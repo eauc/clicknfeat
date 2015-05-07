@@ -43,9 +43,9 @@ describe('state', function() {
 
     describe('goToState(<name>)', function() {
       it('should proxy stateService', function() {
-        this.scope.goToState('name');
+        this.scope.goToState('name', {param: 'value'});
         expect(this.stateService.go)
-          .toHaveBeenCalledWith('name');
+          .toHaveBeenCalledWith('name', {param: 'value'});
       });
     });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('game create', function() {
+describe('local game', function() {
 
   beforeEach(function() {
     module('clickApp.controllers');
@@ -22,28 +22,40 @@ describe('game create', function() {
       '$controller',
       function($rootScope,
                $controller) {
-        this.stateService = jasmine.createSpyObj('$state', ['go']);
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
 
         this.createController = function() {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
+          this.scope.goToState = jasmine.createSpy('goToState');
 
           $controller('loungeCtrl', { 
-            '$scope': this.scope,
-            '$state': this.stateService
+            '$scope': this.scope
           });
           $rootScope.$digest();
         };
       }
     ]));
 
-    describe('doCreateLocalGame()', function() {
+    when('page loads', function() {
+      this.createController();
+    }, function() {
+      it('should load local games', function() {
+        expect(this.gamesService.loadLocalGames)
+          .toHaveBeenCalled();
+        expect(this.scope.local_games)
+          .toBe('games.loadLocalGames.returnValue');
+      });
+    });
+
+    when('user create local game', function() {
+      this.scope.doCreateLocalGame();
+    }, function() {
       beforeEach(function() {
         this.createController();
         this.scope.user = { name: 'user' };
-        this.scope.doCreateLocalGame();
+        this.scope.local_games = ['game1','game2'];
       });
 
       it('should create a new game', function() {
@@ -52,16 +64,45 @@ describe('game create', function() {
       });
 
       it('should store the new game locally', function() {
-        expect(this.gamesService.storeNewLocalGame)
-          .toHaveBeenCalledWith('game.create.returnValue');
+        expect(this.gamesService.storeLocalGames)
+          .toHaveBeenCalledWith(['game1','game2','game.create.returnValue']);
       });
 
       it('should go to game page', function() {
-        expect(this.stateService.go)
+        expect(this.scope.goToState)
           .toHaveBeenCalledWith('game', {
             where: 'offline',
-            id: 'games.storeNewLocalGame.returnValue'
+            id: 2
           });
+      });
+    });
+    
+    when('user load local game', function() {
+      this.scope.local_games_selection = [42];
+      this.scope.doLoadLocalGame();
+    }, function() {
+      beforeEach(function() {
+        this.createController();
+      });
+      
+      it('should go to game page', function() {
+        expect(this.scope.goToState)
+          .toHaveBeenCalledWith('game', { where: 'offline', id: 42 });
+      });
+    });
+    
+    when('user delete local game', function() {
+      this.scope.local_games_selection = [1];
+      this.scope.local_games = ['game1','game2','game3'];
+      this.scope.doDeleteLocalGame();
+    }, function() {
+      beforeEach(function() {
+        this.createController();
+      });
+      
+      it('should delete game selection from local storage', function() {
+        expect(this.gamesService.storeLocalGames)
+          .toHaveBeenCalledWith(['game1','game3']);
       });
     });
   });
@@ -92,31 +133,25 @@ describe('game create', function() {
       }
     ]));
 
-    describe('storeNewLocalGame(<game>)', function() {
+    describe('loadLocalGames()', function() {
       beforeEach(function() {
-        this.game = 'new_game';
         this.localStorage.getItem
           .and.returnValue('["game1","game2"]');
       });
 
       it('should retrieve local games from local storage', function() {
-        this.gamesService.storeNewLocalGame(this.game);
-
-        expect(this.localStorage.getItem)
-          .toHaveBeenCalledWith('clickApp.local_games');
+        expect(this.gamesService.loadLocalGames())
+          .toEqual(['game1','game2']);
       });
+    });
 
+    describe('storeLocalGames(<games>)', function() {
       it('should append new game to local games and store them', function() {
-        this.gamesService.storeNewLocalGame(this.game);
+        this.gamesService.storeLocalGames(["game1","game2"]);
 
         expect(this.localStorage.setItem)
           .toHaveBeenCalledWith('clickApp.local_games',
-                                '["game1","game2","new_game"]');
-      });
-
-      it('should return the new game index', function() {
-        expect(this.gamesService.storeNewLocalGame(this.game))
-          .toBe(2);
+                                '["game1","game2"]');
       });
     });
   });

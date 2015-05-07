@@ -1,13 +1,48 @@
 <div class="container">
-  <h4>
-    {{::user_desc}}
-  </h4>
-  <h4>
-    Status : Offline
-  </h4>
-  <h4>Local games :</h4>
-  <button class="btn btn-default"
-          ng-click="doCreateLocalGame()">
-    Create New Game
-  </button>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h4 class="panel-title">{{::user_desc}}</h4>
+    </div>
+    <div class="panel-body">
+      Status : Offline
+    </div>
+  </div>
+  
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h4 class="panel-title">Local games</h4>
+    </div>
+    <div class="panel-body"
+         style="
+         max-height: 10em;
+         overflow-y: auto;
+         ">
+      <div ng-repeat="(i,g) in local_games"
+           class="
+           {{isInLocalGamesSelection(i) ? 'bg-info':''}}
+           "
+           style="
+           cursor: pointer;
+           "
+           ng-click="setLocalGamesSelection(i)">
+        {{::g | game:'description'}}
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-default"
+              ng-click="doCreateLocalGame()">
+        Create New Game
+      </button>
+      <button class="btn btn-default"
+              ng-click="doLoadLocalGame()"
+              ng-disabled="localGamesSelectionIsEmpty()">
+        Load Game
+      </button>
+      <button class="btn btn-default"
+              ng-click="doDeleteLocalGame(index)"
+              ng-disabled="localGamesSelectionIsEmpty()">
+        Delete Game
+      </button>
+    </div>
+  </div>
 </div>

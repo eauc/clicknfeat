@@ -1,11 +1,13 @@
 'use strict';
 
+angular.module('clickApp.filters', []);
 angular.module('clickApp.services', []);
 angular.module('clickApp.controllers', []);
 angular.module('clickApp', [
   'ui.router',
   'clickApp.controllers',
   'clickApp.services',
+  'clickApp.filters',
 ]).config([
   '$stateProvider',
   '$urlRouterProvider',

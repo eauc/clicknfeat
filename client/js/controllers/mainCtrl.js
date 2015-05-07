@@ -23,8 +23,9 @@ angular.module('clickApp.controllers')
         console.log('set user', $scope.user);
       };
 
-      $scope.goToState = function(name) {
-        $state.go(name);
+      $scope.goToState = function() {
+        var args = Array.prototype.slice.call(arguments);
+        $state.go.apply($state, args);
       };
       $scope.stateIs = function(name) {
         return $state.is(name);
