@@ -48,5 +48,13 @@ describe('state', function() {
           .toHaveBeenCalledWith('name');
       });
     });
+
+    describe('currentState()', function() {
+      it('should proxy stateService.current', function() {
+        this.stateService.current = { name: 'current' };
+        expect(this.scope.currentState())
+          .toBe(this.stateService.current);
+      });
+    });
   });
 });

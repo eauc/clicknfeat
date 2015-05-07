@@ -7,4 +7,11 @@ angular.module('clickApp.services')
   .factory('user', [
     'localStorage',
     userServiceFactory
+  ])
+  .factory('game', [
+    gameServiceFactory
+  ])
+  .factory('games', [
+    'localStorage',
+    gamesServiceFactory
   ]);

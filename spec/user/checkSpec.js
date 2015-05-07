@@ -70,7 +70,8 @@ describe('user check', function() {
           this.scope = $rootScope.$new();
           this.scope.checkUser = jasmine.createSpy('checkUser');
           $controller('loungeCtrl', { 
-            '$scope': this.scope
+            '$scope': this.scope,
+            '$state': {}
           });
           $rootScope.$digest();
         };

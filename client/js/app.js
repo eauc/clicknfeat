@@ -24,6 +24,12 @@ angular.module('clickApp', [
         controller: 'userCtrl',
         data: {}
       })
+      .state('game', {
+        url: '/game/:where/:id',
+        templateUrl: 'partials/game.html',
+        controller: 'gameCtrl',
+        data: { hide_nav: true }
+      })
     ;
   }
 ]).config([

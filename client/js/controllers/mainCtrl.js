@@ -29,5 +29,8 @@ angular.module('clickApp.controllers')
       $scope.stateIs = function(name) {
         return $state.is(name);
       };
+      $scope.currentState = function() {
+        return $state.current;
+      };
     }
   ]);

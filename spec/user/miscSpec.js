@@ -22,6 +22,7 @@ describe('user', function() {
           this.scope.user = { name: 'user' };
           $controller('loungeCtrl', { 
             '$scope': this.scope,
+            '$state': {}
           });
           $rootScope.$digest();
         };
