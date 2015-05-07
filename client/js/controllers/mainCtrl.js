@@ -23,5 +23,11 @@ angular.module('clickApp.controllers')
         console.log('set user', $scope.user);
       };
 
+      $scope.goToState = function(name) {
+        $state.go(name);
+      };
+      $scope.stateIs = function(name) {
+        return $state.is(name);
+      };
     }
   ]);

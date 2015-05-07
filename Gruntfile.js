@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
 
-  var app_js_src = [ 'client/js/app.js',
+  var app_js_src = [ 'client/js/mixins/*.js',
+                     'client/js/app.js',
                      'client/js/controllers/*.js',
                      'client/js/services/*.js',
                      'client/js/angular_services.js',

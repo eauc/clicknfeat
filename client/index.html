@@ -12,6 +12,14 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="#">ClicknFeat</a>
         </div>
+        <ul class="nav navbar-nav">
+          <li class="{{stateIs('user') ? 'active' : ''}}">
+            <a href="#/user">User</a>
+          </li>
+          <li class="{{stateIs('lounge') ? 'active' : ''}}">
+            <a href="#/lounge">Lounge</a>
+          </li>
+        </ul>
       </div>
     </nav>
     <div ui-view>
@@ -20,6 +28,7 @@
     <script src="lib/underscore-string/underscore-string.js"></script>
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular-ui-router/angular-ui-router.js"></script>
+    <script src="js/mixins/exists.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/mainCtrl.js"></script>
     <script src="js/controllers/loungeCtrl.js"></script>
