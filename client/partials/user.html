@@ -1,0 +1,91 @@
+<div class="container">
+  <form name="user_form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name"
+             name="name"
+             class="form-control"
+             type="text"
+             ng-model="edit_user.name"
+             required="required" />
+    </div>
+    <div class="form-group">
+      <label for="language">Language</label>
+      <input id="language"
+             name="language"
+             class="form-control"
+             type="text"
+             ng-model="edit_user.language"
+             placeholder="FR, EN, ..." />
+    </div>
+    <div class="form-group">
+      <label for="chat">Chat</label>
+      <select id="chat"
+              name="chat"
+              class="form-control"
+              type="text"
+              ng-model="edit_user.chat"
+              multiple="multiple">
+        <option value="text">Text</option>
+        <option value="skype">Skype</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="faction">Faction</label>
+      <select id="faction"
+              name="faction"
+              class="form-control"
+              ng-model="edit_user.faction"
+              multiple="multiple">
+        <option value="circle">Circle Orboros</option>
+        <option value="cryx">Cryx</option>
+        <option value="cygnar">Cygnar</option>
+        <option value="cyriss">Convergence of Cyriss</option>
+        <option value="khador">Khador</option>
+        <option value="legion">Legion of Everblight</option>
+        <option value="menoth">Protectorate of Menoth</option>
+        <option value="mercs">Mercernaries</option>
+        <option value="minions">Minions</option>
+        <option value="scyrah">Retribution of Scyrah</option>
+        <option value="skorne">Skorne Empire</option>
+        <option value="troll">Trollbloods</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="game_size">Games sizes</label>
+      <input id="game_size"
+             name="game_size"
+             class="form-control"
+             type="text"
+             ng-model="edit_user.game_size"
+             placeholder="50, 35, ..." />
+    </div>
+    <div class="form-group">
+      <label for="ck_position">Favorite Caster Kill Positions</label>
+      <select id="ck_position"
+              name="ck_position"
+              class="form-control"
+              type="text"
+              ng-model="edit_user.ck_position"
+              multiple="multiple">
+        <option value="missionary">Missionary</option>
+        <option value="69">69</option>
+        <option value="71">71</option>
+        <option value="47">47</option>
+        <option value="ln(2Pi)">ln(2Pi)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-default"
+              ng-click="doPlayOffline()"
+              ng-disabled="!user_form.$valid">
+        Play offline
+      </button>
+      <button class="btn btn-default"
+              ng-click="doPlayOffline()"
+              ng-disabled="!user_form.$valid">
+        Play online
+      </button>
+    </div>
+  </form>
+</div>

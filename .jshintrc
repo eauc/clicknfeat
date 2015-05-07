@@ -1,0 +1,15 @@
+{
+  "multistr": true,
+  "newcap": false,
+  "globals": {
+    "R": false,
+    "$": false,
+    "s": false,
+    "angular": false,
+    "console": false,
+    "self": false
+  },
+  "-W097": true, // "use strict function form"
+  "-W040": true, // "possible strict violation"
+  "-W069": true  // "is better written in dot notation"
+}
