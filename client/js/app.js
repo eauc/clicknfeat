@@ -34,6 +34,18 @@ angular.module('clickApp', [
         controller: 'gameCtrl',
         data: { hide_nav: true }
       })
+      .state('game.main', {
+        url: '/main',
+        templateUrl: 'partials/game/main.html',
+        controller: 'gameMainCtrl',
+        data: { hide_nav: true }
+      })
+      .state('game.help', {
+        url: '/help',
+        templateUrl: 'partials/game/help.html',
+        controller: 'gameHelpCtrl',
+        data: { hide_nav: true }
+      })
     ;
   }
 ]).config([

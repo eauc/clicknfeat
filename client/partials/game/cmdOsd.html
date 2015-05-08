@@ -1,0 +1,30 @@
+<div class="scroll-container">
+  <div style="
+       min-height:3em;
+       ">
+    <strong>{{modes | modes:'currentModeName' }} Mode</strong>
+  </div>
+  <div class="btn-group-vertical">
+    <button ng-repeat="action in action_buttons"
+            class="
+            btn
+            {{::(action.length === 3 && action[1] !== 'toggle') ? 'btn-info' : 'btn-default'}}
+            "
+            title="{{::action_bindings[action[1]] || ''}}"
+            ng-click="doActionButton(action)"
+            ng-show="
+            action[1] === 'toggle' ||
+            action.length === 2 ||
+            show_action_group === action[2]
+            ">
+      {{::action[0]}}
+      <span class="
+            glyphicon
+            {{action[1] === 'toggle' ? (show_action_group === action[2] ?
+            'glyphicon-chevron-up' :
+            'glyphicon-chevron-down') :
+            '' }}
+            "></span>
+    </button>
+  </div>
+</div>

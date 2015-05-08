@@ -3,106 +3,11 @@
   <div id="gameview"
        class="resizable">
     <div id="zoom-osd"
-         class="btn-group-vertical">
-      <button class="btn btn-default"
-              ng-click="doZoomIn()">
-        <span class="glyphicon glyphicon-zoom-in"></span>
-      </button>
-      <button class="btn btn-default"
-              ng-click="doZoomReset()">
-        <span class="glyphicon glyphicon-fullscreen"></span>
-      </button>
-      <button class="btn btn-default"
-              ng-click="doZoomOut()">
-        <span class="glyphicon glyphicon-zoom-out"></span>
-      </button>
+         class="btn-group-vertical"
+         ng-include="'partials/game/zoomOsd.html'">
     </div>
-    <div id="cmd-osd">
-      <div class="scroll-container">
-        <div style="min-height:3em;">
-          <strong>Default Mode</strong>
-        </div>
-        <div class="btn-group-vertical">
-          <!-- <button class="btn btn-default">
-          Command TotoToto
-          </button> -->
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-          <button class="btn btn-default">
-            Command
-          </button>
-        </div>
-      </div>
+    <div id="cmd-osd"
+         ng-include="'partials/game/cmdOsd.html'">
     </div>
     <div id="viewport">
       <svg id="map"
@@ -262,10 +167,21 @@
         <strong>Player 2:</strong> {{game | game:'playerName':'p2'}}
       </p>
       <ul class="nav nav-tabs">
-        <li class="active"><a>Main</a></li>
-        <li><a>Online</a></li>
-        <li><a ng-click="goToState('lounge')">Lounge</a></li>
+        <li class="{{stateIs('game.main') ? 'active' : ''}}"
+            ng-click="goToState('^.main')">
+          <a>Main</a>
+        </li>
+        <li class="{{stateIs('game.help') ? 'active' : ''}}"
+            ng-click="goToState('^.help')">
+          <a>Help</a>
+        </li>
+        <li ng-click="goToState('lounge')">
+          <a>Lounge</a>
+        </li>
       </ul>
+      <div ui-view
+           id="menu-view">
+      </div>
     </p>
   </div>
 </div>

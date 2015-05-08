@@ -6,6 +6,7 @@
     "$": false,
     "s": false,
     "angular": false,
+    "Mousetrap": false,
     "console": false,
     "self": false,
     "describe": false,

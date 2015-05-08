@@ -2,8 +2,8 @@ module.exports = function(grunt) {
 
   var app_js_src = [ 'client/js/mixins/*.js',
                      'client/js/app.js',
-                     'client/js/controllers/*.js',
-                     'client/js/services/*.js',
+                     'client/js/controllers/**/*.js',
+                     'client/js/services/**/*.js',
                      'client/js/angular_services.js',
                      'client/js/filters/*.js',
                      'client/js/directives/*.js',
@@ -56,6 +56,7 @@ module.exports = function(grunt) {
               'client/lib/angular/angular.js',
               'client/lib/angular-ui-router/angular-ui-router.min.js',
               'client/lib/angular/angular-mocks.js',
+              'client/lib/mousetrap/mousetrap.js',
           ],
           outfile: 'spec/SpecRunner.html',
           keepRunner: true

@@ -21,9 +21,11 @@ describe('load game', function() {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
           this.scope.goToState = jasmine.createSpy('goToState');
+          this.state = { current: { name: 'game.main' } };
 
           $controller('gameCtrl', { 
             '$scope': this.scope,
+            '$state': this.state,
             '$stateParams': params
           });
           $rootScope.$digest();

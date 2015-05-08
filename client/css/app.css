@@ -70,6 +70,10 @@ ul.nav-tabs li {
     min-width:400px;
 }
 
+#game #menu-view {
+    padding:3px;
+}
+
 #game #menu.hidden #menu-content {
     display: none;
 }

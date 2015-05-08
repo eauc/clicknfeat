@@ -7,7 +7,6 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-          console.log('gamePage', element);
           var gameview = element[0].querySelector('#gameview');
           var viewport = element[0].querySelector('#viewport');
           var menu = element[0].querySelector('#menu');
@@ -123,6 +122,7 @@ angular.module('clickApp.directives')
             .addEventListener('click', toggleMenuClick);
           map.addEventListener('click', clickMap);
           scope.$on('flipMap', flipMap);
+          scope.$on('toggleMenu', toggleMenuClick);
           scope.$on('zoomIn', zoomIn);
           scope.$on('zoomOut', zoomOut);
           scope.$on('zoomReset', zoomReset);

@@ -14,4 +14,20 @@ angular.module('clickApp.services')
   .factory('games', [
     'localStorage',
     gamesServiceFactory
+  ])
+  .factory('modes', [
+    modesServiceFactory
+  ])
+  .factory('commonMode', [
+    'modes',
+    commonModeServiceFactory
+  ])
+  .factory('defaultMode', [
+    'modes',
+    'commonMode',
+    defaultModeServiceFactory
+  ])
+  .factory('allModes', [
+    'defaultMode',
+    function() { return {}; }
   ]);

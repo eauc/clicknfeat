@@ -9,4 +9,13 @@ angular.module('clickApp.filters')
         return gameService[method].apply(null, R.append(input, args));
       };
     }
+  ])
+  .filter('modes', [
+    'modes',
+    function(modesService) {
+      return function(input, method) {
+        var args = R.tail(R.tail(arguments));
+        return modesService[method].apply(null, R.append(input, args));
+      };
+    }
   ]);
