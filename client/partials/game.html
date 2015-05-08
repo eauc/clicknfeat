@@ -1,3 +1,271 @@
-<div class="container">
-  <a href="#/lounge'">Go back to the Lounge</a>
+<div id="game"
+     click-game-page>
+  <div id="gameview"
+       class="resizable">
+    <div id="zoom-osd"
+         class="btn-group-vertical">
+      <button class="btn btn-default"
+              ng-click="doZoomIn()">
+        <span class="glyphicon glyphicon-zoom-in"></span>
+      </button>
+      <button class="btn btn-default"
+              ng-click="doZoomReset()">
+        <span class="glyphicon glyphicon-fullscreen"></span>
+      </button>
+      <button class="btn btn-default"
+              ng-click="doZoomOut()">
+        <span class="glyphicon glyphicon-zoom-out"></span>
+      </button>
+    </div>
+    <div id="cmd-osd">
+      <div class="scroll-container">
+        <div style="min-height:3em;">
+          <strong>Default Mode</strong>
+        </div>
+        <div class="btn-group-vertical">
+          <!-- <button class="btn btn-default">
+          Command TotoToto
+          </button> -->
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+          <button class="btn btn-default">
+            Command
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="viewport">
+      <svg id="map"
+           viewBox="0 0 480 480">
+        <rect x="0" y="0"
+              width="480" height="480"
+              style="
+              fill: green;
+              " />
+        <line x1="0" y1="10"
+              x2="480" y2="10"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="20"
+              x2="480" y2="20"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="30"
+              x2="480" y2="30"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="40"
+              x2="480" y2="40"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="50"
+              x2="480" y2="50"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="60"
+              x2="480" y2="60"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="120"
+              x2="480" y2="120"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="180"
+              x2="480" y2="180"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="240"
+              x2="480" y2="240"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="360"
+              x2="480" y2="360"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="0" y1="480"
+              x2="480" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+
+        <line x1="10" y1="0"
+              x2="10" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="20" y1="0"
+              x2="20" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="30" y1="0"
+              x2="30" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="40" y1="0"
+              x2="40" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="50" y1="0"
+              x2="50" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="60" y1="0"
+              x2="60" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="120" y1="0"
+              x2="120" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="180" y1="0"
+              x2="180" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="240" y1="0"
+              x2="240" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="360" y1="0"
+              x2="360" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+        <line x1="480" y1="0"
+              x2="480" y2="480"
+              style="
+              stroke-width: 1;
+              stroke: black;
+              "/>
+      </svg>
+    </div>
+  </div>
+  <div id="menu">
+    <button id="menu-toggle"
+            class="btn btn-default"
+            title="Toggle menu">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </button>
+    <div id="menu-content">
+      <p>
+        <strong>Player 1:</strong> {{game | game:'playerName':'p1'}}
+        <strong>VS</strong>
+        <strong>Player 2:</strong> {{game | game:'playerName':'p2'}}
+      </p>
+      <ul class="nav nav-tabs">
+        <li class="active"><a>Main</a></li>
+        <li><a>Online</a></li>
+        <li><a ng-click="goToState('lounge')">Lounge</a></li>
+      </ul>
+    </p>
+  </div>
 </div>

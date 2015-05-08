@@ -2,3 +2,110 @@ input.ng-invalid-required {
     border-color: #A94442;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
 }
+
+ul.nav-tabs li {
+    cursor: pointer;
+}
+
+#game #gameview {
+    position: relative;
+    background-color: blue;
+    height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#game #gameview.resizable {
+    float: left;
+    resize: horizontal;
+}
+
+#game #viewport {
+    background-color: #999;
+    height: 100%;
+    width: 100%;
+    overflow: scroll;
+}
+
+#game #menu {
+    display: block !important;
+    background-color: white;
+    overflow: auto;
+    height:100vh;
+}
+
+#game #menu.hidden {
+    position: absolute;
+    top: 0;
+    right: 0;
+    overflow: visible;
+}
+
+#game #menu-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    z-index: 2000;
+    padding: 8px;
+}
+
+#game #menu-toggle .glyphicon-chevron-right {
+    display: inline;
+}
+#game #menu-toggle .glyphicon-chevron-left {
+    display: none;
+}
+#game #menu.hidden #menu-toggle .glyphicon-chevron-right {
+    display: none;
+}
+#game #menu.hidden #menu-toggle .glyphicon-chevron-left {
+    display: inline;
+}
+
+#game #menu-content {
+    min-width:400px;
+}
+
+#game #menu.hidden #menu-content {
+    display: none;
+}
+
+#game #zoom-osd {
+    position: absolute;
+    left: 3px;
+    bottom: 16px;
+    opacity: 0.75;
+    z-index: 1000;
+}
+
+#game #cmd-osd {
+    position: absolute;
+    right: 15px;
+    top: 0;
+    max-height: 98vh;
+    overflow: hidden;
+    z-index: 1000;
+    background-color: #EEE;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#game #cmd-osd .scroll-container {
+    margin-right: -15px;
+    min-width: 115px;
+    max-height: 98vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    #game #cmd-osd .scroll-container {
+        padding-right: 15px;
+    }
+}
+#game #cmd-osd button {
+    min-width: 100px;
+}

@@ -18,5 +18,17 @@ angular.module('clickApp.controllers')
         $scope.goToState('lounge');
         return;
       }
+      $scope.$on('clickMap', function onMapClick(event, coord, click) {
+        console.log('$on clickMap', arguments);
+      });
+      $scope.doZoomIn = function doZoomIn() {
+        $scope.$broadcast('zoomIn');
+      };
+      $scope.doZoomOut = function doZoomOut() {
+        $scope.$broadcast('zoomOut');
+      };
+      $scope.doZoomReset = function doZoomReset() {
+        $scope.$broadcast('zoomReset');
+      };
     }
   ]);
