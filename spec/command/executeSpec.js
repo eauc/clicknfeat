@@ -13,6 +13,10 @@ describe('execute commands', function() {
       beforeEach(function() {
         this.game = { commands: [] };
         this.scope = jasmine.createSpyObj('scope', ['saveGame']);
+        this.scope.user = { name: 'user' };
+        this.commandsService.execute._retVal = {
+          returnValue: 'commands.execute.returnValue'
+        };
       });
 
       it('should proxy commandsService.execute', function() {
@@ -33,7 +37,10 @@ describe('execute commands', function() {
       }, function() {
         it('should register command', function() {
           expect(this.game.commands)
-            .toEqual(['commands.execute.returnValue']);
+            .toEqual([{
+              user: 'user',
+              returnValue: 'commands.execute.returnValue'
+            }]);
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
         });

@@ -46,6 +46,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
 
       var game = R.last(args);
       var scope = R.nth(-2, args);
+      command.user = scope.user.name;
       game.commands = R.append(command, game.commands);
       scope.saveGame(game);
     },

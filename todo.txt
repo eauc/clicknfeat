@@ -1,0 +1,12 @@
+user in command
+command stamp
+command log undo/replay
+layers - deploiement
+scenario
+model
+template
+dices
+game chat
+online - users login
+online - users chat + notification
+online - game
