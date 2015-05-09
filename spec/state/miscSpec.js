@@ -1,12 +1,6 @@
 'use strict';
 
 describe('state', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('mainCtrl', function(c) {
 
     beforeEach(inject([

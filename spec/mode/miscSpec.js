@@ -1,12 +1,6 @@
 'use strict';
 
 describe('modes', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('modesService', function() {
     beforeEach(inject([
       'modes',

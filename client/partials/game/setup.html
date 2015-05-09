@@ -1,0 +1,16 @@
+<div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Board Map</strong>
+    </div>
+    <div class="panel-content">
+      <form name="board-map">
+        <select class="form-control"
+                ng-options="b.name as b.name for b in boards"
+                ng-model="board_name"
+                ng-change="doSetBoard()">
+        </select>
+      </form>
+    </div>
+  </div>
+</div>

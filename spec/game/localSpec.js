@@ -1,22 +1,7 @@
 'use strict';
 
 describe('local game', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-
-    this.localStorage = jasmine.createSpyObj('localStorage', [
-      'setItem',
-      'getItem'
-    ]);
-    module({
-      'localStorage': this.localStorage,
-    });
-  });
-
   describe('loungeCtrl', function(c) {
-
     beforeEach(inject([
       '$rootScope',
       '$controller',
@@ -130,6 +115,10 @@ describe('local game', function() {
       'games',
       function(gamesService) {
         this.gamesService = gamesService;
+        this.gameService = spyOnService('game');
+        this.gameService.toJson.and.callFake(function(g) {
+          return g+'.toJson';
+        });
       }
     ]));
 
@@ -151,7 +140,7 @@ describe('local game', function() {
 
         expect(this.localStorage.setItem)
           .toHaveBeenCalledWith('clickApp.local_games',
-                                '["game1","game2"]');
+                                '[game1.toJson,game2.toJson]');
       });
     });
   });

@@ -1,12 +1,6 @@
 'use strict';
 
 describe('commonMode', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('modesService', function() {
     beforeEach(inject([
       'commonMode',
@@ -25,12 +19,12 @@ describe('commonMode', function() {
     ], function(e, d) {
       describe(e.action+'()', function() {
         beforeEach(function() {
-          this.scope = jasmine.createSpyObj('scope', ['$broadcast']);
+          this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
         });
 
         it('should broadcast "'+e.event+'" event', function() {
           this.commonModeService.actions[e.action](this.scope);
-          expect(this.scope.$broadcast)
+          expect(this.scope.gameEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });

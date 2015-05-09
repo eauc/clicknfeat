@@ -9,10 +9,12 @@ angular.module('clickApp.services')
     userServiceFactory
   ])
   .factory('game', [
+    'commands',
     gameServiceFactory
   ])
   .factory('games', [
     'localStorage',
+    'game',
     gamesServiceFactory
   ])
   .factory('modes', [
@@ -29,5 +31,23 @@ angular.module('clickApp.services')
   ])
   .factory('allModes', [
     'defaultMode',
+    function() { return {}; }
+  ])
+  .factory('http', [
+    httpServiceFactory
+  ])
+  .factory('gameBoard', [
+    'http',
+    gameBoardServiceFactory
+  ])
+  .factory('commands', [
+    commandsServiceFactory
+  ])
+  .factory('setBoardCommand', [
+    'commands',
+    setBoardCommandServiceFactory
+  ])
+  .factory('allCommands', [
+    'setBoardCommand',
     function() { return {}; }
   ]);

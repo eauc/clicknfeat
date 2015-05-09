@@ -1,3 +1,5 @@
+'use strict';
+
 self.modesServiceFactory = function modesServiceFactory() {
   var MODES_REG = {};
   var modesService = {

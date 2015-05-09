@@ -1,14 +1,7 @@
 'use strict';
 
 describe('load game', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('gameCtrl', function(c) {
-
     beforeEach(inject([
       '$rootScope',
       '$controller',
@@ -60,8 +53,10 @@ describe('load game', function() {
           });
 
           it('should load game', function() {
+            expect(this.gameService.load)
+              .toHaveBeenCalledWith(this.scope, 'game2');
             expect(this.scope.game)
-              .toBe('game2');
+              .toBe('game.load.returnValue');
           });
         });
       });
@@ -72,5 +67,43 @@ describe('load game', function() {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
     }]));
+
+    describe('load(scope)', function() {
+      beforeEach(function() {
+        this.commandsService = spyOnService('commands');
+
+        this.game = {
+          players: { p1: { name: 'p1' } },
+          commands: ['cmd1', 'cmd2']
+        };
+        this.scope = { 'this': 'scope',
+                       $digest: jasmine.createSpy('$digest')
+                     };
+        this.ret = this.gameService.load(this.scope, this.game);
+      });
+
+      it('should extend game with default values', function() {
+        expect(this.ret)
+          .toEqual({
+            players: { p1: { name: 'p1' },
+                       p2: { name: null }
+                     },
+            board: {},
+            commands: [ 'cmd1', 'cmd2' ]
+          });
+      });
+
+      it('should replay commands', function() {
+        expect(this.commandsService.replay)
+          .toHaveBeenCalledWith('cmd1', this.scope, this.ret);
+        expect(this.commandsService.replay)
+          .toHaveBeenCalledWith('cmd2', this.scope, this.ret);
+      });
+
+      it('should refresh scope', function() {
+        expect(this.scope.$digest)
+          .toHaveBeenCalled();
+      });
+    });
   });
 });

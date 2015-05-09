@@ -5,11 +5,19 @@ angular.module('clickApp.controllers')
     '$scope',
     '$state',
     'user',
+    'gameBoard',
     function($scope,
              $state,
-             userService) {
+             userService,
+             gameBoardService) {
       console.log('init mainCtrl');
       
+      gameBoardService.init()
+        .then(function(boards) {
+          $scope.boards = boards;
+          console.log('boards', boards);
+        });
+
       $scope.user = userService.load();
       console.log('loaded user', $scope.user);
       $scope.checkUser = function checkUser() {

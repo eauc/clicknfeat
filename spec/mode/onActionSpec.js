@@ -1,14 +1,7 @@
 'use strict';
 
 describe('on mode action', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('gameCtrl', function(c) {
-
     beforeEach(inject([
       '$rootScope',
       '$controller',

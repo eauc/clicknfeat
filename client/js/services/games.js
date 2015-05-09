@@ -1,4 +1,7 @@
-self.gamesServiceFactory = function gamesServiceFactory(localStorage) {
+'use strict';
+
+self.gamesServiceFactory = function gamesServiceFactory(localStorage,
+                                                        gameService) {
   var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
   var gamesService = {
     loadLocalGames: function() {
@@ -15,7 +18,8 @@ self.gamesServiceFactory = function gamesServiceFactory(localStorage) {
       return local_games;
     },
     storeLocalGames: function(games) {
-      localStorage.setItem(LOCAL_GAMES_STORAGE_KEY, JSON.stringify(games));
+      var json = '['+R.join(',',R.map(gameService.toJson, games))+']';
+      localStorage.setItem(LOCAL_GAMES_STORAGE_KEY, json);
     }
   };
   return gamesService;

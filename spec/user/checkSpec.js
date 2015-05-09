@@ -1,14 +1,7 @@
 'use strict';
 
 describe('user check', function() {
-
-  beforeEach(function() {
-    module('clickApp.services');
-    module('clickApp.controllers');
-  });
-
   describe('mainCtrl', function(c) {
-
     beforeEach(inject([
       '$rootScope',
       '$controller',

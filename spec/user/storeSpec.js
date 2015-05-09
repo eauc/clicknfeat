@@ -1,22 +1,7 @@
 'use strict';
 
 describe('user load/store', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-
-    this.localStorage = jasmine.createSpyObj('localStorage', [
-      'setItem',
-      'getItem'
-    ]);
-    module({
-      'localStorage': this.localStorage,
-    });
-  });
-
   describe('mainCtrl', function(c) {
-
     beforeEach(inject([
       '$rootScope',
       '$controller',

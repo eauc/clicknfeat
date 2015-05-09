@@ -1,12 +1,6 @@
 'use strict';
 
 describe('game', function() {
-
-  beforeEach(function() {
-    module('clickApp.controllers');
-    module('clickApp.services');
-  });
-
   describe('game service', function() {
     beforeEach(inject([
       'game',
@@ -30,6 +24,24 @@ describe('game', function() {
           expect(this.gameService.description(e.game))
             .toEqual(e.desc);
         });
+      });
+    });
+    
+    describe('toJson()', function() {
+      it('should pick selected keys', function() {
+        expect(this.gameService.toJson({
+          players: 'players',
+          commands: 'commands',
+          other: 'other',
+        })).toEqual('{"players":"players","commands":"commands"}');
+      });
+
+      it('should drop angular tags', function() {
+        expect(this.gameService.toJson({
+          players: { $$tag: 'tag', p1: 'p1' },
+          commands: [ { $$key: 'key', cmd: 'cmd' } ],
+          other: 'other',
+        })).toEqual('{"players":{"p1":"p1"},"commands":[{"cmd":"cmd"}]}');
       });
     });
   });

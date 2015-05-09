@@ -1,3 +1,5 @@
+'use strict';
+
 self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService,
                                                                     commonModeService) {
   var default_actions = Object.create(commonModeService.actions);

@@ -1,19 +1,21 @@
+'use strict';
+
 self.commonModeServiceFactory = function commonModeServiceFactory(modesService) {
   var common_actions = {
     zoomIn: function zoomIn(scope) {
-      scope.$broadcast('zoomIn');
+      scope.gameEvent('zoomIn');
     },
     zoomOut: function zoomOut(scope) {
-      scope.$broadcast('zoomOut');
+      scope.gameEvent('zoomOut');
     },
     zoomReset: function zoomReset(scope) {
-      scope.$broadcast('zoomReset');
+      scope.gameEvent('zoomReset');
     },
     flipMap: function flipMap(scope) {
-      scope.$broadcast('flipMap');
+      scope.gameEvent('flipMap');
     },
     toggleMenu: function toggleMenu(scope) {
-      scope.$broadcast('toggleMenu');
+      scope.gameEvent('toggleMenu');
     },
   };
   var common_bindings = {

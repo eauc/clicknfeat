@@ -1,3 +1,5 @@
+'use strict';
+
 self.userServiceFactory = function userServiceFactory(localStorage) {
   var STORAGE_KEY = 'clickApp.user';
   var userService = {
