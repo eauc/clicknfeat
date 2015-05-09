@@ -36,11 +36,13 @@ describe('execute commands', function() {
       when('commandsService.execute succeeds', function() {
       }, function() {
         it('should register command', function() {
-          expect(this.game.commands)
-            .toEqual([{
-              user: 'user',
-              returnValue: 'commands.execute.returnValue'
-            }]);
+          expect(this.game.commands[0].user)
+            .toBe('user');
+          expect(this.game.commands[0].returnValue)
+            .toBe('commands.execute.returnValue');
+          expect(this.game.commands[0].stamp)
+            .toMatch(/[1-9a-f-]{10,}/);
+
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
         });

@@ -1,5 +1,3 @@
-user in command
-command stamp
 command log undo/replay
 layers - deploiement
 scenario
