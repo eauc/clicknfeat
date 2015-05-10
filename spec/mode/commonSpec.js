@@ -11,6 +11,10 @@ describe('commonMode', function() {
 
     using([
       [ 'action', 'event'  ],
+      [ 'viewScrollLeft', 'viewScrollLeft' ],
+      [ 'viewScrollRight', 'viewScrollRight' ],
+      [ 'viewScrollDown', 'viewScrollDown' ],
+      [ 'viewScrollUp', 'viewScrollUp' ],
       [ 'viewZoomIn', 'viewZoomIn' ],
       [ 'viewZoomOut', 'viewZoomOut' ],
       [ 'viewZoomReset', 'viewZoomReset' ],

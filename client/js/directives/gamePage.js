@@ -92,6 +92,35 @@ angular.module('clickApp.directives')
             setViewportCenter(cx_cy[0]/2, cx_cy[1]/2, vw_vh[0], vw_vh[1]);
           }
 
+          var scroll_indent = 30;
+          function scrollLeft() {
+            var left = viewport.scrollLeft;
+            $window.requestAnimationFrame(function _scrollLeft() {
+              viewport.scrollLeft = left - scroll_indent;
+            });
+          }
+
+          function scrollRight() {
+            var left = viewport.scrollLeft;
+            $window.requestAnimationFrame(function _scrollRight() {
+              viewport.scrollLeft = left + scroll_indent;
+            });
+          }
+
+          function scrollUp() {
+            var top = viewport.scrollTop;
+            $window.requestAnimationFrame(function _scrollUp() {
+              viewport.scrollTop = top - scroll_indent;
+            });
+          }
+
+          function scrollDown() {
+            var top = viewport.scrollTop;
+            $window.requestAnimationFrame(function _scrollDown() {
+              viewport.scrollTop = top + scroll_indent;
+            });
+          }
+
           function setMapDimensions(dim) {
             $window.requestAnimationFrame(function _setMapDimensions() {
               map.style.width = dim+'px';
@@ -126,6 +155,10 @@ angular.module('clickApp.directives')
           scope.$on('viewZoomIn', zoomIn);
           scope.$on('viewZoomOut', zoomOut);
           scope.$on('viewZoomReset', zoomReset);
+          scope.$on('viewScrollLeft', scrollLeft);
+          scope.$on('viewScrollRight', scrollRight);
+          scope.$on('viewScrollUp', scrollUp);
+          scope.$on('viewScrollDown', scrollDown);
 
           var rect = gameview.getBoundingClientRect();
           gameview.style.width = (rect.height+100)+'px';

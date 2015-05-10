@@ -9,6 +9,18 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     commandReplayNext: function commandReplayNext(scope) {
       gameService.replayNextCommand(scope, scope.game);
     },
+    viewScrollLeft: function viewZoomLeft(scope) {
+      scope.gameEvent('viewScrollLeft');
+    },
+    viewScrollRight: function viewZoomRight(scope) {
+      scope.gameEvent('viewScrollRight');
+    },
+    viewScrollUp: function viewZoomUp(scope) {
+      scope.gameEvent('viewScrollUp');
+    },
+    viewScrollDown: function viewZoomDown(scope) {
+      scope.gameEvent('viewScrollDown');
+    },
     viewZoomIn: function viewZoomIn(scope) {
       scope.gameEvent('viewZoomIn');
     },
@@ -28,6 +40,10 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
   var common_bindings = {
     commandUndoLast: 'ctrl+z',
     commandReplayNext: 'ctrl+y',
+    viewScrollLeft: 'alt+left',
+    viewScrollRight: 'alt+right',
+    viewScrollUp: 'alt+up',
+    viewScrollDown: 'alt+down',
     viewZoomIn: 'alt++',
     viewZoomOut: 'alt+-',
     viewZoomReset: 'alt+z',
