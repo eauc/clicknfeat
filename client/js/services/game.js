@@ -11,7 +11,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
       };
       return new_game;
     },
-    load: function(scope, data) {
+    load: function gameLoad(scope, data) {
       var game = R.deepExtend({
         players: {
           p1: { name: null },
@@ -19,17 +19,18 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
         },
         board: {},
         commands: [],
+        undo: [],
       }, data);
-      gameReplay(scope, game);
+      gameReplayAll(scope, game);
       return game;
     },
     toJson: function gameToJson(game) {
-      var json = JSON.stringify(R.pick(['players', 'commands'], game),
-                                jsonFilter);
-      console.log('game tojson', json);
+      var json = JSON.stringify(R.pick([
+        'players', 'commands', 'undo'
+      ], game), jsonFilter);
       return json;
     },
-    playerName: function(p, game) {
+    playerName: function gamePlayerName(p, game) {
       return R.defaultTo('John Doe', R.path(['players',p,'name'], game));
     },
     description: function gameDescription(game) {
@@ -39,7 +40,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
                gameService.playerName('p2', game)
              );
     },
-    executeCommand: function(/* ...args..., scope, game */) {
+    executeCommand: function gameExecuteCommand(/* ...args..., scope, game */) {
       var args = Array.prototype.slice.apply(arguments);
       var command = commandsService.execute.apply(null, args);
       if(R.isNil(command)) return;
@@ -50,9 +51,28 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
       command.stamp = R.guid();
       game.commands = R.append(command, game.commands);
       scope.saveGame(game);
+      scope.gameEvent('command', 'execute');
+    },
+    undoLastCommand: function gameUndoLastCommand(scope, game) {
+      if(R.isEmpty(game.commands)) return;
+      var command = R.last(game.commands);
+      commandsService.undo(command, scope, game);
+      game.commands = R.init(game.commands);
+      game.undo = R.append(command, game.undo);
+      scope.saveGame(game);
+      scope.gameEvent('command', 'undo');
+    },
+    replayNextCommand: function gameReplayNextCommand(scope, game) {
+      if(R.isEmpty(game.undo)) return;
+      var command = R.last(game.undo);
+      commandsService.replay(command, scope, game);
+      game.undo = R.init(game.undo);
+      game.commands = R.append(command, game.commands);
+      scope.saveGame(game);
+      scope.gameEvent('command', 'replay');
     },
   };
-  function gameReplay(scope, game) {
+  function gameReplayAll(scope, game) {
     if(R.isEmpty(game.commands)) return;
 
     var i = 0;

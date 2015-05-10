@@ -89,7 +89,8 @@ describe('load game', function() {
                        p2: { name: null }
                      },
             board: {},
-            commands: [ 'cmd1', 'cmd2' ]
+            commands: [ 'cmd1', 'cmd2' ],
+            undo: [],
           });
       });
 

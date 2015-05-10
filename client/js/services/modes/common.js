@@ -1,15 +1,22 @@
 'use strict';
 
-self.commonModeServiceFactory = function commonModeServiceFactory(modesService) {
+self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
+                                                                  gameService) {
   var common_actions = {
-    zoomIn: function zoomIn(scope) {
-      scope.gameEvent('zoomIn');
+    commandUndoLast: function commandUndoLast(scope) {
+      gameService.undoLastCommand(scope, scope.game);
     },
-    zoomOut: function zoomOut(scope) {
-      scope.gameEvent('zoomOut');
+    commandReplayNext: function commandReplayNext(scope) {
+      gameService.replayNextCommand(scope, scope.game);
     },
-    zoomReset: function zoomReset(scope) {
-      scope.gameEvent('zoomReset');
+    viewZoomIn: function viewZoomIn(scope) {
+      scope.gameEvent('viewZoomIn');
+    },
+    viewZoomOut: function viewZoomOut(scope) {
+      scope.gameEvent('viewZoomOut');
+    },
+    viewZoomReset: function viewZoomReset(scope) {
+      scope.gameEvent('viewZoomReset');
     },
     flipMap: function flipMap(scope) {
       scope.gameEvent('flipMap');
@@ -19,9 +26,11 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService) 
     },
   };
   var common_bindings = {
-    zoomIn: 'alt++',
-    zoomOut: 'alt+-',
-    zoomReset: 'alt+z',
+    commandUndoLast: 'ctrl+z',
+    commandReplayNext: 'ctrl+y',
+    viewZoomIn: 'alt++',
+    viewZoomOut: 'alt+-',
+    viewZoomReset: 'alt+z',
     flipMap: 'ctrl+shift+f',
     toggleMenu: 'ctrl+m',
   };

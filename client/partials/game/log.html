@@ -1,0 +1,36 @@
+<div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Command Log</strong>
+    </div>
+    <div class="panel-content">
+      <button class="btn btn-default"
+              ng-disabled="game.commands.length === 0"
+              ng-click="doUndoLast()">
+        Undo Last
+      </button>
+      <button class="btn btn-default"
+              ng-disabled="game.undo.length === 0"
+              ng-click="doReplayNext()">
+        Replay Next
+      </button>
+      <div id="log-replay-list"
+           click-log-replay-list>
+        <div ng-repeat="(i,cmd) in game.undo track by cmd.stamp"
+             class="log-row"
+             ng-click="doSetReplaySelection(cmd.stamp)">
+          <span class="text-primary">{{::cmd.user}}</span>
+          {{::cmd.type}} {{::cmd.desc}}
+        </div>
+      </div>
+      <div id="log-command-list">
+        <div ng-repeat="(i,cmd) in game.commands.slice().reverse() track by cmd.stamp"
+             class="log-row"
+             ng-click="doSetUndoSelection(cmd.stamp)">
+          <span class="text-primary">{{::cmd.user}}</span>
+          {{::cmd.type}} {{::cmd.desc}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

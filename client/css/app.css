@@ -113,3 +113,28 @@ ul.nav-tabs li {
 #game #cmd-osd button {
     min-width: 100px;
 }
+
+#game #log-replay-list {
+    max-height: 70px;
+    overflow-y: auto;
+    border-bottom: 1px solid #EEE;
+    font-style: italic;
+    color: #999;
+}
+
+#game #log-command-list {
+    max-height: 70px;
+    overflow-y: auto;
+}
+
+#game #log-command-list div:first-child {
+    background-color: #dff0d8;
+}
+
+#game .log-row {
+    cursor: pointer;
+}
+
+#game .log-row:hover {
+    background-color: #eee;
+}

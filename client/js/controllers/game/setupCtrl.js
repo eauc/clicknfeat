@@ -12,7 +12,6 @@ angular.module('clickApp.controllers')
       $scope.board_name = gameBoardService.name($scope.game.board);
       $scope.$on('changeBoard', function() {
         $scope.board_name = gameBoardService.name($scope.game.board);
-        $scope.$digest();
       });
       $scope.doSetBoard = function doSetBoard() {
         gameService.executeCommand('setBoard',

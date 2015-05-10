@@ -32,7 +32,7 @@ describe('on mode action', function() {
     when('a mode action occurs', function() {
       this.scope.doModeAction('action');
     }, function() {
-      it('proxy currentModeAction', function() {
+      it('should proxy currentModeAction', function() {
         expect(this.modesService.currentModeAction)
           .toHaveBeenCalledWith('modes.init.returnValue',
                                 'action',
@@ -80,7 +80,7 @@ describe('on mode action', function() {
       function(modesService, defaultModeService) {
         this.modesService = modesService;
         this.defaultModeService = defaultModeService;
-        spyOn(this.defaultModeService.actions, 'zoomIn');
+        spyOn(this.defaultModeService.actions, 'viewZoomIn');
       }
     ]));
 
@@ -89,12 +89,12 @@ describe('on mode action', function() {
         this.scope = { 'this': 'scope' };
         this.modes = this.modesService.init(this.scope);
         this.modesService.currentModeAction(this.modes,
-                                            'zoomIn',
+                                            'viewZoomIn',
                                             this.scope);
       });
 
       it('should proxy current mode\'s action', function() {
-        expect(this.defaultModeService.actions.zoomIn)
+        expect(this.defaultModeService.actions.viewZoomIn)
           .toHaveBeenCalledWith(this.scope);
       });
     });

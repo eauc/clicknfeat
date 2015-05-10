@@ -52,6 +52,12 @@ angular.module('clickApp', [
         controller: 'gameHelpCtrl',
         data: { hide_nav: true }
       })
+      .state('game.log', {
+        url: '/log',
+        templateUrl: 'partials/game/log.html',
+        controller: 'gameLogCtrl',
+        data: { hide_nav: true }
+      })
     ;
   }
 ]).config([

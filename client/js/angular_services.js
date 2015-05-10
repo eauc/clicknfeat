@@ -22,6 +22,7 @@ angular.module('clickApp.services')
   ])
   .factory('commonMode', [
     'modes',
+    'game',
     commonModeServiceFactory
   ])
   .factory('defaultMode', [

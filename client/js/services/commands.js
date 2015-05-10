@@ -17,13 +17,20 @@ self.commandsServiceFactory = function commandsServiceFactory() {
       ctxt.type = name;
       return ctxt;
     },
+    undo: function commandsUndo(ctxt, scope, game) {
+      if(R.isNil(CMD_REGS[ctxt.type])) {
+        console.log('undo unknown command '+ctxt.type);
+        return;
+      }
+      CMD_REGS[ctxt.type].undo(ctxt, scope, game);
+    },
     replay: function commandsReplay(ctxt, scope, game) {
       if(R.isNil(CMD_REGS[ctxt.type])) {
         console.log('replay unknown command '+ctxt.type);
         return;
       }
       CMD_REGS[ctxt.type].replay(ctxt, scope, game);
-    }
+    },
   };
   return commandsService;
 };

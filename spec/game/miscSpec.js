@@ -32,8 +32,9 @@ describe('game', function() {
         expect(this.gameService.toJson({
           players: 'players',
           commands: 'commands',
+          undo: 'undo',
           other: 'other',
-        })).toEqual('{"players":"players","commands":"commands"}');
+        })).toEqual('{"players":"players","commands":"commands","undo":"undo"}');
       });
 
       it('should drop angular tags', function() {

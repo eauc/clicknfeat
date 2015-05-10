@@ -123,9 +123,9 @@ angular.module('clickApp.directives')
           map.addEventListener('click', clickMap);
           scope.$on('flipMap', flipMap);
           scope.$on('toggleMenu', toggleMenuClick);
-          scope.$on('zoomIn', zoomIn);
-          scope.$on('zoomOut', zoomOut);
-          scope.$on('zoomReset', zoomReset);
+          scope.$on('viewZoomIn', zoomIn);
+          scope.$on('viewZoomOut', zoomOut);
+          scope.$on('viewZoomReset', zoomReset);
 
           var rect = gameview.getBoundingClientRect();
           gameview.style.width = (rect.height+100)+'px';
@@ -134,12 +134,3 @@ angular.module('clickApp.directives')
       };
     }
   ]);
-// $window.addEventListener('resize', function(event) {
-//   var rect = viewport.getBoundingClientRect();
-//   var hw = Math.min(rect.width, rect.height);
-  
-//   rect = map.getBoundingClientRect();
-//   if(rect.width < hw) {
-//     setMapDimensions(hw);
-//   }
-// });

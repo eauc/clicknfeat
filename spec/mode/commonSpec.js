@@ -1,7 +1,7 @@
 'use strict';
 
 describe('commonMode', function() {
-  describe('modesService', function() {
+  describe('commonModeService', function() {
     beforeEach(inject([
       'commonMode',
       function(commonModeService) {
@@ -11,9 +11,9 @@ describe('commonMode', function() {
 
     using([
       [ 'action', 'event'  ],
-      [ 'zoomIn', 'zoomIn' ],
-      [ 'zoomOut', 'zoomOut' ],
-      [ 'zoomReset', 'zoomReset' ],
+      [ 'viewZoomIn', 'viewZoomIn' ],
+      [ 'viewZoomOut', 'viewZoomOut' ],
+      [ 'viewZoomReset', 'viewZoomReset' ],
       [ 'flipMap', 'flipMap' ],
       [ 'toggleMenu', 'toggleMenu' ],
     ], function(e, d) {

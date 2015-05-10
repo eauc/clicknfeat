@@ -23,12 +23,3 @@ angular.module('clickApp.directives')
       };
     }
   ]);
-// $window.addEventListener('resize', function(event) {
-//   var rect = viewport.getBoundingClientRect();
-//   var hw = Math.min(rect.width, rect.height);
-  
-//   rect = map.getBoundingClientRect();
-//   if(rect.width < hw) {
-//     setMapDimensions(hw);
-//   }
-// });

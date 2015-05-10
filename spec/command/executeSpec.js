@@ -12,7 +12,9 @@ describe('execute commands', function() {
     }, function() {
       beforeEach(function() {
         this.game = { commands: [] };
-        this.scope = jasmine.createSpyObj('scope', ['saveGame']);
+        this.scope = jasmine.createSpyObj('scope', [
+          'saveGame', 'gameEvent'
+        ]);
         this.scope.user = { name: 'user' };
         this.commandsService.execute._retVal = {
           returnValue: 'commands.execute.returnValue'
@@ -42,9 +44,14 @@ describe('execute commands', function() {
             .toBe('commands.execute.returnValue');
           expect(this.game.commands[0].stamp)
             .toMatch(/[1-9a-f-]{10,}/);
-
+        });
+        it('should save game', function() {
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
+        });
+        it('should send execute event', function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('command','execute');
         });
       });
     });
