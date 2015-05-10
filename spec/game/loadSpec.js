@@ -77,7 +77,8 @@ describe('load game', function() {
           commands: ['cmd1', 'cmd2']
         };
         this.scope = { 'this': 'scope',
-                       deferDigest: jasmine.createSpy('deferDigest')
+                       deferDigest: jasmine.createSpy('deferDigest'),
+                       gameEvent: jasmine.createSpy('gameEvent'),
                      };
         this.ret = this.gameService.load(this.scope, this.game);
       });
@@ -101,6 +102,13 @@ describe('load game', function() {
           .toHaveBeenCalledWith('cmd1', this.scope, this.ret);
         expect(this.commandsService.replay)
           .toHaveBeenCalledWith('cmd2', this.scope, this.ret);
+      });
+
+      it('should send Loading and Loaded event', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('gameLoading');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('gameLoaded');
       });
 
       it('should refresh scope', function() {

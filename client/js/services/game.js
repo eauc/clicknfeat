@@ -83,10 +83,12 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
       i++;
       if(i >= R.length(game.commands)) {
         scope.deferDigest(scope);
+        scope.gameEvent('gameLoaded');
         return;
       }
       self.requestAnimationFrame(gameReplayCmd);
     }
+    scope.gameEvent('gameLoading');
     self.requestAnimationFrame(gameReplayCmd);
   }
   function jsonFilter(key, value) {

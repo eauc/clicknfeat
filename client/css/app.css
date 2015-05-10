@@ -126,6 +126,14 @@ ul.nav-tabs li {
     min-width: 100px;
 }
 
+#game #game-loading {
+    font-size: 1.5em;
+    position:absolute;
+    z-index:1000;
+    width: 100%;
+    opacity: 0.8;
+}
+
 /**************************
   Scenario
 ***************************/
