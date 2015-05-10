@@ -1,37 +1,6 @@
 'use strict';
 
 describe('replay commands', function() {
-  describe('gameLogCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameService = spyOnService('game');
-
-        this.createController = function(params) {
-          this.scope = $rootScope.$new();
-          this.scope.game = 'game';
-
-          $controller('gameLogCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user replay next command', function() {
-      this.scope.doReplayNext();
-    }, function() {
-      it('should replay next game command', function() {
-        expect(this.gameService.replayNextCommand)
-          .toHaveBeenCalledWith(this.scope, this.scope.game);
-      });
-    });
-  });
-
   describe('commonModeService', function() {
     beforeEach(inject([
       'commonMode',

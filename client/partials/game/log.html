@@ -6,12 +6,12 @@
     <div class="panel-content">
       <button class="btn btn-default"
               ng-disabled="game.commands.length === 0"
-              ng-click="doUndoLast()">
+              ng-click="doModeAction('commandUndoLast')">
         Undo Last
       </button>
       <button class="btn btn-default"
               ng-disabled="game.undo.length === 0"
-              ng-click="doReplayNext()">
+              ng-click="doModeAction('commandReplayNext')">
         Replay Next
       </button>
       <div id="log-replay-list"

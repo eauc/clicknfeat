@@ -1,37 +1,6 @@
 'use strict';
 
 describe('undo commands', function() {
-  describe('gameLogCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameService = spyOnService('game');
-
-        this.createController = function(params) {
-          this.scope = $rootScope.$new();
-          this.scope.game = 'game';
-
-          $controller('gameLogCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user undo last command', function() {
-      this.scope.doUndoLast();
-    }, function() {
-      it('should undo last game command', function() {
-        expect(this.gameService.undoLastCommand)
-          .toHaveBeenCalledWith(this.scope, this.scope.game);
-      });
-    });
-  });
-
   describe('commonModeService', function() {
     beforeEach(inject([
       'commonMode',

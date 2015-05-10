@@ -115,7 +115,7 @@ ul.nav-tabs li {
 }
 
 #game #log-replay-list {
-    max-height: 70px;
+    max-height: 30vh;
     overflow-y: auto;
     border-bottom: 1px solid #EEE;
     font-style: italic;
@@ -123,7 +123,7 @@ ul.nav-tabs li {
 }
 
 #game #log-command-list {
-    max-height: 70px;
+    max-height: 30vh;
     overflow-y: auto;
 }
 
