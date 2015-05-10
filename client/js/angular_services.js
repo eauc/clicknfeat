@@ -48,6 +48,10 @@ angular.module('clickApp.services')
   .factory('commands', [
     commandsServiceFactory
   ])
+  .factory('rollDiceCommand', [
+    'commands',
+    rollDiceCommandServiceFactory
+  ])
   .factory('setBoardCommand', [
     'commands',
     setBoardCommandServiceFactory
@@ -57,6 +61,7 @@ angular.module('clickApp.services')
     setScenarioCommandServiceFactory
   ])
   .factory('allCommands', [
+    'rollDiceCommand',
     'setBoardCommand',
     'setScenarioCommand',
     function() { return {}; }

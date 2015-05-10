@@ -1,3 +1,37 @@
 <div>
-  Main
+  <div class="panel panel-info">
+    <div class="panel-heading">Dice</div>
+    <div class="panel-content">
+      <button class="btn btn-default"
+              ng-click="doRollDice(6, 1)">
+        1D6
+      </button>
+      <button class="btn btn-default"
+              ng-click="doRollDice(6, 2)">
+        2D6
+      </button>
+      <button class="btn btn-default"
+              ng-click="doRollDice(6, 3)">
+        3D6
+      </button>
+      <button class="btn btn-default"
+              ng-click="doRollDice(6, 4)">
+        4D6
+      </button>
+      <button class="btn btn-default"
+              ng-click="doRollDice(6, 5)">
+        5D6
+      </button>
+      <button class="btn btn-default"
+              ng-click="doRollDice(3, 1)">
+        1D3
+      </button>
+      <div id="main-dice-list">
+        <div ng-repeat="(i,dice) in game.dice.slice(-10).reverse() track by dice.stamp">
+          <span class="text-primary">[{{::dice.user}}]</span>
+          {{::dice.desc}}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -170,4 +170,10 @@ ul.nav-tabs li {
     background-color: #dff0d8;
 }
 
+/**************************
+  Main Menu
+***************************/
+#game #main-dice-list {
+    max-height: 15vh;
+    overflow-y: auto;
 }

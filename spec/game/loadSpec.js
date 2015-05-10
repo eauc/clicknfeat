@@ -92,6 +92,7 @@ describe('load game', function() {
             scenario: {},
             commands: [ 'cmd1', 'cmd2' ],
             undo: [],
+            dice: [],
           });
       });
 

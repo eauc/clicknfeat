@@ -21,6 +21,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
         scenario: {},
         commands: [],
         undo: [],
+        dice: [],
       }, data);
       gameReplayAll(scope, game);
       return game;
