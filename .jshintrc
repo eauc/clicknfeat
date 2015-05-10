@@ -8,7 +8,10 @@
     "angular": false,
     "Mousetrap": false,
     "console": false,
-    "self": false
+    "self": false,
+    "document": false,
+    "Exception": false,
+    "Uint8Array": false
   },
   "-W097": true, // "use strict function form"
   "-W040": true, // "possible strict violation"

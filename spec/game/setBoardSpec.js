@@ -1,6 +1,6 @@
 'use strict';
 
-describe('load game', function() {
+describe('set board', function() {
   describe('setupCtrl', function(c) {
     beforeEach(inject([
       '$rootScope',
@@ -12,7 +12,7 @@ describe('load game', function() {
 
         this.createController = function() {
           this.scope = $rootScope.$new();
-          this.scope.game = {};
+          this.scope.game = { board: {}, scenario: {} };
           this.scope.boards = ['boards'];
 
           $controller('gameSetupCtrl', { 

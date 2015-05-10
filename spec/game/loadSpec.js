@@ -89,6 +89,7 @@ describe('load game', function() {
                        p2: { name: null }
                      },
             board: {},
+            scenario: {},
             commands: [ 'cmd1', 'cmd2' ],
             undo: [],
           });

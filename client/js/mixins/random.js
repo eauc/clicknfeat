@@ -1,3 +1,5 @@
+'use strict';
+
 R.random = (function() {
   var random = function(min, max) {
     var rval = 0;
@@ -13,7 +15,7 @@ R.random = (function() {
     
     // Create byte array and fill with N random numbers
     var byteArray = new Uint8Array(bytes_needed);
-    window.crypto.getRandomValues(byteArray);
+    self.crypto.getRandomValues(byteArray);
     
     var p = (bytes_needed - 1) * 8;
     for (var i = 0; i < bytes_needed; i++) {
@@ -35,6 +37,10 @@ R.random = (function() {
     return random(0, 1000000000) / 1000000000;
   };
 })();
+
+R.randomRange = function(min, max) {
+  return (( min + R.random() * (max - min + 1) )|0);
+};
 
 R.guid = function() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

@@ -6,16 +6,23 @@ angular.module('clickApp.controllers')
     '$state',
     'user',
     'gameBoard',
+    'gameScenario',
     function($scope,
              $state,
              userService,
-             gameBoardService) {
+             gameBoardService,
+             gameScenarioService) {
       console.log('init mainCtrl');
       
       gameBoardService.init()
         .then(function(boards) {
           $scope.boards = boards;
           console.log('boards', boards);
+        });
+      gameScenarioService.init()
+        .then(function(scenarios) {
+          $scope.scenarios = scenarios;
+          console.log('scenarios', scenarios);
         });
 
       $scope.user = userService.load();

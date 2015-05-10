@@ -41,6 +41,10 @@ angular.module('clickApp.services')
     'http',
     gameBoardServiceFactory
   ])
+  .factory('gameScenario', [
+    'http',
+    gameScenarioServiceFactory
+  ])
   .factory('commands', [
     commandsServiceFactory
   ])
@@ -48,7 +52,12 @@ angular.module('clickApp.services')
     'commands',
     setBoardCommandServiceFactory
   ])
+  .factory('setScenarioCommand', [
+    'commands',
+    setScenarioCommandServiceFactory
+  ])
   .factory('allCommands', [
     'setBoardCommand',
+    'setScenarioCommand',
     function() { return {}; }
   ]);

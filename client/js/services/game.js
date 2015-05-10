@@ -18,6 +18,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
           p2: { name: null }
         },
         board: {},
+        scenario: {},
         commands: [],
         undo: [],
       }, data);

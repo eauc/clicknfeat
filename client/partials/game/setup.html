@@ -4,12 +4,40 @@
       <strong>Board Map</strong>
     </div>
     <div class="panel-content">
-      <form name="board-map">
+      <form class="form-inline"
+            name="board-map">
         <select class="form-control"
                 ng-options="b.name as b.name for b in boards"
                 ng-model="board_name"
                 ng-change="doSetBoard()">
         </select>
+        <button class="btn btn-default"
+                ng-click="doSetRandomBoard()">
+          Random
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Scenario</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="board-map">
+        <select class="form-control"
+                ng-options="s as s[0] for s in scenarios"
+                ng-model="scenario_group">
+        </select>
+        <select class="form-control"
+                ng-options="s.name as s.name for s in scenario_group[1]"
+                ng-model="scenario_name"
+                ng-change="doSetScenario()">
+        </select>
+        <button class="btn btn-default"
+                ng-click="doSetRandomScenario()">
+          Random
+        </button>
       </form>
     </div>
   </div>
