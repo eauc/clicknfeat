@@ -3,8 +3,15 @@
     <div class="panel-heading">Current Mode Bindings</div>
     <table class="table">
       <tr ng-repeat="bind in ::current_bindings">
-        <th>{{::bind[0]}}</th>
+        <td>
+          <button class="btn btn-default"
+                  ng-click="doModeAction(bind[0])">
+            {{::bind[0]}}
+          </button>
+        </td>
         <td>{{::bind[1]}}</td>
+        <td>
+        </td>
       </tr>
     </table>
   </div>
