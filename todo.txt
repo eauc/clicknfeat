@@ -1,8 +1,9 @@
-dices
-game chat
+undo bindings on gameCtrl destroy
+loading bar
 template
 model
 layers - deploiement
 online - users login
 online - users chat + notification
-online - game
+online - game chat
+online - game synchro

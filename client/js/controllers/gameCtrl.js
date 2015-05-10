@@ -76,6 +76,10 @@ angular.module('clickApp.controllers')
       $scope.$on('clickMap', function onMapClick(event, coord, click) {
         console.log('$on clickMap', arguments);
       });
+      $scope.$on('$destroy', function onGameCtrlDestroy() {
+        console.log('on gameCtrl $destroy');
+        Mousetrap.reset();
+      });
 
       $scope.game = gameService.load($scope, $scope.game);
     }
