@@ -15,6 +15,8 @@ angular.module('clickApp.controllers')
       $scope.board_name = gameBoardService.name($scope.game.board);
       $scope.$on('changeBoard', function() {
         $scope.board_name = gameBoardService.name($scope.game.board);
+
+        $scope.deferDigest($scope);
       });
       $scope.doSetBoard = function doSetBoard() {
         var board = gameBoardService.forName($scope.board_name,
@@ -41,6 +43,7 @@ angular.module('clickApp.controllers')
         $scope.scenario_name = gameScenarioService.name($scope.game.scenario);
         $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
                                                                  $scope.scenarios);
+        $scope.deferDigest($scope);
       });
       $scope.doSetScenario = function doSetScenario() {
         var scenario = gameScenarioService.forName($scope.scenario_name,

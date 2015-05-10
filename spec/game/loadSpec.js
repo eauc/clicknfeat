@@ -77,7 +77,7 @@ describe('load game', function() {
           commands: ['cmd1', 'cmd2']
         };
         this.scope = { 'this': 'scope',
-                       $digest: jasmine.createSpy('$digest')
+                       deferDigest: jasmine.createSpy('deferDigest')
                      };
         this.ret = this.gameService.load(this.scope, this.game);
       });
@@ -103,7 +103,7 @@ describe('load game', function() {
       });
 
       it('should refresh scope', function() {
-        expect(this.scope.$digest)
+        expect(this.scope.deferDigest)
           .toHaveBeenCalled();
       });
     });

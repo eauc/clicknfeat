@@ -13,10 +13,6 @@ angular.module('clickApp.controllers')
       $scope.$watch('game.undo', function() {
         $scope.$broadcast('logReplayList');
       });
-      $scope.$on('command', function() {
-        $window.requestAnimationFrame(function() {
-          $scope.$digest();
-        });
-      });
+      $scope.digestOnGameEvent($scope, 'command');
     }
   ]);

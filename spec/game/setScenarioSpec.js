@@ -54,11 +54,13 @@ describe('set scenario', function() {
         this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
         this.game = { scenario: 'before' };
 
-        this.ctxt = this.setScenarioCommandService.execute('after', this.scope, this.game);
+        this.ctxt = this.setScenarioCommandService.execute({
+          name: 'after_name'
+        }, this.scope, this.game);
       });
       
       it('should set game scenario', function() {
-        expect(this.game.scenario).toBe('after');
+        expect(this.game.scenario).toEqual({ name: 'after_name' });
       });
       
       it('should send changeScenario event', function() {
@@ -69,7 +71,8 @@ describe('set scenario', function() {
       it('should return context', function() {
         expect(this.ctxt).toEqual({
           before: 'before',
-          after: 'after'
+          after: { name: 'after_name' },
+          desc: 'after_name',
         });
       });
     });

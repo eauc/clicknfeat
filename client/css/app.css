@@ -1,3 +1,6 @@
+/**************************
+  General
+***************************/
 input.ng-invalid-required {
     border-color: #A94442;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
@@ -7,6 +10,9 @@ ul.nav-tabs li {
     cursor: pointer;
 }
 
+/**************************
+  Game View
+***************************/
 #game #gameview {
     position: relative;
     background-color: blue;
@@ -27,6 +33,9 @@ ul.nav-tabs li {
     overflow: scroll;
 }
 
+/**************************
+  Menu
+***************************/
 #game #menu {
     display: block !important;
     background-color: white;
@@ -78,6 +87,9 @@ ul.nav-tabs li {
     display: none;
 }
 
+/**************************
+  OSD
+***************************/
 #game #zoom-osd {
     position: absolute;
     left: 3px;
@@ -114,6 +126,33 @@ ul.nav-tabs li {
     min-width: 100px;
 }
 
+/**************************
+  Scenario
+***************************/
+
+#game-scenario .zone {
+    fill:#CC0;
+    fill-opacity:0.3;
+    stroke:#990;
+    stroke-width:0.5px;
+}
+
+#game-scenario .objective {
+    fill:#CC0;
+    fill-opacity:0.8;
+    stroke:#C90;
+    stroke-width:0.5px;
+}
+
+#game-scenario .area {
+    fill:none;
+    stroke:#990;
+    stroke-width:0.5px;
+}
+
+/**************************
+  Log Menu
+***************************/
 #game #log-replay-list {
     max-height: 30vh;
     overflow-y: auto;
@@ -131,10 +170,4 @@ ul.nav-tabs li {
     background-color: #dff0d8;
 }
 
-#game .log-row {
-    cursor: pointer;
-}
-
-#game .log-row:hover {
-    background-color: #eee;
 }

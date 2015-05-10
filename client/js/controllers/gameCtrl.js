@@ -5,6 +5,7 @@ angular.module('clickApp.controllers')
     '$scope',
     '$state',
     '$stateParams',
+    '$window',
     'game',
     'games',
     'modes',
@@ -13,6 +14,7 @@ angular.module('clickApp.controllers')
     function($scope,
              $state,
              $stateParams,
+             $window,
              gameService,
              gamesService,
              modesService) {
@@ -36,6 +38,19 @@ angular.module('clickApp.controllers')
         var args = Array.prototype.slice.apply(arguments);
         console.log('gameEvent', args);
         $scope.$broadcast.apply($scope, args);
+      };
+      $scope.deferDigest = function deferDigest(scope) {
+        // console.log('deferDigest');
+        $window.requestAnimationFrame(function _deferDigest() {
+          // console.log('_deferDigest');
+          scope.$digest();
+        });
+      };
+      $scope.digestOnGameEvent = function digestOnGameEvent(scope, event) {
+        scope.$on(event, function _digestOnGameEvent() {
+          // console.log('digest on '+event);
+          $scope.deferDigest(scope);
+        });
       };
 
       $scope.saveGame = function saveGame(game) {

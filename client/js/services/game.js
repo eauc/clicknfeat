@@ -81,7 +81,7 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
       commandsService.replay(game.commands[i], scope, game);
       i++;
       if(i >= R.length(game.commands)) {
-        scope.$digest();
+        scope.deferDigest(scope);
         return;
       }
       self.requestAnimationFrame(gameReplayCmd);

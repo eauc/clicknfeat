@@ -5,7 +5,8 @@ self.setBoardCommandServiceFactory = function setBoardCommandServiceFactory(comm
     execute: function setBoardExecute(board, scope, game) {
       var ctxt = {
         before: game.board,
-        after: board
+        after: board,
+        desc: board.name,
       };
       game.board = board;
       scope.gameEvent('changeBoard');

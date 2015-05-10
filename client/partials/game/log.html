@@ -16,18 +16,14 @@
       </button>
       <div id="log-replay-list"
            click-log-replay-list>
-        <div ng-repeat="(i,cmd) in game.undo track by cmd.stamp"
-             class="log-row"
-             ng-click="doSetReplaySelection(cmd.stamp)">
-          <span class="text-primary">{{::cmd.user}}</span>
+        <div ng-repeat="(i,cmd) in game.undo.slice(-20) track by cmd.stamp">
+          <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
         </div>
       </div>
       <div id="log-command-list">
-        <div ng-repeat="(i,cmd) in game.commands.slice().reverse() track by cmd.stamp"
-             class="log-row"
-             ng-click="doSetUndoSelection(cmd.stamp)">
-          <span class="text-primary">{{::cmd.user}}</span>
+        <div ng-repeat="(i,cmd) in game.commands.slice(-20).reverse() track by cmd.stamp">
+          <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
         </div>
       </div>

@@ -54,11 +54,13 @@ describe('set board', function() {
         this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
         this.game = { board: 'before' };
 
-        this.ctxt = this.setBoardCommandService.execute('after', this.scope, this.game);
+        this.ctxt = this.setBoardCommandService.execute({
+          name: 'after_name'
+        }, this.scope, this.game);
       });
       
       it('should set game board', function() {
-        expect(this.game.board).toBe('after');
+        expect(this.game.board).toEqual({ name: 'after_name' });
       });
       
       it('should send changeBoard event', function() {
@@ -69,7 +71,8 @@ describe('set board', function() {
       it('should return context', function() {
         expect(this.ctxt).toEqual({
           before: 'before',
-          after: 'after'
+          after: { name: 'after_name' },
+          desc: 'after_name',
         });
       });
     });

@@ -5,7 +5,8 @@ self.setScenarioCommandServiceFactory = function setScenarioCommandServiceFactor
     execute: function setScenarioExecute(scenario, scope, game) {
       var ctxt = {
         before: game.scenario,
-        after: scenario
+        after: scenario,
+        desc: scenario.name,
       };
       game.scenario = scenario;
       scope.gameEvent('changeScenario');
