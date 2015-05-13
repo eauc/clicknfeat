@@ -78,9 +78,14 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
     if(R.isEmpty(game.commands)) return;
 
     var i = 0;
+    var replay_batch_size = 10;
     function gameReplayCmd() {
-      commandsService.replay(game.commands[i], scope, game);
-      i++;
+      R.times(function _gameReplayCmd() {
+        if(i >= R.length(game.commands)) return;
+
+        commandsService.replay(game.commands[i], scope, game);
+        i++;
+      }, replay_batch_size);
       if(i >= R.length(game.commands)) {
         scope.deferDigest(scope);
         scope.gameEvent('gameLoaded');
@@ -88,8 +93,10 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
       }
       self.requestAnimationFrame(gameReplayCmd);
     }
-    scope.gameEvent('gameLoading');
-    self.requestAnimationFrame(gameReplayCmd);
+    self.requestAnimationFrame(function _gameReplayAll() {
+      scope.gameEvent('gameLoading');
+      gameReplayCmd();
+    });
   }
   function jsonFilter(key, value) {
     if(s.startsWith(key, '$$')) {

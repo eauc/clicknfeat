@@ -124,6 +124,7 @@ ul.nav-tabs li {
 }
 
 #game #game-loading {
+    display: none;
     font-size: 1.5em;
     position:absolute;
     z-index:1000;
