@@ -14,6 +14,7 @@ self.commandsServiceFactory = function commandsServiceFactory() {
       }
       var args = R.tail(Array.prototype.slice.apply(arguments));
       var ctxt = CMD_REGS[name].execute.apply(null, args);
+      if(R.isNil(ctxt)) return;
       ctxt.type = name;
       return ctxt;
     },

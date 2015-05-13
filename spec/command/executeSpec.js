@@ -103,6 +103,15 @@ describe('execute commands', function() {
           });
         });
       });
+
+      when('<name>.execute returns Nil', function() {
+        this.cmd1.execute.and.returnValue(null);
+        this.ret = this.commandsService.execute('cmd1');
+      }, function() {
+        it('should not return a context', function() {
+          expect(this.ret).toBe(undefined);
+        });
+      });
     });
   });
 });
