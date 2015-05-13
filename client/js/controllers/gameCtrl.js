@@ -73,9 +73,26 @@ angular.module('clickApp.controllers')
         $scope.doModeAction(action[1]);
       };
 
-      $scope.$on('clickMap', function onMapClick(event, coord, click) {
-        console.log('$on clickMap', arguments);
-      });
+      var forward_events = [
+        'clickTemplate',
+        'rightClickTemplate',
+        'dragStartTemplate',
+        'dragTemplate',
+        'dragEndTemplate',
+        'clickMap',
+        'rightClickMap',
+        'moveMap',
+        'dragStartMap',
+        'dragMap',
+        'dragEndMap',
+      ];
+      R.forEach(function(fwd) {
+        $scope.$on(fwd, function onForwardEvent(e, target, event) {
+          console.log('$on '+fwd, arguments);
+          $scope.gameEvent('closeSelectionDetail');
+          modesService.currentModeAction(fwd, $scope, target, event, $scope.modes);
+        });
+      }, forward_events);
       $scope.$on('$destroy', function onGameCtrlDestroy() {
         console.log('on gameCtrl $destroy');
         Mousetrap.reset();

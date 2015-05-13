@@ -8,9 +8,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         link: function(scope, element, attrs) {
           var gameview = element[0].querySelector('#gameview');
-          var viewport = element[0].querySelector('#viewport');
           var menu = element[0].querySelector('#menu');
-          var map = element[0].querySelector('#map');
 
           var toggleMenuClick = (function() {
             var menu_hidden = false;
@@ -30,139 +28,13 @@ angular.module('clickApp.directives')
             };
           })();
 
-          function clickMap(event) {
-            console.log('clickMap', event);
-            var event_x, event_y;
-            if(event.offsetX) {
-              event_x = event.offsetX;
-              event_y = event.offsetY;
-            }
-            else {
-              event_x = event.layerX;
-              event_y = event.layerY;
-            }
-            var rect = map.getBoundingClientRect();
-            var map_x = event_x * 480 / rect.width;
-            var map_y = event_y * 480 / rect.height;
-            console.log('clickMap', map_x, map_y);
-            scope.$emit('clickMap', { x: map_x, y: map_y }, event);
-          }
-
-          var flipMap = (function() {
-            var flip = false;
-            return function flipMap() {
-              flip = !flip;
-              if(flip) {
-                map.style.transform = 'scaleX(-1) scaleY(-1)';
-              }
-              else {
-                map.style.transform = '';
-              }
-            };
-          })();
-
-          function zoomReset() {
-            var rect = viewport.getBoundingClientRect();
-            var hw = Math.min(rect.width, rect.height);
-            setMapDimensions(hw);
-          }
-
-          function zoomIn() {
-            var vp = findViewportCenter();
-            var cx_cy = vp[0];
-            var vw_vh = vp[1];
-    
-            var rect = map.getBoundingClientRect();
-            var cx = (vw_vh[0] > rect.width) ? rect.width / 2 : cx_cy[0];
-            var cy = (vw_vh[1] > rect.height) ? rect.height / 2 : cx_cy[1];
-
-            setMapDimensions(rect.width*2);
-            setViewportCenter(cx*2, cy*2, vw_vh[0], vw_vh[1]);
-          }
-
-          function zoomOut() {
-            var vp = findViewportCenter();
-            var cx_cy = vp[0];
-            var vw_vh = vp[1];
-            var hw = Math.min(vw_vh[0], vw_vh[1]);
-            
-            var rect = map.getBoundingClientRect();
-
-            setMapDimensions(Math.max(hw-15, rect.width/2));
-            setViewportCenter(cx_cy[0]/2, cx_cy[1]/2, vw_vh[0], vw_vh[1]);
-          }
-
-          var scroll_indent = 30;
-          function scrollLeft() {
-            var left = viewport.scrollLeft;
-            $window.requestAnimationFrame(function _scrollLeft() {
-              viewport.scrollLeft = left - scroll_indent;
-            });
-          }
-
-          function scrollRight() {
-            var left = viewport.scrollLeft;
-            $window.requestAnimationFrame(function _scrollRight() {
-              viewport.scrollLeft = left + scroll_indent;
-            });
-          }
-
-          function scrollUp() {
-            var top = viewport.scrollTop;
-            $window.requestAnimationFrame(function _scrollUp() {
-              viewport.scrollTop = top - scroll_indent;
-            });
-          }
-
-          function scrollDown() {
-            var top = viewport.scrollTop;
-            $window.requestAnimationFrame(function _scrollDown() {
-              viewport.scrollTop = top + scroll_indent;
-            });
-          }
-
-          function setMapDimensions(dim) {
-            $window.requestAnimationFrame(function _setMapDimensions() {
-              map.style.width = dim+'px';
-              map.style.height = dim+'px';
-            });
-          }          
-
-          function findViewportCenter() {
-            var rect = viewport.getBoundingClientRect();
-            var vw = rect.width;
-            var vh = rect.height;
-
-            var cx = viewport.scrollLeft + rect.width/2;
-            var cy = viewport.scrollTop + rect.height/2;
-
-            return [[cx, cy], [vw, vh]];
-          }
-
-          function setViewportCenter(cx, cy, vw, vh) {
-            $window.requestAnimationFrame(function _setViewportCenter() {
-              viewport.scrollLeft = cx - vw/2;
-              viewport.scrollTop = cy - vh/2;
-            });
-          }
-
           element[0]
             .querySelector('#menu-toggle')
             .addEventListener('click', toggleMenuClick);
-          map.addEventListener('click', clickMap);
-          scope.$on('flipMap', flipMap);
           scope.$on('toggleMenu', toggleMenuClick);
-          scope.$on('viewZoomIn', zoomIn);
-          scope.$on('viewZoomOut', zoomOut);
-          scope.$on('viewZoomReset', zoomReset);
-          scope.$on('viewScrollLeft', scrollLeft);
-          scope.$on('viewScrollRight', scrollRight);
-          scope.$on('viewScrollUp', scrollUp);
-          scope.$on('viewScrollDown', scrollDown);
 
           var rect = gameview.getBoundingClientRect();
-          gameview.style.width = (rect.height+100)+'px';
-          setMapDimensions(rect.height-15);
+          gameview.style.width = (rect.height)+'px';
         }
       };
     }

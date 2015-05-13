@@ -112,16 +112,13 @@ ul.nav-tabs li {
 
 #game #cmd-osd .scroll-container {
     margin-right: -15px;
+    padding-right: 15px;
     min-width: 115px;
     max-height: 98vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #game #cmd-osd .scroll-container {
-        padding-right: 15px;
-    }
-}
+
 #game #cmd-osd button {
     min-width: 100px;
 }
