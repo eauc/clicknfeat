@@ -9,6 +9,9 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     commandReplayNext: function commandReplayNext(scope) {
       gameService.replayNextCommand(scope, scope.game);
     },
+    modeBackToDefault: function modeBackToDefault(scope) {
+      modesService.switchToMode('Default', scope, scope.modes);
+    },
     viewScrollLeft: function viewZoomLeft(scope) {
       scope.gameEvent('viewScrollLeft');
     },
@@ -40,6 +43,7 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
   var common_bindings = {
     commandUndoLast: 'ctrl+z',
     commandReplayNext: 'ctrl+y',
+    modeBackToDefault: 'esc',
     viewScrollLeft: 'alt+left',
     viewScrollRight: 'alt+right',
     viewScrollUp: 'alt+up',

@@ -33,5 +33,19 @@ describe('commonMode', function() {
         });
       });
     });
+
+    describe('modeBackToDefault', function() {
+      beforeEach(function() {
+        this.modesService = spyOnService('modes');
+      });
+
+      it('should switch to default mode', function() {
+        this.scope = { modes: 'modes' };
+        this.commonModeService.actions.modeBackToDefault(this.scope);
+
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('Default', this.scope, 'modes');
+      });
+    });
   });
 });

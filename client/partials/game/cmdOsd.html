@@ -6,6 +6,11 @@
     <strong>{{modes | modes:'currentModeName' }}</strong>
   </div>
   <div class="btn-group-vertical">
+    <button class="btn btn-default"
+            title="esc"
+            ng-click="doModeAction('modeBackToDefault')">
+      Back To Default
+    </button>
     <button ng-repeat="action in action_buttons"
             class="
             btn
