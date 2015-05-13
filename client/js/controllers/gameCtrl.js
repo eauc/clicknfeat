@@ -62,7 +62,7 @@ angular.module('clickApp.controllers')
 
       $scope.modes = modesService.init($scope);
       $scope.doModeAction = function doModeAction(action) {
-        modesService.currentModeAction($scope.modes, action, $scope);
+        modesService.currentModeAction(action, $scope, $scope.modes);
       };
       $scope.show_action_group = null;
       $scope.doActionButton = function doActionButton(action) {

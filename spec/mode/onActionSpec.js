@@ -34,9 +34,9 @@ describe('on mode action', function() {
     }, function() {
       it('should proxy currentModeAction', function() {
         expect(this.modesService.currentModeAction)
-          .toHaveBeenCalledWith('modes.init.returnValue',
-                                'action',
-                                this.scope);
+          .toHaveBeenCalledWith('action',
+                                this.scope,
+                                'modes.init.returnValue');
       });
     });
 
@@ -88,9 +88,9 @@ describe('on mode action', function() {
       beforeEach(function() {
         this.scope = { 'this': 'scope' };
         this.modes = this.modesService.init(this.scope);
-        this.modesService.currentModeAction(this.modes,
-                                            'viewZoomIn',
-                                            this.scope);
+        this.modesService.currentModeAction('viewZoomIn',
+                                            this.scope,
+                                            this.modes);
       });
 
       it('should proxy current mode\'s action', function() {

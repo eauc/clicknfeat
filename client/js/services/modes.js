@@ -28,23 +28,35 @@ self.modesServiceFactory = function modesServiceFactory() {
         R.sortBy(R.head)
       )(currentMode(modes).bindings);
     },
-    currentModeAction: function(modes, action, scope) {
+    currentModeAction: function(action /* ...args..., modes */) {
+      var args = Array.prototype.slice.call(arguments);
+      var modes = R.last(args);
       var mode = currentMode(modes);
       if(R.isNil(mode.actions[action])) {
         console.log('unknown mode '+mode.name+' action '+action);
         return;
       }
-      mode.actions[action](scope);
+      mode.actions[action].apply(null, R.init(R.tail(args)));
     },
-    switchToMode: function(modes, name, scope) {
+    switchToMode: function(name, scope, modes) {
+      var mode = currentMode(modes);
       var next = modes.register[name];
+      if(next === mode) {
+        console.log('already in '+name+' mode');
+        return;
+      }
       if(R.isNil(next)) {
         console.log('error switching to mode '+name+' : does not exists');
         return;
       }
+      console.log('switch mode from '+
+                  modesService.currentModeName(modes)+
+                  ' to '+
+                  name);
       leaveMode(modes, scope);
       modes.current = name;
       enterMode(modes, scope);
+      scope.gameEvent('switchMode');
     }
   };
 
