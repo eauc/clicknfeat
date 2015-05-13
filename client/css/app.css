@@ -131,6 +131,21 @@ ul.nav-tabs li {
     opacity: 0.8;
 }
 
+#selection-osd {
+    position:absolute;
+    z-index: 2000;
+}
+#selection-osd .panel {
+    margin-bottom:0px;
+}
+#selection-osd .panel-heading {
+    cursor:pointer;
+}
+#selection-osd .panel-content {
+    padding:10px;
+    min-width: 300px;
+}
+
 /**************************
   Scenario
 ***************************/
