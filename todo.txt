@@ -1,5 +1,22 @@
-loading bar
-template
+template create
+template delete
+template lock
+template on
+template selection
+template drag
+template move
+template changeSize
+gameTemplate cleanup
+
+
+point service
+custom bindings
+custom moves
+template - wall
+template - spray
+pubSub
+ruler
+selectionBox
 model
 layers - deploiement
 online - users login

@@ -10,6 +10,8 @@ angular.module('clickApp.services')
   ])
   .factory('game', [
     'commands',
+    'gameTemplates',
+    'gameTemplateSelection',
     gameServiceFactory
   ])
   .factory('games', [
@@ -30,8 +32,15 @@ angular.module('clickApp.services')
     'commonMode',
     defaultModeServiceFactory
   ])
+  .factory('createTemplateMode', [
+    'modes',
+    'commonMode',
+    'game',
+    createTemplateModeServiceFactory
+  ])
   .factory('allModes', [
     'defaultMode',
+    'createTemplateMode',
     function() { return {}; }
   ])
   .factory('http', [
@@ -45,8 +54,18 @@ angular.module('clickApp.services')
     'http',
     gameScenarioServiceFactory
   ])
+  .factory('gameTemplates', [
+    gameTemplatesServiceFactory
+  ])
   .factory('commands', [
     commandsServiceFactory
+  ])
+  .factory('createTemplateCommand', [
+    'commands',
+    'template',
+    'gameTemplates',
+    'gameTemplateSelection',
+    createTemplateCommandServiceFactory
   ])
   .factory('rollDiceCommand', [
     'commands',
@@ -61,8 +80,20 @@ angular.module('clickApp.services')
     setScenarioCommandServiceFactory
   ])
   .factory('allCommands', [
+    'createTemplateCommand',
     'rollDiceCommand',
     'setBoardCommand',
     'setScenarioCommand',
+    function() { return {}; }
+  ])
+  .factory('template', [
+    templateServiceFactory
+  ])
+  .factory('aoeTemplate', [
+    'template',
+    aoeTemplateServiceFactory
+  ])
+  .factory('allTemplates', [
+    'aoeTemplate',
     function() { return {}; }
   ]);

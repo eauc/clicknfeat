@@ -11,6 +11,7 @@ angular.module('clickApp.controllers')
     'modes',
     'allModes',
     'allCommands',
+    'allTemplates',
     function($scope,
              $state,
              $stateParams,
@@ -98,6 +99,7 @@ angular.module('clickApp.controllers')
         Mousetrap.reset();
       });
 
+      $scope.create = {};
       $scope.game = gameService.load($scope, $scope.game);
     }
   ]);

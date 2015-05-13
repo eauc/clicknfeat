@@ -172,6 +172,57 @@ ul.nav-tabs li {
 }
 
 /**************************
+  Templates
+***************************/
+
+#create-template-aoe {
+    fill: #F11;
+    opacity: 0.8;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+#game .template {
+    fill:#FC3;
+    stroke: #C60;
+    stroke-width:0.5px;
+    pointer-events:visible;
+}
+#game-templates .template {
+    fill-opacity:0.5;
+}
+#game-templates-locked .template {
+    fill-opacity:0.2;
+}
+
+#game .template-aoe-direction {
+    stroke-width:0.75px;
+    pointer-events: none;
+    stroke: #0F0;
+}
+#game #game-templates-locked .template-aoe-direction {
+    stroke-width:0px;
+}
+
+#game g.label {
+    pointer-events: none;
+}
+
+#game g.label rect {
+    fill:#333;
+    fill-opacity:0.7;
+}
+
+#game g.label text {
+    fill:white;
+    text-anchor:middle;
+    font-size:6px;
+    font-family:monospace;
+    -webkit-user-select: none;
+    -moz-user-select:none;
+}
+
+/**************************
   Log Menu
 ***************************/
 #game #log-replay-list {

@@ -94,6 +94,8 @@ describe('load game', function() {
             commands: [ 'cmd1', 'cmd2' ],
             undo: [],
             dice: [],
+            templates: { active: [], locked: [] },
+            template_selection: { local: { stamps: [] } },
           });
       });
 

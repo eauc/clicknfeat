@@ -22,6 +22,20 @@
       <svg id="map"
            click-game-map
            viewBox="0 0 480 480">
+        <defs>
+          <marker id="aoe-direction-end"
+                  markerWidth="6"
+                  markerHeight="8"
+                  refx="6"
+                  refy="4"
+                  orient="auto">
+            <polygon points="0,8 6,4 0,0"
+                     style="
+                     fill:#0F0;
+                     "
+                     />
+          </marker>
+        </defs>
         <g id="game-board"
            click-game-board>
           <image id="board-preview"
@@ -167,6 +181,20 @@
         stroke-width: 1;
         stroke: black;
         "/> -->
+        <g id="game-templates-locked"
+           click-game-templates-list>
+          <g ng-repeat="t in game.templates.locked track by t.state.stamp"
+             click-game-template="{{::t.state.stamp}}"
+             />
+        </g>
+        <g id="game-templates"
+           click-game-templates-list>
+          <g ng-repeat="t in game.templates.active track by t.state.stamp"
+             click-game-template="{{::t.state.stamp}}"
+             />
+        </g>
+        <g click-create-template>
+        </g>
       </svg>
     </div>
   </div>

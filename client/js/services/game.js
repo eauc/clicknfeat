@@ -1,6 +1,8 @@
 'use strict';
 
-self.gameServiceFactory = function gameServiceFactory(commandsService) {
+self.gameServiceFactory = function gameServiceFactory(commandsService,
+                                                      gameTemplatesService,
+                                                      gameTemplateSelectionService) {
   var gameService = {
     create: function gameCreate(player1) {
       var new_game = {
@@ -22,6 +24,8 @@ self.gameServiceFactory = function gameServiceFactory(commandsService) {
         commands: [],
         undo: [],
         dice: [],
+        templates: gameTemplatesService.create(),
+        template_selection: gameTemplateSelectionService.create(),
       }, data);
       gameReplayAll(scope, game);
       return game;

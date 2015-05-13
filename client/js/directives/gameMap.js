@@ -110,12 +110,12 @@ angular.module('clickApp.directives')
             var move_enabled = false;
             function onEnableMove() {
               if(move_enabled) return;
-              map.addEventListener('mousemove', mouseEvents.moveMap);
+              map.addEventListener('mousemove', mouseEvents.move);
               move_enabled = true;
             }
             function onDisableMove() {
               if(!move_enabled) return;
-              map.removeEventListener('mousemove', mouseEvents.moveMap);
+              map.removeEventListener('mousemove', mouseEvents.move);
               move_enabled = false;
             }
             return {
