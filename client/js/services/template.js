@@ -57,6 +57,18 @@ self.templateServiceFactory = function templateServiceFactory() {
     setState: function templateSetState(state, template) {
       template.state = R.clone(state);
     },
+    call: function templatesCall(method /* ...args..., template */) {
+      var args = R.tail(Array.prototype.slice.call(arguments));
+      var temp = R.last(args);
+      console.log(args);
+      if(R.isNil(TEMP_REGS[temp.state.type]) ||
+         R.isNil(TEMP_REGS[temp.state.type][method])) {
+        console.log('unknown call '+method+' on template type '+temp.state.type);
+        return;
+      }
+      TEMP_REGS[temp.state.type][method].apply(null, args);
+      return templateService.saveState(temp);
+    },
     checkState: function templateCheckState(state) {
       state.x = Math.max(0, Math.min(480, state.x));
       state.y = Math.max(0, Math.min(480, state.y));
@@ -88,27 +100,33 @@ self.templateServiceFactory = function templateServiceFactory() {
     },
     rotateLeft: function templateRotateLeft(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].rotate;
-      template.state = templateService.checkState(R.assoc('r', template.state.r-move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('r', template.state.r-move, template.state));
     },
     rotateRight: function templateRotateRight(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].rotate;
-      template.state = templateService.checkState(R.assoc('r', template.state.r+move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('r', template.state.r+move, template.state));
     },
     shiftLeft: function templateShiftLeft(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].shift;
-      template.state = templateService.checkState(R.assoc('x', template.state.x-move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('x', template.state.x-move, template.state));
     },
     shiftRight: function templateShiftRight(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].shift;
-      template.state = templateService.checkState(R.assoc('x', template.state.x+move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('x', template.state.x+move, template.state));
     },
     shiftUp: function templateShiftUp(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].shift;
-      template.state = templateService.checkState(R.assoc('y', template.state.y-move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('y', template.state.y-move, template.state));
     },
     shiftDown: function templateShiftDown(small, template) {
       var move = MOVES[small ? 'small' : 'normal'].shift;
-      template.state = templateService.checkState(R.assoc('y', template.state.y+move, template.state));
+      template.state = templateService
+        .checkState(R.assoc('y', template.state.y+move, template.state));
     },
     eventName: function templateEventName(template) {
       return R.path(['state','stamp'], template);
@@ -118,18 +136,6 @@ self.templateServiceFactory = function templateServiceFactory() {
     },
     removeLabel: function templateRemoveLabel(label, template) {
       template.state.l = R.reject(R.eq(label), template.state.l);
-    },
-    call: function templatesCall(method /* ...args... */) {
-      var args = R.tail(Array.prototype.slice.call(arguments));
-      var temp = R.last(args);
-      console.log(args);
-      if(R.isNil(TEMP_REGS[temp.state.type]) ||
-         R.isNil(TEMP_REGS[temp.state.type][method])) {
-        console.log('unknown call '+method+' on template type '+temp.state.type);
-        return;
-      }
-      TEMP_REGS[temp.state.type][method].apply(null, args);
-      return templateService.saveState(temp);
     },
     fullLabel: function templateFullLabel(template) {
       return template.state.l.join(' ');

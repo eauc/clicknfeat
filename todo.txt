@@ -1,10 +1,7 @@
-template selection
-template delete
-template lock
-template on
-template drag
 template move
+template label
 template changeSize
+template drag
 
 
 point service

@@ -104,6 +104,12 @@ angular.module('clickApp.services')
     'gameTemplates',
     lockTemplatesCommandServiceFactory
   ])
+  .factory('onTemplatesCommand', [
+    'commands',
+    'template',
+    'gameTemplates',
+    onTemplatesCommandServiceFactory
+  ])
   .factory('rollDiceCommand', [
     'commands',
     rollDiceCommandServiceFactory
@@ -120,6 +126,7 @@ angular.module('clickApp.services')
     'createTemplateCommand',
     'deleteTemplatesCommand',
     'lockTemplatesCommand',
+    'onTemplatesCommand',
     'rollDiceCommand',
     'setBoardCommand',
     'setScenarioCommand',

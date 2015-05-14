@@ -1,7 +1,7 @@
 'use strict';
 
 describe('lock template', function() {
-  describe('templateMode service', function() {
+  describe('templatLockedMode service', function() {
     beforeEach(inject([
       'templateLockedMode',
       function(templateLockedModeService) {
