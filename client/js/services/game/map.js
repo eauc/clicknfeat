@@ -5,6 +5,13 @@ angular.module('clickApp.services')
     'gameTemplates',
     function gameMapServiceFactory(gameTemplatesService) {
       var gameMapService = {
+        isFlipped: function mapIsFlipped(map) {
+          return map.hasAttribute('flipped');
+        },
+        zoomFactor: function mapZoomFactor(map) {
+          var map_rect = map.getBoundingClientRect();
+          return map_rect.width / 480;
+        },
         eventToMapCoordinates: function gameMapEventToMapCoordinates(map, event) {
           var event_x, event_y;
           if(event.offsetX) {
@@ -21,7 +28,7 @@ angular.module('clickApp.services')
           return { x: map_x, y: map_y };
         },
         mapToScreenCoordinates: function gameMapMapToScreenCoordinates(map, coord) {
-          var map_flipped = map.hasAttribute('flipped');
+          var map_flipped = gameMapService.isFlipped(map);
           var rect = map.getBoundingClientRect();
           var x = (coord.x * rect.width / 480);
           var y = (coord.y * rect.height / 480);
