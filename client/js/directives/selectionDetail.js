@@ -1,5 +1,28 @@
 'use strict';
 
+angular.module('clickApp.controllers')
+  .controller('clickGameSelectionDetailCtrl', [
+    '$scope',
+    'game',
+    function($scope,
+             gameService) {
+      console.log('init clickGameSelectionDetailCtrl');
+      $scope.doAddLabel = function doAddLabel() {
+        var new_label = s.trim($scope.new_label);
+        if(R.length(new_label) === 0) return;
+        gameService.executeCommand('onTemplates', 'addLabel', new_label,
+                                   [$scope.selection.state.stamp],
+                                   $scope, $scope.game);
+        $scope.new_label = '';
+      };
+      $scope.doRemoveLabel = function doRemoveLabel(label) {
+        gameService.executeCommand('onTemplates', 'removeLabel', label,
+                                   [$scope.selection.state.stamp],
+                                   $scope, $scope.game);
+      };
+    }
+  ]);
+
 angular.module('clickApp.directives')
   .directive('clickGameSelectionDetail', [
     '$window',
@@ -11,6 +34,7 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         scope: true,
+        controller: 'clickGameSelectionDetailCtrl',
         link: function(scope, element, attrs) {
           console.log('gameSelectionDetail');
           var viewport = document.getElementById('viewport');
@@ -84,21 +108,6 @@ angular.module('clickApp.directives')
           scope.$on('openSelectionDetail', openSelectionDetail);
           scope.$on('closeSelectionDetail', closeSelectionDetail);
           scope.doClose = closeSelectionDetail;
-
-          scope.doAddLabel = function doAddLabel() {
-            console.log('selection', scope.selection);
-            var new_label = s.trim(scope.new_label);
-            if(R.length(new_label) === 0) return;
-            gameService.executeCommand('onTemplates', 'addLabel', scope.new_label,
-                                       [scope.selection.state.stamp],
-                                       scope, scope.game);
-            scope.new_label = '';
-          };
-          scope.doRemoveLabel = function doRemoveLabel(label) {
-            gameService.executeCommand('onTemplates', 'removeLabel', label,
-                                       [scope.selection.state.stamp],
-                                       scope, scope.game);
-          };
         }
       };
     }
