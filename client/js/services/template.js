@@ -14,7 +14,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
   return aoeTemplateService;
 };
 
-self.templateServiceFactory = function templateServiceFactory() {
+self.templateServiceFactory = function templateServiceFactory(pointService) {
   var TEMP_REGS = {};
   var MOVES = {
     normal: {
@@ -82,52 +82,44 @@ self.templateServiceFactory = function templateServiceFactory() {
       )(template.state);
     },
     moveFront: function templateMoveFront(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].move;
-      var rad = template.state.r * Math.PI / 180;
-      var new_state = R.pipe(
-        R.assoc('x', template.state.x + move * Math.sin(rad)),
-        R.assoc('y', template.state.y - move * Math.cos(rad))
-      )(template.state);
-      template.state = templateService.checkState(new_state);
+      var dist = MOVES[small ? 'small' : 'normal'].move;
+      template.state = templateService
+        .checkState(pointService.moveFront(dist, template.state));
     },
-    moveBack: function templateMoveFront(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].move;
-      var rad = template.state.r * Math.PI / 180;
-      var new_state = R.pipe(
-        R.assoc('x', template.state.x - move * Math.sin(rad)),
-        R.assoc('y', template.state.y + move * Math.cos(rad))
-      )(template.state);
-      template.state = templateService.checkState(new_state);
+    moveBack: function templateMoveBack(small, template) {
+      var dist = MOVES[small ? 'small' : 'normal'].move;
+      template.state = templateService
+        .checkState(pointService.moveBack(dist, template.state));
     },
     rotateLeft: function templateRotateLeft(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].rotate;
+      var angle = MOVES[small ? 'small' : 'normal'].rotate;
       template.state = templateService
-        .checkState(R.assoc('r', template.state.r-move, template.state));
+        .checkState(pointService.rotateLeft(angle, template.state));
     },
     rotateRight: function templateRotateRight(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].rotate;
+      var angle = MOVES[small ? 'small' : 'normal'].rotate;
       template.state = templateService
-        .checkState(R.assoc('r', template.state.r+move, template.state));
+        .checkState(pointService.rotateRight(angle, template.state));
     },
     shiftLeft: function templateShiftLeft(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].shift;
+      var dist = MOVES[small ? 'small' : 'normal'].shift;
       template.state = templateService
-        .checkState(R.assoc('x', template.state.x-move, template.state));
+        .checkState(pointService.shiftLeft(dist, template.state));
     },
     shiftRight: function templateShiftRight(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].shift;
+      var dist = MOVES[small ? 'small' : 'normal'].shift;
       template.state = templateService
-        .checkState(R.assoc('x', template.state.x+move, template.state));
+        .checkState(pointService.shiftRight(dist, template.state));
     },
     shiftUp: function templateShiftUp(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].shift;
+      var dist = MOVES[small ? 'small' : 'normal'].shift;
       template.state = templateService
-        .checkState(R.assoc('y', template.state.y-move, template.state));
+        .checkState(pointService.shiftUp(dist, template.state));
     },
     shiftDown: function templateShiftDown(small, template) {
-      var move = MOVES[small ? 'small' : 'normal'].shift;
+      var dist = MOVES[small ? 'small' : 'normal'].shift;
       template.state = templateService
-        .checkState(R.assoc('y', template.state.y+move, template.state));
+        .checkState(pointService.shiftDown(dist, template.state));
     },
     eventName: function templateEventName(template) {
       return R.path(['state','stamp'], template);

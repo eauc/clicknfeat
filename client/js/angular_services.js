@@ -19,6 +19,9 @@ angular.module('clickApp.services')
     'game',
     gamesServiceFactory
   ])
+  .factory('point', [
+    pointServiceFactory
+  ])
   .factory('modes', [
     modesServiceFactory
   ])
@@ -133,6 +136,7 @@ angular.module('clickApp.services')
     function() { return {}; }
   ])
   .factory('template', [
+    'point',
     templateServiceFactory
   ])
   .factory('aoeTemplate', [
