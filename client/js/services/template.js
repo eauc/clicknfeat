@@ -131,6 +131,9 @@ self.templateServiceFactory = function templateServiceFactory() {
       TEMP_REGS[temp.state.type][method].apply(null, args);
       return templateService.saveState(temp);
     },
+    fullLabel: function templateFullLabel(template) {
+      return template.state.l.join(' ');
+    },
   };
   R.curryService(templateService);
   return templateService;

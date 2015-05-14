@@ -1,6 +1,6 @@
 'use strict';
 
-describe('load game', function() {
+describe('create template', function() {
   describe('gameMainCtrl', function(c) {
     beforeEach(inject([
       '$rootScope',

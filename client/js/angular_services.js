@@ -30,6 +30,9 @@ angular.module('clickApp.services')
   .factory('defaultMode', [
     'modes',
     'commonMode',
+    'game',
+    'template',
+    'gameTemplateSelection',
     defaultModeServiceFactory
   ])
   .factory('createTemplateMode', [
@@ -38,9 +41,26 @@ angular.module('clickApp.services')
     'game',
     createTemplateModeServiceFactory
   ])
+  .factory('templateLockedMode', [
+    'modes',
+    'defaultMode',
+    'game',
+    'gameTemplateSelection',
+    templateLockedModeServiceFactory
+  ])
+  .factory('templateMode', [
+    'modes',
+    'templateLockedMode',
+    'template',
+    'game',
+    'gameTemplateSelection',
+    templateModeServiceFactory
+  ])
   .factory('allModes', [
     'defaultMode',
     'createTemplateMode',
+    'templateLockedMode',
+    'templateMode',
     function() { return {}; }
   ])
   .factory('http', [
@@ -56,6 +76,11 @@ angular.module('clickApp.services')
   ])
   .factory('gameTemplates', [
     gameTemplatesServiceFactory
+  ])
+  .factory('gameTemplateSelection', [
+    'modes',
+    'gameTemplates',
+    gameTemplateSelectionServiceFactory
   ])
   .factory('commands', [
     commandsServiceFactory

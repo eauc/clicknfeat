@@ -1,12 +1,10 @@
-template create
+template selection
 template delete
 template lock
 template on
-template selection
 template drag
 template move
 template changeSize
-gameTemplate cleanup
 
 
 point service
