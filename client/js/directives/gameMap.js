@@ -50,6 +50,21 @@ angular.module('clickApp.directives')
                           },
                           event);
             }
+            function mouseLeaveMap(event) {
+              log('mouseLeaveMap', event);
+              event.preventDefault();
+
+              map.removeEventListener('mousemove', dragMap);
+              if(drag.active) {
+                drag.active = false;
+                scope.$emit('dragEnd'+drag.target.type,
+                            { target: drag.target.target,
+                              start: drag.start,
+                              now: drag.now
+                            },
+                            event);
+              }
+            }
             function clickMap(event) {
               log('clickMap', event);
               event.preventDefault();
@@ -100,6 +115,7 @@ angular.module('clickApp.directives')
             return {
               down: mouseDownMap,
               drag: dragMap,
+              leave: mouseLeaveMap,
               click: clickMap,
               rightClick: rightClickMap,
               move: moveMap,
@@ -236,6 +252,7 @@ angular.module('clickApp.directives')
 
           map.addEventListener('mouseup', mouseEvents.click);
           map.addEventListener('mousedown', mouseEvents.down);
+          map.addEventListener('mouseleave', mouseEvents.leave);
           map.addEventListener('dragstart', function dragStartDisable(event){
             event.preventDefault();
           });
