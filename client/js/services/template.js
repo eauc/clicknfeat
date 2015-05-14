@@ -77,7 +77,8 @@ self.templateServiceFactory = function templateServiceFactory() {
     setPosition: function templateSet(pos, template) {
       template.state = R.pipe(
         R.assoc('x', pos.x),
-        R.assoc('y', pos.y)
+        R.assoc('y', pos.y),
+        templateService.checkState
       )(template.state);
     },
     moveFront: function templateMoveFront(small, template) {
