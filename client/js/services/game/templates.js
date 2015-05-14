@@ -41,7 +41,9 @@ self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory() {
         R.assoc('locked', R.reject(function(template) {
           return R.find(R.eq(template.state.stamp), stamps);
         }, templates.locked)),
-        R.assoc('locked', R.concat(templates.locked, temps))
+        function (templates) {
+          return R.assoc('locked', R.concat(templates.locked, temps), templates);
+        }
       )(templates);
     },
     unlockStamps: function templatesUnlockStamps(stamps, templates) {
@@ -55,7 +57,9 @@ self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory() {
         R.assoc('locked', R.reject(function(template) {
           return R.find(R.eq(template.state.stamp), stamps);
         }, templates.locked)),
-        R.assoc('active', R.concat(templates.active, temps))
+        function (templates) {
+          return R.assoc('active', R.concat(templates.active, temps), templates);
+        }
       )(templates);
     },
   };
