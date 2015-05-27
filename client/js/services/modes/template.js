@@ -1,6 +1,7 @@
 'use strict';
 
 self.templateModeServiceFactory = function templateModeServiceFactory(modesService,
+                                                                      settingsService,
                                                                       templateLockedModeService,
                                                                       templateService,
                                                                       gameService,
@@ -64,12 +65,15 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     };
   })();
 
-  var template_bindings = Object.create(templateLockedModeService.bindings);
-  template_bindings['delete'] = 'del';
+  var template_default_bindings = {
+    'delete': 'del',
+  };
   R.forEach(function(move) {
-    template_bindings[move[0]] = move[1];
-    template_bindings[move[0]+'Small'] = 'shift+'+move[1];
+    template_default_bindings[move[0]] = move[1];
+    template_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
+  var template_bindings = R.extend(Object.create(templateLockedModeService.bindings),
+                                   template_default_bindings);
   var template_buttons = [
     [ 'Size', 'toggle', 'size' ],
     [ 'Aoe3', 'aoeSize3', 'size' ],
@@ -89,5 +93,10 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     bindings: template_bindings,
   };
   modesService.registerMode(template_mode);
+  settingsService.registerBindings(template_mode.name,
+                                   template_default_bindings,
+                                   function(bs) {
+                                     R.extend(template_mode.bindings, bs);
+                                   });
   return template_mode;
 };

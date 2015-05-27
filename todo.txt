@@ -1,12 +1,8 @@
-template move
-template label
-template changeSize
-template drag
-
-
-point service
 custom bindings
 custom moves
+save settings as file
+settings reset to default
+
 template - wall
 template - spray
 pubSub

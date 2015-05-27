@@ -1,6 +1,7 @@
 'use strict';
 
-self.gameServiceFactory = function gameServiceFactory(commandsService,
+self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
+                                                      commandsService,
                                                       gameTemplatesService,
                                                       gameTemplateSelectionService) {
   var gameService = {
@@ -31,9 +32,9 @@ self.gameServiceFactory = function gameServiceFactory(commandsService,
       return game;
     },
     toJson: function gameToJson(game) {
-      var json = JSON.stringify(R.pick([
+      var json = jsonStringifierService.stringify(R.pick([
         'players', 'commands', 'undo'
-      ], game), jsonFilter);
+      ], game));
       return json;
     },
     playerName: function gamePlayerName(p, game) {
@@ -101,12 +102,6 @@ self.gameServiceFactory = function gameServiceFactory(commandsService,
       scope.gameEvent('gameLoading');
       gameReplayCmd();
     });
-  }
-  function jsonFilter(key, value) {
-    if(s.startsWith(key, '$$')) {
-      return undefined;
-    }
-    return value;
   }
   return gameService;
 };

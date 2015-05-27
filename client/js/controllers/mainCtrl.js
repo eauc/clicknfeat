@@ -4,11 +4,16 @@ angular.module('clickApp.controllers')
   .controller('mainCtrl', [
     '$scope',
     '$state',
+    '$window',
+    'settings',
     'user',
     'gameBoard',
     'gameScenario',
+    'allModes',
     function($scope,
              $state,
+             $window,
+             settingsService,
              userService,
              gameBoardService,
              gameScenarioService) {
@@ -24,6 +29,7 @@ angular.module('clickApp.controllers')
           $scope.scenarios = scenarios;
           console.log('scenarios', scenarios);
         });
+      $scope.settings = settingsService.init();
 
       $scope.user = userService.load();
       console.log('loaded user', $scope.user);
@@ -45,8 +51,19 @@ angular.module('clickApp.controllers')
       $scope.stateIs = function(name) {
         return $state.is(name);
       };
+      $scope.stateMatches = function(match) {
+        return 0 <= $state.current.name.indexOf(match);
+      };
       $scope.currentState = function() {
         return $state.current;
+      };
+
+      $scope.deferDigest = function deferDigest(scope) {
+        // console.log('deferDigest');
+        $window.requestAnimationFrame(function _deferDigest() {
+          // console.log('_deferDigest');
+          scope.$digest();
+        });
       };
     }
   ]);

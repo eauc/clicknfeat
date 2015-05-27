@@ -4,11 +4,15 @@ angular.module('clickApp.services')
       return self.localStorage;
     }
   ])
+  .factory('jsonStringifier', [
+    jsonStringifierServiceFactory
+  ])
   .factory('user', [
     'localStorage',
     userServiceFactory
   ])
   .factory('game', [
+    'jsonStringifier',
     'commands',
     'gameTemplates',
     'gameTemplateSelection',
@@ -19,6 +23,11 @@ angular.module('clickApp.services')
     'game',
     gamesServiceFactory
   ])
+  .factory('settings', [
+    'localStorage',
+    'jsonStringifier',
+    settingsServiceFactory
+  ])
   .factory('point', [
     pointServiceFactory
   ])
@@ -27,6 +36,7 @@ angular.module('clickApp.services')
   ])
   .factory('commonMode', [
     'modes',
+    'settings',
     'game',
     commonModeServiceFactory
   ])
@@ -46,6 +56,7 @@ angular.module('clickApp.services')
   ])
   .factory('templateLockedMode', [
     'modes',
+    'settings',
     'defaultMode',
     'game',
     'gameTemplateSelection',
@@ -53,6 +64,7 @@ angular.module('clickApp.services')
   ])
   .factory('templateMode', [
     'modes',
+    'settings',
     'templateLockedMode',
     'template',
     'game',

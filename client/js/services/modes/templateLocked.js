@@ -1,6 +1,7 @@
 'use strict';
 
 self.templateLockedModeServiceFactory = function templateLockedModeServiceFactory(modesService,
+                                                                                  settingsService,
                                                                                   defaultModeService,
                                                                                   gameService,
                                                                                   gameTemplateSelectionService) {
@@ -31,11 +32,14 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     gameService.executeCommand('lockTemplates', [target], false, scope, scope.game);
     modesService.switchToMode('Template', scope, scope.modes);
   };
-  var template_bindings = Object.create(defaultModeService.bindings);
-  template_bindings['aoeSize3'] = '3';
-  template_bindings['aoeSize4'] = '4';
-  template_bindings['aoeSize5'] = '5';
-  template_bindings['lock'] = 'l';
+  var template_default_bindings = {
+    aoeSize3: '3',
+    aoeSize4: '4',
+    aoeSize5: '5',
+    lock: 'l',
+  };
+  var template_bindings = R.extend(Object.create(defaultModeService.bindings),
+                                   template_default_bindings);
   var template_buttons = [
     [ 'Size', 'toggle', 'size' ],
     [ 'Aoe3', 'aoeSize3', 'size' ],
@@ -54,5 +58,10 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     bindings: template_bindings,
   };
   modesService.registerMode(template_mode);
+  settingsService.registerBindings(template_mode.name,
+                                   template_default_bindings,
+                                   function(bs) {
+                                     R.extend(template_mode.bindings, bs);
+                                   });
   return template_mode;
 };

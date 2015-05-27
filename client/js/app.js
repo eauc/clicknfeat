@@ -28,6 +28,17 @@ angular.module('clickApp', [
         controller: 'userCtrl',
         data: {}
       })
+      .state('settings', {
+        url: '/settings',
+        templateUrl: 'partials/settings.html',
+        controller: 'settingsCtrl',
+        data: {}
+      })
+      .state('settings.Bindings', {
+        url: '/bindings',
+        templateUrl: 'partials/settings/bindings.html',
+        controller: 'settingsBindingsCtrl',
+      })
       .state('game', {
         url: '/game/:where/:id',
         templateUrl: 'partials/game.html',

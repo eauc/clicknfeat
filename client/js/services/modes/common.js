@@ -1,6 +1,7 @@
 'use strict';
 
 self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
+                                                                  settingsService,
                                                                   gameService) {
   var common_actions = {
     commandUndoLast: function commandUndoLast(scope) {
@@ -58,7 +59,12 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     name: 'Common',
     actions: common_actions,
     buttons: [],
-    bindings: common_bindings,
+    bindings: R.clone(common_bindings),
   };
+  settingsService.registerBindings(common_mode.name,
+                                   common_bindings,
+                                   function updateCommonBindings(bs) {
+                                     R.extend(common_mode.bindings, bs);
+                                   });
   return common_mode;
 };

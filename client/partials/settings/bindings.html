@@ -1,0 +1,46 @@
+<div id="settings-bindings">
+  <form>
+    <div class="form-group">
+      <label>For mode :</label>
+      <select class="form-control"
+              ng-options="m as m for m in modes"
+              ng-model="mode">
+      </select>
+    </div>
+  </form>
+  <table class="table">
+    <tr>
+      <th>Action</th>
+      <th>Default</th>
+      <th>Current</th>
+    </tr>
+    <tr ng-repeat="(a,b) in settings.default.Bindings[mode]"
+        style="
+        font-weight: {{settings.current.Bindings[mode][a] !== b ? 'bold' : 'normal'}};
+        ">
+      <td style="vertical-align:middle;">{{::a}}</td>
+      <td style="vertical-align:middle;">{{::b}}</td>
+      <td>
+        <div class="input-group">
+          <input type="text"
+                 class="form-control"
+                 placeholder="{{::b}}"
+                 ng-model="settings.current.Bindings[mode][a]"
+                 ng-change="doUpdateSettings()"/>
+          <span class="input-group-btn">
+            <button class="btn btn-default"
+                    type="button"
+                    ng-click="doRecordBinding(a)">
+              <span class="glyphicon glyphicon-record">
+              </span>
+            </button>
+          </span>
+        </div>
+        <span style="font-style: italic;"
+              ng-show="recording === a">
+          Recording...
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>

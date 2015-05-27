@@ -40,13 +40,6 @@ angular.module('clickApp.controllers')
         console.log('gameEvent', args);
         $scope.$broadcast.apply($scope, args);
       };
-      $scope.deferDigest = function deferDigest(scope) {
-        // console.log('deferDigest');
-        $window.requestAnimationFrame(function _deferDigest() {
-          // console.log('_deferDigest');
-          scope.$digest();
-        });
-      };
       $scope.digestOnGameEvent = function digestOnGameEvent(scope, event) {
         scope.$on(event, function _digestOnGameEvent() {
           // console.log('digest on '+event);

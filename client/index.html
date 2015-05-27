@@ -20,6 +20,9 @@
           <li class="{{stateIs('lounge') ? 'active' : ''}}">
             <a href="#/lounge">Lounge</a>
           </li>
+          <li class="{{stateMatches('settings') ? 'active' : ''}}">
+            <a href="#/settings">Settings</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -30,6 +33,7 @@
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular-ui-router/angular-ui-router.js"></script>
     <script src="lib/mousetrap/mousetrap.js"></script>
+    <script src="lib/mousetrap/mousetrap-record.js"></script>
     <script src="js/mixins/countWatchers.js"></script>
     <script src="js/mixins/curryService.js"></script>
     <script src="js/mixins/deepExtend.js"></script>
@@ -44,6 +48,8 @@
     <script src="js/controllers/game/setupCtrl.js"></script>
     <script src="js/controllers/game/helpCtrl.js"></script>
     <script src="js/controllers/loungeCtrl.js"></script>
+    <script src="js/controllers/settingsCtrl.js"></script>
+    <script src="js/controllers/settings/bindingsCtrl.js"></script>
     <script src="js/controllers/userCtrl.js"></script>
     <script src="js/services/commands.js"></script>
     <script src="js/services/command/createTemplate.js"></script>
@@ -61,6 +67,7 @@
     <script src="js/services/game/templates.js"></script>
     <script src="js/services/game/templateSelection.js"></script>
     <script src="js/services/http.js"></script>
+    <script src="js/services/jsonStringifier.js"></script>
     <script src="js/services/modes.js"></script>
     <script src="js/services/modes/common.js"></script>
     <script src="js/services/modes/default.js"></script>
@@ -68,6 +75,7 @@
     <script src="js/services/modes/template.js"></script>
     <script src="js/services/modes/templateLocked.js"></script>
     <script src="js/services/point.js"></script>
+    <script src="js/services/settings.js"></script>
     <script src="js/services/template.js"></script>
     <script src="js/services/user.js"></script>
     <script src="js/angular_services.js"></script>
