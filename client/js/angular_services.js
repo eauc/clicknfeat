@@ -148,6 +148,7 @@ angular.module('clickApp.services')
     function() { return {}; }
   ])
   .factory('template', [
+    'settings',
     'point',
     templateServiceFactory
   ])

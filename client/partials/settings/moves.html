@@ -1,0 +1,34 @@
+<div id="settings-bindings">
+  <form>
+    <div class="form-group">
+      <label>For mode :</label>
+      <select class="form-control"
+              ng-options="m as m for m in modes"
+              ng-model="mode">
+      </select>
+    </div>
+  </form>
+  <table class="table">
+    <tr>
+      <th>Action</th>
+      <th>Default</th>
+      <th>Current</th>
+    </tr>
+    <tr ng-repeat="(a,b) in settings.default.Moves[mode]"
+        style="
+        font-weight: {{settings.current.Moves[mode][a] !== b ? 'bold' : 'normal'}};
+        ">
+      <td style="vertical-align:middle;">{{::a}}</td>
+      <td style="vertical-align:middle;">{{::b}}</td>
+      <td>
+        <div class="input-group">
+          <input type="number"
+                 class="form-control"
+                 placeholder="{{::b}}"
+                 ng-model="settings.current.Moves[mode][a]"
+                 ng-change="doUpdateSettings()"/>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -61,10 +61,11 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     buttons: [],
     bindings: R.clone(common_bindings),
   };
-  settingsService.registerBindings(common_mode.name,
-                                   common_bindings,
-                                   function updateCommonBindings(bs) {
-                                     R.extend(common_mode.bindings, bs);
-                                   });
+  settingsService.register('Bindings',
+                           common_mode.name,
+                           common_bindings,
+                           function updateCommonBindings(bs) {
+                             R.extend(common_mode.bindings, bs);
+                           });
   return common_mode;
 };

@@ -27,13 +27,13 @@ describe('load settings', function() {
           }
         };
         this.test1_updater = jasmine.createSpy('test1_updater');
-        this.settingsService.registerBindings('test1',
-                                              this.default_settings.Bindings.test1,
-                                              this.test1_updater);
+        this.settingsService.register('Bindings', 'test1',
+                                      this.default_settings.Bindings.test1,
+                                      this.test1_updater);
         this.test2_updater = jasmine.createSpy('test2_updater');
-        this.settingsService.registerBindings('test2',
-                                              this.default_settings.Bindings.test2,
-                                              this.test2_updater);
+        this.settingsService.register('Bindings', 'test2',
+                                      this.default_settings.Bindings.test2,
+                                      this.test2_updater);
       });
       
       it('should load settings from local storage', function() {
@@ -63,8 +63,7 @@ describe('load settings', function() {
             Bindings: {
               test1: { binding1: 'a',
                        binding3: 'd' },
-              test2: {  },
-              test3: { binding2: 'c' }
+              test2: {  }
             }
           });
         expect(Object.getPrototypeOf(settings.current.Bindings.test1))
