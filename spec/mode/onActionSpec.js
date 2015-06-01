@@ -9,6 +9,7 @@ describe('on mode action', function() {
                $controller) {
         this.modesService = spyOnService('modes');
         this.gamesService = spyOnService('games');
+        mockReturnPromise(this.gamesService.loadLocalGames);
 
         this.createController = function(params) {
           this.scope = $rootScope.$new();
@@ -24,8 +25,8 @@ describe('on mode action', function() {
           $rootScope.$digest();
         };
         this.params = { where: 'offline', id: '0' };
-        this.gamesService.loadLocalGames._retVal = ['game1'];
         this.createController(this.params);
+        this.gamesService.loadLocalGames.resolve([ 'game1' ]);
       }
     ]));
 

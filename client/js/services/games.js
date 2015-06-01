@@ -1,25 +1,21 @@
 'use strict';
 
-self.gamesServiceFactory = function gamesServiceFactory(localStorage,
+self.gamesServiceFactory = function gamesServiceFactory(localStorageService,
+                                                        jsonParserService,
                                                         gameService) {
   var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
   var gamesService = {
     loadLocalGames: function() {
-      var data = localStorage.getItem(LOCAL_GAMES_STORAGE_KEY);
-      var local_games = [];
-      if(R.exists(data)) {
-        try {
-          local_games = JSON.parse(data);
-        }
-        catch(e) {
-          console.log('failed to load local games', e);
-        }
-      }
-      return local_games;
+      var data = localStorageService.getItem(LOCAL_GAMES_STORAGE_KEY);
+      return jsonParserService.parse(data)
+        .catch(function() {
+          console.log('Failed to load local games');
+          return [];
+        });
     },
     storeLocalGames: function(games) {
       var json = '['+R.join(',',R.map(gameService.toJson, games))+']';
-      localStorage.setItem(LOCAL_GAMES_STORAGE_KEY, json);
+      localStorageService.setItem(LOCAL_GAMES_STORAGE_KEY, json);
     }
   };
   return gamesService;

@@ -7,6 +7,9 @@ angular.module('clickApp.services')
   .factory('jsonStringifier', [
     jsonStringifierServiceFactory
   ])
+  .factory('jsonParser', [
+    jsonParserServiceFactory
+  ])
   .factory('user', [
     'localStorage',
     userServiceFactory
@@ -20,11 +23,13 @@ angular.module('clickApp.services')
   ])
   .factory('games', [
     'localStorage',
+    'jsonParser',
     'game',
     gamesServiceFactory
   ])
   .factory('settings', [
     'localStorage',
+    'jsonParser',
     'jsonStringifier',
     settingsServiceFactory
   ])

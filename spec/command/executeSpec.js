@@ -43,7 +43,7 @@ describe('execute commands', function() {
           expect(this.game.commands[0].returnValue)
             .toBe('commands.execute.returnValue');
           expect(this.game.commands[0].stamp)
-            .toMatch(/[1-9a-f-]{10,}/);
+            .toMatch(/[0-9a-f-]{10,}/);
         });
         it('should save game', function() {
           expect(this.scope.saveGame)

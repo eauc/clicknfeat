@@ -9,7 +9,8 @@ describe('local game', function() {
                $controller) {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
-
+        mockReturnPromise(this.gamesService.loadLocalGames);
+        
         this.createController = function() {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
@@ -25,6 +26,7 @@ describe('local game', function() {
 
     when('page loads', function() {
       this.createController();
+      this.gamesService.loadLocalGames.resolve('games.loadLocalGames.returnValue');
     }, function() {
       it('should load local games', function() {
         expect(this.gamesService.loadLocalGames)
@@ -115,6 +117,7 @@ describe('local game', function() {
       'games',
       function(gamesService) {
         this.gamesService = gamesService;
+
         this.gameService = spyOnService('game');
         this.gameService.toJson.and.callFake(function(g) {
           return g+'.toJson';
@@ -129,8 +132,18 @@ describe('local game', function() {
       });
 
       it('should retrieve local games from local storage', function() {
-        expect(this.gamesService.loadLocalGames())
-          .toEqual(['game1','game2']);
+        var local_games;
+        this.gamesService.loadLocalGames()
+          .then(function(_local_games) {
+            local_games = _local_games;
+          });
+
+        expect(this.jsonParserService.parse)
+          .toHaveBeenCalledWith('["game1","game2"]');
+        this.jsonParserService.parse.resolve(["game1","game2"]);
+
+        expect(local_games)
+          .toEqual(["game1","game2"]);
       });
     });
 

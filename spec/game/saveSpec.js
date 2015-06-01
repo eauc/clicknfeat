@@ -9,7 +9,8 @@ describe('save game', function() {
                $controller) {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
-        this.gamesService.loadLocalGames._retVal = [ 'game1', 'game2' ];
+        mockReturnPromise(this.gamesService.loadLocalGames);
+        
         this.createController = function(params) {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
@@ -25,6 +26,7 @@ describe('save game', function() {
         };
         this.params = { where: 'offline', id: '0' };
         this.createController(this.params);
+        this.gamesService.loadLocalGames.resolve([ 'game1', 'game2' ]);
       }
     ]));
 

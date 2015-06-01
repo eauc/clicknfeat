@@ -9,7 +9,9 @@ describe('user load/store', function() {
                $controller) {
         this.userService = spyOnService('user');
         this.stateService = jasmine.createSpyObj('$state', ['go']);
-
+        this.settingsService = spyOnService('settings');
+        mockReturnPromise(this.settingsService.init);
+        
         this.createController = function() {
           this.scope = $rootScope.$new();
           $controller('mainCtrl', { 

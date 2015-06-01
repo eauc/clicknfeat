@@ -9,6 +9,7 @@ describe('init modes', function() {
                $controller) {
         this.modesService = spyOnService('modes');
         this.gamesService = spyOnService('games');
+        mockReturnPromise(this.gamesService.loadLocalGames);
 
         this.createController = function(params) {
           this.scope = $rootScope.$new();
@@ -29,10 +30,10 @@ describe('init modes', function() {
 
     when('page loads', function() {
       this.createController(this.params);
+        this.gamesService.loadLocalGames.resolve([ 'game1' ]);
     }, function() {
       beforeEach(function() {
         this.params = { where: 'offline', id: '0' };
-        this.gamesService.loadLocalGames._retVal = ['game1'];
       });
 
       it('should init modes', function() {

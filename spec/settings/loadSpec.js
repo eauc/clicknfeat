@@ -15,9 +15,9 @@ describe('load settings', function() {
             test3: { binding2: 'c' },
           }
         };
-        this.localStorage.getItem.and.callFake(R.bind(function() {
-          return JSON.stringify(this.stored_settings);
-        }, this));
+        
+        this.localStorage.getItem
+          .and.returnValue('localStorage.getItem.returnValue');
 
         this.default_settings = {
           Bindings: {
@@ -34,18 +34,22 @@ describe('load settings', function() {
         this.settingsService.register('Bindings', 'test2',
                                       this.default_settings.Bindings.test2,
                                       this.test2_updater);
+
+        this.settingsService.init()
+          .then(R.bind(function(settings) {
+            this.settings = settings;
+          }, this));
+        this.jsonParserService.parse.resolve(this.stored_settings);
       });
       
       it('should load settings from local storage', function() {
-        this.settingsService.init();
-
         expect(this.localStorage.getItem)
           .toHaveBeenCalledWith('clickApp.settings');
+        expect(this.jsonParserService.parse)
+          .toHaveBeenCalledWith('localStorage.getItem.returnValue');
       });
       
       it('should update modified settings', function() {
-        this.settingsService.init();
-
         expect(this.test1_updater)
           .toHaveBeenCalledWith({ binding1: 'a',
                                   binding3: 'd' });
@@ -54,11 +58,10 @@ describe('load settings', function() {
       });
       
       it('should return settings object', function() {
-        var settings = this.settingsService.init();
-        expect(settings.default)
+        expect(this.settings.default)
           .toEqual(this.default_settings);
 
-        expect(settings.current)
+        expect(this.settings.current)
           .toEqual({
             Bindings: {
               test1: { binding1: 'a',
@@ -66,9 +69,9 @@ describe('load settings', function() {
               test2: {  }
             }
           });
-        expect(Object.getPrototypeOf(settings.current.Bindings.test1))
+        expect(Object.getPrototypeOf(this.settings.current.Bindings.test1))
           .toEqual(this.default_settings.Bindings.test1);
-        expect(Object.getPrototypeOf(settings.current.Bindings.test2))
+        expect(Object.getPrototypeOf(this.settings.current.Bindings.test2))
           .toEqual(this.default_settings.Bindings.test2);
       });
     });

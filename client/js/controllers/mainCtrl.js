@@ -29,7 +29,11 @@ angular.module('clickApp.controllers')
           $scope.scenarios = scenarios;
           console.log('scenarios', scenarios);
         });
-      $scope.settings = settingsService.init();
+      settingsService.init()
+        .then(function(settings) {
+          $scope.settings = settings;
+          console.log('settings', settings);
+        });
 
       $scope.user = userService.load();
       console.log('loaded user', $scope.user);

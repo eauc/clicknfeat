@@ -20,21 +20,18 @@ angular.module('clickApp.controllers')
              gamesService,
              modesService) {
       console.log('init gameCtrl', $stateParams, $state.current.name);
+      var onLoad;
       if($stateParams.where === 'offline') {
-        $scope.local_games = gamesService.loadLocalGames();
-        $scope.game_index = $stateParams.id >> 0;
-        $scope.game = R.nth($scope.game_index,
-                            $scope.local_games);
-        console.log('load game', $scope.game);
+        onLoad = gamesService.loadLocalGames()
+            .then(function(local_games) {
+              $scope.local_games = local_games;
+              $scope.game_index = $stateParams.id >> 0;
+              $scope.game = R.nth($scope.game_index,
+                                  $scope.local_games);
+              console.log('load game', $scope.game);
+            });
       }
-      if(R.isNil($scope.game)) {
-        $scope.goToState('lounge');
-        return;
-      }
-      if($state.current.name === 'game') {
-        $scope.goToState('.main');
-      }
-
+      
       $scope.gameEvent = function gameEvent() {
         var args = Array.prototype.slice.apply(arguments);
         console.log('gameEvent', args);
@@ -54,7 +51,6 @@ angular.module('clickApp.controllers')
         gamesService.storeLocalGames($scope.local_games);
       };
 
-      $scope.modes = modesService.init($scope);
       $scope.doModeAction = function doModeAction(action) {
         modesService.currentModeAction(action, $scope, $scope.modes);
       };
@@ -92,7 +88,17 @@ angular.module('clickApp.controllers')
         Mousetrap.reset();
       });
 
-      $scope.create = {};
-      $scope.game = gameService.load($scope, $scope.game);
+      onLoad.then(function() {
+        if(R.isNil($scope.game)) {
+          $scope.goToState('lounge');
+          return;
+        }
+        if($state.current.name === 'game') {
+          $scope.goToState('.main');
+        } 
+        $scope.modes = modesService.init($scope);
+        $scope.create = {};
+        $scope.game = gameService.load($scope, $scope.game);
+      });
     }
   ]);

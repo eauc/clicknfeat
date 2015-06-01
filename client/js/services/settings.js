@@ -1,7 +1,8 @@
 'use strict';
 
-self.settingsServiceFactory = function settingsServiceFactory(localStorage,
-                                                              jsonStringifier) {
+self.settingsServiceFactory = function settingsServiceFactory(localStorageService,
+                                                              jsonParserService,
+                                                              jsonStringifierService) {
   var SETTINGS_STORAGE_KEY = 'clickApp.settings';
   var DEFAULT_SETTINGS = {};
   var UPDATERS = {};
@@ -16,20 +17,16 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorage,
       UPDATERS[type][name] = updater;
     },
     load: function settingsLoad() {
-      var data = localStorage.getItem(SETTINGS_STORAGE_KEY);
-      var settings = {};
-      if(R.exists(data)) {
-        try {
-          settings = JSON.parse(data);
-        }
-        catch(e) {
-          console.log('failed to load settings', e);
-        }
-      }
-      return settings;
+      var data = localStorageService.getItem(SETTINGS_STORAGE_KEY);
+      return jsonParserService.parse(data)
+        .catch(function(error) {
+          console.log('failed to load settings');
+          return {};
+        });
     },
     init: function settingsInit() {
-      return R.pipe(
+      return R.pipeP(
+        settingsService.load,
         settingsService.bind,
         function(stored) {
           return {
@@ -38,7 +35,7 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorage,
           };
         },
         settingsService.update
-      )(settingsService.load());
+      )(null);
     },
     bind: function settingsBind(settings) {
       return R.pipe(
@@ -78,8 +75,8 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorage,
     },
     store: function settingsStore(settings) {
       console.log('storing settings', settings.current);
-      var json = JSON.stringify(settings.current);
-      localStorage.setItem(SETTINGS_STORAGE_KEY, json);
+      var json = jsonStringifierService.stringify(settings.current);
+      localStorageService.setItem(SETTINGS_STORAGE_KEY, json);
     }
   };
   return settingsService;

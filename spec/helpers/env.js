@@ -24,4 +24,7 @@ beforeEach(function() {
     'localStorage': this.localStorage,
   });
   mockReturnPromise(this.httpService.get);
+
+  this.jsonParserService = spyOnService('jsonParser');
+  mockReturnPromise(this.jsonParserService.parse);
 });

@@ -14,7 +14,10 @@ angular.module('clickApp.controllers')
       $scope.checkUser();
 
       $scope.user_desc = userService.description($scope.user);
-      $scope.local_games = gamesService.loadLocalGames();
+      gamesService.loadLocalGames()
+        .then(function(local_games) {
+          $scope.local_games = local_games;
+        });
 
       $scope.local_games_selection = [];
       $scope.isInLocalGamesSelection = function(index) {

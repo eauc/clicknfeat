@@ -9,7 +9,8 @@ describe('load game', function() {
                $controller) {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
-
+        mockReturnPromise(this.gamesService.loadLocalGames);
+        
         this.createController = function(params) {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
@@ -29,13 +30,13 @@ describe('load game', function() {
 
     when('page loads', function() {
       this.createController(this.params);
+      this.gamesService.loadLocalGames.resolve(['game1','game2']);
     }, function() {
       when('loading an offline game', function() {
         this.params.where = 'offline';
       }, function() {
         when('the game does not exist', function() {
           this.params.id = '4';
-          this.gamesService.loadLocalGames._retVal = ['game1','game2'];
         }, function() {
           it('should return to the lounge page', function() {
             expect(this.scope.goToState)
@@ -45,7 +46,6 @@ describe('load game', function() {
 
         when('the game exists', function() {
           this.params.id = '1';
-          this.gamesService.loadLocalGames._retVal = ['game1','game2'];
         }, function() {
           it('should return not to the lounge page', function() {
             expect(this.scope.goToState)
