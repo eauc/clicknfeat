@@ -34,6 +34,12 @@ angular.module('clickApp.controllers')
           $scope.settings = settings;
           console.log('settings', settings);
         });
+      $scope.doResetSettings = function doResetSettings(data) {
+        $scope.settings = R.pipe(
+          settingsService.bind,
+          settingsService.update
+        )(data);
+      };
 
       $scope.user = userService.load();
       console.log('loaded user', $scope.user);

@@ -1,4 +1,3 @@
-custom moves
 save settings as file
 settings reset to default
 

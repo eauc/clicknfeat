@@ -28,12 +28,6 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorageServic
       return R.pipeP(
         settingsService.load,
         settingsService.bind,
-        function(stored) {
-          return {
-            default: DEFAULT_SETTINGS,
-            current: stored,
-          };
-        },
         settingsService.update
       )(null);
     },
@@ -52,7 +46,13 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorageServic
             }, {})
           )(DEFAULT_SETTINGS[type]);
           return mem;
-        }, {})
+        }, {}),
+        function(binded) {
+          return {
+            default: DEFAULT_SETTINGS,
+            current: binded,
+          };
+        }
       )(DEFAULT_SETTINGS);
     },
     update: function settingsUpdate(settings) {

@@ -13,7 +13,7 @@ angular.module('clickApp.controllers')
         $scope.goToState('.Bindings');
       }
       console.log($scope.settings);
-      $scope.menu = R.keys($scope.settings.default);
+      $scope.menu = R.prepend('Main', R.keys($scope.settings.default));
       $scope.doUpdateSettings = function doUpdateSettings() {
         settingsService.update($scope.settings);
       };

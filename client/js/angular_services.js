@@ -10,6 +10,14 @@ angular.module('clickApp.services')
   .factory('jsonParser', [
     jsonParserServiceFactory
   ])
+  .factory('fileExport', [
+    'jsonStringifier',
+    fileExportServiceFactory
+  ])
+  .factory('fileImport', [
+    'jsonParser',
+    fileImportServiceFactory
+  ])
   .factory('user', [
     'localStorage',
     userServiceFactory
