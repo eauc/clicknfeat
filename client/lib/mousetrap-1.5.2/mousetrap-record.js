@@ -80,6 +80,7 @@
         } else if (e.type == 'keyup' && _currentRecordedKeys.length > 0) {
             _recordCurrentCombo();
         }
+      e.preventDefault();
     }
 
     /**
