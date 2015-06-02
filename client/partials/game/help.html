@@ -1,5 +1,14 @@
 <div>
   <div class="panel panel-info">
+    <div class="panel-heading">Debug dump file</div>
+    <div class="panel-body">
+      <a ng-href="{{debug.url}}"
+         download="{{::debug.name}}">
+        Download Dump File
+      </a>
+    </div>
+  </div>
+  <div class="panel panel-info">
     <div class="panel-heading">Current Mode Bindings</div>
     <table class="table">
       <tr ng-repeat="bind in current_bindings">

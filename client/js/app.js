@@ -85,6 +85,11 @@ angular.module('clickApp', [
         controller: 'gameLogCtrl',
         data: { hide_nav: true }
       })
+      .state('debug', {
+        url: '/debug',
+        templateUrl: 'partials/debug.html',
+        controller: 'debugCtrl'
+      })
     ;
   }
 ]).config([
