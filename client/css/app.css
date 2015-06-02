@@ -187,6 +187,12 @@ ul.nav-tabs li {
     pointer-events: none;
     visibility: hidden;
 }
+#create-template-spray {
+    fill: #F11;
+    opacity: 0.8;
+    pointer-events: none;
+    visibility: hidden;
+}
 
 #game .template {
     fill:#FC3;

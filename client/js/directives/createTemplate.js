@@ -15,6 +15,10 @@ angular.module('clickApp.directives')
             element: createAoE(document, svgNS, element[0]),
             setPosition: setAoEPosition,
           };
+          templates['spray'] = {
+            element: createSpray(document, svgNS, element[0]),
+            setPosition: setSprayPosition,
+          };
           templates['wall'] = {
             element: createWall(document, svgNS, element[0]),
             setPosition: setWallPosition,
@@ -36,6 +40,7 @@ angular.module('clickApp.directives')
           scope.$on('disableCreateTemplate', function onDisableCreateTemplate() {
             $window.requestAnimationFrame(function _onDisableCreateTemplate() {
               templates['aoe'].element.style.visibility = 'hidden';
+              templates['spray'].element.style.visibility = 'hidden';
               templates['wall'].element.style.visibility = 'hidden';
             });
           });
@@ -53,6 +58,23 @@ angular.module('clickApp.directives')
       function setAoEPosition(coord) {
         templates['aoe'].element.setAttribute('cx', coord.x+'');
         templates['aoe'].element.setAttribute('cy', coord.y+'');
+      }
+      function createSpray(document, svgNS, element) {
+        var sp = document.createElementNS(svgNS, 'polygon');
+        sp.id = 'create-template-spray';
+        sp.setAttribute('points', '8.75,0 5.125,-59 10,-60 14.875,-59 11.25,0');
+        sp.setAttribute('transform', 'translate(230,240)');
+        element.appendChild(sp);
+        return sp;
+      }
+      function setSprayPosition(coord) {
+        templates['spray'].element.setAttribute('transform', [
+          'translate(',
+          coord.x-10,
+          ',',
+          coord.y,
+          ')',
+        ].join(''));
       }
       function createWall(document, svgNS, element) {
         var wall = document.createElementNS(svgNS, 'rect');

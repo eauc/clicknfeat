@@ -79,6 +79,9 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     [ 'Aoe3', 'aoeSize3', 'size' ],
     [ 'Aoe4', 'aoeSize4', 'size' ],
     [ 'Aoe5', 'aoeSize5', 'size' ],
+    [ 'Spray6', 'spraySize6', 'size' ],
+    [ 'Spray8', 'spraySize8', 'size' ],
+    [ 'Spray10', 'spraySize10', 'size' ],
     [ 'Delete', 'delete' ],
     [ 'Lock', 'lock' ],
   ];

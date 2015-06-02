@@ -23,6 +23,20 @@ self.wallTemplateServiceFactory = function wallTemplateServiceFactory(templateSe
   return wallTemplateService;
 };
 
+self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(templateService) {
+  var sprayTemplateService = Object.create(templateService);
+  sprayTemplateService.create = function sprayTemplateCreate(temp) {    
+    temp.state = R.assoc('s', 6, temp.state);
+    return temp;
+  };
+  sprayTemplateService.setSize = function sprayTemplateSetSize(size, temp) {
+    if(R.isNil(R.find(R.eq(size), [6,8,10]))) return;
+    temp.state = R.assoc('s', size, temp.state);
+  };
+  templateService.registerTemplate('spray', sprayTemplateService);
+  return sprayTemplateService;
+};
+
 self.templateServiceFactory = function templateServiceFactory(settingsService,
                                                               pointService) {
   var TEMP_REGS = {};

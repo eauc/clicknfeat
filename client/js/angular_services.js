@@ -169,12 +169,17 @@ angular.module('clickApp.services')
     'template',
     aoeTemplateServiceFactory
   ])
+  .factory('sprayTemplate', [
+    'template',
+    sprayTemplateServiceFactory
+  ])
   .factory('wallTemplate', [
     'template',
     wallTemplateServiceFactory
   ])
   .factory('allTemplates', [
     'aoeTemplate',
+    'sprayTemplate',
     'wallTemplate',
     function() { return {}; }
   ]);
