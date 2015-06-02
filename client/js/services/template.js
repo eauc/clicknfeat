@@ -14,6 +14,15 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
   return aoeTemplateService;
 };
 
+self.wallTemplateServiceFactory = function wallTemplateServiceFactory(templateService) {
+  var wallTemplateService = Object.create(templateService);
+  wallTemplateService.create = function wallTemplateCreate(temp) {    
+    return temp;
+  };
+  templateService.registerTemplate('wall', wallTemplateService);
+  return wallTemplateService;
+};
+
 self.templateServiceFactory = function templateServiceFactory(settingsService,
                                                               pointService) {
   var TEMP_REGS = {};

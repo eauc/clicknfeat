@@ -1,5 +1,3 @@
-game help bug report dump
-
 template - wall
 template - spray
 pubSub

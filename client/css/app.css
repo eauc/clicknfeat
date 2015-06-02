@@ -181,6 +181,12 @@ ul.nav-tabs li {
     pointer-events: none;
     visibility: hidden;
 }
+#create-template-wall {
+    fill: #F11;
+    opacity: 0.8;
+    pointer-events: none;
+    visibility: hidden;
+}
 
 #game .template {
     fill:#FC3;
@@ -202,6 +208,16 @@ ul.nav-tabs li {
 }
 #game #game-templates-locked .template-aoe-direction {
     stroke-width:0px;
+}
+
+#game .wall {
+    fill:#CCC;
+    fill-opacity:0.6;
+    stroke-width:0.5px;
+    pointer-events:visible;
+}
+#game-templates-locked .wall {
+    fill-opacity:1.0;
 }
 
 #game g.label {
