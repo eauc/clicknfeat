@@ -9,6 +9,7 @@ angular.module('clickApp.controllers')
     'game',
     'games',
     'modes',
+    'pubSub',
     'allModes',
     'allCommands',
     'allTemplates',
@@ -18,7 +19,8 @@ angular.module('clickApp.controllers')
              $window,
              gameService,
              gamesService,
-             modesService) {
+             modesService,
+             pubSubService) {
       console.log('init gameCtrl', $stateParams, $state.current.name);
       var onLoad;
       if($stateParams.where === 'offline') {
@@ -31,16 +33,32 @@ angular.module('clickApp.controllers')
               console.log('load game', $scope.game);
             });
       }
-      
+
+      var game_event_channel = pubSubService.init();
+      pubSubService.subscribe('#watch#', function() {
+        console.log('gameEvent', arguments);
+      }, game_event_channel);
       $scope.gameEvent = function gameEvent() {
         var args = Array.prototype.slice.apply(arguments);
-        console.log('gameEvent', args);
-        $scope.$broadcast.apply($scope, args);
+        pubSubService.publish.apply(null, R.append(game_event_channel, args));
       };
-      $scope.digestOnGameEvent = function digestOnGameEvent(scope, event) {
-        scope.$on(event, function _digestOnGameEvent() {
-          // console.log('digest on '+event);
+      $scope.onGameEvent = function onGameEvent(event, listener, scope) {
+        // console.log('subscribe onGameEvent', arguments);
+        var unsubscribe = pubSubService.subscribe(event, listener, game_event_channel);
+        scope.$on('$destroy', function unsubscribeOnGameEvent() {
+          // console.log('unsubscribe onGameEvent', event, game_event_channel);
+          unsubscribe();
+        });
+      };
+      $scope.digestOnGameEvent = function digestOnGameEvent(event, scope) {
+        // console.log('subscribe digestOnGameEvent', arguments);
+        var unsubscribe = pubSubService.subscribe(event, function _digestOnGameEvent() {
+          // console.log('digestOnGameEvent', event);
           $scope.deferDigest(scope);
+        }, game_event_channel);
+        scope.$on('$destroy', function unsubscribeDigestOnGameEvent() {
+          // console.log('unsubscribe digestOnGameEvent', event, game_event_channel);
+          unsubscribe();
         });
       };
 

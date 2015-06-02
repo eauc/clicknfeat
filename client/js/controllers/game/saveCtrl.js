@@ -19,9 +19,9 @@ angular.module('clickApp.controllers')
         fileExportService.cleanup($scope.save.url);
       });
       $scope.updateExports();
-      $scope.$on('saveGame', function onSaveGame() {
+      $scope.onGameEvent('saveGame', function onSaveGame() {
         fileExportService.cleanup($scope.save.url);
         $scope.updateExports();
-      });
+      }, $scope);
     }
   ]);

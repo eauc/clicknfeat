@@ -43,13 +43,13 @@ angular.module('clickApp.directives')
           closeSelectionDetail();
 
           function openSelectionDetail($event, type, selection) {
-            console.log('openSelectionDetail');
+            // console.log('openSelectionDetail');
             scope.type = type;
             scope.selection = selection;
             $window.requestAnimationFrame(displaySelectionDetail);
           }
           function closeSelectionDetail() {
-            console.log('closeSelectionDetail');
+            // console.log('closeSelectionDetail');
             scope.selection = {};
             scope.deferDigest(scope);
             $window.requestAnimationFrame(function _closeSelectionDetail() {
@@ -105,8 +105,8 @@ angular.module('clickApp.directives')
             return (screen_pos.y-detail_rect.height)+'px';
           }
 
-          scope.$on('openSelectionDetail', openSelectionDetail);
-          scope.$on('closeSelectionDetail', closeSelectionDetail);
+          scope.onGameEvent('openSelectionDetail', openSelectionDetail, scope);
+          scope.onGameEvent('closeSelectionDetail', closeSelectionDetail, scope);
           scope.doClose = closeSelectionDetail;
         }
       };

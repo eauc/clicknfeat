@@ -15,11 +15,12 @@ angular.module('clickApp.controllers')
         modesService.switchToMode('CreateTemplate', $scope, $scope.modes);
       };
 
-      $scope.digestOnGameEvent($scope, 'diceRoll');
       $scope.doRollDice = function doRoll(sides, nb_dice) {
         gameService.executeCommand('rollDice',
                                    sides, nb_dice,
                                    $scope, $scope.game);
       };
+
+      $scope.digestOnGameEvent('diceRoll', $scope);
     }
   ]);

@@ -257,16 +257,16 @@ angular.module('clickApp.directives')
             event.preventDefault();
           });
           map.addEventListener('contextmenu', mouseEvents.rightClick);
-          scope.$on('flipMap', flipMap);
-          scope.$on('enableMoveMap', moveEvents.enable);
-          scope.$on('disableMoveMap', moveEvents.disable);
-          scope.$on('viewZoomIn', zoomEvents.in);
-          scope.$on('viewZoomOut', zoomEvents.out);
-          scope.$on('viewZoomReset', zoomEvents.reset);
-          scope.$on('viewScrollLeft', scrollEvents.left);
-          scope.$on('viewScrollRight', scrollEvents.right);
-          scope.$on('viewScrollUp', scrollEvents.up);
-          scope.$on('viewScrollDown', scrollEvents.down);
+          scope.onGameEvent('flipMap', flipMap, scope);
+          scope.onGameEvent('enableMoveMap', moveEvents.enable, scope);
+          scope.onGameEvent('disableMoveMap', moveEvents.disable, scope);
+          scope.onGameEvent('viewZoomIn', zoomEvents.in, scope);
+          scope.onGameEvent('viewZoomOut', zoomEvents.out, scope);
+          scope.onGameEvent('viewZoomReset', zoomEvents.reset, scope);
+          scope.onGameEvent('viewScrollLeft', scrollEvents.left, scope);
+          scope.onGameEvent('viewScrollRight', scrollEvents.right, scope);
+          scope.onGameEvent('viewScrollUp', scrollEvents.up, scope);
+          scope.onGameEvent('viewScrollDown', scrollEvents.down, scope);
 
           $window.requestAnimationFrame(function initMap() {
             zoomEvents.reset();

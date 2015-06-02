@@ -7,7 +7,7 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-          scope.digestOnGameEvent(scope, 'changeScenario');
+          scope.digestOnGameEvent('changeScenario', scope);
         }
       };
     }

@@ -10,10 +10,10 @@ angular.module('clickApp.controllers')
              fileExportService) {
       console.log('init gameHelpCtrl');
       $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
-      $scope.$on('switchMode', function onSwitchMode() {
+      $scope.onGameEvent('switchMode', function onSwitchMode() {
         $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
         $scope.deferDigest($scope);
-      });
+      }, $scope);
       
       $scope.updateExports = function updateExports() {
         $scope.debug = {
@@ -29,9 +29,9 @@ angular.module('clickApp.controllers')
         fileExportService.cleanup($scope.debug.url);
       });
       $scope.updateExports();
-      $scope.$on('saveGame', function onSaveGame() {
+      $scope.onGameEvent('saveGame', function onSaveGame() {
         fileExportService.cleanup($scope.debug.url);
         $scope.updateExports();
-      });
+      }, $scope);
     }
   ]);

@@ -24,26 +24,26 @@ angular.module('clickApp.directives')
             setPosition: setWallPosition,
           };
 
-          scope.$on('enableCreateTemplate', function onEnableCreateTemplate() {
+          scope.onGameEvent('enableCreateTemplate', function onEnableCreateTemplate() {
             $window.requestAnimationFrame(function _onEnableCreateTemplate() {
               var type = scope.create.template.type;
               templates[type].setPosition(scope.create.template);
               templates[type].element.style.visibility = 'visible';
             });
-          });
-          scope.$on('moveCreateTemplate', function onMoveCreateTemplate() {
+          }, scope);
+          scope.onGameEvent('moveCreateTemplate', function onMoveCreateTemplate() {
             $window.requestAnimationFrame(function _onMoveCreateTemplate() {
               var type = scope.create.template.type;
               templates[type].setPosition(scope.create.template);
             });
-          });
-          scope.$on('disableCreateTemplate', function onDisableCreateTemplate() {
+          }, scope);
+          scope.onGameEvent('disableCreateTemplate', function onDisableCreateTemplate() {
             $window.requestAnimationFrame(function _onDisableCreateTemplate() {
               templates['aoe'].element.style.visibility = 'hidden';
               templates['spray'].element.style.visibility = 'hidden';
               templates['wall'].element.style.visibility = 'hidden';
             });
-          });
+          }, scope);
         }
       };
       function createAoE(document, svgNS, element) {

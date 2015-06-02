@@ -31,7 +31,7 @@ angular.module('clickApp.directives')
           element[0]
             .querySelector('#menu-toggle')
             .addEventListener('click', toggleMenuClick);
-          scope.$on('toggleMenu', toggleMenuClick);
+          scope.onGameEvent('toggleMenu', toggleMenuClick, scope);
 
           var rect = gameview.getBoundingClientRect();
           gameview.style.width = (rect.height)+'px';

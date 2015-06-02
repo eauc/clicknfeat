@@ -8,14 +8,12 @@ angular.module('clickApp.directives')
         restrict: 'A',
         link: function(scope, element, attrs) {
           console.log('gameLoading');
-          scope.$on('gameLoading', function() {
-            console.log('on gameLoading');
+          scope.onGameEvent('gameLoading', function() {
             element[0].style.display = 'block';
-          });
-          scope.$on('gameLoaded', function() {
-            console.log('on gameLoaded');
+          }, scope);
+          scope.onGameEvent('gameLoaded', function() {
             element[0].style.display = 'none';
-          });
+          }, scope);
         }
       };
     }

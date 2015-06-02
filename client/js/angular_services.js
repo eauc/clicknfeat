@@ -4,6 +4,9 @@ angular.module('clickApp.services')
       return self.localStorage;
     }
   ])
+  .factory('pubSub', [
+    pubSubServiceFactory
+  ])
   .factory('jsonStringifier', [
     jsonStringifierServiceFactory
   ])

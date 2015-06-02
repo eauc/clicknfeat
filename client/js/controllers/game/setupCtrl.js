@@ -12,12 +12,17 @@ angular.module('clickApp.controllers')
              gameService) {
       console.log('init gameSetupCtrl');
 
-      $scope.board_name = gameBoardService.name($scope.game.board);
-      $scope.$on('changeBoard', function() {
+      if(R.exists($scope.game)) {
+        $scope.board_name = gameBoardService.name($scope.game.board);
+        $scope.scenario_name = gameScenarioService.name($scope.game.scenario);
+        $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
+                                                                 $scope.scenarios);
+      }
+      $scope.onGameEvent('changeBoard', function() {
         $scope.board_name = gameBoardService.name($scope.game.board);
 
         $scope.deferDigest($scope);
-      });
+      }, $scope);
       $scope.doSetBoard = function doSetBoard() {
         var board = gameBoardService.forName($scope.board_name,
                                              $scope.boards);
@@ -36,15 +41,12 @@ angular.module('clickApp.controllers')
         $scope.doSetBoard();
       };
 
-      $scope.scenario_name = gameScenarioService.name($scope.game.scenario);
-      $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
-                                                               $scope.scenarios);
-      $scope.$on('changeScenario', function() {
+      $scope.onGameEvent('changeScenario', function() {
         $scope.scenario_name = gameScenarioService.name($scope.game.scenario);
         $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
                                                                  $scope.scenarios);
         $scope.deferDigest($scope);
-      });
+      }, $scope);
       $scope.doSetScenario = function doSetScenario() {
         var scenario = gameScenarioService.forName($scope.scenario_name,
                                                    $scope.scenario_group);

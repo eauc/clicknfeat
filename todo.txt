@@ -1,9 +1,6 @@
-template - wall
-template - spray
-pubSub
 ruler
-selectionBox
 model
+selectionBox
 layers - deploiement
 online - users login
 online - users chat + notification

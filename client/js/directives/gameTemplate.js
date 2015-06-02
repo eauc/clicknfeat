@@ -30,14 +30,15 @@ angular.module('clickApp.directives')
 
           var element = templates[template.state.type].create(svgNS, el[0], template);
 
-          scope.$on('flipMap', function onFlipMap() {
+          scope.onGameEvent('flipMap', function onFlipMap() {
             labelElementService.updateOnFlipMap(map, template.state, element.label);
-          });
+          }, scope);
           function updateTemplate() {
             templates[template.state.type].update(map, scope, template, element);
           }
           updateTemplate();
-          scope.$on('changeTemplate-'+template.state.stamp, updateTemplate);
+          scope.onGameEvent('changeTemplate-'+template.state.stamp,
+                            updateTemplate, scope);
         }
       };
     }
@@ -50,7 +51,7 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-          scope.digestOnGameEvent(scope, 'createTemplate');
+          scope.digestOnGameEvent('createTemplate', scope);
         }
       };
     }
