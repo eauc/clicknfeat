@@ -67,6 +67,12 @@ angular.module('clickApp', [
         controller: 'gameSetupCtrl',
         data: { hide_nav: true }
       })
+      .state('game.save', {
+        url: '/save',
+        templateUrl: 'partials/game/save.html',
+        controller: 'gameSaveCtrl',
+        data: { hide_nav: true }
+      })
       .state('game.help', {
         url: '/help',
         templateUrl: 'partials/game/help.html',

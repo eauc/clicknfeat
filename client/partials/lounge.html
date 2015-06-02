@@ -43,6 +43,15 @@
               ng-disabled="localGamesSelectionIsEmpty()">
         Delete Game
       </button>
+        <label class="control-label"
+               for="import-file">
+          Import game file :
+        </label>
+        <input style="display: inline;"
+               id="import-file"
+               type="file"
+               multiple
+               ea-file="doOpenLocalGameFile(file)" />
     </div>
   </div>
 </div>

@@ -10,6 +10,8 @@ describe('local game', function() {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
         mockReturnPromise(this.gamesService.loadLocalGames);
+        this.fileImportService = spyOnService('fileImport');
+        mockReturnPromise(this.fileImportService.read);
         
         this.createController = function() {
           this.scope = $rootScope.$new();
@@ -43,6 +45,7 @@ describe('local game', function() {
         this.createController();
         this.scope.user = { name: 'user' };
         this.scope.local_games = ['game1','game2'];
+        this.gamesService.newLocalGame._retVal = ['game1','game2','new_game'];
       });
 
       it('should create a new game', function() {
@@ -51,8 +54,8 @@ describe('local game', function() {
       });
 
       it('should store the new game locally', function() {
-        expect(this.gamesService.storeLocalGames)
-          .toHaveBeenCalledWith(['game1','game2','game.create.returnValue']);
+        expect(this.gamesService.newLocalGame)
+          .toHaveBeenCalledWith('game.create.returnValue', ['game1','game2']);
       });
 
       it('should go to game page', function() {
@@ -61,6 +64,42 @@ describe('local game', function() {
             where: 'offline',
             id: 2
           });
+      });
+    });
+    
+
+    when('user import local game file', function() {
+      this.scope.doOpenLocalGameFile(['file']);
+    }, function() {
+      beforeEach(function() {
+        this.createController();
+        this.scope.local_games = ['game1','game2'];
+        this.gamesService.newLocalGame._retVal = ['game1','game2','new_game'];
+      });
+
+      it('should read game file', function() {
+        expect(this.fileImportService.read)
+          .toHaveBeenCalledWith('json', 'file');
+      });
+
+      when('read succeeds', function() {
+      }, function() {
+        it('should store the new game locally', function() {
+          this.fileImportService.read.resolve('new_game');
+          
+          expect(this.gamesService.newLocalGame)
+            .toHaveBeenCalledWith('new_game', ['game1','game2']);
+        });
+
+        it('should go to game page', function() {
+          this.fileImportService.read.resolve('new_game');
+          
+          expect(this.scope.goToState)
+            .toHaveBeenCalledWith('game', {
+              where: 'offline',
+              id: 2
+            });
+        });
       });
     });
     
@@ -117,11 +156,6 @@ describe('local game', function() {
       'games',
       function(gamesService) {
         this.gamesService = gamesService;
-
-        this.gameService = spyOnService('game');
-        this.gameService.toJson.and.callFake(function(g) {
-          return g+'.toJson';
-        });
       }
     ]));
 
@@ -147,14 +181,29 @@ describe('local game', function() {
       });
     });
 
-    describe('storeLocalGames(<games>)', function() {
+    describe('newLocalGame(<game>)', function() {
+      it('should return appended games list', function() {
+        expect(this.gamesService.newLocalGame('game3', ["game1","game2"]))
+          .toEqual(["game1","game2","game3"]);
+      });
+
       it('should append new game to local games and store them', function() {
+        this.gamesService.newLocalGame('game3', ["game1","game2"]);
+
+        expect(this.localStorage.setItem)
+          .toHaveBeenCalledWith('clickApp.local_games',
+                                '["game1","game2","game3"]');
+      });
+    });
+
+    describe('storeLocalGames(<games>)', function() {
+      it('should store games', function() {
         this.gamesService.storeLocalGames(["game1","game2"]);
 
         expect(this.localStorage.setItem)
           .toHaveBeenCalledWith('clickApp.local_games',
-                                '[game1.toJson,game2.toJson]');
+                                '["game1","game2"]');
       });
-    });
-  });
+    }); 
+ });
 });

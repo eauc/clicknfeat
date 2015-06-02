@@ -32,7 +32,7 @@ angular.module('clickApp.services')
   .factory('games', [
     'localStorage',
     'jsonParser',
-    'game',
+    'jsonStringifier',
     gamesServiceFactory
   ])
   .factory('settings', [

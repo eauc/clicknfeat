@@ -2,7 +2,7 @@
 
 self.gamesServiceFactory = function gamesServiceFactory(localStorageService,
                                                         jsonParserService,
-                                                        gameService) {
+                                                        jsonStringifierService) {
   var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
   var gamesService = {
     loadLocalGames: function() {
@@ -14,9 +14,14 @@ self.gamesServiceFactory = function gamesServiceFactory(localStorageService,
         });
     },
     storeLocalGames: function(games) {
-      var json = '['+R.join(',',R.map(gameService.toJson, games))+']';
+      var json = jsonStringifierService.stringify(games);
       localStorageService.setItem(LOCAL_GAMES_STORAGE_KEY, json);
-    }
+    },
+    newLocalGame: function(game, local_games) {
+      var ret = R.append(game, local_games);
+      gamesService.storeLocalGames(ret);
+      return ret;
+    },
   };
   return gamesService;
 };

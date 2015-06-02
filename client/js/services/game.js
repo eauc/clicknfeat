@@ -15,7 +15,8 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
       return new_game;
     },
     load: function gameLoad(scope, data) {
-      var game = R.deepExtend({
+      var game = Object.create(game_proto);
+      game = R.deepExtend(game, {
         players: {
           p1: { name: null },
           p2: { name: null }
@@ -32,10 +33,7 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
       return game;
     },
     toJson: function gameToJson(game) {
-      var json = jsonStringifierService.stringify(R.pick([
-        'players', 'commands', 'undo'
-      ], game));
-      return json;
+      return jsonStringifierService.stringify(game_proto.toJSON.apply(game));
     },
     playerName: function gamePlayerName(p, game) {
       return R.defaultTo('John Doe', R.path(['players',p,'name'], game));
@@ -78,6 +76,13 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
       scope.saveGame(game);
       scope.gameEvent('command', 'replay');
     },
+  };
+  var game_proto = {
+    toJSON: function() {
+      return R.pick([
+        'players', 'commands', 'undo'
+      ], this);
+    }
   };
   function gameReplayAll(scope, game) {
     if(R.isEmpty(game.commands)) return;

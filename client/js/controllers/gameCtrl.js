@@ -49,8 +49,10 @@ angular.module('clickApp.controllers')
         console.log('save game', $scope.game);
         $scope.local_games[$scope.game_index] = $scope.game;
         gamesService.storeLocalGames($scope.local_games);
+        $scope.gameEvent('saveGame');
       };
 
+      $scope.modes = modesService.init($scope);
       $scope.doModeAction = function doModeAction(action) {
         modesService.currentModeAction(action, $scope, $scope.modes);
       };
@@ -96,7 +98,6 @@ angular.module('clickApp.controllers')
         if($state.current.name === 'game') {
           $scope.goToState('.main');
         } 
-        $scope.modes = modesService.init($scope);
         $scope.create = {};
         $scope.game = gameService.load($scope, $scope.game);
       });

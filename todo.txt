@@ -1,5 +1,4 @@
-save settings as file
-settings reset to default
+game help bug report dump
 
 template - wall
 template - spray

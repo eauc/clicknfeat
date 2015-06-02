@@ -6,10 +6,12 @@ angular.module('clickApp.controllers')
     'user',
     'game',
     'games',
+    'fileImport',
     function($scope,
              userService,
              gameService,
-             gamesService) {
+             gamesService,
+             fileImportService) {
       console.log('init loungeCtrl');
       $scope.checkUser();
 
@@ -27,18 +29,33 @@ angular.module('clickApp.controllers')
         return R.isEmpty($scope.local_games_selection);
       };
       $scope.setLocalGamesSelection = function(index) {
-        $scope.local_games_selection = [index];
+        if(R.isEmpty($scope.local_games)) {
+          $scope.local_games_selection = [];
+        }
+        else {          
+          $scope.local_games_selection = [ Math.min(R.length($scope.local_games)-1,
+                                                    index)
+                                         ];
+        }
         console.log('local_games_selection', $scope.local_games_selection);
       };
 
+      function loadNewLocalGame(game) {
+        $scope.local_games = gamesService.newLocalGame(game, $scope.local_games);
+        $scope.goToState('game', { where: 'offline', id: R.length($scope.local_games)-1 });
+      }
       $scope.doCreateLocalGame = function doCreateLocalGame() {
         var game = gameService.create($scope.user);
-        var index = R.length($scope.local_games);
-
-        $scope.local_games = R.append(game, $scope.local_games);
-        gamesService.storeLocalGames($scope.local_games);
-
-        $scope.goToState('game', { where: 'offline', id: index });
+        loadNewLocalGame(game);
+      };
+      $scope.doOpenLocalGameFile = function doOpenLocalGameFile(files) {
+        fileImportService.read('json', files[0])
+          .then(function(game) {
+            loadNewLocalGame(game);
+          })
+          .catch(function() {
+            console.log('Failed to open local game file');
+          });
       };
       $scope.doLoadLocalGame = function doLoadLocalGame() {
         $scope.goToState('game', { where: 'offline', id: $scope.local_games_selection[0] });
@@ -47,6 +64,7 @@ angular.module('clickApp.controllers')
         $scope.local_games = R.remove($scope.local_games_selection[0], 1,
                                       $scope.local_games);
         gamesService.storeLocalGames($scope.local_games);
+        $scope.setLocalGamesSelection($scope.local_games_selection[0]);
       };
     }
   ]);
