@@ -95,7 +95,9 @@ describe('load game', function() {
             undo: [],
             dice: [],
             templates: { active: [], locked: [] },
-            template_selection: { local: { stamps: [] } },
+            template_selection: { local: { stamps: [] },
+                                  remote: { stamps: [] }
+                                },
           });
       });
 

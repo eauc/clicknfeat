@@ -175,9 +175,9 @@ describe('create template', function() {
           .toBe('gameTemplates.add.returnValue');
       });
 
-      it('should set templateSelection to new template', function() {
-        expect(this.gameTemplateSelectionService.setLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+      it('should set local templateSelection to new template', function() {
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
       });
 
       it('should emit createTemplate event', function() {
@@ -207,7 +207,8 @@ describe('create template', function() {
         ]);
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
-
+        this.templateService.create._retVal = { state: this.ctxt.template };
+        
         this.createTemplateCommandService.replay(this.ctxt, this.scope, this.game);
       });
 
@@ -218,9 +219,14 @@ describe('create template', function() {
 
       it('should add new template to <game> templates', function() {
         expect(this.gameTemplatesService.add)
-          .toHaveBeenCalledWith('template.create.returnValue', 'templates');
+          .toHaveBeenCalledWith({ state: { stamp: 'stamp' } }, 'templates');
         expect(this.game.templates)
           .toBe('gameTemplates.add.returnValue');
+      });
+
+      it('should set remote templateSelection to new template', function() {
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('remote', 'stamp', this.scope, 'selection');
       });
 
       it('should emit createTemplate event', function() {
@@ -252,8 +258,11 @@ describe('create template', function() {
       });
 
       it('should remove <ctxt.template> from templateSelection', function() {
-        expect(this.gameTemplateSelectionService.removeFromLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', 'stamp', this.scope,
+                                'gameTemplateSelection.removeFrom.returnValue');
       });
 
       it('should emit createTemplate event', function() {
@@ -339,6 +348,9 @@ describe('create template', function() {
 
       when('<state.type> is known', function() {
         this.type = 'aoe';
+        this.aoeTemplateService.create.and.callFake(function(t) {
+          return R.clone(t);
+        });
       }, function() {
         it('should proxy <type> create', function() {
           this.templateService.create({ type: this.type });
@@ -364,16 +376,29 @@ describe('create template', function() {
             .toHaveBeenCalledWith({
               state: {
                 type: 'aoe',
-                x: 1, y: 4, r: 0,
-                l: [ 'label' ],
-                stamp: 'stamp',
+                x: 0, y: 0, r: 0,
+                l: [],
+                stamp: 'newGuid',
               }
             });
         });
 
         it('should return <type>.create value', function() {
-          expect(this.templateService.create({ type: this.type }))
-            .toBe('aoeTemplate.create.returnValue');
+          var ret = this.templateService.create({
+            type: this.type,
+            x: 1, y: 4,
+            l: ['label'],
+            stamp: 'stamp'
+          });
+          expect(ret)
+            .toEqual({
+              state: {
+                type: 'aoe',
+                x: 1, y: 4, r: 0,
+                l: [ 'label' ],
+                stamp: 'stamp'
+              }
+            });
         });
       });
     });

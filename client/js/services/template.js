@@ -65,15 +65,18 @@ self.templateServiceFactory = function templateServiceFactory(settingsService,
         return;
       }
       var template = {
-        state: R.deepExtend({
+        state: {
+          type: temp.type,
           x: 0,
           y: 0,
           r: 0,
           l: [],
           stamp: R.guid()
-        }, temp)
+        }
       };
-      return TEMP_REGS[temp.type].create(template);
+      template = TEMP_REGS[temp.type].create(template);
+      template.state = R.deepExtend(template.state, temp);
+      return template;
     },
     state: function templateState(template) {
       return R.prop('state', template);

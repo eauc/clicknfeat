@@ -26,17 +26,26 @@ angular.module('clickApp.directives')
           parent.appendChild(line);
 
           var label = labelElementService.create(svgNS, parent);
-
+          
           return { aoe: circle,
                    dir: line,
                    label: label,
                  };
         },
-        update: function aoeTemplateElementUpdate(map, scope, template, aoe) {
-          var selected = gameTemplateSelectionService.inLocal(template.state.stamp,
-                                                              scope.game.template_selection);
-          var stroke_color = ( selected ? '#0F0' : '#C60' );
-          var dir_visibility = ( selected ? 'visible' : 'hidden' );
+        update: function aoeTemplateElementUpdate(map, scope, selection, template, aoe) {
+          selection = R.defaultTo(scope.game.template_selection, selection);
+          var local =
+              gameTemplateSelectionService.in('local', template.state.stamp,
+                                              selection);
+          var remote =
+              gameTemplateSelectionService.in('remote', template.state.stamp,
+                                              selection);
+          var selected = (local || remote);
+          var stroke_color = ( selected ?
+                               ( local ? '#0F0' : '#FFF') :
+                               '#C60'
+                             );
+          var dir_visibility = ( local ? 'visible' : 'hidden' );
 
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);

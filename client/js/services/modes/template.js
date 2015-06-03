@@ -8,11 +8,11 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
                                                                       gameTemplateSelectionService) {
   var template_actions = Object.create(templateLockedModeService.actions);
   template_actions.delete = function templateDelete(scope) {
-    var target = gameTemplateSelectionService.getLocal(scope.game.template_selection);
+    var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('deleteTemplates', [target], scope, scope.game);
   };
   template_actions.lock = function templateLock(scope) {
-    var target = gameTemplateSelectionService.getLocal(scope.game.template_selection);
+    var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('lockTemplates', [target], true, scope, scope.game);
     modesService.switchToMode('TemplateLocked', scope, scope.modes);
   };
@@ -28,11 +28,11 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
   ];
   R.forEach(function(move) {
     template_actions[move[0]] = function templateMove(scope) {
-      var target = gameTemplateSelectionService.getLocal(scope.game.template_selection);
+      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
       gameService.executeCommand('onTemplates', move[0], false, [target], scope, scope.game);
     };
     template_actions[move[0]+'Small'] = function templateMove(scope) {
-      var target = gameTemplateSelectionService.getLocal(scope.game.template_selection);
+      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
       gameService.executeCommand('onTemplates', move[0], true, [target], scope, scope.game);
     };
   }, moves);
@@ -48,8 +48,9 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     template_actions.dragStartTemplate = function templateDragStartTemplate(scope, event) {
       drag_template_start_state = R.clone(event.target.state);
       template_actions.dragTemplate(scope, event);
-      gameTemplateSelectionService.setLocal(event.target.state.stamp,
-                                            scope, scope.game.template_selection);
+      scope.game.template_selection =
+        gameTemplateSelectionService.set('local', event.target.state.stamp,
+                                         scope, scope.game.template_selection);
     };
     template_actions.dragTemplate = function templateDragTemplate(scope, event) {
       updateStateWithDelta(event, event.target.state);

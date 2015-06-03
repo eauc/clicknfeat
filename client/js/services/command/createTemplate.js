@@ -15,9 +15,9 @@ self.createTemplateCommandServiceFactory =
           desc: temp.type,
         };
         game.templates = gameTemplatesService.add(template, game.templates);
-        gameTemplateSelectionService.setLocal(template.state.stamp,
-                                              scope,
-                                              game.template_selection);
+        game.template_selection =
+          gameTemplateSelectionService.set('local', template.state.stamp,
+                                           scope, game.template_selection);
         scope.gameEvent('createTemplate');
         return ctxt;
       },
@@ -26,13 +26,19 @@ self.createTemplateCommandServiceFactory =
         if(R.isNil(template)) return;
 
         game.templates = gameTemplatesService.add(template, game.templates);
+        game.template_selection =
+          gameTemplateSelectionService.set('remote', template.state.stamp,
+                                           scope, game.template_selection);
         scope.gameEvent('createTemplate');
       },
       undo: function createTemplateUndo(ctxt, scope, game) {
         game.templates = gameTemplatesService.removeStamp(ctxt.template.stamp, game.templates);
-        gameTemplateSelectionService.removeFromLocal(ctxt.template.stamp,
-                                                     scope,
-                                                     game.template_selection);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('local', ctxt.template.stamp,
+                                                  scope, game.template_selection);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('remote', ctxt.template.stamp,
+                                                  scope, game.template_selection);
         scope.gameEvent('createTemplate');
       }
     };

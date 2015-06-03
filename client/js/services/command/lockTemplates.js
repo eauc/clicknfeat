@@ -2,7 +2,8 @@
 
 self.lockTemplatesCommandServiceFactory =
   function lockTemplatesCommandServiceFactory(commandsService,
-                                              gameTemplatesService) {
+                                              gameTemplatesService,
+                                              gameTemplateSelectionService) {
     var lockTemplatesCommandService = {
       execute: function lockTemplatesExecute(stamps, lock, scope, game) {
         var filter = (lock ?
@@ -31,6 +32,9 @@ self.lockTemplatesCommandServiceFactory =
                       gameTemplatesService.unlockStamps
                      );
         game.templates = action(ctxt.stamps, game.templates);
+        game.template_selection =
+          gameTemplateSelectionService.set('remote', R.last(ctxt.stamps),
+                                           scope, game.template_selection);
         scope.gameEvent('createTemplate');
       },
       undo: function lockTemplatesUndo(ctxt, scope, game) {
@@ -39,6 +43,9 @@ self.lockTemplatesCommandServiceFactory =
                       gameTemplatesService.lockStamps
                      );
         game.templates = action(ctxt.stamps, game.templates);
+        game.template_selection =
+          gameTemplateSelectionService.set('remote', R.last(ctxt.stamps),
+                                           scope, game.template_selection);
         scope.gameEvent('createTemplate');
       }
     };

@@ -30,12 +30,12 @@ describe('move template', function() {
         this.templateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = 'stamp';
         });
 
         it('should get current selection', function() {
-          expect(this.gameTemplateSelectionService.getLocal)
-            .toHaveBeenCalledWith('selection');
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
         });
 
         it('should execute onTemplates/'+e.action+' command', function() {
@@ -49,12 +49,12 @@ describe('move template', function() {
         this.templateModeService.actions[e.action+'Small'](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = 'stamp';
         });
 
         it('should get current selection', function() {
-          expect(this.gameTemplateSelectionService.getLocal)
-            .toHaveBeenCalledWith('selection');
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
         });
 
         it('should execute onTemplates/'+e.action+'Small command', function() {

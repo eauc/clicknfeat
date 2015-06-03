@@ -19,8 +19,8 @@ describe('select template', function() {
         .clickTemplate(this.scope, this.event);
     }, function() {
       it('should set gameTemplateSelection', function() {
-        expect(this.gameTemplateSelectionService.setLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
       });
     });
 
@@ -35,8 +35,8 @@ describe('select template', function() {
       });
 
       it('should set gameTemplateSelection', function() {
-        expect(this.gameTemplateSelectionService.setLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
       });
     });
   });
@@ -63,8 +63,8 @@ describe('select template', function() {
           .actions[e.action+'Map'](this.scope);
       }, function() {
         it('should clear gameTemplateSelection', function() {
-          expect(this.gameTemplateSelectionService.clearLocal)
-            .toHaveBeenCalledWith(this.scope, 'selection');
+          expect(this.gameTemplateSelectionService.clear)
+            .toHaveBeenCalledWith('local', this.scope, 'selection');
         });
       });
     });
@@ -84,110 +84,130 @@ describe('select template', function() {
       }
     ]));
 
-    when('setLocal(<stamp>, <scope>)', function() {
-      this.gameTemplateSelectionService.setLocal('stamp', this.scope,
-                                                 this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.selection = { local: { stamps: [] } };
-      });
+    using([
+      [ 'where' ],
+      [ 'local' ],
+      [ 'remote' ],
+    ], function(e, d) {
+      when('set(<where>, <stamp>, <scope>)', function() {
+        this.ret = this.gameTemplateSelectionService.set(e.where, 'stamp',
+                                                         this.scope, this.selection);
+      }, function() {
+        beforeEach(function() {
+          this.selection = { local: { stamps: [] },
+                             remote: { stamps: [] }
+                           };
+        });
 
-      it('should set local selection', function() {
-        expect(this.gameTemplateSelectionService.inLocal('stamp', this.selection))
-          .toBeTruthy();
-      });
+        it('should set <where> selection', function() {
+          expect(this.gameTemplateSelectionService.in(e.where, 'stamp', this.ret))
+            .toBeTruthy();
+        });
 
-      it('should emit changeTemplate event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTemplate-stamp');
-      });
+        it('should emit changeTemplate event', function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeTemplate-stamp', this.ret);
+        });
 
-      using([
-        [ 'isLocked', 'mode'],
-        [ true      , 'TemplateLocked' ],
-        [ false     , 'Template' ],
-      ], function(e,d) {
-        when('<stamp> is '+(e.isLocked?'':'not ')+'locked', function() {
-          this.gameTemplatesService.isLocked._retVal = e.isLocked;
+        if(e.where === 'local') {
+          using([
+            [ 'isLocked', 'mode'],
+            [ true      , 'TemplateLocked' ],
+            [ false     , 'Template' ],
+          ], function(e,d) {
+            when('<stamp> is '+(e.isLocked?'':'not ')+'locked', function() {
+              this.gameTemplatesService.isLocked._retVal = e.isLocked;
+            }, function() {
+              it('should switch to '+e.mode+' mode', function() {            
+                expect(this.modesService.switchToMode)
+                  .toHaveBeenCalledWith(e.mode, this.scope, 'modes');
+              });
+            });
+          });
+        }
+        
+        when('there is a previous selection', function() {
+          this.selection[e.where].stamps = [ 'previous' ];
         }, function() {
-          it('should switch to '+e.mode+' mode', function() {            
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith(e.mode, this.scope, 'modes');
+          it('should emit changeTemplate event', function() {            
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('changeTemplate-previous', this.ret);
           });
         });
       });
 
-      when('there is a previous selection', function() {
-        this.selection.local.stamps = [ 'previous' ];
+      when('removeFrom(<where>, <stamp>, <scope>)', function() {
+        this.ret = this.gameTemplateSelectionService.removeFrom(e.where, 'stamp',
+                                                                this.scope, this.selection);
       }, function() {
-        it('should emit changeTemplate event', function() {            
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-previous');
+        when('<stamp> is in previous selection', function() {
+          this.selection = { local: { stamps: ['stamp'] },
+                             remote: { stamps: ['stamp'] }
+                           };
+        }, function() {
+          it('should clear <where> selection', function() {
+            expect(this.gameTemplateSelectionService.in(e.where, 'stamp', this.ret))
+              .toBeFalsy();
+          });
+
+          if(e.where === 'local') {
+            it('should switch to Default mode', function() {            
+              expect(this.modesService.switchToMode)
+                .toHaveBeenCalledWith('Default', this.scope, 'modes');
+            });
+          }
+
+          it('should emit changeTemplate event', function() {            
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('changeTemplate-stamp', this.ret);
+          });
+        });
+
+        when('<stamp> is not in previous selection', function() {
+          this.selection = { local: { stamps: ['other'] },
+                             remote: { stamps: ['other'] }
+                           };
+        }, function() {
+          it('should do nothing', function() {
+            expect(this.gameTemplateSelectionService.in(e.where, 'other', this.selection))
+              .toBeTruthy();
+            expect(this.modesService.switchToMode)
+              .not.toHaveBeenCalled();
+            expect(this.scope.gameEvent)
+              .not.toHaveBeenCalled();
+          });
         });
       });
-    });
 
-    when('removeFromLocal(<stamp>, <scope>)', function() {
-      this.gameTemplateSelectionService.removeFromLocal('stamp', this.scope,
-                                                        this.selection);
-    }, function() {
-      when('<stamp> is in previous selection', function() {
-        this.selection = { local: { stamps: ['stamp'] } };
+      when('clear(<where>, <scope>)', function() {
+        this.ret = this.gameTemplateSelectionService.clear(e.where, this.scope,
+                                                           this.selection);
       }, function() {
-        it('should clear local selection', function() {
-          expect(this.gameTemplateSelectionService.inLocal('stamp', this.selection))
+        beforeEach(function() {
+          this.selection = { local: { stamps: ['stamp'] },
+                             remote: { stamps: ['stamp'] }
+                           };
+        });
+
+        it('should clear <where> selection', function() {
+          expect(this.gameTemplateSelectionService.in(e.where, 'stamp', this.ret))
             .toBeFalsy();
         });
 
-        it('should switch to Default mode', function() {            
-          expect(this.modesService.switchToMode)
-            .toHaveBeenCalledWith('Default', this.scope, 'modes');
-        });
+        if(e.where === 'local') {
+          it('should switch to Default mode', function() {            
+            expect(this.modesService.switchToMode)
+              .toHaveBeenCalledWith('Default', this.scope, 'modes');
+          });
+        }
 
-        it('should emit changeTemplate event', function() {            
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp');
-        });
-      });
-
-      when('<stamp> is not in previous selection', function() {
-        this.selection = { local: { stamps: ['other'] } };
-      }, function() {
-        it('should do nothing', function() {
-          expect(this.gameTemplateSelectionService.inLocal('other', this.selection))
-            .toBeTruthy();
-          expect(this.modesService.switchToMode)
-            .not.toHaveBeenCalled();
-          expect(this.scope.gameEvent)
-            .not.toHaveBeenCalled();
-        });
-      });
-    });
-
-    when('clearLocal(<scope>)', function() {
-      this.gameTemplateSelectionService.clearLocal(this.scope,
-                                                   this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.selection = { local: { stamps: ['stamp'] } };
-      });
-
-      it('should clear local selection', function() {
-        expect(this.gameTemplateSelectionService.inLocal('stamp', this.selection))
-          .toBeFalsy();
-      });
-
-      it('should switch to Default mode', function() {            
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Default', this.scope, 'modes');
-      });
-
-      when('there is a previous selection', function() {
-        this.selection.local.stamps = [ 'previous' ];
-      }, function() {
-        it('should emit changeTemplate event', function() {            
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-previous');
+        when('there is a previous selection', function() {
+          this.selection[e.where].stamps = [ 'previous' ];
+        }, function() {
+          it('should emit changeTemplate event', function() {            
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('changeTemplate-previous', this.ret);
+          });
         });
       });
     });

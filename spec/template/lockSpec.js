@@ -21,12 +21,12 @@ describe('lock template', function() {
       this.templateLockedModeService.actions.lock(this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = 'stamp';
       });
 
       it('should get current selection', function() {
-        expect(this.gameTemplateSelectionService.getLocal)
-          .toHaveBeenCalledWith('selection');
+        expect(this.gameTemplateSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
       });
 
       it('should execute lockTemplates command', function() {
@@ -63,12 +63,12 @@ describe('lock template', function() {
       this.templateModeService.actions.lock(this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = 'stamp';
       });
 
       it('should get current selection', function() {
-        expect(this.gameTemplateSelectionService.getLocal)
-          .toHaveBeenCalledWith('selection');
+        expect(this.gameTemplateSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
       });
 
       it('should execute lockTemplates command', function() {
@@ -92,6 +92,7 @@ describe('lock template', function() {
         this.lockTemplatesCommandService = lockTemplatesCommandService;
         this.templateService = spyOnService('template');
         this.gameTemplatesService = spyOnService('gameTemplates');
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       }
     ]));
 
@@ -174,6 +175,11 @@ describe('lock template', function() {
             expect(this.game.templates)
               .toBe('gameTemplates.'+e.action+'.returnValue');
           });
+
+          it('should set remote templateSelection to modified templates', function() {
+            expect(this.gameTemplateSelectionService.set)
+              .toHaveBeenCalledWith('remote', 'stamp2', this.scope, 'selection');
+          });
           
           it('should emit createTemplate gameEvent', function() {
             expect(this.scope.gameEvent)
@@ -210,6 +216,11 @@ describe('lock template', function() {
               .toHaveBeenCalledWith(['stamp1', 'stamp2'], 'templates');
             expect(this.game.templates)
               .toBe('gameTemplates.'+e.action+'.returnValue');
+          });
+
+          it('should set remote templateSelection to modified templates', function() {
+            expect(this.gameTemplateSelectionService.set)
+              .toHaveBeenCalledWith('remote', 'stamp2', this.scope, 'selection');
           });
           
           it('should emit createTemplate gameEvent', function() {

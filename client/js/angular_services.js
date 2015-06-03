@@ -133,12 +133,14 @@ angular.module('clickApp.services')
   .factory('lockTemplatesCommand', [
     'commands',
     'gameTemplates',
+    'gameTemplateSelection',
     lockTemplatesCommandServiceFactory
   ])
   .factory('onTemplatesCommand', [
     'commands',
     'template',
     'gameTemplates',
+    'gameTemplateSelection',
     onTemplatesCommandServiceFactory
   ])
   .factory('rollDiceCommand', [

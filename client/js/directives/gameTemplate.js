@@ -33,8 +33,8 @@ angular.module('clickApp.directives')
           scope.onGameEvent('flipMap', function onFlipMap() {
             labelElementService.updateOnFlipMap(map, template.state, element.label);
           }, scope);
-          function updateTemplate() {
-            templates[template.state.type].update(map, scope, template, element);
+          function updateTemplate(event, selection) {
+            templates[template.state.type].update(map, scope, selection, template, element);
           }
           updateTemplate();
           scope.onGameEvent('changeTemplate-'+template.state.stamp,

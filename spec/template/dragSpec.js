@@ -23,8 +23,8 @@ describe('move template', function() {
       this.defaultModeService.actions.dragStartTemplate(this.scope, this.event);
     }, function() {
       it('should set current selection', function() {
-        expect(this.gameTemplateSelectionService.setLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
       });
 
       it('should forward dragStart action to new mode', function() {
@@ -64,8 +64,8 @@ describe('move template', function() {
       });
 
       it('should set current selection', function() {
-        expect(this.gameTemplateSelectionService.setLocal)
-          .toHaveBeenCalledWith('stamp', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
       });
 
       it('should update target position', function() {

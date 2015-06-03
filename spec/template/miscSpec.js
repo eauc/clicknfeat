@@ -12,6 +12,7 @@ describe('misc template', function() {
         this.gameTemplatesService.findStamp.and.callFake(function(s) {
           return { state: { stamp: s } };
         });
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       }
     ]));
 
@@ -101,6 +102,11 @@ describe('misc template', function() {
           .toHaveBeenCalledWith({ stamp: 'after2' }, { state: { stamp: 'after2' } });
       });
 
+      it('should set remote templateSelection to modified templates', function() {
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('remote', 'after2', this.scope, 'selection');
+      });
+
       it('should emit changeTemplate gameEvents', function() {
         expect(this.scope.gameEvent)
           .toHaveBeenCalledWith('changeTemplate-after1');
@@ -136,6 +142,11 @@ describe('misc template', function() {
           .toHaveBeenCalledWith({ stamp: 'before1' }, { state: { stamp: 'before1' } });
         expect(this.templateService.setState)
           .toHaveBeenCalledWith({ stamp: 'before2' }, { state: { stamp: 'before2' } });
+      });
+
+      it('should set remote templateSelection to modified templates', function() {
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('remote', 'before2', this.scope, 'selection');
       });
 
       it('should emit changeTemplate gameEvents', function() {

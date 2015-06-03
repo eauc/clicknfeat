@@ -25,12 +25,12 @@ describe('setSize template', function() {
         this.templateLockedModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = 'stamp';
         });
 
         it('should get current selection', function() {
-          expect(this.gameTemplateSelectionService.getLocal)
-            .toHaveBeenCalledWith('selection');
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
         });
 
         it('should execute onTemplates/setSize command', function() {

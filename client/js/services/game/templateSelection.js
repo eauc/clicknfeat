@@ -6,40 +6,76 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
     create: function templateSelectionCreate() {
       return {
         local: { stamps: [] },
+        remote: { stamps: [] },
       };
     },
-    inLocal: function templateSelectionInLocal(stamp, selection) {
-      var local = R.path(['local','stamps'], selection);
-      return R.find(R.eq(stamp), local);
+    'in': function templateSelectionIn(where, stamp, selection) {
+      var stamps = R.path([where,'stamps'], selection);
+      return R.find(R.eq(stamp), stamps);
     },
-    getLocal: function templateSelectionGetLocal(selection) {
-      return R.path(['local','stamps'], selection)[0];
+    get: function templateSelectionGet(where, selection) {
+      return R.path([where,'stamps'], selection)[0];
     },
-    setLocal: function templateSelectionSetLocal(stamp, scope, selection) {
-      var previous_selection = gameTemplateSelectionService.getLocal(selection);
-      selection.local = R.assoc('stamps', [stamp], selection.local);
-      var mode = (gameTemplatesService.isLocked(stamp, scope.game.templates) ?
-                  'TemplateLocked' : 'Template');
-      modesService.switchToMode(mode, scope, scope.modes);
-      scope.gameEvent('changeTemplate-'+stamp);
-      if(R.exists(previous_selection)) {
-        scope.gameEvent('changeTemplate-'+previous_selection);
+    set: function templateSelectionSet(where, stamp, scope, selection) {
+      var previous_selection = gameTemplateSelectionService.get(where, selection);
+      var ret = R.pipe(
+        R.prop(where),
+        R.assoc('stamps', [stamp]),
+        function(sel) {
+          return R.assoc(where, sel, selection);
+        }
+      )(selection);
+
+      if('local' === where) {
+        var mode = (gameTemplatesService.isLocked(stamp, scope.game.templates) ?
+                    'TemplateLocked' : 'Template');
+        modesService.switchToMode(mode, scope, scope.modes);
       }
+      
+      scope.gameEvent('changeTemplate-'+stamp, ret);
+      if(R.exists(previous_selection)) {
+        scope.gameEvent('changeTemplate-'+previous_selection, ret);
+      }
+
+      return ret;
     },
-    removeFromLocal: function templateSelectionRemoveFromLocal(stamp, scope, selection) {
-      if(gameTemplateSelectionService.inLocal(stamp, selection)) {
-        selection.local = R.assoc('stamps', [], selection.local);
+    removeFrom: function templateSelectionRemoveFrom(where, stamp, scope, selection) {
+      var ret = selection;
+      if(gameTemplateSelectionService.in(where, stamp, selection)) {
+        ret = R.pipe(
+          R.prop(where),
+          R.assoc('stamps', []),
+          function(sel) {
+            return R.assoc(where, sel, selection);
+          }
+        )(selection);
+
+        if('local' === where) {
+          modesService.switchToMode('Default', scope, scope.modes);
+        }
+
+        scope.gameEvent('changeTemplate-'+stamp, ret);
+      }
+      return ret;
+    },
+    clear: function templateSelectionClear(where, scope, selection) {
+      var previous_selection = gameTemplateSelectionService.get(where, selection);
+      var ret = R.pipe(
+        R.prop(where),
+        R.assoc('stamps', []),
+        function(sel) {
+          return R.assoc(where, sel, selection);
+        }
+      )(selection);
+
+      if('local' === where) {
         modesService.switchToMode('Default', scope, scope.modes);
-        scope.gameEvent('changeTemplate-'+stamp);
       }
-    },
-    clearLocal: function templateSelectionRemoveFromLocal(scope, selection) {
-      var previous_selection = gameTemplateSelectionService.getLocal(selection);
-      selection.local = R.assoc('stamps', [], selection.local);
-      modesService.switchToMode('Default', scope, scope.modes);
+
       if(R.exists(previous_selection)) {
-        scope.gameEvent('changeTemplate-'+previous_selection);
+        scope.gameEvent('changeTemplate-'+previous_selection, ret);
       }
+      return ret;
     },
   };
   return gameTemplateSelectionService;

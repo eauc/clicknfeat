@@ -12,6 +12,7 @@ describe('set scenario', function() {
 
         this.createController = function() {
           this.scope = $rootScope.$new();
+          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
           this.scope.game = { board: {}, scenario: {} };
           this.scope.scenarios = ['scenarios'];
 

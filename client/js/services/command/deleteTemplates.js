@@ -16,8 +16,12 @@ self.deleteTemplatesCommandServiceFactory =
 
           ctxt.templates.push(templateService.saveState(template));
           game.templates = gameTemplatesService.removeStamp(stamp, game.templates);
-          gameTemplateSelectionService.removeFromLocal(stamp, scope,
-                                                       game.template_selection);
+          game.template_selection =
+            gameTemplateSelectionService.removeFrom('local', stamp,
+                                                    scope, game.template_selection);
+          game.template_selection =
+            gameTemplateSelectionService.removeFrom('remote', stamp,
+                                                    scope, game.template_selection);
         }, stamps);
         scope.gameEvent('createTemplate');
         return ctxt;
@@ -25,8 +29,12 @@ self.deleteTemplatesCommandServiceFactory =
       replay: function deleteTemplatesReplay(ctxt, scope, game) {
         R.forEach(function(state) {
           game.templates = gameTemplatesService.removeStamp(state.stamp, game.templates);
-          gameTemplateSelectionService.removeFromLocal(state.stamp, scope,
-                                                       game.template_selection);
+          game.template_selection =
+            gameTemplateSelectionService.removeFrom('local', state.stamp,
+                                                    scope, game.template_selection);
+          game.template_selection =
+            gameTemplateSelectionService.removeFrom('remote', state.stamp,
+                                                    scope, game.template_selection);
         }, ctxt.templates);
         scope.gameEvent('createTemplate');
       },
@@ -37,6 +45,9 @@ self.deleteTemplatesCommandServiceFactory =
 
           game.templates = gameTemplatesService.add(template, game.templates);
         }, ctxt.templates);
+        game.template_selection =
+          gameTemplateSelectionService.set('remote', R.last(ctxt.templates).stamp,
+                                           scope, game.template_selection);
         scope.gameEvent('createTemplate');
       }
     };

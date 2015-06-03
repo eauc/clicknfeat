@@ -2,7 +2,8 @@
 
 self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactory(commandsService,
                                                                                   templateService,
-                                                                                  gameTemplatesService) {
+                                                                                  gameTemplatesService,
+                                                                                  gameTemplateSelectionService) {
   var onTemplatesCommandService = {
     execute: function onTemplatesExecute(method /* ...args..., scope, game */) {
       var args = Array.prototype.slice.call(arguments);
@@ -35,6 +36,9 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
           scope.gameEvent('changeTemplate-'+templateService.eventName(template));
         })
       )(ctxt.after);
+      game.template_selection =
+        gameTemplateSelectionService.set('remote', R.last(ctxt.after).stamp,
+                                         scope, game.template_selection);
     },
     undo: function onTemplatesUndo(ctxt, scope, game) {
       R.pipe(
@@ -46,6 +50,9 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
           scope.gameEvent('changeTemplate-'+templateService.eventName(template));
         })
       )(ctxt.before);
+      game.template_selection =
+        gameTemplateSelectionService.set('remote', R.last(ctxt.before).stamp,
+                                         scope, game.template_selection);
     }
   };
   commandsService.registerCommand('onTemplates', onTemplatesCommandService);

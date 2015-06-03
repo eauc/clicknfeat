@@ -19,12 +19,12 @@ describe('delete template', function() {
       this.templateModeService.actions.delete(this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.getLocal._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = 'stamp';
       });
 
       it('should get current selection', function() {
-        expect(this.gameTemplateSelectionService.getLocal)
-          .toHaveBeenCalledWith('selection');
+        expect(this.gameTemplateSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
       });
 
       it('should execute deleteTemplates command', function() {
@@ -92,10 +92,20 @@ describe('delete template', function() {
       });
 
       it('should remove <stamps> from local selection', function() {
-        expect(this.gameTemplateSelectionService.removeFromLocal)
-          .toHaveBeenCalledWith('stamp1', this.scope, 'selection');
-        expect(this.gameTemplateSelectionService.removeFromLocal)
-          .toHaveBeenCalledWith('stamp2', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', 'stamp1', this.scope,
+                                'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', 'stamp1', this.scope,
+                                'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', 'stamp2', this.scope,
+                                'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', 'stamp2', this.scope,
+                                'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.game.template_selection)
+          .toBe('gameTemplateSelection.removeFrom.returnValue');
       });
 
       it('should emit createTemplate gameEvent', function() {
@@ -128,10 +138,20 @@ describe('delete template', function() {
       });
 
       it('should remove <stamps> from local selection', function() {
-        expect(this.gameTemplateSelectionService.removeFromLocal)
-          .toHaveBeenCalledWith('stamp1', this.scope, 'selection');
-        expect(this.gameTemplateSelectionService.removeFromLocal)
-          .toHaveBeenCalledWith('stamp2', this.scope, 'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', 'stamp1', this.scope,
+                                'selection');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', 'stamp1', this.scope,
+                               'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', 'stamp2', this.scope,
+                               'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.gameTemplateSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', 'stamp2', this.scope,
+                               'gameTemplateSelection.removeFrom.returnValue');
+        expect(this.game.template_selection)
+          .toBe('gameTemplateSelection.removeFrom.returnValue');
       });
 
       it('should emit createTemplate gameEvent', function() {
@@ -172,6 +192,11 @@ describe('delete template', function() {
           .toHaveBeenCalledWith({ state: { stamp: 'stamp2' } }, jasmine.any(String));
         expect(this.game.templates)
           .toBe('gameTemplates.add.returnValue');
+      });
+
+      it('should set remote templateSelection to new templates', function() {
+        expect(this.gameTemplateSelectionService.set)
+          .toHaveBeenCalledWith('remote', 'stamp2', this.scope, 'selection');
       });
 
       it('should emit createTemplate event', function() {

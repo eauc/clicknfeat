@@ -35,10 +35,19 @@ angular.module('clickApp.directives')
                    label: label,
                  };
         },
-        update: function sprayTemplateElementUpdate(map, scope, template, spray) {
-          var selected = gameTemplateSelectionService.inLocal(template.state.stamp,
-                                                              scope.game.template_selection);
-          var stroke_color = ( selected ? '#0F0' : '#C60' );
+        update: function sprayTemplateElementUpdate(map, scope, selection, template, spray) {
+          selection = R.defaultTo(scope.game.template_selection, selection);
+          var local =
+              gameTemplateSelectionService.in('local', template.state.stamp,
+                                              selection);
+          var remote =
+              gameTemplateSelectionService.in('remote', template.state.stamp,
+                                              selection);
+          var selected = (local || remote);
+          var stroke_color = ( selected ?
+                               ( local ? '#0F0' : '#FFF') :
+                               '#C60'
+                             );
 
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
