@@ -28,6 +28,7 @@ angular.module('clickApp.services')
   .factory('game', [
     'jsonStringifier',
     'commands',
+    'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
     gameServiceFactory
@@ -64,6 +65,14 @@ angular.module('clickApp.services')
     'gameTemplateSelection',
     defaultModeServiceFactory
   ])
+  .factory('rulerMode', [
+    'modes',
+    'settings',
+    'commonMode',
+    'game',
+    'gameRuler',
+    rulerModeServiceFactory
+  ])
   .factory('createTemplateMode', [
     'modes',
     'commonMode',
@@ -89,6 +98,7 @@ angular.module('clickApp.services')
   ])
   .factory('allModes', [
     'defaultMode',
+    'rulerMode',
     'createTemplateMode',
     'templateLockedMode',
     'templateMode',
@@ -104,6 +114,10 @@ angular.module('clickApp.services')
   .factory('gameScenario', [
     'http',
     gameScenarioServiceFactory
+  ])
+  .factory('gameRuler', [
+    'point',
+    gameRulerServiceFactory
   ])
   .factory('gameTemplates', [
     gameTemplatesServiceFactory
@@ -151,6 +165,11 @@ angular.module('clickApp.services')
     'commands',
     setBoardCommandServiceFactory
   ])
+  .factory('setRulerCommand', [
+    'commands',
+    'gameRuler',
+    setRulerCommandServiceFactory
+  ])
   .factory('setScenarioCommand', [
     'commands',
     setScenarioCommandServiceFactory
@@ -162,6 +181,7 @@ angular.module('clickApp.services')
     'onTemplatesCommand',
     'rollDiceCommand',
     'setBoardCommand',
+    'setRulerCommand',
     'setScenarioCommand',
     function() { return {}; }
   ])

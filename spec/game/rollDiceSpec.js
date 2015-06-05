@@ -1,6 +1,6 @@
 'use strict';
 
-describe('set board', function() {
+describe('roll dice', function() {
   describe('gameMainCtrl', function(c) {
     beforeEach(inject([
       '$rootScope',
@@ -12,6 +12,7 @@ describe('set board', function() {
 
         this.createController = function() {
           this.scope = $rootScope.$new();
+          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
           this.scope.digestOnGameEvent = jasmine.createSpy('digestOnGameEvent');
           this.scope.game = { 'this': 'game' };
 
@@ -27,7 +28,7 @@ describe('set board', function() {
     when('user roll dice', function() {
       this.scope.doRollDice(6, 4);
     }, function() {
-      it('should execute rollDic command', function() {
+      it('should execute rollDice command', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('rollDice',
                                 6, 4,

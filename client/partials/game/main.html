@@ -3,6 +3,17 @@
     <div class="panel-heading">Tools</div>
     <div class="panel-content">
       <button class="btn btn-default"
+              ng-click="doUseRuler()">
+        User<br />Ruler
+      </button>
+      <button class="
+              btn btn-default
+              {{ ruler_displayed ? 'active' : '' }}
+              "
+              ng-click="doToggleShowRuler()">
+        Show<br />Ruler
+      </button>
+      <button class="btn btn-default"
               ng-click="doCreateTemplate('aoe')">
         New<br />AoE
       </button>

@@ -73,5 +73,21 @@ describe('point', function() {
         });
       });
     });
+
+    describe('distanceTo(<other>)', function() {
+      using([
+        ['other', 'distance'],
+        [{x: 240, y: 0}, 240],
+        [{x: 240, y: 120}, 120],
+        [{x: 120, y: 120}, 169.7056274847714],
+      ], function(e, d) {
+        it('should return distance to other point, '+d, function() {
+          expect(this.pointService.distanceTo(e.other, {
+            x: 240,
+            y: 240
+          })).toBe(e.distance);
+        });
+      });
+    });
   });
 });

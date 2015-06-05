@@ -1,4 +1,11 @@
+verif toutes commande replay/undo encapsule dans service
+
 ruler
+- disable click on template when in ruler mode
+- max length
+template
+- deviate
+- aoe to ruler : template mode/ruler mode
 model
 selectionBox
 layers - deploiement

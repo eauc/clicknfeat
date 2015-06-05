@@ -245,6 +245,21 @@ ul.nav-tabs li {
 }
 
 /**************************
+  Ruler
+***************************/
+
+#game-ruler {
+    pointer-events: none;
+}
+
+#game-ruler line {
+    stroke-width:1px;
+    marker-start:url(#ruler-start);
+    marker-end:url(#ruler-end);
+    stroke: #0EE;
+}
+
+/**************************
   Log Menu
 ***************************/
 #game #log-replay-list {

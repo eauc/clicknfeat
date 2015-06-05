@@ -152,6 +152,7 @@ angular.module('clickApp.directives')
                 map.removeAttribute('flipped');
                 map.style.transform = '';
               }
+              scope.gameEvent('mapFlipped');
             };
           })();
 

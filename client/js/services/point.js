@@ -34,6 +34,11 @@ self.pointServiceFactory = function pointServiceFactory() {
     shiftDown: function pointShiftDown(dist, point) {
       return R.assoc('y', point.y + dist, point);
     },
+    distanceTo: function pointDistanceTo(other, point) {
+      return Math.sqrt( Math.pow(other.x - point.x, 2) +
+                        Math.pow(other.y - point.y, 2)
+                      );
+    },
   };
   R.curryService(pointService);
   return pointService;

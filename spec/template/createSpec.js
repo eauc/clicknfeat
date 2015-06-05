@@ -11,6 +11,7 @@ describe('create template', function() {
 
         this.createController = function(params) {
           this.scope = $rootScope.$new();
+          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
           this.scope.modes = 'modes';
           this.scope.create = {};
           this.scope.digestOnGameEvent = function() {};

@@ -35,6 +35,7 @@ angular.module('clickApp.directives')
                                             text_center,
                                             text,
                                             label) {
+          text = R.defaultTo('', text) + '';
           var visibility = R.length(text) > 0 ? 'visible' : 'hidden';
 
           updateLabel(map_flipped, flip_center, visibility, label.label);

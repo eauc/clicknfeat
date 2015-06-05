@@ -30,7 +30,7 @@ angular.module('clickApp.directives')
 
           var element = templates[template.state.type].create(svgNS, el[0], template);
 
-          scope.onGameEvent('flipMap', function onFlipMap() {
+          scope.onGameEvent('mapFlipped', function onMapFlipped() {
             labelElementService.updateOnFlipMap(map, template.state, element.label);
           }, scope);
           function updateTemplate(event, selection) {

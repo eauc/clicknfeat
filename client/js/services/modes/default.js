@@ -17,12 +17,14 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
       gameTemplateSelectionService.set('local', event.target.state.stamp,
                                        scope, scope.game.template_selection);
   };
-
-  default_actions.dragStartTemplate = function templateDragStartTemplate(scope, event) {
+  default_actions.dragStartTemplate = function defaultDragStartTemplate(scope, event) {
     scope.game.template_selection =
       gameTemplateSelectionService.set('local', event.target.state.stamp,
                                        scope, scope.game.template_selection);
     modesService.currentModeAction('dragStartTemplate', scope, event, null, scope.modes);
+  };
+  default_actions.enterRulerMode = function defaultEnterRulerMode(scope, event) {
+    modesService.switchToMode('Ruler', scope, scope.modes);
   };
 
   var default_bindings = Object.create(commonModeService.bindings);

@@ -94,6 +94,20 @@ describe('load game', function() {
             commands: [ 'cmd1', 'cmd2' ],
             undo: [],
             dice: [],
+            ruler: {
+              local: {
+                display: false,
+                start: { x:0, y: 0 },
+                end: { x:0, y: 0 },
+                length: null,
+              },
+              remote: {
+                display: false,
+                start: { x:0, y: 0 },
+                end: { x:0, y: 0 },
+                length: null,
+              },
+            },
             templates: { active: [], locked: [] },
             template_selection: { local: { stamps: [] },
                                   remote: { stamps: [] }
