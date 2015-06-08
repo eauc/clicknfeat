@@ -1,7 +1,6 @@
 verif toutes commande replay/undo encapsule dans service
 
 template
-- deviate
 - deviate max dist
 - aoe to ruler : template mode/ruler mode
 model

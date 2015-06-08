@@ -32,7 +32,7 @@ describe('misc template', function() {
           return t.state.stamp+'State';
         });
         this.templateService.call.and.callFake(function(m, a1, a2, t) {
-          return t.state.stamp+'After_'+m;
+          t.state.stamp += 'After';
         });
       });
 
@@ -50,21 +50,21 @@ describe('misc template', function() {
 
       it('should apply <method> on <stamps>', function() {
         expect(this.templateService.call)
-          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp1' } });
+          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp1After' } });
         expect(this.templateService.call)
-          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp2' } });
+          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp2After' } });
       });
 
       it('should save <stamps> states after change', function() {
         expect(this.ctxt.after)
-          .toEqual(['stamp1After_method', 'stamp2After_method']);
+          .toEqual(['stamp1AfterState', 'stamp2AfterState']);
       });
 
       it('should emit changeTemplate gameEvents', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTemplate-stamp1');
+          .toHaveBeenCalledWith('changeTemplate-stamp1After');
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTemplate-stamp2');
+          .toHaveBeenCalledWith('changeTemplate-stamp2After');
       });
 
       it('should return context', function() {
@@ -158,7 +158,47 @@ describe('misc template', function() {
     });
   });
 
-  describe('templateCommand service', function() {
+  describe('gameTemplates service', function() {
+    beforeEach(inject([
+      'gameTemplates',
+      function(gameTemplatesService) {
+        this.gameTemplatesService = gameTemplatesService;
+        this.templateService = spyOnService('template');
+      }
+    ]));
+
+    describe('onStamp(<stamp>, <method>, <...args...>)', function() {
+      beforeEach(function() {
+        this.templates = {
+          active: [
+            { state: { stamp: 'stamp1' } },
+            { state: { stamp: 'stamp2' } },
+          ],
+          locked: [
+            { state: { stamp: 'stamp3' } },
+          ],
+        };
+      });
+
+      it('should call <method> on <stamp> template', function() {
+        this.gameTemplatesService.onStamp('stamp2',
+                                          'method', 'arg1', 'arg2',
+                                          this.templates);
+        expect(this.templateService.call)
+          .toHaveBeenCalledWith('method', 'arg1', 'arg2',
+                                { state: { stamp: 'stamp2' } });
+
+        this.gameTemplatesService.onStamp('stamp3',
+                                          'method',
+                                          this.templates);
+        expect(this.templateService.call)
+          .toHaveBeenCalledWith('method',
+                                { state: { stamp: 'stamp3' } });
+      });
+    });
+  });
+
+  describe('template service', function() {
     beforeEach(inject([
       'template',
       function(templateService) {
@@ -166,6 +206,16 @@ describe('misc template', function() {
         this.aoeTemplateService = spyOnService('aoeTemplate');
       }
     ]));
+
+    describe('answerTo(<method>)', function() {
+      it('should test whether template responds to <method>', function() {
+        this.template = { state: { type: 'aoe' } };
+        expect(this.templateService.respondTo('setSize', this.template))
+          .toBe(true);
+        expect(this.templateService.respondTo('whatever', this.template))
+          .toBe(false);
+      });
+    });
 
     when('call(<method>, <...args...>)', function() {
       this.ret = this.templateService
@@ -183,13 +233,8 @@ describe('misc template', function() {
         it('should proxy <template.type>\'s <method>', function() {
           expect(this.aoeTemplateService.setSize)
             .toHaveBeenCalledWith('arg1', 'arg2', this.template);
-        });
-
-        it('should save <template.state>', function() {
-          expect(this.templateService.saveState)
-            .toHaveBeenCalledWith(this.template);
           expect(this.ret)
-            .toBe('template.saveState.returnValue');
+            .toBe('aoeTemplate.setSize.returnValue');
         });
       });
     });

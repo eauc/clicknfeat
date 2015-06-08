@@ -95,7 +95,9 @@ angular.module('clickApp.services')
     'settings',
     'templateLockedMode',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
+    'prompt',
     aoeTemplateModeServiceFactory(true)
   ])
   .factory('sprayTemplateLockedMode', [
@@ -130,7 +132,9 @@ angular.module('clickApp.services')
     'settings',
     'templateMode',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
+    'prompt',
     aoeTemplateModeServiceFactory(false)
   ])
   .factory('sprayTemplateMode', [
@@ -178,6 +182,7 @@ angular.module('clickApp.services')
     gameRulerServiceFactory
   ])
   .factory('gameTemplates', [
+    'template',
     gameTemplatesServiceFactory
   ])
   .factory('gameTemplateSelection', [

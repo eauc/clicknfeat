@@ -13,10 +13,18 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
   };
   aoeTemplateService.deviate = function aoeTemplateDeviate(dir, len, temp) {
     dir = temp.state.r + 60 * (dir-1);
+    var max_len = R.defaultTo(len, R.path(['state','m'], temp));
+    len = Math.min(len, max_len);
     temp.state = pointService.translateInDirection(len * 10,
                                                    dir * Math.PI / 180,
                                                    temp.state);
     temp.state = R.assoc('r', dir, temp.state);
+  };
+  aoeTemplateService.maxDeviation = function aoeTemplateMaxDeviation(temp) {
+    return R.defaultTo(0, R.path(['state','m'], temp));
+  };
+  aoeTemplateService.setMaxDeviation = function aoeTemplateSetMaxDeviation(max, temp) {
+    temp.state = R.assoc('m', max, temp.state);
   };
   templateService.registerTemplate('aoe', aoeTemplateService);
   return aoeTemplateService;
@@ -95,17 +103,20 @@ self.templateServiceFactory = function templateServiceFactory(settingsService,
     setState: function templateSetState(state, template) {
       template.state = R.clone(state);
     },
-    call: function templatesCall(method /* ...args..., template */) {
+    respondTo: function templateAnswerTo(method, template) {
+      return ( R.exists(TEMP_REGS[template.state.type]) &&
+               R.exists(TEMP_REGS[template.state.type][method])
+             );
+    },
+    call: function templateCall(method /* ...args..., template */) {
       var args = R.tail(Array.prototype.slice.call(arguments));
       var temp = R.last(args);
-      console.log(args);
-      if(R.isNil(TEMP_REGS[temp.state.type]) ||
-         R.isNil(TEMP_REGS[temp.state.type][method])) {
+      console.log(method, args);
+      if(!templateService.respondTo(method, temp)) {
         console.log('unknown call '+method+' on template type '+temp.state.type);
         return;
       }
-      TEMP_REGS[temp.state.type][method].apply(null, args);
-      return templateService.saveState(temp);
+      return TEMP_REGS[temp.state.type][method].apply(null, args);
     },
     checkState: function templateCheckState(state) {
       state.x = Math.max(0, Math.min(480, state.x));

@@ -98,10 +98,13 @@ describe('setSize template', function() {
       function(aoeTemplateModeService) {
         this.aoeTemplateModeService = aoeTemplateModeService;
         this.gameService = spyOnService('game');
+        this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = {
-          game: { template_selection: 'selection' },
+          game: { template_selection: 'selection',
+                  templates: 'templates' },
+          gameEvent: jasmine.createSpy('gameEvent'),
         };
       }
     ]));
@@ -136,6 +139,62 @@ describe('setSize template', function() {
                                 this.scope, this.scope.game);
       });
     });
+
+    describe('when user set max deviation', function() {
+      beforeEach(function() {
+        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplatesService.onStamp._retVal = 42;
+
+        this.aoeTemplateModeService.actions.setMaxDeviation(this.scope);
+      });
+
+      it('should get current selection max deviation', function() {
+        expect(this.gameTemplateSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.gameTemplatesService.onStamp)
+          .toHaveBeenCalledWith('stamp', 'maxDeviation', 'templates');
+      });
+
+      it('should prompt user for max deviation', function() {
+        expect(this.promptService.prompt)
+          .toHaveBeenCalledWith('prompt',
+                                'Set AoE max deviation :',
+                                42);
+      });
+
+      describe('when user set max deviation', function() {
+        beforeEach(function() {
+          this.promptService.prompt.resolve(42);
+        });
+
+        it('should set max deviation', function() {
+          expect(this.gameTemplatesService.onStamp)
+            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', 42, 'templates');
+        });
+      });
+
+      describe('when user reset max deviation', function() {
+        beforeEach(function() {
+          this.promptService.prompt.resolve(0);
+        });
+
+        it('should set max deviation', function() {
+          expect(this.gameTemplatesService.onStamp)
+            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', null, 'templates');
+        });
+      });
+
+      describe('when user cancels prompt', function() {
+        beforeEach(function() {
+          this.promptService.prompt.reject('canceled');
+        });
+
+        it('should reset max deviation', function() {
+          expect(this.gameTemplatesService.onStamp)
+            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', null, 'templates');
+        });
+      });
+    });
   });
 
   describe('aoeTemplate service', function() {
@@ -165,6 +224,29 @@ describe('setSize template', function() {
           this.aoeTemplateService.deviate(e.dir, e.len, this.template);
           expect(this.template.state)
             .toEqual(e.result);
+        });
+      });
+
+      describe('enforces max deviation', function() {
+        using([
+          [ 'max', 'dir', 'len' , 'result' ],
+          [ 10   , 1     , 2    , { x: 240, y: 260, r: 180, m:10 } ],
+          [ 3    , 1     , 3    , { x: 240, y: 270, r: 180, m:3 } ],
+          [ 2    , 1     , 4    , { x: 240, y: 260, r: 180, m:2 } ],
+        ], function(e, d) {
+          beforeEach(function() {
+            this.template.state.r = 180;
+          });
+
+          it('should deviate template, '+d, function() {
+            this.aoeTemplateService.setMaxDeviation(e.max, this.template);
+            expect(this.aoeTemplateService.maxDeviation(this.template))
+              .toBe(e.max);
+
+            this.aoeTemplateService.deviate(e.dir, e.len, this.template);
+            expect(this.template.state)
+              .toEqual(e.result);
+          });
         });
       });
     });

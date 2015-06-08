@@ -1,6 +1,6 @@
 'use strict';
 
-self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory() {
+self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory(templateService) {
   var gameTemplatesService = {
     create: function() {
       return {
@@ -11,6 +11,14 @@ self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory() {
     findStamp: function templatesFindStamp(stamp, templates) {
       return (R.find(R.pathEq(['state','stamp'], stamp), templates.active) ||
               R.find(R.pathEq(['state','stamp'], stamp), templates.locked));
+    },
+    onStamp: function templatesFindStamp(stamp, method /*, ...args..., templates*/) {
+      var args = Array.prototype.slice.call(arguments);
+      var templates = R.last(args);
+      var template = gameTemplatesService.findStamp(stamp, templates);
+      // console.log(arguments, templates, template);
+      args = R.append(template, R.slice(1, -1, args));
+      return templateService.call.apply(null, args);
     },
     add: function templatesAdd(template, templates) {
       return R.assoc('active', R.pipe(

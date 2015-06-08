@@ -18,9 +18,12 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
       args = R.slice(0, -3, args);
       R.forEach(function(stamp) {
         var template = gameTemplatesService.findStamp(stamp, game.templates);
+        if(!templateService.respondTo(method, template)) return;
+
         ctxt.before.push(templateService.saveState(template));
-        var after = templateService.call.apply(null, R.append(template, args));
-        if(R.exists(after)) ctxt.after.push(after);
+        templateService.call.apply(null, R.append(template, args));
+        ctxt.after.push(templateService.saveState(template));
+
         scope.gameEvent('changeTemplate-'+templateService.eventName(template));
       }, stamps);
       if(R.isEmpty(ctxt.after)) return;
