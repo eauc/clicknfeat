@@ -2,9 +2,11 @@
 
 self.templateModeServiceFactory = function templateModeServiceFactory(modesService,
                                                                       settingsService,
+                                                                      defaultModeService,
                                                                       templateLockedModeService,
                                                                       templateService,
                                                                       gameService,
+                                                                      gameTemplatesService,
                                                                       gameTemplateSelectionService) {
   var template_actions = Object.create(templateLockedModeService.actions);
   template_actions.delete = function templateDelete(scope) {
@@ -12,9 +14,10 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     gameService.executeCommand('deleteTemplates', [target], scope, scope.game);
   };
   template_actions.lock = function templateLock(scope) {
-    var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-    gameService.executeCommand('lockTemplates', [target], true, scope, scope.game);
-    modesService.switchToMode('TemplateLocked', scope, scope.modes);
+    var stamp = gameTemplateSelectionService.get('local', scope.game.template_selection);
+    gameService.executeCommand('lockTemplates', [stamp], true, scope, scope.game);
+    modesService.switchToMode(gameTemplatesService.modeForStamp(stamp, scope.game.templates),
+                              scope, scope.modes);
   };
   var moves = [
     ['moveFront', 'up'],
@@ -74,16 +77,9 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     template_default_bindings[move[0]] = move[1];
     template_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
-  var template_bindings = R.extend(Object.create(templateLockedModeService.bindings),
+  var template_bindings = R.extend(Object.create(defaultModeService.bindings),
                                    template_default_bindings);
   var template_buttons = [
-    [ 'Size', 'toggle', 'size' ],
-    [ 'Aoe3', 'aoeSize3', 'size' ],
-    [ 'Aoe4', 'aoeSize4', 'size' ],
-    [ 'Aoe5', 'aoeSize5', 'size' ],
-    [ 'Spray6', 'spraySize6', 'size' ],
-    [ 'Spray8', 'spraySize8', 'size' ],
-    [ 'Spray10', 'spraySize10', 'size' ],
     [ 'Delete', 'delete' ],
     [ 'Lock', 'lock' ],
   ];
@@ -97,7 +93,7 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
     buttons: template_buttons,
     bindings: template_bindings,
   };
-  modesService.registerMode(template_mode);
+  // modesService.registerMode(template_mode);
   settingsService.register('Bindings',
                            template_mode.name,
                            template_default_bindings,

@@ -27,8 +27,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       )(selection);
 
       if('local' === where) {
-        var mode = (gameTemplatesService.isLocked(stamp, scope.game.templates) ?
-                    'TemplateLocked' : 'Template');
+        var mode = gameTemplatesService.modeForStamp(stamp, scope.game.templates);
         modesService.switchToMode(mode, scope, scope.modes);
       }
       

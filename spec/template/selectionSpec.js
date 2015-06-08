@@ -79,7 +79,7 @@ describe('select template', function() {
         this.modesService = spyOnService('modes');
 
         this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-        this.scope.game = { template: 'templates' };
+        this.scope.game = { templates: 'templates' };
         this.scope.modes = 'modes';
       }
     ]));
@@ -110,19 +110,12 @@ describe('select template', function() {
         });
 
         if(e.where === 'local') {
-          using([
-            [ 'isLocked', 'mode'],
-            [ true      , 'TemplateLocked' ],
-            [ false     , 'Template' ],
-          ], function(e,d) {
-            when('<stamp> is '+(e.isLocked?'':'not ')+'locked', function() {
-              this.gameTemplatesService.isLocked._retVal = e.isLocked;
-            }, function() {
-              it('should switch to '+e.mode+' mode', function() {            
-                expect(this.modesService.switchToMode)
-                  .toHaveBeenCalledWith(e.mode, this.scope, 'modes');
-              });
-            });
+          it('should switch to correct mode', function() {
+            expect(this.gameTemplatesService.modeForStamp)
+              .toHaveBeenCalledWith('stamp', 'templates');
+            expect(this.modesService.switchToMode)
+              .toHaveBeenCalledWith('gameTemplates.modeForStamp.returnValue',
+                                    this.scope, 'modes');
           });
         }
         
@@ -208,6 +201,36 @@ describe('select template', function() {
             expect(this.scope.gameEvent)
               .toHaveBeenCalledWith('changeTemplate-previous', this.ret);
           });
+        });
+      });
+    });
+  });
+
+  describe('gameTemplates service', function() {
+    beforeEach(inject([
+      'gameTemplates',
+      function(gameTemplatesService) {
+        this.gameTemplatesService = gameTemplatesService;
+        this.templates = {
+          active: [ { state: { type: 'aoe', stamp: 'stamp1' } },
+                    { state: { type: 'spray', stamp: 'stamp2' } } ],
+          locked: [ { state: { type: 'wall', stamp: 'stamp3' } },
+                    { state: { type: 'aoe', stamp: 'stamp4' } } ],
+        };          
+      }
+    ]));
+
+    describe('modeForStamp(<stamp>, <templates>)', function() {
+      using([
+        [ 'stamp'  , 'mode' ],
+        [ 'stamp1' , 'aoeTemplate' ],
+        [ 'stamp2' , 'sprayTemplate' ],
+        [ 'stamp3' , 'wallTemplateLocked' ],
+        [ 'stamp4' , 'aoeTemplateLocked' ],
+      ], function(e, d) {
+        it('should return correct mode for <stamp>, '+d, function() {
+          expect(this.gameTemplatesService.modeForStamp(e.stamp, this.templates))
+            .toBe(e.mode);
         });
       });
     });

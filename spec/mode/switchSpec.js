@@ -9,7 +9,7 @@ describe('modes', function() {
         this.modesService = modesService;
         this.defaultModeService = spyOnService('defaultMode');
         this.defaultModeService.onLeave = jasmine.createSpy('onLeave');
-        this.templateModeService = spyOnService('templateMode');
+        this.templateModeService = spyOnService('aoeTemplateMode');
       }
     ]));
 
@@ -23,7 +23,7 @@ describe('modes', function() {
       });
 
       when('we need to change mode', function() {
-        this.modesService.switchToMode('Template', this.scope, this.modes);
+        this.modesService.switchToMode('aoeTemplate', this.scope, this.modes);
       }, function() {
         it('should leave current mode', function() {
           expect(this.defaultModeService.onLeave)
@@ -37,7 +37,7 @@ describe('modes', function() {
 
         it('should change current mode', function() {
           expect(this.modesService.currentModeName(this.modes))
-            .toBe('Template');
+            .toBe('aoeTemplate');
         });
 
         it('should emit switchMode event', function() {

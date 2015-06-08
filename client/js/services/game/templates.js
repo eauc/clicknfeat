@@ -62,6 +62,16 @@ self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory() {
         }
       )(templates);
     },
+    modeForStamp: function templateSelectionModeForStamp(stamp, templates) {
+      var mode = (gameTemplatesService.isLocked(stamp, templates) ?
+                  'TemplateLocked' : 'Template');
+      var type = R.defaultTo('aoe',
+                             R.path(['state','type'],
+                                    gameTemplatesService.findStamp(stamp, templates)
+                                   )
+                            );
+      return type+mode;
+    },
   };
   R.curryService(gameTemplatesService);
   return gameTemplatesService;

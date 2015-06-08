@@ -86,24 +86,80 @@ angular.module('clickApp.services')
     'settings',
     'defaultMode',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
     templateLockedModeServiceFactory
+  ])
+  .factory('aoeTemplateLockedMode', [
+    'modes',
+    'settings',
+    'templateLockedMode',
+    'game',
+    'gameTemplateSelection',
+    aoeTemplateModeServiceFactory
+  ])
+  .factory('sprayTemplateLockedMode', [
+    'modes',
+    'settings',
+    'templateLockedMode',
+    'game',
+    'gameTemplateSelection',
+    sprayTemplateModeServiceFactory
+  ])
+  .factory('wallTemplateLockedMode', [
+    'modes',
+    'settings',
+    'templateLockedMode',
+    'game',
+    'gameTemplateSelection',
+    wallTemplateModeServiceFactory
   ])
   .factory('templateMode', [
     'modes',
     'settings',
+    'defaultMode',
     'templateLockedMode',
     'template',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
     templateModeServiceFactory
+  ])
+  .factory('aoeTemplateMode', [
+    'modes',
+    'settings',
+    'templateMode',
+    'game',
+    'gameTemplateSelection',
+    aoeTemplateModeServiceFactory
+  ])
+  .factory('sprayTemplateMode', [
+    'modes',
+    'settings',
+    'templateMode',
+    'game',
+    'gameTemplateSelection',
+    sprayTemplateModeServiceFactory
+  ])
+  .factory('wallTemplateMode', [
+    'modes',
+    'settings',
+    'templateMode',
+    'game',
+    'gameTemplateSelection',
+    wallTemplateModeServiceFactory
   ])
   .factory('allModes', [
     'defaultMode',
     'rulerMode',
     'createTemplateMode',
-    'templateLockedMode',
+    'aoeTemplateLockedMode',
+    'sprayTemplateLockedMode',
+    'wallTemplateLockedMode',
     'templateMode',
+    'aoeTemplateMode',
+    'sprayTemplateMode',
+    'wallTemplateMode',
     function() { return {}; }
   ])
   .factory('http', [

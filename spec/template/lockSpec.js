@@ -8,17 +8,19 @@ describe('lock template', function() {
         this.templateLockedModeService = templateLockedModeService;
         this.gameService = spyOnService('game');
         this.modesService = spyOnService('modes');
+        this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = {
-          game: { template_selection: 'selection' },
+          game: { template_selection: 'selection',
+                  templates: 'templates' },
           modes: 'modes',
         };
       }
     ]));
 
     when('user unlocks current template selection', function() {
-      this.templateLockedModeService.actions.lock(this.scope);
+      this.templateLockedModeService.actions.unlock(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = 'stamp';
@@ -35,9 +37,11 @@ describe('lock template', function() {
                                 this.scope, this.scope.game);
       });
 
-      it('should switch to TemplateLocked mode', function() {
+      it('should switch to correct mode', function() {
+        expect(this.gameTemplatesService.modeForStamp)
+          .toHaveBeenCalledWith('stamp', 'templates');
         expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Template',
+          .toHaveBeenCalledWith('gameTemplates.modeForStamp.returnValue',
                                 this.scope, 'modes');
       });
     });
@@ -50,10 +54,12 @@ describe('lock template', function() {
         this.templateModeService = templateModeService;
         this.gameService = spyOnService('game');
         this.modesService = spyOnService('modes');
+        this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = {
-          game: { template_selection: 'selection' },
+          game: { template_selection: 'selection',
+                  templates: 'templates' },
           modes: 'modes',
         };
       }
@@ -77,9 +83,11 @@ describe('lock template', function() {
                                 this.scope, this.scope.game);
       });
 
-      it('should switch to TemplateLocked mode', function() {
+      it('should switch to correct mode', function() {
+        expect(this.gameTemplatesService.modeForStamp)
+          .toHaveBeenCalledWith('stamp', 'templates');
         expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('TemplateLocked',
+          .toHaveBeenCalledWith('gameTemplates.modeForStamp.returnValue',
                                 this.scope, 'modes');
       });
     });

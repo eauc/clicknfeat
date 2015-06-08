@@ -1,11 +1,11 @@
 'use strict';
 
 describe('setSize template', function() {
-  describe('templateLockedMode service', function() {
+  describe('aoeTemplateLockedMode service', function() {
     beforeEach(inject([
-      'templateLockedMode',
-      function(templateLockedModeService) {
-        this.templateLockedModeService = templateLockedModeService;
+      'aoeTemplateLockedMode',
+      function(aoeTemplateLockedModeService) {
+        this.aoeTemplateLockedModeService = aoeTemplateLockedModeService;
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
@@ -22,7 +22,48 @@ describe('setSize template', function() {
       [ 'aoeSize5', 5 ],
     ], function(e, d) {
       when('user set '+e.action+' on template selection', function() {
-        this.templateLockedModeService.actions[e.action](this.scope);
+        this.aoeTemplateLockedModeService.actions[e.action](this.scope);
+      }, function() {
+        beforeEach(function() {
+          this.gameTemplateSelectionService.get._retVal = 'stamp';
+        });
+
+        it('should get current selection', function() {
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+        });
+
+        it('should execute onTemplates/setSize command', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onTemplates', 'setSize', e.size, ['stamp'],
+                                  this.scope, this.scope.game);
+        });
+      });
+    });
+  });
+
+  describe('sprayTemplateLockedMode service', function() {
+    beforeEach(inject([
+      'sprayTemplateLockedMode',
+      function(sprayTemplateLockedModeService) {
+        this.sprayTemplateLockedModeService = sprayTemplateLockedModeService;
+        this.gameService = spyOnService('game');
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
+
+        this.scope = {
+          game: { template_selection: 'selection' },
+        };
+      }
+    ]));
+
+    using([
+      [ 'action', 'size' ],
+      [ 'spraySize6', 6 ],
+      [ 'spraySize8', 8 ],
+      [ 'spraySize10', 10 ],
+    ], function(e, d) {
+      when('user set '+e.action+' on template selection', function() {
+        this.sprayTemplateLockedModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = 'stamp';
@@ -65,6 +106,36 @@ describe('setSize template', function() {
 
         it('should set template size', function() {
           this.aoeTemplateService.setSize(e.size, this.template);
+          expect(this.template.state)
+            .toEqual(e.result);
+        });
+      });
+    });
+  });
+
+  describe('sprayTemplate service', function() {
+    beforeEach(inject([
+      'sprayTemplate',
+      function(sprayTemplateService) {
+        this.sprayTemplateService = sprayTemplateService;
+      }
+    ]));
+
+    using([
+      [ 'size', 'result' ],
+      [ 6     , { s: 6 } ],
+      [ 8     , { s: 8 } ],
+      [ 10    , { s: 10 } ],
+    ], function(e, d) {
+      describe('setSize(<size>), '+d, function() {
+        beforeEach(function() {
+          this.template = {
+            state: { }
+          };
+        });
+
+        it('should set template size', function() {
+          this.sprayTemplateService.setSize(e.size, this.template);
           expect(this.template.state)
             .toEqual(e.result);
         });
