@@ -7,7 +7,7 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
                                                                 gameRulerService,
                                                                 promptService) {
   var ruler_actions = Object.create(commonModeService.actions);
-  ruler_actions.dragStartMap = function rulerDragMap(scope, drag, event) {
+  ruler_actions.dragStartMap = function rulerDragStartMap(scope, drag, event) {
     scope.game.ruler = gameRulerService.setLocal(drag.start, drag.now,
                                                  scope, scope.game.ruler);
   };
@@ -15,10 +15,13 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
     scope.game.ruler = gameRulerService.setLocal(drag.start, drag.now,
                                                  scope, scope.game.ruler);
   };
-  ruler_actions.dragEndMap = function rulerDragMap(scope, drag, event) {
+  ruler_actions.dragEndMap = function rulerDragEndMap(scope, drag, event) {
     gameService.executeCommand('setRuler', 'setRemote', drag.start, drag.now,
                                scope,  scope.game);
   };
+  ruler_actions.dragStartTemplate = ruler_actions.dragStartMap;
+  ruler_actions.dragTemplate = ruler_actions.dragMap;
+  ruler_actions.dragEndTemplate = ruler_actions.dragEndMap;
   ruler_actions.setMaxLength = function rulerSetMaxLength(scope, event) {
     promptService.prompt('prompt',
                          'Set ruler max length :',
