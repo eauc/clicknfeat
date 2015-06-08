@@ -39,6 +39,18 @@ self.pointServiceFactory = function pointServiceFactory() {
                         Math.pow(other.y - point.y, 2)
                       );
     },
+    directionTo: function pointDirectionTo(other, point) {
+      return Math.atan2(
+        other.x - point.x,
+        point.y - other.y
+      );
+    },
+    translateInDirection: function pointTranslateInDirection(distance, direction, point) {
+      return R.pipe(
+        R.assoc('x', point.x + distance * Math.sin(direction)), 
+        R.assoc('y', point.y - distance * Math.cos(direction))
+      )(point);
+    },
   };
   R.curryService(pointService);
   return pointService;

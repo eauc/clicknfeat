@@ -59,6 +59,7 @@ angular.module('clickApp.services')
   ])
   .factory('defaultMode', [
     'modes',
+    'settings',
     'commonMode',
     'game',
     'template',
@@ -71,6 +72,7 @@ angular.module('clickApp.services')
     'commonMode',
     'game',
     'gameRuler',
+    'prompt',
     rulerModeServiceFactory
   ])
   .factory('createTemplateMode', [

@@ -1,6 +1,7 @@
 'use strict';
 
 self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService,
+                                                                    settingsService,
                                                                     commonModeService,
                                                                     gameService,
                                                                     templateService,
@@ -27,7 +28,11 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
     modesService.switchToMode('Ruler', scope, scope.modes);
   };
 
-  var default_bindings = Object.create(commonModeService.bindings);
+  var default_default_bindings = {
+    enterRulerMode: 'r',
+  };
+  var default_bindings = R.extend(Object.create(commonModeService.bindings),
+                                  default_default_bindings);
   var default_buttons = [
     [ 'Flip Map', 'flipMap' ],
   ];
@@ -38,5 +43,11 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
     bindings: default_bindings,
   };
   modesService.registerMode(default_mode);
+  settingsService.register('Bindings',
+                           default_mode.name,
+                           default_default_bindings,
+                           function(bs) {
+                             R.extend(default_mode.bindings, bs);
+                           });
   return default_mode;
 };

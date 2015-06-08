@@ -89,5 +89,40 @@ describe('point', function() {
         });
       });
     });
+    
+    describe('directionTo(<other>)', function() {
+      using([
+        ['other', 'direction'],
+        [{x: 240, y: 0}, 0],
+        [{x: 0, y: 240}, -Math.PI/2],
+        [{x: 120, y: 120}, -Math.PI/4],
+      ], function(e, d) {
+        it('should return direction to other point, '+d, function() {
+          expect(this.pointService.directionTo(e.other, {
+            x: 240,
+            y: 240
+          })).toBe(e.direction);
+        });
+      });
+    });
+    
+    describe('translateInDirection(<length>, <direction>)', function() {
+      using([
+        [ 'length',  'dir'     , 'translated'       ],
+        [ 10      ,  0         , { x: 240, y: 230 } ],
+        [ 20      ,  Math.PI/2 , { x: 260, y: 240 } ],
+        [ 30      ,  Math.PI   , { x: 240, y: 270 } ],
+        [ 40      , -Math.PI/2 , { x: 200, y: 240 } ],
+        [ 50      , -Math.PI/4 , { x: 204.64466094067262,
+                                   y: 204.64466094067262 } ],
+      ], function(e, d) {
+        it('should return translated point, '+d, function() {
+          expect(this.pointService.translateInDirection(e.length, e.dir, {
+            x: 240,
+            y: 240
+          })).toEqual(e.translated);
+        });
+      });
+    });
   });
 });

@@ -10,7 +10,7 @@ self.modesServiceFactory = function modesServiceFactory() {
     init: function modesInit(scope) {
       var modes = {
         current: 'Default',
-        register: R.clone(MODES_REG),
+        register: MODES_REG,
       };
       // TODO : import customized bindings
       enterMode(modes, scope);

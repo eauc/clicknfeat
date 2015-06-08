@@ -71,6 +71,9 @@ angular.module('clickApp.controllers')
       };
 
       $scope.modes = modesService.init($scope);
+      $scope.currentModeIs = function currentModeIs(mode) {
+        return modesService.currentModeName($scope.modes) === mode;
+      };
       $scope.doModeAction = function doModeAction(action) {
         modesService.currentModeAction(action, $scope, $scope.modes);
       };

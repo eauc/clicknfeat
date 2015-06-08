@@ -2,7 +2,10 @@
   <div class="panel panel-info">
     <div class="panel-heading">Tools</div>
     <div class="panel-content">
-      <button class="btn btn-default"
+      <button class="
+              btn btn-default
+              {{ currentModeIs('Ruler') ? 'active' : '' }}
+              "
               ng-click="doUseRuler()">
         User<br />Ruler
       </button>

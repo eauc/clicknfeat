@@ -39,5 +39,6 @@ angular.module('clickApp.controllers')
       };
 
       $scope.digestOnGameEvent('diceRoll', $scope);
+      $scope.digestOnGameEvent('switchMode', $scope);
     }
   ]);

@@ -10,6 +10,42 @@ ul.nav-tabs li {
     cursor: pointer;
 }
 
+/******************************************************/
+/* prompt
+/******************************************************/
+
+.prompt-mask {
+    z-index:2000;
+    background-color:black;
+    opacity:0.5;
+    position:fixed;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+}
+.prompt-container {
+    z-index:2010;
+    position:fixed;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
+}
+.prompt-panel {
+    margin-top:40px;
+    margin-left:auto;
+    margin-right:auto;
+    max-width:300px;
+}
+
+.section {
+    text-align:center;
+    font-weight:bold;
+    background-color:#CCC;
+    margin-bottom:10px;
+}
+
 /**************************
   Game View
 ***************************/

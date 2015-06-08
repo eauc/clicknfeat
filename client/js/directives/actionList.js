@@ -8,6 +8,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         link: function(scope, element, attrs) {
           scope.digestOnGameEvent('switchMode', scope);
+          scope.digestOnGameEvent('refreshActions', scope);
         }
       };
     }

@@ -69,7 +69,8 @@ describe('user ruler', function() {
       this.gameService = spyOnService('game');
       this.gameRulerService = spyOnService('gameRuler');
       this.scope = { modes: 'modes',
-                     game: { ruler: 'ruler' }
+                     game: { ruler: 'ruler' },
+                     gameEvent: jasmine.createSpy('gameEvent')
                    };
     }]));
 
@@ -79,6 +80,51 @@ describe('user ruler', function() {
       it('should switch to ruler mode', function() {
         expect(this.modesService.switchToMode)
           .toHaveBeenCalledWith('Default', this.scope, 'modes');
+      });
+    });
+
+    describe('when user set ruler max length', function() {
+      beforeEach(function() {
+        this.rulerModeService.actions.setMaxLength(this.scope);
+      });
+      
+      it('should prompt user for max length', function() {
+        expect(this.promptService.prompt)
+          .toHaveBeenCalledWith('prompt',
+                                'Set ruler max length :',
+                                'gameRuler.maxLength.returnValue');
+      });
+
+      using([
+        [ 'value', 'max' ],
+        [ 42     , 42    ],
+        [ 0      , null  ],
+      ], function(e, d) {
+        describe('when user validates prompt, '+d, function() {
+          beforeEach(function() {
+            this.promptService.prompt.resolve(e.value);
+          });
+        
+          it('should set ruler max length', function() {
+            expect(this.gameRulerService.setMaxLength)
+              .toHaveBeenCalledWith(e.max, 'ruler');
+            expect(this.scope.game.ruler)
+              .toBe('gameRuler.setMaxLength.returnValue');
+          });
+        });
+      });
+
+      describe('when user cancel prompt', function() {
+        beforeEach(function() {
+          this.promptService.prompt.reject('canceled');
+        });
+        
+        it('should reset ruler max length', function() {
+          expect(this.gameRulerService.setMaxLength)
+            .toHaveBeenCalledWith(null, 'ruler');
+          expect(this.scope.game.ruler)
+            .toBe('gameRuler.setMaxLength.returnValue');
+        });
       });
     });
 
@@ -197,18 +243,36 @@ describe('user ruler', function() {
       });
     });
 
-    describe('setLocal(<start>, <end>, <scope>)', function() {
+    describe('setMaxLength(<start>, <end>, <scope>)', function() {
+      using([
+        [ 'set', 'get'],
+        [ 42   , 42   ],
+        [ null , 0    ],
+      ], function(e, d) {
+        it('should set local ruler max length, '+d, function() {
+          this.ruler = {};
+          this.ruler = this.gameRulerService.setMaxLength(e.set, this.ruler);
+          expect(this.gameRulerService.maxLength(this.ruler))
+            .toBe(e.get);
+        });
+      });
+    });
+
+    when('setLocal(<start>, <end>, <scope>)', function() {
+      this.ret = this.gameRulerService.setLocal(this.start, this.end,
+                                                this.scope, this.ruler);
+    }, function() {
       beforeEach(function() {
-        this.ret = this.gameRulerService.setLocal('start', 'end',
-                                                  this.scope, {
-                                                    local: { }
-                                                  });
+        this.start = { x: 100, y: 0 };
+        this.end = { x: 100, y: 100 };
+        this.ruler = { local: {}  };
       });
 
       it('should set local ruler state', function() {
         expect(this.ret)
-          .toEqual({ local: { start: 'start',
-                              end: 'end',
+          .toEqual({ local: { start: { x:100, y: 0},
+                              end: { x: 100.00000000000001,
+                                     y: 100 },
                               length: null,
                               display: true
                             }
@@ -217,24 +281,46 @@ describe('user ruler', function() {
 
       it('should emit changeLocalRuler game event', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeLocalRuler', { start: 'start',
-                                                      end: 'end',
+          .toHaveBeenCalledWith('changeLocalRuler', { start: { x: 100, y: 0},
+                                                      end: { x: 100.00000000000001,
+                                                             y: 100 },
                                                       length: null,
                                                       display: true
                                                     });
       });
+
+      when('with max length', function() {
+        this.ruler = this.gameRulerService.setMaxLength(5, this.ruler);
+      }, function() {
+        it('should enforce max length', function() {
+          expect(this.ret)
+            .toEqual({ local: { max: 5,
+                                start: { x:100, y: 0},
+                                end: { x: 100,
+                                       y: 50 },
+                                length: null,
+                                display: true
+                              }
+                     });
+        });
+      });
     });
 
-    describe('setRemote(<start>, <end>, <scope>)', function() {
+    when('setRemote(<start>, <end>, <scope>)', function() {
+      this.ret = this.gameRulerService.setRemote(this.start, this.end,
+                                                 this.scope, this.ruler);
+    }, function() {
       beforeEach(function() {
         this.pointService = spyOnService('point');
-        this.pointService.distanceTo._retVal = 12.3456;
+        this.pointService.distanceTo.and.callThrough();
+        this.pointService.directionTo.and.callThrough();
+        this.pointService.translateInDirection.and.callThrough();
         
-        this.ret = this.gameRulerService.setRemote('start', 'end',
-                                                  this.scope, {
-                                                    local: {},
-                                                    remote: {},
-                                                  });
+        this.start = { x: 100, y: 0 };
+        this.end = { x: 100, y: 100 };
+        this.ruler = { local: {},
+                       remote: {},
+                     };
       });
 
       it('should reset local ruler state', function() {
@@ -244,9 +330,11 @@ describe('user ruler', function() {
 
       it('should set remote ruler state', function() {
         expect(this.ret.remote)
-          .toEqual({ start: 'start',
-                     end: 'end',
-                     length: 12.35,
+          .toEqual({ max: undefined,
+                     start: { x: 100, y: 0 },
+                     end: { x: 100.00000000000001,
+                            y: 100 },
+                     length: 10,
                      display: true
                    });
       });
@@ -255,11 +343,28 @@ describe('user ruler', function() {
         expect(this.scope.gameEvent)
           .toHaveBeenCalledWith('changeLocalRuler', { display: false });
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', { start: 'start',
-                                                       end: 'end',
-                                                       length: 12.35,
+          .toHaveBeenCalledWith('changeRemoteRuler', { max: undefined,
+                                                       start: { x: 100, y: 0 },
+                                                       end: { x: 100.00000000000001,
+                                                              y: 100 },
+                                                       length: 10,
                                                        display: true
                                                      });
+      });
+
+      when('with max length', function() {
+        this.ruler = this.gameRulerService.setMaxLength(5, this.ruler);
+      }, function() {
+        it('should enforce max length', function() {
+          expect(this.ret.remote)
+            .toEqual({ max: 5,
+                       start: { x: 100, y: 0},
+                       end: { x: 100,
+                              y: 50 },
+                       length: 5,
+                       display: true
+                     });
+        });
       });
     });
 

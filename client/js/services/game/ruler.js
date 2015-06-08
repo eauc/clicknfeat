@@ -21,6 +21,12 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
     isDisplayed: function gameRulerIsDisplayed(ruler) {
       return R.path(['remote','display'], ruler);
     },
+    maxLength: function gameRulerMaxLength(ruler) {
+      return R.defaultTo(0, R.path(['local','max'], ruler));
+    },
+    setMaxLength: function gameRulerSetMaxLength(length, ruler) {
+      return R.assocPath(['local', 'max'], length, ruler);
+    },
     toggleDisplay: function gameRulerToggleDisplay(scope, ruler) {
       var path = ['remote','display'];
       var ret = R.pipe(
@@ -33,7 +39,7 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
       var ret = R.pipe(
         R.prop('local'),
         R.assoc('start', R.clone(start)),
-        R.assoc('end', R.clone(end)),
+        enforceEndToMaxLength(end),
         R.assoc('length', null),
         R.assoc('display', true),
         function(local) {
@@ -46,9 +52,13 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
     setRemote: function gameRulerSetRemote(start, end, scope, ruler) {
       var ret = R.pipe(
         R.prop('remote'),
+        R.assoc('max', R.path(['local', 'max'], ruler)),
         R.assoc('start', R.clone(start)),
-        R.assoc('end', R.clone(end)),
-        R.assoc('length', Math.round(pointService.distanceTo(end, start) * 100) / 100),
+        enforceEndToMaxLength(end),
+        function(remote) {
+          var distance = pointService.distanceTo(remote.end, remote.start);
+          return R.assoc('length', Math.round(distance * 10) / 100, remote);
+        },
         R.assoc('display', true),
         function(remote) {
           return R.assoc('remote', remote, ruler);
@@ -76,6 +86,15 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
       return ret;
     }
   };
+  var enforceEndToMaxLength = R.curry(function _enforceEndToMaxLength(end, ruler) {
+    var length = pointService.distanceTo(end, ruler.start);
+    var dir = pointService.directionTo(end, ruler.start);
+    var max = 10 * R.defaultTo(length/10, ruler.max);
+    length = Math.min(length, max);
+    end = pointService.translateInDirection(length, dir, ruler.start);
+    return R.assoc('end', end, ruler);
+  });
+
   R.curryService(gameRulerService);
   return gameRulerService;
 };

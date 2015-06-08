@@ -19,11 +19,16 @@ beforeEach(function() {
   this.localStorage = jasmine.createSpyObj('localStorage', [
     'setItem', 'getItem'
   ]);
+  this.promptService = jasmine.createSpyObj('prompt', [
+    'prompt'
+  ]);
   module({
     http: this.httpService,
     'localStorage': this.localStorage,
+    'prompt': this.promptService,
   });
   mockReturnPromise(this.httpService.get);
+  mockReturnPromise(this.promptService.prompt);
 
   this.jsonParserService = spyOnService('jsonParser');
   mockReturnPromise(this.jsonParserService.parse);
