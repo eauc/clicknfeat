@@ -42,7 +42,7 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('onTemplates', 'setSize', 10, [target], scope, scope.game);
   };
-  template_actions.lock = function templateLock(scope) {
+  template_actions.unlock = function templateUnlock(scope) {
     var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('lockTemplates', [target], false, scope, scope.game);
     modesService.switchToMode('Template', scope, scope.modes);
@@ -54,7 +54,7 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     spraySize6: '6',
     spraySize8: '8',
     spraySize10: '0',
-    lock: 'l',
+    unlock: 'l',
   };
   var template_bindings = R.extend(Object.create(defaultModeService.bindings),
                                    template_default_bindings);
@@ -66,7 +66,7 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     [ 'Spray6', 'spraySize6', 'size' ],
     [ 'Spray8', 'spraySize8', 'size' ],
     [ 'Spray10', 'spraySize10', 'size' ],
-    [ 'Unlock', 'lock' ],
+    [ 'Unlock', 'unlock' ],
   ];
   var template_mode = {
     onEnter: function templateOnEnter(scope) {

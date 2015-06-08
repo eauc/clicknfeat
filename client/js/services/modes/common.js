@@ -40,6 +40,31 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     toggleMenu: function toggleMenu(scope) {
       scope.gameEvent('toggleMenu');
     },
+    roll1D6: function roll1D6(scope) {
+      gameService.executeCommand('rollDice',
+                                 6, 1,
+                                 scope, scope.game);
+    },
+    roll2D6: function roll2D6(scope) {
+      gameService.executeCommand('rollDice',
+                                 6, 2,
+                                 scope, scope.game);
+    },
+    roll3D6: function roll3D6(scope) {
+      gameService.executeCommand('rollDice',
+                                 6, 3,
+                                 scope, scope.game);
+    },
+    roll4D6: function roll4D6(scope) {
+      gameService.executeCommand('rollDice',
+                                 6, 4,
+                                 scope, scope.game);
+    },
+    roll5D6: function roll5D6(scope) {
+      gameService.executeCommand('rollDice',
+                                 6, 5,
+                                 scope, scope.game);
+    },
   };
   var common_bindings = {
     commandUndoLast: 'ctrl+z',
@@ -54,6 +79,11 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
     viewZoomReset: 'alt+z',
     flipMap: 'ctrl+shift+f',
     toggleMenu: 'ctrl+m',
+    roll1D6: 'd 1',
+    roll2D6: 'd 2',
+    roll3D6: 'd 3',
+    roll4D6: 'd 4',
+    roll5D6: 'd 5',
   };
   var common_mode = {
     name: 'Common',

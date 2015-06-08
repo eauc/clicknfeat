@@ -68,6 +68,7 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
 
   var template_default_bindings = {
     'delete': 'del',
+    'lock': 'l',
   };
   R.forEach(function(move) {
     template_default_bindings[move[0]] = move[1];

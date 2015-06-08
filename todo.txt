@@ -1,10 +1,9 @@
 verif toutes commande replay/undo encapsule dans service
 
-ruler
-- disable click on template when in ruler mode
-- max length
 template
+- separer templateMode en 3 modes enfants
 - deviate
+- deviate max dist
 - aoe to ruler : template mode/ruler mode
 model
 selectionBox

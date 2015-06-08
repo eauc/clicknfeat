@@ -6,6 +6,7 @@
               btn btn-default
               {{ currentModeIs('Ruler') ? 'active' : '' }}
               "
+              title="{{action_bindings['enterRulerMode'] || ''}}"
               ng-click="doUseRuler()">
         User<br />Ruler
       </button>
@@ -34,26 +35,32 @@
     <div class="panel-heading">Dice</div>
     <div class="panel-content">
       <button class="btn btn-default"
+              title="{{action_bindings['roll1D6'] || ''}}"
               ng-click="doRollDice(6, 1)">
         1D6
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['roll2D6'] || ''}}"
               ng-click="doRollDice(6, 2)">
         2D6
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['roll3D6'] || ''}}"
               ng-click="doRollDice(6, 3)">
         3D6
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['roll4D6'] || ''}}"
               ng-click="doRollDice(6, 4)">
         4D6
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['roll5D6'] || ''}}"
               ng-click="doRollDice(6, 5)">
         5D6
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['roll1D3'] || ''}}"
               ng-click="doRollDice(3, 1)">
         1D3
       </button>

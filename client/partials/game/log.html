@@ -5,11 +5,13 @@
     </div>
     <div class="panel-content">
       <button class="btn btn-default"
+              title="{{action_bindings['commandUndoLast'] || ''}}"
               ng-disabled="game.commands.length === 0"
               ng-click="doModeAction('commandUndoLast')">
         Undo Last
       </button>
       <button class="btn btn-default"
+              title="{{action_bindings['commandReplayNext'] || ''}}"
               ng-disabled="game.undo.length === 0"
               ng-click="doModeAction('commandReplayNext')">
         Replay Next
