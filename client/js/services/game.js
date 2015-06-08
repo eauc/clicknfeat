@@ -59,6 +59,7 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
       game.commands = R.append(command, game.commands);
       scope.saveGame(game);
       scope.gameEvent('command', 'execute');
+      return R.clone(command);
     },
     undoLastCommand: function gameUndoLastCommand(scope, game) {
       if(R.isEmpty(game.commands)) return;

@@ -1,7 +1,6 @@
 verif toutes commande replay/undo encapsule dans service
 
 template
-- separer templateMode en 3 modes enfants
 - deviate
 - deviate max dist
 - aoe to ruler : template mode/ruler mode

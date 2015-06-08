@@ -96,7 +96,7 @@ angular.module('clickApp.services')
     'templateLockedMode',
     'game',
     'gameTemplateSelection',
-    aoeTemplateModeServiceFactory
+    aoeTemplateModeServiceFactory(true)
   ])
   .factory('sprayTemplateLockedMode', [
     'modes',
@@ -131,7 +131,7 @@ angular.module('clickApp.services')
     'templateMode',
     'game',
     'gameTemplateSelection',
-    aoeTemplateModeServiceFactory
+    aoeTemplateModeServiceFactory(false)
   ])
   .factory('sprayTemplateMode', [
     'modes',
@@ -219,6 +219,10 @@ angular.module('clickApp.services')
     'commands',
     rollDiceCommandServiceFactory
   ])
+  .factory('rollDeviationCommand', [
+    'commands',
+    rollDeviationCommandServiceFactory
+  ])
   .factory('setBoardCommand', [
     'commands',
     setBoardCommandServiceFactory
@@ -238,6 +242,7 @@ angular.module('clickApp.services')
     'lockTemplatesCommand',
     'onTemplatesCommand',
     'rollDiceCommand',
+    'rollDeviationCommand',
     'setBoardCommand',
     'setRulerCommand',
     'setScenarioCommand',
@@ -250,6 +255,7 @@ angular.module('clickApp.services')
   ])
   .factory('aoeTemplate', [
     'template',
+    'point',
     aoeTemplateServiceFactory
   ])
   .factory('sprayTemplate', [

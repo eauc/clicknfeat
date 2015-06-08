@@ -1,10 +1,11 @@
 'use strict';
 
-self.aoeTemplateModeServiceFactory = function aoeTemplateModeServiceFactory(modesService,
-                                                                            settingsService,
-                                                                            templateModeService,
-                                                                            gameService,
-                                                                            gameTemplateSelectionService) {
+self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFactory(locked,
+                                                                                    modesService,
+                                                                                    settingsService,
+                                                                                    templateModeService,
+                                                                                    gameService,
+                                                                                    gameTemplateSelectionService) {
   var template_actions = Object.create(templateModeService.actions);
   template_actions.aoeSize3 = function aoeSize3(scope) {
     var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
@@ -31,6 +32,19 @@ self.aoeTemplateModeServiceFactory = function aoeTemplateModeServiceFactory(mode
     [ 'Aoe4', 'aoeSize4', 'size' ],
     [ 'Aoe5', 'aoeSize5', 'size' ],
   ], templateModeService.buttons);
+  if(!locked) {
+    template_actions.deviate = function aoeDeviate(scope) {
+      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      var deviation = gameService.executeCommand('rollDeviation', scope, scope.game);
+      gameService.executeCommand('onTemplates', 'deviate',
+                                 deviation.r, deviation.d,
+                                 [target], scope, scope.game);
+    };
+    template_default_bindings['deviate'] = 'd';
+    template_buttons = R.concat([
+      [ 'Deviate', 'deviate' ],
+    ], template_buttons);
+  }
   var template_mode = {
     onEnter: function templateOnEnter(scope) {
     },
@@ -49,4 +63,4 @@ self.aoeTemplateModeServiceFactory = function aoeTemplateModeServiceFactory(mode
                              R.extend(template_mode.bindings, bs);
                            });
   return template_mode;
-};
+});

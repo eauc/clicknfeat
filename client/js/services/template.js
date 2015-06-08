@@ -1,6 +1,7 @@
 'use strict';
 
-self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateService) {
+self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateService,
+                                                                    pointService) {
   var aoeTemplateService = Object.create(templateService);
   aoeTemplateService.create = function aoeTemplateCreate(temp) {    
     temp.state = R.assoc('s', 15, temp.state);
@@ -9,6 +10,13 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
   aoeTemplateService.setSize = function aoeTemplateSetSize(size, temp) {
     if(R.isNil(R.find(R.eq(size), [3,4,5]))) return;
     temp.state = R.assoc('s', size * 5, temp.state);
+  };
+  aoeTemplateService.deviate = function aoeTemplateDeviate(dir, len, temp) {
+    dir = temp.state.r + 60 * (dir-1);
+    temp.state = pointService.translateInDirection(len * 10,
+                                                   dir * Math.PI / 180,
+                                                   temp.state);
+    temp.state = R.assoc('r', dir, temp.state);
   };
   templateService.registerTemplate('aoe', aoeTemplateService);
   return aoeTemplateService;

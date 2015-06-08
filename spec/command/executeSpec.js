@@ -8,7 +8,7 @@ describe('execute commands', function() {
     }]));
 
     when('executeCommand(<...args...>, <scope>, <game>)', function() {
-      this.gameService.executeCommand('arg1', 'arg2', this.scope, this.game);
+      this.ret = this.gameService.executeCommand('arg1', 'arg2', this.scope, this.game);
     }, function() {
       beforeEach(function() {
         this.game = { commands: [] };
@@ -52,6 +52,12 @@ describe('execute commands', function() {
         it('should send execute event', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('command','execute');
+        });
+        it('should return a copy of command context', function() {
+          expect(this.ret)
+            .toEqual(this.game.commands[0]);
+          expect(this.ret)
+            .not.toBe(this.game.commands[0]);
         });
       });
     });

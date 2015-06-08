@@ -5,7 +5,7 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
                                                                                   gameTemplatesService,
                                                                                   gameTemplateSelectionService) {
   var onTemplatesCommandService = {
-    execute: function onTemplatesExecute(method /* ...args..., scope, game */) {
+    execute: function onTemplatesExecute(method /* ...args..., stamps, scope, game */) {
       var args = Array.prototype.slice.call(arguments);
       var game = R.last(args);
       var scope = R.nth(-2, args);
