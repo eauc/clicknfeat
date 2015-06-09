@@ -70,11 +70,12 @@ angular.module('clickApp.controllers')
         $scope.gameEvent('saveGame');
       };
 
-      $scope.modes = modesService.init($scope);
       $scope.currentModeName = function currentModeName(mode) {
+        if(!R.exists($scope.modes)) return '';
         return modesService.currentModeName($scope.modes);
       };
       $scope.currentModeIs = function currentModeIs(mode) {
+        if(!R.exists($scope.modes)) return false;
         return modesService.currentModeName($scope.modes) === mode;
       };
       $scope.doModeAction = function doModeAction(action) {
@@ -121,6 +122,7 @@ angular.module('clickApp.controllers')
           $scope.goToState('lounge');
           return;
         }
+        $scope.modes = modesService.init($scope);
         if($state.current.name === 'game') {
           $scope.goToState('.main');
         } 

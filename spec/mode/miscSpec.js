@@ -19,7 +19,7 @@ describe('modes', function() {
 
     describe('currentModeBindingsPairs', function() {
       beforeEach(function() {
-        this.scope = { 'this': 'scope' };
+        this.scope = { game: { template_selection: 'selection' } };
         this.modes = this.modesService.init(this.scope);
       });
 

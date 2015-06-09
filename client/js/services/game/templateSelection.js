@@ -14,7 +14,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       return R.find(R.eq(stamp), stamps);
     },
     get: function templateSelectionGet(where, selection) {
-      return R.path([where,'stamps'], selection)[0];
+      return R.defaultTo([], R.path([where,'stamps'], selection))[0];
     },
     checkMode: function templateSelectionCheckMode(scope, selection) {
       var stamp = gameTemplateSelectionService.get('local', selection);

@@ -87,7 +87,7 @@ describe('on mode action', function() {
 
     describe('currentModeAction', function() {
       beforeEach(function() {
-        this.scope = { 'this': 'scope' };
+        this.scope = { game: { template_selection: 'selection' } };
         this.modes = this.modesService.init(this.scope);
         this.modesService.currentModeAction('viewZoomIn',
                                             this.scope,

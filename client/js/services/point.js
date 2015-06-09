@@ -40,12 +40,13 @@ self.pointServiceFactory = function pointServiceFactory() {
                       );
     },
     directionTo: function pointDirectionTo(other, point) {
-      return Math.atan2(
+      return 180 * Math.atan2(
         other.x - point.x,
         point.y - other.y
-      );
+      ) / Math.PI;
     },
     translateInDirection: function pointTranslateInDirection(distance, direction, point) {
+      direction = direction * Math.PI / 180;
       return R.pipe(
         R.assoc('x', point.x + distance * Math.sin(direction)), 
         R.assoc('y', point.y - distance * Math.cos(direction))

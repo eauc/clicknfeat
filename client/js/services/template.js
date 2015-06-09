@@ -15,8 +15,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     dir = temp.state.r + 60 * (dir-1);
     var max_len = R.defaultTo(len, R.path(['state','m'], temp));
     len = Math.min(len, max_len);
-    temp.state = pointService.translateInDirection(len * 10,
-                                                   dir * Math.PI / 180,
+    temp.state = pointService.translateInDirection(len * 10, dir,
                                                    temp.state);
     temp.state = R.assoc('r', dir, temp.state);
   };

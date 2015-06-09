@@ -94,8 +94,8 @@ describe('point', function() {
       using([
         ['other', 'direction'],
         [{x: 240, y: 0}, 0],
-        [{x: 0, y: 240}, -Math.PI/2],
-        [{x: 120, y: 120}, -Math.PI/4],
+        [{x: 0, y: 240}, -90],
+        [{x: 120, y: 120}, -45],
       ], function(e, d) {
         it('should return direction to other point, '+d, function() {
           expect(this.pointService.directionTo(e.other, {
@@ -108,13 +108,13 @@ describe('point', function() {
     
     describe('translateInDirection(<length>, <direction>)', function() {
       using([
-        [ 'length',  'dir'     , 'translated'       ],
-        [ 10      ,  0         , { x: 240, y: 230 } ],
-        [ 20      ,  Math.PI/2 , { x: 260, y: 240 } ],
-        [ 30      ,  Math.PI   , { x: 240, y: 270 } ],
-        [ 40      , -Math.PI/2 , { x: 200, y: 240 } ],
-        [ 50      , -Math.PI/4 , { x: 204.64466094067262,
-                                   y: 204.64466094067262 } ],
+        [ 'length',  'dir' , 'translated'       ],
+        [ 10      ,  0     , { x: 240, y: 230 } ],
+        [ 20      ,  90    , { x: 260, y: 240 } ],
+        [ 30      ,  180   , { x: 240, y: 270 } ],
+        [ 40      , -90    , { x: 200, y: 240 } ],
+        [ 50      , -45    , { x: 204.64466094067262,
+                               y: 204.64466094067262 } ],
       ], function(e, d) {
         it('should return translated point, '+d, function() {
           expect(this.pointService.translateInDirection(e.length, e.dir, {
