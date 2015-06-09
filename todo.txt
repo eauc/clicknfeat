@@ -1,8 +1,8 @@
-verif toutes commande replay/undo encapsule dans service
-
 template
-- deviate max dist
 - aoe to ruler : template mode/ruler mode
+unknown binding
+enter default mode -> go to templateMode if selection
+template r in radians/point dir in degrees ?
 model
 selectionBox
 layers - deploiement

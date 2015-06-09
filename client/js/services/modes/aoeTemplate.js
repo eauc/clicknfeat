@@ -64,6 +64,7 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
                                  [target], scope, scope.game);
     };
     template_default_bindings['deviate'] = 'd';
+    template_default_bindings['setMaxDeviation'] = 'm';
     template_buttons = R.concat([
       [ 'Deviate', 'deviate' ],
       set_max_dev_button,

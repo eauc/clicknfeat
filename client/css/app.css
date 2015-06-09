@@ -168,6 +168,17 @@ ul.nav-tabs li {
     opacity: 0.8;
 }
 
+#game #game-warn-mode {
+    position:absolute;
+    top: 50%;
+    width: 100%;
+    z-index:1000;
+    opacity: 0.8;
+    color: #DDD;
+    background-color: #C00;
+    font-size: 3em;
+}
+
 #selection-osd {
     position:absolute;
     z-index: 2000;

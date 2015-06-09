@@ -44,7 +44,7 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
   };
   var ruler_default_bindings = {
     leaveRulerMode: 'r',
-    setMaxLength: 'l',
+    setMaxLength: 'm',
   };
   var ruler_bindings = R.extend(Object.create(commonModeService.bindings),
                                 ruler_default_bindings);

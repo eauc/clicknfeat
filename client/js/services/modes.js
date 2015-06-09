@@ -34,9 +34,10 @@ self.modesServiceFactory = function modesServiceFactory() {
       var mode = currentMode(modes);
       if(R.isNil(mode.actions[action])) {
         console.log('unknown mode '+mode.name+' action '+action);
-        return;
+        return false;
       }
       mode.actions[action].apply(null, R.init(R.tail(args)));
+      return true;
     },
     switchToMode: function(name, scope, modes) {
       var mode = currentMode(modes);
