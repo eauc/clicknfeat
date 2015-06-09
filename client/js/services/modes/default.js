@@ -38,6 +38,13 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
   ];
   var default_mode = {
     name: 'Default',
+    onEnter: function defaultOnEnter(scope) {
+      self.requestAnimationFrame(function _defaultOnEnter() {
+        if(gameTemplateSelectionService.checkMode(scope, scope.game.template_selection)) {
+          return;
+        }
+      });
+    },
     actions: default_actions,
     buttons: default_buttons,
     bindings: default_bindings,

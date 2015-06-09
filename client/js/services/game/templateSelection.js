@@ -16,6 +16,15 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
     get: function templateSelectionGet(where, selection) {
       return R.path([where,'stamps'], selection)[0];
     },
+    checkMode: function templateSelectionCheckMode(scope, selection) {
+      var stamp = gameTemplateSelectionService.get('local', selection);
+      if(R.exists(stamp)) {
+        var mode = gameTemplatesService.modeForStamp(stamp, scope.game.templates);
+        modesService.switchToMode(mode, scope, scope.modes);
+        return true;
+      }
+      return false;
+    },
     set: function templateSelectionSet(where, stamp, scope, selection) {
       var previous_selection = gameTemplateSelectionService.get(where, selection);
       var ret = R.pipe(
