@@ -1,7 +1,6 @@
 template
 - aoe to ruler : template mode/ruler mode
 unknown binding
-template r in radians/point dir in degrees ?
 model
 selectionBox
 layers - deploiement

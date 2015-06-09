@@ -34,7 +34,6 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
     [ 'Aoe4', 'aoeSize4', 'size' ],
     [ 'Aoe5', 'aoeSize5', 'size' ],
   ], templateModeService.buttons);
-  var set_max_dev_button = [ 'Set Max Dev.', 'setMaxDeviation' ];
   if(!locked) {
     template_actions.setMaxDeviation = function rulerSetMaxDeviation(scope, event) {
       var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
@@ -49,11 +48,6 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
         .catch(function(error) {
           console.log(error);
           gameTemplatesService.onStamp(target, 'setMaxDeviation', null, scope.game.templates);
-        })
-        .then(function() {
-          var max = gameTemplatesService.onStamp(target, 'maxDeviation', scope.game.templates);
-          set_max_dev_button[0] = 'Set Max Dev. ('+max+')';
-          scope.gameEvent('refreshActions');
         });
     };
     template_actions.deviate = function aoeDeviate(scope) {
@@ -67,17 +61,10 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
     template_default_bindings['setMaxDeviation'] = 'm';
     template_buttons = R.concat([
       [ 'Deviate', 'deviate' ],
-      set_max_dev_button,
     ], template_buttons);
   }
   var template_mode = {
     onEnter: function templateOnEnter(scope) {
-      self.requestAnimationFrame(function _aoeTemplateModeOnEnter() {
-        var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        var max = gameTemplatesService.onStamp(target, 'maxDeviation', scope.game.templates);
-        set_max_dev_button[0] = 'Set Max Dev. ('+max+')';
-        scope.gameEvent('refreshActions');
-      });
     },
     onLeave: function templateOnLeave(scope) {
     },

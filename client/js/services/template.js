@@ -18,6 +18,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     temp.state = pointService.translateInDirection(len * 10, dir,
                                                    temp.state);
     temp.state = R.assoc('r', dir, temp.state);
+    templateService.checkState(temp.state);
   };
   aoeTemplateService.maxDeviation = function aoeTemplateMaxDeviation(temp) {
     return R.defaultTo(0, R.path(['state','m'], temp));

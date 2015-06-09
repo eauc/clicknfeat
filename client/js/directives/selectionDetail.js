@@ -7,6 +7,12 @@ angular.module('clickApp.controllers')
     function($scope,
              gameService) {
       console.log('init clickGameSelectionDetailCtrl');
+      $scope.doSetMaxDeviation = function doSetMaxDeviation() {
+        var max = ($scope.new_max_deviation > 0) ? $scope.new_max_deviation : null;
+        gameService.executeCommand('onTemplates', 'setMaxDeviation', max,
+                                   [$scope.selection.state.stamp],
+                                   $scope, $scope.game);
+      };
       $scope.doAddLabel = function doAddLabel() {
         var new_label = s.trim($scope.new_label);
         if(R.length(new_label) === 0) return;
@@ -46,6 +52,7 @@ angular.module('clickApp.directives')
             // console.log('openSelectionDetail');
             scope.type = type;
             scope.selection = selection;
+            scope.new_max_deviation = R.defaultTo(0, R.path(['state','m'], selection));
             $window.requestAnimationFrame(displaySelectionDetail);
           }
           function closeSelectionDetail() {

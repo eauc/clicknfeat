@@ -18,7 +18,10 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
       args = R.slice(0, -3, args);
       R.forEach(function(stamp) {
         var template = gameTemplatesService.findStamp(stamp, game.templates);
-        if(!templateService.respondTo(method, template)) return;
+        if(!templateService.respondTo(method, template)) {
+          console.log('onTemplate : template does not respond to method', template, method);
+          return;
+        }
 
         ctxt.before.push(templateService.saveState(template));
         templateService.call.apply(null, R.append(template, args));

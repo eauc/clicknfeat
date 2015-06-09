@@ -10,7 +10,18 @@
   </div>
   <div class="panel-content">
     <form name="selection-label"
-          ng-submit="doAddLabel()"">
+          ng-submit="doSetMaxDeviation()"
+          ng-show="selection.state.type === 'aoe'">
+      <label for="new-deviation">Max Deviation</label>
+      <input id="new-deviation"
+             type="number"
+             step="any"
+             min="0"
+             class="form-control"
+             ng-model="new_max_deviation"
+             placeholder="0" />
+    </form>
+    <form>
       <label for="new-label">Label</label>
       <input id="new-label"
              type="text"
