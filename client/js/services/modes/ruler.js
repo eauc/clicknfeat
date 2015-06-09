@@ -42,14 +42,22 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
   ruler_actions.leaveRulerMode = function rulerLeaveRulerMode(scope, event) {
     modesService.switchToMode('Default', scope, scope.modes);
   };
+  ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope, event) {
+    var position = gameRulerService.targetAoEPosition(scope.game.ruler);
+    position.type = 'aoe';
+    gameService.executeCommand('createTemplate', position,
+                               scope, scope.game);
+  };
   var ruler_default_bindings = {
     leaveRulerMode: 'r',
     setMaxLength: 'm',
+    createAoEOnTarget: 'a',
   };
   var ruler_bindings = R.extend(Object.create(commonModeService.bindings),
                                 ruler_default_bindings);
   var ruler_buttons = [
     [ 'Set Max Len.', 'setMaxLength' ],
+    [ 'AoE on Target', 'createAoEOnTarget' ],
   ];
   var ruler_mode = {
     onEnter: function rulerOnEnter(scope) {

@@ -84,7 +84,15 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
       )(ruler);
       scope.gameEvent('changeRemoteRuler', ret.remote);
       return ret;
-    }
+    },
+    targetAoEPosition: function gameRulerTargetAoEPosition(ruler) {
+      var dir = pointService.directionTo(ruler.remote.end, ruler.remote.start);
+      var max = ruler.remote.length / 2;
+      return R.pipe(
+        R.assoc('r', dir),
+        R.assoc('m', max)
+      )(ruler.remote.end);
+    },
   };
   var enforceEndToMaxLength = R.curry(function _enforceEndToMaxLength(end, ruler) {
     var length = pointService.distanceTo(end, ruler.start);

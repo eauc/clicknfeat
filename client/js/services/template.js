@@ -26,6 +26,15 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
   aoeTemplateService.setMaxDeviation = function aoeTemplateSetMaxDeviation(max, temp) {
     temp.state = R.assoc('m', max, temp.state);
   };
+  aoeTemplateService.setToRuler = function aoeTemplateSetToRuler(pos, temp) {
+    temp.state = R.pipe(
+      R.assoc('x', pos.x),
+      R.assoc('y', pos.y),
+      R.assoc('r', pos.r),
+      R.assoc('m', pos.m),
+      templateService.checkState
+    )(temp.state);
+  };
   templateService.registerTemplate('aoe', aoeTemplateService);
   return aoeTemplateService;
 };

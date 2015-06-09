@@ -97,6 +97,7 @@ angular.module('clickApp.services')
     'game',
     'gameTemplates',
     'gameTemplateSelection',
+    'gameRuler',
     'prompt',
     aoeTemplateModeServiceFactory(true)
   ])
@@ -134,6 +135,7 @@ angular.module('clickApp.services')
     'game',
     'gameTemplates',
     'gameTemplateSelection',
+    'gameRuler',
     'prompt',
     aoeTemplateModeServiceFactory(false)
   ])

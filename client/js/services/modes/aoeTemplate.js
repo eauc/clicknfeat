@@ -7,6 +7,7 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
                                                                                     gameService,
                                                                                     gameTemplatesService,
                                                                                     gameTemplateSelectionService,
+                                                                                    gameRulerService,
                                                                                     promptService) {
   var template_actions = Object.create(templateModeService.actions);
   template_actions.aoeSize3 = function aoeSize3(scope) {
@@ -57,10 +58,22 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
                                  deviation.r, deviation.d,
                                  [target], scope, scope.game);
     };
+    template_actions.setToRulerTarget = function aoeSetToRulerTarget(scope) {
+      if(!gameRulerService.isDisplayed(scope.game.ruler)) return;
+      
+      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      var position = gameRulerService.targetAoEPosition(scope.game.ruler);
+      gameService.executeCommand('onTemplates', 'setToRuler',
+                                 position, [target],
+                                 scope, scope.game);
+    };
     template_default_bindings['deviate'] = 'd';
     template_default_bindings['setMaxDeviation'] = 'm';
+    template_default_bindings['setToRulerTarget'] = 'e';
     template_buttons = R.concat([
       [ 'Deviate', 'deviate' ],
+      // [ 'Set Max Dev.', 'setMaxDeviation' ],
+      [ 'Set to Ruler', 'setToRulerTarget' ],
     ], template_buttons);
   }
   var template_mode = {
