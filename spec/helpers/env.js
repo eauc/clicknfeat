@@ -11,6 +11,12 @@ beforeEach(function() {
       fn();
     });
 
+  if(R.isNil(self.Promise)) {
+    self.Promise = {
+      all: function() {}
+    };
+  }
+
   module('clickApp.services');
   module('clickApp.controllers');
   this.httpService = jasmine.createSpyObj('http', [

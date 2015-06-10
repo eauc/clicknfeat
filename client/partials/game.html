@@ -224,6 +224,12 @@
              click-game-template="{{::t.state.stamp}}">
           </g>
         </g>
+        <g id="game-models"
+           click-game-models-list>
+          <g ng-repeat="(i,model) in game.models.active track by model.state.stamp"
+             click-game-model>
+          </g>
+        </g>
         <g id="game-templates"
            click-game-templates-list>
           <g ng-repeat="t in game.templates.active track by t.state.stamp"
@@ -232,6 +238,11 @@
         </g>
         <g id="game-ruler"
            click-game-ruler>
+        </g>
+        <g click-create-models>
+          <g ng-repeat="(index,model) in create.model.models"
+             click-create-model>
+          </g>
         </g>
         <g click-create-template>
         </g>
@@ -255,6 +266,10 @@
         <li class="{{stateIs('game.main') ? 'active' : ''}}"
             ng-click="goToState('^.main')">
           <a>Main</a>
+        </li>
+        <li class="{{stateIs('game.model') ? 'active' : ''}}"
+            ng-click="goToState('^.model')">
+          <a>Model</a>
         </li>
         <li class="{{stateIs('game.setup') ? 'active' : ''}}"
             ng-click="goToState('^.setup')">

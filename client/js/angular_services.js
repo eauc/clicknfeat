@@ -31,6 +31,8 @@ angular.module('clickApp.services')
     'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
+    'gameModels',
+    // 'gameModelSelection',
     gameServiceFactory
   ])
   .factory('games', [
@@ -74,6 +76,12 @@ angular.module('clickApp.services')
     'gameRuler',
     'prompt',
     rulerModeServiceFactory
+  ])
+  .factory('createModelMode', [
+    'modes',
+    'commonMode',
+    'game',
+    createModelModeServiceFactory
   ])
   .factory('createTemplateMode', [
     'modes',
@@ -158,6 +166,7 @@ angular.module('clickApp.services')
   .factory('allModes', [
     'defaultMode',
     'rulerMode',
+    'createModelMode',
     'createTemplateMode',
     'aoeTemplateLockedMode',
     'sprayTemplateLockedMode',
@@ -174,6 +183,10 @@ angular.module('clickApp.services')
   .factory('gameBoard', [
     'http',
     gameBoardServiceFactory
+  ])
+  .factory('gameFactions', [
+    'http',
+    gameFactionsServiceFactory
   ])
   .factory('gameScenario', [
     'http',
@@ -192,8 +205,24 @@ angular.module('clickApp.services')
     'gameTemplates',
     gameTemplateSelectionServiceFactory
   ])
+  .factory('gameModels', [
+    'model',
+    gameModelsServiceFactory
+  ])
+  // .factory('gameModelSelection', [
+  //   'modes',
+  //   'gameModels',
+  //   gameModelSelectionServiceFactory
+  // ])
   .factory('commands', [
     commandsServiceFactory
+  ])
+  .factory('createModelCommand', [
+    'commands',
+    'model',
+    'gameModels',
+    // 'gameModelSelection',
+    createModelCommandServiceFactory
   ])
   .factory('createTemplateCommand', [
     'commands',
@@ -244,6 +273,7 @@ angular.module('clickApp.services')
     setScenarioCommandServiceFactory
   ])
   .factory('allCommands', [
+    'createModelCommand',
     'createTemplateCommand',
     'deleteTemplatesCommand',
     'lockTemplatesCommand',
@@ -254,6 +284,12 @@ angular.module('clickApp.services')
     'setRulerCommand',
     'setScenarioCommand',
     function() { return {}; }
+  ])
+  .factory('model', [
+    'settings',
+    'point',
+    'gameFactions',
+    modelServiceFactory
   ])
   .factory('template', [
     'settings',

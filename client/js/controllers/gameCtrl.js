@@ -127,7 +127,10 @@ angular.module('clickApp.controllers')
           $scope.goToState('.main');
         } 
         $scope.create = {};
-        $scope.game = gameService.load($scope, $scope.game);
+        $scope.data_ready
+          .then(function() {
+            $scope.game = gameService.load($scope, $scope.game);
+          });
       });
     }
   ]);

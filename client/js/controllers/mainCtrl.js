@@ -8,6 +8,7 @@ angular.module('clickApp.controllers')
     'settings',
     'user',
     'gameBoard',
+    'gameFactions',
     'gameScenario',
     'allModes',
     function($scope,
@@ -16,24 +17,36 @@ angular.module('clickApp.controllers')
              settingsService,
              userService,
              gameBoardService,
+             gameFactionsService,
              gameScenarioService) {
       console.log('init mainCtrl');
       
-      gameBoardService.init()
+      $scope.boards_ready = gameBoardService.init()
         .then(function(boards) {
           $scope.boards = boards;
           console.log('boards', boards);
         });
-      gameScenarioService.init()
+      $scope.factions_ready = gameFactionsService.init()
+        .then(function(factions) {
+          $scope.factions = factions;
+          console.log('factions', factions);
+        });
+      $scope.scenario_ready = gameScenarioService.init()
         .then(function(scenarios) {
           $scope.scenarios = scenarios;
           console.log('scenarios', scenarios);
         });
-      settingsService.init()
+      $scope.settings_ready = settingsService.init()
         .then(function(settings) {
           $scope.settings = settings;
           console.log('settings', settings);
         });
+      $scope.data_ready = self.Promise.all([
+        $scope.boards_ready,
+        $scope.factions_ready,
+        $scope.scenario_ready,
+        $scope.settings_ready,
+      ]);
       $scope.doResetSettings = function doResetSettings(data) {
         $scope.settings = R.pipe(
           settingsService.bind,

@@ -1,7 +1,19 @@
-template
-- aoe to ruler : template mode/ruler mode
 unknown binding
 model
+- create
+- position/size
+- selection(s) [ctrl]
+- moves
+- drag
+- images
+- label
+- icons
+- damage
+- ruler origin target
+- template origin target
+- B2B
+- under Aoe
+- unit
 selectionBox
 layers - deploiement
 online - users login

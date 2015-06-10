@@ -4,7 +4,9 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
                                                       commandsService,
                                                       gameRulerService,
                                                       gameTemplatesService,
-                                                      gameTemplateSelectionService) {
+                                                      gameTemplateSelectionService,
+                                                      gameModelsService,
+                                                      gameModelSelectionService) {
   var gameService = {
     create: function gameCreate(player1) {
       var new_game = {
@@ -28,6 +30,8 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
         undo: [],
         dice: [],
         ruler: gameRulerService.create(),
+        models: gameModelsService.create(),
+        // model_selection: gameModelSelectionService.create(),
         templates: gameTemplatesService.create(),
         template_selection: gameTemplateSelectionService.create(),
       }, data);

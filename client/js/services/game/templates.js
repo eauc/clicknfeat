@@ -12,7 +12,7 @@ self.gameTemplatesServiceFactory = function gameTemplatesServiceFactory(template
       return (R.find(R.pathEq(['state','stamp'], stamp), templates.active) ||
               R.find(R.pathEq(['state','stamp'], stamp), templates.locked));
     },
-    onStamp: function templatesFindStamp(stamp, method /*, ...args..., templates*/) {
+    onStamp: function templatesOnStamp(stamp, method /*, ...args..., templates*/) {
       var args = Array.prototype.slice.call(arguments);
       var templates = R.last(args);
       var template = gameTemplatesService.findStamp(stamp, templates);

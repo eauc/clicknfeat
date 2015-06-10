@@ -219,6 +219,30 @@ ul.nav-tabs li {
 }
 
 /**************************
+  Models
+***************************/
+
+.create-model {
+    fill: #F11;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.model-base {
+    fill-opacity:1.0;
+    stroke:black;
+    stroke-width:0.5px;
+    pointer-events:visible;
+}
+.model-los {
+    stroke:black;
+    stroke-width:0.5px;
+}
+.model-image {
+    pointer-events:none;
+}
+
+/**************************
   Templates
 ***************************/
 

@@ -15,6 +15,9 @@ describe('save game', function() {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};
           this.scope.goToState = jasmine.createSpy('goToState');
+          this.scope.data_ready = {
+            then: function(fn) { fn(); }
+          };
           this.state = { current: { name: 'game.main' } };
 
           $controller('gameCtrl', { 
