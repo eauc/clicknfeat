@@ -8,6 +8,14 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                                                   gameModelsService,
                                                                   gameModelSelectionService) {
   var models_actions = Object.create(defaultModeService.actions);
+  models_actions.clickMap = function modelsClickMap(scope, event) {
+    gameService.executeCommand('setModelSelection', 'clear', null,
+                               scope, scope.game);
+  };
+  models_actions.rightClickMap = function modelsRightClickMap(scope, event) {
+    gameService.executeCommand('setModelSelection', 'clear', null,
+                               scope, scope.game);
+  };
   // models_actions.delete = function modelsDelete(scope) {
   //   var target = gameModelsSelectionService.get('local', scope.game.models_selection);
   //   gameService.executeCommand('deleteModelss', [target], scope, scope.game);

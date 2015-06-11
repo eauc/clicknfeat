@@ -15,10 +15,6 @@ self.templateLockedModeServiceFactory = function templateLockedModeServiceFactor
     scope.game.template_selection =
       gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
   };
-  template_actions.dragMap = function templateDragMap(scope, event) {
-    scope.game.template_selection =
-      gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
-  };
   template_actions.unlock = function templateUnlock(scope) {
     var stamp = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('lockTemplates', [stamp], false, scope, scope.game);

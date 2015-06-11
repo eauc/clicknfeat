@@ -2,7 +2,8 @@
 
 self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
                                                                   settingsService,
-                                                                  gameService) {
+                                                                  gameService,
+                                                                  gameTemplateSelectionService) {
   var common_actions = {
     commandUndoLast: function commandUndoLast(scope) {
       gameService.undoLastCommand(scope, scope.game);
@@ -11,6 +12,10 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
       gameService.replayNextCommand(scope, scope.game);
     },
     modeBackToDefault: function modeBackToDefault(scope) {
+      gameService.executeCommand('setModelSelection', 'clear', null,
+                                 scope, scope.game);
+      scope.game.template_selection =
+        gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
       modesService.switchToMode('Default', scope, scope.modes);
     },
     viewScrollLeft: function viewZoomLeft(scope) {

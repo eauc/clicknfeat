@@ -138,6 +138,39 @@ describe('select model', function() {
     // });
   });
 
+  describe('modelsMode service', function() {
+    beforeEach(inject([
+      'modelsMode',
+      function(modelsModeService) {
+        this.modelsModeService = modelsModeService;
+        this.gameService = spyOnService('game');
+      
+        this.scope = { game: 'game' };
+      }
+    ]));
+
+    when('user click on map', function() {
+      this.modelsModeService.actions
+        .clickMap(this.scope, 'event');
+    }, function() {
+      it('should clear local model selection', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'clear', null,
+                                this.scope, this.scope.game);
+      });
+    });
+
+    when('user right click on map', function() {
+      this.modelsModeService.actions
+        .rightClickMap(this.scope, 'event');
+    }, function() {
+      it('should clear local model selection', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'clear', null,
+                                this.scope, this.scope.game);
+      });
+    });
+  });
 
   describe('setModelSelectionCommand service', function() {
     beforeEach(inject([
@@ -371,8 +404,9 @@ describe('select model', function() {
         });
       });
 
-      when('clear(<where>, <scope>)', function() {
+      when('clear(<where>, <stamps>, <scope>)', function() {
         this.ret = this.gameModelSelectionService.clear(e.where,
+                                                        null,
                                                         this.scope,
                                                         this.selection);
       }, function() {

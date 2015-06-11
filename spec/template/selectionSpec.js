@@ -56,7 +56,6 @@ describe('select template', function() {
       [ 'action' ],
       [ 'click' ],
       [ 'rightClick' ],
-      [ 'drag' ],
     ], function(e,d) {
       when('user '+e.action+' on map', function() {
         this.templateLockedModeService

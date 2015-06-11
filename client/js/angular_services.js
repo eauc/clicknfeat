@@ -57,6 +57,7 @@ angular.module('clickApp.services')
     'modes',
     'settings',
     'game',
+    'gameTemplateSelection',
     commonModeServiceFactory
   ])
   .factory('defaultMode', [

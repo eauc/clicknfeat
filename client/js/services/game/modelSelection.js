@@ -80,7 +80,7 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
 
       return ret;
     },
-    clear: function modelSelectionClear(where, scope, selection) {
+    clear: function modelSelectionClear(where, stamps, scope, selection) {
       var path = [where, 'stamps'];
       var previous = R.path(path, selection);
       return gameModelSelectionService.removeFrom(where, previous, scope, selection);

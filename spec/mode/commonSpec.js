@@ -37,12 +37,27 @@ describe('commonMode', function() {
     describe('modeBackToDefault', function() {
       beforeEach(function() {
         this.modesService = spyOnService('modes');
+        this.gameService = spyOnService('game');
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
+        this.scope = { modes: 'modes',
+                       game: { template_selection: 'selection' }
+                     };
+
+        this.commonModeService.actions.modeBackToDefault(this.scope);
+      });
+
+      it('should clear local template selection', function() {
+        expect(this.gameTemplateSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'selection');
+      });
+
+      it('should clear local model selection', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'clear', null,
+                                this.scope, this.scope.game);
       });
 
       it('should switch to default mode', function() {
-        this.scope = { modes: 'modes' };
-        this.commonModeService.actions.modeBackToDefault(this.scope);
-
         expect(this.modesService.switchToMode)
           .toHaveBeenCalledWith('Default', this.scope, 'modes');
       });
