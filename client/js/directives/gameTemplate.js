@@ -2,13 +2,11 @@
 
 angular.module('clickApp.directives')
   .directive('clickGameTemplate', [
-    'gameTemplates',
     'labelElement',
     'aoeTemplateElement',
     'sprayTemplateElement',
     'wallTemplateElement',
-    function(gameTemplatesService,
-             labelElementService,
+    function(labelElementService,
              aoeTemplateElementService,
              sprayTemplateElementService,
              wallTemplateElementService) {
@@ -23,9 +21,8 @@ angular.module('clickApp.directives')
           var map = document.getElementById('map');
           var svgNS = map.namespaceURI;
 
-          var template = gameTemplatesService.findStamp(attrs.clickGameTemplate,
-                                                        scope.game.templates);
-          console.log('gameTemplate', attrs.clickGameTemplate, template);
+          var template = scope.template;
+          console.log('gameTemplate', template);
           if(R.isNil(template)) return;
 
           var element = templates[template.state.type].create(svgNS, el[0], template);
@@ -33,8 +30,10 @@ angular.module('clickApp.directives')
           scope.onGameEvent('mapFlipped', function onMapFlipped() {
             labelElementService.updateOnFlipMap(map, template.state, element.label);
           }, scope);
-          function updateTemplate(event, selection) {
-            templates[template.state.type].update(map, scope, selection, template, element);
+          function updateTemplate() {
+            self.requestAnimationFrame(function _updateTemplate() {
+              templates[template.state.type].update(map, scope, template, element);
+            });
           }
           updateTemplate();
           scope.onGameEvent('changeTemplate-'+template.state.stamp,

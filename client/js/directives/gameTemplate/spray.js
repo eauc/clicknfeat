@@ -35,8 +35,8 @@ angular.module('clickApp.directives')
                    label: label,
                  };
         },
-        update: function sprayTemplateElementUpdate(map, scope, selection, template, spray) {
-          selection = R.defaultTo(scope.game.template_selection, selection);
+        update: function sprayTemplateElementUpdate(map, scope, template, spray) {
+          var selection = scope.game.template_selection;
           var local =
               gameTemplateSelectionService.in('local', template.state.stamp,
                                               selection);

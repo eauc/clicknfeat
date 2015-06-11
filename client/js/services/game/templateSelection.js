@@ -40,9 +40,9 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
         modesService.switchToMode(mode, scope, scope.modes);
       }
       
-      scope.gameEvent('changeTemplate-'+stamp, ret);
+      scope.gameEvent('changeTemplate-'+stamp);
       if(R.exists(previous_selection)) {
-        scope.gameEvent('changeTemplate-'+previous_selection, ret);
+        scope.gameEvent('changeTemplate-'+previous_selection);
       }
 
       return ret;
@@ -62,7 +62,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
           modesService.switchToMode('Default', scope, scope.modes);
         }
 
-        scope.gameEvent('changeTemplate-'+stamp, ret);
+        scope.gameEvent('changeTemplate-'+stamp);
       }
       return ret;
     },
@@ -81,7 +81,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       }
 
       if(R.exists(previous_selection)) {
-        scope.gameEvent('changeTemplate-'+previous_selection, ret);
+        scope.gameEvent('changeTemplate-'+previous_selection);
       }
       return ret;
     },

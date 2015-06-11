@@ -1,4 +1,6 @@
 unknown binding
+specs :
+- mockCtrl
 template:
 - remove data arg from events and use requestAniFrame to delay directives/scope update
 - locked flag in state / divide templates list by flag

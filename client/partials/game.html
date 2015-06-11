@@ -220,8 +220,8 @@
         "/> -->
         <g id="game-templates-locked"
            click-game-templates-list>
-          <g ng-repeat="t in game.templates.locked track by t.state.stamp"
-             click-game-template="{{::t.state.stamp}}">
+          <g ng-repeat="template in game.templates.locked track by template.state.stamp"
+             click-game-template>
           </g>
         </g>
         <g id="game-models"
@@ -232,8 +232,8 @@
         </g>
         <g id="game-templates"
            click-game-templates-list>
-          <g ng-repeat="t in game.templates.active track by t.state.stamp"
-             click-game-template="{{::t.state.stamp}}">
+          <g ng-repeat="template in game.templates.active track by template.state.stamp"
+             click-game-template>
           </g>
         </g>
         <g id="game-ruler"

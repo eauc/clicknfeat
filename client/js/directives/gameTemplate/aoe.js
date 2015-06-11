@@ -32,8 +32,8 @@ angular.module('clickApp.directives')
                    label: label,
                  };
         },
-        update: function aoeTemplateElementUpdate(map, scope, selection, template, aoe) {
-          selection = R.defaultTo(scope.game.template_selection, selection);
+        update: function aoeTemplateElementUpdate(map, scope, template, aoe) {
+          var selection = scope.game.template_selection;
           var local =
               gameTemplateSelectionService.in('local', template.state.stamp,
                                               selection);

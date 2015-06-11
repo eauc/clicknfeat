@@ -105,7 +105,7 @@ describe('select template', function() {
 
         it('should emit changeTemplate event', function() {
           expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp', this.ret);
+            .toHaveBeenCalledWith('changeTemplate-stamp');
         });
 
         if(e.where === 'local') {
@@ -121,9 +121,9 @@ describe('select template', function() {
         when('there is a previous selection', function() {
           this.selection[e.where].stamps = [ 'previous' ];
         }, function() {
-          it('should emit changeTemplate event', function() {            
+          it('should emit changeTemplate event', function() {
             expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-previous', this.ret);
+              .toHaveBeenCalledWith('changeTemplate-previous');
           });
         });
       });
@@ -149,9 +149,9 @@ describe('select template', function() {
             });
           }
 
-          it('should emit changeTemplate event', function() {            
+          it('should emit changeTemplate event', function() {
             expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-stamp', this.ret);
+              .toHaveBeenCalledWith('changeTemplate-stamp');
           });
         });
 
@@ -196,9 +196,9 @@ describe('select template', function() {
         when('there is a previous selection', function() {
           this.selection[e.where].stamps = [ 'previous' ];
         }, function() {
-          it('should emit changeTemplate event', function() {            
+          it('should emit changeTemplate event', function() {
             expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-previous', this.ret);
+              .toHaveBeenCalledWith('changeTemplate-previous');
           });
         });
       });
