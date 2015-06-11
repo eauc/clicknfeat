@@ -45,6 +45,11 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     setState: function modelSetState(state, model) {
       model.state = R.clone(state);
     },
+    isBetweenPoints: function modelIsBetweenPoints(top_left, bottom_right, model) {
+      return ( top_left.x <= model.state.x && model.state.x <= bottom_right.x &&
+               top_left.y <= model.state.y && model.state.y <= bottom_right.y
+             );
+    },
     // checkState: function modelCheckState(state) {
     //   state.x = Math.max(0, Math.min(480, state.x));
     //   state.y = Math.max(0, Math.min(480, state.y));

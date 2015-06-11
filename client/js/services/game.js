@@ -31,7 +31,7 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
         dice: [],
         ruler: gameRulerService.create(),
         models: gameModelsService.create(),
-        // model_selection: gameModelSelectionService.create(),
+        model_selection: gameModelSelectionService.create(),
         templates: gameTemplatesService.create(),
         template_selection: gameTemplateSelectionService.create(),
       }, data);
@@ -60,7 +60,9 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
       var scope = R.nth(-2, args);
       command.user = scope.user.name;
       command.stamp = R.guid();
-      game.commands = R.append(command, game.commands);
+      if(!command.do_not_log) {
+        game.commands = R.append(command, game.commands);
+      }
       scope.saveGame(game);
       scope.gameEvent('command', 'execute');
       return R.clone(command);

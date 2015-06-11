@@ -15,6 +15,7 @@ describe('create model', function() {
           this.scope.modes = 'modes';
           this.scope.create = {};
           this.scope.digestOnGameEvent = function() {};
+          this.scope.user = { name: 'user' };
 
           this.scope.factions = {
             legion: {
@@ -65,7 +66,8 @@ describe('create model', function() {
               base: { x: 240, y: 240 },
               models: [ {
                 info: ['legion','models','locks','absylonia1'],
-                x: 0, y: 0
+                x: 0, y: 0,
+                user: 'user'
               } ]
             } });
         });
@@ -90,13 +92,16 @@ describe('create model', function() {
               base: { x: 240, y: 240 },
               models: [ {
                 info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 0, y: 0
+                x: 0, y: 0,
+                user: 'user'
               }, {
                 info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 20, y: 0
+                x: 20, y: 0,
+                user: 'user'
               }, {
                 info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 40, y: 0
+                x: 40, y: 0,
+                user: 'user'
               } ]
             } });
         });
@@ -209,7 +214,7 @@ describe('create model', function() {
         this.createModelCommandService = createModelCommandService;
         this.modelService = spyOnService('model');
         this.gameModelsService = spyOnService('gameModels');
-        // this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
 
         this.scope = {
           factions: 'factions',
@@ -218,8 +223,9 @@ describe('create model', function() {
         this.game = { models: 'models',
                       model_selection: 'selection' };
 
+        var stamp_index = 1;
         this.modelService.create.and.callFake(function(f,m) {
-          return { state: R.assoc('stamp', 'stamp', m) };
+          return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
         });
       }
     ]));
@@ -267,17 +273,17 @@ describe('create model', function() {
           .toHaveBeenCalledWith([
             { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
                        x: 240, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp1'
                      }
             },
             { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                        x: 260, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp2'
                      }
             },
             { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                        x: 280, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp3'
                      }
             }
           ], 'models');
@@ -285,10 +291,11 @@ describe('create model', function() {
           .toBe('gameModels.add.returnValue');
       });
 
-  //     it('should set local modelSelection to new model', function() {
-  //       expect(this.gameModelSelectionService.set)
-  //         .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
-  //     });
+      it('should set local modelSelection to new model', function() {
+        expect(this.gameModelSelectionService.set)
+          .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
+                                this.scope, 'selection');
+      });
 
       it('should emit createModel event', function() {
         expect(this.scope.gameEvent)
@@ -300,21 +307,21 @@ describe('create model', function() {
           .toHaveBeenCalledWith({
             state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
                      x: 240, y: 240,
-                     stamp: 'stamp'
+                     stamp: 'stamp1'
                    }
           });
         expect(this.modelService.saveState)
           .toHaveBeenCalledWith({
             state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                      x: 260, y: 240,
-                     stamp: 'stamp'
+                     stamp: 'stamp2'
                    }
           });
         expect(this.modelService.saveState)
           .toHaveBeenCalledWith({
             state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                      x: 280, y: 240,
-                     stamp: 'stamp'
+                     stamp: 'stamp3'
                    }
           });
         expect(this.ret)
@@ -376,17 +383,17 @@ describe('create model', function() {
           .toHaveBeenCalledWith([
             { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
                        x: 240, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp1'
                      }
             },
             { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                        x: 260, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp2'
                      }
             },
             { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                        x: 280, y: 240,
-                       stamp: 'stamp'
+                       stamp: 'stamp3'
                      }
             }
           ], 'models');
@@ -394,10 +401,11 @@ describe('create model', function() {
           .toBe('gameModels.add.returnValue');
       });
 
-  //     it('should set remote modelSelection to new model', function() {
-  //       expect(this.gameModelSelectionService.set)
-  //         .toHaveBeenCalledWith('remote', 'stamp', this.scope, 'selection');
-  //     });
+      it('should set remote modelSelection to new model', function() {
+        expect(this.gameModelSelectionService.set)
+          .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
+                                this.scope, 'selection');
+      });
 
       it('should emit createModel event', function() {
         expect(this.scope.gameEvent)
@@ -435,13 +443,14 @@ describe('create model', function() {
           .toBe('gameModels.removeStamps.returnValue');
       });
 
-      // it('should remove <ctxt.model> from modelSelection', function() {
-      //   expect(this.gameModelSelectionService.removeFrom)
-      //     .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
-      //   expect(this.gameModelSelectionService.removeFrom)
-      //     .toHaveBeenCalledWith('remote', 'stamp', this.scope,
-      //                           'gameModelSelection.removeFrom.returnValue');
-      // });
+      it('should remove <ctxt.model> from modelSelection', function() {
+        expect(this.gameModelSelectionService.removeFrom)
+          .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
+                                this.scope, 'selection');
+        expect(this.gameModelSelectionService.removeFrom)
+          .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
+                                this.scope, 'gameModelSelection.removeFrom.returnValue');
+      });
 
       it('should emit createModel event', function() {
         expect(this.scope.gameEvent)

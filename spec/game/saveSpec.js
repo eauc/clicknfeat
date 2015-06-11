@@ -9,8 +9,9 @@ describe('save game', function() {
                $controller) {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
-        mockReturnPromise(this.gamesService.loadLocalGames);
-        
+        mockReturnPromise(this.gamesService.loadLocalGames); 
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+       
         this.createController = function(params) {
           this.scope = $rootScope.$new();
           this.scope.checkUser = function() {};

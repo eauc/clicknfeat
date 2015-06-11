@@ -9,6 +9,7 @@ describe('load game', function() {
                $controller) {
         this.gameService = spyOnService('game');
         this.gamesService = spyOnService('games');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
         mockReturnPromise(this.gamesService.loadLocalGames);
         
         this.createController = function(params) {
@@ -112,6 +113,9 @@ describe('load game', function() {
               },
             },
             models: { active: [], locked: [] },
+            model_selection: { local: { stamps: [] },
+                               remote: { stamps: [] }
+                             },
             templates: { active: [], locked: [] },
             template_selection: { local: { stamps: [] },
                                   remote: { stamps: [] }

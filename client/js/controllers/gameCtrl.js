@@ -92,6 +92,11 @@ angular.module('clickApp.controllers')
       };
 
       var forward_events = [
+        'clickModel',
+        'rightClickModel',
+        'dragStartModel',
+        'dragModel',
+        'dragEndModel',
         'clickTemplate',
         'rightClickTemplate',
         'dragStartTemplate',

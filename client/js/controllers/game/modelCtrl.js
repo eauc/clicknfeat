@@ -92,6 +92,7 @@ angular.module('clickApp.controllers')
           models: R.times(function(i) {
             return {
               info: model_path,
+              user: $scope.user.name,
               x: 20*i, y: 0
             };
           }, $scope.repeat)

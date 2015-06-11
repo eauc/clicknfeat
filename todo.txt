@@ -1,10 +1,15 @@
 unknown binding
+escape -> leave model/template selection
+move [right]clickMap to common, disable template&model selection
+template:
+- remove data arg from events and use requestAniFrame to delay directives/scope update
+- locked flag in state / divide templates list by flag
 model
-- create
-- position/size
-- selection(s) [ctrl]
-- moves
+- selection(s) [ctrl]click/dragBox
+- select all friendly
+- detail
 - drag
+- moves
 - images
 - label
 - icons

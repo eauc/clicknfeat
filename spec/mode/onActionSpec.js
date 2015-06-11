@@ -85,6 +85,7 @@ describe('on mode action', function() {
         this.modesService = modesService;
         this.defaultModeService = defaultModeService;
         spyOn(this.defaultModeService.actions, 'viewZoomIn');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
       }
     ]));
 

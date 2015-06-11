@@ -4,8 +4,10 @@ angular.module('clickApp.directives')
   .directive('clickGameModel', [
     'gameFactions',
     'labelElement',
+    'gameModelSelection',
     function(gameFactionsService,
-             labelElementService) {
+             labelElementService,
+             gameModelSelectionService) {
       var BASE_RADIUS = {
         huge: 24.605,
         large: 9.842,
@@ -24,7 +26,7 @@ angular.module('clickApp.directives')
           if(R.isNil(scope.model) ||
              R.isNil(info)) return;
           var container = el[0];
-          var element = createModelElement(info, svgNS, container);
+          var element = createModelElement(info, scope.model, svgNS, container);
 
           // scope.onGameEvent('mapFlipped', function onMapFlipped() {
           //   labelElementService.updateOnFlipMap(map, model.state, element.label);
@@ -32,6 +34,7 @@ angular.module('clickApp.directives')
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
               updateModelPosition(info, scope.model, element);
+              updateModelSelection(scope.model, scope.game.model_selection, element);
             });
           }
           updateModel();
@@ -39,7 +42,7 @@ angular.module('clickApp.directives')
                             updateModel, scope);
         }
       };
-      function createModelElement(info, svgNS, parent) {
+      function createModelElement(info, model, svgNS, parent) {
         var base = document.createElementNS(svgNS, 'circle');
         base.classList.add('model-base');
         base.setAttribute('cx', (info.img[0].width/2)+'');
@@ -48,6 +51,7 @@ angular.module('clickApp.directives')
         base.setAttribute('style', [
           'fill:', info.base_color, ';',
         ].join(''));
+        base.setAttribute('data-stamp', model.state.stamp);
         parent.appendChild(base);
 
         var direction = document.createElementNS(svgNS, 'line');
@@ -75,11 +79,38 @@ angular.module('clickApp.directives')
         // image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', info.img[0].link);
         // parent.appendChild(image);
 
+        var edge = document.createElementNS(svgNS, 'circle');
+        edge.classList.add('model-edge');
+        edge.setAttribute('cx', (info.img[0].width/2)+'');
+        edge.setAttribute('cy', (info.img[0].height/2)+'');
+        edge.setAttribute('r', BASE_RADIUS[info.base]);
+        parent.appendChild(edge);
+
+        var direction_los = document.createElementNS(svgNS, 'line');
+        direction_los.classList.add('model-los-selection');
+        direction_los.setAttribute('x1', (info.img[0].width/2)+'');
+        direction_los.setAttribute('y1', (info.img[0].height/2)+'');
+        direction_los.setAttribute('x2', (info.img[0].width/2)+'');
+        direction_los.setAttribute('y2', (info.img[0].height/2-700)+'');
+        parent.appendChild(direction_los);
+
+        var front_arc_los = document.createElementNS(svgNS, 'line');
+        front_arc_los.classList.add('model-los-selection');
+        front_arc_los.setAttribute('x1', (info.img[0].width/2-700)+'');
+        front_arc_los.setAttribute('y1', (info.img[0].height/2)+'');
+        front_arc_los.setAttribute('x2', (info.img[0].width/2+700)+'');
+        front_arc_los.setAttribute('y2', (info.img[0].height/2)+'');
+        parent.appendChild(front_arc_los);
+
+
         return { container: parent,
                  base: base,
                  direction: direction,
                  front_arc: front_arc,
+                 direction_los: direction_los,
+                 front_arc_los: front_arc_los,
                  // image: image,
+                 edge: edge,
                };
       }
       function updateModelPosition(info, model, element) {
@@ -96,6 +127,20 @@ angular.module('clickApp.directives')
           model.state.y,
           ')'
         ].join(''));
+      }
+      function updateModelSelection(model, selection, element) {
+        if(gameModelSelectionService.in('local', model.state.stamp, selection)) {
+          element.container.classList.add('local-selection');
+        }
+        else {
+          element.container.classList.remove('local-selection');
+        }
+        if(gameModelSelectionService.in('remote', model.state.stamp, selection)) {
+          element.container.classList.add('remote-selection');
+        }
+        else {
+          element.container.classList.remove('remote-selection');
+        }
       }
     }
   ])

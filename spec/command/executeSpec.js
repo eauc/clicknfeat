@@ -37,14 +37,27 @@ describe('execute commands', function() {
 
       when('commandsService.execute succeeds', function() {
       }, function() {
-        it('should register command', function() {
-          expect(this.game.commands[0].user)
-            .toBe('user');
-          expect(this.game.commands[0].returnValue)
-            .toBe('commands.execute.returnValue');
-          expect(this.game.commands[0].stamp)
-            .toMatch(/[0-9a-f-]{10,}/);
+        when('command is loggable', function() {
+        }, function() {
+          it('should register command', function() {
+            expect(this.game.commands[0].user)
+              .toBe('user');
+            expect(this.game.commands[0].returnValue)
+              .toBe('commands.execute.returnValue');
+            expect(this.game.commands[0].stamp)
+              .toMatch(/[0-9a-f-]{10,}/);
+          });
         });
+
+        when('command is not loggable', function() {
+          this.commandsService.execute._retVal.do_not_log = true;
+        }, function() {
+          it('should not register command', function() {
+            expect(this.game.commands)
+              .toEqual([]);
+          });
+        });
+        
         it('should save game', function() {
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);

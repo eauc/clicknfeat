@@ -24,9 +24,9 @@ self.createModelCommandServiceFactory =
           desc: models[0].state.info.join('.'),
         };
         game.models = gameModelsService.add(models, game.models);
-        // game.model_selection =
-        //   gameModelSelectionService.set('local', R.map(R.path(['state','stamp']), models),
-        //                                 scope, game.model_selection);
+        game.model_selection =
+          gameModelSelectionService.set('local', R.map(R.path(['state','stamp']), models),
+                                        scope, game.model_selection);
         scope.gameEvent('createModel');
         return ctxt;
       },
@@ -38,20 +38,20 @@ self.createModelCommandServiceFactory =
         if(R.isEmpty(models)) return;
 
         game.models = gameModelsService.add(models, game.models);
-        // game.model_selection =
-        //   gameModelSelectionService.set('remote', R.map(R.path(['state','stamp']), models),
-        //                                 scope, game.model_selection);
+        game.model_selection =
+          gameModelSelectionService.set('remote', R.map(R.path(['state','stamp']), models),
+                                        scope, game.model_selection);
         scope.gameEvent('createModel');
       },
       undo: function createModelUndo(ctxt, scope, game) {
         var stamps = R.map(R.prop('stamp'), ctxt.models);
         game.models = gameModelsService.removeStamps(stamps, game.models);
-        // game.model_selection =
-        //   gameModelSelectionService.removeFrom('local', stamps,
-        //                                        scope, game.model_selection);
-        // game.model_selection =
-        //   gameModelSelectionService.removeFrom('remote', stamps,
-        //                                        scope, game.model_selection);
+        game.model_selection =
+          gameModelSelectionService.removeFrom('local', stamps,
+                                               scope, game.model_selection);
+        game.model_selection =
+          gameModelSelectionService.removeFrom('remote', stamps,
+                                               scope, game.model_selection);
         scope.gameEvent('createModel');
       }
     };

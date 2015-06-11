@@ -12,6 +12,13 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
       return (R.find(R.pathEq(['state','stamp'], stamp), models.active) ||
               R.find(R.pathEq(['state','stamp'], stamp), models.locked));
     },
+    findStampsBetweenPoints: function modelsFindStampBetweenPoints(top_left, bottom_right, models) {
+      models = R.concat(models.active, models.locked);
+      return R.pipe(
+        R.filter(modelService.isBetweenPoints$(top_left, bottom_right)),
+        R.map(R.path(['state','stamp']))
+      )(models);
+    },
     // onStamp: function modelsOnStamp(stamp, method /*, ...args..., models*/) {
     //   var args = Array.prototype.slice.call(arguments);
     //   var models = R.last(args);

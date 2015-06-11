@@ -32,7 +32,7 @@ angular.module('clickApp.services')
     'gameTemplates',
     'gameTemplateSelection',
     'gameModels',
-    // 'gameModelSelection',
+    'gameModelSelection',
     gameServiceFactory
   ])
   .factory('games', [
@@ -66,6 +66,8 @@ angular.module('clickApp.services')
     'game',
     'template',
     'gameTemplateSelection',
+    'gameModels',
+    'gameModelSelection',
     defaultModeServiceFactory
   ])
   .factory('rulerMode', [
@@ -82,6 +84,26 @@ angular.module('clickApp.services')
     'commonMode',
     'game',
     createModelModeServiceFactory
+  ])
+  .factory('modelsMode', [
+    'modes',
+    'settings',
+    'defaultMode',
+    'model',
+    'game',
+    'gameModels',
+    'gameModelSelection',
+    modelsModeServiceFactory
+  ])
+  .factory('modelMode', [
+    'modes',
+    'settings',
+    'modelsMode',
+    'model',
+    'game',
+    'gameModels',
+    'gameModelSelection',
+    modelModeServiceFactory
   ])
   .factory('createTemplateMode', [
     'modes',
@@ -167,6 +189,8 @@ angular.module('clickApp.services')
     'defaultMode',
     'rulerMode',
     'createModelMode',
+    'modelsMode',
+    'modelMode',
     'createTemplateMode',
     'aoeTemplateLockedMode',
     'sprayTemplateLockedMode',
@@ -187,6 +211,11 @@ angular.module('clickApp.services')
   .factory('gameFactions', [
     'http',
     gameFactionsServiceFactory
+  ])
+  .factory('gameMap', [
+    'gameModels',
+    'gameTemplates',
+    gameMapServiceFactory
   ])
   .factory('gameScenario', [
     'http',
@@ -209,11 +238,11 @@ angular.module('clickApp.services')
     'model',
     gameModelsServiceFactory
   ])
-  // .factory('gameModelSelection', [
-  //   'modes',
-  //   'gameModels',
-  //   gameModelSelectionServiceFactory
-  // ])
+  .factory('gameModelSelection', [
+    'modes',
+    'gameModels',
+    gameModelSelectionServiceFactory
+  ])
   .factory('commands', [
     commandsServiceFactory
   ])
@@ -221,8 +250,13 @@ angular.module('clickApp.services')
     'commands',
     'model',
     'gameModels',
-    // 'gameModelSelection',
+    'gameModelSelection',
     createModelCommandServiceFactory
+  ])
+  .factory('setModelSelectionCommand', [
+    'commands',
+    'gameModelSelection',
+    setModelSelectionCommandServiceFactory
   ])
   .factory('createTemplateCommand', [
     'commands',
@@ -274,6 +308,7 @@ angular.module('clickApp.services')
   ])
   .factory('allCommands', [
     'createModelCommand',
+    'setModelSelectionCommand',
     'createTemplateCommand',
     'deleteTemplatesCommand',
     'lockTemplatesCommand',

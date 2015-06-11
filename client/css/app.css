@@ -228,18 +228,43 @@ ul.nav-tabs li {
     pointer-events: none;
 }
 
-.model-base {
-    fill-opacity:1.0;
-    stroke:black;
-    stroke-width:0.5px;
-    pointer-events:visible;
-}
-.model-los {
-    stroke:black;
-    stroke-width:0.5px;
+.model-base,
+.model-edge,
+.model-los,
+.model-los-selection {
+    stroke: black;
+    stroke-width: 0.5px;
+    pointer-events: none;
 }
 .model-image {
-    pointer-events:none;
+    pointer-events: none;
+}
+.model-base {
+    fill-opacity: 1.0;
+    pointer-events: visible;
+}
+.model-edge {
+    fill: transparent;
+}
+.model-los-selection {
+    visibility: hidden;
+}
+
+.remote-selection .model-edge,
+.remote-selection .model-los-selection {
+    stroke-width: 0.75px;
+    stroke: #FFF;
+}
+.remote-selection .model-los-selection {
+    visibility: visible;
+}
+.local-selection .model-edge,
+.local-selection .model-los-selection {
+    stroke-width: 0.75px;
+    stroke: #0F0;
+}
+.local-selection .model-los-selection {
+    visibility: visible;
 }
 
 /**************************
@@ -328,6 +353,17 @@ ul.nav-tabs li {
     marker-start:url(#ruler-start);
     marker-end:url(#ruler-end);
     stroke: #0EE;
+}
+
+/**************************
+  Dragbox
+***************************/
+
+#game-dragbox {
+    pointer-events: none;
+    stroke-width:1px;
+    stroke: #00F;
+    fill: none;
 }
 
 /**************************
