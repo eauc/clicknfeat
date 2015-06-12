@@ -6,26 +6,25 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- images
-- select all friendly
-- detail
-- drag
 - moves
-- lock
+- drag
+- detail
 - label
-- icons alterations
 - damage / field
-- wreck
+- counter
+- souls counters
 - ruler origin target / update when model change ?
 - template origin target / update when model change ?
+- icons alterations
 - B2B
 - under Aoe
 - unit
-- highlight models in melee ?
+- select all friendly
+- lock
+- images / other types
 - incorporeal
-- counter
-- souls counters
-selectionBox
+- wreck
+- highlight models in melee ?
 layers - deploiement
 online - users login
 online - users chat + notification

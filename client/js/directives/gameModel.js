@@ -126,9 +126,9 @@ angular.module('clickApp.directives')
           ') rotate(',
           model.state.r,
           ',',
-          model.state.x,
+          img.width/2,
           ',',
-          model.state.y,
+          img.height/2,
           ')'
         ].join(''));
       }

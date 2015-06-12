@@ -3,11 +3,17 @@
 self.modelServiceFactory = function modelServiceFactory(settingsService,
                                                         pointService,
                                                         gameFactionsService) {
+  var BASE_RADIUS = {
+    huge: 24.605,
+    large: 9.842,
+    medium: 7.874,
+    small: 5.905
+  };
   var DEFAULT_MOVES = {
     Move: 10,
-    MoveSmall: 1,
-    Rotate: 60,
-    RotateSmall: 6,
+    MoveSmall: 5,
+    Rotate: 15,
+    RotateSmall: 5,
     Shift: 10,
     ShiftSmall: 1,
   };
@@ -74,11 +80,13 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         model.state.dsp = R.append('i', model.state.dsp);
       }
     },
-    // checkState: function modelCheckState(state) {
-    //   state.x = Math.max(0, Math.min(480, state.x));
-    //   state.y = Math.max(0, Math.min(480, state.y));
-    //   return state;
-    // },
+    checkState: function modelCheckState(factions, state) {
+      var info = gameFactionsService.getModelInfo(state.info, factions);
+      var radius = BASE_RADIUS[info.base];
+      state.x = Math.max(0+radius, Math.min(480-radius, state.x));
+      state.y = Math.max(0+radius, Math.min(480-radius, state.y));
+      return state;
+    },
     // setPosition: function modelSet(pos, model) {
     //   model.state = R.pipe(
     //     R.assoc('x', pos.x),
@@ -86,46 +94,62 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     //     modelService.checkState
     //   )(model.state);
     // },
-    // moveFront: function modelMoveFront(small, model) {
-    //   var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-    //   model.state = modelService
-    //     .checkState(pointService.moveFront(dist, model.state));
-    // },
-    // moveBack: function modelMoveBack(small, model) {
-    //   var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-    //   model.state = modelService
-    //     .checkState(pointService.moveBack(dist, model.state));
-    // },
-    // rotateLeft: function modelRotateLeft(small, model) {
-    //   var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-    //   model.state = modelService
-    //     .checkState(pointService.rotateLeft(angle, model.state));
-    // },
-    // rotateRight: function modelRotateRight(small, model) {
-    //   var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-    //   model.state = modelService
-    //     .checkState(pointService.rotateRight(angle, model.state));
-    // },
-    // shiftLeft: function modelShiftLeft(small, model) {
-    //   var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-    //   model.state = modelService
-    //     .checkState(pointService.shiftLeft(dist, model.state));
-    // },
-    // shiftRight: function modelShiftRight(small, model) {
-    //   var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-    //   model.state = modelService
-    //     .checkState(pointService.shiftRight(dist, model.state));
-    // },
-    // shiftUp: function modelShiftUp(small, model) {
-    //   var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-    //   model.state = modelService
-    //     .checkState(pointService.shiftUp(dist, model.state));
-    // },
-    // shiftDown: function modelShiftDown(small, model) {
-    //   var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-    //   model.state = modelService
-    //     .checkState(pointService.shiftDown(dist, model.state));
-    // },
+    moveFront: function modelMoveFront(factions, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      model.state = R.pipe(
+        pointService.moveFront$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    moveBack: function modelMoveBack(factions, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      model.state = R.pipe(
+        pointService.moveBack$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    rotateLeft: function modelRotateLeft(factions, small, model) {
+      var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
+      model.state = R.pipe(
+        pointService.rotateLeft$(angle),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    rotateRight: function modelRotateRight(factions, small, model) {
+      var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
+      model.state = R.pipe(
+        pointService.rotateRight$(angle),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    shiftLeft: function modelShiftLeft(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftLeft$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    shiftRight: function modelShiftRight(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftRight$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    shiftUp: function modelShiftUp(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftUp$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    shiftDown: function modelShiftDown(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftDown$(dist),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
     // addLabel: function modelAddLabel(label, model) {
     //   model.state.l = R.uniq(R.append(label, model.state.l));
     // },

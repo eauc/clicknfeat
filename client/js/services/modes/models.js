@@ -36,26 +36,28 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   //   modesService.switchToMode(gameModelssService.modeForStamp(stamp, scope.game.modelss),
   //                             scope, scope.modes);
   // };
-  // var moves = [
-  //   ['moveFront', 'up'],
-  //   ['moveBack', 'down'],
-  //   ['rotateLeft', 'left'],
-  //   ['rotateRight', 'right'],
-  //   ['shiftUp', 'ctrl+up'],
-  //   ['shiftDown', 'ctrl+down'],
-  //   ['shiftLeft', 'ctrl+left'],
-  //   ['shiftRight', 'ctrl+right'],
-  // ];
-  // R.forEach(function(move) {
-    // models_actions[move[0]] = function modelsMove(scope) {
-      // var target = gameModelsSelectionService.get('local', scope.game.models_selection);
-      // gameService.executeCommand('onModelss', move[0], false, [target], scope, scope.game);
-  //   };
-  //   models_actions[move[0]+'Small'] = function modelsMove(scope) {
-  //     var target = gameModelsSelectionService.get('local', scope.game.models_selection);
-  //     gameService.executeCommand('onModelss', move[0], true, [target], scope, scope.game);
-  //   };
-  // }, moves);
+  var moves = [
+    ['moveFront', 'up'],
+    ['moveBack', 'down'],
+    ['rotateLeft', 'left'],
+    ['rotateRight', 'right'],
+    ['shiftUp', 'ctrl+up'],
+    ['shiftDown', 'ctrl+down'],
+    ['shiftLeft', 'ctrl+left'],
+    ['shiftRight', 'ctrl+right'],
+  ];
+  R.forEach(function(move) {
+    models_actions[move[0]] = function modelsMove(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', move[0], scope.factions, false,
+                                 stamps, scope, scope.game);
+    };
+    models_actions[move[0]+'Small'] = function modelsMove(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', move[0], scope.factions, true,
+                                 stamps, scope, scope.game);
+    };
+  }, moves);
 
   // (function() {
   //   var drag_models_start_state;
@@ -90,10 +92,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleImageDisplay': 'i',
     'setNextImage': 'shift+i',
   };
-  // R.forEach(function(move) {
-  //   models_default_bindings[move[0]] = move[1];
-  //   models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
-  // }, moves);
+  R.forEach(function(move) {
+    models_default_bindings[move[0]] = move[1];
+    models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
+  }, moves);
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
   var models_buttons = [
