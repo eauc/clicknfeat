@@ -86,5 +86,6 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       return ret;
     },
   };
+  R.curryService(gameTemplateSelectionService);
   return gameTemplateSelectionService;
 };

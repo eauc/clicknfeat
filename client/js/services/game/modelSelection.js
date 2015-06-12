@@ -86,5 +86,6 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
       return gameModelSelectionService.removeFrom(where, previous, scope, selection);
     },
   };
+  R.curryService(gameModelSelectionService);
   return gameModelSelectionService;
 };

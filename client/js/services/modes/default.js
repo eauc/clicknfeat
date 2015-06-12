@@ -36,6 +36,12 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
       gameTemplateSelectionService.set('local', event.target.state.stamp,
                                        scope, scope.game.template_selection);
   };
+  default_actions.dragStartModel = function defaultDragStartModel(scope, event) {
+    scope.game.model_selection =
+      gameModelSelectionService.set('local', [event.target.state.stamp],
+                                    scope, scope.game.model_selection);
+    modesService.currentModeAction('dragStartModel', scope, event, null, scope.modes);
+  };
   default_actions.dragStartTemplate = function defaultDragStartTemplate(scope, event) {
     scope.game.template_selection =
       gameTemplateSelectionService.set('local', event.target.state.stamp,

@@ -59,34 +59,55 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     };
   }, moves);
 
-  // (function() {
-  //   var drag_models_start_state;
-  //   function updateStateWithDelta(event, state) {
-  //     var dx = event.now.x - event.start.x;
-  //     var dy = event.now.y - event.start.y;
-  //     state.x = drag_models_start_state.x + dx;
-  //     state.y = drag_models_start_state.y + dy;
-  //   }
-  //   models_actions.dragStartModels = function modelsDragStartModels(scope, event) {
-  //     drag_models_start_state = R.clone(event.target.state);
-  //     models_actions.dragModels(scope, event);
-  //     scope.game.models_selection =
-  //       gameModelsSelectionService.set('local', event.target.state.stamp,
-  //                                        scope, scope.game.models_selection);
-  //   };
-  //   models_actions.dragModels = function modelsDragModels(scope, event) {
-  //     updateStateWithDelta(event, event.target.state);
-  //     scope.gameEvent('changeModels-'+event.target.state.stamp);
-  //   };
-  //   models_actions.dragEndModels = function modelsDragEndModels(scope, event) {
-  //     modelsService.setPosition(drag_models_start_state, event.target);
-  //     var end_state = R.clone(drag_models_start_state);
-  //     updateStateWithDelta(event, end_state);
-  //     gameService.executeCommand('onModelss',
-  //                                'setPosition', end_state, [event.target.state.stamp],
-  //                                scope, scope.game);
-  //   };
-  // })();
+  (function() {
+    var drag_models_start_states;
+    var drag_models_start_selection;
+    models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
+      var stamp = event.target.state.stamp;
+      if(!gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
+        gameService.executeCommand('setModelSelection', 'set', [stamp],
+                                   scope, scope.game);
+      }
+
+      drag_models_start_selection = R.pipe(
+        gameModelSelectionService.get$('local'),
+        R.map(function(stamp) {
+          return gameModelsService.findStamp(stamp, scope.game.models);
+        })
+      )(scope.game.model_selection);
+      drag_models_start_states = R.map(modelService.saveState, drag_models_start_selection);
+
+      models_actions.dragModel(scope, event);
+    };
+    models_actions.dragModel = function modelsDragModel(scope, event) {
+      R.pipe(
+        R.forEachIndexed(function(model, index) {
+          var pos = {
+            x: drag_models_start_states[index].x + event.now.x - event.start.x,
+            y: drag_models_start_states[index].y + event.now.y - event.start.y,
+          };
+          modelService.setPosition(scope.factions, pos, model);
+        }),
+        R.forEach(function(model) {
+          scope.gameEvent('changeModel-'+modelService.eventName(model));
+        })
+      )(drag_models_start_selection);
+    };
+    models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
+      R.pipe(
+        R.forEachIndexed(function(model, index) {
+          modelService.setPosition(scope.factions, drag_models_start_states[index], model);
+        })
+      )(drag_models_start_selection);
+      var stamps = R.map(R.path(['state','stamp']), drag_models_start_selection);
+      var shift = {
+        x: event.now.x - event.start.x,
+        y: event.now.y - event.start.y,
+      };
+      gameService.executeCommand('onModels', 'shiftPosition', scope.factions, shift,
+                                 stamps, scope, scope.game);
+    };
+  })();
 
   var models_default_bindings = {
     'toggleImageDisplay': 'i',

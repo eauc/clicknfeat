@@ -87,13 +87,20 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       state.y = Math.max(0+radius, Math.min(480-radius, state.y));
       return state;
     },
-    // setPosition: function modelSet(pos, model) {
-    //   model.state = R.pipe(
-    //     R.assoc('x', pos.x),
-    //     R.assoc('y', pos.y),
-    //     modelService.checkState
-    //   )(model.state);
-    // },
+    setPosition: function modelSet(factions, pos, model) {
+      model.state = R.pipe(
+        R.assoc('x', pos.x),
+        R.assoc('y', pos.y),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
+    shiftPosition: function modelSet(factions, shift, model) {
+      model.state = R.pipe(
+        R.assoc('x', model.state.x + shift.x),
+        R.assoc('y', model.state.y + shift.y),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
     moveFront: function modelMoveFront(factions, small, model) {
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       model.state = R.pipe(
