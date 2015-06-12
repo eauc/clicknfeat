@@ -1,169 +1,176 @@
 'use strict';
 
 describe('misc model', function() {
-  // describe('onModelsCommand service', function() {
-  //   beforeEach(inject([
-  //     'onModelsCommand',
-  //     function(onModelsCommandService) {
-  //       this.onModelsCommandService = onModelsCommandService;
-  //       this.modelService = spyOnService('model');
-  //       this.modelService.eventName.and.callThrough();
-  //       this.gameModelsService = spyOnService('gameModels');
-  //       this.gameModelsService.findStamp.and.callFake(function(s) {
-  //         return { state: { stamp: s } };
-  //       });
-  //       this.gameModelSelectionService = spyOnService('gameModelSelection');
-  //     }
-  //   ]));
+  describe('onModelsCommand service', function() {
+    beforeEach(inject([
+      'onModelsCommand',
+      function(onModelsCommandService) {
+        this.onModelsCommandService = onModelsCommandService;
+        this.modelService = spyOnService('model');
+        this.modelService.eventName.and.callThrough();
+        this.gameModelsService = spyOnService('gameModels');
+        this.gameModelsService.findStamp.and.callFake(R.bind(function(s) {
+          return { state: { stamp: s } };
+        }, this));
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-  //   when('execute(<method>, <..args..>, <stamps>, <scope>, <game>)', function() {
-  //     this.ctxt = this.onModelsCommandService
-  //       .execute('method', 'arg1', 'arg2', this.stamps, this.scope, this.game);
-  //   }, function() {
-  //     beforeEach(function() {
-  //       this.stamps = ['stamp1', 'stamp2'];
-  //       this.scope = jasmine.createSpyObj('scope', [
-  //         'gameEvent'
-  //       ]);
-  //       this.game = { models: 'models',
-  //                     model_selection: 'selection' };
+        this.scope = jasmine.createSpyObj('scope', [
+          'gameEvent'
+        ]);
+        this.game = { models: 'models',
+                      model_selection: 'selection' };
+      }
+    ]));
 
-  //       this.modelService.saveState.and.callFake(function(t) {
-  //         return t.state.stamp+'State';
-  //       });
-  //       this.modelService.call.and.callFake(function(m, a1, a2, t) {
-  //         t.state.stamp += 'After';
-  //       });
-  //     });
+    when('execute(<method>, <..args..>, <stamps>, <scope>, <game>)', function() {
+      this.ctxt = this.onModelsCommandService
+        .execute(this.method, 'arg1', 'arg2', this.stamps, this.scope, this.game);
+    }, function() {
+      beforeEach(function() {
+        this.stamps = ['stamp1', 'stamp2'];
 
-  //     it('should find <stamps> in game models', function() {
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('stamp1', 'models');
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('stamp2', 'models');
-  //     });
+        this.gameModelsService.onStamps.and.callFake(R.bind(function(m) {
+          return this.gameModelsService.onStamps._retVal+'('+m+')';
+        }, this));
+      });
 
-  //     it('should save <stamps> states before change', function() {
-  //       expect(this.ctxt.before)
-  //         .toEqual(['stamp1State', 'stamp2State']);
-  //     });
+      when('modelService does not respond to <method> ', function() {
+        this.method = 'whatever';
+      }, function() {
+        it('should do nothing', function() {
+          expect(this.gameModelsService.onStamps)
+            .not.toHaveBeenCalled();
+        });
 
-  //     it('should apply <method> on <stamps>', function() {
-  //       expect(this.modelService.call)
-  //         .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp1After' } });
-  //       expect(this.modelService.call)
-  //         .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp2After' } });
-  //     });
+        it('should return Nil', function() {
+          expect(this.ctxt)
+            .toBe(undefined);
+        });
+      });
+      
+      when('modelService responds to <method> ', function() {
+        this.method = 'setState';
+      }, function() {
+        it('should save <stamps> states before change', function() {
+          expect(this.gameModelsService.onStamps)
+            .toHaveBeenCalledWith('saveState', this.stamps, 'models');
+          expect(this.ctxt.before)
+            .toEqual('gameModels.onStamps.returnValue(saveState)');
+        });
 
-  //     it('should save <stamps> states after change', function() {
-  //       expect(this.ctxt.after)
-  //         .toEqual(['stamp1AfterState', 'stamp2AfterState']);
-  //     });
+        it('should apply <method> on <stamps>', function() {
+          expect(this.gameModelsService.onStamps)
+            .toHaveBeenCalledWith(this.method, 'arg1', 'arg2', this.stamps, 'models');
+        });
 
-  //     it('should emit changeModel gameEvents', function() {
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-stamp1After');
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-stamp2After');
-  //     });
+        it('should save <stamps> states after change', function() {
+          expect(this.gameModelsService.onStamps)
+            .toHaveBeenCalledWith('saveState', this.stamps, 'models');
+          expect(this.ctxt.after)
+            .toEqual('gameModels.onStamps.returnValue(saveState)');
+        });
 
-  //     it('should return context', function() {
-  //       expect(this.ctxt.desc)
-  //         .toBe('method');
-  //     });
-  //   });
+        it('should emit changeModel gameEvents', function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp1');
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp2');
+        });
 
-  //   when('replay(<ctxt>, <scope>, <game>)', function() {
-  //     this.onModelsCommandService.replay(this.ctxt, this.scope, this.game);
-  //   }, function() {
-  //     beforeEach(function() {
-  //       this.ctxt = {
-  //         before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
-  //         after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
-  //       };
-  //       this.scope = jasmine.createSpyObj('scope', [
-  //         'gameEvent'
-  //       ]);
-  //       this.game = { models: 'models',
-  //                     model_selection: 'selection' };
-  //     });
+        it('should return context', function() {
+          expect(this.ctxt)
+            .toEqual({
+              before: 'gameModels.onStamps.returnValue(saveState)',
+              after: 'gameModels.onStamps.returnValue(saveState)',
+              desc: 'setState'
+            });
+        });
+      });
+    });
 
-  //     it('should find <stamps> in game models', function() {
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('after1', 'models');
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('after2', 'models');
-  //     });
+    when('replay(<ctxt>, <scope>, <game>)', function() {
+      this.onModelsCommandService.replay(this.ctxt, this.scope, this.game);
+    }, function() {
+      beforeEach(function() {
+        this.ctxt = {
+          before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
+          after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
+        };
+      });
 
-  //     it('should set <after> states', function() {
-  //       expect(this.modelService.setState)
-  //         .toHaveBeenCalledWith({ stamp: 'after1' }, { state: { stamp: 'after1' } });
-  //       expect(this.modelService.setState)
-  //         .toHaveBeenCalledWith({ stamp: 'after2' }, { state: { stamp: 'after2' } });
-  //     });
+      it('should find <stamps> in game models', function() {
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('after1', 'models');
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('after2', 'models');
+      });
 
-  //     it('should set remote modelSelection to modified models', function() {
-  //       expect(this.gameModelSelectionService.set)
-  //         .toHaveBeenCalledWith('remote', 'after2', this.scope, 'selection');
-  //     });
+      it('should set <after> states', function() {
+        expect(this.modelService.setState)
+          .toHaveBeenCalledWith({ stamp: 'after1' }, { state: { stamp: 'after1' } });
+        expect(this.modelService.setState)
+          .toHaveBeenCalledWith({ stamp: 'after2' }, { state: { stamp: 'after2' } });
+      });
 
-  //     it('should emit changeModel gameEvents', function() {
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-after1');
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-after2');
-  //     });
-  //   });
+      it('should emit changeModel gameEvents', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeModel-after1');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeModel-after2');
+      });
 
-  //   when('undo(<ctxt>, <scope>, <game>)', function() {
-  //     this.onModelsCommandService.undo(this.ctxt, this.scope, this.game);
-  //   }, function() {
-  //     beforeEach(function() {
-  //       this.ctxt = {
-  //         before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
-  //         after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
-  //       };
-  //       this.scope = jasmine.createSpyObj('scope', [
-  //         'gameEvent'
-  //       ]);
-  //       this.game = { models: 'models',
-  //                     model_selection: 'selection' };
-  //     });
+      it('should set remote modelSelection to modified models', function() {
+        expect(this.gameModelSelectionService.set)
+          .toHaveBeenCalledWith('remote', ['after1', 'after2'],
+                                this.scope, 'selection');
+      });
+    });
 
-  //     it('should find <stamps> in game models', function() {
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('before1', 'models');
-  //       expect(this.gameModelsService.findStamp)
-  //         .toHaveBeenCalledWith('before2', 'models');
-  //     });
+    when('undo(<ctxt>, <scope>, <game>)', function() {
+      this.onModelsCommandService.undo(this.ctxt, this.scope, this.game);
+    }, function() {
+      beforeEach(function() {
+        this.ctxt = {
+          before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
+          after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
+        };
+      });
 
-  //     it('should set <before> states', function() {
-  //       expect(this.modelService.setState)
-  //         .toHaveBeenCalledWith({ stamp: 'before1' }, { state: { stamp: 'before1' } });
-  //       expect(this.modelService.setState)
-  //         .toHaveBeenCalledWith({ stamp: 'before2' }, { state: { stamp: 'before2' } });
-  //     });
+      it('should find <stamps> in game models', function() {
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('before1', 'models');
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('before2', 'models');
+      });
 
-  //     it('should set remote modelSelection to modified models', function() {
-  //       expect(this.gameModelSelectionService.set)
-  //         .toHaveBeenCalledWith('remote', 'before2', this.scope, 'selection');
-  //     });
+      it('should set <before> states', function() {
+        expect(this.modelService.setState)
+          .toHaveBeenCalledWith({ stamp: 'before1' }, { state: { stamp: 'before1' } });
+        expect(this.modelService.setState)
+          .toHaveBeenCalledWith({ stamp: 'before2' }, { state: { stamp: 'before2' } });
+      });
 
-  //     it('should emit changeModel gameEvents', function() {
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-before1');
-  //       expect(this.scope.gameEvent)
-  //         .toHaveBeenCalledWith('changeModel-before2');
-  //     });
-  //   });
-  // });
+      it('should emit changeModel gameEvents', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeModel-before1');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeModel-before2');
+      });
+
+      it('should set remote modelSelection to modified models', function() {
+        expect(this.gameModelSelectionService.set)
+          .toHaveBeenCalledWith('remote', ['before1', 'before2'],
+                                this.scope, 'selection');
+      });
+    });
+  });
 
   describe('gameModels service', function() {
     beforeEach(inject([
       'gameModels',
       function(gameModelsService) {
         this.gameModelsService = gameModelsService;
-        // this.modelService = spyOnService('model');
+        this.modelService = spyOnService('model');
       }
     ]));
 
@@ -192,35 +199,43 @@ describe('misc model', function() {
       });
     });
     
-  //   describe('onStamp(<stamp>, <method>, <...args...>)', function() {
-  //     beforeEach(function() {
-  //       this.models = {
-  //         active: [
-  //           { state: { stamp: 'stamp1' } },
-  //           { state: { stamp: 'stamp2' } },
-  //         ],
-  //         locked: [
-  //           { state: { stamp: 'stamp3' } },
-  //         ],
-  //       };
-  //     });
+    when('onStamp(<method>, <...args...>, <stamps>)', function() {
+      this.ret = this.gameModelsService.onStamps(this.method, 'arg1', 'arg2',
+                                                 this.stamps, this.models);
+    }, function() {
+      beforeEach(function() {
+        this.models = {
+          active: [
+            { state: { stamp: 'stamp1' } },
+            { state: { stamp: 'stamp2' } },
+          ],
+          locked: [
+            { state: { stamp: 'stamp3' } },
+          ],
+        };
+        this.stamps = ['stamp2', 'stamp3'];
 
-  //     it('should call <method> on <stamp> model', function() {
-  //       this.gameModelsService.onStamp('stamp2',
-  //                                         'method', 'arg1', 'arg2',
-  //                                         this.models);
-  //       expect(this.modelService.call)
-  //         .toHaveBeenCalledWith('method', 'arg1', 'arg2',
-  //                               { state: { stamp: 'stamp2' } });
+        this.modelService.setState.and.callFake(function(a1, a2, m) {
+          return 'model.setState.returnValue('+m.state.stamp+')';
+        });
+      });
 
-  //       this.gameModelsService.onStamp('stamp3',
-  //                                         'method',
-  //                                         this.models);
-  //       expect(this.modelService.call)
-  //         .toHaveBeenCalledWith('method',
-  //                               { state: { stamp: 'stamp3' } });
-  //     });
-  //   });
+      when('modelService responds to <method>', function() {
+        this.method = 'setState';
+      }, function() {
+        it('should call <method> on <stamp> model', function() {
+          expect(this.modelService[this.method])
+            .toHaveBeenCalledWith('arg1', 'arg2',
+                                  { state: { stamp: 'stamp2' } });
+          expect(this.modelService[this.method])
+            .toHaveBeenCalledWith('arg1', 'arg2',
+                                  { state: { stamp: 'stamp3' } });
+          expect(this.ret)
+            .toEqual(['model.setState.returnValue(stamp2)',
+                      'model.setState.returnValue(stamp3)']);
+        });
+      });
+    });
   });
 
   describe('model service', function() {

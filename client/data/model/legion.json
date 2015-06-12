@@ -25,7 +25,6 @@
         "type": "wardude",
         "fury": 6,
         "base": "medium",
-        "img": [],
         "damage": {
           "n": 18
         }
@@ -96,7 +95,6 @@
         "type": "wardude",
         "fury": 5,
         "base": "huge",
-        "img": [],
         "damage": {
           "n": 18
         }
@@ -110,6 +108,12 @@
         "img": [
           {
             "link": "data/model/legion/warlocks/Rhyas1.png"
+          },
+          {
+            "link": "data/model/legion/warlocks/Rhyas1_Incorporeal.png"
+          },
+          {
+            "link": "data/model/legion/warlocks/Rhyas1_Invisible.png"
           }
         ],
         "damage": {
@@ -141,7 +145,11 @@
               "type": "wardude",
               "fury": 7,
               "base": "small",
-              "img": [],
+              "img": [
+                {
+                  "link": "data/model/legion/warlocks/Saeryn1.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -152,7 +160,11 @@
               "type": "wardude",
               "fury": 5,
               "base": "small",
-              "img": [],
+              "img": [
+                {
+                  "link": "data/model/legion/warlocks/Rhyas1.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -272,6 +284,11 @@
             "width": 216.667,
             "height": 216.667,
             "link": "data/model/legion/beasts/Archangel.png"
+          },
+          {
+            "width": 216.667,
+            "height": 216.667,
+            "link": "data/model/legion/beasts/Archangel_Fit.png"
           }
         ],
         "damage": {
@@ -293,6 +310,9 @@
         "img": [
           {
             "link": "data/model/legion/beasts/Belphagor.png"
+          },
+          {
+            "link": "data/model/legion/beasts/Belphagor_Meld.png"
           }
         ],
         "damage": {
@@ -370,7 +390,6 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
-        "img": [],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null ],
@@ -526,7 +545,6 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
-        "img": [],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null ],
@@ -642,7 +660,6 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
-        "img": [],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", "b", null, null, null ],
@@ -755,7 +772,6 @@
               "ranges": [ 1, 4 ],
               "type": "warrior",
               "base": "small",
-              "img": [],
               "damage": {
                 "n": 5
               }
@@ -1100,8 +1116,7 @@
               "name": "Leader and Grunts",
               "ranges": [ 1, 6 ],
               "type": "warrior",
-              "base": "small",
-              "img": []
+              "base": "small"
             }
           }
         }
@@ -1127,7 +1142,6 @@
         "type": "wardude",
         "fury": 4,
         "base": "small",
-        "img": [],
         "damage": {
           "n": 5
         }
@@ -1162,7 +1176,6 @@
         "name": "Fyanna the Lash",
         "type": "solo",
         "base": "small",
-        "img": [],
         "damage": {
           "n": 5
         }

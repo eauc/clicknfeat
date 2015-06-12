@@ -582,6 +582,8 @@ describe('create model', function() {
           expect(this.ret)
             .toEqual({
               state: { x: 240, y: 0, r: 0,
+                       dsp: ['i'],
+                       img: 0,
                        l: [ 'label' ],
                        stamp: 'stamp',
                        info: [ 'info' ]

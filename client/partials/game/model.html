@@ -103,7 +103,7 @@
           <th>Damage</th>
           <td>{{getModel().damage}}</td>
         </tr>
-        <tr ng-show="getModel().img.length !== 0">
+        <tr ng-show="getModel().img[0].link">
           <th>Image</th>
           <td><img width="150"
                    height="150"
@@ -115,7 +115,7 @@
       <button class="btn btn-default"
               ng-disabled="
               !getModel() ||
-              !currentModeIs('Default')
+              currentModeIs('CreateModel')
               "
               ng-click="doCreateModel()">
         Create Model

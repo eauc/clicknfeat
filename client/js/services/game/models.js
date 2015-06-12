@@ -19,14 +19,23 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
         R.map(R.path(['state','stamp']))
       )(models);
     },
-    // onStamp: function modelsOnStamp(stamp, method /*, ...args..., models*/) {
-    //   var args = Array.prototype.slice.call(arguments);
-    //   var models = R.last(args);
-    //   var model = gameModelsService.findStamp(stamp, models);
-    //   // console.log(arguments, models, model);
-    //   args = R.append(model, R.slice(1, -1, args));
-    //   return modelService.call.apply(null, args);
-    // },
+    onStamps: function modelsOnStamps(method /*, ...args..., stamps, models*/) {
+      if('Function' !== R.type(modelService[method])) return [];
+
+      var args = Array.prototype.slice.call(arguments);
+      var models = R.last(args);
+      var stamps = R.nth(-2, args);
+
+      args = R.slice(1, -2, args);
+      return R.pipe(
+        R.map(function(stamp) {
+          return gameModelsService.findStamp(stamp, models);
+        }),
+        R.map(function(model) {
+          return modelService[method].apply(null, R.append(model, args));
+        })
+      )(stamps);
+    },
     add: function modelsAdd(mods, models) {
       console.log(arguments);
       return R.pipe(

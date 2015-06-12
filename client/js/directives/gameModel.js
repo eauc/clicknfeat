@@ -4,9 +4,11 @@ angular.module('clickApp.directives')
   .directive('clickGameModel', [
     'gameFactions',
     'labelElement',
+    'model',
     'gameModelSelection',
     function(gameFactionsService,
              labelElementService,
+             modelService,
              gameModelSelectionService) {
       var BASE_RADIUS = {
         huge: 24.605,
@@ -33,7 +35,8 @@ angular.module('clickApp.directives')
           // }, scope);
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
-              updateModelPosition(info, scope.model, element);
+              updateModelPosition(scope.factions, scope.model, element);
+              updateModelImage(scope.factions, scope.model, element);
               updateModelSelection(scope.model, scope.game.model_selection, element);
             });
           }
@@ -70,14 +73,14 @@ angular.module('clickApp.directives')
         front_arc.setAttribute('y2', (info.img[0].height/2)+'');
         parent.appendChild(front_arc);
 
-        // var image = document.createElementNS(svgNS, 'image');
-        // image.classList.add('model-image');
-        // image.setAttribute('x', '0');
-        // image.setAttribute('y', '0');
+        var image = document.createElementNS(svgNS, 'image');
+        image.classList.add('model-image');
+        image.setAttribute('x', '0');
+        image.setAttribute('y', '0');
         // image.setAttribute('width', info.img[0].width+'');
         // image.setAttribute('height', info.img[0].height+'');
         // image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', info.img[0].link);
-        // parent.appendChild(image);
+        parent.appendChild(image);
 
         var edge = document.createElementNS(svgNS, 'circle');
         edge.classList.add('model-edge');
@@ -109,16 +112,17 @@ angular.module('clickApp.directives')
                  front_arc: front_arc,
                  direction_los: direction_los,
                  front_arc_los: front_arc_los,
-                 // image: image,
+                 image: image,
                  edge: edge,
                };
       }
-      function updateModelPosition(info, model, element) {
+      function updateModelPosition(factions, model, element) {
+        var img = modelService.getImage(factions, model);
         element.container.setAttribute('transform', [
           'translate(',
-          model.state.x-info.img[0].width/2,
+          model.state.x-img.width/2,
           ',',
-          model.state.y-info.img[0].height/2,
+          model.state.y-img.height/2,
           ') rotate(',
           model.state.r,
           ',',
@@ -127,6 +131,18 @@ angular.module('clickApp.directives')
           model.state.y,
           ')'
         ].join(''));
+      }
+      function updateModelImage(factions, model, element) {
+        var img = modelService.getImage(factions, model);
+        element.image.setAttribute('width', img.width+'');
+        element.image.setAttribute('height', img.height+'');
+        if(R.exists(img.link)) {
+          element.image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', img.link);
+          element.image.style.visibility = 'visible';
+        }
+        else {
+          element.image.style.visibility = 'hidden';
+        }
       }
       function updateModelSelection(model, selection, element) {
         if(gameModelSelectionService.in('local', model.state.stamp, selection)) {

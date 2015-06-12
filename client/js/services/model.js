@@ -26,15 +26,18 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
       var model = {
         state: {
-          x: 0,
-          y: 0,
-          r: 0,
+          x: 0, y: 0, r: 0,
+          img: 0,
+          dsp: ['i'],
           l: [],
           stamp: R.guid()
         }
       };
       model.state = R.deepExtend(model.state, temp);
       return model;
+    },
+    eventName: function modelEventName(model) {
+      return R.path(['state','stamp'], model);
     },
     state: function modelState(model) {
       return R.prop('state', model);
@@ -49,6 +52,27 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       return ( top_left.x <= model.state.x && model.state.x <= bottom_right.x &&
                top_left.y <= model.state.y && model.state.y <= bottom_right.y
              );
+    },
+    isImageDisplayed: function modelIsImageDisplayed(model) {
+      return !!R.find(R.eq('i'), model.state.dsp);
+    },
+    getImage: function modelGetImage(factions, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var link = modelService.isImageDisplayed(model) ? info.img[model.state.img].link : null;
+      return R.assoc('link', link, info.img[model.state.img]);
+    },
+    setNextImage: function modelSetNextImage(factions, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var next_img = (model.state.img >= info.img.length-1) ? 0 : model.state.img+1;
+      model.state = R.assoc('img', next_img, model.state);
+    },
+    toggleImageDisplay: function modelToggleImageDisplay(model) {
+      if(modelService.isImageDisplayed(model)) {
+        model.state.dsp = R.reject(R.eq('i'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('i', model.state.dsp);
+      }
     },
     // checkState: function modelCheckState(state) {
     //   state.x = Math.max(0, Math.min(480, state.x));
@@ -101,9 +125,6 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     //   var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
     //   model.state = modelService
     //     .checkState(pointService.shiftDown(dist, model.state));
-    // },
-    // eventName: function modelEventName(model) {
-    //   return R.path(['state','stamp'], model);
     // },
     // addLabel: function modelAddLabel(label, model) {
     //   model.state.l = R.uniq(R.append(label, model.state.l));

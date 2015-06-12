@@ -259,6 +259,13 @@ angular.module('clickApp.services')
     'gameModelSelection',
     setModelSelectionCommandServiceFactory
   ])
+  .factory('onModelsCommand', [
+    'commands',
+    'model',
+    'gameModels',
+    'gameModelSelection',
+    onModelsCommandServiceFactory
+  ])
   .factory('createTemplateCommand', [
     'commands',
     'template',
@@ -310,6 +317,7 @@ angular.module('clickApp.services')
   .factory('allCommands', [
     'createModelCommand',
     'setModelSelectionCommand',
+    'onModelsCommand',
     'createTemplateCommand',
     'deleteTemplatesCommand',
     'lockTemplatesCommand',

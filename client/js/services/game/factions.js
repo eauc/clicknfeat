@@ -8,8 +8,11 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
         .then(function(data) {
           return R.map(function(faction) {
             return httpService.get(data[faction])
-              .then(function(data) {
-                factions[faction] = data;
+              .then(function(fdata) {
+                if(R.isNil(fdata)) {
+                  console.log('Error getting '+faction+' faction info', data[faction]);
+                }
+                factions[faction] = fdata;
               });
           }, R.keys(data));
         })
@@ -87,14 +90,23 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
   }
   function updateImgs(imgs) {
     // console.log(imgs);
-    return R.map(function(img) {
-      // console.log(img);
-      return R.pipe(
-        R.assoc('type', R.defaultTo('default', img.type)),
-        R.assoc('width', R.defaultTo(60, img.width)),
-        R.assoc('height', R.defaultTo(60, img.height))
-      )(img);
-    }, imgs);
+    return R.pipe(
+      R.defaultTo([]),
+      function(imgs) {
+        if(R.isEmpty(imgs)) {
+          return R.append({}, imgs);
+        }
+        return imgs;
+      },
+      R.map(function(img) {
+        // console.log(img);
+        return R.pipe(
+          R.assoc('type', R.defaultTo('default', img.type)),
+          R.assoc('width', R.defaultTo(60, img.width)),
+          R.assoc('height', R.defaultTo(60, img.height))
+        )(img);
+      })
+    )(imgs);
   }
   function updateDamage(damage) {
     // console.log(damage);

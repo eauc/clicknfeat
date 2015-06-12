@@ -1,25 +1,30 @@
+index-dev.html
 unknown binding
 specs :
 - mockCtrl
 template:
-- remove data arg from events and use requestAniFrame to delay directives/scope update
 - locked flag in state / divide templates list by flag
-- directives get template from scope
+- rework onTemplates/onStamps similar to model
 model
-- selection(s) [ctrl]click/dragBox
+- images
 - select all friendly
 - detail
 - drag
 - moves
-- images
+- lock
 - label
-- icons
-- damage
-- ruler origin target
-- template origin target
+- icons alterations
+- damage / field
+- wreck
+- ruler origin target / update when model change ?
+- template origin target / update when model change ?
 - B2B
 - under Aoe
 - unit
+- highlight models in melee ?
+- incorporeal
+- counter
+- souls counters
 selectionBox
 layers - deploiement
 online - users login

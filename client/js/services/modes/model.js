@@ -3,10 +3,10 @@
 self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
                                                                 settingsService,
                                                                 modelsModeService,
-                                                                modelervice,
+                                                                modelService,
                                                                 gameService,
-                                                                gameModelService,
-                                                                gameModelelectionService) {
+                                                                gameModelsService,
+                                                                gameModelSelectionService) {
   var model_actions = Object.create(modelsModeService.actions);
   // model_actions.delete = function modelDelete(scope) {
   //   var target = gameModelSelectionService.get('local', scope.game.model_selection);
@@ -69,8 +69,6 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   // })();
 
   var model_default_bindings = {
-    // 'delete': 'del',
-    // 'lock': 'l',
   };
   // R.forEach(function(move) {
   //   model_default_bindings[move[0]] = move[1];
@@ -78,10 +76,11 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   // }, moves);
   var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                  model_default_bindings);
-  var model_buttons = R.concat([
-    // [ 'Delete', 'delete' ],
-    // [ 'Lock', 'lock' ],
-  ], modelsModeService.buttons);
+  var model_buttons = [
+    [ 'Image', 'toggle', 'image' ],
+    [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
+    [ 'Next', 'setNextImage', 'image' ],
+  ];
   var model_mode = {
     onEnter: function modelOnEnter(scope) {
     },

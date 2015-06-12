@@ -99,5 +99,7 @@ angular.module('clickApp.controllers')
         };
         modesService.switchToMode('CreateModel', $scope, $scope.modes);
       };
+
+      $scope.digestOnGameEvent('switchMode', $scope);
     }
   ]);

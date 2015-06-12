@@ -16,6 +16,16 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('setModelSelection', 'clear', null,
                                scope, scope.game);
   };
+  models_actions.toggleImageDisplay = function modelToggleImageDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleImageDisplay',
+                               stamps, scope, scope.game);
+  };
+  models_actions.setNextImage = function modelSetNextImage(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'setNextImage', scope.factions,
+                               stamps, scope, scope.game);
+  };
   // models_actions.delete = function modelsDelete(scope) {
   //   var target = gameModelsSelectionService.get('local', scope.game.models_selection);
   //   gameService.executeCommand('deleteModelss', [target], scope, scope.game);
@@ -77,8 +87,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   // })();
 
   var models_default_bindings = {
-    // 'delete': 'del',
-    // 'lock': 'l',
+    'toggleImageDisplay': 'i',
+    'setNextImage': 'shift+i',
   };
   // R.forEach(function(move) {
   //   models_default_bindings[move[0]] = move[1];
@@ -87,8 +97,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
   var models_buttons = [
-    // [ 'Delete', 'delete' ],
-    // [ 'Lock', 'lock' ],
+    [ 'Image', 'toggle', 'image' ],
+    [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
+    [ 'Next', 'setNextImage', 'image' ],
   ];
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {
