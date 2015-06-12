@@ -25,6 +25,12 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
     gameService.executeCommand('setModelSelection', 'set', [stamp],
                                scope, scope.game);
   };
+  default_actions.rightClickModel = function defaultRightClickModel(scope, event) {
+    var stamp = event.target.state.stamp;
+    scope.gameEvent('openSelectionDetail', 'model', event.target);
+    gameService.executeCommand('setModelSelection', 'set', [stamp],
+                               scope, scope.game);
+  };
   default_actions.clickTemplate = function defaultClickTemplate(scope, event) {
     scope.game.template_selection =
       gameTemplateSelectionService.set('local', event.target.state.stamp,

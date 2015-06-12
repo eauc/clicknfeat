@@ -1,0 +1,35 @@
+<div class="panel panel-info">
+  <div class="panel-heading"
+       ng-click="doClose()">
+    <button class="close">
+      <span>&times;</span>
+    </button>
+    <h4 class="panel-title">
+      {{info.name}}
+    </h4>
+  </div>
+  <div class="panel-content">
+    <div ng-if="info.unit_name">
+      <strong>Unit :</strong> {{info.unit_name}}
+    </div>
+    <div>
+      <strong>Name :</strong> {{info.name}}
+    </div>
+    <div>
+      <strong>Created By :</strong>
+      {{selection.state.user}}
+    </div>
+    <div>
+      <strong>Class :</strong>
+      {{info.type}} - {{info.base}}
+    </div>
+    <div ng-show="info.fury">
+      <strong>Fury :</strong>
+      {{info.fury}}
+    </div>
+    <div ng-show="info.focus">
+      <strong>Focus :</strong>
+      {{info.focus}}
+    </div>
+  </div>
+</div>

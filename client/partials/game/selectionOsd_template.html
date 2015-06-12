@@ -1,0 +1,39 @@
+<div class="panel panel-info">
+  <div class="panel-heading"
+       ng-click="doClose()">
+    <button class="close">
+      <span>&times;</span>
+    </button>
+    <h4 class="panel-title">
+      Template {{selection.state.type}}
+    </h4>
+  </div>
+  <div class="panel-content">
+    <form name="selection-label"
+          ng-submit="doSetMaxDeviation()"
+          ng-show="selection.state.type === 'aoe'">
+      <label for="new-deviation">Max Deviation</label>
+      <input id="new-deviation"
+             type="number"
+             step="any"
+             min="0"
+             class="form-control"
+             ng-model="new_max_deviation"
+             placeholder="0" />
+    </form>
+    <form>
+      <label for="new-label">Label</label>
+      <input id="new-label"
+             type="text"
+             class="form-control"
+             ng-model="new_label"
+             placeholder="New Label" />
+      <button type="button"
+              class="btn btn-default"
+              ng-repeat="l in selection.state.l"
+              ng-click="doRemoveLabel(l)">
+        {{::l}} <span>&times;</span>
+      </button>
+    </form>
+  </div>
+</div>

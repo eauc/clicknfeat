@@ -36,56 +36,58 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
   };
   function updateFaction(faction) {
     // console.log(faction);
-    return R.assoc('models', updateModels(faction.color, faction.models), faction);
+    return R.assoc('models', updateFactionModels(faction, faction.models), faction);
   }
-  function updateModels(faction_color, models) {
+  function updateFactionModels(faction, models) {
     // console.log(models);
     return R.reduce(function(mem, section) {
       // console.log(section);
-      return R.assoc(section, updateSection(faction_color, models[section]), mem);
+      return R.assoc(section, updateSection(faction, models[section]), mem);
     }, {}, R.keys(models));
   }
-  function updateSection(faction_color, section) {
+  function updateSection(faction, section) {
     // console.log(section);
     return R.reduce(function(mem, entry) {
       // console.log(entry);
-      return R.assoc(entry, updateEntry(faction_color, section[entry]), mem);
+      return R.assoc(entry, updateEntry(faction, section[entry]), mem);
     }, {}, R.keys(section));    
   }
-  function updateEntry(faction_color, entry) {
+  function updateEntry(faction, entry) {
     // console.log(entry);
     if(R.exists(entry.entries)) {
-      return updateUnit(faction_color, entry);
+      return updateUnit(faction, entry);
     }
     else {
-      return updateModel(faction_color, null, entry);
+      return updateModel(faction, null, entry);
     }
   }
-  function updateUnit(faction_color, unit) {
+  function updateUnit(faction, unit) {
     // console.log(unit);
-    return R.assoc('entries', updateUnitEntries(faction_color, unit.name, unit.entries), unit);
+    return R.assoc('entries', updateUnitEntries(faction, unit, unit.entries), unit);
   }
-  function updateUnitEntries(faction_color, unit_name, entries) {
+  function updateUnitEntries(faction, unit, entries) {
     // console.log(unit_name, entries);
     return R.reduce(function(mem, category) {
       // console.log(category);
-      return R.assoc(category, updateUnitCategory(faction_color, unit_name, entries[category]), mem);
+      return R.assoc(category, updateUnitCategory(faction, unit, entries[category]), mem);
     }, {}, R.keys(entries));    
   }
-  function updateUnitCategory(faction_color, unit_name, category) {
+  function updateUnitCategory(faction, unit, category) {
     return R.reduce(function(mem, entry) {
       // console.log(entry);
-      return R.assoc(entry, updateModel(faction_color, unit_name, category[entry]), mem);
-    }, {}, R.keys(category));    
+      return R.assoc(entry, updateModel(faction, unit, category[entry]), mem);
+    }, {}, R.keys(category));
   }
-  function updateModel(faction_color, name, model) {
+  function updateModel(faction, unit, model) {
     // console.log(model);
-    name = R.defaultTo(model.name, name);
+    unit = R.defaultTo({}, unit);
+    var default_fk_name = R.defaultTo(model.name, unit.name);
     return R.pipe(
-      R.assoc('fk_name', R.defaultTo(name, model.fk_name)),
+      R.assoc('fk_name', R.defaultTo(default_fk_name, model.fk_name)),
+      R.assoc('unit_name', unit.name),
       R.assoc('img', updateImgs(model.img)),
       R.assoc('damage', updateDamage(model.damage)),
-      R.assoc('base_color', faction_color)
+      R.assoc('base_color', faction.color)
     )(model);
   }
   function updateImgs(imgs) {

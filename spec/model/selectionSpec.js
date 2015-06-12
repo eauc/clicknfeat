@@ -121,21 +121,22 @@ describe('select model', function() {
       });
     });
 
-    // when('user right-click on model', function() {
-    //   this.defaultModeService.actions
-    //     .rightClickModel(this.scope, this.event);
-    // }, function() {
-    //   it('should open model selection detail', function() {
-    //     expect(this.scope.gameEvent)
-    //       .toHaveBeenCalledWith('openSelectionDetail', 'model',
-    //                             { state: { stamp: 'stamp' } });
-    //   });
+    when('user right-click on model', function() {
+      this.defaultModeService.actions
+        .rightClickModel(this.scope, this.event);
+    }, function() {
+      it('should open model selection detail', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('openSelectionDetail', 'model',
+                                { state: { stamp: 'stamp' } });
+      });
 
-    //   it('should set gameModelSelection', function() {
-    //     expect(this.gameModelSelectionService.set)
-    //       .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
-    //   });
-    // });
+      it('should set gameModelSelection', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
+                                this.scope, this.scope.game);
+      });
+    });
   });
 
   describe('modelsMode service', function() {

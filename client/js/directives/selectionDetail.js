@@ -4,9 +4,24 @@ angular.module('clickApp.controllers')
   .controller('clickGameSelectionDetailCtrl', [
     '$scope',
     'game',
+    'gameFactions',
     function($scope,
-             gameService) {
+             gameService,
+             gameFactionsService) {
       console.log('init clickGameSelectionDetailCtrl');
+      var updateOnOpenType = {
+        template: function updateOnOpenTemplate() {
+          $scope.new_max_deviation = R.defaultTo(0, R.path(['state','m'], $scope.selection));
+        },
+        model: function updateOnOpenModel() {
+          $scope.info = gameFactionsService.getModelInfo($scope.selection.state.info,
+                                                         $scope.factions);
+        },
+      };
+      $scope.updateOnOpen = function updateOnOpen() {
+        updateOnOpenType[$scope.type]();
+      };
+      
       $scope.doSetMaxDeviation = function doSetMaxDeviation() {
         var max = ($scope.new_max_deviation > 0) ? $scope.new_max_deviation : null;
         gameService.executeCommand('onTemplates', 'setMaxDeviation', max,
@@ -52,7 +67,7 @@ angular.module('clickApp.directives')
             // console.log('openSelectionDetail');
             scope.type = type;
             scope.selection = selection;
-            scope.new_max_deviation = R.defaultTo(0, R.path(['state','m'], selection));
+            scope.updateOnOpen();
             $window.requestAnimationFrame(displaySelectionDetail);
           }
           function closeSelectionDetail() {
