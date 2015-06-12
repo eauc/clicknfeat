@@ -1,3 +1,4 @@
 {
-  "legion" : "/data/model/legion.json"
+  "legion" : "/data/model/legion.json",
+  "scyrah" : "/data/model/scyrah.json"
 }

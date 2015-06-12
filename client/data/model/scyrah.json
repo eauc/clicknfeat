@@ -1,0 +1,950 @@
+{
+  "name": "Retribution of Scyrah",
+  "color": "#85d1bd",
+  "icon": "data/icons/scyrah_50.png",
+  "wreck": {
+    "medium": "data/model/scyrah/jacks/LightWreck.png",
+    "large": "data/model/scyrah/jacks/HeavyWreck.png",
+    "huge": "data/model/scyrah/jacks/ColossalWreck.png"
+  },
+  "models": {
+    "casters": {
+      "garryth1": {
+        "name": "Garryth1 (Blade of Retribution)",
+        "fk_name": "Garryth, Blade of Retribution",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Garryth1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "issyria1": {
+        "name": "Issyria1 (Sibyl of Dawn)",
+        "fk_name": "Issyria, Sibyl of Dawn",
+        "type": "wardude",
+        "focus": 8,
+        "base": "small",
+        "damage": {
+          "n": 15
+        }
+      },
+      "kaelyssa1": {
+        "name": "Kaelyssa1 (Night's Whisper)",
+        "fk_name": "Kaelyssa, Night's Whisper",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Kaelyssa1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "ossyan1": {
+        "name": "Ossyan1 (Lord Arcanist)",
+        "fk_name": "Lord Arcanist Ossyan",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Ossyan1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "rahn1": {
+        "name": "Rahn1 (Adeptis Rahn Shyeel)",
+        "fk_name": "Adeptis Rahn Shyeel",
+        "type": "wardude",
+        "focus": 8,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Rahn1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "ravyn1": {
+        "name": "Ravyn1 (Eternal Light)",
+        "fk_name": "Ravyn, Eternal Light",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Ravyn1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "vyros1": {
+        "name": "Vyros1 (Dawnlord)",
+        "fk_name": "Dawnlord Vyros",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/casters/Vyros1.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "vyros2": {
+        "name": "Vyros2 (Incissar of the Dawnguard)",
+        "fk_name": "Vyros, Incissar of the Dawnguard",
+        "type": "wardude",
+        "focus": 6,
+        "base": "large",
+        "width": 60,
+        "height": 60,
+        "img": {
+          "x": 0,
+          "y": 0,
+          "link": "data/model/scyrah/casters/Vyros2.png"
+        },
+        "damage": {
+          "type": "warrior",
+          "n": 18
+        }
+      }
+    },
+    "jacks": {
+      "aspis": {
+        "name": "Aspis",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Aspis.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null, null,  "b",   "g",  "m",  "m" ],
+          "4": [ null, null,  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 10
+        }
+      },
+      "banshee": {
+        "name": "Banshee",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Banshee.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",   "b",  "l", null ],
+          "2": [ null,  "b",  "b",   "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",   "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",   "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",   "b",  "r", null ]
+        }
+      },
+      "chimera": {
+        "name": "Chimera",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Chimera.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "g",   "a",  "m",  "m" ],
+          "4": [ null,  "b",  "g",   "a",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 6
+        }
+      },
+      "daemon": {
+        "name": "Daemon",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Daemon.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",   "b",  "l", null ],
+          "2": [ null,  "b",  "b",   "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",   "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",   "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",   "b",  "r", null ]
+        }
+      },
+      "discordia": {
+        "name": "Discordia",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Discordia.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",   "g",  "m",  "m" ],
+          "4": [ null,  "b",  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 10
+        }
+      },
+      "gorgon": {
+        "name": "Gorgon",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Gorgon.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null, null,  "b",   "g",  "m",  "m" ],
+          "4": [ null, null,  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 6
+        }
+      },
+      "griffon": {
+        "name": "Griffon",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Griffon.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null, null,  "b",   "g",  "m",  "m" ],
+          "4": [ null, null,  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 6
+        }
+      },
+      "hyperion": {
+        "name": "Hyperion",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+          {
+            "width": 116.667,
+            "height": 116.667,
+            "link": "data/model/scyrah/jacks/Hyperion.png"
+          }
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null, null, "b", "l", "l" ],
+          "L2": [ null, null,  "b", "l", "l", "c" ],
+          "L3": [ null, null,  "b", "l", "c", "m" ],
+          "L4": [ null,  "b",  "g", "g", "c", "m" ],
+          "L5": [ null,  "b",  "g", "c", "c", "m" ],
+          "L6": [ null,  "b",  "g", "c", "c", "m" ],
+          "R1": [ null,  "b",  "g", "c", "c", "m" ],
+          "R2": [ null,  "b",  "g", "c", "c", "m" ],
+          "R3": [ null,  "b",  "g", "g", "c", "m" ],
+          "R4": [ null, null,  "b", "r", "c", "m" ],
+          "R5": [ null, null,  "b", "r", "r", "c" ],
+          "R6": [ null, null, null, "b", "r", "r" ],
+          "field": 12
+        }
+      },
+      "hypnos": {
+        "name": "Hypnos",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Hypnos.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",   "b",  "l", null ],
+          "2": [  "b",  "b",  "b",   "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",   "a",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",   "a",  "c",  "c" ],
+          "5": [  "b",  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",   "b",  "r", null ]
+        }
+      },
+      "imperatus": {
+        "name": "Imperatus",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",   "g",  "m",  "m" ],
+          "4": [ null,  "b",  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 12
+        }
+      },
+      "manticore": {
+        "name": "Manticore",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Manticore.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null, null,  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",   "g",  "m",  "m" ],
+          "4": [ null,  "b",  "b",   "g",  "c",  "c" ],
+          "5": [ null, null,  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 10
+        }
+      },
+      "phoenix": {
+        "name": "Phoenix",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Phoenix.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null,  "b",  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "g",   "a",  "m",  "m" ],
+          "4": [ null,  "b",  "g",   "a",  "c",  "c" ],
+          "5": [ null,  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 10
+        }
+      },
+      "sphinx": {
+        "name": "Sphinx",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/jacks/Sphinx.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",   "b",  "l", null ],
+          "2": [ null,  "b",  "b",   "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",   "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",   "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",   "b",  "r", null ]
+        }
+      }
+    },
+    "units": {
+      "battleMage": {
+        "name": "House Shyeel Battle Mages",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Battlemage.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "destor": {
+        "name": "Dawnguard Destors",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Destor.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "halberdier": {
+        "name": "Houseguard Halberdiers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Halberdier.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Houseguard Halberdiers Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/HalberdierOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Houseguard Halberdiers Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/HalberdierStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "infiltrator": {
+        "name": "Mage Hunter Infiltrators",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/MagehunterInfiltrators.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "invictor": {
+        "name": "Dawnguard Invictors",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Invictor.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Dawnguard Invictor Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/InvictorOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Dawnguard Invictor Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/InvictorStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "rifleman": {
+        "name": "Houseguard Riflemen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Riflemen.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Houseguard Riflemen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/RiflemenOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Houseguard Riflemen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/RiflemenStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "rifleteam": {
+        "name": "Heavy Rifle Team",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/HeavyRifleCrew.png"
+                }
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/HeavyRifle.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "sentinel": {
+        "name": "Dawnguard Sentinels",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/Sentinal.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Dawnguard Sentinel Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/SentinalOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Dawnguard Sentinel Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/SentinalStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "stormfall": {
+        "name": "Stormfall Archers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/StarfallArcher.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "strikeforce": {
+        "name": "Mage Hunter Strikeforce",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/MageHunter.png"
+                },
+                {
+                  "link": "data/model/scyrah/units/MageHunterGirl.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "commander": {
+              "name": "Commander",
+              "fk_name": "Mage Hunter Commander",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/scyrah/units/MageHunterCommander.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "solos": {
+      "soulless": {
+        "name": "Soulless Escort",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/units/SoullessEscort.png"
+          }
+        ]
+      },
+      "arcanist": {
+        "name": "Arcanist",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Arcanist.png"
+          }
+        ]
+      },
+      "artificer": {
+        "name": "House Shyeel Artificer",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Artificer.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "dawnguard_scyir": {
+        "name": "Dawnguard Scyir",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Scyir.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "destor_thane": {
+        "name": "Dawnguard Destor Thane",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/DestorThane.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "eiryss1": {
+        "name": "Eiryss, Mage Hunter of Ios",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Eiryss1.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "eiryss2": {
+        "name": "Eiryss, Angel of Retribution",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Eiryss2.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "eiryss3": {
+        "name": "Eiryss, Mage Hunter Commander",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "elara": {
+        "name": "Elara, Tyro of The Third Chamber",
+        "type": "wardude",
+        "focus": 4,
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "ghost_sniper": {
+        "name": "Ghost Sniper",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/GhostSniper.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "mage_hunter_assassin": {
+        "name": "Mage Hunter Assassin",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/MageHunterAssassin.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "magister": {
+        "name": "House Shyeel Magister",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Magister.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "narn": {
+        "name": "Narn, Mage Hunter of Ios",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Narn.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "nayl": {
+        "name": "Nayl",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/Nayl.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "skeryth": {
+        "name": "Fane Knight Skeryth Issyen",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/FaneKnight.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "skeryth_dismount": {
+        "name": "Fane Knight Skeryth Issyen (Dismount)",
+        "fk_name": "Fane Knight Skeryth Issyen",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/FaneKnightDismount.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "sylys": {
+        "name": "Sylys Wyshnalyrr, the Seeker",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/scyrah/solos/SylysWyshnaylrr.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "thane": {
+        "name": "Houseguard Thane",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      }
+    },
+    "battle_engines": {
+      "arcantrikForceGenerator": {
+        "name": "Arcantrik Force Generator",
+        "fk_name": "Arcantrik Force Generator",
+        "type": "be",
+        "base": "huge",
+        "width": 90,
+        "height": 90,
+        "img": {
+          "x": 0,
+          "y": 0,
+          "link": "data/model/scyrah/bes/ArcantrikForceGenerator.png"
+        },
+        "damage": {
+          "type": "warrior",
+          "n": 20
+        }
+      }
+    }
+  }
+}
