@@ -1,13 +1,14 @@
 'use strict';
 
 describe('move model', function() {
-  describe('modelMode service', function() {
+  describe('modelsMode service', function() {
     beforeEach(inject([
-      'modelMode',
-      function(modelModeService) {
-        this.modelModeService = modelModeService;
+      'modelsMode',
+      function(modelsModeService) {
+        this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = 'stamps';
 
         this.scope = {
           factions: 'factions',
@@ -28,12 +29,8 @@ describe('move model', function() {
       [ 'shiftRight' ],
     ], function(e, d) {
       when('user '+e.action+' model selection', function() {
-        this.modelModeService.actions[e.action](this.scope);
+        this.modelsModeService.actions[e.action](this.scope);
       }, function() {
-        beforeEach(function() {
-          this.gameModelSelectionService.get._retVal = 'stamps';
-        });
-
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
             .toHaveBeenCalledWith('local', 'selection');
@@ -47,12 +44,8 @@ describe('move model', function() {
       });
 
       when('user '+e.action+'Small model selection', function() {
-        this.modelModeService.actions[e.action+'Small'](this.scope);
+        this.modelsModeService.actions[e.action+'Small'](this.scope);
       }, function() {
-        beforeEach(function() {
-          this.gameModelSelectionService.get._retVal = 'stamps';
-        });
-
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
             .toHaveBeenCalledWith('local', 'selection');
@@ -62,6 +55,64 @@ describe('move model', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
                                   'stamps', this.scope, this.scope.game);
+        });
+      });
+    });
+
+    when('user set orientation up on model selection', function() {
+      this.modelsModeService.actions.setOrientationUp(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.scope.ui_state = { flip_map: false };
+      });
+
+      it('should get current selection', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+      });
+      
+      using([
+        [ 'flipped' , 'dir' ],
+        [ false     , 0     ],
+        [ true      , 180   ],
+      ], function(e, d) {
+        when('map is '+(e.flipped?'':'not ')+'flipped', function() {
+          this.scope.ui_state = { flip_map: e.flipped };
+        }, function() {
+          it('should execute onModels/setOrientation command', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setOrientation', 'factions', e.dir,
+                                    'stamps', this.scope, this.scope.game);
+          });
+        });
+      });
+    });
+
+    when('user set orientation down on model selection', function() {
+      this.modelsModeService.actions.setOrientationDown(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.scope.ui_state = { flip_map: false };
+      });
+
+      it('should get current selection', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+      });
+      
+      using([
+        [ 'flipped' , 'dir' ],
+        [ false     , 180   ],
+        [ true      , 0     ],
+      ], function(e, d) {
+        when('map is '+(e.flipped?'':'not ')+'flipped', function() {
+          this.scope.ui_state = { flip_map: e.flipped };
+        }, function() {
+          it('should execute onModels/setOrientation command', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setOrientation', 'factions', e.dir,
+                                    'stamps', this.scope, this.scope.game);
+          });
         });
       });
     });
@@ -144,6 +195,23 @@ describe('move model', function() {
               .toEqual(e.after_check);
           });
         }
+      });
+    });
+
+    describe('setOrientation(<dir>)', function() {
+      beforeEach(function() {
+        this.model = {
+          state: { info: 'info', x: 240, y: 240, r: 180 }
+        };
+        this.gameFactionsService.getModelInfo._retVal = {
+          base: 'medium'
+        };
+      });
+
+      it('should set model orientation', function() {
+        this.modelService.setOrientation('factions', 15, this.model);
+        expect(this.model.state)
+          .toEqual({ info: 'info', x: 240, y: 240, r: 15 });
       });
     });
   });

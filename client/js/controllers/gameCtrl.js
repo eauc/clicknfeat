@@ -122,6 +122,7 @@ angular.module('clickApp.controllers')
         Mousetrap.reset();
       });
 
+      $scope.ui_state = {};
       onLoad.then(function() {
         if(R.isNil($scope.game)) {
           $scope.goToState('lounge');

@@ -9,9 +9,7 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- detail
 - label
-- damage / field
 - counter
 - souls counters
 - ruler origin target / update when model change ?

@@ -7,9 +7,14 @@
   </div>
   <div class="btn-group-vertical">
     <button class="btn btn-default"
-            title="esc"
+            title="{{action_bindings['modeBackToDefault'] || ''}}"
             ng-click="doModeAction('modeBackToDefault')">
       Back To Default
+    </button>
+    <button class="btn btn-default"
+            title="{{action_bindings['flipMap'] || ''}}"
+            ng-click="doModeAction('flipMap')">
+      Flip Map
     </button>
     <button ng-repeat="action in action_buttons"
             class="

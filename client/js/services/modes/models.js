@@ -58,6 +58,18 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  stamps, scope, scope.game);
     };
   }, moves);
+  models_actions.setOrientationUp = function modelSetOrientationUp(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var orientation = scope.ui_state.flip_map ? 180 : 0;
+    gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
+                               stamps, scope, scope.game);
+  };
+  models_actions.setOrientationDown = function modelSetOrientationDown(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var orientation = scope.ui_state.flip_map ? 0 : 180;
+    gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
+                               stamps, scope, scope.game);
+  };
 
   (function() {
     var drag_models_start_states;
@@ -112,6 +124,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   var models_default_bindings = {
     'toggleImageDisplay': 'i',
     'setNextImage': 'shift+i',
+    'setOrientationUp': 'pageup',
+    'setOrientationDown': 'pagedown',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -123,6 +137,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],
+    [ 'Orient.', 'toggle', 'orientation' ],
+    [ 'Face Up', 'setOrientationUp', 'orientation' ],
+    [ 'Face Down', 'setOrientationDown', 'orientation' ],
   ];
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {

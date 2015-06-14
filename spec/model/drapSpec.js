@@ -1,6 +1,6 @@
 'use strict';
 
-describe('move model', function() {
+describe('drag model', function() {
   describe('defaultMode service', function() {
     beforeEach(inject([
       'defaultMode',

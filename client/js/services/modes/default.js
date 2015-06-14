@@ -86,9 +86,7 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
   };
   var default_bindings = R.extend(Object.create(commonModeService.bindings),
                                   default_default_bindings);
-  var default_buttons = [
-    [ 'Flip Map', 'flipMap' ],
-  ];
+  var default_buttons = [];
   var default_mode = {
     name: 'Default',
     onEnter: function defaultOnEnter(scope) {

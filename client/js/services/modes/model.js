@@ -80,6 +80,9 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],
+    [ 'Orient.', 'toggle', 'orientation' ],
+    [ 'Face Up', 'setOrientationUp', 'orientation' ],
+    [ 'Face Down', 'setOrientationDown', 'orientation' ],
   ];
   var model_mode = {
     onEnter: function modelOnEnter(scope) {

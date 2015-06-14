@@ -96,6 +96,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         modelService.checkState$(factions)
       )(model.state);
     },
+    setOrientation: function modelSet(factions, orientation, model) {
+      model.state = R.pipe(
+        R.assoc('r', orientation),
+        modelService.checkState$(factions)
+      )(model.state);
+    },
     shiftPosition: function modelSet(factions, shift, model) {
       model.state = R.pipe(
         R.assoc('x', model.state.x + shift.x),

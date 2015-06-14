@@ -141,10 +141,10 @@ angular.module('clickApp.directives')
           })();
 
           var flipMap = (function() {
-            var flip = false;
+            scope.ui_state.flip_map = false;
             return function flipMap() {
-              flip = !flip;
-              if(flip) {
+              scope.ui_state.flip_map = !scope.ui_state.flip_map;
+              if(scope.ui_state.flip_map) {
                 map.setAttribute('flipped', 'flipped');
                 map.style.transform = 'scaleX(-1) scaleY(-1)';
               }
