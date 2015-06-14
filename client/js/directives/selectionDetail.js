@@ -22,7 +22,10 @@ angular.module('clickApp.controllers')
       $scope.updateOnOpen = function updateOnOpen() {
         updateOnOpenType[$scope.type]();
       };
-      
+      $scope.labelDisplay = function labelDisplay(l) {
+        return s.truncate(l, 12);
+      };
+
       $scope.doSetMaxDeviation = function doSetMaxDeviation() {
         var max = ($scope.new_max_deviation > 0) ? $scope.new_max_deviation : null;
         gameService.executeCommand('onTemplates', 'setMaxDeviation', max,

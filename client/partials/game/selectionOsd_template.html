@@ -32,7 +32,7 @@
               class="btn btn-default"
               ng-repeat="l in selection.state.l"
               ng-click="doRemoveLabel(l)">
-        {{::l}} <span>&times;</span>
+        {{::labelDisplay(l)}} <span>&times;</span>
       </button>
     </form>
   </div>

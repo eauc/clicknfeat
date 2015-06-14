@@ -2,8 +2,6 @@ index-dev.html
 unknown binding
 close selection detail on back to default mode
 selection detail ensure not out of screen
-delete label button -> ellipsis
-test selectionCtrl in (label/damage) specs ?
 specs :
 - mockCtrl
 template:
