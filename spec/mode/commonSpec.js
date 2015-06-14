@@ -40,7 +40,8 @@ describe('commonMode', function() {
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
         this.scope = { modes: 'modes',
-                       game: { template_selection: 'selection' }
+                       game: { template_selection: 'selection' },
+                       gameEvent: jasmine.createSpy('gameEvent')
                      };
 
         this.commonModeService.actions.modeBackToDefault(this.scope);
@@ -55,6 +56,11 @@ describe('commonMode', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('setModelSelection', 'clear', null,
                                 this.scope, this.scope.game);
+      });
+
+      it('should close selection detail', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('closeSelectionDetail');
       });
 
       it('should switch to default mode', function() {

@@ -16,6 +16,7 @@ self.commonModeServiceFactory = function commonModeServiceFactory(modesService,
                                  scope, scope.game);
       scope.game.template_selection =
         gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
+      scope.gameEvent('closeSelectionDetail');
       modesService.switchToMode('Default', scope, scope.modes);
     },
     viewScrollLeft: function viewZoomLeft(scope) {
