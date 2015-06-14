@@ -3,10 +3,12 @@
 angular.module('clickApp.directives')
   .directive('clickGameModel', [
     'gameFactions',
+    'gameMap',
     'labelElement',
     'model',
     'gameModelSelection',
     function(gameFactionsService,
+             gameMapService,
              labelElementService,
              modelService,
              gameModelSelectionService) {
@@ -36,13 +38,28 @@ angular.module('clickApp.directives')
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
               var img = modelService.getImage(scope.factions, scope.model);
+              var map_flipped = gameMapService.isFlipped(map);
+              var zoom_factor = gameMapService.zoomFactor(map);
+              var label_text = modelService.fullLabel(scope.model);
+              var label_center = computeLabelCenter(info, scope.model);
+
               updateModelPosition(img, scope.model, element);
               updateModelImage(img, scope.model, element);
               updateModelSelection(scope.game.model_selection, scope.model, element);
               updateModelDamage(img, info, scope.model, element);
+              labelElementService.update(map_flipped,
+                                         zoom_factor,
+                                         label_center.flip,
+                                         label_center.text,
+                                         label_text,
+                                         element.label);
             });
           }
           updateModel();
+          scope.onGameEvent('mapFlipped', function onMapFlipped() {
+            var label_center = computeLabelCenter(info, scope.model);
+            labelElementService.updateOnFlipMap(map, label_center.flip, element.label);
+          }, scope);
           scope.onGameEvent('changeModel-'+scope.model.state.stamp,
                             updateModel, scope);
         }
@@ -152,6 +169,7 @@ angular.module('clickApp.directives')
         front_arc_los.setAttribute('y2', (info.img[0].height/2)+'');
         parent.appendChild(front_arc_los);
 
+        var label = labelElementService.create(svgNS, parent.parentNode);
 
         return { container: parent,
                  base: base,
@@ -165,6 +183,7 @@ angular.module('clickApp.directives')
                  damage_bar_green: damage_bar_green,
                  field_bar_red: field_bar_red,
                  field_bar_green: field_bar_green,
+                 label: label,
                };
       }
       function updateModelPosition(img, model, element) {
@@ -241,6 +260,22 @@ angular.module('clickApp.directives')
         element.field_bar_green.setAttribute('y1', (y+1) + '');
         element.field_bar_green.setAttribute('x2', min_x + '');
         element.field_bar_green.setAttribute('y2', (y+1) + '');
+      }
+      function computeLabelCenter(info, model) {
+        var label_text_center_y_down = model.state.y + BASE_RADIUS[info.base] + 6;
+        var label_text_center_y_up = model.state.y - BASE_RADIUS[info.base] - 2;
+        var orientation = ((model.state.r % 360) + 360) % 360;
+        var model_looking_down =  orientation > 90 && orientation < 270;
+        var label_text_center = { x: model.state.x,
+                                  y: model_looking_down ?
+                                  label_text_center_y_down : label_text_center_y_up
+                                };
+        var label_flip_center = { x: label_text_center.x,
+                                  y: label_text_center.y - 2
+                                };
+        return { text: label_text_center,
+                 flip: label_flip_center
+               };
       }
     }
   ])

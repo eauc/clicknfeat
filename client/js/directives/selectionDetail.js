@@ -9,6 +9,7 @@ angular.module('clickApp.controllers')
              gameService,
              gameFactionsService) {
       console.log('init clickGameSelectionDetailCtrl');
+      $scope.label = { new: '' };
       var updateOnOpenType = {
         template: function updateOnOpenTemplate() {
           $scope.new_max_deviation = R.defaultTo(0, R.path(['state','m'], $scope.selection));
@@ -29,15 +30,17 @@ angular.module('clickApp.controllers')
                                    $scope, $scope.game);
       };
       $scope.doAddLabel = function doAddLabel() {
-        var new_label = s.trim($scope.new_label);
+        var cmd = $scope.type === 'template' ? 'onTemplates' : 'onModels';
+        var new_label = s.trim($scope.label.new);
         if(R.length(new_label) === 0) return;
-        gameService.executeCommand('onTemplates', 'addLabel', new_label,
+        gameService.executeCommand(cmd, 'addLabel', new_label,
                                    [$scope.selection.state.stamp],
                                    $scope, $scope.game);
-        $scope.new_label = '';
+        $scope.label.new = '';
       };
       $scope.doRemoveLabel = function doRemoveLabel(label) {
-        gameService.executeCommand('onTemplates', 'removeLabel', label,
+        var cmd = $scope.type === 'template' ? 'onTemplates' : 'onModels';
+        gameService.executeCommand(cmd, 'removeLabel', label,
                                    [$scope.selection.state.stamp],
                                    $scope, $scope.game);
       };
@@ -67,6 +70,7 @@ angular.module('clickApp.directives')
             // console.log('openSelectionDetail');
             scope.type = type;
             scope.selection = selection;
+            scope.label = { new: '' };
             scope.updateOnOpen();
             $window.requestAnimationFrame(displaySelectionDetail);
           }

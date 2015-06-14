@@ -1,6 +1,6 @@
 'use strict';
 
-describe('label template', function() {
+describe('label model', function() {
   describe('clickGameSelectionDetailCtrl', function(c) {
     beforeEach(inject([
       '$rootScope',
@@ -11,7 +11,7 @@ describe('label template', function() {
 
         this.createController = function(params) {
           this.scope = $rootScope.$new();
-          this.scope.type = 'template';
+          this.scope.type = 'model';
           this.scope.selection = { state: { stamp: 'stamp' } };
           this.scope.game = 'game';
 
@@ -24,15 +24,15 @@ describe('label template', function() {
       }
     ]));
 
-    when('user adds a label to template selection', function() {
+    when('user adds a label to model selection', function() {
       this.scope.doAddLabel();
     }, function() {
       when('new label is not empty', function() {
         this.scope.label = { new: '    yoo ' };
       }, function() {
-        it('should execute onTemplates/addLabel command', function() {
+        it('should execute onModels/addLabel command', function() {
           expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', 'addLabel', 'yoo', ['stamp'],
+            .toHaveBeenCalledWith('onModels', 'addLabel', 'yoo', ['stamp'],
                                   this.scope, this.scope.game);
         });
       });
@@ -47,41 +47,41 @@ describe('label template', function() {
       });
     });
 
-    when('user removes a label to template selection', function() {
+    when('user removes a label to model selection', function() {
       this.scope.doRemoveLabel('label');
     }, function() {
-      it('should execute onTemplates/removeLabel command', function() {
+      it('should execute onModels/removeLabel command', function() {
         expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onTemplates', 'removeLabel', 'label', ['stamp'],
+          .toHaveBeenCalledWith('onModels', 'removeLabel', 'label', ['stamp'],
                                 this.scope, this.scope.game);
       });
     });
   });
 
-  describe('template service', function() {
+  describe('model service', function() {
     beforeEach(inject([
-      'template',
-      function(templateService) {
-        this.templateService = templateService;
+      'model',
+      function(modelService) {
+        this.modelService = modelService;
       }
     ]));
 
     describe('fullLabel()', function() {
       beforeEach(function() {
-        this.template = {
+        this.model = {
           state: { l:  ['label1', 'label2'] }
         };
       });
 
-      it('should return template\'s full label', function() {
-        expect(this.templateService.fullLabel(this.template))
+      it('should return model\'s full label', function() {
+        expect(this.modelService.fullLabel(this.model))
           .toEqual('label1 label2');
       });
     });
 
     describe('addLabel(<label>)', function() {
       beforeEach(function() {
-        this.template = {
+        this.model = {
           state: { l:  ['label1', 'label2'] }
         };
       });
@@ -92,9 +92,9 @@ describe('label template', function() {
         // no duplicates
         [ 'label2'  , ['label1', 'label2'] ],
       ], function(e, d) {
-        it('should add <label> to template\'s labels, '+d, function() {
-          this.templateService.addLabel(e.label, this.template);
-          expect(this.template.state.l)
+        it('should add <label> to model\'s labels, '+d, function() {
+          this.modelService.addLabel(e.label, this.model);
+          expect(this.model.state.l)
             .toEqual(e.result);
         });
       });
@@ -102,7 +102,7 @@ describe('label template', function() {
 
     describe('removeLabel(<label>)', function() {
       beforeEach(function() {
-        this.template = {
+        this.model = {
           state: { l:  ['label1', 'label2'] }
         };
       });
@@ -112,9 +112,9 @@ describe('label template', function() {
         [ 'label1'  , ['label2'] ],
         [ 'unknown'  , ['label1', 'label2'] ],
       ], function(e, d) {
-        it('should remove <label> from template\'s labels, '+d, function() {
-          this.templateService.removeLabel(e.label, this.template);
-          expect(this.template.state.l)
+        it('should remove <label> from model\'s labels, '+d, function() {
+          this.modelService.removeLabel(e.label, this.model);
+          expect(this.model.state.l)
             .toEqual(e.result);
         });
       });

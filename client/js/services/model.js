@@ -216,20 +216,19 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state.dmg[col]);
       var value = full ? 0 : 1;
       model.state.dmg[col] = R.mapIndexed(function(val, line) {
-        // console.log(info, col, line, model.state.dmg);
         return R.exists(info.damage[col][line]) ? value : 0;
       }, model.state.dmg[col]);
       model.state.dmg.t = computeTotalGridDamage(model.state.dmg);
     },
-    // addLabel: function modelAddLabel(label, model) {
-    //   model.state.l = R.uniq(R.append(label, model.state.l));
-    // },
-    // removeLabel: function modelRemoveLabel(label, model) {
-    //   model.state.l = R.reject(R.eq(label), model.state.l);
-    // },
-    // fullLabel: function modelFullLabel(model) {
-    //   return model.state.l.join(' ');
-    // },
+    addLabel: function modelAddLabel(label, model) {
+      model.state.l = R.uniq(R.append(label, model.state.l));
+    },
+    removeLabel: function modelRemoveLabel(label, model) {
+      model.state.l = R.reject(R.eq(label), model.state.l);
+    },
+    fullLabel: function modelFullLabel(model) {
+      return model.state.l.join(' ');
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {

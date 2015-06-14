@@ -31,6 +31,20 @@
       <strong>Focus :</strong>
       {{info.focus}}
     </div>
+    <form ng-submit="doAddLabel()">
+      <label for="new-label">Label</label>
+      <input id="new-label"
+             type="text"
+             class="form-control"
+             ng-model="label.new"
+             placeholder="New Label" />
+      <button type="button"
+              class="btn btn-default"
+              ng-repeat="l in selection.state.l"
+              ng-click="doRemoveLabel(l)">
+        {{::l}} <span>&times;</span>
+      </button>
+    </form>
     <div>
       <strong>Damage :</strong>
       <click-model-damage info="info.damage"

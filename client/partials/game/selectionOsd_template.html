@@ -21,12 +21,12 @@
              ng-model="new_max_deviation"
              placeholder="0" />
     </form>
-    <form>
+    <form ng-submit="doAddLabel()">
       <label for="new-label">Label</label>
       <input id="new-label"
              type="text"
              class="form-control"
-             ng-model="new_label"
+             ng-model="label.new"
              placeholder="New Label" />
       <button type="button"
               class="btn btn-default"
