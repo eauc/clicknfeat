@@ -35,9 +35,11 @@ angular.module('clickApp.directives')
           // }, scope);
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
-              updateModelPosition(scope.factions, scope.model, element);
-              updateModelImage(scope.factions, scope.model, element);
-              updateModelSelection(scope.model, scope.game.model_selection, element);
+              var img = modelService.getImage(scope.factions, scope.model);
+              updateModelPosition(img, scope.model, element);
+              updateModelImage(img, scope.model, element);
+              updateModelSelection(scope.game.model_selection, scope.model, element);
+              updateModelDamage(img, info, scope.model, element);
             });
           }
           updateModel();
@@ -89,6 +91,51 @@ angular.module('clickApp.directives')
         edge.setAttribute('r', BASE_RADIUS[info.base]);
         parent.appendChild(edge);
 
+        var damage_bar_red;
+        var damage_bar_green;
+        if(!(info.damage.type === 'warrior' &&
+             info.damage.n === 1)) {
+          damage_bar_red = document.createElementNS(svgNS, 'line');
+          damage_bar_red.classList.add('model-damage-bar');
+          damage_bar_red.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
+          damage_bar_red.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_red.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
+          damage_bar_red.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_red.style.stroke = '#F00';
+          parent.appendChild(damage_bar_red);
+          
+          damage_bar_green = document.createElementNS(svgNS, 'line');
+          damage_bar_green.classList.add('model-damage-bar');
+          damage_bar_green.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
+          damage_bar_green.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_green.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
+          damage_bar_green.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_green.style.stroke = '#0F0';
+          parent.appendChild(damage_bar_green);
+        }
+
+        var field_bar_red;
+        var field_bar_green;
+        if(R.exists(info.damage.field)) {
+          field_bar_red = document.createElementNS(svgNS, 'line');
+          field_bar_red.classList.add('model-damage-bar');
+          field_bar_red.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
+          field_bar_red.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_red.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
+          field_bar_red.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_red.style.stroke = '#066';
+          parent.appendChild(field_bar_red);
+          
+          field_bar_green = document.createElementNS(svgNS, 'line');
+          field_bar_green.classList.add('model-damage-bar');
+          field_bar_green.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
+          field_bar_green.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_green.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
+          field_bar_green.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_green.style.stroke = '#0FF';
+          parent.appendChild(field_bar_green);
+        }
+
         var direction_los = document.createElementNS(svgNS, 'line');
         direction_los.classList.add('model-los-selection');
         direction_los.setAttribute('x1', (info.img[0].width/2)+'');
@@ -114,10 +161,13 @@ angular.module('clickApp.directives')
                  front_arc_los: front_arc_los,
                  image: image,
                  edge: edge,
+                 damage_bar_red: damage_bar_red,
+                 damage_bar_green: damage_bar_green,
+                 field_bar_red: field_bar_red,
+                 field_bar_green: field_bar_green,
                };
       }
-      function updateModelPosition(factions, model, element) {
-        var img = modelService.getImage(factions, model);
+      function updateModelPosition(img, model, element) {
         element.container.setAttribute('transform', [
           'translate(',
           model.state.x-img.width/2,
@@ -132,8 +182,7 @@ angular.module('clickApp.directives')
           ')'
         ].join(''));
       }
-      function updateModelImage(factions, model, element) {
-        var img = modelService.getImage(factions, model);
+      function updateModelImage(img, model, element) {
         element.image.setAttribute('width', img.width+'');
         element.image.setAttribute('height', img.height+'');
         if(R.exists(img.link)) {
@@ -144,7 +193,7 @@ angular.module('clickApp.directives')
           element.image.style.visibility = 'hidden';
         }
       }
-      function updateModelSelection(model, selection, element) {
+      function updateModelSelection(selection, model, element) {
         if(gameModelSelectionService.in('local', model.state.stamp, selection)) {
           element.container.classList.add('local-selection');
         }
@@ -157,6 +206,41 @@ angular.module('clickApp.directives')
         else {
           element.container.classList.remove('remote-selection');
         }
+      }
+      function updateModelDamage(img, info, model, element) {
+        if(R.isNil(element.damage_bar_red)) return;
+
+        var min_x = img.width / 2 + BASE_RADIUS[info.base];
+        var max_x = img.width / 2 - BASE_RADIUS[info.base];
+        var y = img.height / 2 + BASE_RADIUS[info.base] + 2;
+
+        var percent_damage = model.state.dmg.t / info.damage.total;
+        var damage_x = (max_x-min_x) * (1-percent_damage) + min_x;
+
+        element.damage_bar_red.setAttribute('x1', max_x + '');
+        element.damage_bar_red.setAttribute('y1', y + '');
+        element.damage_bar_red.setAttribute('x2', min_x + '');
+        element.damage_bar_red.setAttribute('y2', y + '');
+
+        element.damage_bar_green.setAttribute('x1', damage_x + '');
+        element.damage_bar_green.setAttribute('y1', y + '');
+        element.damage_bar_green.setAttribute('x2', min_x + '');
+        element.damage_bar_green.setAttribute('y2', y + '');
+
+        if(R.isNil(element.field_bar_red)) return;
+
+        var percent_field = model.state.dmg.f / info.damage.field;
+        var field_x = (max_x-min_x) * (1-percent_field) + min_x;
+
+        element.field_bar_red.setAttribute('x1', max_x + '');
+        element.field_bar_red.setAttribute('y1', (y+1) + '');
+        element.field_bar_red.setAttribute('x2', min_x + '');
+        element.field_bar_red.setAttribute('y2', (y+1) + '');
+
+        element.field_bar_green.setAttribute('x1', field_x + '');
+        element.field_bar_green.setAttribute('y1', (y+1) + '');
+        element.field_bar_green.setAttribute('x2', min_x + '');
+        element.field_bar_green.setAttribute('y2', (y+1) + '');
       }
     }
   ])

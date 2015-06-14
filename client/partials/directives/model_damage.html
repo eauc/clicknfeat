@@ -1,0 +1,79 @@
+<div>
+  <strong>Total : </strong>
+  <span ng-show="state">{{state.dmg.t}} / </span>{{info.total}}
+  <span ng-if="info.field">
+    + <span ng-show="state">{{state.dmg.f}} / </span>{{info.field}}
+  </span>
+  <button class="btn btn-default"
+          ng-show="state"
+          ng-click="doResetDamage()">
+    Reset
+  </button>
+  <div ng-if="info.type == 'warrior'"
+       class="damage-warrior">
+    <div ng-repeat="i in range(info.n)"
+         class="
+         damage-box
+         {{ warriorBoxClass(i) }}
+         "
+         ng-click="doWarriorDamage(i+1)">
+    </div>
+  </div>
+  <table class="damage-grid"
+         ng-if="info.field">
+    <tr ng-repeat="line in [0, 1]">
+      <td ng-repeat="col in range(info.field/2)"
+          class="
+          damage-box
+          {{ fieldBoxClass(col, line) }}
+          "
+          ng-click="doFieldDamage(line * info.field/2 + col + 1)">
+        F
+      </td>
+    </tr>
+  </table>
+  <table ng-if="
+         info.type === 'jack' ||
+         info.type === 'gargantuan' ||
+         info.type === 'beast'
+         "
+         class="damage-grid">
+    <tr>
+      <td ng-repeat="col in ['1','2','3','4','5','6']"
+          class="damage-col-header"
+          ng-click="doGridColDamage(col)">
+        {{::col}}
+      </td>
+    </tr>
+    <tr ng-repeat="line in range(info.depth)">
+      <td ng-repeat="col in ['1','2','3','4','5','6']"
+          class="
+          damage-box
+          {{ gridBoxClass(col, line) }}
+          "
+          ng-click="doGridDamage(line, col)">
+        {{ (!info[col][line] || info[col][line] === 'b') ? ' ' : info[col][line].toUpperCase() }}
+      </td>
+    </tr>
+  </table>
+  <table ng-if="info.type == 'colossal'"
+         class="damage-grid">
+    <tr>
+      <td ng-repeat="col in ['L1','L2','L3','L4','L5','L6','R1','R2','R3','R4','R5','R6']"
+          class="damage-col-header"
+          ng-click="doGridColDamage(col)">
+        {{::col}}
+      </td>
+    </tr>
+    <tr ng-repeat="line in [0,1,2,3,4,5]">
+      <td ng-repeat="col in ['L1','L2','L3','L4','L5','L6','R1','R2','R3','R4','R5','R6']"
+          class="
+          damage-box
+          {{ gridBoxClass(col, line) }}
+          "
+          ng-click="doGridDamage(line, col)">
+        {{ (!info[col][line] || info[col][line] === 'b') ? ' ' : info[col][line].toUpperCase() }}
+      </td>
+    </tr>
+  </table>
+</div>

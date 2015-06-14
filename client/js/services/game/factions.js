@@ -116,7 +116,41 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
       R.defaultTo({ type: 'warrior', n: 1 }),
       function(damage) {
         return R.assoc('type', R.defaultTo('warrior', damage.type), damage);
+      },
+      function(damage) {
+        return R.assoc('total', computeDamageTotal(damage), damage);
+      },
+      function(damage) {
+        return R.assoc('depth', computeDamageDepth(damage), damage);
       }
+    )(damage);
+  }
+  function computeDamageTotal(damage) {
+    if(damage.type === 'warrior') return damage.n;
+    return R.pipe(
+      R.keys,
+      R.reject(R.eq('type')),
+      R.reject(R.eq('total')),
+      R.reject(R.eq('field')),
+      R.reduce(function(mem, key) {
+        return mem + R.pipe(
+          R.reject(R.isNil),
+          R.length
+        )(damage[key]);
+      }, 0)
+    )(damage);
+  }
+  function computeDamageDepth(damage) {
+    if(damage.type === 'warrior') return damage.n;
+    return R.pipe(
+      R.keys,
+      R.reject(R.eq('type')),
+      R.reject(R.eq('total')),
+      R.reject(R.eq('field')),
+      R.map(function(key) {
+        return R.length(damage[key]);
+      }),
+      R.max
     )(damage);
   }
   return gameFactionsService;

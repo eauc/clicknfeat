@@ -266,6 +266,10 @@ ul.nav-tabs li {
 .local-selection .model-los-selection {
     visibility: visible;
 }
+.model-damage-bar {
+    stroke-width: 1px;
+    pointer-events: none;
+}
 
 /**************************
   Templates
@@ -364,6 +368,57 @@ ul.nav-tabs li {
     stroke-width:1px;
     stroke: #00F;
     fill: none;
+}
+
+/**************************
+  Damage
+***************************/
+
+.damage-box {
+    width:20px;
+    height:20px;
+    padding: 0;
+    border:1px solid black;
+    margin: 0;
+    text-align:center;
+    background-color: white;
+}
+div.damage-box {
+    display:inline-block;
+}
+.damage-box.mark {
+    background-color: #999;
+}
+.damage-box.none {
+    background-color: black;
+}
+.damage-warrior .damage-box:nth-child(5n) {
+    width:25px;
+    border-right: 5px solid black;
+}
+.damage-grid .damage-box:nth-child(6n) {
+    border-right: 5px solid black;
+}
+.damage-grid .damage-box:nth-child(6n+1) {
+    width:25px;
+}
+.damage-warrior .damage-box:last-child {
+    width:20px;
+    border-right: 1px solid black;
+}
+.damage-grid .damage-box:first-child {
+    width:20px;
+}
+.damage-grid .damage-box:last-child {
+    border-right: 1px solid black;
+}
+.damage-grid {
+    border-collapse:collapse;
+    text-align:center;
+}
+.damage-col-header {
+    width:20px;
+    height:20px;
 }
 
 /**************************

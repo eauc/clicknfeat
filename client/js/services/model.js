@@ -26,7 +26,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
                            });
   var modelService = {
     create: function modelCreate(factions, temp) {
-      if(R.isNil(gameFactionsService.getModelInfo(temp.info, factions))) {
+      var info = gameFactionsService.getModelInfo(temp.info, factions);
+      if(R.isNil(info)) {
         console.log('create unknown model '+temp.info.join('.'));
         return;
       }
@@ -36,6 +37,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           img: 0,
           dsp: ['i'],
           l: [],
+          dmg: initDamage(info.damage),
           stamp: R.guid()
         }
       };
@@ -157,6 +159,62 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         modelService.checkState$(factions)
       )(model.state);
     },
+    resetDamage: function modelResetDamage(model) {
+      model.state.dmg = R.pipe(
+        R.keys,
+        R.reduce(function(mem, key) {
+          var value = model.state.dmg[key];
+          if('Array' === R.type(value)) {
+            value = R.map(R.always(0), value);
+          }
+          else {
+            value = 0;
+          }
+          return R.assoc(key, value, mem);
+        }, {})
+      )(model.state.dmg);
+    },
+    setWarriorDamage: function modelSetWarriorDamage(factions, i, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var value = R.defaultTo(0, model.state.dmg.n);
+      value = (value === i) ? 0 : i;
+      value = Math.min(value, info.damage.n);
+      model.state.dmg = R.pipe(
+        R.assoc('n', value),
+        R.assoc('t', value)
+      )(model.state.dmg);
+    },
+    setFieldDamage: function modelSetFieldDamage(factions, i, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var value = R.defaultTo(0, model.state.dmg.f);
+      value = (value === i) ? 0 : i;
+      value = Math.min(value, info.damage.field);
+      model.state.dmg = R.assoc('f', value, model.state.dmg);
+    },
+    setGridDamage: function modelSetGridDamage(factions, line, col, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var value = model.state.dmg[col][line];
+      value = (value === 0) ? 1 : 0;
+      value = R.exists(info.damage[col][line]) ? value : 0;
+      model.state.dmg[col][line] = value;
+      model.state.dmg.t = computeTotalGridDamage(model.state.dmg);
+    },
+    setGridColDamage: function modelSetGridColDamage(factions, col, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var full = R.pipe(
+        R.filterIndexed(function(val, line) {
+          return R.exists(info.damage[col][line]);
+        }),
+        R.reject(R.eq(1)),
+        R.isEmpty
+      )(model.state.dmg[col]);
+      var value = full ? 0 : 1;
+      model.state.dmg[col] = R.mapIndexed(function(val, line) {
+        // console.log(info, col, line, model.state.dmg);
+        return R.exists(info.damage[col][line]) ? value : 0;
+      }, model.state.dmg[col]);
+      model.state.dmg.t = computeTotalGridDamage(model.state.dmg);
+    },
     // addLabel: function modelAddLabel(label, model) {
     //   model.state.l = R.uniq(R.append(label, model.state.l));
     // },
@@ -167,6 +225,34 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     //   return model.state.l.join(' ');
     // },
   };
+  function initDamage(info) {
+    if(info.type === 'warrior') {
+      return { n: 0, t: 0 };
+    }
+    return R.pipe(
+      R.keys,
+      R.reject(R.eq('type')),
+      R.reject(R.eq('field')),
+      R.reject(R.eq('total')),
+      R.reject(R.eq('depth')),
+      R.reduce(function(mem, key) {
+        return R.assoc(key, R.map(R.always(0), info[key]), mem);
+      }, {}),
+      R.assoc('f', 0),
+      R.assoc('t', 0)
+    )(info);
+  }
+  function computeTotalGridDamage(damage) {
+    return R.pipe(
+      R.keys,
+      R.reject(R.eq('t')),
+      R.reject(R.eq('f')),
+      R.reject(R.eq('n')),
+      R.reduce(function(mem, col) {
+        return mem + R.reduce(R.add, 0, damage[col]);
+      }, 0)
+    )(damage);
+  }
   R.curryService(modelService);
   return modelService;
 };

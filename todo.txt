@@ -5,6 +5,9 @@ specs :
 template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
+ruler:
+- activate -> one model selection -> set as origin
+- set max length + model origin -> save max length on model (outside state ?)
 model
 - detail
 - label

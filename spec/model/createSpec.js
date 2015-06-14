@@ -546,6 +546,7 @@ describe('create model', function() {
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        this.gameFactionsService.getModelInfo._retVal = null;
         spyOn(R, 'guid').and.returnValue('newGuid');
       }
     ]));
@@ -576,12 +577,15 @@ describe('create model', function() {
                        l: ['label'],
                        stamp: 'stamp'
                      };
-        this.gameFactionsService.getModelInfo._retVal = {};
+        this.gameFactionsService.getModelInfo._retVal = {
+          damage: { type: 'warrior', n: 1 }
+        };
       }, function() {
         it('should extend <state> with default values', function() {
           expect(this.ret)
             .toEqual({
               state: { x: 240, y: 0, r: 0,
+                       dmg: { n: 0, t: 0 },
                        dsp: ['i'],
                        img: 0,
                        l: [ 'label' ],
@@ -589,6 +593,38 @@ describe('create model', function() {
                        info: [ 'info' ]
                      }
             });
+        });
+      });
+
+      using([
+        [ 'info', 'state' ],
+        [ { type: 'warrior', n: 1 }, { n: 0, t: 0 } ],
+        [ { type: 'jack',
+            1: [ null, null,  null,  "b",  "l", null ],
+            2: [ null,  "b",  "b",   "l",  "l",  "m" ],
+            3: [ null,  "b",  "g",   "a",  "m",  "m" ],
+            4: [ null,  "b",  "g",   "a",  "c",  "c" ],
+            5: [ null,  "b",  "b",   "r",  "r",  "c" ],
+            6: [ null, null,  null,  "b",  "r", null ],
+            field: 10
+          }, { 1: [ 0, 0, 0, 0, 0, 0 ],
+               2: [ 0, 0, 0, 0, 0, 0 ],
+               3: [ 0, 0, 0, 0, 0, 0 ],
+               4: [ 0, 0, 0, 0, 0, 0 ],
+               5: [ 0, 0, 0, 0, 0, 0 ],
+               6: [ 0, 0, 0, 0, 0, 0 ],
+               f: 0, t: 0
+             } ],
+      ], function(e, d) {
+        when('<state.info> damage type is '+e.info.type, function() {
+          this.gameFactionsService.getModelInfo._retVal = {
+            damage: e.info
+          };
+        }, function() {
+          it('should init <state> damage', function() {
+            expect(this.ret.state.dmg)
+              .toEqual(e.state);
+          });
         });
       });
     });

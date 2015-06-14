@@ -101,7 +101,10 @@
         </tr>
         <tr>
           <th>Damage</th>
-          <td>{{getModel().damage}}</td>
+          <td>
+            <click-model-damage info="getModel().damage">
+            </click-model-damage>
+          </td>
         </tr>
         <tr ng-show="getModel().img[0].link">
           <th>Image</th>
