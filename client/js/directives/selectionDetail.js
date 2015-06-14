@@ -122,7 +122,7 @@ angular.module('clickApp.directives')
             return screen_pos.x+'px';
           }
           function alignLeft(detail_rect, screen_pos) {
-            return (screen_pos.x-detail_rect.width)+'px';
+            return Math.max(0, screen_pos.x-detail_rect.width)+'px';
           }
           function detailCanFitBottom(viewport_rect, detail_rect, screen_pos) {
             return screen_pos.y + detail_rect.height <= viewport_rect.bottom;
@@ -131,7 +131,7 @@ angular.module('clickApp.directives')
             return screen_pos.y+'px';
           }
           function alignTop(detail_rect, screen_pos) {
-            return (screen_pos.y-detail_rect.height)+'px';
+            return Math.max(0, screen_pos.y-detail_rect.height)+'px';
           }
 
           scope.onGameEvent('openSelectionDetail', openSelectionDetail, scope);
