@@ -19,12 +19,9 @@ describe('model image', function() {
       this.modelsModeService.actions
         .toggleImageDisplay(this.scope);
     }, function() {
-      it('should get local models selection', function() {
+      it('should toggle image display on local selection', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-      });
-
-      it('should toggle image display on local selection', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('onModels', 'toggleImageDisplay',
                                 'gameModelSelection.get.returnValue',
@@ -36,12 +33,9 @@ describe('model image', function() {
       this.modelsModeService.actions
         .setNextImage(this.scope);
     }, function() {
-      it('should get local models selection', function() {
+      it('should set next image on local selection', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-      });
-
-      it('should set next image on local selection', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('onModels', 'setNextImage', 'factions',
                                 'gameModelSelection.get.returnValue',

@@ -65,10 +65,11 @@ angular.module('clickApp.directives')
       function updateBackground(zoom_factor, text_center,
                                 label, bckgnd) {
         var label_rect = label.getBoundingClientRect();
-        var width = label_rect.width / zoom_factor;
+        var width = label_rect.width / zoom_factor - 2;
+        var height = parseFloat(bckgnd.getAttribute('height'));
 
         bckgnd.setAttribute('x', (text_center.x - width / 2 - 1)+'');
-        bckgnd.setAttribute('y', (text_center.y - 5)+'');
+        bckgnd.setAttribute('y', (text_center.y - (height - 1))+'');
         bckgnd.setAttribute('width', (width + 2)+'');
       }
       return labelElementService;

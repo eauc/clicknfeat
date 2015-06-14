@@ -26,6 +26,36 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'setNextImage', scope.factions,
                                stamps, scope, scope.game);
   };
+  models_actions.toggleCounterDisplay = function modelToggleCounterDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleCounterDisplay', 'c',
+                               stamps, scope, scope.game);
+  };
+  models_actions.incrementCounter = function modelIncrementCounter(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'incrementCounter', 'c',
+                               stamps, scope, scope.game);
+  };
+  models_actions.decrementCounter = function modelDecrementCounter(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'decrementCounter', 'c',
+                               stamps, scope, scope.game);
+  };
+  models_actions.toggleSoulsDisplay = function modelToggleSoulsDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleCounterDisplay', 's',
+                               stamps, scope, scope.game);
+  };
+  models_actions.incrementSouls = function modelIncrementSouls(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'incrementCounter', 's',
+                               stamps, scope, scope.game);
+  };
+  models_actions.decrementSouls = function modelDecrementSouls(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'decrementCounter', 's',
+                               stamps, scope, scope.game);
+  };
   // models_actions.delete = function modelsDelete(scope) {
   //   var target = gameModelsSelectionService.get('local', scope.game.models_selection);
   //   gameService.executeCommand('deleteModelss', [target], scope, scope.game);
@@ -126,6 +156,12 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'setNextImage': 'shift+i',
     'setOrientationUp': 'pageup',
     'setOrientationDown': 'pagedown',
+    'toggleCounterDisplay': 'n',
+    'incrementCounter': '+',
+    'decrementCounter': '-',
+    'toggleSoulsDisplay': 's',
+    'incrementSouls': 'shift++',
+    'decrementSouls': 'shift+-',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -140,6 +176,14 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Orient.', 'toggle', 'orientation' ],
     [ 'Face Up', 'setOrientationUp', 'orientation' ],
     [ 'Face Down', 'setOrientationDown', 'orientation' ],
+    [ 'Counter', 'toggle', 'counter' ],
+    [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
+    [ 'Inc.', 'incrementCounter', 'counter' ],
+    [ 'Dec.', 'decrementCounter', 'counter' ],
+    [ 'Souls', 'toggle', 'souls' ],
+    [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
+    [ 'Inc.', 'incrementSouls', 'souls' ],
+    [ 'Dec.', 'decrementSouls', 'souls' ],
   ];
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {

@@ -589,6 +589,7 @@ describe('create model', function() {
                        dsp: ['i'],
                        img: 0,
                        l: [ 'label' ],
+                       c: 0, s: 0,
                        stamp: 'stamp',
                        info: [ 'info' ]
                      }
@@ -624,6 +625,26 @@ describe('create model', function() {
           it('should init <state> damage', function() {
             expect(this.ret.state.dmg)
               .toEqual(e.state);
+          });
+        });
+      });
+
+      using([
+        [ 'type'    , 'dsp' ],
+        [ 'warrior' , ['i'] ],
+        [ 'wardude' , ['i','c'] ],
+        [ 'beast'   , ['i','c'] ],
+        [ 'jack'    , ['i','c'] ],
+      ], function(e, d) {
+        when('<state.info> type is '+e.type, function() {
+          this.gameFactionsService.getModelInfo._retVal = {
+            type: e.type,
+            damage: { type: 'warrior', n: 1 }
+          };
+        }, function() {
+          it('should init counter display', function() {
+            expect(this.ret.state.dsp)
+              .toEqual(e.dsp);
           });
         });
       });

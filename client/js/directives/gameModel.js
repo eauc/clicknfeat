@@ -42,6 +42,9 @@ angular.module('clickApp.directives')
               var zoom_factor = gameMapService.zoomFactor(map);
               var label_text = modelService.fullLabel(scope.model);
               var label_center = computeLabelCenter(info, scope.model);
+              var counter_text = modelService.isCounterDisplayed('c', scope.model) ?
+                  scope.model.state.c : '';
+              var counter_center = computeCounterCenter(scope.model);
 
               updateModelPosition(img, scope.model, element);
               updateModelImage(img, scope.model, element);
@@ -53,6 +56,14 @@ angular.module('clickApp.directives')
                                          label_center.text,
                                          label_text,
                                          element.label);
+              labelElementService.update(map_flipped,
+                                         zoom_factor,
+                                         counter_center.flip,
+                                         counter_center.text,
+                                         counter_text,
+                                         element.counter);
+              updateSoulsCounter(map_flipped, zoom_factor,
+                                 img, info, scope.model, element);
             });
           }
           updateModel();
@@ -170,6 +181,18 @@ angular.module('clickApp.directives')
         parent.appendChild(front_arc_los);
 
         var label = labelElementService.create(svgNS, parent.parentNode);
+        var counter = labelElementService.create(svgNS, parent.parentNode);
+        counter.label.classList.add('counter');
+        counter.bckgnd.setAttribute('height', '9');
+        var souls_image = document.createElementNS(svgNS, 'image');
+        souls_image.classList.add('model-image');
+        souls_image.setAttribute('x', '0');
+        souls_image.setAttribute('y', '0');
+        souls_image.setAttribute('width', '20');
+        souls_image.setAttribute('height', '20');
+        souls_image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/data/icons/Soul.png');
+        parent.appendChild(souls_image);
+        var souls = labelElementService.create(svgNS, parent);
 
         return { container: parent,
                  base: base,
@@ -184,6 +207,8 @@ angular.module('clickApp.directives')
                  field_bar_red: field_bar_red,
                  field_bar_green: field_bar_green,
                  label: label,
+                 counter: counter,
+                 souls: { label: souls, image: souls_image },
                };
       }
       function updateModelPosition(img, model, element) {
@@ -275,6 +300,37 @@ angular.module('clickApp.directives')
                                 };
         return { text: label_text_center,
                  flip: label_flip_center
+               };
+      }
+      function updateSoulsCounter(map_flipped, zoom_factor, img, info, model, element) {
+        var souls_text = modelService.isCounterDisplayed('s', model) ?
+            model.state.s+'' : '';
+        var visibility = R.length(souls_text) > 0 ? 'visible' : 'hidden';
+        var souls_center = computeSoulsCenter(img, info, model);
+
+        element.souls.image.setAttribute('x', (souls_center.text.x-10)+'');
+        element.souls.image.setAttribute('y', (souls_center.text.y-10)+'');
+        element.souls.image.style.visibility = visibility;
+        labelElementService.update(map_flipped,
+                                   zoom_factor,
+                                   souls_center.flip,
+                                   souls_center.text,
+                                   souls_text,
+                                   element.souls.label);
+      }
+      function computeCounterCenter(model) {
+        var counter_flip_center = { x: model.state.x, y: model.state.y };
+        var counter_text_center = { x: counter_flip_center.x, y: counter_flip_center.y+4 };
+        return { text: counter_text_center,
+                 flip: counter_flip_center,
+               };
+      }
+      function computeSoulsCenter(img, info, model) {
+        var counter_flip_center = { x: img.width/2, y: img.height/2 };
+        var counter_text_center = { x: counter_flip_center.x + BASE_RADIUS[info.base] + 5,
+                                    y: counter_flip_center.y - BASE_RADIUS[info.base] - 5 };
+        return { text: counter_text_center,
+                 flip: counter_flip_center,
                };
       }
     }

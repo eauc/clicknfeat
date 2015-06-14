@@ -9,12 +9,11 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- label
 - counter
 - souls counters
+- icons alterations
 - ruler origin target / update when model change ?
 - template origin target / update when model change ?
-- icons alterations
 - B2B
 - under Aoe
 - unit

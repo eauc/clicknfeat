@@ -37,10 +37,16 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           img: 0,
           dsp: ['i'],
           l: [],
+          c: 0, s: 0,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
       };
+      if(info.type === 'wardude' ||
+         info.type === 'beast' ||
+         info.type === 'jack') {
+        model.state.dsp = R.append('c', model.state.dsp);
+      }
       model.state = R.deepExtend(model.state, temp);
       return model;
     },
@@ -228,6 +234,25 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     fullLabel: function modelFullLabel(model) {
       return model.state.l.join(' ');
+    },
+    isCounterDisplayed: function modelIsCounterDisplayed(counter, model) {
+      return !!R.find(R.eq(counter), model.state.dsp);
+    },
+    incrementCounter: function modelIncrementCounter(counter, model) {
+      var value = R.defaultTo(0, model.state[counter]) + 1;
+      model.state = R.assoc(counter, value, model.state);
+    },
+    decrementCounter: function modelDecrementCounter(counter, model) {
+      var value = Math.max(0, R.defaultTo(0, model.state[counter]) - 1);
+      model.state = R.assoc(counter, value, model.state);
+    },
+    toggleCounterDisplay: function modelToggleCounterDisplay(counter, model) {
+      if(modelService.isCounterDisplayed(counter, model)) {
+        model.state.dsp = R.reject(R.eq(counter), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append(counter, model.state.dsp);
+      }
     },
   };
   function initDamage(info) {

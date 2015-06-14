@@ -83,6 +83,14 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Orient.', 'toggle', 'orientation' ],
     [ 'Face Up', 'setOrientationUp', 'orientation' ],
     [ 'Face Down', 'setOrientationDown', 'orientation' ],
+    [ 'Counter', 'toggle', 'counter' ],
+    [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
+    [ 'Inc.', 'incrementCounter', 'counter' ],
+    [ 'Dec.', 'decrementCounter', 'counter' ],
+    [ 'Souls', 'toggle', 'souls' ],
+    [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
+    [ 'Inc.', 'incrementSouls', 'souls' ],
+    [ 'Dec.', 'decrementSouls', 'souls' ],
   ];
   var model_mode = {
     onEnter: function modelOnEnter(scope) {
