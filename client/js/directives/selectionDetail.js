@@ -69,6 +69,9 @@ angular.module('clickApp.directives')
 
           closeSelectionDetail();
 
+          scope.type = 'model';
+          scope.deferDigest();
+
           function openSelectionDetail($event, type, selection) {
             // console.log('openSelectionDetail');
             scope.type = type;
