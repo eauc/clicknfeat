@@ -1,6 +1,8 @@
 'use strict';
 
-self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
+self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
+                                                                modelService,
+                                                                gameModelsService) {
   var gameRulerService = {
     create: function gameRulerCreate() {
       return {
@@ -27,6 +29,49 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
     setMaxLength: function gameRulerSetMaxLength(length, ruler) {
       return R.assocPath(['local', 'max'], length, ruler);
     },
+    origin: function gameRulerOrigin(ruler) {
+      return R.path(['remote', 'origin'], ruler);
+    },
+    setOrigin: function gameRulerSetOrigin(models, origin_model, scope, ruler) {
+      var origin = origin_model.state.stamp;
+      var target = gameRulerService.target(ruler);
+      target = (target === origin) ? null : target;
+      var line = { start: R.pick(['x','y'], origin_model.state),
+                   end: R.pick(['x','y'], origin_model.state)
+                 };
+      if(R.exists(target)) {
+        var target_model = gameModelsService.findStamp(target, models);
+        if(R.exists(target_model)) {
+          line = modelService.shortestLineTo(scope.factions, target_model, origin_model);
+        }
+      }
+
+      return setOriginTarget(line, origin, target, scope, ruler);
+    },
+    target: function gameRulerTarget(ruler) {
+      return R.path(['remote', 'target'], ruler);
+    },
+    targetReached: function gameRulerTarget(ruler) {
+      return R.path(['remote', 'reached'], ruler);
+    },
+    setTarget: function gameRulerSetTarger(models, target_model, scope, ruler) {
+      var origin = gameRulerService.origin(ruler);
+      var target = target_model.state.stamp;
+      origin = (origin === target) ? null : origin;
+      var line = { start: R.pick(['x','y'], target_model.state),
+                   end: R.pick(['x','y'], target_model.state)
+                 };
+      if(R.exists(origin)) {
+        var origin_model = gameModelsService.findStamp(origin, models);
+        if(R.exists(origin_model)) {
+          line = modelService.shortestLineTo(scope.factions,
+                                             target_model,
+                                             origin_model);
+        }
+      }
+
+      return setOriginTarget(line, origin, target, scope, ruler);
+    },
     toggleDisplay: function gameRulerToggleDisplay(scope, ruler) {
       var path = ['remote','display'];
       var ret = R.pipe(
@@ -52,6 +97,9 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
     setRemote: function gameRulerSetRemote(start, end, scope, ruler) {
       var ret = R.pipe(
         R.prop('remote'),
+        R.assoc('origin', null),
+        R.assoc('target', null),
+        R.assoc('reached', null),
         R.assoc('max', R.path(['local', 'max'], ruler)),
         R.assoc('start', R.clone(start)),
         enforceEndToMaxLength(end),
@@ -102,6 +150,31 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService) {
     end = pointService.translateInDirection(length, dir, ruler.start);
     return R.assoc('end', end, ruler);
   });
+  function setOriginTarget(line, origin, target, scope, ruler) {
+    var display = ( R.exists(origin) && R.exists(target) );
+    var models_dist = pointService.distanceTo(line.end, line.start);
+    var ret = R.pipe(
+      R.prop('remote'),
+      R.assoc('max', R.path(['local', 'max'], ruler)),
+      R.assoc('start', line.start),
+      enforceEndToMaxLength(line.end),
+      function(remote) {
+        var ruler_length = pointService.distanceTo(remote.end, remote.start);
+        return R.pipe(
+          R.assoc('reached', ruler_length >= models_dist - 0.1),
+          R.assoc('length', Math.round(ruler_length * 10) / 100)
+        )(remote);
+      },
+      R.assoc('display', display),
+      R.assoc('origin', origin),
+      R.assoc('target', target),
+      function(remote) {
+        return R.assoc('remote', remote, ruler);
+      }
+    )(ruler);
+    scope.gameEvent('changeRemoteRuler', ret.remote);
+    return ret;
+  }
 
   R.curryService(gameRulerService);
   return gameRulerService;

@@ -224,6 +224,8 @@ angular.module('clickApp.services')
   ])
   .factory('gameRuler', [
     'point',
+    'model',
+    'gameModels',
     gameRulerServiceFactory
   ])
   .factory('gameTemplates', [

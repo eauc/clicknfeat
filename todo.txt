@@ -9,16 +9,14 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- delete model
-- ruler origin target / update when model change ?
+- ruler origin target / aoeToRuler / update when model change ?
 - template origin target / update when model change ?
 - B2B
 - under Aoe
-- unit/leader
+- unit
 - select all friendly
 - lock
-- images / other types
-- incorporeal
+- images / other types : incorporeal
 - wreck
 - highlight models in melee ?
 layers - deploiement

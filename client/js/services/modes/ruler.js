@@ -22,6 +22,20 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
   ruler_actions.dragStartTemplate = ruler_actions.dragStartMap;
   ruler_actions.dragTemplate = ruler_actions.dragMap;
   ruler_actions.dragEndTemplate = ruler_actions.dragEndMap;
+  ruler_actions.dragStartModel = ruler_actions.dragStartMap;
+  ruler_actions.dragModel = ruler_actions.dragMap;
+  ruler_actions.dragEndModel = ruler_actions.dragEndMap;
+  ruler_actions.clickModel = function rulerClickModel(scope, event, dom_event) {
+    console.log(arguments);
+    if(dom_event.ctrlKey) {
+      gameService.executeCommand('setRuler', 'setOrigin', scope.game.models, event.target,
+                                 scope,  scope.game);
+    }
+    else if(dom_event.shiftKey) {
+      gameService.executeCommand('setRuler', 'setTarget', scope.game.models, event.target,
+                                 scope,  scope.game);
+    }
+  };
   ruler_actions.setMaxLength = function rulerSetMaxLength(scope, event) {
     promptService.prompt('prompt',
                          'Set ruler max length :',

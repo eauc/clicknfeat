@@ -306,6 +306,21 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     toggleAreaDisplay: function modelToggleAreaDisplay(area, model) {
       model.state.are = (area === model.state.are) ? null : area;
     },
+    shortestLineTo: function modelShortestLineTo(factions, other, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
+      
+      var direction = pointService.directionTo(other.state, model.state);
+      var start = pointService.translateInDirection(BASE_RADIUS[info.base],
+                                                    direction,
+                                                    model.state);
+      var end = pointService.translateInDirection(BASE_RADIUS[other_info.base],
+                                                  direction+180,
+                                                  other.state);
+      return { start: R.pick(['x','y'], start),
+               end: R.pick(['x','y'], end)
+             };
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {

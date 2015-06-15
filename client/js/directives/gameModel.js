@@ -5,11 +5,13 @@ angular.module('clickApp.directives')
     'gameFactions',
     'gameMap',
     'labelElement',
+    'gameRuler',
     'model',
     'gameModelSelection',
     function(gameFactionsService,
              gameMapService,
              labelElementService,
+             gameRulerService,
              modelService,
              gameModelSelectionService) {
       var BASE_RADIUS = {
@@ -63,7 +65,8 @@ angular.module('clickApp.directives')
               updateModelPosition(img, scope.model, element);
               updateModelAura(img, info, scope.model, element);
               updateModelImage(img, scope.model, element);
-              updateModelSelection(scope.game.model_selection, scope.model, element);
+              updateModelSelection(scope.game.model_selection, scope.game.ruler,
+                                   scope.model, element);
               updateModelDamage(img, info, scope.model, element);
               labelElementService.update(map_flipped,
                                          zoom_factor,
@@ -318,7 +321,7 @@ angular.module('clickApp.directives')
           element.image.style.visibility = 'hidden';
         }
       }
-      function updateModelSelection(selection, model, element) {
+      function updateModelSelection(selection, ruler, model, element) {
         if(gameModelSelectionService.in('local', model.state.stamp, selection)) {
           element.container.classList.add('local-selection');
         }
@@ -330,6 +333,25 @@ angular.module('clickApp.directives')
         }
         else {
           element.container.classList.remove('remote-selection');
+        }
+        if(gameRulerService.origin(ruler) === model.state.stamp) {
+          element.container.classList.add('ruler-origin');
+        }
+        else {
+          element.container.classList.remove('ruler-origin');
+        }
+        if(gameRulerService.target(ruler) === model.state.stamp) {
+          element.container.classList.add('ruler-target');
+          if(gameRulerService.targetReached(ruler)) {
+            element.container.classList.add('ruler-target-reached');
+          }
+          else {
+            element.container.classList.remove('ruler-target-reached');
+          }
+        }
+        else {
+          element.container.classList.remove('ruler-target');
+          element.container.classList.remove('ruler-target-reached');
         }
       }
       function updateModelDamage(img, info, model, element) {

@@ -243,6 +243,7 @@ describe('misc model', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
+        this.gameFactionsService = spyOnService('gameFactions');
       }
     ]));
 
@@ -262,6 +263,28 @@ describe('misc model', function() {
         this.modelService.setState(state, model);
         expect(model.state).toEqual(state);
         expect(model.state).not.toBe(state);
+      });
+    });
+
+    describe('shortestLineTo(<factions>, <other>)', function() {
+      beforeEach(function() {
+        var info = {
+          'model': { base: 'medium' },
+          'other': { base: 'large' },
+        };
+        this.gameFactionsService.getModelInfo.and.callFake(function(i) {
+          return info[i];
+        });
+      });
+
+      it('should set a copy of <state> as model\'s state', function() {
+        var model = { state: { info: 'model', x: 240, y: 240 } };
+        var other = { state: { info: 'other', x: 120, y: 120 } };
+        expect(this.modelService.shortestLineTo('factions', other, model))
+          .toEqual({
+            start: { x: 234.43224120493713, y: 234.43224120493713 },
+            end: { x: 126.959344940438, y: 126.959344940438 }
+          });
       });
     });
   });
