@@ -40,7 +40,12 @@ angular.module('clickApp.directives')
              R.isNil(info)) return;
           var container = el[0];
           var element = createModelElement(info, scope.model, svgNS, container);
-
+          var parentNode = container.parentNode;
+          scope.$on('$destroy', function gameModelOnDestroy() {
+            console.log('gameModelOnDestroy');
+            parentNode.removeChild(element.label.label);
+            parentNode.removeChild(element.counter.label);
+          });
           // scope.onGameEvent('mapFlipped', function onMapFlipped() {
           //   labelElementService.updateOnFlipMap(map, model.state, element.label);
           // }, scope);
@@ -417,8 +422,9 @@ angular.module('clickApp.directives')
       function updateModelCtrlArea(factions, img, info, model, element) {
         element.ctrl_area.setAttribute('cx', (img.width/2)+'');
         element.ctrl_area.setAttribute('cy', (img.height/2)+'');
-        element.ctrl_area.setAttribute('r', ((info.focus || info.fury)*20 + BASE_RADIUS[info.base])+'');
         if(modelService.isCtrlAreaDisplayed(factions, model)) {
+          var radius = ((info.focus || info.fury)*20 + BASE_RADIUS[info.base]);
+          element.ctrl_area.setAttribute('r', radius+'');
           element.ctrl_area.style.visibility = 'visible';
         }
         else {
