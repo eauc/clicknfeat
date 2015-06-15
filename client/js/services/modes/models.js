@@ -8,6 +8,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                                                   gameModelsService,
                                                                   gameModelSelectionService) {
   var models_actions = Object.create(defaultModeService.actions);
+  models_actions.deleteSelection = function modelsDeleteSeelction(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('deleteModel', stamps, scope, scope.game);
+  };
   models_actions.clickMap = function modelsClickMap(scope, event) {
     gameService.executeCommand('setModelSelection', 'clear', null,
                                scope, scope.game);
@@ -113,10 +117,6 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  stamps, scope, scope.game);
     };
   }, effects);
-  // models_actions.delete = function modelsDelete(scope) {
-  //   var target = gameModelsSelectionService.get('local', scope.game.models_selection);
-  //   gameService.executeCommand('deleteModelss', [target], scope, scope.game);
-  // };
   // models_actions.lock = function modelsLock(scope) {
   //   var stamp = gameModelsSelectionService.get('local', scope.game.models_selection);
   //   gameService.executeCommand('lockModelss', [stamp], true, scope, scope.game);
@@ -209,6 +209,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   })();
 
   var models_default_bindings = {
+    'deleteSelection': 'del',
     'toggleImageDisplay': 'i',
     'setNextImage': 'shift+i',
     'setOrientationUp': 'pageup',
@@ -241,6 +242,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
   var models_buttons = [
+    [ 'Delete', 'deleteSelection' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],

@@ -77,6 +77,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                  model_default_bindings);
   var model_buttons = [
+    [ 'Delete', 'deleteSelection' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],
