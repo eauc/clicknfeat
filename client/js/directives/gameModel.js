@@ -56,6 +56,7 @@ angular.module('clickApp.directives')
               var counter_center = computeCounterCenter(scope.model);
 
               updateModelPosition(img, scope.model, element);
+              updateModelAura(img, info, scope.model, element);
               updateModelImage(img, scope.model, element);
               updateModelSelection(scope.game.model_selection, scope.model, element);
               updateModelDamage(img, info, scope.model, element);
@@ -87,6 +88,14 @@ angular.module('clickApp.directives')
         }
       };
       function createModelElement(info, model, svgNS, parent) {
+        var aura = document.createElementNS(svgNS, 'circle');
+        aura.setAttribute('cx', (info.img[0].width/2)+'');
+        aura.setAttribute('cy', (info.img[0].height/2)+'');
+        aura.setAttribute('r', BASE_RADIUS[info.base]);
+        aura.style.filter = 'url(#aura-filter)';
+        aura.style.visibility = 'hidden';
+        parent.appendChild(aura);
+
         var base = document.createElementNS(svgNS, 'circle');
         base.classList.add('model-base');
         base.setAttribute('cx', (info.img[0].width/2)+'');
@@ -228,6 +237,7 @@ angular.module('clickApp.directives')
         }, {}, EFFECTS);
 
         return { container: parent,
+                 aura: aura,
                  base: base,
                  direction: direction,
                  front_arc: front_arc,
@@ -260,6 +270,18 @@ angular.module('clickApp.directives')
           img.height/2,
           ')'
         ].join(''));
+      }
+      function updateModelAura(img, info, model, element) {
+        element.aura.setAttribute('x', (img.width/2)+'');
+        element.aura.setAttribute('y', (img.height/2)+'');
+        element.aura.setAttribute('r', (BASE_RADIUS[info.base]*1.15)+'');
+        if(modelService.isAuraDisplayed(model)) {
+          element.aura.style.fill = model.state.aur;
+          element.aura.style.visibility = 'visible';
+        }
+        else {
+          element.aura.style.visibility = 'hidden';
+        }
       }
       function updateModelImage(img, model, element) {
         element.image.setAttribute('width', img.width+'');
@@ -321,22 +343,6 @@ angular.module('clickApp.directives')
         element.field_bar_green.setAttribute('x2', min_x + '');
         element.field_bar_green.setAttribute('y2', (y+1) + '');
       }
-      function computeLabelCenter(info, model) {
-        var label_text_center_y_down = model.state.y + BASE_RADIUS[info.base] + 6;
-        var label_text_center_y_up = model.state.y - BASE_RADIUS[info.base] - 2;
-        var orientation = ((model.state.r % 360) + 360) % 360;
-        var model_looking_down =  orientation > 90 && orientation < 270;
-        var label_text_center = { x: model.state.x,
-                                  y: model_looking_down ?
-                                  label_text_center_y_down : label_text_center_y_up
-                                };
-        var label_flip_center = { x: label_text_center.x,
-                                  y: label_text_center.y - 2
-                                };
-        return { text: label_text_center,
-                 flip: label_flip_center
-               };
-      }
       function updateSoulsCounter(map_flipped, zoom_factor, img, info, model, element) {
         var souls_text = modelService.isCounterDisplayed('s', model) ?
             model.state.s+'' : '';
@@ -388,6 +394,22 @@ angular.module('clickApp.directives')
             element.effects[effect].style.visibility = 'hidden';
           })
         )(element.effects);
+      }
+      function computeLabelCenter(info, model) {
+        var label_text_center_y_down = model.state.y + BASE_RADIUS[info.base] + 6;
+        var label_text_center_y_up = model.state.y - BASE_RADIUS[info.base] - 2;
+        var orientation = ((model.state.r % 360) + 360) % 360;
+        var model_looking_down =  orientation > 90 && orientation < 270;
+        var label_text_center = { x: model.state.x,
+                                  y: model_looking_down ?
+                                  label_text_center_y_down : label_text_center_y_up
+                                };
+        var label_flip_center = { x: label_text_center.x,
+                                  y: label_text_center.y - 2
+                                };
+        return { text: label_text_center,
+                 flip: label_flip_center
+               };
       }
       function computeCounterCenter(model) {
         var counter_flip_center = { x: model.state.x, y: model.state.y };

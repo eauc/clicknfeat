@@ -94,6 +94,11 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  model_buttons = R.append([ 'Auras', 'toggle', 'auras' ], model_buttons);
+  R.forEach(function(aura) {
+    model_buttons = R.append([ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ],
+                             model_buttons);
+  }, modelsModeService.auras);
   model_buttons = R.append([ 'Effects', 'toggle', 'effects' ], model_buttons);
   R.forEach(function(effect) {
     model_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],

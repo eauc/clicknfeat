@@ -61,6 +61,21 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'toggleLeaderDisplay',
                                stamps, scope, scope.game);
   };
+  var auras = [
+    [ 'Red', '#F00' ],
+    [ 'Green', '#0F0' ],
+    [ 'Blue', '#00F' ],
+    [ 'Yellow', '#FF0' ],
+    [ 'Purple', '#F0F' ],
+    [ 'Cyan', '#0FF' ],
+  ];
+  R.forEach(function(aura) {
+    models_actions['toggle'+aura[0]+'AuraDisplay'] = function modelToggleAuraDisplay(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', 'toggleAuraDisplay', aura[1],
+                                 stamps, scope, scope.game);
+    };
+  }, auras);
   var effects = [
     [ 'Blind', 'b' ],
     [ 'Corrosion', 'c' ],
@@ -189,6 +204,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     models_default_bindings[move[0]] = move[1];
     models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
+  R.forEachIndexed(function(aura, index) {
+    models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
+  }, auras);
   R.forEach(function(effect) {
     models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
   }, effects);
@@ -212,6 +230,11 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  models_buttons = R.append([ 'Auras', 'toggle', 'auras' ], models_buttons);
+  R.forEach(function(aura) {
+    models_buttons = R.append([ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ],
+                              models_buttons);
+  }, auras);
   models_buttons = R.append([ 'Effects', 'toggle', 'effects' ], models_buttons);
   R.forEach(function(effect) {
     models_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
@@ -226,6 +249,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     actions: models_actions,
     buttons: models_buttons,
     bindings: models_bindings,
+    auras: auras,
     effects: effects,
   };
   modesService.registerMode(models_mode);

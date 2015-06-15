@@ -9,8 +9,8 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- icons alterations
 - aura
+- areas
 - delete model
 - clean external elements on delete model
 - ruler origin target / update when model change ?

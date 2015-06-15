@@ -9,7 +9,11 @@ angular.module('clickApp.controllers')
              modesService,
              fileExportService) {
       console.log('init gameHelpCtrl');
-      $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
+
+      self.Promise.resolve($scope.onGameLoad)
+        .then(function() {
+          $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
+        });
       $scope.onGameEvent('switchMode', function onSwitchMode() {
         $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
         $scope.deferDigest($scope);

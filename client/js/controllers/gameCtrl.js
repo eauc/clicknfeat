@@ -123,7 +123,7 @@ angular.module('clickApp.controllers')
       });
 
       $scope.ui_state = {};
-      onLoad.then(function() {
+      $scope.onGameLoad = onLoad.then(function() {
         if(R.isNil($scope.game)) {
           $scope.goToState('lounge');
           return;
@@ -133,7 +133,7 @@ angular.module('clickApp.controllers')
           $scope.goToState('.main');
         } 
         $scope.create = {};
-        $scope.data_ready
+        return $scope.data_ready
           .then(function() {
             $scope.game = gameService.load($scope, $scope.game);
           });

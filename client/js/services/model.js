@@ -39,6 +39,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           eff: [],
           l: [],
           c: 0, s: 0,
+          aur: null,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
@@ -276,6 +277,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       else {
         model.state.eff = R.append(effect, R.defaultTo([], model.state.eff));
       }
+    },
+    isAuraDisplayed: function modelIsAuraDisplayed(model) {
+      return R.exists(model.state.aur);
+    },
+    toggleAuraDisplay: function modelToggleAuraDisplay(aura, model) {
+      model.state.aur = (aura === model.state.aur) ? null : aura;
     },
   };
   function initDamage(info) {
