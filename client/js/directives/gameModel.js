@@ -18,6 +18,15 @@ angular.module('clickApp.directives')
         medium: 7.874,
         small: 5.905
       };
+      var EFFECTS = [
+        [ 'b', '/data/icons/Blind.png' ],
+        [ 'c', '/data/icons/Corrosion.png' ],
+        [ 'd', '/data/icons/BoltBlue.png' ],
+        [ 'f', '/data/icons/Fire.png' ],
+        [ 'r', '/data/icons/BoltYellow.png' ],
+        [ 'k', '/data/icons/KD.png' ],
+        [ 's', '/data/icons/Stationary.png' ],
+      ];
       return {
         restrict: 'A',
         link: function(scope, el, attrs) {
@@ -64,6 +73,8 @@ angular.module('clickApp.directives')
                                          element.counter);
               updateSoulsCounter(map_flipped, zoom_factor,
                                  img, info, scope.model, element);
+              updateLeaderImage(img, info, scope.model, element);
+              updateEffectImages(img, info, scope.model, element);
             });
           }
           updateModel();
@@ -194,6 +205,28 @@ angular.module('clickApp.directives')
         parent.appendChild(souls_image);
         var souls = labelElementService.create(svgNS, parent);
 
+        var leader_image = document.createElementNS(svgNS, 'image');
+        leader_image.classList.add('model-image');
+        leader_image.setAttribute('x', '0');
+        leader_image.setAttribute('y', '0');
+        leader_image.setAttribute('width', '10');
+        leader_image.setAttribute('height', '10');
+        leader_image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/data/icons/Leader.png');
+        parent.appendChild(leader_image);
+
+        var effects = R.reduce(function(mem, effect) {
+          var image = document.createElementNS(svgNS, 'image');
+          image.classList.add('model-image');
+          image.setAttribute('x', '0');
+          image.setAttribute('y', '0');
+          image.setAttribute('width', '10');
+          image.setAttribute('height', '10');
+          image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', effect[1]);
+          image.style.visibility = 'hidden';
+          parent.appendChild(image);
+          return R.assoc(effect[0], image, mem);
+        }, {}, EFFECTS);
+
         return { container: parent,
                  base: base,
                  direction: direction,
@@ -209,6 +242,8 @@ angular.module('clickApp.directives')
                  label: label,
                  counter: counter,
                  souls: { label: souls, image: souls_image },
+                 leader: leader_image,
+                 effects: effects,
                };
       }
       function updateModelPosition(img, model, element) {
@@ -256,7 +291,7 @@ angular.module('clickApp.directives')
 
         var min_x = img.width / 2 + BASE_RADIUS[info.base];
         var max_x = img.width / 2 - BASE_RADIUS[info.base];
-        var y = img.height / 2 + BASE_RADIUS[info.base] + 2;
+        var y = img.height / 2 + BASE_RADIUS[info.base] + 1;
 
         var percent_damage = model.state.dmg.t / info.damage.total;
         var damage_x = (max_x-min_x) * (1-percent_damage) + min_x;
@@ -317,6 +352,42 @@ angular.module('clickApp.directives')
                                    souls_center.text,
                                    souls_text,
                                    element.souls.label);
+      }
+      function updateLeaderImage(img, info, model, element) {
+        element.leader.setAttribute('x', (img.width / 2 - 0.7 * BASE_RADIUS[info.base] - 5)+'');
+        element.leader.setAttribute('y', (img.height / 2 - 0.7 * BASE_RADIUS[info.base] - 5)+'');
+        if(modelService.isLeaderDisplayed(model)) {
+          element.leader.style.visibility = 'visible';
+        }
+        else {
+          element.leader.style.visibility = 'hidden';
+        }
+      }
+      function updateEffectImages(img, info, model, element) {        
+        R.pipe(
+          R.keys,
+          R.filter(function(effect) {
+            return modelService.isEffectDisplayed(effect, model);
+          }),
+          function(effects) {
+            var base_x = img.width / 2 - (R.length(effects) * 10 / 2);
+            var base_y = img.height / 2 + BASE_RADIUS[info.base] + 1;
+            R.forEachIndexed(function(effect, i) {
+              element.effects[effect].setAttribute('x', (base_x + i * 10)+'');
+              element.effects[effect].setAttribute('y', (base_y)+'');
+              element.effects[effect].style.visibility = 'visible';
+            }, effects);
+          }
+        )(element.effects);
+        R.pipe(
+          R.keys,
+          R.reject(function(effect) {
+            return modelService.isEffectDisplayed(effect, model);
+          }),
+          R.forEach(function(effect) {
+            element.effects[effect].style.visibility = 'hidden';
+          })
+        )(element.effects);
       }
       function computeCounterCenter(model) {
         var counter_flip_center = { x: model.state.x, y: model.state.y };

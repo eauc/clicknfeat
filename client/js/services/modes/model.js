@@ -91,7 +91,14 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
     [ 'Inc.', 'incrementSouls', 'souls' ],
     [ 'Dec.', 'decrementSouls', 'souls' ],
+    [ 'Unit', 'toggle', 'unit' ],
+    [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  model_buttons = R.append([ 'Effects', 'toggle', 'effects' ], model_buttons);
+  R.forEach(function(effect) {
+    model_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
+                             model_buttons);
+  }, modelsModeService.effects);
   var model_mode = {
     onEnter: function modelOnEnter(scope) {
     },

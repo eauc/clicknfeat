@@ -587,6 +587,7 @@ describe('create model', function() {
               state: { x: 240, y: 0, r: 0,
                        dmg: { n: 0, t: 0 },
                        dsp: ['i'],
+                       eff: [],
                        img: 0,
                        l: [ 'label' ],
                        c: 0, s: 0,

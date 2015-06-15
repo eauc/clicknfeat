@@ -36,6 +36,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           x: 0, y: 0, r: 0,
           img: 0,
           dsp: ['i'],
+          eff: [],
           l: [],
           c: 0, s: 0,
           dmg: initDamage(info.damage),
@@ -252,6 +253,28 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
       else {
         model.state.dsp = R.append(counter, model.state.dsp);
+      }
+    },
+    isLeaderDisplayed: function modelIsLeaderDisplayed(model) {
+      return !!R.find(R.eq('l'), model.state.dsp);
+    },
+    toggleLeaderDisplay: function modelToggleLeaderDisplay(model) {
+      if(modelService.isLeaderDisplayed(model)) {
+        model.state.dsp = R.reject(R.eq('l'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('l', model.state.dsp);
+      }
+    },
+    isEffectDisplayed: function modelIsEffectDisplayed(effect, model) {
+      return !!R.find(R.eq(effect), R.defaultTo([], model.state.eff));
+    },
+    toggleEffectDisplay: function modelToggleEffectDisplay(effect, model) {
+      if(modelService.isEffectDisplayed(effect, model)) {
+        model.state.eff = R.reject(R.eq(effect), R.defaultTo([], model.state.eff));
+      }
+      else {
+        model.state.eff = R.append(effect, R.defaultTo([], model.state.eff));
       }
     },
   };

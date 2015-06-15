@@ -56,6 +56,27 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'decrementCounter', 's',
                                stamps, scope, scope.game);
   };
+  models_actions.toggleLeaderDisplay = function modelToggleLeaderDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleLeaderDisplay',
+                               stamps, scope, scope.game);
+  };
+  var effects = [
+    [ 'Blind', 'b' ],
+    [ 'Corrosion', 'c' ],
+    [ 'Disrupt', 'd' ],
+    [ 'Fire', 'f' ],
+    [ 'Fleeing', 'r' ],
+    [ 'KD', 'k' ],
+    [ 'Stationary', 's' ],
+  ];
+  R.forEach(function(effect) {
+    models_actions['toggle'+effect[0]+'EffectDisplay'] = function modelToggleEffectDisplay(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', 'toggleEffectDisplay', effect[1],
+                                 stamps, scope, scope.game);
+    };
+  }, effects);
   // models_actions.delete = function modelsDelete(scope) {
   //   var target = gameModelsSelectionService.get('local', scope.game.models_selection);
   //   gameService.executeCommand('deleteModelss', [target], scope, scope.game);
@@ -162,11 +183,15 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleSoulsDisplay': 's',
     'incrementSouls': 'shift++',
     'decrementSouls': 'shift+-',
+    'toggleLeaderDisplay': 'alt+l',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
     models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
+  R.forEach(function(effect) {
+    models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
+  }, effects);
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
   var models_buttons = [
@@ -184,7 +209,14 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
     [ 'Inc.', 'incrementSouls', 'souls' ],
     [ 'Dec.', 'decrementSouls', 'souls' ],
+    [ 'Unit', 'toggle', 'unit' ],
+    [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  models_buttons = R.append([ 'Effects', 'toggle', 'effects' ], models_buttons);
+  R.forEach(function(effect) {
+    models_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
+                              models_buttons);
+  }, effects);
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {
     },
@@ -194,6 +226,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     actions: models_actions,
     buttons: models_buttons,
     bindings: models_bindings,
+    effects: effects,
   };
   modesService.registerMode(models_mode);
   settingsService.register('Bindings',

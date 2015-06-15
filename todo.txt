@@ -9,14 +9,15 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- counter
-- souls counters
 - icons alterations
+- aura
+- delete model
+- clean external elements on delete model
 - ruler origin target / update when model change ?
 - template origin target / update when model change ?
 - B2B
 - under Aoe
-- unit
+- unit/leader
 - select all friendly
 - lock
 - images / other types
