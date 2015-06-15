@@ -61,6 +61,11 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'toggleLeaderDisplay',
                                stamps, scope, scope.game);
   };
+  models_actions.toggleCtrlAreaDisplay = function modelToggleCtrlAreaDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleCtrlAreaDisplay',
+                               stamps, scope, scope.game);
+  };
   var auras = [
     [ 'Red', '#F00' ],
     [ 'Green', '#0F0' ],
@@ -76,6 +81,22 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  stamps, scope, scope.game);
     };
   }, auras);
+  var areas = R.range(0, 10);
+  R.forEach(function(area) {
+    var size = area === 0 ? 10 : area;
+    models_actions['toggle'+size+'InchesAreaDisplay'] = function modelToggleAreaDisplay(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', 'toggleAreaDisplay', size,
+                                 stamps, scope, scope.game);
+    };
+    var big_size = size + 10;
+    models_actions['toggle'+big_size+'InchesAreaDisplay'] =
+      function modelToggle10InchesAreaDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        gameService.executeCommand('onModels', 'toggleAreaDisplay', big_size,
+                                   stamps, scope, scope.game);
+      };
+  }, areas);
   var effects = [
     [ 'Blind', 'b' ],
     [ 'Corrosion', 'c' ],
@@ -199,11 +220,18 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'incrementSouls': 'shift++',
     'decrementSouls': 'shift+-',
     'toggleLeaderDisplay': 'alt+l',
+    'toggleCtrlAreaDisplay': 'shift+c',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
     models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
+  R.forEach(function(area) {
+    var size = area === 0 ? 10 : area;
+    models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;
+    size += 10;
+    models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+shift+'+area;
+  }, areas);
   R.forEachIndexed(function(aura, index) {
     models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
   }, auras);
@@ -230,6 +258,18 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  models_buttons = R.append([ 'Areas', 'toggle', 'areas' ], models_buttons);
+  models_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], models_buttons);
+  R.forEach(function(area) {
+    var size = area + 1;
+    models_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
+                              models_buttons);
+  }, areas);
+  R.forEach(function(area) {
+    var size = area + 11;
+    models_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
+                              models_buttons);
+  }, areas);
   models_buttons = R.append([ 'Auras', 'toggle', 'auras' ], models_buttons);
   R.forEach(function(aura) {
     models_buttons = R.append([ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ],
@@ -249,6 +289,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     actions: models_actions,
     buttons: models_buttons,
     bindings: models_bindings,
+    areas: areas,
     auras: auras,
     effects: effects,
   };

@@ -76,6 +76,8 @@ angular.module('clickApp.directives')
                                  img, info, scope.model, element);
               updateLeaderImage(img, info, scope.model, element);
               updateEffectImages(img, info, scope.model, element);
+              updateModelCtrlArea(scope.factions, img, info, scope.model, element);
+              updateModelArea(img, info, scope.model, element);
             });
           }
           updateModel();
@@ -236,6 +238,21 @@ angular.module('clickApp.directives')
           return R.assoc(effect[0], image, mem);
         }, {}, EFFECTS);
 
+        var ctrl_area = document.createElementNS(svgNS, 'circle');
+        ctrl_area.classList.add('model-ctrl-area');
+        ctrl_area.setAttribute('cx', '0');
+        ctrl_area.setAttribute('cy', '0');
+        ctrl_area.setAttribute('r', '0');
+        ctrl_area.style.visibility = 'hidden';
+        parent.appendChild(ctrl_area);
+        var area = document.createElementNS(svgNS, 'circle');
+        area.classList.add('model-area');
+        area.setAttribute('cx', '0');
+        area.setAttribute('cy', '0');
+        area.setAttribute('r', '0');
+        area.style.visibility = 'hidden';
+        parent.appendChild(area);
+
         return { container: parent,
                  aura: aura,
                  base: base,
@@ -254,6 +271,8 @@ angular.module('clickApp.directives')
                  souls: { label: souls, image: souls_image },
                  leader: leader_image,
                  effects: effects,
+                 ctrl_area: ctrl_area,
+                 area: area,
                };
       }
       function updateModelPosition(img, model, element) {
@@ -394,6 +413,29 @@ angular.module('clickApp.directives')
             element.effects[effect].style.visibility = 'hidden';
           })
         )(element.effects);
+      }
+      function updateModelCtrlArea(factions, img, info, model, element) {
+        element.ctrl_area.setAttribute('cx', (img.width/2)+'');
+        element.ctrl_area.setAttribute('cy', (img.height/2)+'');
+        element.ctrl_area.setAttribute('r', ((info.focus || info.fury)*20 + BASE_RADIUS[info.base])+'');
+        if(modelService.isCtrlAreaDisplayed(factions, model)) {
+          element.ctrl_area.style.visibility = 'visible';
+        }
+        else {
+          element.ctrl_area.style.visibility = 'hidden';
+        }
+      }
+      function updateModelArea(img, info, model, element) {
+        element.area.setAttribute('cx', (img.width/2)+'');
+        element.area.setAttribute('cy', (img.height/2)+'');
+        if(modelService.isAreaDisplayed(model)) {
+          console.log('AREA', model.state.are);
+          element.area.setAttribute('r', (model.state.are * 10 + BASE_RADIUS[info.base])+'');
+          element.area.style.visibility = 'visible';
+        }
+        else {
+          element.area.style.visibility = 'hidden';
+        }
       }
       function computeLabelCenter(info, model) {
         var label_text_center_y_down = model.state.y + BASE_RADIUS[info.base] + 6;

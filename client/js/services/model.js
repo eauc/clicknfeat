@@ -40,6 +40,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           l: [],
           c: 0, s: 0,
           aur: null,
+          are: null,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
@@ -283,6 +284,27 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     toggleAuraDisplay: function modelToggleAuraDisplay(aura, model) {
       model.state.aur = (aura === model.state.aur) ? null : aura;
+    },
+    isCtrlAreaDisplayed: function modelIsCtrlAreaDisplayed(factions, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      return ( info.type === 'wardude' &&
+               ( 'Number' === R.type(info.focus) ||'Number' === R.type(info.fury) ) &&
+               !!R.find(R.eq('a'), model.state.dsp)
+             );
+    },
+    toggleCtrlAreaDisplay: function modelToggleCtrlAreaDisplay(model) {
+      if(!!R.find(R.eq('a'), model.state.dsp)) {
+        model.state.dsp = R.reject(R.eq('a'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('a', model.state.dsp);
+      }
+    },
+    isAreaDisplayed: function modelIsAreaDisplayed(model) {
+      return R.exists(model.state.are);
+    },
+    toggleAreaDisplay: function modelToggleAreaDisplay(area, model) {
+      model.state.are = (area === model.state.are) ? null : area;
     },
   };
   function initDamage(info) {

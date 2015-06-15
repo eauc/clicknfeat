@@ -271,6 +271,20 @@ ul.nav-tabs li {
     pointer-events: none;
 }
 
+.model-ctrl-area {
+    fill: #0FF;
+    fill-opacity: 0.15;
+    stroke: #099;
+    stroke-width: 1px;
+    pointer-events: none;
+}
+.model-area {
+    fill:#9F9;
+    fill-opacity:0.15;
+    stroke:#6F6;
+    stroke-width:0.5px;
+}
+
 /**************************
   Templates
 ***************************/

@@ -94,6 +94,18 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
   ];
+  model_buttons = R.append([ 'Areas', 'toggle', 'areas' ], model_buttons);
+  model_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], model_buttons);
+  R.forEach(function(area) {
+    var size = area + 1;
+    model_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
+                             model_buttons);
+  }, modelsModeService.areas);
+  R.forEach(function(area) {
+    var size = area + 11;
+    model_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
+                             model_buttons);
+  }, modelsModeService.areas);
   model_buttons = R.append([ 'Auras', 'toggle', 'auras' ], model_buttons);
   R.forEach(function(aura) {
     model_buttons = R.append([ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ],

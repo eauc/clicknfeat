@@ -592,6 +592,7 @@ describe('create model', function() {
                        l: [ 'label' ],
                        c: 0, s: 0,
                        aur: null,
+                       are: null,
                        stamp: 'stamp',
                        info: [ 'info' ]
                      }
