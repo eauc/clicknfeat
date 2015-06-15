@@ -62,7 +62,8 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
       if(!gameRulerService.isDisplayed(scope.game.ruler)) return;
       
       var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-      var position = gameRulerService.targetAoEPosition(scope.game.ruler);
+      var position = gameRulerService.targetAoEPosition(scope.game.models,
+                                                        scope.game.ruler);
       gameService.executeCommand('onTemplates', 'setToRuler',
                                  position, [target],
                                  scope, scope.game);

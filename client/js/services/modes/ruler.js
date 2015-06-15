@@ -57,7 +57,8 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
     modesService.switchToMode('Default', scope, scope.modes);
   };
   ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope, event) {
-    var position = gameRulerService.targetAoEPosition(scope.game.ruler);
+    var position = gameRulerService.targetAoEPosition(scope.game.models,
+                                                      scope.game.ruler);
     position.type = 'aoe';
     gameService.executeCommand('createTemplate', position,
                                scope, scope.game);

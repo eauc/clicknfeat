@@ -9,7 +9,7 @@ ruler:
 - activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- ruler origin target / aoeToRuler / update when model change ?
+- ruler origin target : aoeToRuler / update when model change ?
 - template origin target / update when model change ?
 - B2B
 - under Aoe

@@ -12,7 +12,8 @@ describe('set aoe to ruler', function() {
 
         this.scope = {
           game: { template_selection: 'selection',
-                  ruler :'ruler' },
+                  ruler:'ruler',
+                  models: 'models' },
         };
       }
     ]));
@@ -43,7 +44,7 @@ describe('set aoe to ruler', function() {
       
         it('should get ruler target position', function() {
           expect(this.gameRulerService.targetAoEPosition)
-            .toHaveBeenCalledWith('ruler');
+            .toHaveBeenCalledWith('models', 'ruler');
         });
 
         it('should execute onTemplates/setToRuler command', function() {
@@ -66,7 +67,8 @@ describe('set aoe to ruler', function() {
 
         this.scope = {
           game: { template_selection: 'selection',
-                  ruler :'ruler' },
+                  ruler:'ruler',
+                  models: 'models' },
         };
       }
     ]));
@@ -82,7 +84,7 @@ describe('set aoe to ruler', function() {
       
       it('should get ruler target position', function() {
         expect(this.gameRulerService.targetAoEPosition)
-          .toHaveBeenCalledWith('ruler');
+          .toHaveBeenCalledWith('models', 'ruler');
       });
       
       it('should execute createTemplate command', function() {
@@ -100,6 +102,7 @@ describe('set aoe to ruler', function() {
       'gameRuler',
       function(gameRulerService) {
         this.gameRulerService = gameRulerService;
+        this.gameModelsService = spyOnService('gameModels');
       }
     ]));
 
@@ -111,13 +114,44 @@ describe('set aoe to ruler', function() {
                       length: 4.5
                     }
           };
+          this.gameModelsService.findStamp._retVal = {
+            state: { x: 320, y: 320 }
+          };
         });
 
-      it('should return target AoE position', function() {
-        expect(this.gameRulerService.targetAoEPosition(this.ruler))
-          .toEqual({
-            x: 240, y: 240, r: 135, m: 2.25
-          });
+      when('ruler target is not set', function() {
+        this.ruler.remote.target = null;
+      }, function() {
+        it('should return end of ruler position', function() {
+          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
+            .toEqual({
+              x: 240, y: 240, r: 135, m: 2.25
+            });
+        });
+      });
+
+      when('ruler target is set but not reached', function() {
+        this.ruler.remote.target = 'target';
+        this.ruler.remote.reached = false;
+      }, function() {
+        it('should return end of ruler position', function() {
+          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
+            .toEqual({
+              x: 240, y: 240, r: 135, m: 2.25
+            });
+        });
+      });
+
+      when('ruler target is set and reached', function() {
+        this.ruler.remote.target = 'target';
+        this.ruler.remote.reached = true;
+      }, function() {
+        it('should return end of ruler position', function() {
+          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
+            .toEqual({
+              x: 320, y: 320, r: 135, m: 2.25
+            });
+        });
       });
     });
   });
