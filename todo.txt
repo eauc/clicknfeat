@@ -6,19 +6,23 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 ruler:
-- activate -> one model selection -> set as origin
 - set max length + model origin -> save max length on model (outside state ?)
 model
-- ruler origin target : aoeToRuler / update when model change ?
 - template origin target / update when model change ?
+- ruler origin target : update when model change ?
+- melee
+- target
+- toggle on mutliple models -> toggle based on first value
+- charge
 - B2B
 - under Aoe
-- unit
+- unit : set, select
+- wreck
 - select all friendly
 - lock
 - images / other types : incorporeal
-- wreck
 - highlight models in melee ?
+- los
 layers - deploiement
 online - users login
 online - users chat + notification

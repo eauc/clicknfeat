@@ -334,13 +334,15 @@ angular.module('clickApp.directives')
         else {
           element.container.classList.remove('remote-selection');
         }
-        if(gameRulerService.origin(ruler) === model.state.stamp) {
+        if(gameRulerService.isDisplayed(ruler) &&
+           gameRulerService.origin(ruler) === model.state.stamp) {
           element.container.classList.add('ruler-origin');
         }
         else {
           element.container.classList.remove('ruler-origin');
         }
-        if(gameRulerService.target(ruler) === model.state.stamp) {
+        if(gameRulerService.isDisplayed(ruler) &&
+           gameRulerService.target(ruler) === model.state.stamp) {
           element.container.classList.add('ruler-target');
           if(gameRulerService.targetReached(ruler)) {
             element.container.classList.add('ruler-target-reached');

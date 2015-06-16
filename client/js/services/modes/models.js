@@ -6,7 +6,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                                                   modelService,
                                                                   gameService,
                                                                   gameModelsService,
-                                                                  gameModelSelectionService) {
+                                                                  gameModelSelectionService,
+                                                                  promptService) {
   var models_actions = Object.create(defaultModeService.actions);
   models_actions.deleteSelection = function modelsDeleteSeelction(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
@@ -59,6 +60,25 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'decrementCounter', 's',
                                stamps, scope, scope.game);
+  };
+  models_actions.setRulerMaxLength = function modelSetRulerMaxLength(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var value = R.defaultTo(0, modelService.rulerMaxLength(model));
+    promptService.prompt('prompt',
+                         'Set ruler max length :',
+                         value)
+      .then(function(value) {
+        value = (value === 0) ? null : value;
+        gameService.executeCommand('onModels', 'setRulerMaxLength', value,
+                                   stamps, scope, scope.game);
+        return value;
+      })
+      .catch(function(error) {
+        gameService.executeCommand('onModels', 'setRulerMaxLength', null,
+                                   stamps, scope, scope.game);
+        return null;
+      });
   };
   models_actions.toggleLeaderDisplay = function modelToggleLeaderDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
@@ -222,6 +242,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'decrementSouls': 'shift+-',
     'toggleLeaderDisplay': 'alt+l',
     'toggleCtrlAreaDisplay': 'shift+c',
+    'setRulerMaxLength': 'm',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -243,6 +264,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  models_default_bindings);
   var models_buttons = [
     [ 'Delete', 'deleteSelection' ],
+    [ 'Ruler Max Len.', 'setRulerMaxLength' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],

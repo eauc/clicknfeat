@@ -48,13 +48,22 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
 
       return setOriginTarget(line, origin, target, scope, ruler);
     },
+    setOriginResetTarget: function gameRulerSetOrigin(models, origin_model, scope, ruler) {
+      var origin = origin_model.state.stamp;
+      var target = null;
+      var line = { start: R.pick(['x','y'], origin_model.state),
+                   end: R.pick(['x','y'], origin_model.state)
+                 };
+
+      return setOriginTarget(line, origin, target, scope, ruler);
+    },
     target: function gameRulerTarget(ruler) {
       return R.path(['remote', 'target'], ruler);
     },
-    targetReached: function gameRulerTarget(ruler) {
+    targetReached: function gameRulerTargetReached(ruler) {
       return R.path(['remote', 'reached'], ruler);
     },
-    setTarget: function gameRulerSetTarger(models, target_model, scope, ruler) {
+    setTarget: function gameRulerSetTarget(models, target_model, scope, ruler) {
       var origin = gameRulerService.origin(ruler);
       var target = target_model.state.stamp;
       origin = (origin === target) ? null : origin;

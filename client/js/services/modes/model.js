@@ -78,6 +78,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
                                  model_default_bindings);
   var model_buttons = [
     [ 'Delete', 'deleteSelection' ],
+    [ 'Ruler Max Len.', 'setRulerMaxLength' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],

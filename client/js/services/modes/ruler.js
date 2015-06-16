@@ -5,6 +5,9 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
                                                                 commonModeService,
                                                                 gameService,
                                                                 gameRulerService,
+                                                                modelService,
+                                                                gameModelsService,
+                                                                gameModelSelectionService,
                                                                 promptService) {
   var ruler_actions = Object.create(commonModeService.actions);
   ruler_actions.dragStartMap = function rulerDragStartMap(scope, drag, event) {
@@ -30,6 +33,7 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
     if(dom_event.ctrlKey) {
       gameService.executeCommand('setRuler', 'setOrigin', scope.game.models, event.target,
                                  scope,  scope.game);
+      updateMaxLengthFromModel(event.target, scope);
     }
     else if(dom_event.shiftKey) {
       gameService.executeCommand('setRuler', 'setTarget', scope.game.models, event.target,
@@ -43,14 +47,21 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
       .then(function(value) {
         value = (value === 0) ? null : value;
         scope.game.ruler = gameRulerService.setMaxLength(value, scope.game.ruler);
+        return value;
       })
       .catch(function(error) {
         scope.game.ruler = gameRulerService.setMaxLength(null, scope.game.ruler);
+        return null;
+      })
+      .then(function(value) {
+        var origin = gameRulerService.origin(scope.game.ruler);
+        if(R.isNil(origin)) return;
+
+        gameService.executeCommand('onModels', 'setRulerMaxLength', value,
+                                   [origin], scope,  scope.game);
       })
       .then(function() {
-        var max = gameRulerService.maxLength(scope.game.ruler);
-        ruler_mode.buttons[0][0] = 'Set Max Len. ('+max+')';
-        scope.gameEvent('refreshActions');
+        updateMaxLengthButton(scope);
       });
   };
   ruler_actions.leaveRulerMode = function rulerLeaveRulerMode(scope, event) {
@@ -76,6 +87,16 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
   ];
   var ruler_mode = {
     onEnter: function rulerOnEnter(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      if(R.length(stamps) !== 1) return;
+
+      var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+      if(R.isNil(model)) return;
+
+      gameService.executeCommand('setRuler', 'setOriginResetTarget', scope.game.models, model,
+                                 scope,  scope.game);
+      
+      updateMaxLengthFromModel(model, scope);
     },
     onLeave: function rulerOnLeave(scope) {
     },
@@ -91,5 +112,19 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
                            function(bs) {
                              R.extend(ruler_mode.bindings, bs);
                            });
+
+  function updateMaxLengthFromModel(model, scope) {
+    var max_length = modelService.rulerMaxLength(model);
+    if(R.exists(max_length)) {
+      scope.game.ruler = gameRulerService.setMaxLength(max_length, scope.game.ruler);
+      updateMaxLengthButton(scope);
+    }
+  }
+  function updateMaxLengthButton(scope) {
+    var max = gameRulerService.maxLength(scope.game.ruler);
+    ruler_mode.buttons[0][0] = 'Set Max Len. ('+max+')';
+    scope.gameEvent('refreshActions');
+  }
+
   return ruler_mode;
 };

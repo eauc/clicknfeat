@@ -68,17 +68,54 @@ describe('user ruler', function() {
       this.modesService = spyOnService('modes');
       this.gameService = spyOnService('game');
       this.gameRulerService = spyOnService('gameRuler');
+      this.modelService = spyOnService('model');
+      this.modelService.rulerMaxLength._retVal = null;
+      this.gameModelsService = spyOnService('gameModels');
+      this.gameModelSelectionService = spyOnService('gameModelSelection');
       this.scope = { modes: 'modes',
                      game: { ruler: 'ruler',
-                             models: 'models' },
+                             models: 'models',
+                             model_selection: 'selection'
+                           },
                      gameEvent: jasmine.createSpy('gameEvent')
                    };
     }]));
 
+    when('user starts using ruler', function() {
+      this.rulerModeService.onEnter(this.scope);
+    }, function() {
+      when('there is exactly one model selected', function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      }, function() {
+        it('should set selected model as origin', function() {
+          expect(this.gameModelSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+          expect(this.gameModelsService.findStamp)
+            .toHaveBeenCalledWith('stamp', 'models');
+
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setRuler', 'setOriginResetTarget',
+                                  'models', 'gameModels.findStamp.returnValue',
+                                  this.scope, this.scope.game);
+        });
+
+        when('selected model has a ruler max length', function() {
+          this.modelService.rulerMaxLength._retVal = 42;
+        }, function() {
+          it('should set ruler max length', function() {
+            expect(this.gameRulerService.setMaxLength)
+              .toHaveBeenCalledWith(42, 'ruler');
+            expect(this.scope.game.ruler)
+              .toBe('gameRuler.setMaxLength.returnValue');
+          });
+        });
+      });
+    });
+      
     when('user stop using ruler', function() {
       this.rulerModeService.actions.leaveRulerMode(this.scope);
     }, function() {
-      it('should switch to ruler mode', function() {
+      it('should switch to default mode', function() {
         expect(this.modesService.switchToMode)
           .toHaveBeenCalledWith('Default', this.scope, 'modes');
       });
@@ -112,6 +149,13 @@ describe('user ruler', function() {
             expect(this.scope.game.ruler)
               .toBe('gameRuler.setMaxLength.returnValue');
           });
+          
+          it('should set origin model\'s ruler max length', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', e.max,
+                                    ['gameRuler.origin.returnValue'],
+                                    this.scope, this.scope.game);
+          });
         });
       });
 
@@ -125,6 +169,13 @@ describe('user ruler', function() {
             .toHaveBeenCalledWith(null, 'ruler');
           expect(this.scope.game.ruler)
             .toBe('gameRuler.setMaxLength.returnValue');
+        });
+          
+        it('should reset origin model\'s ruler max length', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', null,
+                                  ['gameRuler.origin.returnValue'],
+                                  this.scope, this.scope.game);
         });
       });
     });
@@ -169,6 +220,17 @@ describe('user ruler', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('setRuler', 'setOrigin', 'models', this.event.target,
                                 this.scope, this.scope.game);
+      });
+
+      when('selected model has a ruler max length', function() {
+        this.modelService.rulerMaxLength._retVal = 42;
+      }, function() {
+        it('should set ruler max length', function() {
+          expect(this.gameRulerService.setMaxLength)
+            .toHaveBeenCalledWith(42, 'ruler');
+          expect(this.scope.game.ruler)
+            .toBe('gameRuler.setMaxLength.returnValue');
+        });
       });
     });
 
@@ -569,6 +631,38 @@ describe('user ruler', function() {
               .toBe(13.00);
           });
         });
+      });
+    });
+
+    when('setOriginResetTarget(<models>, <origin>, <scope>)', function() {
+      this.ret = this.gameRulerService.setOriginResetTarget('models', this.origin,
+                                                 this.scope, this.ruler);
+    }, function() {
+      beforeEach(function() {
+        this.origin = { state: { stamp: 'origin' } };
+        this.ruler = {
+          remote: { target: 'target' }
+        };
+      });
+
+      it('should store ruler origin', function() {
+        expect(this.gameRulerService.origin(this.ret))
+          .toBe('origin');
+      });
+
+      it('refresh remote ruler', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeRemoteRuler', this.ret.remote);
+      });
+
+      it('should reset ruler target', function() {
+        expect(this.gameRulerService.target(this.ret))
+          .toBe(null);
+      });
+
+      it('should not display ruler', function() {
+        expect(this.gameRulerService.isDisplayed(this.ret))
+          .toBeFalsy();
       });
     });
 

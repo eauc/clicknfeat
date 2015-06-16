@@ -41,6 +41,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           c: 0, s: 0,
           aur: null,
           are: null,
+          rml: null,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
@@ -320,6 +321,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       return { start: R.pick(['x','y'], start),
                end: R.pick(['x','y'], end)
              };
+    },
+    rulerMaxLength: function modelRulerMaxLength(model) {
+      return R.path(['state','rml'], model);
+    },
+    setRulerMaxLength: function modelSetRulerMaxLength(value, model) {
+      model.state = R.assoc('rml', value, model.state);
     },
   };
   function initDamage(info) {

@@ -77,6 +77,9 @@ angular.module('clickApp.services')
     'commonMode',
     'game',
     'gameRuler',
+    'model',
+    'gameModels',
+    'gameModelSelection',
     'prompt',
     rulerModeServiceFactory
   ])
@@ -94,6 +97,7 @@ angular.module('clickApp.services')
     'game',
     'gameModels',
     'gameModelSelection',
+    'prompt',
     modelsModeServiceFactory
   ])
   .factory('modelMode', [
