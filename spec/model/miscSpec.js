@@ -287,5 +287,22 @@ describe('misc model', function() {
           });
       });
     });
+
+    describe('baseEdgeInDirection(<factions>, <dir>)', function() {
+      beforeEach(function() {
+        this.gameFactionsService.getModelInfo._retVal = {
+          base_radius: 7.874
+        };
+      });
+
+      it('should compute the point on model\s base edge in <direction>', function() {
+        expect(this.modelService.baseEdgeInDirection('factions', 42, {
+          state: { x: 140, y: 340 }
+        })).toEqual({
+          x: 145.26873439446965,
+          y: 334.148477644191
+        });
+      });
+    });
   });
 });

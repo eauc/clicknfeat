@@ -139,9 +139,12 @@ angular.module('clickApp.services')
   .factory('sprayTemplateLockedMode', [
     'modes',
     'settings',
-    'templateLockedMode',
+    'templateMode',
+    'sprayTemplate',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
+    'gameModels',
     sprayTemplateModeServiceFactory
   ])
   .factory('wallTemplateLockedMode', [
@@ -178,8 +181,11 @@ angular.module('clickApp.services')
     'modes',
     'settings',
     'templateMode',
+    'sprayTemplate',
     'game',
+    'gameTemplates',
     'gameTemplateSelection',
+    'gameModels',
     sprayTemplateModeServiceFactory
   ])
   .factory('wallTemplateMode', [
@@ -356,11 +362,14 @@ angular.module('clickApp.services')
   ])
   .factory('aoeTemplate', [
     'template',
+    'model',
     'point',
     aoeTemplateServiceFactory
   ])
   .factory('sprayTemplate', [
     'template',
+    'model',
+    'point',
     sprayTemplateServiceFactory
   ])
   .factory('wallTemplate', [

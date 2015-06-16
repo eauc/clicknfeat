@@ -386,6 +386,14 @@ ul.nav-tabs li {
     font-family:Verdana, sans-serif;
 }
 
+.spray-origin {
+    stroke: #F90;
+    stroke-width: 1.25px;
+    pointer-events: none;
+    fill: transparent;
+    pointer-events: visible;
+}
+
 /**************************
   Ruler
 ***************************/

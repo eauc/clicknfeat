@@ -339,6 +339,13 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         model.state.dsp = R.append(melee, model.state.dsp);
       }
     },
+    baseEdgeInDirection: function modelBaseEdgeInDirection(factions, dir, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      return R.pipe(
+        pointService.translateInDirection$(info.base_radius, dir),
+        R.pick(['x','y'])
+      )(model.state);
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {

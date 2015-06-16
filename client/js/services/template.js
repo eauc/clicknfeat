@@ -1,6 +1,7 @@
 'use strict';
 
 self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateService,
+                                                                    modelService,
                                                                     pointService) {
   var aoeTemplateService = Object.create(templateService);
   aoeTemplateService.create = function aoeTemplateCreate(temp) {    
@@ -35,6 +36,19 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
       templateService.checkState
     )(temp.state);
   };
+  aoeTemplateService.setOrigin = function aoeTemplateSetOrigin(factions, origin, temp) {
+    var direction = pointService.directionTo(temp.state, origin.state);
+    var base_edge = modelService.baseEdgeInDirection(factions, direction, origin);
+    var max_dev = pointService.distanceTo(temp.state, base_edge) / 20;
+    temp.state = R.pipe(
+      R.assoc('r', direction),
+      R.assoc('m', max_dev),
+      templateService.checkState
+    )(temp.state);
+  };
+  aoeTemplateService.setTarget = function aoeTemplateSetTarget(factions, origin, target, temp) {
+    templateService.setPosition(target.state, temp);
+  };
   templateService.registerTemplate('aoe', aoeTemplateService);
   return aoeTemplateService;
 };
@@ -48,7 +62,9 @@ self.wallTemplateServiceFactory = function wallTemplateServiceFactory(templateSe
   return wallTemplateService;
 };
 
-self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(templateService) {
+self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(templateService,
+                                                                        modelService,
+                                                                        pointService) {
   var sprayTemplateService = Object.create(templateService);
   sprayTemplateService.create = function sprayTemplateCreate(temp) {    
     temp.state = R.assoc('s', 6, temp.state);
@@ -57,6 +73,61 @@ self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(template
   sprayTemplateService.setSize = function sprayTemplateSetSize(size, temp) {
     if(R.isNil(R.find(R.eq(size), [6,8,10]))) return;
     temp.state = R.assoc('s', size, temp.state);
+  };
+  sprayTemplateService.origin = function sprayTemplateOrigin(temp) {
+    return R.path(['state','o'], temp);
+  };
+  sprayTemplateService.setOrigin = function sprayTemplateSetOrigin(factions, origin, temp) {
+    var position = modelService.baseEdgeInDirection(factions, temp.state.r, origin);
+    temp.state = R.assoc('o', origin.state.stamp, temp.state);
+    templateService.setPosition(position, temp);
+  };
+  sprayTemplateService.setTarget = function sprayTemplateSetTarget(factions, origin, target, temp) {
+    var direction = pointService.directionTo(target.state, origin.state);
+    var position = modelService.baseEdgeInDirection(factions, direction, origin);
+    temp.state = R.assoc('r', direction, temp.state);
+    templateService.setPosition(position, temp);
+  };
+  var FORWARD_MOVES = [
+    'moveFront',
+    'moveBack',
+    'shiftLeft',
+    'shiftRight',
+    'shiftUp',
+    'shiftDown',
+    'setPosition',
+  ];
+  R.forEach(function(move) {
+    sprayTemplateService[move] = function sprayTemplateForwardMove(small, template) {
+      template.state = R.assoc('o', null, template.state);
+      templateService[move](small, template);
+    };
+  }, FORWARD_MOVES);
+  sprayTemplateService.rotateLeft = function sprayTemplateRotateLeft(factions, origin,
+                                                                     small, template) {
+    if(R.exists(origin)) {
+      var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
+      template.state = pointService.rotateLeft(angle, template.state);
+      var base_edge = modelService.baseEdgeInDirection(factions,
+                                                       template.state.r,
+                                                       origin);
+      templateService.setPosition(base_edge, template);
+      return;
+    }
+    templateService.rotateLeft(small, template);
+  };
+  sprayTemplateService.rotateRight = function sprayTemplateRotateRight(factions, origin,
+                                                                       small, template) {
+    if(R.exists(origin)) {
+      var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
+      template.state = pointService.rotateRight(angle, template.state);
+      var base_edge = modelService.baseEdgeInDirection(factions,
+                                                       template.state.r,
+                                                       origin);
+      templateService.setPosition(base_edge, template);
+      return;
+    }
+    templateService.rotateRight(small, template);
   };
   templateService.registerTemplate('spray', sprayTemplateService);
   return sprayTemplateService;
@@ -83,6 +154,9 @@ self.templateServiceFactory = function templateServiceFactory(settingsService,
   var templateService = {
     registerTemplate: function templateRegister(type, service) {
       TEMP_REGS[type] = service;
+    },
+    moves: function templateMoves() {
+      return MOVES;
     },
     create: function templateCreate(temp) {
       if(R.isNil(TEMP_REGS[temp.type])) {

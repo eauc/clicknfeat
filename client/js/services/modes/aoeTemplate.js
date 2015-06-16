@@ -22,6 +22,20 @@ self.aoeTemplateModeServiceFactory = R.curry(function aoeTemplateModeServiceFact
     var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
     gameService.executeCommand('onTemplates', 'setSize', 5, [target], scope, scope.game);
   };
+  template_actions.clickModel = function aoeClickModel(scope, event, dom_event) {
+    var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
+    if(dom_event.ctrlKey) {
+      gameService.executeCommand('onTemplates', 'setOrigin', scope.factions, event.target,
+                                 [target], scope,  scope.game);
+      return;
+    }
+    else if(dom_event.shiftKey) {
+      gameService.executeCommand('onTemplates', 'setTarget', scope.factions, null, event.target,
+                                 [target], scope,  scope.game);
+      return;
+    }
+    templateModeService.actions.clickModel(scope, event, dom_event);
+  };
   var template_default_bindings = {
     aoeSize3: '3',
     aoeSize4: '4',

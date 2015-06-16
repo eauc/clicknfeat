@@ -4,12 +4,18 @@ angular.module('clickApp.directives')
   .factory('sprayTemplateElement', [
     '$window',
     'template',
+    'sprayTemplate',
     'gameTemplateSelection',
+    'gameModels',
+    'gameFactions',
     'gameMap',
     'labelElement',
     function($window,
              templateService,
+             sprayTemplateService,
              gameTemplateSelectionService,
+             gameModelsService,
+             gameFactionsService,
              gameMapService,
              labelElementService) {
       var POINTS = {
@@ -30,9 +36,18 @@ angular.module('clickApp.directives')
 
           var label = labelElementService.create(svgNS, group);
 
+          var origin = document.createElementNS(svgNS, 'circle');
+          origin.classList.add('spray-origin');
+          origin.setAttribute('cx', '0');
+          origin.setAttribute('cy', '0');
+          origin.setAttribute('r', '0');
+          origin.style.visibility = 'hidden';
+          parent.appendChild(origin);
+
           return { container: group,
                    spray: polygon,
                    label: label,
+                   origin: origin,
                  };
         },
         update: function sprayTemplateElementUpdate(map, scope, template, spray) {
@@ -48,7 +63,12 @@ angular.module('clickApp.directives')
                                ( local ? '#0F0' : '#FFF') :
                                '#C60'
                              );
-
+          var origin = sprayTemplateService.origin(template);
+          var origin_model;
+          if(R.exists(origin)) {
+            origin_model = gameModelsService.findStamp(origin, scope.game.models);
+          }
+          
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
           var label_flip_center = template.state;
@@ -65,6 +85,7 @@ angular.module('clickApp.directives')
                                        label_text_center,
                                        label_text,
                                        spray.label);
+            updateOrigin(scope.factions, local, origin_model, spray.origin);
           });
         },
       };
@@ -89,6 +110,18 @@ angular.module('clickApp.directives')
         ].join(''));
         spray.setAttribute('points', POINTS[template.state.s+'']);
         spray.style.stroke = stroke_color;
+      }
+      function updateOrigin(factions, local, model, origin) {
+        if(!local ||
+           R.isNil(model)) {
+          origin.style.visibility = 'hidden';
+          return;
+        }
+        var info = gameFactionsService.getModelInfo(model.state.info, factions);
+        origin.setAttribute('cx', model.state.x+'');
+        origin.setAttribute('cy', model.state.y+'');
+        origin.setAttribute('r', info.base_radius+'');
+        origin.style.visibility = 'visible';
       }
       return sprayTemplateElementService;
     }
