@@ -1,6 +1,12 @@
 'use strict';
 
 self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpService) {
+  var BASE_RADIUS = {
+    huge: 24.605,
+    large: 9.842,
+    medium: 7.874,
+    small: 5.905
+  };
   var gameFactionsService = {
     init: function gameFactionsInit() {
       var factions = {};
@@ -87,7 +93,8 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
       R.assoc('unit_name', unit.name),
       R.assoc('img', updateImgs(model.img)),
       R.assoc('damage', updateDamage(model.damage)),
-      R.assoc('base_color', faction.color)
+      R.assoc('base_color', faction.color),
+      R.assoc('base_radius', BASE_RADIUS[model.base])
     )(model);
   }
   function updateImgs(imgs) {

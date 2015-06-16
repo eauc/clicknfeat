@@ -6,13 +6,6 @@ angular.module('clickApp.directives')
     'gameFactions',
     function($window,
              gameFactionsService) {
-      var BASE_RADIUS = {
-        huge: 24.605,
-        large: 9.842,
-        medium: 7.874,
-        small: 5.905
-      };
-
       return {
         restrict: 'A',
         link: function(scope, el, attrs) {
@@ -37,7 +30,7 @@ angular.module('clickApp.directives')
         element.classList.add('create-model');
         element.setAttribute('cx', '240');
         element.setAttribute('cy', '240');
-        element.setAttribute('r', BASE_RADIUS[info.base]);
+        element.setAttribute('r', info.base_radius);
         parent.appendChild(element);
         return element;
       }

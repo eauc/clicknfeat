@@ -269,15 +269,15 @@ describe('misc model', function() {
     describe('shortestLineTo(<factions>, <other>)', function() {
       beforeEach(function() {
         var info = {
-          'model': { base: 'medium' },
-          'other': { base: 'large' },
+          'model': { base_radius: 7.874 },
+          'other': { base_radius: 9.842 },
         };
         this.gameFactionsService.getModelInfo.and.callFake(function(i) {
           return info[i];
         });
       });
 
-      it('should set a copy of <state> as model\'s state', function() {
+      it('should compute the shortest line between both models', function() {
         var model = { state: { info: 'model', x: 240, y: 240 } };
         var other = { state: { info: 'other', x: 120, y: 120 } };
         expect(this.modelService.shortestLineTo('factions', other, model))

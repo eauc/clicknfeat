@@ -6,8 +6,8 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- target
 - template origin target / update when model change ?
+- ruler origin target : faire pareil que spray pour les cercles origin/target sur models
 - ruler origin target : update when model change ?
 - toggle on multiple models -> toggle based on first value
 - charge

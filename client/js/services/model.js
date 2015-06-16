@@ -3,12 +3,6 @@
 self.modelServiceFactory = function modelServiceFactory(settingsService,
                                                         pointService,
                                                         gameFactionsService) {
-  var BASE_RADIUS = {
-    huge: 24.605,
-    large: 9.842,
-    medium: 7.874,
-    small: 5.905
-  };
   var DEFAULT_MOVES = {
     Move: 10,
     MoveSmall: 5,
@@ -94,7 +88,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     checkState: function modelCheckState(factions, state) {
       var info = gameFactionsService.getModelInfo(state.info, factions);
-      var radius = BASE_RADIUS[info.base];
+      var radius = info.base_radius;
       state.x = Math.max(0+radius, Math.min(480-radius, state.x));
       state.y = Math.max(0+radius, Math.min(480-radius, state.y));
       return state;
@@ -318,10 +312,10 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
       
       var direction = pointService.directionTo(other.state, model.state);
-      var start = pointService.translateInDirection(BASE_RADIUS[info.base],
+      var start = pointService.translateInDirection(info.base_radius,
                                                     direction,
                                                     model.state);
-      var end = pointService.translateInDirection(BASE_RADIUS[other_info.base],
+      var end = pointService.translateInDirection(other_info.base_radius,
                                                   direction+180,
                                                   other.state);
       return { start: R.pick(['x','y'], start),

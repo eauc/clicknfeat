@@ -129,38 +129,38 @@ describe('move model', function() {
 
     using([
       [ 'move', 'base', 'result', 'small_result', 'before_check', 'after_check' ],
-      [ 'rotateLeft', 'small',
+      [ 'rotateLeft', 5.905,
         { info: 'info', x: 240, y: 240, r: 165 },
         { info: 'info', x: 240, y: 240, r: 175 } ],
-      [ 'rotateRight', 'small',
+      [ 'rotateRight', 5.905,
         { info: 'info', x: 240, y: 240, r: 195 },
         { info: 'info', x: 240, y: 240, r: 185 } ],
-      [ 'moveFront', 'small',
+      [ 'moveFront', 5.905,
         { info: 'info', x: 240, y: 250, r: 180 },
         { info: 'info', x: 240, y: 245, r: 180 },
         { info: 'info', x: 240, y: 470, r: 180 },
         { info: 'info', x: 240, y: 474.095, r: 180 } ],
-      [ 'moveBack', 'medium',
+      [ 'moveBack', 7.874,
         { info: 'info', x: 240, y: 230, r: 180 },
         { info: 'info', x: 240, y: 235, r: 180 },
         { info: 'info', x: 240, y: 10, r: 180 },
         { info: 'info', x: 240, y: 7.874, r: 180 } ],
-      [ 'shiftLeft', 'large',
+      [ 'shiftLeft', 9.842,
         { info: 'info', x: 230, y: 240, r: 180 },
         { info: 'info', x: 239, y: 240, r: 180 },
         { info: 'info', x: 15, y: 240, r: 180 },
         { info: 'info', x: 9.842, y: 240, r: 180 } ],
-      [ 'shiftRight', 'huge',
+      [ 'shiftRight', 24.605,
         { info: 'info', x: 250, y: 240, r: 180 },
         { info: 'info', x: 241, y: 240, r: 180 },
         { info: 'info', x: 450, y: 240, r: 180 },
         { info: 'info', x: 455.395, y: 240, r: 180 } ],
-      [ 'shiftUp', 'small',
+      [ 'shiftUp', 5.905,
         { info: 'info', x: 240, y: 230, r: 180 },
         { info: 'info', x: 240, y: 239, r: 180 },
         { info: 'info', x: 240, y: 10, r: 180 },
         { info: 'info', x: 240, y: 5.905, r: 180 } ],
-      [ 'shiftDown', 'small',
+      [ 'shiftDown', 5.905,
         { info: 'info', x: 240, y: 250, r: 180 },
         { info: 'info', x: 240, y: 241, r: 180 },
         { info: 'info', x: 240, y: 470, r: 180 },
@@ -172,7 +172,7 @@ describe('move model', function() {
             state: { info: 'info', x: 240, y: 240, r: 180 }
           };
           this.gameFactionsService.getModelInfo._retVal = {
-            base: e.base
+            base_radius: e.base
           };
         });
 
@@ -204,7 +204,7 @@ describe('move model', function() {
           state: { info: 'info', x: 240, y: 240, r: 180 }
         };
         this.gameFactionsService.getModelInfo._retVal = {
-          base: 'medium'
+          base_radius: 7.874
         };
       });
 

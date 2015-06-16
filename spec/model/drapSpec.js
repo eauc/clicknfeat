@@ -203,6 +203,9 @@ describe('drag model', function() {
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        this.gameFactionsService.getModelInfo._retVal = {
+          base_radius: 7.874
+        };
       }
     ]));
 
@@ -210,9 +213,6 @@ describe('drag model', function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info', x: 240, y: 240, r: 180 }
-        };
-        this.gameFactionsService.getModelInfo._retVal = {
-          base: 'medium'
         };
       });
 
@@ -233,9 +233,6 @@ describe('drag model', function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info', x: 440, y: 440, r: 180 }
-        };
-        this.gameFactionsService.getModelInfo._retVal = {
-          base: 'medium'
         };
       });
 

@@ -14,12 +14,6 @@ angular.module('clickApp.directives')
              gameRulerService,
              modelService,
              gameModelSelectionService) {
-      var BASE_RADIUS = {
-        huge: 24.605,
-        large: 9.842,
-        medium: 7.874,
-        small: 5.905
-      };
       var EFFECTS = [
         [ 'b', '/data/icons/Blind.png' ],
         [ 'c', '/data/icons/Corrosion.png' ],
@@ -102,7 +96,7 @@ angular.module('clickApp.directives')
         var aura = document.createElementNS(svgNS, 'circle');
         aura.setAttribute('cx', (info.img[0].width/2)+'');
         aura.setAttribute('cy', (info.img[0].height/2)+'');
-        aura.setAttribute('r', BASE_RADIUS[info.base]);
+        aura.setAttribute('r', info.base_radius);
         aura.style.filter = 'url(#aura-filter)';
         aura.style.visibility = 'hidden';
         parent.appendChild(aura);
@@ -124,7 +118,7 @@ angular.module('clickApp.directives')
         base.classList.add('model-base');
         base.setAttribute('cx', (info.img[0].width/2)+'');
         base.setAttribute('cy', (info.img[0].height/2)+'');
-        base.setAttribute('r', BASE_RADIUS[info.base]);
+        base.setAttribute('r', info.base_radius);
         base.setAttribute('style', [
           'fill:', info.base_color, ';',
         ].join(''));
@@ -136,14 +130,14 @@ angular.module('clickApp.directives')
         direction.setAttribute('x1', (info.img[0].width/2)+'');
         direction.setAttribute('y1', (info.img[0].height/2)+'');
         direction.setAttribute('x2', (info.img[0].width/2)+'');
-        direction.setAttribute('y2', (info.img[0].height/2-BASE_RADIUS[info.base])+'');
+        direction.setAttribute('y2', (info.img[0].height/2-info.base_radius)+'');
         parent.appendChild(direction);
 
         var front_arc = document.createElementNS(svgNS, 'line');
         front_arc.classList.add('model-los');
-        front_arc.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
+        front_arc.setAttribute('x1', (info.img[0].width/2-info.base_radius)+'');
         front_arc.setAttribute('y1', (info.img[0].height/2)+'');
-        front_arc.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
+        front_arc.setAttribute('x2', (info.img[0].width/2+info.base_radius)+'');
         front_arc.setAttribute('y2', (info.img[0].height/2)+'');
         parent.appendChild(front_arc);
 
@@ -160,7 +154,7 @@ angular.module('clickApp.directives')
         edge.classList.add('model-edge');
         edge.setAttribute('cx', (info.img[0].width/2)+'');
         edge.setAttribute('cy', (info.img[0].height/2)+'');
-        edge.setAttribute('r', BASE_RADIUS[info.base]);
+        edge.setAttribute('r', info.base_radius);
         parent.appendChild(edge);
 
         var damage_bar_red;
@@ -169,19 +163,19 @@ angular.module('clickApp.directives')
              info.damage.n === 1)) {
           damage_bar_red = document.createElementNS(svgNS, 'line');
           damage_bar_red.classList.add('model-damage-bar');
-          damage_bar_red.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
-          damage_bar_red.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
-          damage_bar_red.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
-          damage_bar_red.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_red.setAttribute('x1', (info.img[0].width/2-info.base_radius)+'');
+          damage_bar_red.setAttribute('y1', (info.img[0].height/2+info.base_radius+2)+'');
+          damage_bar_red.setAttribute('x2', (info.img[0].width/2+info.base_radius)+'');
+          damage_bar_red.setAttribute('y2', (info.img[0].height/2+info.base_radius+2)+'');
           damage_bar_red.style.stroke = '#F00';
           parent.appendChild(damage_bar_red);
           
           damage_bar_green = document.createElementNS(svgNS, 'line');
           damage_bar_green.classList.add('model-damage-bar');
-          damage_bar_green.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
-          damage_bar_green.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
-          damage_bar_green.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
-          damage_bar_green.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          damage_bar_green.setAttribute('x1', (info.img[0].width/2-info.base_radius)+'');
+          damage_bar_green.setAttribute('y1', (info.img[0].height/2+info.base_radius+2)+'');
+          damage_bar_green.setAttribute('x2', (info.img[0].width/2+info.base_radius)+'');
+          damage_bar_green.setAttribute('y2', (info.img[0].height/2+info.base_radius+2)+'');
           damage_bar_green.style.stroke = '#0F0';
           parent.appendChild(damage_bar_green);
         }
@@ -191,19 +185,19 @@ angular.module('clickApp.directives')
         if(R.exists(info.damage.field)) {
           field_bar_red = document.createElementNS(svgNS, 'line');
           field_bar_red.classList.add('model-damage-bar');
-          field_bar_red.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
-          field_bar_red.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
-          field_bar_red.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
-          field_bar_red.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_red.setAttribute('x1', (info.img[0].width/2-info.base_radius)+'');
+          field_bar_red.setAttribute('y1', (info.img[0].height/2+info.base_radius+2)+'');
+          field_bar_red.setAttribute('x2', (info.img[0].width/2+info.base_radius)+'');
+          field_bar_red.setAttribute('y2', (info.img[0].height/2+info.base_radius+2)+'');
           field_bar_red.style.stroke = '#066';
           parent.appendChild(field_bar_red);
           
           field_bar_green = document.createElementNS(svgNS, 'line');
           field_bar_green.classList.add('model-damage-bar');
-          field_bar_green.setAttribute('x1', (info.img[0].width/2-BASE_RADIUS[info.base])+'');
-          field_bar_green.setAttribute('y1', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
-          field_bar_green.setAttribute('x2', (info.img[0].width/2+BASE_RADIUS[info.base])+'');
-          field_bar_green.setAttribute('y2', (info.img[0].height/2+BASE_RADIUS[info.base]+2)+'');
+          field_bar_green.setAttribute('x1', (info.img[0].width/2-info.base_radius)+'');
+          field_bar_green.setAttribute('y1', (info.img[0].height/2+info.base_radius+2)+'');
+          field_bar_green.setAttribute('x2', (info.img[0].width/2+info.base_radius)+'');
+          field_bar_green.setAttribute('y2', (info.img[0].height/2+info.base_radius+2)+'');
           field_bar_green.style.stroke = '#0FF';
           parent.appendChild(field_bar_green);
         }
@@ -318,7 +312,7 @@ angular.module('clickApp.directives')
       function updateModelAura(img, info, model, element) {
         element.aura.setAttribute('x', (img.width/2)+'');
         element.aura.setAttribute('y', (img.height/2)+'');
-        element.aura.setAttribute('r', (BASE_RADIUS[info.base]*1.15)+'');
+        element.aura.setAttribute('r', (info.base_radius*1.15)+'');
         if(modelService.isAuraDisplayed(model)) {
           element.aura.style.fill = model.state.aur;
           element.aura.style.visibility = 'visible';
@@ -376,9 +370,9 @@ angular.module('clickApp.directives')
       function updateModelDamage(img, info, model, element) {
         if(R.isNil(element.damage_bar_red)) return;
 
-        var min_x = img.width / 2 + BASE_RADIUS[info.base];
-        var max_x = img.width / 2 - BASE_RADIUS[info.base];
-        var y = img.height / 2 + BASE_RADIUS[info.base] + 1;
+        var min_x = img.width / 2 + info.base_radius;
+        var max_x = img.width / 2 - info.base_radius;
+        var y = img.height / 2 + info.base_radius + 1;
 
         var percent_damage = model.state.dmg.t / info.damage.total;
         var damage_x = (max_x-min_x) * (1-percent_damage) + min_x;
@@ -452,8 +446,8 @@ angular.module('clickApp.directives')
                                    element.souls.label);
       }
       function updateLeaderImage(img, info, model, element) {
-        element.leader.setAttribute('x', (img.width / 2 - 0.7 * BASE_RADIUS[info.base] - 5)+'');
-        element.leader.setAttribute('y', (img.height / 2 - 0.7 * BASE_RADIUS[info.base] - 5)+'');
+        element.leader.setAttribute('x', (img.width / 2 - 0.7 * info.base_radius - 5)+'');
+        element.leader.setAttribute('y', (img.height / 2 - 0.7 * info.base_radius - 5)+'');
         if(modelService.isLeaderDisplayed(model)) {
           element.leader.style.visibility = 'visible';
         }
@@ -469,7 +463,7 @@ angular.module('clickApp.directives')
           }),
           function(effects) {
             var base_x = img.width / 2 - (R.length(effects) * 10 / 2);
-            var base_y = img.height / 2 + BASE_RADIUS[info.base] + 1;
+            var base_y = img.height / 2 + info.base_radius + 1;
             R.forEachIndexed(function(effect, i) {
               element.effects[effect].setAttribute('x', (base_x + i * 10)+'');
               element.effects[effect].setAttribute('y', (base_y)+'');
@@ -491,7 +485,7 @@ angular.module('clickApp.directives')
         element.ctrl_area.setAttribute('cx', (img.width/2)+'');
         element.ctrl_area.setAttribute('cy', (img.height/2)+'');
         if(modelService.isCtrlAreaDisplayed(factions, model)) {
-          var radius = ((info.focus || info.fury)*20 + BASE_RADIUS[info.base]);
+          var radius = ((info.focus || info.fury)*20 + info.base_radius);
           element.ctrl_area.setAttribute('r', radius+'');
           element.ctrl_area.style.visibility = 'visible';
         }
@@ -504,7 +498,7 @@ angular.module('clickApp.directives')
         element.area.setAttribute('cy', (img.height/2)+'');
         if(modelService.isAreaDisplayed(model)) {
           console.log('AREA', model.state.are);
-          element.area.setAttribute('r', (model.state.are * 10 + BASE_RADIUS[info.base])+'');
+          element.area.setAttribute('r', (model.state.are * 10 + info.base_radius)+'');
           element.area.style.visibility = 'visible';
         }
         else {
@@ -512,8 +506,8 @@ angular.module('clickApp.directives')
         }
       }
       function computeLabelCenter(info, model) {
-        var label_text_center_y_down = model.state.y + BASE_RADIUS[info.base] + 6;
-        var label_text_center_y_up = model.state.y - BASE_RADIUS[info.base] - 2;
+        var label_text_center_y_down = model.state.y + info.base_radius + 6;
+        var label_text_center_y_up = model.state.y - info.base_radius - 2;
         var orientation = ((model.state.r % 360) + 360) % 360;
         var model_looking_down =  orientation > 90 && orientation < 270;
         var label_text_center = { x: model.state.x,
@@ -536,24 +530,24 @@ angular.module('clickApp.directives')
       }
       function computeSoulsCenter(img, info, model) {
         var counter_flip_center = { x: img.width/2, y: img.height/2 };
-        var counter_text_center = { x: counter_flip_center.x + BASE_RADIUS[info.base] + 5,
-                                    y: counter_flip_center.y - BASE_RADIUS[info.base] - 5 };
+        var counter_text_center = { x: counter_flip_center.x + info.base_radius + 5,
+                                    y: counter_flip_center.y - info.base_radius - 5 };
         return { text: counter_text_center,
                  flip: counter_flip_center,
                };
       }
       function computeMeleePath(size, img, info) {
         return [
-          'M',img.width/2-BASE_RADIUS[info.base]-size,',',img.height/2,' ',
+          'M',img.width/2-info.base_radius-size,',',img.height/2,' ',
 
-          'L',img.width/2+BASE_RADIUS[info.base]+size,',',img.height/2,' ',
+          'L',img.width/2+info.base_radius+size,',',img.height/2,' ',
 
-          'A',BASE_RADIUS[info.base]+size,',',BASE_RADIUS[info.base]+size,' 0 0,0 ',
-          img.width/2-BASE_RADIUS[info.base]-size,',',img.height/2,' ',
+          'A',info.base_radius+size,',',info.base_radius+size,' 0 0,0 ',
+          img.width/2-info.base_radius-size,',',img.height/2,' ',
 
           'M',img.width/2,',',img.height/2,' ',
 
-          'L',img.width/2,',',img.height/2-BASE_RADIUS[info.base]-size,' ',
+          'L',img.width/2,',',img.height/2-info.base_radius-size,' ',
         ].join('');
       }
     }

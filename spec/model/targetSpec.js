@@ -41,7 +41,7 @@ describe('model target', function() {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
         this.gameFactionsService.getModelInfo._retVal = {
-          base: 'small'
+          base_radius: 7.874
         };
       }
     ]));

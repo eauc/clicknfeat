@@ -29,7 +29,6 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
   ruler_actions.dragModel = ruler_actions.dragMap;
   ruler_actions.dragEndModel = ruler_actions.dragEndMap;
   ruler_actions.clickModel = function rulerClickModel(scope, event, dom_event) {
-    console.log(arguments);
     if(dom_event.ctrlKey) {
       gameService.executeCommand('setRuler', 'setOrigin', scope.game.models, event.target,
                                  scope,  scope.game);
