@@ -21,6 +21,15 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('setModelSelection', 'clear', null,
                                scope, scope.game);
   };
+  models_actions.clickModel = function modelsClickModel(scope, event, dom_event) {
+    if(dom_event.shiftKey) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      gameService.executeCommand('onModels', 'orientTo', scope.factions, event.target,
+                                 stamps, scope, scope.game);
+      return;
+    }
+    defaultModeService.actions.clickModel(scope, event, dom_event);
+  };
   models_actions.toggleImageDisplay = function modelToggleImageDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'toggleImageDisplay',

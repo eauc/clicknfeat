@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model image', function() {
+describe('model melee', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
@@ -47,10 +47,10 @@ describe('model image', function() {
 
     describe('isMeleeDisplayed(<melee>)', function() {
       using([
-        [ 'dsp'         , 'isDisplayed' ],
-        [ []            , false ],
-        [ ['a', 'mr']    , false ],
-        [ ['mm']         , true ],
+        [ 'dsp'           , 'isDisplayed' ],
+        [ []              , false ],
+        [ ['a', 'mr']     , false ],
+        [ ['mm']          , true ],
         [ ['a','mm','mr'] , true ],
       ], function(e, d) {
         it('should check whether model\'s <melee> is displayed, '+d, function() {

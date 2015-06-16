@@ -6,7 +6,6 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- melee
 - target
 - template origin target / update when model change ?
 - ruler origin target : update when model change ?
