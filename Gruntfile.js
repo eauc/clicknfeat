@@ -5,8 +5,8 @@ module.exports = function(grunt) {
                      'client/js/controllers/**/*.js',
                      'client/js/services/**/*.js',
                      'client/js/angular_services.js',
-                     'client/js/filters/*.js',
-                     'client/js/directives/*.js',
+                     'client/js/filters/**/*.js',
+                     'client/js/directives/**/*.js',
                      '!**/*.min.js' ];
   var spec_js_src = [ 'spec/**/*Spec.js' ];
   var spec_js_helpers = [ 'spec/helpers/*.js' ];
