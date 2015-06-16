@@ -5,16 +5,14 @@ specs :
 template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
-ruler:
-- set max length + model origin -> save max length on model (outside state ?)
 model
-- template origin target / update when model change ?
-- ruler origin target : update when model change ?
 - melee
 - target
-- toggle on mutliple models -> toggle based on first value
+- template origin target / update when model change ?
+- ruler origin target : update when model change ?
+- toggle on multiple models -> toggle based on first value
 - charge
-- B2B
+- B2B : move / auras
 - under Aoe
 - unit : set, select
 - wreck

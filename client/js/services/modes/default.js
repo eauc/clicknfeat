@@ -82,7 +82,7 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
   };
 
   var default_default_bindings = {
-    enterRulerMode: 'r',
+    enterRulerMode: 'shift+r',
   };
   var default_bindings = R.extend(Object.create(commonModeService.bindings),
                                   default_default_bindings);

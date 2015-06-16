@@ -296,6 +296,15 @@ ul.nav-tabs li {
     fill-opacity:0.15;
     stroke:#6F6;
     stroke-width:0.5px;
+    pointer-events: none;
+}
+
+.model-melee {
+    stroke:#000;
+    stroke-width:0.5px;
+    fill: #000;
+    fill-opacity: 0.3;
+    pointer-events: none;
 }
 
 /**************************

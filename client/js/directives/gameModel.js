@@ -86,6 +86,7 @@ angular.module('clickApp.directives')
               updateEffectImages(img, info, scope.model, element);
               updateModelCtrlArea(scope.factions, img, info, scope.model, element);
               updateModelArea(img, info, scope.model, element);
+              updateModelMelee(img, info, scope.model, element);
             });
           }
           updateModel();
@@ -106,6 +107,19 @@ angular.module('clickApp.directives')
         aura.style.visibility = 'hidden';
         parent.appendChild(aura);
 
+        var melee = document.createElementNS(svgNS, 'path');
+        melee.classList.add('model-melee');
+        melee.setAttribute('d', '');
+        parent.appendChild(melee);
+        var reach = document.createElementNS(svgNS, 'path');
+        reach.classList.add('model-melee');
+        reach.setAttribute('d', '');
+        parent.appendChild(reach);
+        var strike = document.createElementNS(svgNS, 'path');
+        strike.classList.add('model-melee');
+        strike.setAttribute('d', '');
+        parent.appendChild(strike);
+        
         var base = document.createElementNS(svgNS, 'circle');
         base.classList.add('model-base');
         base.setAttribute('cx', (info.img[0].width/2)+'');
@@ -281,6 +295,9 @@ angular.module('clickApp.directives')
                  effects: effects,
                  ctrl_area: ctrl_area,
                  area: area,
+                 melee: melee,
+                 reach: reach,
+                 strike: strike,
                };
       }
       function updateModelPosition(img, model, element) {
@@ -391,6 +408,33 @@ angular.module('clickApp.directives')
         element.field_bar_green.setAttribute('x2', min_x + '');
         element.field_bar_green.setAttribute('y2', (y+1) + '');
       }
+      function updateModelMelee(img, info, model, element) {
+        var path;
+        if(modelService.isMeleeDisplayed('mm', model)) {
+          path = computeMeleePath(5, img, info);
+          element.melee.setAttribute('d', path);
+          element.melee.style.visibility = 'visible';
+        }
+        else {
+          element.melee.style.visibility = 'hidden';
+        }
+        if(modelService.isMeleeDisplayed('mr', model)) {
+          path = computeMeleePath(20, img, info);
+          element.reach.setAttribute('d', path);
+          element.reach.style.visibility = 'visible';
+        }
+        else {
+          element.reach.style.visibility = 'hidden';
+        }
+        if(modelService.isMeleeDisplayed('ms', model)) {
+          path = computeMeleePath(40, img, info);
+          element.strike.setAttribute('d', path);
+          element.strike.style.visibility = 'visible';
+        }
+        else {
+          element.strike.style.visibility = 'hidden';
+        }
+      }
       function updateSoulsCounter(map_flipped, zoom_factor, img, info, model, element) {
         var souls_text = modelService.isCounterDisplayed('s', model) ?
             model.state.s+'' : '';
@@ -497,6 +541,20 @@ angular.module('clickApp.directives')
         return { text: counter_text_center,
                  flip: counter_flip_center,
                };
+      }
+      function computeMeleePath(size, img, info) {
+        return [
+          'M',img.width/2-BASE_RADIUS[info.base]-size,',',img.height/2,' ',
+
+          'L',img.width/2+BASE_RADIUS[info.base]+size,',',img.height/2,' ',
+
+          'A',BASE_RADIUS[info.base]+size,',',BASE_RADIUS[info.base]+size,' 0 0,0 ',
+          img.width/2-BASE_RADIUS[info.base]-size,',',img.height/2,' ',
+
+          'M',img.width/2,',',img.height/2,' ',
+
+          'L',img.width/2,',',img.height/2-BASE_RADIUS[info.base]-size,' ',
+        ].join('');
       }
     }
   ])

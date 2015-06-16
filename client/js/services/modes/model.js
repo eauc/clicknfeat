@@ -95,6 +95,10 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Dec.', 'decrementSouls', 'souls' ],
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
+    [ 'Melee', 'toggle', 'melee' ],
+    [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
+    [ 'Reach', 'toggleReachDisplay', 'melee' ],
+    [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
   ];
   model_buttons = R.append([ 'Areas', 'toggle', 'areas' ], model_buttons);
   model_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], model_buttons);

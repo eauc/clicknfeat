@@ -328,6 +328,17 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     setRulerMaxLength: function modelSetRulerMaxLength(value, model) {
       model.state = R.assoc('rml', value, model.state);
     },
+    isMeleeDisplayed: function modelIsMeleeDisplayed(melee, model) {
+      return !!R.find(R.eq(melee), model.state.dsp);
+    },
+    toggleMeleeDisplay: function modelToggleMeleeDisplay(melee, model) {
+      if(modelService.isMeleeDisplayed(melee, model)) {
+        model.state.dsp = R.reject(R.eq(melee), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append(melee, model.state.dsp);
+      }
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {

@@ -26,6 +26,21 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'toggleImageDisplay',
                                stamps, scope, scope.game);
   };
+  models_actions.toggleMeleeDisplay = function modelToggleMeleeDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'mm',
+                               stamps, scope, scope.game);
+  };
+  models_actions.toggleReachDisplay = function modelToggleReachDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'mr',
+                               stamps, scope, scope.game);
+  };
+  models_actions.toggleStrikeDisplay = function modelToggleStrikeDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'ms',
+                               stamps, scope, scope.game);
+  };
   models_actions.setNextImage = function modelSetNextImage(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'setNextImage', scope.factions,
@@ -242,7 +257,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'decrementSouls': 'shift+-',
     'toggleLeaderDisplay': 'alt+l',
     'toggleCtrlAreaDisplay': 'shift+c',
-    'setRulerMaxLength': 'm',
+    'setRulerMaxLength': 'shift+m',
+    'toggleMeleeDisplay': 'm',
+    'toggleReachDisplay': 'r',
+    'toggleStrikeDisplay': 's',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -281,6 +299,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Dec.', 'decrementSouls', 'souls' ],
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
+    [ 'Melee', 'toggle', 'melee' ],
+    [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
+    [ 'Reach', 'toggleReachDisplay', 'melee' ],
+    [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
   ];
   models_buttons = R.append([ 'Areas', 'toggle', 'areas' ], models_buttons);
   models_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], models_buttons);

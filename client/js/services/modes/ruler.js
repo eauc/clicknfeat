@@ -75,7 +75,7 @@ self.rulerModeServiceFactory = function rulerModeServiceFactory(modesService,
                                scope, scope.game);
   };
   var ruler_default_bindings = {
-    leaveRulerMode: 'r',
+    leaveRulerMode: 'shift+r',
     setMaxLength: 'm',
     createAoEOnTarget: 'a',
   };
