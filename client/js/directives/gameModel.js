@@ -27,6 +27,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         link: function(scope, el, attrs) {
           var map = document.getElementById('map');
+          var over_models_container = document.getElementById('game-over-models');
           var svgNS = map.namespaceURI;
 
           var info = gameFactionsService.getModelInfo(scope.model.state.info,
@@ -35,12 +36,12 @@ angular.module('clickApp.directives')
           if(R.isNil(scope.model) ||
              R.isNil(info)) return;
           var container = el[0];
-          var element = createModelElement(info, scope.model, svgNS, container);
-          var parentNode = container.parentNode;
+          var element = createModelElement(info, scope.model,
+                                           svgNS, over_models_container, container);
           scope.$on('$destroy', function gameModelOnDestroy() {
             console.log('gameModelOnDestroy');
-            parentNode.removeChild(element.label.label);
-            parentNode.removeChild(element.counter.label);
+            over_models_container.removeChild(element.label.label);
+            over_models_container.removeChild(element.counter.label);
           });
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
@@ -89,7 +90,8 @@ angular.module('clickApp.directives')
                             updateModel, scope);
         }
       };
-      function createModelElement(info, model, svgNS, parent) {
+      function createModelElement(info, model,
+                                  svgNS, over_models_container, parent) {
         var aura = document.createElementNS(svgNS, 'circle');
         aura.setAttribute('cx', (info.img[0].width/2)+'');
         aura.setAttribute('cy', (info.img[0].height/2)+'');
@@ -212,8 +214,8 @@ angular.module('clickApp.directives')
         front_arc_los.setAttribute('y2', (info.img[0].height/2)+'');
         parent.appendChild(front_arc_los);
 
-        var label = labelElementService.create(svgNS, parent.parentNode);
-        var counter = labelElementService.create(svgNS, parent.parentNode);
+        var label = labelElementService.create(svgNS, over_models_container);
+        var counter = labelElementService.create(svgNS, over_models_container);
         counter.label.classList.add('counter');
         counter.bckgnd.setAttribute('height', '9');
         var souls_image = document.createElementNS(svgNS, 'image');
