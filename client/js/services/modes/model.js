@@ -29,6 +29,18 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
                                                 { target: model },
                                                 { ctrlKey: true });
   };
+  model_actions.selectAllUnit = function modelSelectAllUnit(scope, event) {
+    var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(selection[0], scope.game.models);
+    var stamps = R.pipe(
+      gameModelsService.all,
+      R.filter(modelService.userIs$(modelService.user(model))),
+      R.filter(modelService.unitIs$(modelService.unit(model))),
+      R.map(modelService.stamp)
+    )(scope.game.models);
+    gameService.executeCommand('setModelSelection', 'set', stamps,
+                               scope, scope.game);
+  };
   // model_actions.delete = function modelDelete(scope) {
   //   var target = gameModelSelectionService.get('local', scope.game.model_selection);
   //   gameService.executeCommand('deleteModels', [target], scope, scope.game);
@@ -92,6 +104,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   var model_default_bindings = {
     'createAoEOnModel': 'ctrl+a',
     'createSprayOnModel': 'ctrl+s',
+    'selectAllUnit': 'ctrl+u',
   };
   // R.forEach(function(move) {
   //   model_default_bindings[move[0]] = move[1];
@@ -118,6 +131,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Dec.', 'decrementSouls', 'souls' ],
     [ 'Unit', 'toggle', 'unit' ],
     [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
+    [ 'Select All', 'selectAllUnit', 'unit' ],
     [ 'Set #', 'setUnit', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
     [ 'Melee', 'toggle', 'melee' ],

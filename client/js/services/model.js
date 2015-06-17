@@ -49,6 +49,9 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.deepExtend(model.state, temp);
       return model;
     },
+    stamp: function modelStamp(model) {
+      return R.path(['state','stamp'], model);
+    },
     eventName: function modelEventName(model) {
       return R.path(['state','stamp'], model);
     },
@@ -60,6 +63,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     setState: function modelSetState(state, model) {
       model.state = R.clone(state);
+    },
+    user: function modelUser(model) {
+      return R.path(['state', 'user'], model);
+    },
+    userIs: function modelUser(user, model) {
+      return R.pathEq(['state', 'user'], user, model);
     },
     isBetweenPoints: function modelIsBetweenPoints(top_left, bottom_right, model) {
       return ( top_left.x <= model.state.x && model.state.x <= bottom_right.x &&
@@ -352,6 +361,9 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     unit: function modelUnit(model) {
       return R.prop('u', model.state);
+    },
+    unitIs: function modelUnit(unit, model) {
+      return R.propEq('u', unit, model.state);
     },
     setUnit: function modelSetUnit(unit, model) {
       model.state = R.assoc('u', unit, model.state);

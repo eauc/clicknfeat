@@ -8,6 +8,9 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
         locked: [],
       };
     },
+    all: function modelsAll(models) {
+      return R.concat(models.active, models.locked);
+    },
     findStamp: function modelsFindStamp(stamp, models) {
       return (R.find(R.pathEq(['state','stamp'], stamp), models.active) ||
               R.find(R.pathEq(['state','stamp'], stamp), models.locked));
