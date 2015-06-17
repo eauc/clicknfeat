@@ -33,6 +33,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           eff: [],
           l: [],
           c: 0, s: 0,
+          u: null,
           aur: null,
           are: null,
           rml: null,
@@ -345,6 +346,23 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         pointService.translateInDirection$(info.base_radius, dir),
         R.pick(['x','y'])
       )(model.state);
+    },
+    isUnitDisplayed: function modelIsUnitDisplayed(model) {
+      return !!R.find(R.eq('u'), model.state.dsp);
+    },
+    unit: function modelUnit(model) {
+      return R.prop('u', model.state);
+    },
+    setUnit: function modelSetUnit(unit, model) {
+      model.state = R.assoc('u', unit, model.state);
+    },
+    toggleUnitDisplay: function modelToggleUnitDisplay(model) {
+      if(modelService.isUnitDisplayed(model)) {
+        model.state.dsp = R.reject(R.eq('u'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('u', model.state.dsp);
+      }
     },
   };
   function initDamage(info) {

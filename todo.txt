@@ -6,7 +6,6 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- put external elements (labels) in dedicated container
 - unit : display, set, select
 - wreck
 - charge

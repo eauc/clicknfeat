@@ -74,6 +74,8 @@ angular.module('clickApp.directives')
                                          element.counter);
               updateSoulsCounter(map_flipped, zoom_factor,
                                  img, info, scope.model, element);
+              updateUnit(map_flipped, zoom_factor,
+                         img, info, scope.model, element);
               updateLeaderImage(img, info, scope.model, element);
               updateEffectImages(img, info, scope.model, element);
               updateModelCtrlArea(scope.factions, img, info, scope.model, element);
@@ -228,6 +230,8 @@ angular.module('clickApp.directives')
         parent.appendChild(souls_image);
         var souls = labelElementService.create(svgNS, parent);
 
+        var unit = labelElementService.create(svgNS, parent);
+
         var leader_image = document.createElementNS(svgNS, 'image');
         leader_image.classList.add('model-image');
         leader_image.setAttribute('x', '0');
@@ -281,6 +285,7 @@ angular.module('clickApp.directives')
                  label: label,
                  counter: counter,
                  souls: { label: souls, image: souls_image },
+                 unit: unit,
                  leader: leader_image,
                  effects: effects,
                  ctrl_area: ctrl_area,
@@ -420,6 +425,20 @@ angular.module('clickApp.directives')
                                    souls_text,
                                    element.souls.label);
       }
+      function updateUnit(map_flipped, zoom_factor, img, info, model, element) {
+        var unit = modelService.unit(model);
+        unit = R.exists(unit) ? unit : '';
+        var unit_text = modelService.isUnitDisplayed(model) ? unit+'' : '';
+        unit_text = R.length(unit_text) > 0 ? 'U'+unit_text : unit_text;
+        var unit_center = computeUnitCenter(img, info, model);
+
+        labelElementService.update(map_flipped,
+                                   zoom_factor,
+                                   unit_center.flip,
+                                   unit_center.text,
+                                   unit_text,
+                                   element.unit);
+      }
       function updateLeaderImage(img, info, model, element) {
         element.leader.setAttribute('x', (img.width / 2 - 0.7 * info.base_radius - 5)+'');
         element.leader.setAttribute('y', (img.height / 2 - 0.7 * info.base_radius - 5)+'');
@@ -505,8 +524,16 @@ angular.module('clickApp.directives')
       }
       function computeSoulsCenter(img, info, model) {
         var counter_flip_center = { x: img.width/2, y: img.height/2 };
-        var counter_text_center = { x: counter_flip_center.x + info.base_radius + 5,
+        var counter_text_center = { x: counter_flip_center.x + info.base_radius * 0.8 + 5,
                                     y: counter_flip_center.y - info.base_radius - 5 };
+        return { text: counter_text_center,
+                 flip: counter_flip_center,
+               };
+      }
+      function computeUnitCenter(img, info, model) {
+        var counter_flip_center = { x: img.width/2, y: img.height/2 };
+        var counter_text_center = { x: counter_flip_center.x - info.base_radius*0.7 - 5,
+                                    y: counter_flip_center.y - info.base_radius*0.7 - 5 };
         return { text: counter_text_center,
                  flip: counter_flip_center,
                };

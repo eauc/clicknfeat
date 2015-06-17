@@ -591,6 +591,7 @@ describe('create model', function() {
                        img: 0,
                        l: [ 'label' ],
                        c: 0, s: 0,
+                       u : null,
                        aur: null,
                        are: null,
                        rml: null,

@@ -35,6 +35,29 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'toggleImageDisplay',
                                stamps, scope, scope.game);
   };
+  models_actions.toggleUnitDisplay = function modelToggleUnitDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleUnitDisplay',
+                               stamps, scope, scope.game);
+  };
+  models_actions.setUnit = function modelSetUnit(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var value = R.defaultTo(0, modelService.unit(model));
+    promptService.prompt('prompt',
+                         'Set unit number :',
+                         value)
+      .then(function(value) {
+        gameService.executeCommand('onModels', 'setUnit', value,
+                                   stamps, scope, scope.game);
+        return value;
+      })
+      .catch(function(error) {
+        gameService.executeCommand('onModels', 'setUnit', null,
+                                   stamps, scope, scope.game);
+        return null;
+      });
+  };
   models_actions.toggleMeleeDisplay = function modelToggleMeleeDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'mm',
@@ -261,7 +284,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleCounterDisplay': 'n',
     'incrementCounter': '+',
     'decrementCounter': '-',
-    'toggleSoulsDisplay': 's',
+    'toggleSoulsDisplay': 'shift+s',
     'incrementSouls': 'shift++',
     'decrementSouls': 'shift+-',
     'toggleLeaderDisplay': 'alt+l',
@@ -270,6 +293,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleMeleeDisplay': 'm',
     'toggleReachDisplay': 'r',
     'toggleStrikeDisplay': 's',
+    'setUnit': 'shift+u',
+    'toggleUnitDisplay': 'alt+u',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -307,6 +332,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Inc.', 'incrementSouls', 'souls' ],
     [ 'Dec.', 'decrementSouls', 'souls' ],
     [ 'Unit', 'toggle', 'unit' ],
+    [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
+    [ 'Set #', 'setUnit', 'unit' ],
     [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
     [ 'Melee', 'toggle', 'melee' ],
     [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
