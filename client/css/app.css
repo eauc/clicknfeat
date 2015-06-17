@@ -267,18 +267,6 @@ ul.nav-tabs li {
     visibility: visible;
 }
 
-.ruler-origin .model-edge {
-    stroke-width: 1.25px;
-    stroke: #F90;
-}
-.ruler-target .model-edge {
-    stroke-width: 1.25px;
-    stroke: #F00;
-}
-.ruler-target-reached .model-edge {
-    stroke: #F0F;
-}
-
 .model-damage-bar {
     stroke-width: 1px;
     pointer-events: none;
@@ -407,6 +395,23 @@ ul.nav-tabs li {
     marker-start:url(#ruler-start);
     marker-end:url(#ruler-end);
     stroke: #0EE;
+}
+
+.ruler-origin,
+.ruler-target {
+    stroke-width: 1.25px;
+    fill: transparent;
+    pointer-events: none;
+}
+
+.ruler-origin {
+    stroke: #F90;
+}
+.ruler-target {
+    stroke: #F00;
+}
+.ruler-target.reached {
+    stroke: #F0F;
 }
 
 /**************************

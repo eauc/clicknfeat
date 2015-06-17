@@ -6,20 +6,25 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- template origin target / update when model change ?
 - ruler origin target : faire pareil que spray pour les cercles origin/target sur models
-- ruler origin target : update when model change ?
-- toggle on multiple models -> toggle based on first value
+- template : create aoe on model/spray with model as origin
+- put external elements (labels) in dedicated container
+- unit : display, set, select
+- wreck
 - charge
 - B2B : move / auras
 - under Aoe
-- unit : set, select
-- wreck
+- toggle on multiple models -> toggle based on first value
 - select all friendly
 - lock
+- ruler origin target : update when model change ?
+- template origin target : update when model change ?
 - images / other types : incorporeal
 - highlight models in melee ?
-- los
+los
+- line
+- from model
+- update when origin/target move ?
 layers - deploiement
 online - users login
 online - users chat + notification

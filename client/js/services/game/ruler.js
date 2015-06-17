@@ -86,7 +86,7 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
       var ret = R.pipe(
         R.assocPath(path, !R.path(path, ruler))
       )(ruler);
-      scope.gameEvent('changeRemoteRuler', ret.remote);
+      scope.gameEvent('changeRemoteRuler');
       return ret;
     },
     setLocal: function gameRulerSetLocal(start, end, scope, ruler) {
@@ -100,7 +100,7 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
           return R.assoc('local', local, ruler);
         }
       )(ruler);
-      scope.gameEvent('changeLocalRuler', ret.local);
+      scope.gameEvent('changeLocalRuler');
       return ret;
     },
     setRemote: function gameRulerSetRemote(start, end, scope, ruler) {
@@ -128,8 +128,8 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
           return R.assoc('local', local, ret);
         }
       )(ret);
-      scope.gameEvent('changeLocalRuler', ret.local);
-      scope.gameEvent('changeRemoteRuler', ret.remote);
+      scope.gameEvent('changeLocalRuler');
+      scope.gameEvent('changeRemoteRuler');
       return ret;
     },
     saveRemoteState: function gameRulerSaveRemoteState(ruler) {
@@ -139,7 +139,7 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
       var ret = R.pipe(
         R.assoc('remote', R.clone(state))
       )(ruler);
-      scope.gameEvent('changeRemoteRuler', ret.remote);
+      scope.gameEvent('changeRemoteRuler');
       return ret;
     },
     targetAoEPosition: function gameRulerTargetAoEPosition(models, ruler) {
@@ -191,7 +191,7 @@ self.gameRulerServiceFactory = function gameRulerServiceFactory(pointService,
         return R.assoc('remote', remote, ruler);
       }
     )(ruler);
-    scope.gameEvent('changeRemoteRuler', ret.remote);
+    scope.gameEvent('changeRemoteRuler');
     return ret;
   }
 

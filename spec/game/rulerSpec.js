@@ -290,17 +290,6 @@ describe('user ruler', function() {
         expect(this.ctxt.after)
           .toBe('gameRuler.setRemote.returnValueSave');
       });
-
-      it('should update origin/target models', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-origin1');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-origin2');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-target1');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-target2');
-      });
     });
 
     using([
@@ -324,17 +313,6 @@ describe('user ruler', function() {
             .toHaveBeenCalledWith(e.result, this.scope, e.previous);
           expect(this.game.ruler)
             .toBe('gameRuler.resetRemote.returnValue');
-        });
-
-        it('should update origin/target models', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-origin1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-origin2');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-target1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-target2');
         });
       });
     });
@@ -362,7 +340,7 @@ describe('user ruler', function() {
 
       it('should emit changeRemoteRuler game event', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', { display: true });
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
     });
 
@@ -404,12 +382,7 @@ describe('user ruler', function() {
 
       it('should emit changeLocalRuler game event', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeLocalRuler', { start: { x: 100, y: 0},
-                                                      end: { x: 100.00000000000001,
-                                                             y: 100 },
-                                                      length: null,
-                                                      display: true
-                                                    });
+          .toHaveBeenCalledWith('changeLocalRuler');
       });
 
       when('with max length', function() {
@@ -467,18 +440,9 @@ describe('user ruler', function() {
 
       it('should emit changeLocalRuler & changeRemoteRuler game events', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeLocalRuler', { display: false });
+          .toHaveBeenCalledWith('changeLocalRuler');
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', { max: undefined,
-                                                       origin: null,
-                                                       target: null,
-                                                       reached: null,
-                                                       start: { x: 100, y: 0 },
-                                                       end: { x: 100.00000000000001,
-                                                              y: 100 },
-                                                       length: 10,
-                                                       display: true
-                                                     });
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
 
       when('with max length', function() {
@@ -515,7 +479,7 @@ describe('user ruler', function() {
 
       it('should emit changeRemoteRuler game events', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', { state: 'state' });
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
     });
 
@@ -553,7 +517,7 @@ describe('user ruler', function() {
 
       it('refresh remote ruler', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', this.ret.remote);
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
 
       when('ruler target is not set', function() {
@@ -652,7 +616,7 @@ describe('user ruler', function() {
 
       it('refresh remote ruler', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', this.ret.remote);
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
 
       it('should reset ruler target', function() {
@@ -684,7 +648,7 @@ describe('user ruler', function() {
 
       it('refresh remote ruler', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler', this.ret.remote);
+          .toHaveBeenCalledWith('changeRemoteRuler');
       });
 
       when('ruler origin is not set', function() {
