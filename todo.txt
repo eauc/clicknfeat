@@ -6,7 +6,6 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- unit : select
 - wreck
 - charge
 - B2B : move / auras

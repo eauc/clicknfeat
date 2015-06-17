@@ -72,7 +72,7 @@ describe('model image', function() {
     describe('getImage(<factions>)', function() {
       it('should fetch model info from <factions>', function() {
         this.gameFactionsService.getModelInfo._retVal = {
-          img: [ { width: 60, height: 60, link: 'link' } ]
+          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
         };
 
         this.modelService.getImage('factions', {
@@ -86,27 +86,33 @@ describe('model image', function() {
       using([
         [ 'info_img', 'dsp', 'img', 'result' ],
         // standard case
-        [ [ { width: 60, height: 60, link: 'link' } ], ['i'], 0,
-          { width: 60, height: 60, link: 'link' }
+        [ [ { type: 'default', width: 60, height: 60, link: 'link' } ], ['i'], 0,
+          { type: 'default', width: 60, height: 60, link: 'link' }
         ],
         // info has no image -> it's ok
-        [ [ { width: 60, height: 60 } ], ['i'], 0,
-          { width: 60, height: 60, link: undefined }
+        [ [ { type: 'default', width: 60, height: 60 } ], ['i'], 0,
+          { type: 'default', width: 60, height: 60, link: undefined }
         ],
         // image is not displayed
-        [ [ { width: 60, height: 60, link: 'link' } ], ['a','r'], 0,
-          { width: 60, height: 60, link: null }
+        [ [ { type: 'default', width: 60, height: 60, link: 'link' } ], ['a','r'], 0,
+          { type: 'default', width: 60, height: 60, link: null }
         ],
         // info has multiple images > return image indexed by state.img
-        [ [ { width: 60, height: 60, link: 'link1' },
-            { width: 60, height: 60, link: 'link2' },
-            { width: 180, height: 180, link: 'link3' } ], ['i'], 2,
-          { width: 180, height: 180, link: 'link3' }
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'default', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], ['i'], 2,
+          { type: 'default', width: 180, height: 180, link: 'link3' }
         ],
-        [ [ { width: 60, height: 60, link: 'link1' },
-            { width: 60, height: 60, link: 'link2' },
-            { width: 180, height: 180, link: 'link3' } ], ['i'], 1,
-          { width: 60, height: 60, link: 'link2' }
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'default', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], ['i'], 1,
+          { type: 'default', width: 60, height: 60, link: 'link2' }
+        ],
+        // info has multiple images > skip image with type !== 'default'
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'wreck', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], ['i'], 1,
+          { type: 'default', width: 180, height: 180, link: 'link3' }
         ],
       ], function(e, d) {
         it('should return image info for <model>, '+d, function() {
@@ -124,7 +130,7 @@ describe('model image', function() {
     describe('setNextImage(<factions>)', function() {
       it('should fetch model info from <factions>', function() {
         this.gameFactionsService.getModelInfo._retVal = {
-          img: [ { width: 60, height: 60, link: 'link' } ]
+          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
         };
 
         this.modelService.setNextImage('factions', {
@@ -138,15 +144,19 @@ describe('model image', function() {
       using([
         [ 'info_img', 'img', 'next_img' ],
         // standard case, one image -> no change
-        [ [ { width: 60, height: 60, link: 'link' } ], 0, 0 ],
+        [ [ { type: 'default', width: 60, height: 60, link: 'link' } ], 0, 0 ],
         // info has multiple images -> increment index
-        [ [ { width: 60, height: 60, link: 'link1' },
-            { width: 60, height: 60, link: 'link2' },
-            { width: 180, height: 180, link: 'link3' } ], 0, 1 ],
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'default', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], 0, 1 ],
         // info has multiple images -> wrap around
-        [ [ { width: 60, height: 60, link: 'link1' },
-            { width: 60, height: 60, link: 'link2' },
-            { width: 180, height: 180, link: 'link3' } ], 2, 0 ],
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'default', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], 2, 0 ],
+        // info has multiple images -> skip images type !== 'default'
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'wreck', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], 1, 0 ],
       ], function(e, d) {
         it('should set next image <model>, '+d, function() {
           this.gameFactionsService.getModelInfo._retVal = {

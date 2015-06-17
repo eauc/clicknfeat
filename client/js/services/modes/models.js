@@ -35,6 +35,11 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'toggleImageDisplay',
                                stamps, scope, scope.game);
   };
+  models_actions.toggleWreckDisplay = function modelToggleWreckDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'toggleWreckDisplay',
+                               stamps, scope, scope.game);
+  };
   models_actions.toggleUnitDisplay = function modelToggleUnitDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'toggleUnitDisplay',
@@ -294,6 +299,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleReachDisplay': 'r',
     'toggleStrikeDisplay': 's',
     'setUnit': 'shift+u',
+    'toggleWreckDisplay': 'alt+w',
     'toggleUnitDisplay': 'alt+u',
   };
   R.forEach(function(move) {
@@ -320,6 +326,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],
+    [ 'Wreck', 'toggleWreckDisplay', 'image' ],
     [ 'Orient.', 'toggle', 'orientation' ],
     [ 'Face Up', 'setOrientationUp', 'orientation' ],
     [ 'Face Down', 'setOrientationDown', 'orientation' ],

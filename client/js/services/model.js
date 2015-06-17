@@ -80,12 +80,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     getImage: function modelGetImage(factions, model) {
       var info = gameFactionsService.getModelInfo(model.state.info, factions);
-      var link = modelService.isImageDisplayed(model) ? info.img[model.state.img].link : null;
-      return R.assoc('link', link, info.img[model.state.img]);
+      var imgs = R.filter(R.propEq('type','default'), info.img);
+      var link = modelService.isImageDisplayed(model) ? imgs[model.state.img].link : null;
+      return R.assoc('link', link, imgs[model.state.img]);
     },
     setNextImage: function modelSetNextImage(factions, model) {
       var info = gameFactionsService.getModelInfo(model.state.info, factions);
-      var next_img = (model.state.img >= info.img.length-1) ? 0 : model.state.img+1;
+      var imgs = R.filter(R.propEq('type','default'), info.img);
+      var next_img = (model.state.img >= imgs.length-1) ? 0 : model.state.img+1;
       model.state = R.assoc('img', next_img, model.state);
     },
     toggleImageDisplay: function modelToggleImageDisplay(model) {
@@ -94,6 +96,27 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
       else {
         model.state.dsp = R.append('i', model.state.dsp);
+      }
+    },
+    isWreckDisplayed: function modelIsWreckDisplayed(model) {
+      return !!R.find(R.eq('w'), model.state.dsp);
+    },
+    getWreckImage: function modelGetWreckImage(factions, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var img = R.find(R.propEq('type','wreck'), info.img);
+      if(R.isNil(img)) {
+        img = R.find(R.propEq('type','default'), info.img);
+        img = R.assoc('link', null, img);
+      }
+      var link = modelService.isImageDisplayed(model) ? img.link : null;
+      return R.assoc('link', link, img);
+    },
+    toggleWreckDisplay: function modelToggleWreckDisplay(model) {
+      if(modelService.isWreckDisplayed(model)) {
+        model.state.dsp = R.reject(R.eq('w'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('w', model.state.dsp);
       }
     },
     checkState: function modelCheckState(factions, state) {

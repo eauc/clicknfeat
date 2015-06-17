@@ -3,9 +3,11 @@
   "color": "#85d1bd",
   "icon": "data/icons/scyrah_50.png",
   "wreck": {
-    "medium": "data/model/scyrah/jacks/LightWreck.png",
-    "large": "data/model/scyrah/jacks/HeavyWreck.png",
-    "huge": "data/model/scyrah/jacks/ColossalWreck.png"
+    "medium": { "link": "data/model/scyrah/jacks/LightWreck.png" },
+    "large": { "link": "data/model/scyrah/jacks/HeavyWreck.png" },
+    "huge": { "width": 116.667,
+              "height": 116.667,
+              "link": "data/model/scyrah/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {

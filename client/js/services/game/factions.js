@@ -42,7 +42,14 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
   };
   function updateFaction(faction) {
     // console.log(faction);
-    return R.assoc('models', updateFactionModels(faction, faction.models), faction);
+    return R.pipe(
+      R.assoc('wreck', updateWreck(faction.wreck)),
+      function(faction) {
+        return R.assoc('models',
+                       updateFactionModels(faction, faction.models),
+                       faction);
+      }
+    )(faction);
   }
   function updateFactionModels(faction, models) {
     // console.log(models);
@@ -94,7 +101,15 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
       R.assoc('img', updateImgs(model.img)),
       R.assoc('damage', updateDamage(model.damage)),
       R.assoc('base_color', faction.color),
-      R.assoc('base_radius', BASE_RADIUS[model.base])
+      R.assoc('base_radius', BASE_RADIUS[model.base]),
+      function(model) {
+        if(model.type === 'jack' &&
+           R.exists(faction.wreck) &&
+           R.exists(faction.wreck[model.base])) {
+          return R.assoc('img', R.append(faction.wreck[model.base], model.img), model);
+        }
+        return model;
+      }
     )(model);
   }
   function updateImgs(imgs) {
@@ -107,15 +122,28 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
         }
         return imgs;
       },
-      R.map(function(img) {
-        // console.log(img);
-        return R.pipe(
-          R.assoc('type', R.defaultTo('default', img.type)),
-          R.assoc('width', R.defaultTo(60, img.width)),
-          R.assoc('height', R.defaultTo(60, img.height))
-        )(img);
-      })
+      R.map(updateImage)
     )(imgs);
+  }
+  function updateWreck(wreck) {
+    return R.pipe(
+      R.defaultTo({}),
+      function(wreck) {
+        return R.pipe(
+          R.keys,
+          R.reduce(function(mem, key) {
+            return R.assoc(key, updateImage(R.assoc('type','wreck',wreck[key])), mem);
+          }, {})
+        )(wreck);
+      }
+    )(wreck);
+  }
+  function updateImage(img) {
+    return R.pipe(
+      R.assoc('type', R.defaultTo('default', img.type)),
+      R.assoc('width', R.defaultTo(60, img.width)),
+      R.assoc('height', R.defaultTo(60, img.height))
+    )(img);
   }
   function updateDamage(damage) {
     // console.log(damage);

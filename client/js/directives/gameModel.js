@@ -45,7 +45,10 @@ angular.module('clickApp.directives')
           });
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
-              var img = modelService.getImage(scope.factions, scope.model);
+              var is_wreck = modelService.isWreckDisplayed(scope.model);
+              var img = is_wreck ?
+                  modelService.getWreckImage(scope.factions, scope.model) :
+                  modelService.getImage(scope.factions, scope.model);
               var map_flipped = gameMapService.isFlipped(map);
               var zoom_factor = gameMapService.zoomFactor(map);
               var label_text = modelService.fullLabel(scope.model);
@@ -70,7 +73,7 @@ angular.module('clickApp.directives')
                                          zoom_factor,
                                          counter_center.flip,
                                          counter_center.text,
-                                         counter_text,
+                                         is_wreck ? '' : counter_text,
                                          element.counter);
               updateSoulsCounter(map_flipped, zoom_factor,
                                  img, info, scope.model, element);
@@ -350,6 +353,16 @@ angular.module('clickApp.directives')
       function updateModelDamage(img, info, model, element) {
         if(R.isNil(element.damage_bar_red)) return;
 
+        if(modelService.isWreckDisplayed(model)) {
+          element.damage_bar_red.style.visibility = 'hidden';
+          element.damage_bar_green.style.visibility = 'hidden';
+          if(R.isNil(element.field_bar_red)) return;
+
+          element.field_bar_red.style.visibility = 'hidden';
+          element.field_bar_green.style.visibility = 'hidden';
+          return;
+        }
+        
         var min_x = img.width / 2 + info.base_radius;
         var max_x = img.width / 2 - info.base_radius;
         var y = img.height / 2 + info.base_radius + 1;
@@ -361,11 +374,13 @@ angular.module('clickApp.directives')
         element.damage_bar_red.setAttribute('y1', y + '');
         element.damage_bar_red.setAttribute('x2', min_x + '');
         element.damage_bar_red.setAttribute('y2', y + '');
+        element.damage_bar_red.style.visibility = 'visible';
 
         element.damage_bar_green.setAttribute('x1', damage_x + '');
         element.damage_bar_green.setAttribute('y1', y + '');
         element.damage_bar_green.setAttribute('x2', min_x + '');
         element.damage_bar_green.setAttribute('y2', y + '');
+        element.damage_bar_green.style.visibility = 'visible';
 
         if(R.isNil(element.field_bar_red)) return;
 
@@ -376,11 +391,13 @@ angular.module('clickApp.directives')
         element.field_bar_red.setAttribute('y1', (y+1) + '');
         element.field_bar_red.setAttribute('x2', min_x + '');
         element.field_bar_red.setAttribute('y2', (y+1) + '');
+        element.field_bar_red.style.visibility = 'visible';
 
         element.field_bar_green.setAttribute('x1', field_x + '');
         element.field_bar_green.setAttribute('y1', (y+1) + '');
         element.field_bar_green.setAttribute('x2', min_x + '');
         element.field_bar_green.setAttribute('y2', (y+1) + '');
+        element.field_bar_green.style.visibility = 'visible';
       }
       function updateModelMelee(img, info, model, element) {
         var path;
@@ -410,8 +427,10 @@ angular.module('clickApp.directives')
         }
       }
       function updateSoulsCounter(map_flipped, zoom_factor, img, info, model, element) {
-        var souls_text = modelService.isCounterDisplayed('s', model) ?
-            model.state.s+'' : '';
+        var souls_text = ( !modelService.isWreckDisplayed(model) &&
+                           modelService.isCounterDisplayed('s', model)  ?
+                           model.state.s+'' : ''
+                         );
         var visibility = R.length(souls_text) > 0 ? 'visible' : 'hidden';
         var souls_center = computeSoulsCenter(img, info, model);
 
