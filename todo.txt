@@ -6,7 +6,6 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- ruler origin target : faire pareil que spray pour les cercles origin/target sur models
 - template : create aoe on model/spray with model as origin
 - put external elements (labels) in dedicated container
 - unit : display, set, select

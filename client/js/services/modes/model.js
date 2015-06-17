@@ -3,11 +3,32 @@
 self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
                                                                 settingsService,
                                                                 modelsModeService,
+                                                                sprayTemplateModeService,
                                                                 modelService,
                                                                 gameService,
                                                                 gameModelsService,
                                                                 gameModelSelectionService) {
   var model_actions = Object.create(modelsModeService.actions);
+  model_actions.createAoEOnModel = function modelCreateAoEModel(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var position = R.pick(['x','y'], model.state);
+    position.type = 'aoe';
+    gameService.executeCommand('createTemplate', position,
+                               scope, scope.game);
+  };
+  model_actions.createSprayOnModel = function modelCreateSprayModel(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var position = R.pick(['x','y'], model.state);
+    position.type = 'spray';
+    gameService.executeCommand('createTemplate', position,
+                               scope, scope.game);
+    // simulate ctrl-click on model in sprayTemplateMode
+    sprayTemplateModeService.actions.clickModel(scope,
+                                                { target: model },
+                                                { ctrlKey: true });
+  };
   // model_actions.delete = function modelDelete(scope) {
   //   var target = gameModelSelectionService.get('local', scope.game.model_selection);
   //   gameService.executeCommand('deleteModels', [target], scope, scope.game);
@@ -69,6 +90,8 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   // })();
 
   var model_default_bindings = {
+    'createAoEOnModel': 'ctrl+a',
+    'createSprayOnModel': 'ctrl+s',
   };
   // R.forEach(function(move) {
   //   model_default_bindings[move[0]] = move[1];
@@ -99,6 +122,9 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
     [ 'Reach', 'toggleReachDisplay', 'melee' ],
     [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
+    [ 'Templates', 'toggle', 'templates' ],
+    [ 'AoE', 'createAoEOnModel', 'templates' ],
+    [ 'Spray', 'createSprayOnModel', 'templates' ],
   ];
   model_buttons = R.append([ 'Areas', 'toggle', 'areas' ], model_buttons);
   model_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], model_buttons);

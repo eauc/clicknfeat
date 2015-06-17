@@ -104,6 +104,7 @@ angular.module('clickApp.services')
     'modes',
     'settings',
     'modelsMode',
+    'sprayTemplateMode',
     'model',
     'game',
     'gameModels',
