@@ -595,6 +595,8 @@ describe('create model', function() {
                        aur: null,
                        are: null,
                        rml: null,
+                       cml: null,
+                       cha: null,
                        stamp: 'stamp',
                        info: [ 'info' ]
                      }

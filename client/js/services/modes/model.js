@@ -41,6 +41,63 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     gameService.executeCommand('setModelSelection', 'set', stamps,
                                scope, scope.game);
   };
+  model_actions.toggleCharge = function modelToggleCharge(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    if(modelService.isCharging(model)) {
+      gameService.executeCommand('onModels', 'endCharge',
+                                 stamps, scope, scope.game);
+    }
+    else {
+      gameService.executeCommand('onModels', 'startCharge',
+                                 stamps, scope, scope.game);
+    }
+  };
+  model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    if(dom_event.shiftKey &&
+       modelService.isCharging(model) &&
+       model.state.stamp !== event.target.state.stamp) {
+      gameService.executeCommand('onModels', 'setChargeTarget',
+                                 scope.factions, event.target,
+                                 stamps, scope, scope.game);
+      return;
+    }
+    modelsModeService.actions.clickModel(scope, event, dom_event);
+  };
+  var moves = [
+    ['moveFront', 'up'],
+    ['moveBack', 'down'],
+    ['rotateLeft', 'left'],
+    ['rotateRight', 'right'],
+    ['shiftUp', 'ctrl+up'],
+    ['shiftDown', 'ctrl+down'],
+    ['shiftLeft', 'ctrl+left'],
+    ['shiftRight', 'ctrl+right'],
+  ];
+  R.forEach(function(move) {
+    model_actions[move[0]] = buildChargeMove(move[0], false, move[0]);
+    model_actions[move[0]+'Small'] = buildChargeMove(move[0], true, move[0]+'Small');
+  }, moves);
+  function buildChargeMove(move, small, fwd) {
+    return function modelDoChargeMove(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+      if(modelService.isCharging(model)) {
+        var target = modelService.chargeTarget(model);
+        var target_model;
+        if(R.exists(target)) {
+          target_model = gameModelsService.findStamp(target, scope.game.models);
+        }
+        gameService.executeCommand('onModels', move+'Charge',
+                                   scope.factions, target_model, small,
+                                   stamps, scope, scope.game);
+        return;
+      }
+      modelsModeService.actions[fwd](scope);
+    };
+  }
   // model_actions.delete = function modelDelete(scope) {
   //   var target = gameModelSelectionService.get('local', scope.game.model_selection);
   //   gameService.executeCommand('deleteModels', [target], scope, scope.game);
@@ -51,70 +108,19 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   //   modesService.switchToMode(gameModelsService.modeForStamp(stamp, scope.game.models),
   //                             scope, scope.modes);
   // };
-  // var moves = [
-  //   ['moveFront', 'up'],
-  //   ['moveBack', 'down'],
-  //   ['rotateLeft', 'left'],
-  //   ['rotateRight', 'right'],
-  //   ['shiftUp', 'ctrl+up'],
-  //   ['shiftDown', 'ctrl+down'],
-  //   ['shiftLeft', 'ctrl+left'],
-  //   ['shiftRight', 'ctrl+right'],
-  // ];
-  // R.forEach(function(move) {
-    // model_actions[move[0]] = function modelMove(scope) {
-      // var target = gameModelSelectionService.get('local', scope.game.model_selection);
-      // gameService.executeCommand('onModels', move[0], false, [target], scope, scope.game);
-  //   };
-  //   model_actions[move[0]+'Small'] = function modelMove(scope) {
-  //     var target = gameModelSelectionService.get('local', scope.game.model_selection);
-  //     gameService.executeCommand('onModels', move[0], true, [target], scope, scope.game);
-  //   };
-  // }, moves);
-
-  // (function() {
-  //   var drag_model_start_state;
-  //   function updateStateWithDelta(event, state) {
-  //     var dx = event.now.x - event.start.x;
-  //     var dy = event.now.y - event.start.y;
-  //     state.x = drag_model_start_state.x + dx;
-  //     state.y = drag_model_start_state.y + dy;
-  //   }
-  //   model_actions.dragStartModel = function modelDragStartModel(scope, event) {
-  //     drag_model_start_state = R.clone(event.target.state);
-  //     model_actions.dragModel(scope, event);
-  //     scope.game.model_selection =
-  //       gameModelSelectionService.set('local', event.target.state.stamp,
-  //                                        scope, scope.game.model_selection);
-  //   };
-  //   model_actions.dragModel = function modelDragModel(scope, event) {
-  //     updateStateWithDelta(event, event.target.state);
-  //     scope.gameEvent('changeModel-'+event.target.state.stamp);
-  //   };
-  //   model_actions.dragEndModel = function modelDragEndModel(scope, event) {
-  //     modelService.setPosition(drag_model_start_state, event.target);
-  //     var end_state = R.clone(drag_model_start_state);
-  //     updateStateWithDelta(event, end_state);
-  //     gameService.executeCommand('onModels',
-  //                                'setPosition', end_state, [event.target.state.stamp],
-  //                                scope, scope.game);
-  //   };
-  // })();
 
   var model_default_bindings = {
     'createAoEOnModel': 'ctrl+a',
     'createSprayOnModel': 'ctrl+s',
     'selectAllUnit': 'ctrl+u',
+    'toggleCharge': 'c',
   };
-  // R.forEach(function(move) {
-  //   model_default_bindings[move[0]] = move[1];
-  //   model_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
-  // }, moves);
   var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                  model_default_bindings);
   var model_buttons = [
     [ 'Delete', 'deleteSelection' ],
     [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+    [ 'Charge Max Len.', 'setChargeMaxLength' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],
@@ -142,6 +148,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     [ 'Templates', 'toggle', 'templates' ],
     [ 'AoE', 'createAoEOnModel', 'templates' ],
     [ 'Spray', 'createSprayOnModel', 'templates' ],
+    [ 'Charge', 'toggleCharge' ],
   ];
   model_buttons = R.append([ 'Areas', 'toggle', 'areas' ], model_buttons);
   model_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], model_buttons);

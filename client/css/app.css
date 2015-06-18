@@ -295,6 +295,22 @@ ul.nav-tabs li {
     pointer-events: none;
 }
 
+.model-charge-path {
+    fill: #CCC;
+    fill-opacity: 0.3;
+    stroke: #666;
+    stroke-width: 0.5px;
+}
+.model-charge-target {
+    stroke: #F00;
+    stroke-width: 1.25px;
+    pointer-events: none;
+    fill: transparent;
+}
+.model-charge-target.reached {
+    stroke: #0FF;
+}
+
 /**************************
   Templates
 ***************************/
@@ -379,7 +395,6 @@ ul.nav-tabs li {
     stroke-width: 1.25px;
     pointer-events: none;
     fill: transparent;
-    pointer-events: visible;
 }
 
 /**************************

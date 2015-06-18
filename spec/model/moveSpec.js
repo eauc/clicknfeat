@@ -128,7 +128,7 @@ describe('move model', function() {
     ]));
 
     using([
-      [ 'move', 'base', 'result', 'small_result', 'before_check', 'after_check' ],
+      [ 'move', 'base', 'result', 'small_result' ],
       [ 'rotateLeft', 5.905,
         { info: 'info', x: 240, y: 240, r: 165 },
         { info: 'info', x: 240, y: 240, r: 175 } ],
@@ -137,34 +137,22 @@ describe('move model', function() {
         { info: 'info', x: 240, y: 240, r: 185 } ],
       [ 'moveFront', 5.905,
         { info: 'info', x: 240, y: 250, r: 180 },
-        { info: 'info', x: 240, y: 245, r: 180 },
-        { info: 'info', x: 240, y: 470, r: 180 },
-        { info: 'info', x: 240, y: 474.095, r: 180 } ],
+        { info: 'info', x: 240, y: 245, r: 180 } ],
       [ 'moveBack', 7.874,
         { info: 'info', x: 240, y: 230, r: 180 },
-        { info: 'info', x: 240, y: 235, r: 180 },
-        { info: 'info', x: 240, y: 10, r: 180 },
-        { info: 'info', x: 240, y: 7.874, r: 180 } ],
+        { info: 'info', x: 240, y: 235, r: 180 } ],
       [ 'shiftLeft', 9.842,
         { info: 'info', x: 230, y: 240, r: 180 },
-        { info: 'info', x: 239, y: 240, r: 180 },
-        { info: 'info', x: 15, y: 240, r: 180 },
-        { info: 'info', x: 9.842, y: 240, r: 180 } ],
+        { info: 'info', x: 239, y: 240, r: 180 } ],
       [ 'shiftRight', 24.605,
         { info: 'info', x: 250, y: 240, r: 180 },
-        { info: 'info', x: 241, y: 240, r: 180 },
-        { info: 'info', x: 450, y: 240, r: 180 },
-        { info: 'info', x: 455.395, y: 240, r: 180 } ],
+        { info: 'info', x: 241, y: 240, r: 180 } ],
       [ 'shiftUp', 5.905,
         { info: 'info', x: 240, y: 230, r: 180 },
-        { info: 'info', x: 240, y: 239, r: 180 },
-        { info: 'info', x: 240, y: 10, r: 180 },
-        { info: 'info', x: 240, y: 5.905, r: 180 } ],
+        { info: 'info', x: 240, y: 239, r: 180 } ],
       [ 'shiftDown', 5.905,
         { info: 'info', x: 240, y: 250, r: 180 },
-        { info: 'info', x: 240, y: 241, r: 180 },
-        { info: 'info', x: 240, y: 470, r: 180 },
-        { info: 'info', x: 240, y: 474.095, r: 180 } ],
+        { info: 'info', x: 240, y: 241, r: 180 } ],
     ], function(e, d) {
       describe(e.move+'(<small>)', function() {
         beforeEach(function() {
@@ -174,6 +162,9 @@ describe('move model', function() {
           this.gameFactionsService.getModelInfo._retVal = {
             base_radius: e.base
           };
+          spyOn(this.modelService, 'checkState')
+            .and.callThrough();
+          this.modelService.checkState$ = R.curryN(3, this.modelService.checkState);
         });
 
         using([
@@ -187,14 +178,12 @@ describe('move model', function() {
               .toEqual(ee.result);
           });
         });
-        if(e.before_check) {
-          it('should stay on the board', function() {
-            this.model.state = e.before_check;
-            this.modelService[e.move]('factions', false, this.model);
-            expect(this.model.state)
-              .toEqual(e.after_check);
-          });
-        }
+
+        it('should check state', function() {
+          this.modelService[e.move]('factions', false, this.model);
+          expect(this.modelService.checkState)
+            .toHaveBeenCalledWith('factions', null, jasmine.any(Object));
+        });
       });
     });
 

@@ -7,13 +7,17 @@ angular.module('clickApp.directives')
     'labelElement',
     'gameRuler',
     'model',
+    'gameModels',
     'gameModelSelection',
+    'point',
     function(gameFactionsService,
              gameMapService,
              labelElementService,
              gameRulerService,
              modelService,
-             gameModelSelectionService) {
+             gameModelsService,
+             gameModelSelectionService,
+             pointService) {
       var EFFECTS = [
         [ 'b', '/data/icons/Blind.png' ],
         [ 'c', '/data/icons/Corrosion.png' ],
@@ -27,6 +31,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         link: function(scope, el, attrs) {
           var map = document.getElementById('map');
+          var under_models_container = document.getElementById('game-under-models');
           var over_models_container = document.getElementById('game-over-models');
           var svgNS = map.namespaceURI;
 
@@ -36,12 +41,17 @@ angular.module('clickApp.directives')
           if(R.isNil(scope.model) ||
              R.isNil(info)) return;
           var container = el[0];
-          var element = createModelElement(info, scope.model,
-                                           svgNS, over_models_container, container);
+          var element = createModelElement(info, scope.model, svgNS,
+                                           over_models_container,
+                                           under_models_container,
+                                           container);
           scope.$on('$destroy', function gameModelOnDestroy() {
             console.log('gameModelOnDestroy');
             over_models_container.removeChild(element.label.label);
-            over_models_container.removeChild(element.counter.label);
+            over_models_container.removeChild(element.counter);
+            over_models_container.removeChild(element.charge.label);
+            over_models_container.removeChild(element.charge.target);
+            under_models_container.removeChild(element.charge.path);
           });
           function updateModel(event, selection) {
             self.requestAnimationFrame(function _updateModel() {
@@ -84,19 +94,33 @@ angular.module('clickApp.directives')
               updateModelCtrlArea(scope.factions, img, info, scope.model, element);
               updateModelArea(img, info, scope.model, element);
               updateModelMelee(img, info, scope.model, element);
+              updateModelCharge(map_flipped, zoom_factor, scope,
+                                info, scope.model, element.charge);
             });
           }
           updateModel();
           scope.onGameEvent('mapFlipped', function onMapFlipped() {
             var label_center = computeLabelCenter(info, scope.model);
-            labelElementService.updateOnFlipMap(map, label_center.flip, element.label);
+            labelElementService.updateOnFlipMap(map,
+                                                label_center.flip,
+                                                element.label);
+            labelElementService.updateOnFlipMap(map,
+                                                scope.model.state,
+                                                element.counter);
+            if(modelService.isCharging(scope.model)) {
+              labelElementService.updateOnFlipMap(map,
+                                                  scope.model.state.cha.s,
+                                                  element.charge.label);
+            }
           }, scope);
           scope.onGameEvent('changeModel-'+scope.model.state.stamp,
                             updateModel, scope);
         }
       };
-      function createModelElement(info, model,
-                                  svgNS, over_models_container, parent) {
+      function createModelElement(info, model, svgNS,
+                                  over_models_container,
+                                  under_models_container,
+                                  parent) {
         var aura = document.createElementNS(svgNS, 'circle');
         aura.setAttribute('cx', (info.img[0].width/2)+'');
         aura.setAttribute('cy', (info.img[0].height/2)+'');
@@ -272,6 +296,16 @@ angular.module('clickApp.directives')
         area.style.visibility = 'hidden';
         parent.appendChild(area);
 
+        var charge_path = document.createElementNS(svgNS, 'rect');
+        charge_path.style.visibility = 'hidden';
+        charge_path.classList.add('model-charge-path');
+        under_models_container.appendChild(charge_path);
+        var charge_target = document.createElementNS(svgNS, 'circle');
+        charge_target.style.visibility = 'hidden';
+        charge_target.classList.add('model-charge-target');
+        over_models_container.appendChild(charge_target);
+        var charge_label = labelElementService.create(svgNS, over_models_container);
+
         return { container: parent,
                  aura: aura,
                  base: base,
@@ -296,6 +330,10 @@ angular.module('clickApp.directives')
                  melee: melee,
                  reach: reach,
                  strike: strike,
+                 charge: { path: charge_path,
+                           label: charge_label,
+                           target: charge_target,
+                         },
                };
       }
       function updateModelPosition(img, model, element) {
@@ -517,6 +555,78 @@ angular.module('clickApp.directives')
         else {
           element.area.style.visibility = 'hidden';
         }
+      }
+      function updateModelCharge(map_flipped, zoom_factor, scope,
+                                 info, model, charge) {
+        if(!modelService.isCharging(model)) {
+          charge.path.style.visibility = 'hidden';
+          charge.target.style.visibility = 'hidden';
+          labelElementService.update(map_flipped,
+                                     zoom_factor,
+                                     model.state,
+                                     model.state,
+                                     '',
+                                     charge.label);
+          return;
+        }
+        var charge_length = pointService.distanceTo(model.state, model.state.cha.s);
+        var charge_dir = pointService.directionTo(model.state, model.state.cha.s);
+        var charge_middle = pointService.translateInDirection(charge_length/2,
+                                                              charge_dir,
+                                                              model.state.cha.s);
+        charge.path.setAttribute('width', (info.base_radius*2)+'');
+        charge.path.setAttribute('height', charge_length+'');
+        charge.path.setAttribute('x', (charge_middle.x-info.base_radius)+'');
+        charge.path.setAttribute('y', (charge_middle.y-charge_length/2)+'');
+        charge.path.setAttribute('transform', [
+          'rotate(',
+          charge_dir,
+          ',',
+          charge_middle.x,
+          ',',
+          charge_middle.y,
+          ')'
+        ].join(''));
+        charge.path.style.visibility = 'visible';
+
+        labelElementService.update(map_flipped,
+                                   zoom_factor,
+                                   model.state.cha.s,
+                                   model.state.cha.s,
+                                   (Math.round(charge_length*10)/100)+'',
+                                   charge.label);
+
+        var charge_target_visibility = 'hidden';
+        if(gameModelSelectionService.in('local', model.state.stamp, scope.game.model_selection) &&
+           R.exists(model.state.cha.t)) {
+          var target = gameModelsService.findStamp(model.state.cha.t, scope.game.models);
+          if(R.exists(target)) {
+            var target_info = gameFactionsService.getModelInfo(target.state.info, scope.factions);
+            charge.target.setAttribute('cx', (target.state.x)+'');
+            charge.target.setAttribute('cy', (target.state.y)+'');
+            charge.target.setAttribute('r', (target_info.base_radius)+'');
+
+            var melee_range = 0;
+            if(modelService.isMeleeDisplayed('mm', model)) {
+              melee_range = 5;
+            }
+            if(modelService.isMeleeDisplayed('mr', model)) {
+              melee_range = 20;
+            }
+            if(modelService.isMeleeDisplayed('ms', model)) {
+              melee_range = 40;
+            }
+            var distance_to_target = pointService.distanceTo(target.state, model.state);
+            if(distance_to_target <= melee_range + info.base_radius + target_info.base_radius) {
+              charge.target.classList.add('reached');
+            }
+            else {
+              charge.target.classList.remove('reached');
+            }
+            charge_target_visibility = 'visible';
+          }
+        }
+        charge.target.style.visibility = charge_target_visibility;
       }
       function computeLabelCenter(info, model) {
         var label_text_center_y_down = model.state.y + info.base_radius + 6;

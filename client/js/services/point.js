@@ -19,8 +19,26 @@ self.pointServiceFactory = function pointServiceFactory() {
     rotateLeft: function pointRotateLeft(angle, point) {
       return R.assoc('r', point.r - angle, point);
     },
+    rotateLeftAround: function pointRotateLeftAround(angle, center, point) {
+      var direction = pointService.directionTo(point, center);
+      var distance = pointService.distanceTo(point, center);
+      var new_direction = direction - angle;
+      return R.pipe(
+        R.assoc('x', center.x + distance * Math.sin(new_direction * Math.PI / 180)),
+        R.assoc('y', center.y - distance * Math.cos(new_direction * Math.PI / 180))
+      )(point);
+    },
     rotateRight: function pointRotateRight(angle, point) {
       return R.assoc('r', point.r + angle, point);
+    },
+    rotateRightAround: function pointRotateLeftAround(angle, center, point) {
+      var direction = pointService.directionTo(point, center);
+      var distance = pointService.distanceTo(point, center);
+      var new_direction = direction + angle;
+      return R.pipe(
+        R.assoc('x', center.x + distance * Math.sin(new_direction * Math.PI / 180)),
+        R.assoc('y', center.y - distance * Math.cos(new_direction * Math.PI / 180))
+      )(point);
     },
     shiftLeft: function pointShiftLeft(dist, point) {
       return R.assoc('x', point.x - dist, point);

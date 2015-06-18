@@ -3,6 +3,7 @@
 self.modelServiceFactory = function modelServiceFactory(settingsService,
                                                         pointService,
                                                         gameFactionsService) {
+  var CHARGE_EPSILON = 0.1;
   var DEFAULT_MOVES = {
     Move: 10,
     MoveSmall: 5,
@@ -10,6 +11,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     RotateSmall: 5,
     Shift: 10,
     ShiftSmall: 1,
+    RotateCharge: 10,
+    RotateChargeSmall: 2,
   };
   var MOVES = R.clone(DEFAULT_MOVES);
   settingsService.register('Moves',
@@ -37,6 +40,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           aur: null,
           are: null,
           rml: null,
+          cml: null,
+          cha: null,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
@@ -119,93 +124,96 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         model.state.dsp = R.append('w', model.state.dsp);
       }
     },
-    checkState: function modelCheckState(factions, state) {
+    checkState: function modelCheckState(factions, target, state) {
       var info = gameFactionsService.getModelInfo(state.info, factions);
       var radius = info.base_radius;
-      state.x = Math.max(0+radius, Math.min(480-radius, state.x));
-      state.y = Math.max(0+radius, Math.min(480-radius, state.y));
-      return state;
+      return R.pipe(
+        R.assoc('x', Math.max(0+radius, Math.min(480-radius, state.x))),
+        R.assoc('y', Math.max(0+radius, Math.min(480-radius, state.y))),
+        ensureChargeLength,
+        ensureChargeOrientation$(target)
+      )(state);
     },
     setPosition: function modelSet(factions, pos, model) {
       model.state = R.pipe(
         R.assoc('x', pos.x),
         R.assoc('y', pos.y),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     setOrientation: function modelSet(factions, orientation, model) {
       model.state = R.pipe(
         R.assoc('r', orientation),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     orientTo: function modelSet(factions, other, model) {
       model.state = R.pipe(
         R.assoc('r', pointService.directionTo(other.state, model.state)),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftPosition: function modelSet(factions, shift, model) {
       model.state = R.pipe(
         R.assoc('x', model.state.x + shift.x),
         R.assoc('y', model.state.y + shift.y),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     moveFront: function modelMoveFront(factions, small, model) {
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       model.state = R.pipe(
         pointService.moveFront$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     moveBack: function modelMoveBack(factions, small, model) {
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       model.state = R.pipe(
         pointService.moveBack$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     rotateLeft: function modelRotateLeft(factions, small, model) {
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       model.state = R.pipe(
         pointService.rotateLeft$(angle),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     rotateRight: function modelRotateRight(factions, small, model) {
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       model.state = R.pipe(
         pointService.rotateRight$(angle),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftLeft: function modelShiftLeft(factions, small, model) {
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftLeft$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftRight: function modelShiftRight(factions, small, model) {
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftRight$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftUp: function modelShiftUp(factions, small, model) {
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftUp$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftDown: function modelShiftDown(factions, small, model) {
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftDown$(dist),
-        modelService.checkState$(factions)
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     resetDamage: function modelResetDamage(model) {
@@ -399,6 +407,97 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         model.state.dsp = R.append('u', model.state.dsp);
       }
     },
+    startCharge: function modelStartCharge(model) {
+      model.state = R.assoc('cha', {
+        s: R.pick(['x','y'], model.state),
+        t: null
+      }, model.state);
+    },
+    isCharging: function modelIsCharging(model) {
+      return R.exists(model.state.cha);
+    },
+    chargeTarget: function modelChargeTarget(model) {
+      if(!modelService.isCharging(model)) return null;
+      return R.path(['state','cha','t'], model);
+    },
+    endCharge: function modelEndCharge(model) {
+      model.state = R.assoc('cha', null, model.state);
+    },
+    setChargeTarget: function modelSetChargeTarget(factions, other, model) {
+      model.state.cha = R.assoc('t', other.state.stamp, model.state.cha);
+      model.state = R.pipe(
+        R.assoc('r', pointService.directionTo(other.state, model.state)),
+        modelService.checkState$(factions, other)
+      )(model.state);
+    },
+    chargeMaxLength: function modelChargeMaxLength(model) {
+      return R.path(['state','cml'], model);
+    },
+    setChargeMaxLength: function modelSetChargeMaxLength(value, model) {
+      model.state = R.assoc('cml', value, model.state);
+    },
+    moveFrontCharge: function modelMoveFrontCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      var direction = pointService.directionTo(model.state, model.state.cha.s);
+      var distance = pointService.distanceTo(model.state, model.state.cha.s);
+      if(CHARGE_EPSILON > distance) direction = model.state.r;
+      model.state = R.pipe(
+        pointService.translateInDirection$(dist, direction), 
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    moveBackCharge: function modelMoveBackCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      var direction = pointService.directionTo(model.state.cha.s, model.state);
+      var distance = pointService.distanceTo(model.state, model.state.cha.s);
+      if(dist > distance) dist = distance;
+      model.state = R.pipe(
+        pointService.translateInDirection$(dist, direction),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    rotateLeftCharge: function modelRotateLeftCharge(factions, target, small, model) {
+      var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
+      model.state = R.pipe(
+        pointService.rotateLeftAround$(angle, model.state.cha.s),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    rotateRightCharge: function modelRotateRightCharge(factions, target, small, model) {
+      var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
+      model.state = R.pipe( 
+        pointService.rotateRightAround$(angle, model.state.cha.s),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    shiftLeftCharge: function modelShiftLeftCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftLeft$(dist),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    shiftRightCharge: function modelShiftRightCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftRight$(dist),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    shiftUpCharge: function modelShiftUpCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftUp$(dist),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
+    shiftDownCharge: function modelShiftDownCharge(factions, target, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftDown$(dist),
+        modelService.checkState$(factions, target)
+      )(model.state);
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {
@@ -428,6 +527,35 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }, 0)
     )(damage);
   }
+  function ensureChargeLength(state) {
+    if(R.exists(state.cha) &&
+       R.exists(state.cml)) {
+      var distance = pointService.distanceTo(state, state.cha.s);
+      if(distance > state.cml*10) {
+        var direction = pointService.directionTo(state, state.cha.s);
+        var position = pointService.translateInDirection(state.cml*10, direction,
+                                                         state.cha.s);
+        return R.pipe(
+          R.assoc('x', position.x),
+          R.assoc('y', position.y)
+        )(state);
+      }
+    }
+    return state;
+  }
+  function ensureChargeOrientation(target, state) {
+    if(R.exists(state.cha)) {
+      if(R.exists(target)) {
+        return R.assoc('r', pointService.directionTo(target.state, state), state);
+      }
+      var distance = pointService.distanceTo(state, state.cha.s);
+      var direction = CHARGE_EPSILON > distance ? state.r :
+          pointService.directionTo(state, state.cha.s);
+      return R.assoc('r', direction, state);
+    }
+    return state;
+  }
+  var ensureChargeOrientation$ = R.curry(ensureChargeOrientation);
   R.curryService(modelService);
   return modelService;
 };

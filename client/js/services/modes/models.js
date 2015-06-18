@@ -132,6 +132,25 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
         return null;
       });
   };
+  models_actions.setChargeMaxLength = function modelSetChargeMaxLength(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var value = R.defaultTo(0, modelService.chargeMaxLength(model));
+    promptService.prompt('prompt',
+                         'Set charge max length :',
+                         value)
+      .then(function(value) {
+        value = (value === 0) ? null : value;
+        gameService.executeCommand('onModels', 'setChargeMaxLength', value,
+                                   stamps, scope, scope.game);
+        return value;
+      })
+      .catch(function(error) {
+        gameService.executeCommand('onModels', 'setChargeMaxLength', null,
+                                   stamps, scope, scope.game);
+        return null;
+      });
+  };
   models_actions.toggleLeaderDisplay = function modelToggleLeaderDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('onModels', 'toggleLeaderDisplay',
@@ -295,6 +314,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleLeaderDisplay': 'alt+l',
     'toggleCtrlAreaDisplay': 'shift+c',
     'setRulerMaxLength': 'shift+m',
+    'setChargeMaxLength': 'alt+m',
     'toggleMeleeDisplay': 'm',
     'toggleReachDisplay': 'r',
     'toggleStrikeDisplay': 's',
@@ -323,6 +343,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   var models_buttons = [
     [ 'Delete', 'deleteSelection' ],
     [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+    [ 'Charge Max Len.', 'setChargeMaxLength' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],

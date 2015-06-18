@@ -124,5 +124,47 @@ describe('point', function() {
         });
       });
     });
+    
+    describe('rotateLeftAround(<angle>, <center>)', function() {
+      using([
+        [ 'angle' ,  'res'       ],
+        [ 90      , { x: 239.99999999999997, y: 360 } ],
+        [ 180     , { x: 360, y: 240.00000000000003 } ],
+        [ -90     , { x: 240, y: 120 } ],
+        [ 45      , { x: 155.1471862576143, y: 324.8528137423857 } ],
+        [ 135     , { x: 324.8528137423857, y: 324.8528137423857 } ],
+      ], function(e, d) {
+        it('should return rotated point, '+d, function() {
+          expect(this.pointService.rotateLeftAround(e.angle, {
+            x: 240,
+            y: 240
+          }, {
+            x: 120,
+            y: 240
+          })).toEqual(e.res);
+        });
+      });
+    });
+    
+    describe('rotateRightAround(<angle>, <center>)', function() {
+      using([
+        [ 'angle' ,  'res'       ],
+        [ 90      , { x: 240, y: 120 } ],
+        [ 180     , { x: 360, y: 240 } ],
+        [ -90     , { x: 239.99999999999997, y: 360 } ],
+        [ 45      , { x: 155.1471862576143, y: 155.1471862576143 } ],
+        [ 135     , { x: 324.8528137423857, y: 155.1471862576143 } ],
+      ], function(e, d) {
+        it('should return rotated point, '+d, function() {
+          expect(this.pointService.rotateRightAround(e.angle, {
+            x: 240,
+            y: 240
+          }, {
+            x: 120,
+            y: 240
+          })).toEqual(e.res);
+        });
+      });
+    });
   });
 });
