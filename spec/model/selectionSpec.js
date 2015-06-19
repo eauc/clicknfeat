@@ -441,7 +441,6 @@ describe('select model', function() {
 
       describe('inSingle(<where>, <stamp>)', function() {
         beforeEach(function() {
-          this.remove = ['stamp2', 'stamp3'];
           this.selection = { local: { stamps: [] },
                              remote: { stamps: [] }
                            };

@@ -202,6 +202,33 @@ describe('select template', function() {
           });
         });
       });
+
+      describe('inSingle(<where>, <stamp>)', function() {
+        beforeEach(function() {
+          this.selection = { local: { stamps: [] },
+                             remote: { stamps: [] }
+                           };
+        });
+        
+        it('should check whether <stamp> is alone in selection', function() {
+          this.selection = this.gameTemplateSelectionService.set(e.where, 'stamp',
+                                                                 this.scope, this.selection);
+          expect(this.gameTemplateSelectionService.inSingle(e.where, 'other', this.selection))
+            .toBeFalsy();
+          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
+            .toBeTruthy();
+          
+          this.selection = this.gameTemplateSelectionService.set(e.where, 'other',
+                                                                 this.scope, this.selection);
+          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
+            .toBeFalsy();
+
+          this.selection = this.gameTemplateSelectionService.clear(e.where,
+                                                                   this.scope, this.selection);
+          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
+            .toBeFalsy();
+        });
+      });
     });
   });
 

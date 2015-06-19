@@ -506,6 +506,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
                other_info.base_radius
              );
     },
+    distanceToAoE: function modelDistanceToAoE(factions, aoe, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var aoe_size = aoe.state.s;
+      return ( pointService.distanceTo(aoe.state, model.state) -
+               info.base_radius -
+               aoe_size
+             );
+    },
     setB2B: function modelSetB2B(factions, other, model) {
       var direction = pointService.directionTo(model.state, other.state); 
       var info = gameFactionsService.getModelInfo(model.state.info, factions);

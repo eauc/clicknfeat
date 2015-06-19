@@ -13,6 +13,12 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       var stamps = R.path([where,'stamps'], selection);
       return R.find(R.eq(stamp), stamps);
     },
+    inSingle: function templateSelectionIn(where, stamp, selection) {
+      var stamps = R.path([where,'stamps'], selection);
+      return ( R.length(stamps) === 1 &&
+               stamp === stamps[0]
+             );
+    },
     get: function templateSelectionGet(where, selection) {
       return R.defaultTo([], R.path([where,'stamps'], selection))[0];
     },
@@ -38,10 +44,12 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       if('local' === where) {
         var mode = gameTemplatesService.modeForStamp(stamp, scope.game.templates);
         modesService.switchToMode(mode, scope, scope.modes);
+        checkSingleTemplateSelection(scope, ret);
       }
       
       scope.gameEvent('changeTemplate-'+stamp);
-      if(R.exists(previous_selection)) {
+      if(R.exists(previous_selection) &&
+         previous_selection !== stamp) {
         scope.gameEvent('changeTemplate-'+previous_selection);
       }
 
@@ -60,6 +68,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
 
         if('local' === where) {
           modesService.switchToMode('Default', scope, scope.modes);
+          checkSingleTemplateSelection(scope, ret);
         }
 
         scope.gameEvent('changeTemplate-'+stamp);
@@ -78,6 +87,7 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
 
       if('local' === where) {
         modesService.switchToMode('Default', scope, scope.modes);
+        checkSingleTemplateSelection(scope, ret);
       }
 
       if(R.exists(previous_selection)) {
@@ -86,6 +96,11 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
       return ret;
     },
   };
+  function checkSingleTemplateSelection(scope, selection) {
+    if(R.length(R.path(['local','stamps'], selection)) !== 1) {
+      scope.gameEvent('disableSingleAoESelection');
+    }
+  }
   R.curryService(gameTemplateSelectionService);
   return gameTemplateSelectionService;
 };

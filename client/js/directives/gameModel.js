@@ -155,6 +155,32 @@ angular.module('clickApp.directives')
                             onchangeSingleModelSelection, scope);
           scope.onGameEvent('disableSingleModelSelection',
                             onDisableSingleModelSelection, scope);
+
+          function onchangeSingleAoESelection(event, selected_aoe) {
+            // console.log('changeSingleAoESelection',
+            //             selected_aoe.state.stamp,
+            //             scope.model.state.stamp);
+            if(R.exists(selected_aoe)) {
+              var dist = modelService.distanceToAoE(scope.factions,
+                                                    selected_aoe,
+                                                    scope.model);
+              if(dist <= 0) {
+                element.container.classList.add('under-aoe');
+                return;
+              }
+            }
+            element.container.classList.remove('under-aoe');
+          }
+          function onDisableSingleAoESelection(event) {
+            // console.log('disableSingleAoESelection',
+            //             scope.model.state.stamp);
+            element.container.classList.remove('under-aoe');
+            element.container.classList.remove('b2b');
+          }
+          scope.onGameEvent('changeSingleAoESelection',
+                            onchangeSingleAoESelection, scope);
+          scope.onGameEvent('disableSingleAoESelection',
+                            onDisableSingleAoESelection, scope);
         }
       };
       function createModelElement(info, model, svgNS,

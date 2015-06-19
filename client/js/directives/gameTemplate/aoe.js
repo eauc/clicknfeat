@@ -63,6 +63,12 @@ angular.module('clickApp.directives')
                                        label_text_center,
                                        label_text,
                                        aoe.label);
+            $window.requestAnimationFrame(function _aoeTemplateElementUpdate2() {
+              if(gameTemplateSelectionService.inSingle('local', template.state.stamp,
+                                                       scope.game.template_selection)) {
+                scope.gameEvent('changeSingleAoESelection', template);
+              }
+            });
           });
         },
       };

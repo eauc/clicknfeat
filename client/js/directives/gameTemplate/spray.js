@@ -86,6 +86,12 @@ angular.module('clickApp.directives')
                                        label_text,
                                        spray.label);
             updateOrigin(scope.factions, local, origin_model, spray.origin);
+            $window.requestAnimationFrame(function _aoeTemplateElementUpdate2() {
+              if(gameTemplateSelectionService.inSingle('local', template.state.stamp,
+                                                       scope.game.template_selection)) {
+                scope.gameEvent('changeSingleAoESelection', null);
+              }
+            });
           });
         },
       };

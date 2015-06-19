@@ -328,6 +328,10 @@ ul.nav-tabs li {
     fill: #F60;
     visibility: visible;
 }
+.under-aoe .state-aura {
+    fill: #FFF;
+    visibility: visible;
+}
 
 /**************************
   Templates
