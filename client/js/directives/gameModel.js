@@ -96,6 +96,14 @@ angular.module('clickApp.directives')
               updateModelMelee(img, info, scope.model, element);
               updateModelCharge(map_flipped, zoom_factor, scope,
                                 info, scope.model, element.charge);
+
+              self.requestAnimationFrame(function _updateModel2() {
+                if(gameModelSelectionService.inSingle('local',
+                                                      scope.model.state.stamp,
+                                                      scope.game.model_selection)) {
+                  scope.gameEvent('changeSingleModelSelection', scope.model);
+                }
+              });
             });
           }
           updateModel();
@@ -115,6 +123,38 @@ angular.module('clickApp.directives')
           }, scope);
           scope.onGameEvent('changeModel-'+scope.model.state.stamp,
                             updateModel, scope);
+          function onchangeSingleModelSelection(event, selected_model) {
+            // console.log('changeSingleModelSelection',
+            //             selected_model.state.stamp,
+            //             scope.model.state.stamp);
+            if(selected_model.state.stamp !== scope.model.state.stamp) {
+              var dist = modelService.distanceTo(scope.factions,
+                                                 selected_model,
+                                                 scope.model);
+              if(dist < -0.1) {
+                element.container.classList.add('overlap');
+                element.container.classList.remove('b2b');
+                return;
+              }
+              else if(dist < 0.1) {
+                element.container.classList.remove('overlap');
+                element.container.classList.add('b2b');
+                return;
+              }
+            }
+            element.container.classList.remove('overlap');
+            element.container.classList.remove('b2b');
+          }
+          function onDisableSingleModelSelection(event) {
+            // console.log('disableSingleModelSelection',
+            //             scope.model.state.stamp);
+            element.container.classList.remove('overlap');
+            element.container.classList.remove('b2b');
+          }
+          scope.onGameEvent('changeSingleModelSelection',
+                            onchangeSingleModelSelection, scope);
+          scope.onGameEvent('disableSingleModelSelection',
+                            onDisableSingleModelSelection, scope);
         }
       };
       function createModelElement(info, model, svgNS,
@@ -122,12 +162,15 @@ angular.module('clickApp.directives')
                                   under_models_container,
                                   parent) {
         var aura = document.createElementNS(svgNS, 'circle');
-        aura.setAttribute('cx', (info.img[0].width/2)+'');
-        aura.setAttribute('cy', (info.img[0].height/2)+'');
-        aura.setAttribute('r', info.base_radius);
+        aura.classList.add('color-aura');
         aura.style.filter = 'url(#aura-filter)';
         aura.style.visibility = 'hidden';
         parent.appendChild(aura);
+
+        var state_aura = document.createElementNS(svgNS, 'circle');
+        state_aura.classList.add('state-aura');
+        state_aura.style.filter = 'url(#aura-filter)';
+        parent.appendChild(state_aura);
 
         var melee = document.createElementNS(svgNS, 'path');
         melee.classList.add('model-melee');
@@ -308,6 +351,7 @@ angular.module('clickApp.directives')
 
         return { container: parent,
                  aura: aura,
+                 state_aura: state_aura,
                  base: base,
                  direction: direction,
                  front_arc: front_arc,
@@ -352,9 +396,13 @@ angular.module('clickApp.directives')
         ].join(''));
       }
       function updateModelAura(img, info, model, element) {
-        element.aura.setAttribute('x', (img.width/2)+'');
-        element.aura.setAttribute('y', (img.height/2)+'');
-        element.aura.setAttribute('r', (info.base_radius*1.15)+'');
+        element.state_aura.setAttribute('cx', (img.width/2)+'');
+        element.state_aura.setAttribute('cy', (img.height/2)+'');
+        element.state_aura.setAttribute('r', (info.base_radius*1.2)+'');
+
+        element.aura.setAttribute('cx', (img.width/2)+'');
+        element.aura.setAttribute('cy', (img.height/2)+'');
+        element.aura.setAttribute('r', (info.base_radius*1.2)+'');
         if(modelService.isAuraDisplayed(model)) {
           element.aura.style.fill = model.state.aur;
           element.aura.style.visibility = 'visible';

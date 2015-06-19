@@ -498,6 +498,27 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         modelService.checkState$(factions, target)
       )(model.state);
     },
+    distanceTo: function modelDistanceTo(factions, other, model) {
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
+      return ( pointService.distanceTo(other.state, model.state) -
+               info.base_radius -
+               other_info.base_radius
+             );
+    },
+    setB2B: function modelSetB2B(factions, other, model) {
+      var direction = pointService.directionTo(model.state, other.state); 
+      var info = gameFactionsService.getModelInfo(model.state.info, factions);
+      var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
+      var distance = info.base_radius + other_info.base_radius;
+      var position = pointService.translateInDirection(distance, direction,
+                                                       other.state);
+      model.state = R.pipe(
+        R.assoc('x', position.x),
+        R.assoc('y', position.y),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
   };
   function initDamage(info) {
     if(info.type === 'warrior') {

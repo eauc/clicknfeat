@@ -93,9 +93,9 @@ describe('setSize template', function() {
 
     using([
       [ 'size', 'result' ],
-      [ 3     , { s: 15 } ],
-      [ 4     , { s: 20 } ],
-      [ 5     , { s: 25 } ],
+      [ 3     , 15       ],
+      [ 4     , 20       ],
+      [ 5     , 25       ],
     ], function(e, d) {
       describe('setSize(<size>), '+d, function() {
         beforeEach(function() {
@@ -106,7 +106,7 @@ describe('setSize template', function() {
 
         it('should set template size', function() {
           this.aoeTemplateService.setSize(e.size, this.template);
-          expect(this.template.state)
+          expect(this.aoeTemplateService.size(this.template))
             .toEqual(e.result);
         });
       });
@@ -123,9 +123,9 @@ describe('setSize template', function() {
 
     using([
       [ 'size', 'result' ],
-      [ 6     , { s: 6 } ],
-      [ 8     , { s: 8 } ],
-      [ 10    , { s: 10 } ],
+      [ 6     , 6        ],
+      [ 8     , 8        ],
+      [ 10    , 10       ],
     ], function(e, d) {
       describe('setSize(<size>), '+d, function() {
         beforeEach(function() {
@@ -136,7 +136,7 @@ describe('setSize template', function() {
 
         it('should set template size', function() {
           this.sprayTemplateService.setSize(e.size, this.template);
-          expect(this.template.state)
+          expect(this.sprayTemplateService.size(this.template))
             .toEqual(e.result);
         });
       });

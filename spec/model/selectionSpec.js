@@ -438,6 +438,29 @@ describe('select model', function() {
             .toHaveBeenCalledWith('changeModel-stamp2');
         });
       });
+
+      describe('inSingle(<where>, <stamp>)', function() {
+        beforeEach(function() {
+          this.remove = ['stamp2', 'stamp3'];
+          this.selection = { local: { stamps: [] },
+                             remote: { stamps: [] }
+                           };
+        });
+        
+        it('should check whether <stamp> is alone in selection', function() {
+          this.selection = this.gameModelSelectionService.set(e.where, ['stamp'],
+                                                              this.scope, this.selection);
+          expect(this.gameModelSelectionService.inSingle(e.where, 'other', this.selection))
+            .toBeFalsy();
+          expect(this.gameModelSelectionService.inSingle(e.where, 'stamp', this.selection))
+            .toBeTruthy();
+
+          this.selection = this.gameModelSelectionService.set(e.where, ['stamp', 'other'],
+                                                              this.scope, this.selection);
+          expect(this.gameModelSelectionService.inSingle(e.where, 'stamp', this.selection))
+            .toBeFalsy();
+        });
+      });
     });
   });
 

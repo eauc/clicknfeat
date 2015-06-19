@@ -56,6 +56,14 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
   model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    if(dom_event.ctrlKey &&
+       dom_event.shiftKey &&
+       model.state.stamp !== event.target.state.stamp) {
+      gameService.executeCommand('onModels', 'setB2B',
+                                 scope.factions, event.target,
+                                 stamps, scope, scope.game);
+      return;
+    }
     if(dom_event.shiftKey &&
        modelService.isCharging(model) &&
        model.state.stamp !== event.target.state.stamp) {
@@ -98,16 +106,6 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
       modelsModeService.actions[fwd](scope);
     };
   }
-  // model_actions.delete = function modelDelete(scope) {
-  //   var target = gameModelSelectionService.get('local', scope.game.model_selection);
-  //   gameService.executeCommand('deleteModels', [target], scope, scope.game);
-  // };
-  // model_actions.lock = function modelLock(scope) {
-  //   var stamp = gameModelSelectionService.get('local', scope.game.model_selection);
-  //   gameService.executeCommand('lockModels', [stamp], true, scope, scope.game);
-  //   modesService.switchToMode(gameModelsService.modeForStamp(stamp, scope.game.models),
-  //                             scope, scope.modes);
-  // };
 
   var model_default_bindings = {
     'createAoEOnModel': 'ctrl+a',

@@ -12,6 +12,9 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     if(R.isNil(R.find(R.eq(size), [3,4,5]))) return;
     temp.state = R.assoc('s', size * 5, temp.state);
   };
+  aoeTemplateService.size = function aoeTemplateSize(temp) {
+    return R.path(['state','s'], temp);
+  };
   aoeTemplateService.deviate = function aoeTemplateDeviate(dir, len, temp) {
     dir = temp.state.r + 60 * (dir-1);
     var max_len = R.defaultTo(len, R.path(['state','m'], temp));
@@ -73,6 +76,9 @@ self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(template
   sprayTemplateService.setSize = function sprayTemplateSetSize(size, temp) {
     if(R.isNil(R.find(R.eq(size), [6,8,10]))) return;
     temp.state = R.assoc('s', size, temp.state);
+  };
+  sprayTemplateService.size = function sprayTemplateSize(temp) {
+    return R.path(['state','s'], temp);
   };
   sprayTemplateService.origin = function sprayTemplateOrigin(temp) {
     return R.path(['state','o'], temp);

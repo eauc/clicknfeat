@@ -311,6 +311,24 @@ ul.nav-tabs li {
     stroke: #0FF;
 }
 
+.state-aura {
+    fill: transparent;
+    pointer-events: none;
+    visibility: hidden;
+}
+.b2b .color-aura,
+.overlap .color-aura {
+    visibility: hidden !important;
+}
+.b2b .state-aura {
+    fill: #FF0;
+    visibility: visible;
+}
+.overlap .state-aura {
+    fill: #F60;
+    visibility: visible;
+}
+
 /**************************
   Templates
 ***************************/

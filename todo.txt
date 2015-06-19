@@ -1,12 +1,13 @@
-index-dev.html
-unknown binding
+index-dev.html/app.min.js
+binding:
+- warn unknown binding
+- click events as bindings ?
 specs :
 - mockCtrl
 template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- charge
 - B2B : move / auras
 - under Aoe
 - toggle on multiple models -> toggle based on first value

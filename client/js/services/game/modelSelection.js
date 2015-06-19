@@ -13,6 +13,11 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
       var stamps = R.path([where,'stamps'], selection);
       return R.find(R.eq(stamp), stamps);
     },
+    inSingle: function modelSelectionInSingle(where, stamp, selection) {
+      var stamps = R.path([where,'stamps'], selection);
+      return ( R.length(stamps) === 1 &&
+               stamps[0] === stamp );
+    },
     get: function modelSelectionGet(where, selection) {
       return R.defaultTo([], R.path([where,'stamps'], selection));
     },
@@ -37,6 +42,7 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
 
       if('local' === where) {
         gameModelSelectionService.checkMode(scope, ret);
+        checkSingleSelection(scope, ret);
       }
       
       R.forEach(function(stamp) {
@@ -57,6 +63,7 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
 
       if('local' === where) {
         gameModelSelectionService.checkMode(scope, ret);
+        checkSingleSelection(scope, ret);
       }
       
       R.forEach(function(stamp) {
@@ -72,6 +79,7 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
       
       if('local' === where) {
         gameModelSelectionService.checkMode(scope, ret);
+        checkSingleSelection(scope, ret);
       }
 
       R.forEach(function(stamp) {
@@ -86,6 +94,11 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
       return gameModelSelectionService.removeFrom(where, previous, scope, selection);
     },
   };
+  function checkSingleSelection(scope, selection) {
+    if(1 !== R.length(R.path(['local','stamps'], selection))) {
+      scope.gameEvent('disableSingleModelSelection');
+    }
+  }
   R.curryService(gameModelSelectionService);
   return gameModelSelectionService;
 };
