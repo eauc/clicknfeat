@@ -46,7 +46,9 @@ angular.module('clickApp.controllers')
         $scope.factions_ready,
         $scope.scenario_ready,
         $scope.settings_ready,
-      ]);
+      ]).then(function() {
+        console.log('data ready');
+      });
       $scope.doResetSettings = function doResetSettings(data) {
         $scope.settings = R.pipe(
           settingsService.bind,

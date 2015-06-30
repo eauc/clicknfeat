@@ -48,8 +48,8 @@ angular.module('clickApp.directives')
           scope.$on('$destroy', function gameModelOnDestroy() {
             console.log('gameModelOnDestroy');
             over_models_container.removeChild(element.label.label);
-            over_models_container.removeChild(element.counter);
-            over_models_container.removeChild(element.charge.label);
+            over_models_container.removeChild(element.counter.label);
+            over_models_container.removeChild(element.charge.label.label);
             over_models_container.removeChild(element.charge.target);
             under_models_container.removeChild(element.charge.path);
           });

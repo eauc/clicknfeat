@@ -8,14 +8,13 @@ template:
 - locked flag in state / divide templates list by flag
 - rework onTemplates/onStamps similar to model
 model
-- B2B : move / auras
-- under Aoe
+- multiple selection : no los
 - toggle on multiple models -> toggle based on first value
 - select all friendly
 - lock
+- incorporeal
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
-- images / other types : incorporeal
 - highlight models in melee ?
 los
 - line
