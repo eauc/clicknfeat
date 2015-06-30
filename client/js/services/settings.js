@@ -32,6 +32,7 @@ self.settingsServiceFactory = function settingsServiceFactory(localStorageServic
       )(null);
     },
     bind: function settingsBind(settings) {
+      settings = R.defaultTo({}, settings);
       return R.pipe(
         R.keys,
         R.reduce(function(mem, type) {
