@@ -32,17 +32,23 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   };
   models_actions.toggleImageDisplay = function modelToggleImageDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleImageDisplay',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isImageDisplayed(model);
+    gameService.executeCommand('onModels', 'setImageDisplay', !present,
                                stamps, scope, scope.game);
   };
   models_actions.toggleWreckDisplay = function modelToggleWreckDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleWreckDisplay',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isWreckDisplayed(model);
+    gameService.executeCommand('onModels', 'setWreckDisplay', !present,
                                stamps, scope, scope.game);
   };
   models_actions.toggleUnitDisplay = function modelToggleUnitDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleUnitDisplay',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isUnitDisplayed(model);
+    gameService.executeCommand('onModels', 'setUnitDisplay', !present,
                                stamps, scope, scope.game);
   };
   models_actions.setUnit = function modelSetUnit(scope, event) {
@@ -65,17 +71,23 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   };
   models_actions.toggleMeleeDisplay = function modelToggleMeleeDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'mm',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isMeleeDisplayed('mm', model);
+    gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
                                stamps, scope, scope.game);
   };
   models_actions.toggleReachDisplay = function modelToggleReachDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'mr',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isMeleeDisplayed('mr', model);
+    gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
                                stamps, scope, scope.game);
   };
   models_actions.toggleStrikeDisplay = function modelToggleStrikeDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleMeleeDisplay', 'ms',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isMeleeDisplayed('ms', model);
+    gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
                                stamps, scope, scope.game);
   };
   models_actions.setNextImage = function modelSetNextImage(scope) {
@@ -85,7 +97,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   };
   models_actions.toggleCounterDisplay = function modelToggleCounterDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleCounterDisplay', 'c',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isCounterDisplayed('c', model);
+    gameService.executeCommand('onModels', 'setCounterDisplay', 'c', !present,
                                stamps, scope, scope.game);
   };
   models_actions.incrementCounter = function modelIncrementCounter(scope) {
@@ -100,7 +114,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   };
   models_actions.toggleSoulsDisplay = function modelToggleSoulsDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleCounterDisplay', 's',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isCounterDisplayed('s', model);
+    gameService.executeCommand('onModels', 'setCounterDisplay', 's', !present,
                                stamps, scope, scope.game);
   };
   models_actions.incrementSouls = function modelIncrementSouls(scope) {
@@ -153,12 +169,16 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   };
   models_actions.toggleLeaderDisplay = function modelToggleLeaderDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleLeaderDisplay',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isLeaderDisplayed(model);
+    gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
                                stamps, scope, scope.game);
   };
   models_actions.toggleCtrlAreaDisplay = function modelToggleCtrlAreaDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'toggleCtrlAreaDisplay',
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isCtrlAreaDisplayed(scope.factions, model);
+    gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
                                stamps, scope, scope.game);
   };
   var auras = [
@@ -172,7 +192,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   R.forEach(function(aura) {
     models_actions['toggle'+aura[0]+'AuraDisplay'] = function modelToggleAuraDisplay(scope) {
       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      gameService.executeCommand('onModels', 'toggleAuraDisplay', aura[1],
+      var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+      var present = modelService.auraDisplay(model);
+      gameService.executeCommand('onModels', 'setAuraDisplay',
+                                 (present === aura[1]) ? null : aura[1],
                                  stamps, scope, scope.game);
     };
   }, auras);
@@ -181,14 +204,20 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     var size = area === 0 ? 10 : area;
     models_actions['toggle'+size+'InchesAreaDisplay'] = function modelToggleAreaDisplay(scope) {
       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      gameService.executeCommand('onModels', 'toggleAreaDisplay', size,
+      var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+      var present = modelService.areaDisplay(model);
+      gameService.executeCommand('onModels', 'setAreaDisplay',
+                                 (present === size) ? null : size,
                                  stamps, scope, scope.game);
     };
     var big_size = size + 10;
     models_actions['toggle'+big_size+'InchesAreaDisplay'] =
       function modelToggle10InchesAreaDisplay(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        gameService.executeCommand('onModels', 'toggleAreaDisplay', big_size,
+        var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+        var present = modelService.areaDisplay(model);
+        gameService.executeCommand('onModels', 'setAreaDisplay',
+                                   (present === big_size) ? null : big_size,
                                    stamps, scope, scope.game);
       };
   }, areas);
@@ -204,7 +233,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   R.forEach(function(effect) {
     models_actions['toggle'+effect[0]+'EffectDisplay'] = function modelToggleEffectDisplay(scope) {
       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      gameService.executeCommand('onModels', 'toggleEffectDisplay', effect[1],
+      var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+      var present = modelService.isEffectDisplayed(effect[1], model);
+      gameService.executeCommand('onModels', 'setEffectDisplay', effect[1], !present,
                                  stamps, scope, scope.game);
     };
   }, effects);

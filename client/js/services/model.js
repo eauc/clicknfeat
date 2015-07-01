@@ -95,6 +95,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var next_img = (model.state.img >= imgs.length-1) ? 0 : model.state.img+1;
       model.state = R.assoc('img', next_img, model.state);
     },
+    setImageDisplay: function modelSetImageDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('i', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('i'), model.state.dsp);
+      }
+    },
     toggleImageDisplay: function modelToggleImageDisplay(model) {
       if(modelService.isImageDisplayed(model)) {
         model.state.dsp = R.reject(R.eq('i'), model.state.dsp);
@@ -115,6 +123,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
       var link = modelService.isImageDisplayed(model) ? img.link : null;
       return R.assoc('link', link, img);
+    },
+    setWreckDisplay: function modelSetWreckDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('w', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('w'), model.state.dsp);
+      }
     },
     toggleWreckDisplay: function modelToggleWreckDisplay(model) {
       if(modelService.isWreckDisplayed(model)) {
@@ -291,6 +307,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var value = Math.max(0, R.defaultTo(0, model.state[counter]) - 1);
       model.state = R.assoc(counter, value, model.state);
     },
+    setCounterDisplay: function modelSetCounterDisplay(counter, set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append(counter, model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq(counter), model.state.dsp);
+      }
+    },
     toggleCounterDisplay: function modelToggleCounterDisplay(counter, model) {
       if(modelService.isCounterDisplayed(counter, model)) {
         model.state.dsp = R.reject(R.eq(counter), model.state.dsp);
@@ -301,6 +325,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     isLeaderDisplayed: function modelIsLeaderDisplayed(model) {
       return !!R.find(R.eq('l'), model.state.dsp);
+    },
+    setLeaderDisplay: function modelSetLeaderDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('l', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('l'), model.state.dsp);
+      }
     },
     toggleLeaderDisplay: function modelToggleLeaderDisplay(model) {
       if(modelService.isLeaderDisplayed(model)) {
@@ -313,6 +345,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     isEffectDisplayed: function modelIsEffectDisplayed(effect, model) {
       return !!R.find(R.eq(effect), R.defaultTo([], model.state.eff));
     },
+    setEffectDisplay: function modelSetEffectDisplay(effect, set, model) {
+      if(set) {
+        model.state.eff = R.uniq(R.append(effect, R.defaultTo([], model.state.eff)));
+      }
+      else {
+        model.state.eff = R.reject(R.eq(effect), R.defaultTo([], model.state.eff));
+      }
+    },
     toggleEffectDisplay: function modelToggleEffectDisplay(effect, model) {
       if(modelService.isEffectDisplayed(effect, model)) {
         model.state.eff = R.reject(R.eq(effect), R.defaultTo([], model.state.eff));
@@ -324,6 +364,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     isAuraDisplayed: function modelIsAuraDisplayed(model) {
       return R.exists(model.state.aur);
     },
+    auraDisplay: function modelAuraDisplay(model) {
+      return model.state.aur;
+    },
+    setAuraDisplay: function modelSetAuraDisplay(aura, model) {
+      model.state.aur = aura;
+    },
     toggleAuraDisplay: function modelToggleAuraDisplay(aura, model) {
       model.state.aur = (aura === model.state.aur) ? null : aura;
     },
@@ -333,6 +379,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
                ( 'Number' === R.type(info.focus) ||'Number' === R.type(info.fury) ) &&
                !!R.find(R.eq('a'), model.state.dsp)
              );
+    },
+    setCtrlAreaDisplay: function modelSetCtrlAreaDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('a', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('a'), model.state.dsp);
+      }
     },
     toggleCtrlAreaDisplay: function modelToggleCtrlAreaDisplay(model) {
       if(!!R.find(R.eq('a'), model.state.dsp)) {
@@ -344,6 +398,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     isAreaDisplayed: function modelIsAreaDisplayed(model) {
       return R.exists(model.state.are);
+    },
+    areaDisplay: function modelAreaDisplay(model) {
+      return model.state.are;
+    },
+    setAreaDisplay: function modelSetAreaDisplay(area, model) {
+      model.state.are = area;
     },
     toggleAreaDisplay: function modelToggleAreaDisplay(area, model) {
       model.state.are = (area === model.state.are) ? null : area;
@@ -372,6 +432,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     isMeleeDisplayed: function modelIsMeleeDisplayed(melee, model) {
       return !!R.find(R.eq(melee), model.state.dsp);
     },
+    setMeleeDisplay: function modelSetMeleeDisplay(melee, set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append(melee, model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq(melee), model.state.dsp);
+      }
+    },
     toggleMeleeDisplay: function modelToggleMeleeDisplay(melee, model) {
       if(modelService.isMeleeDisplayed(melee, model)) {
         model.state.dsp = R.reject(R.eq(melee), model.state.dsp);
@@ -398,6 +466,14 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     setUnit: function modelSetUnit(unit, model) {
       model.state = R.assoc('u', unit, model.state);
+    },
+    setUnitDisplay: function modelSetUnitDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('u', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('u'), model.state.dsp);
+      }
     },
     toggleUnitDisplay: function modelToggleUnitDisplay(model) {
       if(modelService.isUnitDisplayed(model)) {

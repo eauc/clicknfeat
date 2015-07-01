@@ -7,24 +7,43 @@ describe('model effects', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection' },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
     ]));
 
     when('user toggles leader display on models', function() {
-        this.modelsModeService.actions.toggleLeaderDisplay(this.scope);
+      this.modelsModeService.actions
+        .toggleLeaderDisplay(this.scope);
     }, function() {
-      it('should toggle leader display on local selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'toggleLeaderDisplay',
-                                'gameModelSelection.get.returnValue',
-                                this.scope, this.scope.game);
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s leaderDisplayed is '+e.first, function() {
+          this.modelService.isLeaderDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle leader display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isLeaderDisplayed)
+              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setLeaderDisplay', e.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
       });
     });
 
@@ -38,16 +57,30 @@ describe('model effects', function() {
       [ 'KD' , 'k' ],
       [ 'Stationary' , 's' ],
     ], function(e, d) {
-      when('user toggles '+e.effect+' effect display on models', function() {
+      when('user toggles '+e.effect+' display on models', function() {
         this.modelsModeService.actions['toggle'+e.effect+'EffectDisplay'](this.scope);
       }, function() {
-        it('should toggle '+e.effect+' effect display on local selection', function() {
-          expect(this.gameModelSelectionService.get)
-            .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'toggleEffectDisplay', e.flag,
-                                  'gameModelSelection.get.returnValue',
-                                  this.scope, this.scope.game);
+        using([
+          ['first', 'set'],
+          [ true  , false],
+          [ false , true ],
+        ], function(ee, dd) {
+          when('first selected model\'s '+e.effect+'EffectDisplayed is '+ee.first, function() {
+            this.modelService.isEffectDisplayed._retVal = ee.first;
+          }, function() {
+            it('should toggle '+e.effect+' display on local selection, '+dd, function() {
+              expect(this.gameModelSelectionService.get)
+                .toHaveBeenCalledWith('local', 'selection');
+              expect(this.gameModelsService.findStamp)
+                .toHaveBeenCalledWith('stamp1', 'models');
+              expect(this.modelService.isEffectDisplayed)
+                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setEffectDisplay', e.flag, ee.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+            });
+          });
         });
       });
     });
@@ -62,39 +95,31 @@ describe('model effects', function() {
       }
     ]));
 
-    describe('isLeaderDisplayed()', function() {
-      using([
-        [ 'dsp'         , 'isDisplayed' ],
-        [ []            , false ],
-        [ ['a', 'w']    , false ],
-        [ ['l']         , true ],
-        [ ['a','l','w'] , true ],
-      ], function(e, d) {
-        it('should check whether model\'s leader is displayed, '+d, function() {
-          expect(this.modelService.isLeaderDisplayed({
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
+    describe('toggleLeaderDisplay()', function() {
+      it('should toggle leader display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleLeaderDisplay(this.model);
+        expect(this.modelService.isLeaderDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleLeaderDisplay(this.model);
+        expect(this.modelService.isLeaderDisplayed(this.model))
+          .toBeFalsy();
       });
     });
 
-    describe('toggleLeaderDisplay()', function() {
-      using([
-        [ 'dsp'         , 'new_dsp'     ],
-        [ []            , ['l']  ],
-        [ ['l']         , []            ],
-        [ ['a','w']     , ['a','w','l'] ],
-        [ ['a','l','w'] , ['a','w']     ],
-      ], function(e, d) {
-        it('should toggle leader display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleLeaderDisplay(this.model);
-          
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('setLeaderDisplay(<set>)', function() {
+      it('should set leader display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setLeaderDisplay(true, this.model);
+        expect(this.modelService.isLeaderDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setLeaderDisplay(false, this.model);
+        expect(this.modelService.isLeaderDisplayed(this.model))
+          .toBeFalsy();
       });
     });
 
@@ -108,39 +133,31 @@ describe('model effects', function() {
       [ 'KD' , 'k' ],
       [ 'Stationary' , 's' ],
     ], function(ee, dd) {
-      describe('isEffectDisplayed(<effect>), '+dd, function() {
-        using([
-          [ 'eff'             , 'isDisplayed' ],
-          [ []                , false ],
-          [ ['a', 'w']        , false ],
-          [ [ee.flag]         , true ],
-          [ ['a',ee.flag,'w'] , true ],
-        ], function(e, d) {
-          it('should check whether model\'s effect is displayed, '+d, function() {
-            expect(this.modelService.isEffectDisplayed(ee.flag, {
-              state: { eff: e.eff }
-            })).toBe(e.isDisplayed);
-          });
+      describe('toggleEffectDisplay(<effect>)', function() {
+        it('should toggle effect display for <model>', function() {
+          this.model = { state: { dsp: [] } };
+          
+          this.modelService.toggleEffectDisplay(ee.flag, this.model);
+          expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
+            .toBeTruthy();
+          
+          this.modelService.toggleEffectDisplay(ee.flag, this.model);
+          expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
+            .toBeFalsy();
         });
       });
 
-      describe('toggleEffectDisplay(<effect>), '+dd, function() {
-        using([
-          [ 'eff'             , 'new_eff'     ],
-          [ []                , [ee.flag]  ],
-          [ [ee.flag]         , []            ],
-          [ ['a','w']         , ['a','w',ee.flag] ],
-          [ ['a',ee.flag,'w'] , ['a','w']     ],
-        ], function(e, d) {
-          it('should toggle effect display for <model>, '+d, function() {
-            this.model = {
-              state: { eff: e.eff }
-            };
-            
-            this.modelService.toggleEffectDisplay(ee.flag, this.model);
-            
-            expect(this.model.state.eff).toEqual(e.new_eff);
-          });
+      describe('setEffectDisplay(<set>)', function() {
+        it('should set effect display for <model>', function() {
+          this.model = { state: { dsp: [] } };
+          
+          this.modelService.setEffectDisplay(ee.flag, true, this.model);
+          expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
+            .toBeTruthy();
+          
+          this.modelService.setEffectDisplay(ee.flag, false, this.model);
+          expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
+            .toBeFalsy();
         });
       });
     });

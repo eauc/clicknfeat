@@ -7,13 +7,13 @@ describe('model unit', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
-        this.modelService = spyOnService('model');
         this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection',
-                               models: 'models'
-                             },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -23,16 +23,30 @@ describe('model unit', function() {
       this.modelsModeService.actions
         .toggleUnitDisplay(this.scope);
     }, function() {
-      it('should toggle unit display on local selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'toggleUnitDisplay',
-                                'gameModelSelection.get.returnValue',
-                                this.scope, this.scope.game);
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s unitDisplayed is '+e.first, function() {
+          this.modelService.isUnitDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle unit display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isUnitDisplayed)
+              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setUnitDisplay', e.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
       });
     });
-
+    
     describe('when user set unit number', function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
@@ -202,22 +216,6 @@ describe('model unit', function() {
       });
     });
 
-    describe('isUnitDisplayed', function() {
-      using([
-        [ 'dsp'         , 'isDisplayed' ],
-        [ []            , false ],
-        [ ['a', 'r']    , false ],
-        [ ['u']         , true ],
-        [ ['a','u','r'] , true ],
-      ], function(e, d) {
-        it('should check whether model\'s unit number is displayed, '+d, function() {
-          expect(this.modelService.isUnitDisplayed({
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
-      });
-    });
-
     describe('unitIs(<unit>)', function() {
       using([
         ['unit', 'is' ],
@@ -246,22 +244,30 @@ describe('model unit', function() {
     });
 
     describe('toggleUnitDisplay()', function() {
-      using([
-        [ 'dsp'         , 'new_dsp'     ],
-        [ []            , ['u']         ],
-        [ ['u']         , []            ],
-        [ ['a','r']     , ['a','r','u'] ],
-        [ ['a','u','r'] , ['a','r']     ],
-      ], function(e, d) {
-        it('should toggle unit number display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleUnitDisplay(this.model);
+      it('should toggle unit display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleUnitDisplay(this.model);
+        expect(this.modelService.isUnitDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleUnitDisplay(this.model);
+        expect(this.modelService.isUnitDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
 
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('setUnitDisplay(<set>)', function() {
+      it('should set unit display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setUnitDisplay(true, this.model);
+        expect(this.modelService.isUnitDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setUnitDisplay(false, this.model);
+        expect(this.modelService.isUnitDisplayed(this.model))
+          .toBeFalsy();
       });
     });
   });

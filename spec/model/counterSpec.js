@@ -7,9 +7,13 @@ describe('model counter', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection' },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -23,13 +27,27 @@ describe('model counter', function() {
       when('user toggles '+e.type+' display on models', function() {
         this.modelsModeService.actions['toggle'+e.type+'Display'](this.scope);
       }, function() {
-        it('should toggle '+e.type+' display on local selection', function() {
-          expect(this.gameModelSelectionService.get)
-            .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'toggleCounterDisplay', e.flag,
-                                  'gameModelSelection.get.returnValue',
-                                  this.scope, this.scope.game);
+        using([
+          ['first', 'set'],
+          [ true  , false],
+          [ false , true ],
+        ], function(ee, dd) {
+          when('first selected model\'s counterDisplayed is '+ee.first, function() {
+            this.modelService.isCounterDisplayed._retVal = ee.first;
+          }, function() {
+            it('should toggle wreck display on local selection, '+dd, function() {
+              expect(this.gameModelSelectionService.get)
+                .toHaveBeenCalledWith('local', 'selection');
+              expect(this.gameModelsService.findStamp)
+                .toHaveBeenCalledWith('stamp1', 'models');
+              expect(this.modelService.isCounterDisplayed)
+                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setCounterDisplay', e.flag, ee.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+            });
+          });
         });
       });
 
@@ -41,7 +59,7 @@ describe('model counter', function() {
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', 'incrementCounter', e.flag,
-                                  'gameModelSelection.get.returnValue',
+                                  this.gameModelSelectionService.get._retVal,
                                   this.scope, this.scope.game);
         });
       });
@@ -54,7 +72,7 @@ describe('model counter', function() {
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', 'decrementCounter', e.flag,
-                                  'gameModelSelection.get.returnValue',
+                                  this.gameModelSelectionService.get._retVal,
                                   this.scope, this.scope.game);
         });
       });
@@ -75,39 +93,31 @@ describe('model counter', function() {
       [ 'c'       ],
       [ 's'       ],
     ], function(ee, dd) {
-      describe('isCounterDisplayed(<counter>), '+dd, function() {
-        using([
-          [ 'dsp'                , 'isDisplayed' ],
-          [ []                   , false ],
-          [ ['a', 'r']           , false ],
-          [ [ee.counter]         , true ],
-          [ ['a',ee.counter,'r'] , true ],
-        ], function(e, d) {
-          it('should check whether model\'s counter is displayed, '+d, function() {
-            expect(this.modelService.isCounterDisplayed(ee.counter, {
-              state: { dsp: e.dsp }
-            })).toBe(e.isDisplayed);
-          });
+      describe('toggleCounterDisplay(<counter>)', function() {
+        it('should toggle wreck display for <model>', function() {
+          this.model = { state: { dsp: [] } };
+        
+          this.modelService.toggleCounterDisplay(ee.counter, this.model);
+          expect(this.modelService.isCounterDisplayed(ee.counter, this.model))
+            .toBeTruthy();
+        
+          this.modelService.toggleCounterDisplay(ee.counter, this.model);
+          expect(this.modelService.isCounterDisplayed(ee.counter, this.model))
+            .toBeFalsy();
         });
       });
-
-      describe('toggleCounterDisplay(<counter>), '+dd, function() {
-        using([
-          [ 'dsp'                , 'new_dsp'     ],
-          [ []                   , [ee.counter]  ],
-          [ [ee.counter]         , []            ],
-          [ ['a','r']            , ['a','r',ee.counter] ],
-          [ ['a',ee.counter,'r'] , ['a','r']     ],
-        ], function(e, d) {
-          it('should toggle counter display for <model>, '+d, function() {
-            this.model = {
-              state: { dsp: e.dsp }
-            };
-            
-            this.modelService.toggleCounterDisplay(ee.counter, this.model);
-
-            expect(this.model.state.dsp).toEqual(e.new_dsp);
-          });
+      
+      describe('setCounterDisplay(<set>)', function() {
+        it('should set counter display for <model>', function() {
+          this.model = { state: { dsp: [] } };
+        
+          this.modelService.setCounterDisplay(ee.counter, true, this.model);
+          expect(this.modelService.isCounterDisplayed(ee.counter, this.model))
+            .toBeTruthy();
+        
+          this.modelService.setCounterDisplay(ee.counter, false, this.model);
+          expect(this.modelService.isCounterDisplayed(ee.counter, this.model))
+            .toBeFalsy();
         });
       });
 

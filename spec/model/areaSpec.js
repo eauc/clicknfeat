@@ -7,9 +7,13 @@ describe('model areas', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection' },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -18,13 +22,27 @@ describe('model areas', function() {
     when('user toggles ctrl area display on models', function() {
       this.modelsModeService.actions['toggleCtrlAreaDisplay'](this.scope);
     }, function() {
-      it('should toggle ctrl area display on local selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'toggleCtrlAreaDisplay',
-                                'gameModelSelection.get.returnValue',
-                                this.scope, this.scope.game);
+      using([
+        ['first', 'set' ],
+        [ true  , false ],
+        [ false , true  ],
+      ], function(ee, dd) {
+        when('first selected model\'s ctrlAreaDisplay is '+ee.first, function() {
+          this.modelService.isCtrlAreaDisplayed._retVal = ee.first;
+        }, function() {
+          it('should toggle ctrlArea display on local selection, '+dd, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isCtrlAreaDisplayed)
+              .toHaveBeenCalledWith('factions', 'gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setCtrlAreaDisplay', ee.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
       });
     });
 
@@ -36,13 +54,27 @@ describe('model areas', function() {
       when('user toggles '+e.area+'" area display on models', function() {
         this.modelsModeService.actions['toggle'+e.area+'InchesAreaDisplay'](this.scope);
       }, function() {
-        it('should toggle '+e.area+'" area display on local selection', function() {
-          expect(this.gameModelSelectionService.get)
-            .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'toggleAreaDisplay', e.area,
-                                  'gameModelSelection.get.returnValue',
-                                  this.scope, this.scope.game);
+        using([
+          ['first' , 'set'],
+          [ e.area , null ],
+          [ null   , e.area ],
+        ], function(ee, dd) {
+          when('first selected model\'s areaDisplay is '+ee.first, function() {
+            this.modelService.areaDisplay._retVal = ee.first;
+          }, function() {
+            it('should toggle '+e.area+' area display on local selection, '+dd, function() {
+              expect(this.gameModelSelectionService.get)
+                .toHaveBeenCalledWith('local', 'selection');
+              expect(this.gameModelsService.findStamp)
+                .toHaveBeenCalledWith('stamp1', 'models');
+              expect(this.modelService.areaDisplay)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setAreaDisplay', ee.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+            });
+          });
         });
       });
     });
@@ -54,80 +86,74 @@ describe('model areas', function() {
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        this.gameFactionsService.getModelInfo._retVal = {
+          type: 'wardude',
+          focus: 8
+        };
       }
     ]));
 
-    describe('isAreaDisplayed()', function() {
-      using([
-        [ 'info', 'dsp' , 'isDisplayed' ],
-        [ { type: 'warrior', focus: 7 }, []  , false ],
-        [ { type: 'warrior', focus: 7 }, ['a']    , false ],
-        [ { type: 'wardude', focus: null }, []  , false ],
-        [ { type: 'wardude', focus: null }, ['a']    , false ],
-        [ { type: 'wardude', focus: 7 }, []  , false ],
-        [ { type: 'wardude', focus: 7 }, ['a']    , true ],
-        [ { type: 'wardude', fury: 7 }, []  , false ],
-        [ { type: 'wardude', fury: 7 }, ['i','a','r']    , true ],
-      ], function(e, d) {
-        it('should check whether model\'s area is displayed, '+d, function() {
-          this.gameFactionsService.getModelInfo._retVal = e.info;
-          
-          expect(this.modelService.isCtrlAreaDisplayed('factions', {
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
+    describe('toggleCtrlAreaDisplay()', function() {
+      it('should toggle ctrlArea display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleCtrlAreaDisplay(this.model);
+        expect(this.modelService.isCtrlAreaDisplayed('factions', this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleCtrlAreaDisplay(this.model);
+        expect(this.modelService.isCtrlAreaDisplayed('factions', this.model))
+          .toBeFalsy();
       });
     });
 
-    describe('isAreaDisplayed()', function() {
-      using([
-        [ 'are' , 'isDisplayed' ],
-        [ null  , false ],
-        [ 42    , true ],
-      ], function(e, d) {
-        it('should check whether model\'s area is displayed, '+d, function() {
-          expect(this.modelService.isAreaDisplayed({
-            state: { are: e.are }
-          })).toBe(e.isDisplayed);
-        });
+    describe('setCtrlAreaDisplay(<set>)', function() {
+      it('should set ctrlArea display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setCtrlAreaDisplay(true, this.model);
+        expect(this.modelService.isCtrlAreaDisplayed('factions', this.model))
+          .toBeTruthy();
+        
+        this.modelService.setCtrlAreaDisplay(false, this.model);
+        expect(this.modelService.isCtrlAreaDisplayed('factions', this.model))
+          .toBeFalsy();
       });
     });
 
-    describe('toggleCtrlAreaDisplay(<area>)', function() {
-      using([
-        [ 'dsp'     , 'new_dsp' ],
-        [ []        , ['a']     ],
-        [ ['i']     , ['i','a'] ],
-        [ ['a','r'] , ['r']     ],
-      ], function(e, d) {
-        it('should toggle ctrlArea display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleCtrlAreaDisplay(this.model);
-          
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('toggleAreaDisplay()', function() {
+      it('should toggle area display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleAreaDisplay('area', this.model);
+        expect(this.modelService.areaDisplay(this.model))
+          .toBe('area');
+        expect(this.modelService.isAreaDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleAreaDisplay('area', this.model);
+        expect(this.modelService.areaDisplay(this.model))
+          .toBe(null);
+        expect(this.modelService.isAreaDisplayed(this.model))
+          .toBeFalsy();
       });
     });
 
-    describe('toggleAreaDisplay(<area>)', function() {
-      using([
-        [ 'are' , 'new_are' ],
-        [ null  , 5         ],
-        [ 42    , 5         ],
-        [ 5     , null      ],
-      ], function(e, d) {
-        it('should toggle <area> display for <model>, '+d, function() {
-          this.model = {
-            state: { are: e.are }
-          };
-          
-          this.modelService.toggleAreaDisplay(5, this.model);
-          
-          expect(this.model.state.are).toEqual(e.new_are);
-        });
+    describe('setAreaDisplay(<set>)', function() {
+      it('should set area display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setAreaDisplay('area', this.model);
+        expect(this.modelService.areaDisplay(this.model))
+          .toBe('area');
+        expect(this.modelService.isAreaDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setAreaDisplay(null, this.model);
+        expect(this.modelService.areaDisplay(this.model))
+          .toBe(null);
+        expect(this.modelService.isAreaDisplayed(this.model))
+          .toBeFalsy();
       });
     });
   });

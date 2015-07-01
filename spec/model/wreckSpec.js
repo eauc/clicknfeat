@@ -7,9 +7,13 @@ describe('model wreck', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection' },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -19,13 +23,27 @@ describe('model wreck', function() {
       this.modelsModeService.actions
         .toggleWreckDisplay(this.scope);
     }, function() {
-      it('should toggle wreck display on local selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'toggleWreckDisplay',
-                                'gameModelSelection.get.returnValue',
-                                this.scope, this.scope.game);
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s wreckDisplayed is '+e.first, function() {
+          this.modelService.isWreckDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle wreck display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isWreckDisplayed)
+              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setWreckDisplay', e.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
       });
     });
   });
@@ -38,22 +56,6 @@ describe('model wreck', function() {
         this.gameFactionsService = spyOnService('gameFactions');
       }
     ]));
-
-    describe('isWreckDisplayed', function() {
-      using([
-        [ 'dsp'         , 'isDisplayed' ],
-        [ []            , false ],
-        [ ['a', 'r']    , false ],
-        [ ['w']         , true ],
-        [ ['a','w','r'] , true ],
-      ], function(e, d) {
-        it('should check whether model\'s wreck is displayed, '+d, function() {
-          expect(this.modelService.isWreckDisplayed({
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
-      });
-    });
 
     describe('getWreckImage(<factions>)', function() {
       it('should fetch model info from <factions>', function() {
@@ -101,22 +103,30 @@ describe('model wreck', function() {
     });
 
     describe('toggleWreckDisplay()', function() {
-      using([
-        [ 'dsp'         , 'new_dsp'     ],
-        [ []            , ['w']         ],
-        [ ['w']         , []            ],
-        [ ['a','r']     , ['a','r','w'] ],
-        [ ['a','w','r'] , ['a','r']     ],
-      ], function(e, d) {
-        it('should toggle wreck display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleWreckDisplay(this.model);
+      it('should toggle wreck display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleWreckDisplay(this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleWreckDisplay(this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
 
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('setWreckDisplay(<set>)', function() {
+      it('should set wreck display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setWreckDisplay(true, this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setWreckDisplay(false, this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeFalsy();
       });
     });
   });

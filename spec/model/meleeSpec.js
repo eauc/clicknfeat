@@ -7,9 +7,13 @@ describe('model melee', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
       
-        this.scope = { game: { model_selection: 'selection' },
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -24,13 +28,27 @@ describe('model melee', function() {
       when('user toggles melee display on models, '+d, function() {
         this.modelsModeService.actions['toggle'+e.melee+'Display'](this.scope);
       }, function() {
-        it('should toggle melee display on local selection', function() {
-          expect(this.gameModelSelectionService.get)
-            .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'toggleMeleeDisplay', e.flag,
-                                  'gameModelSelection.get.returnValue',
-                                  this.scope, this.scope.game);
+        using([
+          ['first', 'set'],
+          [ true  , false],
+          [ false , true ],
+        ], function(ee, dd) {
+          when('first selected model\'s meleeDisplay is '+ee.first, function() {
+            this.modelService.isMeleeDisplayed._retVal = ee.first;
+          }, function() {
+            it('should toggle '+e.melee+' melee display on local selection, '+dd, function() {
+              expect(this.gameModelSelectionService.get)
+                .toHaveBeenCalledWith('local', 'selection');
+              expect(this.gameModelsService.findStamp)
+                .toHaveBeenCalledWith('stamp1', 'models');
+              expect(this.modelService.isMeleeDisplayed)
+                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setMeleeDisplay', e.flag, ee.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+            });
+          });
         });
       });
     });
@@ -45,39 +63,31 @@ describe('model melee', function() {
       }
     ]));
 
-    describe('isMeleeDisplayed(<melee>)', function() {
-      using([
-        [ 'dsp'           , 'isDisplayed' ],
-        [ []              , false ],
-        [ ['a', 'mr']     , false ],
-        [ ['mm']          , true ],
-        [ ['a','mm','mr'] , true ],
-      ], function(e, d) {
-        it('should check whether model\'s <melee> is displayed, '+d, function() {
-          expect(this.modelService.isMeleeDisplayed('mm', {
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
+    describe('toggleMeleeDisplay()', function() {
+      it('should toggle melee display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleMeleeDisplay('melee', this.model);
+        expect(this.modelService.isMeleeDisplayed('melee', this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleMeleeDisplay('melee', this.model);
+        expect(this.modelService.isMeleeDisplayed('melee', this.model))
+          .toBeFalsy();
       });
     });
 
-    describe('toggleMeleeDisplay(<melee>)', function() {
-      using([
-        [ 'dsp'          , 'new_dsp'     ],
-        [ []             , ['mm']         ],
-        [ ['mm']         , []            ],
-        [ ['a','r']      , ['a','r','mm'] ],
-        [ ['a','mm','r'] , ['a','r']     ],
-      ], function(e, d) {
-        it('should toggle <melee> display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleMeleeDisplay('mm', this.model);
-
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('setMeleeDisplay(<set>)', function() {
+      it('should set melee display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setMeleeDisplay('melee', true, this.model);
+        expect(this.modelService.isMeleeDisplayed('melee', this.model))
+          .toBeTruthy();
+        
+        this.modelService.setMeleeDisplay('melee', false, this.model);
+        expect(this.modelService.isMeleeDisplayed('melee', this.model))
+          .toBeFalsy();
       });
     });
   });

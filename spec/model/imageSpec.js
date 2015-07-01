@@ -7,9 +7,13 @@ describe('model image', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
         this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
-      
-        this.scope = { game: { model_selection: 'selection' },
+        this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+        this.modelService = spyOnService('model');
+     
+        this.scope = { game: { models: 'models',
+                               model_selection: 'selection' },
                        factions: 'factions'
                      };
       }
@@ -19,13 +23,27 @@ describe('model image', function() {
       this.modelsModeService.actions
         .toggleImageDisplay(this.scope);
     }, function() {
-      it('should toggle image display on local selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'toggleImageDisplay',
-                                'gameModelSelection.get.returnValue',
-                                this.scope, this.scope.game);
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s imageDisplayed is '+e.first, function() {
+          this.modelService.isImageDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle image display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isImageDisplayed)
+              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setImageDisplay', e.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
       });
     });
 
@@ -37,8 +55,8 @@ describe('model image', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'setNextImage', 'factions',
-                                'gameModelSelection.get.returnValue',
+          .toHaveBeenCalledWith('onModels', 'setNextImage', 'factions', 
+                                this.gameModelSelectionService.get._retVal,
                                 this.scope, this.scope.game);
       });
     });
@@ -52,22 +70,6 @@ describe('model image', function() {
         this.gameFactionsService = spyOnService('gameFactions');
       }
     ]));
-
-    describe('isImageDisplayed', function() {
-      using([
-        [ 'dsp'         , 'isDisplayed' ],
-        [ []            , false ],
-        [ ['a', 'r']    , false ],
-        [ ['i']         , true ],
-        [ ['a','i','r'] , true ],
-      ], function(e, d) {
-        it('should check whether model\'s image is displayed, '+d, function() {
-          expect(this.modelService.isImageDisplayed({
-            state: { dsp: e.dsp }
-          })).toBe(e.isDisplayed);
-        });
-      });
-    });
 
     describe('getImage(<factions>)', function() {
       it('should fetch model info from <factions>', function() {
@@ -174,22 +176,30 @@ describe('model image', function() {
     });
 
     describe('toggleImageDisplay()', function() {
-      using([
-        [ 'dsp'         , 'new_dsp'     ],
-        [ []            , ['i']         ],
-        [ ['i']         , []            ],
-        [ ['a','r']     , ['a','r','i'] ],
-        [ ['a','i','r'] , ['a','r']     ],
-      ], function(e, d) {
-        it('should toggle image display for <model>, '+d, function() {
-          this.model = {
-            state: { dsp: e.dsp }
-          };
-          
-          this.modelService.toggleImageDisplay(this.model);
+      it('should toggle image display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleImageDisplay(this.model);
+        expect(this.modelService.isImageDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleImageDisplay(this.model);
+        expect(this.modelService.isImageDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
 
-          expect(this.model.state.dsp).toEqual(e.new_dsp);
-        });
+    describe('setImageDisplay(<set>)', function() {
+      it('should set image display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setImageDisplay(true, this.model);
+        expect(this.modelService.isImageDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setImageDisplay(false, this.model);
+        expect(this.modelService.isImageDisplayed(this.model))
+          .toBeFalsy();
       });
     });
   });
