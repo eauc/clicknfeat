@@ -6,7 +6,8 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
                                                       gameTemplatesService,
                                                       gameTemplateSelectionService,
                                                       gameModelsService,
-                                                      gameModelSelectionService) {
+                                                      gameModelSelectionService,
+                                                      gameLayersService) {
   var gameService = {
     create: function gameCreate(player1) {
       var new_game = {
@@ -34,6 +35,7 @@ self.gameServiceFactory = function gameServiceFactory(jsonStringifierService,
         model_selection: gameModelSelectionService.create(),
         templates: gameTemplatesService.create(),
         template_selection: gameTemplateSelectionService.create(),
+        layers: gameLayersService.create(),
       }, data);
       gameReplayAll(scope, game);
       return game;

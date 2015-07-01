@@ -13,7 +13,12 @@ beforeEach(function() {
 
   if(R.isNil(self.Promise)) {
     self.Promise = {
-      all: function() {}
+      all: function() {
+        return self.Promise;
+      },
+      then: function() {
+        return self.Promise;
+      }
     };
   }
 

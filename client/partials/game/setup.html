@@ -1,6 +1,56 @@
 <div>
   <div class="panel panel-info">
     <div class="panel-heading">
+      <strong>Layers</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="layers">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="isLayerDisplayed('b')"
+                   ng-click="doToggleLayer('b')">
+            Board
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="isLayerDisplayed('d')"
+                   ng-click="doToggleLayer('d')">
+            Deploiement
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="isLayerDisplayed('s')"
+                   ng-click="doToggleLayer('s')">
+            Scenario
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="isLayerDisplayed('m')"
+                   ng-click="doToggleLayer('m')">
+            Models
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="isLayerDisplayed('t')"
+                   ng-click="doToggleLayer('t')">
+            Templates
+          </label>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
       <strong>Board Map</strong>
     </div>
     <div class="panel-content">
@@ -24,7 +74,7 @@
     </div>
     <div class="panel-content">
       <form class="form-inline"
-            name="board-map">
+            name="scenario">
         <select class="form-control"
                 ng-options="s as s[0] for s in scenarios"
                 ng-model="scenario_group">

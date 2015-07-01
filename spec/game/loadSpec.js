@@ -120,6 +120,7 @@ describe('load game', function() {
             template_selection: { local: { stamps: [] },
                                   remote: { stamps: [] }
                                 },
+            layers: ['b','d','s','m','t'],
           });
       });
 

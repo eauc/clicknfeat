@@ -33,6 +33,7 @@ angular.module('clickApp.services')
     'gameTemplateSelection',
     'gameModels',
     'gameModelSelection',
+    'gameLayers',
     gameServiceFactory
   ])
   .factory('games', [
@@ -257,6 +258,9 @@ angular.module('clickApp.services')
     'gameModels',
     gameModelSelectionServiceFactory
   ])
+  .factory('gameLayers', [
+    gameLayersServiceFactory
+  ])
   .factory('commands', [
     commandsServiceFactory
   ])
@@ -325,6 +329,11 @@ angular.module('clickApp.services')
     'commands',
     setBoardCommandServiceFactory
   ])
+  .factory('setLayersCommand', [
+    'commands',
+    'gameLayers',
+    setLayersCommandServiceFactory
+  ])
   .factory('setRulerCommand', [
     'commands',
     'gameRuler',
@@ -346,6 +355,7 @@ angular.module('clickApp.services')
     'rollDiceCommand',
     'rollDeviationCommand',
     'setBoardCommand',
+    'setLayersCommand',
     'setRulerCommand',
     'setScenarioCommand',
     function() { return {}; }

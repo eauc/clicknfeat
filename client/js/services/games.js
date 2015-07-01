@@ -8,6 +8,7 @@ self.gamesServiceFactory = function gamesServiceFactory(localStorageService,
     loadLocalGames: function() {
       var data = localStorageService.getItem(LOCAL_GAMES_STORAGE_KEY);
       return jsonParserService.parse(data)
+        .then(R.defaultTo([]))
         .catch(function() {
           console.log('Failed to load local games');
           return [];

@@ -143,14 +143,17 @@ angular.module('clickApp.directives')
           var flipMap = (function() {
             scope.ui_state.flip_map = false;
             return function flipMap() {
+              var deploiement_labels = document.querySelector('#deploiement-labels');
               scope.ui_state.flip_map = !scope.ui_state.flip_map;
               if(scope.ui_state.flip_map) {
                 map.setAttribute('flipped', 'flipped');
                 map.style.transform = 'scaleX(-1) scaleY(-1)';
+                deploiement_labels.setAttribute('transform','rotate(180,240,240)');
               }
               else {
                 map.removeAttribute('flipped');
                 map.style.transform = '';
+                deploiement_labels.setAttribute('transform','');
               }
               scope.gameEvent('mapFlipped');
             };

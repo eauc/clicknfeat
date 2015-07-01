@@ -463,6 +463,38 @@ ul.nav-tabs li {
 }
 
 /**************************
+  Dragbox
+***************************/
+
+.deploiement-line {
+    stroke: #000;
+    stroke-width: 1px;
+}
+
+.extended-deploiement-line {
+    stroke: #000;
+    stroke-dasharray: 2 1;
+    stroke-width: 0.25px;
+}
+
+.advance-deploiement-line {
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+
+.extended-advance-deploiement-line {
+    stroke:#000;
+    stroke-dasharray: 2 3;
+    stroke-width:0.25px;
+}
+
+.ambush-line {
+    stroke:#000;
+    stroke-width:0.25px;
+    stroke-dasharray: 5 5;
+}
+
+/**************************
   Damage
 ***************************/
 

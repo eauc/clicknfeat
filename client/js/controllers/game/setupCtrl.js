@@ -5,10 +5,12 @@ angular.module('clickApp.controllers')
     '$scope',
     'gameBoard',
     'gameScenario',
+    'gameLayers',
     'game',
     function($scope,
              gameBoardService,
              gameScenarioService,
+             gameLayersService,
              gameService) {
       console.log('init gameSetupCtrl');
 
@@ -65,6 +67,14 @@ angular.module('clickApp.controllers')
         $scope.scenario_group = group;
         $scope.scenario_name = name;
         $scope.doSetScenario();
+      };
+
+      $scope.isLayerDisplayed = function isLayerDisplayed(l) {
+        return gameLayersService.isDisplayed(l, R.defaultTo({}, $scope.game).layers);
+      };
+      $scope.doToggleLayer = function doToggleLayer(l) {
+        gameService.executeCommand('setLayers', 'toggle', l,
+                                   $scope, $scope.game);
       };
     }
   ]);
