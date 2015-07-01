@@ -1,4 +1,7 @@
 {
+  "cygnar" : "/data/model/cygnar.json",
   "legion" : "/data/model/legion.json",
-  "scyrah" : "/data/model/scyrah.json"
+  "orboros" : "/data/model/orboros.json",
+  "scyrah" : "/data/model/scyrah.json",
+  "trollblood" : "/data/model/trollblood.json"
 }
