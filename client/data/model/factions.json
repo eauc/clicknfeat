@@ -1,4 +1,5 @@
 {
+  "cryx" : "/data/model/cryx.json",
   "cygnar" : "/data/model/cygnar.json",
   "legion" : "/data/model/legion.json",
   "orboros" : "/data/model/orboros.json",
