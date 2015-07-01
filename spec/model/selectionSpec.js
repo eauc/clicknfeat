@@ -353,7 +353,10 @@ describe('select model', function() {
           });
         }
 
-        it('should emit changeModel event', function() {            
+        it('should emit changeModel event', function() {
+          // also emit stamp1 to update single selection styles
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp1');
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp2');
           expect(this.scope.gameEvent)
@@ -398,6 +401,9 @@ describe('select model', function() {
         }
 
         it('should emit changeModel event', function() {            
+          // also emit stamp1 to update single selection styles
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp1');
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp2');
           expect(this.scope.gameEvent)

@@ -255,7 +255,7 @@ ul.nav-tabs li {
     stroke-width: 0.75px;
     stroke: #FFF;
 }
-.remote-selection .model-los-selection {
+.remote-selection.single .model-los-selection {
     visibility: visible;
 }
 .local-selection .model-edge,
@@ -263,7 +263,7 @@ ul.nav-tabs li {
     stroke-width: 0.75px;
     stroke: #0F0;
 }
-.local-selection .model-los-selection {
+.local-selection.single .model-los-selection {
     visibility: visible;
 }
 

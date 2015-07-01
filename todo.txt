@@ -14,14 +14,15 @@ model
 - select all friendly
 - lock
 - incorporeal
+- leader image
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
+- import/merge own model desc
 los
 - line
 - from model
 - update when origin/target move ?
-layers - deploiement
 online - users login
 online - users chat + notification
 online - game chat

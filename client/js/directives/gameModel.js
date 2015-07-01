@@ -461,6 +461,13 @@ angular.module('clickApp.directives')
         else {
           element.container.classList.remove('remote-selection');
         }
+        if(gameModelSelectionService.inSingle('local', model.state.stamp, selection) ||
+           gameModelSelectionService.inSingle('remote', model.state.stamp, selection)) {
+          element.container.classList.add('single');
+        }
+        else {
+          element.container.classList.remove('single');
+        }
       }
       function updateModelDamage(img, info, model, element) {
         if(R.isNil(element.damage_bar_red)) return;

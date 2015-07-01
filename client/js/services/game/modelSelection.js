@@ -56,8 +56,9 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
     },
     addTo: function modelSelectionSet(where, stamps, scope, selection) {
       var previous = gameModelSelectionService.get(where, selection);
+      var new_selection = R.uniq(R.concat(previous, stamps));
       var ret = R.assocPath([where, 'stamps'],
-                            R.uniq(R.concat(previous, stamps)),
+                            new_selection,
                             selection
                            );
 
@@ -68,14 +69,15 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
       
       R.forEach(function(stamp) {
         scope.gameEvent('changeModel-'+stamp);
-      }, stamps);
+      }, new_selection);
 
       return ret;
     },
     removeFrom: function modelSelectionRemoveFrom(where, stamps, scope, selection) {
       var path = [where, 'stamps'];
       var previous = R.path(path, selection);
-      var ret = R.assocPath(path, R.difference(previous, stamps), selection);
+      var new_selection = R.difference(previous, stamps);
+      var ret = R.assocPath(path, new_selection, selection);
       
       if('local' === where) {
         gameModelSelectionService.checkMode(scope, ret);
@@ -84,7 +86,7 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
 
       R.forEach(function(stamp) {
         scope.gameEvent('changeModel-'+stamp);
-      }, stamps);
+      }, R.uniq(R.concat(previous, stamps)));
 
       return ret;
     },
