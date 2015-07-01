@@ -28,7 +28,13 @@ angular.module('clickApp.controllers')
       };
       $scope.onTypeChange = function onTypeChange() {
         var entries = $scope.getEntries();
-        $scope.model = R.head(R.keys(entries[$scope.type]));
+        $scope.model = R.pipe(
+          R.defaultTo({}),
+          R.prop($scope.type),
+          R.defaultTo({}),
+          R.keys(),
+          R.head()
+        )(entries);
         $scope.onModelChange();
       };
       $scope.onModelChange = function onModelChange() {
