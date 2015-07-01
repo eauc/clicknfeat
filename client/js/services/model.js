@@ -86,8 +86,15 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     getImage: function modelGetImage(factions, model) {
       var info = gameFactionsService.getModelInfo(model.state.info, factions);
       var imgs = R.filter(R.propEq('type','default'), info.img);
-      var link = modelService.isImageDisplayed(model) ? imgs[model.state.img].link : null;
-      return R.assoc('link', link, imgs[model.state.img]);
+      var img = imgs[model.state.img];
+      if(modelService.isLeaderDisplayed(model)) {
+        var leaders = R.filter(R.propEq('type','leader'), info.img);
+        if(!R.isEmpty(leaders)) {
+          img = R.head(leaders);
+        }
+      }
+      var link = modelService.isImageDisplayed(model) ? img.link : null;
+      return R.assoc('link', link, img);
     },
     setNextImage: function modelSetNextImage(factions, model) {
       var info = gameFactionsService.getModelInfo(model.state.info, factions);

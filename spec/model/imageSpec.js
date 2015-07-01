@@ -127,6 +127,45 @@ describe('model image', function() {
           })).toEqual(e.result);
         });
       });
+
+      when('model is a unit leader', function() {
+      }, function() {
+        using([
+          [ 'info_img', 'is_leader', 'is_displayed', 'result' ],
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'leader', width: 60, height: 60, link: 'link2' } ], true, true,
+            { type: 'leader', width: 60, height: 60, link: 'link2' }
+          ],
+          // no leader image
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ], true, true,
+            { type: 'default', width: 60, height: 60, link: 'link1' }
+          ],
+          // not leader
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'leader', width: 60, height: 60, link: 'link2' } ], false, true,
+            { type: 'default', width: 60, height: 60, link: 'link1' }
+          ],
+          // image not displayed
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'leader', width: 60, height: 60, link: 'link2' } ], true, false,
+            { type: 'leader', width: 60, height: 60, link: null }
+          ],
+        ], function(e, d) {
+          it('should return leader image info for <model> if it exists, '+d, function() {
+            this.gameFactionsService.getModelInfo._retVal = {
+              img: e.info_img
+            };
+            this.model = {
+              state: { dsp: [], img: 0, info: 'info' }
+            };
+            this.modelService.setLeaderDisplay(e.is_leader, this.model);
+            this.modelService.setImageDisplay(e.is_displayed, this.model);
+            
+            expect(this.modelService.getImage('factions', this.model))
+              .toEqual(e.result);
+          });
+        });
+      });
     });
 
     describe('setNextImage(<factions>)', function() {

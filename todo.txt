@@ -9,12 +9,10 @@ template:
 - rework onTemplates/onStamps similar to model
 - better color on locked AoEs
 model
-- multiple selection : no los
-- toggle on multiple models -> toggle based on first value
+- leader image
+- incorporeal
 - select all friendly
 - lock
-- incorporeal
-- leader image
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
