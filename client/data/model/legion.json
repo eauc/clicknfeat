@@ -110,6 +110,7 @@
             "link": "data/model/legion/warlocks/Rhyas1.png"
           },
           {
+            "type": "incorporeal",
             "link": "data/model/legion/warlocks/Rhyas1_Incorporeal.png"
           },
           {

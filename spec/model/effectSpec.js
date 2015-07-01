@@ -47,6 +47,34 @@ describe('model effects', function() {
       });
     });
 
+    when('user toggles incorporeal display on models', function() {
+      this.modelsModeService.actions
+        .toggleIncorporealDisplay(this.scope);
+    }, function() {
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s incorporealDisplayed is '+e.first, function() {
+          this.modelService.isIncorporealDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle incorporeal display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            expect(this.modelService.isIncorporealDisplayed)
+              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setIncorporealDisplay', e.set,
+                                    this.gameModelSelectionService.get._retVal,
+                                    this.scope, this.scope.game);
+          });
+        });
+      });
+    });
+
     using([
       [ 'effect' , 'flag' ], 
       [ 'Blind' , 'b' ],
@@ -119,6 +147,34 @@ describe('model effects', function() {
         
         this.modelService.setLeaderDisplay(false, this.model);
         expect(this.modelService.isLeaderDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
+
+    describe('toggleIncorporealDisplay()', function() {
+      it('should toggle incorporeal display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleIncorporealDisplay(this.model);
+        expect(this.modelService.isIncorporealDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleIncorporealDisplay(this.model);
+        expect(this.modelService.isIncorporealDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
+
+    describe('setIncorporealDisplay(<set>)', function() {
+      it('should set incorporeal display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setIncorporealDisplay(true, this.model);
+        expect(this.modelService.isIncorporealDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setIncorporealDisplay(false, this.model);
+        expect(this.modelService.isIncorporealDisplayed(this.model))
           .toBeFalsy();
       });
     });

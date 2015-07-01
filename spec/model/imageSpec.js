@@ -166,6 +166,45 @@ describe('model image', function() {
           });
         });
       });
+
+      when('model is incorporeal', function() {
+      }, function() {
+        using([
+          [ 'info_img', 'is_incorporeal', 'is_displayed', 'result' ],
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, true,
+            { type: 'incorporeal', width: 60, height: 60, link: 'link2' }
+          ],
+          // no incorporeal image
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ], true, true,
+            { type: 'default', width: 60, height: 60, link: 'link1' }
+          ],
+          // not incorporeal
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], false, true,
+            { type: 'default', width: 60, height: 60, link: 'link1' }
+          ],
+          // image not displayed
+          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, false,
+            { type: 'incorporeal', width: 60, height: 60, link: null }
+          ],
+        ], function(e, d) {
+          it('should return incorporeal image info for <model> if it exists, '+d, function() {
+            this.gameFactionsService.getModelInfo._retVal = {
+              img: e.info_img
+            };
+            this.model = {
+              state: { dsp: [], img: 0, info: 'info' }
+            };
+            this.modelService.setIncorporealDisplay(e.is_incorporeal, this.model);
+            this.modelService.setImageDisplay(e.is_displayed, this.model);
+            
+            expect(this.modelService.getImage('factions', this.model))
+              .toEqual(e.result);
+          });
+        });
+      });
     });
 
     describe('setNextImage(<factions>)', function() {

@@ -174,6 +174,13 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
                                stamps, scope, scope.game);
   };
+  models_actions.toggleIncorporealDisplay = function modelToggleIncorporealDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isIncorporealDisplayed(model);
+    gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
+                               stamps, scope, scope.game);
+  };
   models_actions.toggleCtrlAreaDisplay = function modelToggleCtrlAreaDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -369,6 +376,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   R.forEach(function(effect) {
     models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
   }, effects);
+  models_default_bindings['toggleIncorporealDisplay'] = 'alt+i';
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
   var models_buttons = [
@@ -421,6 +429,8 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     models_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
                               models_buttons);
   }, effects);
+  models_buttons = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ],
+                            models_buttons);
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {
     },

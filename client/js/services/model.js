@@ -93,6 +93,12 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           img = R.head(leaders);
         }
       }
+      if(modelService.isIncorporealDisplayed(model)) {
+        var incorps = R.filter(R.propEq('type','incorporeal'), info.img);
+        if(!R.isEmpty(incorps)) {
+          img = R.head(incorps);
+        }
+      }
       var link = modelService.isImageDisplayed(model) ? img.link : null;
       return R.assoc('link', link, img);
     },
@@ -347,6 +353,25 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
       else {
         model.state.dsp = R.append('l', model.state.dsp);
+      }
+    },
+    isIncorporealDisplayed: function modelIsIncorporealDisplayed(model) {
+      return !!R.find(R.eq('in'), model.state.dsp);
+    },
+    setIncorporealDisplay: function modelSetIncorporealDisplay(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('in', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('in'), model.state.dsp);
+      }
+    },
+    toggleIncorporealDisplay: function modelToggleIncorporealDisplay(model) {
+      if(modelService.isIncorporealDisplayed(model)) {
+        model.state.dsp = R.reject(R.eq('in'), model.state.dsp);
+      }
+      else {
+        model.state.dsp = R.append('in', model.state.dsp);
       }
     },
     isEffectDisplayed: function modelIsEffectDisplayed(effect, model) {

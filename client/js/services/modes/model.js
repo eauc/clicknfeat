@@ -170,6 +170,8 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     model_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
                              model_buttons);
   }, modelsModeService.effects);
+  model_buttons = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ],
+                           model_buttons);
   var model_mode = {
     onEnter: function modelOnEnter(scope) {
     },
