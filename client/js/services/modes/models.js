@@ -257,10 +257,6 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     ['moveBack', 'down'],
     ['rotateLeft', 'left'],
     ['rotateRight', 'right'],
-    ['shiftUp', 'ctrl+up'],
-    ['shiftDown', 'ctrl+down'],
-    ['shiftLeft', 'ctrl+left'],
-    ['shiftRight', 'ctrl+right'],
   ];
   R.forEach(function(move) {
     models_actions[move[0]] = function modelsMove(scope) {
@@ -268,12 +264,32 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
       gameService.executeCommand('onModels', move[0], scope.factions, false,
                                  stamps, scope, scope.game);
     };
-    models_actions[move[0]+'Small'] = function modelsMove(scope) {
+    models_actions[move[0]+'Small'] = function modelsMoveSmall(scope) {
       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       gameService.executeCommand('onModels', move[0], scope.factions, true,
                                  stamps, scope, scope.game);
     };
   }, moves);
+  var shifts = [
+    ['shiftUp', 'ctrl+up', 'shiftDown'],
+    ['shiftDown', 'ctrl+down', 'shiftUp'],
+    ['shiftLeft', 'ctrl+left', 'shiftRight'],
+    ['shiftRight', 'ctrl+right', 'shiftLeft'],
+  ];
+  R.forEach(function(shift) {
+    models_actions[shift[0]] = function modelsShift(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+      gameService.executeCommand('onModels', model_shift, scope.factions, false,
+                                 stamps, scope, scope.game);
+    };
+    models_actions[shift[0]+'Small'] = function modelsShiftSmall(scope) {
+      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+      gameService.executeCommand('onModels', model_shift, scope.factions, true,
+                                 stamps, scope, scope.game);
+    };
+  }, shifts);
   models_actions.setOrientationUp = function modelSetOrientationUp(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var orientation = scope.ui_state.flip_map ? 180 : 0;
@@ -364,6 +380,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     models_default_bindings[move[0]] = move[1];
     models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
   }, moves);
+  R.forEach(function(shift) {
+    models_default_bindings[shift[0]] = shift[1];
+    models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
+  }, shifts);
   R.forEach(function(area) {
     var size = area === 0 ? 10 : area;
     models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;

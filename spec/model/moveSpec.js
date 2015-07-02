@@ -23,10 +23,6 @@ describe('move model', function() {
       [ 'moveBack' ],
       [ 'rotateLeft' ],
       [ 'rotateRight' ],
-      [ 'shiftUp' ],
-      [ 'shiftDown' ],
-      [ 'shiftLeft' ],
-      [ 'shiftRight' ],
     ], function(e, d) {
       when('user '+e.action+' model selection', function() {
         this.modelsModeService.actions[e.action](this.scope);
@@ -55,6 +51,64 @@ describe('move model', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
                                   'stamps', this.scope, this.scope.game);
+        });
+      });
+    });
+
+    using([
+      [ 'action'     , 'flipped_action' ],
+      [ 'shiftUp'    , 'shiftDown'      ],
+      [ 'shiftDown'  , 'shiftUp'        ],
+      [ 'shiftLeft'  , 'shiftRight'     ],
+      [ 'shiftRight' , 'shiftLeft'      ],
+    ], function(e, d) {
+      when('user '+e.action+' model selection', function() {
+        this.modelsModeService.actions[e.action](this.scope);
+      }, function() {
+        it('should get current selection', function() {
+          expect(this.gameModelSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+        });
+
+        it('should execute onModels/'+e.action+' command', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', e.action, 'factions', false,
+                                  'stamps', this.scope, this.scope.game);
+        });
+
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map: true };
+        }, function() {
+          it('should execute onModels/'+e.flipped_action+' command', function() {
+            expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', e.flipped_action, 'factions', false,
+                                  'stamps', this.scope, this.scope.game);
+          });
+        });
+      });
+
+      when('user '+e.action+'Small model selection', function() {
+        this.modelsModeService.actions[e.action+'Small'](this.scope);
+      }, function() {
+        it('should get current selection', function() {
+          expect(this.gameModelSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+        });
+
+        it('should execute onModels/'+e.action+'Small command', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
+                                  'stamps', this.scope, this.scope.game);
+        });
+
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map: true };
+        }, function() {
+          it('should execute onModels/'+e.flipped_action+'Small command', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', e.flipped_action, 'factions', true,
+                                    'stamps', this.scope, this.scope.game);
+          });
         });
       });
     });
