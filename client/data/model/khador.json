@@ -1,0 +1,1413 @@
+{
+  "name": "Khador",
+  "color": "#a94a4a",
+  "icon": "data/icons/khador_50.png",
+  "wreck": {
+    "medium": { "link": "data/model/khador/jacks/LightWreck.png" },
+    "large": { "link": "data/model/khador/jacks/HeavyWreck.png" },
+    "huge": { "width": 116.667,
+              "height": 116.667,
+              "link": "data/model/khador/jacks/ColossalWreck.png" }
+  },
+  "models": {
+    "casters": {
+      "butcher1": {
+        "name": "Butcher1 (The Butcher of Khardov)",
+        "fk_name": "The Butcher of Khardov",
+        "type": "wardude",
+        "focus": 6,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Butcher1.png"
+          }
+        ],
+        "damage": {
+          "n": 20
+        }
+      },
+      "butcher2": {
+        "name": "Butcher2 (Kommander Orsus Zoktavir)",
+        "fk_name": "Kommander Orsus Zoktavir",
+        "type": "wardude",
+        "focus": 6,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Butcher2.png"
+          }
+        ],
+        "damage": {
+          "n": 20
+        }
+      },
+      "butcher3": {
+        "name": "Butcher3 (Kommander Zoktavir, The Butcher Unleashed)",
+        "entries": {
+          "caster": {
+            "butcher3": {
+              "name": "Butcher3",
+              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
+              "type": "wardude",
+              "focus": 6,
+              "base": "medium",
+              "damage": {
+                "n": 20
+              }
+            }
+          },
+          "attachement": {
+            "argus1": {     
+              "name": "War Argus 1",
+              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
+              "type": "solo",
+              "base": "medium",
+              "damage": {
+                "n": 8
+              }
+            },
+            "argus2": {     
+              "name": "War Argus 2",
+              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
+              "type": "solo",
+              "base": "medium",
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },                 
+      "harkevich1": {
+        "name": "Harkevich1 (Kommander Harkevich, The Iron Wolf)",
+        "fk_name": "Kommander Harkevich, the Iron Wolf",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Harkevich1.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },          
+      "irusk1": {
+        "name": "Irusk1 (Kommandant Irusk)",
+        "fk_name": "Kommandant Irusk",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Irusk1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "irusk2": {
+        "name": "Irusk2 (Supreme Kommandant Irusk)",
+        "fk_name": "Supreme Kommandant Irusk",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Irusk2.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "karchev1": {
+        "name": "Karchev1 (Karchev the Terrible)",
+        "fk_name": "Karchev the Terrible",
+        "type": "wardude",
+        "focus": 5,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Karchev1.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "B",  "B" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "B" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "oldwitch1": {
+        "name": "OldWitch1 (Zevanna Agha, the Old Witch of Khador)",
+        "entries": {
+          "caster": {
+            "olwitch1": {
+              "name": "OldWitch1",
+              "fk_name": "Zevanna Agha, the Old Witch of Khador",
+              "type": "wardude",
+              "focus": 7,
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/casters/OldWitch1.png"
+                }
+              ],
+              "damage": {
+                "n": 16
+              }
+            }
+          },
+          "attachement": {
+            "scrapjack": {
+              "name": "Scrapjack",
+              "fk_name": "Zevanna Agha, the Old Witch of Khador",
+              "type": "jack",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/khador/jacks/Scrapjack.png"
+                }
+              ],
+              "damage": {
+                "type": "jack",
+                "1": [ null, null, null,  "b",  "m", null ],
+                "2": [ null, null,  "b",  "b",  "c",  "m" ],
+                "3": [ null,  "b",  "b",  "b",  "a",  "c" ],
+                "4": [ null,  "b",  "b",  "b",  "a",  "c" ],
+                "5": [ null, null,  "b",  "b",  "c",  "m" ],
+                "6": [ null, null, null,  "b",  "m", null ]
+              }
+            }
+          }
+        }
+      },
+      "sorscha1": {
+        "name": "Sorscha1 (Kommander Sorscha)",
+        "fk_name": "Kommander Sorscha",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Sorscha1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "sorscha2": {
+        "name": "Sorscha2 (Forward Kommander Sorscha)",
+        "fk_name": "Forward Kommander Sorscha",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Sorscha2.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "strakhov1": {
+        "name": "Strakhov1 (Kommander Strakhov)",
+        "fk_name": "Kommander Strakhov",
+        "type": "wardude",
+        "focus": 6,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Strakhov1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "vlad1": {
+        "name": "Vlad1 (Vladimir, The Dark Prince)",
+        "fk_name": "Vladimir, The Dark Prince",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Vlad1.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "vlad2": {
+        "name": "Vlad2 (Vladimir Tzepesci, the Dark Champion)",
+        "fk_name": "Vladimir Tzepesci, the Dark Champion",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Vlad2.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "vlad3": {
+        "name": "Vlad3 (Vladimir Tzepesci, Great Prince of Umbrey)",
+        "fk_name": "Vladimir Tzepesci, Great Prince of Umbrey",
+        "type": "wardude",
+        "focus": 7,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Vlad3.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "zerkova": {
+        "name": "Zerkova1 (Koldun Kommander Aleksandra Zerkova)",
+        "fk_name": "Koldun Kommander Aleksandra Zerkova",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/casters/Zerkova1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      }   
+    },
+    "jacks": {
+      "beast": {
+        "name": "Beast 09",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Beast.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "behemoth": {
+        "name": "Behemoth",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Behemoth.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l",  "l" ],
+          "2": [ "b",  "b",  "b",  "b",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "s",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "s",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "b",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r",  "r" ]
+        }
+      },
+      "berserker": {
+        "name": "Berserker",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Berserker.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c", null ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "blackivan": {
+        "name": "Black Ivan",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/BlackIvan.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "conquest": {
+        "name": "Conquest",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+          {
+            "width": 116.667,
+            "height": 116.667,
+            "link": "data/model/khador/jacks/Conquest.png"
+          }
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L2": [ null, null,  "b",  "l",  "l",  "c" ],
+          "L3": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L4": [  "b",  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "R3": [  "b",  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R5": [ null, null,  "b",  "r",  "r",  "c" ],
+          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
+        }
+      },
+      "decimator": {
+        "name": "Decimator",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Decimator.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "demolisher": {
+        "name": "Demolisher",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Demolisher.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "destroyer": {
+        "name": "Destroyer",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Destroyer.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "devastator": {
+        "name": "Devastator",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Devastator.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "drago": {
+        "name": "Drago",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Drago.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "juggernaut": {
+        "name": "Juggernaut",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Juggernaut.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "kodiak": {
+        "name": "Kodiak",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Kodiak.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "marauder": {
+        "name": "Marauder",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Marauder.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "spriggan": {
+        "name": "Spriggan",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Spriggan.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "torch": {
+        "name": "Torch",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/jacks/Torch.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      }
+    },
+    "units": {
+      "ak": {
+        "name": "Assault Kommandos",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/AssaultKommando.png"
+                }
+              ]
+            }
+          },
+          "wa": {
+            "flamer": {
+              "name": "Flame Throwers",
+              "fk_name": [
+                "Assault Kommando Flame Thrower",
+                "Assault Kommando Flame Throwers"
+              ],
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/AssaultKommandoFlamer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "bm": {
+        "name": "Battle Mechaniks",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader & Grunt",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/BattleMechanik.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "data/model/khador/units/BattleMechanikChief.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Battle Mechanik Officer",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/khador/units/BattleMechanikOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "bdp": {
+        "name": "Black Dragons Pikemen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/BlackDragon.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Black Dragon Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/BlackDragonOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Black Dragon Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/BlackDragonStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "doomreaver": {
+        "name": "Doom Reavers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/DoomReaver.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "escort": {
+              "name": "Greylord Escort",
+              "fk_name": "Greylord Escort",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/GreylordEscort.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "gbog": {
+        "name": "Great Bears of Gallowswood",
+        "entries": {
+          "unit": {
+            "Ryan": {
+              "name": "Kolsk",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/GreatBearKolsk.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "Lynch": {
+              "name": "Volkov",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/GreatBearVolkov.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "Watts": {
+              "name": "Yarovich",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/GreatBearYarovich.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }                 
+      },
+      "go": {
+        "name": "Greylord Outriders",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/khador/units/GreylordOutriders.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "gt": {
+        "name": "Greylord Ternion",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Greylord.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ifp": {
+        "name": "Iron Fang Pikemen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/IronFangPikeman.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Iron Fang Pikemen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/IronFangOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Iron Fang Pikemen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/IronFangStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ifu": {
+        "name": "Iron Fang Uhlans",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Uhlan.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },          
+      "ka": {
+        "name": "Kayazy Assassins",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/KayazyAssasin.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "underboss": {
+              "name": "Underboss",
+              "fk_name": "Kayazy Assassin Underboss",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/KayazyUnderboss.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "ke": {
+        "name": "Kayazy Eliminators",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Grunt",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/EliminatorBlonde1.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "leader": {
+              "name": "Leader",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/EliminatorRed2.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "kw": {
+        "name": "Kossite Woodsmen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/KossiteWoodsman.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "mowb": {
+        "name": "Man-o-war Bombardiers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Bombardier.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "mowdc": {
+        "name": "Man-o-war Demolition Corps",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/khador/units/DemoCorp.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "mowst": {
+        "name": "Man-o-war Shocktroopers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/khador/units/ShockTrooper.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "widowmakers": {
+        "name": "Widowmakers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Widowmaker.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "data/model/khador/units/WidowmakerKapitan.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "wgi": {
+        "name": "Winter Guard Infantry",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "type": "warrior",
+              "ranges": [1, 6, 10],
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Winterguard.png"
+                }
+              ]
+            }
+          },
+          "wa": {
+            "roketeer": {
+              "name": "Roketeer",
+              "fk_name": ["Winter Guard Infantry Rocketeer",
+                          "Winter Guard Infantry Rocketeers"],
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/WinterguardRocketeer.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Winter Guard Infantry Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/WinterguardOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Winter Guard Infantry Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/WinterguardStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "wgfg": {
+        "name": "Winter Guard Field Gun",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Crew",
+              "ranges": [1, 2],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/FieldGunCrew.png"
+                }
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/khador/units/FieldGun.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "wgm": {
+        "name": "Winter Guard Mortar Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/MortarCrew.png"
+                }
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/khador/units/Mortar.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "wgrc": {
+        "name": "Winter Guard Rifle Corps",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "type": "warrior",
+              "ranges": [1, 6, 10],
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/khador/units/WinterguardRifle.png"
+                }
+              ]
+            }
+          }
+        }
+      }      
+    },
+    "solos": {
+      "fenris": {
+        "name": "Fenris",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Fenris.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "fenris_dismount": {
+        "name": "Fenris (dismount)",
+        "fk_name": "Fenris",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Fenris_Dismount.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "ifk": {
+        "name": "Iron Fang Kovnik",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/IronFangKovnik.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "koldunlord": {
+        "name": "Koldun Lord",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/KoldunLord.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "malakov": {
+        "name": "Kovnik Andrei Malakov",
+        "type": "wardude",
+        "focus": 4,
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "joe": {
+        "name": "Kovnik Jozef Grigorovich",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Grigorovich.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "markov": {
+        "name": "Kovnik Markov",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Markov.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "drakhun": {
+        "name": "Man-o-war Drakhun",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Drakhun.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "drakhun_dismount": {
+        "name": "Man-o-war Drakhun (dismount)",
+        "fk_name": "Man-o-war Drakhun",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Drakhun_Dismount.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "mowk": {
+        "name": "Man-o-war Kovnik",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Kovnik.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "manhunter": {
+        "name": "Manhunter",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Manhunter.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "marksman": {
+        "name": "Widowmaker Marksman",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Marksman.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "valachev": {
+        "name": "Koldun Kapitan Valachev",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Valachev.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "wardog": {
+        "name": "War Dog",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Wardog.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "yuri": {
+        "name": "Yuri the Axe",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/khador/solos/Yuri.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      }
+    },
+    "battle_engines": {
+      "guncarriage": {
+        "name": "Gun Carriage",
+        "type": "be",
+        "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "data/model/khador/bes/GunCarriage.png"
+          }
+        ],
+        "damage": {
+          "n": 22
+        }
+      }
+    }
+  }
+}

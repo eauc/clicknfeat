@@ -9,9 +9,9 @@ template:
 - rework onTemplates/onStamps similar to model
 - better color on locked AoEs
 model
-- incorporeal
 - select all friendly
 - lock
+- place
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
@@ -26,3 +26,8 @@ online - game chat
 online - game synchro
 fk import
 save model selection
+
+=================================
+- mouvement cartesien + flip map
+- ruler : leave mode with escape, show ruler button bug, target origin show bug
+- charge start show infinite charge lane, allow rotate charge lane when length=0
