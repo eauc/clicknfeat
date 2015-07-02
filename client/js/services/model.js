@@ -160,7 +160,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         R.assoc('x', Math.max(0+radius, Math.min(480-radius, state.x))),
         R.assoc('y', Math.max(0+radius, Math.min(480-radius, state.y))),
         ensureChargeLength,
-        ensureChargeOrientation$(target)
+        ensureChargeOrientation$(target),
+        updateChargeDirection
       )(state);
     },
     setPosition: function modelSet(factions, pos, model) {
@@ -517,7 +518,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     startCharge: function modelStartCharge(model) {
       model.state = R.assoc('cha', {
-        s: R.pick(['x','y'], model.state),
+        s: R.pick(['x','y','r'], model.state),
         t: null
       }, model.state);
     },
@@ -546,9 +547,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     moveFrontCharge: function modelMoveFrontCharge(factions, target, small, model) {
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-      var direction = pointService.directionTo(model.state, model.state.cha.s);
+      var direction = model.state.cha.s.r;
       var distance = pointService.distanceTo(model.state, model.state.cha.s);
-      if(CHARGE_EPSILON > distance) direction = model.state.r;
       model.state = R.pipe(
         pointService.translateInDirection$(dist, direction), 
         modelService.checkState$(factions, target)
@@ -556,7 +556,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
     },
     moveBackCharge: function modelMoveBackCharge(factions, target, small, model) {
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-      var direction = pointService.directionTo(model.state.cha.s, model.state);
+      var direction = model.state.cha.s.r+180;
       var distance = pointService.distanceTo(model.state, model.state.cha.s);
       if(dist > distance) dist = distance;
       model.state = R.pipe(
@@ -568,6 +568,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe(
         pointService.rotateLeftAround$(angle, model.state.cha.s),
+        R.assocPath(['cha','s','r'], model.state.cha.s.r-angle),
         modelService.checkState$(factions, target)
       )(model.state);
     },
@@ -575,6 +576,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe( 
         pointService.rotateRightAround$(angle, model.state.cha.s),
+        R.assocPath(['cha','s','r'], model.state.cha.s.r+angle),
         modelService.checkState$(factions, target)
       )(model.state);
     },
@@ -689,6 +691,16 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var direction = CHARGE_EPSILON > distance ? state.r :
           pointService.directionTo(state, state.cha.s);
       return R.assoc('r', direction, state);
+    }
+    return state;
+  }
+  function updateChargeDirection(state) {
+    if(R.exists(state.cha)) {
+      var distance = pointService.distanceTo(state, state.cha.s);
+      if(distance > CHARGE_EPSILON) {
+        var direction = pointService.directionTo(state, state.cha.s);
+        return R.assocPath(['cha','s','r'], direction, state);
+      }
     }
     return state;
   }

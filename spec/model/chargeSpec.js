@@ -241,7 +241,7 @@ describe('model charge', function() {
 
         expect(this.model.state.cha)
           .toEqual({
-            s: { x: 240, y: 240 },
+            s: { x: 240, y: 240, r: 180 },
             t: null
           });
         expect(this.modelService.isCharging(this.model))
@@ -316,45 +316,74 @@ describe('model charge', function() {
       });
     });
     using([
-      [ 'move', 'result', 'small_result', 'target_result' ],
+      [ 'move', 'start',
+        'start_result', 'result',
+        'start_small_result', 'small_result',
+        'start_target_result', 'target_result' ],
       [ 'rotateLeftCharge',
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 80.00000000000003 },
         { x: 239.39231012048833, y: 233.0540728933228, r: 80.00000000000003 },
+        { x: 200, y: 240, r: 87.99999999999999 },
         { x: 239.97563308076383, y: 238.60402013189994, r: 87.99999999999999 },
+        { x: 200, y: 240, r: 80.00000000000003 },
         { x: 239.39231012048833, y: 233.0540728933228, r: -46.56192698809119 } ],
       [ 'rotateRightCharge',
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 99.99999999999999 },
         { x: 239.39231012048833, y: 246.9459271066772, r: 99.99999999999999 },
+        { x: 200, y: 240, r: 92 },
         { x: 239.97563308076383, y: 241.39597986810003, r: 92 },
+        { x: 200, y: 240, r: 99.99999999999999 },
         { x: 239.39231012048833, y: 246.9459271066772, r: -43.24365551169685 } ],
+      // charge length === 0
+      [ 'rotateLeftCharge',
+        { x: 240, y: 240, r: 90 },
+        { x: 240, y: 240, r: 80 }, { x: 240, y: 240, r: 180 },
+        { x: 240, y: 240, r: 88 }, { x: 240, y: 240, r: 180 },
+        { x: 240, y: 240, r: 80 }, { x: 240, y: 240, r: -45 }, ],
+      // charge length === 0
+      [ 'rotateRightCharge',
+        { x: 240, y: 240, r: 90 },
+        { x: 240, y: 240, r: 100 }, { x: 240, y: 240, r: 180 },
+        { x: 240, y: 240, r: 92 }, { x: 240, y: 240, r: 180 },
+        { x: 240, y: 240, r: 100 }, { x: 240, y: 240, r: -45 }, ],
       [ 'moveFrontCharge',
-        { x: 250, y: 240, r: 90 },
-        { x: 245, y: 240, r: 90 },
-        { x: 250, y: 240, r: -47.290610042638534 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 250, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 245, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 250, y: 240, r: -47.290610042638534 } ],
       [ 'moveBackCharge',
-        { x: 230, y: 240, r: 90 },
-        { x: 235, y: 240, r: 90 },
-        { x: 230, y: 240, r: -42.51044707800085 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 230, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 235, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 230, y: 240, r: -42.51044707800085 } ],
       [ 'shiftLeftCharge',
-        { x: 230, y: 240, r: 90 },
-        { x: 239, y: 240, r: 90 },
-        { x: 230, y: 240, r: -42.51044707800085 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 230, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 239, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 230, y: 240, r: -42.51044707800085 } ],
       [ 'shiftRightCharge',
-        { x: 250, y: 240, r: 90 },
-        { x: 241, y: 240, r: 90 },
-        { x: 250, y: 240, r: -47.290610042638534 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 250, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 241, y: 240, r: 90 },
+        { x: 200, y: 240, r: 90 }, { x: 250, y: 240, r: -47.290610042638534 } ],
       [ 'shiftUpCharge',
-        { x: 240, y: 230, r: 75.96375653207353 },
-        { x: 240, y: 239, r: 88.56790381583536 },
-        { x: 240, y: 230, r: -47.48955292199916 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 75.96375653207353 }, { x: 240, y: 230, r: 75.96375653207353 },
+        { x: 200, y: 240, r: 88.56790381583536 }, { x: 240, y: 239, r: 88.56790381583536 },
+        { x: 200, y: 240, r: 75.96375653207353 }, { x: 240, y: 230, r: -47.48955292199916 } ],
       [ 'shiftDownCharge',
-        { x: 240, y: 250, r: 104.0362434679265 },
-        { x: 240, y: 241, r: 91.43209618416466 },
-        { x: 240, y: 250, r: -42.70938995736147 } ],
+        { x: 200, y: 240, r: 90 },
+        { x: 200, y: 240, r: 104.0362434679265 }, { x: 240, y: 250, r: 104.0362434679265 },
+        { x: 200, y: 240, r: 91.43209618416466 }, { x: 240, y: 241, r: 91.43209618416466 },
+        { x: 200, y: 240, r: 104.0362434679265 }, { x: 240, y: 250, r: -42.70938995736147 } ],
     ], function(e, d) {
       describe(e.move+'(<small>)', function() {
         beforeEach(function() {
           this.model = {
             state: { info: 'info', x: 240, y: 240, r: 180,
-                     cha: { s: { x: 200, y: 240 }, t: null }
+                     cha: { s: e.start, t: null }
                    }
           };
           this.target = {
@@ -369,9 +398,9 @@ describe('model charge', function() {
         });
 
         using([
-          [ 'small', 'result' ],
-          [ false  , e.result ],
-          [ true   , e.small_result ],
+          [ 'small', 'result', 'start_result' ],
+          [ false  , e.result, e.start_result ],
+          [ true   , e.small_result, e.start_small_result ],
         ], function(ee, dd) {
           when('target is not set', function() {
             this.modelService[e.move]('factions', null, ee.small, this.model);
@@ -379,6 +408,8 @@ describe('model charge', function() {
             it('should '+e.move+' model, '+dd, function() {
               expect(R.pick(['x','y','r'], this.model.state))
                 .toEqual(ee.result);
+              expect(this.model.state.cha.s)
+                .toEqual(ee.start_result);
             });
           });
         });
@@ -389,6 +420,8 @@ describe('model charge', function() {
           it('should '+e.move+' model', function() {
             expect(R.pick(['x','y','r'], this.model.state))
               .toEqual(e.target_result);
+            expect(this.model.state.cha.s)
+              .toEqual(e.start_target_result);
           });
         });
 

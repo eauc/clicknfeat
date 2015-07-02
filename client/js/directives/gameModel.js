@@ -651,14 +651,14 @@ angular.module('clickApp.directives')
           return;
         }
         var charge_length = pointService.distanceTo(model.state, model.state.cha.s);
-        var charge_dir = pointService.directionTo(model.state, model.state.cha.s);
-        var charge_middle = pointService.translateInDirection(charge_length/2,
+        var charge_dir = model.state.cha.s.r;
+        var charge_middle = pointService.translateInDirection(400,
                                                               charge_dir,
                                                               model.state.cha.s);
         charge.path.setAttribute('width', (info.base_radius*2)+'');
-        charge.path.setAttribute('height', charge_length+'');
+        charge.path.setAttribute('height', '800');
         charge.path.setAttribute('x', (charge_middle.x-info.base_radius)+'');
-        charge.path.setAttribute('y', (charge_middle.y-charge_length/2)+'');
+        charge.path.setAttribute('y', (charge_middle.y-400)+'');
         charge.path.setAttribute('transform', [
           'rotate(',
           charge_dir,

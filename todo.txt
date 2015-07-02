@@ -28,6 +28,5 @@ fk import
 save model selection
 
 =================================
-- mouvement cartesien + flip map
 - ruler : leave mode with escape, show ruler button bug, target origin show bug
 - charge start show infinite charge lane, allow rotate charge lane when length=0
