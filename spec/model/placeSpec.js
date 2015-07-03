@@ -335,37 +335,61 @@ describe('model place', function() {
       });
     });
 
-  //   describe('setPlaceTarget(<factions>, <target>)', function() {
-  //     beforeEach(function() {
-  //       this.model = {
-  //         state: { info: 'info',
-  //                  x: 240, y:240, r: 180,
-  //                  cha: {
-  //                    s: { x: 160, y: 160 },
-  //                    t: null
-  //                  }
-  //                }
-  //       };
-  //       this.target = {
-  //         state: { x: 120, y: 120, stamp: 'target' }
-  //       };
-  //       this.gameFactionsService.getModelInfo._retVal = {
-  //         base_radius: 9.842,
-  //       };
+    describe('setPlaceTarget(<factions>, <target>)', function() {
+      beforeEach(function() {
+        this.model = {
+          state: { info: 'info',
+                   x: 240, y:240, r: 180,
+                   pla: {
+                     s: { x: 160, y: 160 }
+                   }
+                 }
+        };
+        this.target = {
+          state: { x: 120, y: 120, stamp: 'target' }
+        };
+        this.gameFactionsService.getModelInfo._retVal = {
+          base_radius: 9.842,
+        };
         
-  //       this.modelService.setPlaceTarget('factions', this.target, this.model);
-  //     });
+        this.modelService.setPlaceTarget('factions', this.target, this.model);
+      });
       
-  //     it('should set place <target> on model', function() {
-  //       expect(this.modelService.placeTarget(this.model))
-  //         .toBe('target');
-  //     });
+      it('should orient place lane toward <target>', function() {
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 80, y: 79.99999999999999, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state.pla.s))
+          .toEqual({ x: 160, y: 160, r: -44.99999999999999 });
+      });
+    });
 
-  //     it('should orient model toward <target>', function() {
-  //       expect(this.model.state.r)
-  //         .toBe(-45);
-  //     });
-  //   });
+    describe('setPlaceOrigin(<factions>, <origin>)', function() {
+      beforeEach(function() {
+        this.model = {
+          state: { info: 'info',
+                   x: 240, y:240, r: 180,
+                   pla: {
+                     s: { x: 160, y: 160 }
+                   }
+                 }
+        };
+        this.origin = {
+          state: { x: 120, y: 240, stamp: 'origin' }
+        };
+        this.gameFactionsService.getModelInfo._retVal = {
+          base_radius: 9.842,
+        };
+        
+        this.modelService.setPlaceOrigin('factions', this.origin, this.model);
+      });
+      
+      it('should orient place lane toward <target>', function() {
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 210.59644256269408, y: 58.807114874611855, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state.pla.s))
+          .toEqual({ x: 160, y: 160, r: 26.56505117707799 });
+      });
+    });
 
     describe('setPlaceMaxLength(<length>)', function() {
       beforeEach(function() {

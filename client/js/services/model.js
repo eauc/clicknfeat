@@ -624,8 +624,20 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.assoc('pla', null, model.state);
     },
     setPlaceOrigin: function modelSetPlaceOrigin(factions, other, model) {
+      var direction = pointService.directionTo(model.state.pla.s, other.state);
+      model.state = R.pipe(
+        pointService.rotateAroundTo$(direction, model.state.pla.s),
+        R.assocPath(['pla','s','r'], direction),
+        modelService.checkState$(factions, null)
+      )(model.state);
     },
     setPlaceTarget: function modelSetPlaceTarget(factions, other, model) {
+      var direction = pointService.directionTo(other.state, model.state.pla.s);
+      model.state = R.pipe(
+        pointService.rotateAroundTo$(direction, model.state.pla.s),
+        R.assocPath(['pla','s','r'], direction),
+        modelService.checkState$(factions, null)
+      )(model.state);
     },
     placeMaxLength: function modelPlaceMaxLength(model) {
       return R.head(R.path(['state','pml'], model));
@@ -662,11 +674,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe(
         pointService.rotateLeftAround$(angle, model.state.pla.s),
-        R.spy('state'),
         R.assocPath(['pla','s','r'], model.state.pla.s.r - angle),
-        R.spy('state'),
-        modelService.checkState$(factions, null),
-        R.spy('state')
+        modelService.checkState$(factions, null)
       )(model.state);
     },
     rotateRightPlace: function modelRotateRightPlace(factions, small, model) {

@@ -40,6 +40,13 @@ self.pointServiceFactory = function pointServiceFactory() {
         R.assoc('y', center.y - distance * Math.cos(new_direction * Math.PI / 180))
       )(point);
     },
+    rotateAroundTo: function pointRotateAroundTo(direction, center, point) {
+      var distance = pointService.distanceTo(point, center);
+      return R.pipe(
+        R.assoc('x', center.x + distance * Math.sin(direction * Math.PI / 180)),
+        R.assoc('y', center.y - distance * Math.cos(direction * Math.PI / 180))
+      )(point);
+    },
     shiftLeft: function pointShiftLeft(dist, point) {
       return R.assoc('x', point.x - dist, point);
     },
