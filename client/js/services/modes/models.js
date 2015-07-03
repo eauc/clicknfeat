@@ -167,6 +167,32 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
         return null;
       });
   };
+  models_actions.setPlaceMaxLength = function modelSetPlaceMaxLength(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var value = R.defaultTo(0, modelService.placeMaxLength(model));
+    promptService.prompt('prompt',
+                         'Set place max length :',
+                         value)
+      .then(function(value) {
+        value = (value === 0) ? null : value;
+        gameService.executeCommand('onModels', 'setPlaceMaxLength', value,
+                                   stamps, scope, scope.game);
+        return value;
+      })
+      .catch(function(error) {
+        gameService.executeCommand('onModels', 'setPlaceMaxLength', null,
+                                   stamps, scope, scope.game);
+        return null;
+      });
+  };
+  models_actions.togglePlaceWithin = function modelTogglePlaceWithin(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.placeWithin(model);
+    gameService.executeCommand('onModels', 'setPlaceWithin', !present,
+                               stamps, scope, scope.game);
+  };
   models_actions.toggleLeaderDisplay = function modelToggleLeaderDisplay(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -368,7 +394,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleLeaderDisplay': 'alt+l',
     'toggleCtrlAreaDisplay': 'shift+c',
     'setRulerMaxLength': 'shift+m',
-    'setChargeMaxLength': 'alt+m',
+    'setChargeMaxLength': 'shift+m',
+    'setPlaceMaxLength': 'shift+p',
+    'togglePlaceWithin': 'shift+w',
     'toggleMeleeDisplay': 'm',
     'toggleReachDisplay': 'r',
     'toggleStrikeDisplay': 's',
@@ -403,6 +431,9 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     [ 'Delete', 'deleteSelection' ],
     [ 'Ruler Max Len.', 'setRulerMaxLength' ],
     [ 'Charge Max Len.', 'setChargeMaxLength' ],
+    [ 'Place', 'toggle', 'place' ],
+    [ 'Max Len.', 'setPlaceMaxLength', 'place' ],
+    [ 'Within', 'togglePlaceWithin', 'place' ],
     [ 'Image', 'toggle', 'image' ],
     [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
     [ 'Next', 'setNextImage', 'image' ],

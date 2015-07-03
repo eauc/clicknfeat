@@ -41,7 +41,9 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
           are: null,
           rml: null,
           cml: null,
+          pml: [null,false],
           cha: null,
+          pla: null,
           dmg: initDamage(info.damage),
           stamp: R.guid()
         }
@@ -159,8 +161,10 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       return R.pipe(
         R.assoc('x', Math.max(0+radius, Math.min(480-radius, state.x))),
         R.assoc('y', Math.max(0+radius, Math.min(480-radius, state.y))),
+        ensurePlaceLength$(info),
         ensureChargeLength,
         ensureChargeOrientation$(target),
+        updatePlaceDirection,
         updateChargeDirection
       )(state);
     },
@@ -608,6 +612,99 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         modelService.checkState$(factions, target)
       )(model.state);
     },
+    startPlace: function modelStartPlace(model) {
+      model.state = R.assoc('pla', {
+        s: R.pick(['x','y','r'], model.state)
+      }, model.state);
+    },
+    isPlacing: function modelIsPlarging(model) {
+      return R.exists(model.state.pla);
+    },
+    endPlace: function modelEndPlace(model) {
+      model.state = R.assoc('pla', null, model.state);
+    },
+    setPlaceOrigin: function modelSetPlaceOrigin(factions, other, model) {
+    },
+    setPlaceTarget: function modelSetPlaceTarget(factions, other, model) {
+    },
+    placeMaxLength: function modelPlaceMaxLength(model) {
+      return R.head(R.path(['state','pml'], model));
+    },
+    setPlaceMaxLength: function modelSetPlaceMaxLength(value, model) {
+      model.state = R.assoc('pml', [ value, model.state.pml[1] ], model.state);
+    },
+    placeWithin: function modelPlaceWithin(model) {
+      return R.nth(1, R.defaultTo([], R.path(['state','pml'], model)));
+    },
+    setPlaceWithin: function modelSetPlaceWithin(value, model) {
+      model.state = R.assoc('pml', [ model.state.pml[0], value ], model.state);
+    },
+    moveFrontPlace: function modelMoveFrontPlace(factions, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      var direction = model.state.pla.s.r;
+      var distance = pointService.distanceTo(model.state, model.state.pla.s);
+      model.state = R.pipe(
+        pointService.translateInDirection$(dist, direction), 
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    moveBackPlace: function modelMoveBackPlace(factions, small, model) {
+      var dist = MOVES[small ? 'MoveSmall' : 'Move'];
+      var direction = model.state.pla.s.r+180;
+      var distance = pointService.distanceTo(model.state, model.state.pla.s);
+      if(dist > distance) dist = distance;
+      model.state = R.pipe(
+        pointService.translateInDirection$(dist, direction),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    rotateLeftPlace: function modelRotateLeftPlace(factions, small, model) {
+      var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
+      model.state = R.pipe(
+        pointService.rotateLeftAround$(angle, model.state.pla.s),
+        R.spy('state'),
+        R.assocPath(['pla','s','r'], model.state.pla.s.r - angle),
+        R.spy('state'),
+        modelService.checkState$(factions, null),
+        R.spy('state')
+      )(model.state);
+    },
+    rotateRightPlace: function modelRotateRightPlace(factions, small, model) {
+      var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
+      model.state = R.pipe( 
+        pointService.rotateRightAround$(angle, model.state.pla.s),
+        R.assocPath(['pla','s','r'], model.state.pla.s.r + angle),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    shiftLeftPlace: function modelShiftLeftPlace(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftLeft$(dist),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    shiftRightPlace: function modelShiftRightPlace(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftRight$(dist),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    shiftUpPlace: function modelShiftUpPlace(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftUp$(dist),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
+    shiftDownPlace: function modelShiftDownPlace(factions, small, model) {
+      var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
+      model.state = R.pipe(
+        pointService.shiftDown$(dist),
+        modelService.checkState$(factions, null)
+      )(model.state);
+    },
     distanceTo: function modelDistanceTo(factions, other, model) {
       var info = gameFactionsService.getModelInfo(model.state.info, factions);
       var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
@@ -666,6 +763,24 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }, 0)
     )(damage);
   }
+  function ensurePlaceLength(info, state) {
+    if(R.exists(state.pla) &&
+       R.exists(state.pml)) {
+      var distance = pointService.distanceTo(state, state.pla.s);
+      var max_dist = state.pml[0] * 10 + (state.pml[1] ? info.base_radius * 2 : 0);
+      if(distance > max_dist) {
+        var direction = pointService.directionTo(state, state.pla.s);
+        var position = pointService.translateInDirection(max_dist, direction,
+                                                         state.pla.s);
+        return R.pipe(
+          R.assoc('x', position.x),
+          R.assoc('y', position.y)
+        )(state);
+      }
+    }
+    return state;
+  }
+  var ensurePlaceLength$ = R.curry(ensurePlaceLength);
   function ensureChargeLength(state) {
     if(R.exists(state.cha) &&
        R.exists(state.cml)) {
@@ -700,6 +815,16 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       if(distance > CHARGE_EPSILON) {
         var direction = pointService.directionTo(state, state.cha.s);
         return R.assocPath(['cha','s','r'], direction, state);
+      }
+    }
+    return state;
+  }
+  function updatePlaceDirection(state) {
+    if(R.exists(state.pla)) {
+      var distance = pointService.distanceTo(state, state.pla.s);
+      if(distance > CHARGE_EPSILON) {
+        var direction = pointService.directionTo(state, state.pla.s);
+        return R.assocPath(['pla','s','r'], direction, state);
       }
     }
     return state;

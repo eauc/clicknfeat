@@ -596,7 +596,9 @@ describe('create model', function() {
                        are: null,
                        rml: null,
                        cml: null,
+                       pml: [null,false],
                        cha: null,
+                       pla: null,
                        stamp: 'stamp',
                        info: [ 'info' ]
                      }

@@ -11,7 +11,8 @@ template:
 model
 - select all friendly
 - lock
-- place
+- place : place & charge modes / exclude charge & place
+- generate objectives/flags
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
@@ -20,6 +21,10 @@ los
 - line
 - from model
 - update when origin/target move ?
+refac backToDefault :
+- enforce escape in all modes
+- model/template selection -> back to models/templates mode -> back to default mode
+- ruler + bug show/hide button + toggle use ruler button
 online - users login
 online - users chat + notification
 online - game chat
@@ -28,5 +33,3 @@ fk import
 save model selection
 
 =================================
-- ruler : leave mode with escape, show ruler button bug, target origin show bug
-- charge start show infinite charge lane, allow rotate charge lane when length=0

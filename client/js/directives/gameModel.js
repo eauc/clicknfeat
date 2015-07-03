@@ -94,8 +94,8 @@ angular.module('clickApp.directives')
               updateModelCtrlArea(scope.factions, img, info, scope.model, element);
               updateModelArea(img, info, scope.model, element);
               updateModelMelee(img, info, scope.model, element);
-              updateModelCharge(map_flipped, zoom_factor, scope,
-                                info, scope.model, element.charge);
+              updateModelChargePlace(map_flipped, zoom_factor, scope,
+                                     info, scope.model, element.charge);
 
               self.requestAnimationFrame(function _updateModel2() {
                 if(gameModelSelectionService.inSingle('local',
@@ -115,7 +115,8 @@ angular.module('clickApp.directives')
             labelElementService.updateOnFlipMap(map,
                                                 scope.model.state,
                                                 element.counter);
-            if(modelService.isCharging(scope.model)) {
+            if(modelService.isCharging(scope.model) ||
+               modelService.isPlacing(scope.model)) {
               labelElementService.updateOnFlipMap(map,
                                                   scope.model.state.cha.s,
                                                   element.charge.label);
@@ -637,9 +638,10 @@ angular.module('clickApp.directives')
           element.area.style.visibility = 'hidden';
         }
       }
-      function updateModelCharge(map_flipped, zoom_factor, scope,
-                                 info, model, charge) {
-        if(!modelService.isCharging(model)) {
+      function updateModelChargePlace(map_flipped, zoom_factor, scope,
+                                      info, model, charge) {
+        if(!modelService.isCharging(model) &&
+           !modelService.isPlacing(model)) {
           charge.path.style.visibility = 'hidden';
           charge.target.style.visibility = 'hidden';
           labelElementService.update(map_flipped,
@@ -650,64 +652,108 @@ angular.module('clickApp.directives')
                                      charge.label);
           return;
         }
-        var charge_length = pointService.distanceTo(model.state, model.state.cha.s);
-        var charge_dir = model.state.cha.s.r;
-        var charge_middle = pointService.translateInDirection(400,
-                                                              charge_dir,
-                                                              model.state.cha.s);
-        charge.path.setAttribute('width', (info.base_radius*2)+'');
-        charge.path.setAttribute('height', '800');
-        charge.path.setAttribute('x', (charge_middle.x-info.base_radius)+'');
-        charge.path.setAttribute('y', (charge_middle.y-400)+'');
-        charge.path.setAttribute('transform', [
-          'rotate(',
-          charge_dir,
-          ',',
-          charge_middle.x,
-          ',',
-          charge_middle.y,
-          ')'
-        ].join(''));
-        charge.path.style.visibility = 'visible';
+        var max_dist;
+        if(modelService.isCharging(model)) {
+          var charge_length = pointService.distanceTo(model.state, model.state.cha.s);
+          var charge_dir = model.state.cha.s.r;
+          var charge_middle = pointService.translateInDirection(400,
+                                                                charge_dir,
+                                                                model.state.cha.s);
+          charge.path.setAttribute('width', (info.base_radius*2)+'');
+          charge.path.setAttribute('height', '800');
+          charge.path.setAttribute('x', (charge_middle.x-info.base_radius)+'');
+          charge.path.setAttribute('y', (charge_middle.y-400)+'');
+          charge.path.setAttribute('transform', [
+            'rotate(',
+            charge_dir,
+            ',',
+            charge_middle.x,
+            ',',
+            charge_middle.y,
+            ')'
+          ].join(''));
+          charge.path.style.visibility = 'visible';
 
-        labelElementService.update(map_flipped,
-                                   zoom_factor,
-                                   model.state.cha.s,
-                                   model.state.cha.s,
-                                   (Math.round(charge_length*10)/100)+'',
-                                   charge.label);
-
-        var charge_target_visibility = 'hidden';
-        if(gameModelSelectionService.in('local', model.state.stamp, scope.game.model_selection) &&
-           R.exists(model.state.cha.t)) {
-          var target = gameModelsService.findStamp(model.state.cha.t, scope.game.models);
-          if(R.exists(target)) {
-            var target_info = gameFactionsService.getModelInfo(target.state.info, scope.factions);
-            charge.target.setAttribute('cx', (target.state.x)+'');
-            charge.target.setAttribute('cy', (target.state.y)+'');
-            charge.target.setAttribute('r', (target_info.base_radius)+'');
-
-            var melee_range = 0;
-            if(modelService.isMeleeDisplayed('mm', model)) {
-              melee_range = 5;
-            }
-            if(modelService.isMeleeDisplayed('mr', model)) {
-              melee_range = 20;
-            }
-            if(modelService.isMeleeDisplayed('ms', model)) {
-              melee_range = 40;
-            }
-            var distance_to_target = pointService.distanceTo(target.state, model.state);
-            if(distance_to_target <= melee_range + info.base_radius + target_info.base_radius) {
-              charge.target.classList.add('reached');
-            }
-            else {
-              charge.target.classList.remove('reached');
-            }
-            charge_target_visibility = 'visible';
+          var charge_label = (Math.round(charge_length*10)/100)+'"';
+          max_dist = modelService.chargeMaxLength(model);
+          if(R.exists(max_dist)) {
+            charge_label += '/'+max_dist+'"';
           }
+          labelElementService.update(map_flipped,
+                                     zoom_factor,
+                                     model.state.cha.s,
+                                     model.state.cha.s,
+                                     charge_label,
+                                     charge.label);
+
+          var charge_target_visibility = 'hidden';
+          if(gameModelSelectionService.in('local', model.state.stamp, scope.game.model_selection) &&
+             R.exists(model.state.cha.t)) {
+            var target = gameModelsService.findStamp(model.state.cha.t, scope.game.models);
+            if(R.exists(target)) {
+              var target_info = gameFactionsService.getModelInfo(target.state.info, scope.factions);
+              charge.target.setAttribute('cx', (target.state.x)+'');
+              charge.target.setAttribute('cy', (target.state.y)+'');
+              charge.target.setAttribute('r', (target_info.base_radius)+'');
+
+              var melee_range = 0;
+              if(modelService.isMeleeDisplayed('mm', model)) {
+                melee_range = 5;
+              }
+              if(modelService.isMeleeDisplayed('mr', model)) {
+                melee_range = 20;
+              }
+              if(modelService.isMeleeDisplayed('ms', model)) {
+                melee_range = 40;
+              }
+              var distance_to_target = pointService.distanceTo(target.state, model.state);
+              if(distance_to_target <= melee_range + info.base_radius + target_info.base_radius) {
+                charge.target.classList.add('reached');
+              }
+              else {
+                charge.target.classList.remove('reached');
+              }
+              charge_target_visibility = 'visible';
+            }
+          }
+          charge.target.style.visibility = charge_target_visibility;
         }
-        charge.target.style.visibility = charge_target_visibility;
+        if(modelService.isPlacing(model)) {
+          var place_length = pointService.distanceTo(model.state, model.state.pla.s);
+          var place_dir = model.state.pla.s.r;
+          var place_middle = pointService.translateInDirection(400,
+                                                               place_dir,
+                                                               model.state.pla.s);
+          charge.path.setAttribute('width', (info.base_radius*2)+'');
+          charge.path.setAttribute('height', '800');
+          charge.path.setAttribute('x', (place_middle.x-info.base_radius)+'');
+          charge.path.setAttribute('y', (place_middle.y-400)+'');
+          charge.path.setAttribute('transform', [
+            'rotate(',
+            place_dir,
+            ',',
+            place_middle.x,
+            ',',
+            place_middle.y,
+            ')'
+          ].join(''));
+          charge.path.style.visibility = 'visible';
+
+          var place_label = (Math.round(place_length*10)/100)+'"';
+          var within = modelService.placeWithin(model);
+          max_dist = modelService.placeMaxLength(model);
+          if(R.exists(max_dist)) {
+            place_label += '/'+(within ? 'w.' : '')+max_dist+'"';
+          }
+          labelElementService.update(map_flipped,
+                                     zoom_factor,
+                                     model.state.pla.s,
+                                     model.state.pla.s,
+                                     place_label,
+                                     charge.label);
+
+          charge.target.style.visibility = 'hidden';
+        }
       }
       function computeLabelCenter(info, model) {
         var label_text_center_y_down = model.state.y + info.base_radius + 6;
