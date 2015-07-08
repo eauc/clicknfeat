@@ -250,20 +250,22 @@ ul.nav-tabs li {
     visibility: hidden;
 }
 
-.remote-selection .model-edge,
-.remote-selection .model-los-selection {
+.remote-selection .model-edge {
     stroke-width: 0.75px;
     stroke: #FFF;
 }
-.remote-selection.single .model-los-selection {
+.remote-selection.single-remote .model-los-selection {
+    stroke-width: 0.75px;
+    stroke: #FFF;
     visibility: visible;
 }
-.local-selection .model-edge,
-.local-selection .model-los-selection {
+.local-selection .model-edge {
     stroke-width: 0.75px;
     stroke: #0F0;
 }
-.local-selection.single .model-los-selection {
+.local-selection.single-local .model-los-selection {
+    stroke-width: 0.75px;
+    stroke: #0F0;
     visibility: visible;
 }
 

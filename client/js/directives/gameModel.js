@@ -462,12 +462,17 @@ angular.module('clickApp.directives')
         else {
           element.container.classList.remove('remote-selection');
         }
-        if(gameModelSelectionService.inSingle('local', model.state.stamp, selection) ||
-           gameModelSelectionService.inSingle('remote', model.state.stamp, selection)) {
-          element.container.classList.add('single');
+        if(gameModelSelectionService.inSingle('local', model.state.stamp, selection)) {
+          element.container.classList.add('single-local');
+          element.container.classList.remove('single-remote');
+        }
+        else if(gameModelSelectionService.inSingle('remote', model.state.stamp, selection)) {
+          element.container.classList.remove('single-local');
+          element.container.classList.add('single-remote');
         }
         else {
-          element.container.classList.remove('single');
+          element.container.classList.remove('single-local');
+          element.container.classList.remove('single-remote');
         }
       }
       function updateModelDamage(img, info, model, element) {
