@@ -9,7 +9,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                                                   gameModelSelectionService,
                                                                   promptService) {
   var models_actions = Object.create(defaultModeService.actions);
-  models_actions.deleteSelection = function modelsDeleteSeelction(scope) {
+  models_actions.deleteSelection = function modelsDeleteSelection(scope) {
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     gameService.executeCommand('deleteModel', stamps, scope, scope.game);
   };
@@ -35,6 +35,11 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
     var present = modelService.isImageDisplayed(model);
     gameService.executeCommand('onModels', 'setImageDisplay', !present,
+                               stamps, scope, scope.game);
+  };
+  models_actions.setNextImage = function modelSetNextImage(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    gameService.executeCommand('onModels', 'setNextImage', scope.factions,
                                stamps, scope, scope.game);
   };
   models_actions.toggleWreckDisplay = function modelToggleWreckDisplay(scope) {
@@ -88,11 +93,6 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
     var present = modelService.isMeleeDisplayed('ms', model);
     gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
-                               stamps, scope, scope.game);
-  };
-  models_actions.setNextImage = function modelSetNextImage(scope) {
-    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    gameService.executeCommand('onModels', 'setNextImage', scope.factions,
                                stamps, scope, scope.game);
   };
   models_actions.toggleCounterDisplay = function modelToggleCounterDisplay(scope) {
@@ -207,13 +207,6 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
                                stamps, scope, scope.game);
   };
-  models_actions.toggleCtrlAreaDisplay = function modelToggleCtrlAreaDisplay(scope) {
-    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-    var present = modelService.isCtrlAreaDisplayed(scope.factions, model);
-    gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
-                               stamps, scope, scope.game);
-  };
   var auras = [
     [ 'Red', '#F00' ],
     [ 'Green', '#0F0' ],
@@ -232,6 +225,13 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  stamps, scope, scope.game);
     };
   }, auras);
+  models_actions.toggleCtrlAreaDisplay = function modelToggleCtrlAreaDisplay(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(stamps[0], scope.game.models);
+    var present = modelService.isCtrlAreaDisplayed(scope.factions, model);
+    gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
+                               stamps, scope, scope.game);
+  };
   var areas = R.range(0, 10);
   R.forEach(function(area) {
     var size = area === 0 ? 10 : area;
@@ -272,12 +272,6 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                                  stamps, scope, scope.game);
     };
   }, effects);
-  // models_actions.lock = function modelsLock(scope) {
-  //   var stamp = gameModelsSelectionService.get('local', scope.game.models_selection);
-  //   gameService.executeCommand('lockModelss', [stamp], true, scope, scope.game);
-  //   modesService.switchToMode(gameModelssService.modeForStamp(stamp, scope.game.modelss),
-  //                             scope, scope.modes);
-  // };
   var moves = [
     ['moveFront', 'up'],
     ['moveBack', 'down'],
@@ -400,9 +394,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     'toggleMeleeDisplay': 'm',
     'toggleReachDisplay': 'r',
     'toggleStrikeDisplay': 's',
+    'toggleUnitDisplay': 'alt+u',
     'setUnit': 'shift+u',
     'toggleWreckDisplay': 'alt+w',
-    'toggleUnitDisplay': 'alt+u',
+    'toggleIncorporealDisplay': 'alt+i',
   };
   R.forEach(function(move) {
     models_default_bindings[move[0]] = move[1];
@@ -424,64 +419,10 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
   R.forEach(function(effect) {
     models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
   }, effects);
-  models_default_bindings['toggleIncorporealDisplay'] = 'alt+i';
   var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                  models_default_bindings);
-  var models_buttons = [
-    [ 'Delete', 'deleteSelection' ],
-    [ 'Ruler Max Len.', 'setRulerMaxLength' ],
-    [ 'Charge Max Len.', 'setChargeMaxLength' ],
-    [ 'Place', 'toggle', 'place' ],
-    [ 'Max Len.', 'setPlaceMaxLength', 'place' ],
-    [ 'Within', 'togglePlaceWithin', 'place' ],
-    [ 'Image', 'toggle', 'image' ],
-    [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
-    [ 'Next', 'setNextImage', 'image' ],
-    [ 'Wreck', 'toggleWreckDisplay', 'image' ],
-    [ 'Orient.', 'toggle', 'orientation' ],
-    [ 'Face Up', 'setOrientationUp', 'orientation' ],
-    [ 'Face Down', 'setOrientationDown', 'orientation' ],
-    [ 'Counter', 'toggle', 'counter' ],
-    [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
-    [ 'Inc.', 'incrementCounter', 'counter' ],
-    [ 'Dec.', 'decrementCounter', 'counter' ],
-    [ 'Souls', 'toggle', 'souls' ],
-    [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
-    [ 'Inc.', 'incrementSouls', 'souls' ],
-    [ 'Dec.', 'decrementSouls', 'souls' ],
-    [ 'Unit', 'toggle', 'unit' ],
-    [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
-    [ 'Set #', 'setUnit', 'unit' ],
-    [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
-    [ 'Melee', 'toggle', 'melee' ],
-    [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
-    [ 'Reach', 'toggleReachDisplay', 'melee' ],
-    [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
-  ];
-  models_buttons = R.append([ 'Areas', 'toggle', 'areas' ], models_buttons);
-  models_buttons = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], models_buttons);
-  R.forEach(function(area) {
-    var size = area + 1;
-    models_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
-                              models_buttons);
-  }, areas);
-  R.forEach(function(area) {
-    var size = area + 11;
-    models_buttons = R.append([ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ],
-                              models_buttons);
-  }, areas);
-  models_buttons = R.append([ 'Auras', 'toggle', 'auras' ], models_buttons);
-  R.forEach(function(aura) {
-    models_buttons = R.append([ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ],
-                              models_buttons);
-  }, auras);
-  models_buttons = R.append([ 'Effects', 'toggle', 'effects' ], models_buttons);
-  R.forEach(function(effect) {
-    models_buttons = R.append([ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ],
-                              models_buttons);
-  }, effects);
-  models_buttons = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ],
-                            models_buttons);
+
+  var models_buttons = buildModelsModesButtons();
   var models_mode = {
     onEnter: function modelsOnEnter(scope) {
     },
@@ -490,6 +431,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
     name: 'Models',
     actions: models_actions,
     buttons: models_buttons,
+    buildButtons: buildModelsModesButtons,
     bindings: models_bindings,
     areas: areas,
     auras: auras,
@@ -502,5 +444,85 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                            function(bs) {
                              R.extend(models_mode.bindings, bs);
                            });
+
+  function buildModelsModesButtons(options) {
+    options = R.defaultTo({}, options);
+    var ret = [
+      [ 'Delete', 'deleteSelection' ],
+      [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+      [ 'Image', 'toggle', 'image' ],
+      [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
+      [ 'Next', 'setNextImage', 'image' ],
+      [ 'Wreck', 'toggleWreckDisplay', 'image' ],
+      [ 'Orient.', 'toggle', 'orientation' ],
+      [ 'Face Up', 'setOrientationUp', 'orientation' ],
+      [ 'Face Down', 'setOrientationDown', 'orientation' ],
+      [ 'Counter', 'toggle', 'counter' ],
+      [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
+      [ 'Inc.', 'incrementCounter', 'counter' ],
+      [ 'Dec.', 'decrementCounter', 'counter' ],
+      [ 'Souls', 'toggle', 'souls' ],
+      [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
+      [ 'Inc.', 'incrementSouls', 'souls' ],
+      [ 'Dec.', 'decrementSouls', 'souls' ],
+      [ 'Melee', 'toggle', 'melee' ],
+      [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
+      [ 'Reach', 'toggleReachDisplay', 'melee' ],
+      [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
+    ];
+    if(R.prop('single', options)) {
+      ret = R.concat(ret, [ [ 'Templates', 'toggle', 'templates' ],
+                            [ 'AoE', 'createAoEOnModel', 'templates' ],
+                            [ 'Spray', 'createSprayOnModel', 'templates' ],
+                          ]);
+    }
+    ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
+    ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
+    ret = R.concat(ret, R.map(function(area) {
+      var size = area + 1;
+      return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
+    }, areas));
+    ret = R.concat(ret, R.map(function(area) {
+      var size = area + 11;
+      return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
+    }, areas));
+    ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
+    ret = R.concat(ret, R.map(function(aura) {
+      return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
+    }, auras));
+    ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
+    ret = R.concat(ret, R.map(function(effect) {
+      return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
+    }, effects));
+    ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
+    ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
+    if(R.prop('start_charge', options)) {
+      ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
+    }
+    if(R.prop('end_charge', options)) {
+      ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
+    }
+    ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
+    ret = R.append([ 'Place', 'toggle', 'place' ], ret);
+    if(R.prop('start_place', options)) {
+      ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
+    }
+    if(R.prop('end_place', options)) {
+      ret = R.append([ 'End', 'endPlace', 'place' ], ret);
+    }
+    ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
+    ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
+    ret = R.concat(ret, [ [ 'Unit', 'toggle', 'unit' ],
+                          [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
+                          [ 'Set #', 'setUnit', 'unit' ],
+                          [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
+                        ]);
+    if(R.prop('single', options)) {
+      ret = R.append([ 'Select All', 'selectAllUnit', 'unit' ], ret);
+    }
+
+    return ret;
+  }
+  
   return models_mode;
 };

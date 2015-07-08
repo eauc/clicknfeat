@@ -101,7 +101,7 @@ angular.module('clickApp.services')
     'prompt',
     modelsModeServiceFactory
   ])
-  .factory('modelMode', [
+  .factory('modelBaseMode', [
     'modes',
     'settings',
     'modelsMode',
@@ -110,7 +110,39 @@ angular.module('clickApp.services')
     'game',
     'gameModels',
     'gameModelSelection',
+    modelBaseModeServiceFactory
+  ])
+  .factory('modelMode', [
+    'modes',
+    'settings',
+    'modelsMode',
+    'modelBaseMode',
+    'model',
+    'game',
+    'gameModels',
+    'gameModelSelection',
     modelModeServiceFactory
+  ])
+  .factory('modelChargeMode', [
+    'modes',
+    'settings',
+    'modelsMode',
+    'modelBaseMode',
+    'model',
+    'game',
+    'gameModels',
+    'gameModelSelection',
+    modelChargeModeServiceFactory
+  ])
+  .factory('modelPlaceMode', [
+    'modes',
+    'settings',
+    'modelsMode',
+    'modelBaseMode',
+    'game',
+    'gameModels',
+    'gameModelSelection',
+    modelPlaceModeServiceFactory
   ])
   .factory('createTemplateMode', [
     'modes',
@@ -204,6 +236,8 @@ angular.module('clickApp.services')
     'createModelMode',
     'modelsMode',
     'modelMode',
+    'modelChargeMode',
+    'modelPlaceMode',
     'createTemplateMode',
     'aoeTemplateLockedMode',
     'sprayTemplateLockedMode',

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model image', function() {
+describe('model b2b', function() {
   describe('modelMode service', function() {
     beforeEach(inject([
       'modelMode',

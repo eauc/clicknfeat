@@ -46,20 +46,20 @@ describe('modes', function() {
         });
       });
 
-      when('we are already in <next> mode', function() {
-        this.modesService.switchToMode('Default', this.scope, this.modes);
-      }, function() {
-        it('should do nothing', function() {
-          expect(this.defaultModeService.onLeave)
-            .not.toHaveBeenCalled();
-          expect(this.templateModeService.onEnter)
-            .not.toHaveBeenCalled();
-          expect(this.modesService.currentModeName(this.modes))
-            .toBe('Default');
-          expect(this.scope.gameEvent)
-            .not.toHaveBeenCalled();
-        });
-      });
+      // when('we are already in <next> mode', function() {
+      //   this.modesService.switchToMode('Default', this.scope, this.modes);
+      // }, function() {
+      //   it('should do nothing', function() {
+      //     expect(this.defaultModeService.onLeave)
+      //       .not.toHaveBeenCalled();
+      //     expect(this.templateModeService.onEnter)
+      //       .not.toHaveBeenCalled();
+      //     expect(this.modesService.currentModeName(this.modes))
+      //       .toBe('Default');
+      //     expect(this.scope.gameEvent)
+      //       .not.toHaveBeenCalled();
+      //   });
+      // });
 
       when('<next> mode does not exist', function() {
         this.modesService.switchToMode('Unknown', this.scope, this.modes);

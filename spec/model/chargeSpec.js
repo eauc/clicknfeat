@@ -6,6 +6,7 @@ describe('model charge', function() {
       'modelMode',
       function(modelModeService) {
         this.modelModeService = modelModeService;
+        this.modesService = spyOnService('modes');
         this.gameService = spyOnService('game');
         this.modelService = spyOnService('model');
         this.modelService.isPlacing._retVal = false;
@@ -17,41 +18,114 @@ describe('model charge', function() {
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       modes: 'modes',
                      };
       }
     ]));
 
-    when('user toggle charge on model', function() {
-      this.modelModeService.actions.toggleCharge(this.scope);
+    when('user enters Model mode', function() {
+      this.modelModeService.onEnter(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
       });
 
+      it('should check whether selected model is charging', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('stamp', 'models');
+        expect(this.modelService.isCharging)
+          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+      });
+      
       when('model is not charging', function() {
         this.modelService.isCharging._retVal = false;
+        this.modelService.isPlacing._retVal = false;
       }, function() {
-        it('should start charge for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'startCharge', ['stamp'],
-                                  this.scope, this.scope.game);
+        it('should not switch to ModelCharge mode', function() {
+          expect(this.modesService.switchToMode)
+            .not.toHaveBeenCalled();
         });
       });
-
+      
       when('model is charging', function() {
         this.modelService.isCharging._retVal = true;
+        this.modelService.isPlacing._retVal = false;
       }, function() {
-        it('should end charge for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'endCharge', ['stamp'],
-                                  this.scope, this.scope.game);
+        it('should switch to charge mode', function() {
+          expect(this.modesService.switchToMode)
+            .toHaveBeenCalledWith('ModelCharge', this.scope, 'modes');
         });
       });
     });
 
+    when('user starts charge on model', function() {
+      this.modelModeService.actions.startCharge(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+
+      it('should start charge for model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('onModels', 'startCharge', ['stamp'],
+                                this.scope, this.scope.game);
+      });
+
+      it('should switch to charge mode', function() {
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('ModelCharge', this.scope, 'modes');
+      });
+    });
+  });
+  
+  describe('modelChargeMode service', function() {
+    beforeEach(inject([
+      'modelChargeMode',
+      function(modelChargeModeService) {
+        this.modelChargeModeService = modelChargeModeService;
+        this.modesService = spyOnService('modes');
+        this.gameService = spyOnService('game');
+        this.modelService = spyOnService('model');
+        this.modelService.isPlacing._retVal = false;
+        this.gameModelsService = spyOnService('gameModels');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.modelsModeService = spyOnService('modelsMode');
+        spyOn(this.modelsModeService.actions, 'clickModel');
+      
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                       factions: 'factions',
+                       modes: 'modes',
+                     };
+      }
+    ]));
+
+    when('user ends charge on model', function() {
+      this.modelChargeModeService.actions.endCharge(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+
+      it('should end charge for model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('onModels', 'endCharge', ['stamp'],
+                                this.scope, this.scope.game);
+      });
+
+      it('should switch to Model mode', function() {
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('Model', this.scope, 'modes');
+      });
+    });
+
     when('user shift click on model', function() {
-      this.modelModeService.actions.clickModel(this.scope, this.event, { shiftKey: true });
+      this.modelChargeModeService.actions
+        .clickModel(this.scope, this.event, { shiftKey: true });
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -61,17 +135,7 @@ describe('model charge', function() {
         this.event = { target: { state: { stamp: 'target' } } };
       });
 
-      when('model is not charging', function() {
-        this.modelService.isCharging._retVal = false;
-      }, function() {
-        it('should forward to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event, { shiftKey: true });
-        });
-      });
-
       when('target is the same as selection', function() {
-        this.modelService.isCharging._retVal = true;
         this.event.target.state.stamp = 'stamp';
       }, function() {
         it('should forward to modelsMode', function() {
@@ -81,7 +145,6 @@ describe('model charge', function() {
       });
 
       when('target is another model', function() {
-        this.modelService.isCharging._retVal = true;
       }, function() {
         it('should set charge target for model', function() {
           expect(this.gameService.executeCommand)
@@ -93,54 +156,52 @@ describe('model charge', function() {
     });
 
     using([
-      ['move'            , 'cmd'         , 'small'],
-      ['moveFront'       , 'moveFront'   , false  ],
-      ['moveFrontSmall'  , 'moveFront'   , true   ],
-      ['moveBack'        , 'moveBack'    , false  ],
-      ['moveBackSmall'   , 'moveBack'    , true   ],
-      ['rotateLeft'      , 'rotateLeft'  , false  ],
-      ['rotateLeftSmall' , 'rotateLeft'  , true   ],
-      ['rotateRight'     , 'rotateRight' , false  ],
-      ['rotateRightSmall', 'rotateRight' , true   ],
-      ['shiftUp'         , 'shiftUp'     , false  ],
-      ['shiftUpSmall'    , 'shiftUp'     , true   ],
-      ['shiftDown'       , 'shiftDown'   , false  ],
-      ['shiftDownSmall'  , 'shiftDown'   , true   ],
-      ['shiftLeft'       , 'shiftLeft'   , false  ],
-      ['shiftLeftSmall'  , 'shiftLeft'   , true   ],
-      ['shiftRight'      , 'shiftRight'  , false  ],
-      ['shiftRightSmall' , 'shiftRight'  , true   ],
+      ['move'            , 'cmd'         , 'flipMove'    , 'small'],
+      ['moveFront'       , 'moveFront'   , 'moveFront'   , false  ],
+      ['moveFrontSmall'  , 'moveFront'   , 'moveFront'   , true   ],
+      ['moveBack'        , 'moveBack'    , 'moveBack'    , false  ],
+      ['moveBackSmall'   , 'moveBack'    , 'moveBack'    , true   ],
+      ['rotateLeft'      , 'rotateLeft'  , 'rotateLeft'  , false  ],
+      ['rotateLeftSmall' , 'rotateLeft'  , 'rotateLeft'  , true   ],
+      ['rotateRight'     , 'rotateRight' , 'rotateRight' , false  ],
+      ['rotateRightSmall', 'rotateRight' , 'rotateRight' , true   ],
+      ['shiftUp'         , 'shiftUp'     , 'shiftDown'   , false  ],
+      ['shiftUpSmall'    , 'shiftUp'     , 'shiftDown'   , true   ],
+      ['shiftDown'       , 'shiftDown'   , 'shiftUp'     , false  ],
+      ['shiftDownSmall'  , 'shiftDown'   , 'shiftUp'     , true   ],
+      ['shiftLeft'       , 'shiftLeft'   , 'shiftRight'  , false  ],
+      ['shiftLeftSmall'  , 'shiftLeft'   , 'shiftRight'  , true   ],
+      ['shiftRight'      , 'shiftRight'  , 'shiftLeft'   , false  ],
+      ['shiftRightSmall' , 'shiftRight'  , 'shiftLeft'   , true   ],
     ], function(e, d) {
       when('user '+e.move+' on model', function() {
-        this.modelModeService.actions[e.move](this.scope);
+        this.modelChargeModeService.actions[e.move](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameModelSelectionService.get._retVal = ['stamp'];
           spyOn(this.modelsModeService.actions, e.move);
         });
 
-        when('model is not charging', function() {
-          this.modelService.isCharging._retVal = false;
-        }, function() {
-          it('should forward to modelsMode', function() {
-            expect(this.modelsModeService.actions[e.move])
-              .toHaveBeenCalledWith(this.scope);
-          });
+        it('should fetch charge target', function() {
+          expect(this.modelService.chargeTarget)
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+          expect(this.gameModelsService.findStamp)
+            .toHaveBeenCalledWith('model.chargeTarget.returnValue', 'models');
         });
 
-        when('model is charging', function() {
-          this.modelService.isCharging._retVal = true;
-        }, function() {
-          it('should fetch charge target', function() {
-            expect(this.modelService.chargeTarget)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameModelsService.findStamp)
-              .toHaveBeenCalledWith('model.chargeTarget.returnValue', 'models');
-          });
+        it('should charge-move model with defined target', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', e.cmd+'Charge',
+                                  this.scope.factions, 'gameModels.findStamp.returnValue', e.small,
+                                  ['stamp'], this.scope, this.scope.game);
+        });
 
-          it('should charge-move model with defined target', function() {
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map: true };
+        }, function() {
+          it('should charge-flipMove model with defined target', function() {
             expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', e.cmd+'Charge',
+              .toHaveBeenCalledWith('onModels', e.flipMove+'Charge',
                                     this.scope.factions, 'gameModels.findStamp.returnValue', e.small,
                                     ['stamp'], this.scope, this.scope.game);
           });

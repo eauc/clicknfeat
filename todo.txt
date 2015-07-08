@@ -11,7 +11,7 @@ template:
 model
 - select all friendly
 - lock
-- place : place & charge modes / exclude charge & place
+----> place : place & charge modes / exclude charge & place
 - generate objectives/flags
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?

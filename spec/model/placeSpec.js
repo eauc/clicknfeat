@@ -6,6 +6,7 @@ describe('model place', function() {
       'modelMode',
       function(modelModeService) {
         this.modelModeService = modelModeService;
+        this.modesService = spyOnService('modes');
         this.gameService = spyOnService('game');
         this.modelService = spyOnService('model');
         this.modelService.isCharging._retVal = false;
@@ -17,41 +18,114 @@ describe('model place', function() {
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       modes: 'modes',
                      };
       }
     ]));
 
-    when('user toggle place on model', function() {
-      this.modelModeService.actions.togglePlace(this.scope);
+    when('user enters Model mode', function() {
+      this.modelModeService.onEnter(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
       });
 
+      it('should check whether selected model is placing', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('stamp', 'models');
+        expect(this.modelService.isPlacing)
+          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+      });
+      
       when('model is not placing', function() {
+        this.modelService.isCharging._retVal = false;
         this.modelService.isPlacing._retVal = false;
       }, function() {
-        it('should start place for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'startPlace', ['stamp'],
-                                  this.scope, this.scope.game);
+        it('should not switch to ModelPlace mode', function() {
+          expect(this.modesService.switchToMode)
+            .not.toHaveBeenCalled();
         });
       });
-
+      
       when('model is placing', function() {
+        this.modelService.isCharging._retVal = false;
         this.modelService.isPlacing._retVal = true;
       }, function() {
-        it('should end place for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'endPlace', ['stamp'],
-                                  this.scope, this.scope.game);
+        it('should switch to place mode', function() {
+          expect(this.modesService.switchToMode)
+            .toHaveBeenCalledWith('ModelPlace', this.scope, 'modes');
         });
       });
     });
 
+    when('user starts place on model', function() {
+      this.modelModeService.actions.startPlace(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+
+      it('should start place for model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('onModels', 'startPlace', ['stamp'],
+                                this.scope, this.scope.game);
+      });
+
+      it('should switch to ModelPlace mode', function() {
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('ModelPlace', this.scope, 'modes');
+      });
+    });
+  });
+
+  describe('modelPlaceMode service', function() {
+    beforeEach(inject([
+      'modelPlaceMode',
+      function(modelPlaceModeService) {
+        this.modelPlaceModeService = modelPlaceModeService;
+        this.modesService = spyOnService('modes');
+        this.gameService = spyOnService('game');
+        this.modelService = spyOnService('model');
+        this.modelService.isCharging._retVal = false;
+        this.gameModelsService = spyOnService('gameModels');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.modelsModeService = spyOnService('modelsMode');
+        spyOn(this.modelsModeService.actions, 'clickModel');
+      
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                       factions: 'factions',
+                       modes: 'modes',
+                     };
+      }
+    ]));
+
+    when('user ends place on model', function() {
+      this.modelPlaceModeService.actions.endPlace(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+
+      it('should end place for model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('onModels', 'endPlace', ['stamp'],
+                                this.scope, this.scope.game);
+      });
+
+      it('should switch to Model mode', function() {
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('Model', this.scope, 'modes');
+      });
+    });
+
     when('user shift click on model', function() {
-      this.modelModeService.actions.clickModel(this.scope, this.event, { shiftKey: true });
+      this.modelPlaceModeService.actions
+        .clickModel(this.scope, this.event, { shiftKey: true });
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -61,17 +135,7 @@ describe('model place', function() {
         this.event = { target: { state: { stamp: 'target' } } };
       });
 
-      when('model is not placing', function() {
-        this.modelService.isPlacing._retVal = false;
-      }, function() {
-        it('should forward to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event, { shiftKey: true });
-        });
-      });
-
       when('target is the same as selection', function() {
-        this.modelService.isPlacing._retVal = true;
         this.event.target.state.stamp = 'stamp';
       }, function() {
         it('should forward to modelsMode', function() {
@@ -81,7 +145,6 @@ describe('model place', function() {
       });
 
       when('target is another model', function() {
-        this.modelService.isPlacing._retVal = true;
       }, function() {
         it('should set place target for model', function() {
           expect(this.gameService.executeCommand)
@@ -93,7 +156,8 @@ describe('model place', function() {
     });
 
     when('user ctrl click on model', function() {
-      this.modelModeService.actions.clickModel(this.scope, this.event, { ctrlKey: true });
+      this.modelPlaceModeService.actions
+        .clickModel(this.scope, this.event, { ctrlKey: true });
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -103,17 +167,7 @@ describe('model place', function() {
         this.event = { target: { state: { stamp: 'target' } } };
       });
 
-      when('model is not placing', function() {
-        this.modelService.isPlacing._retVal = false;
-      }, function() {
-        it('should forward to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event, { ctrlKey: true });
-        });
-      });
-
       when('target is the same as selection', function() {
-        this.modelService.isPlacing._retVal = true;
         this.event.target.state.stamp = 'stamp';
       }, function() {
         it('should forward to modelsMode', function() {
@@ -123,7 +177,6 @@ describe('model place', function() {
       });
 
       when('target is another model', function() {
-        this.modelService.isPlacing._retVal = true;
       }, function() {
         it('should set place target for model', function() {
           expect(this.gameService.executeCommand)
@@ -135,47 +188,45 @@ describe('model place', function() {
     });
 
     using([
-      ['move'            , 'cmd'         , 'small'],
-      ['moveFront'       , 'moveFront'   , false  ],
-      ['moveFrontSmall'  , 'moveFront'   , true   ],
-      ['moveBack'        , 'moveBack'    , false  ],
-      ['moveBackSmall'   , 'moveBack'    , true   ],
-      ['rotateLeft'      , 'rotateLeft'  , false  ],
-      ['rotateLeftSmall' , 'rotateLeft'  , true   ],
-      ['rotateRight'     , 'rotateRight' , false  ],
-      ['rotateRightSmall', 'rotateRight' , true   ],
-      ['shiftUp'         , 'shiftUp'     , false  ],
-      ['shiftUpSmall'    , 'shiftUp'     , true   ],
-      ['shiftDown'       , 'shiftDown'   , false  ],
-      ['shiftDownSmall'  , 'shiftDown'   , true   ],
-      ['shiftLeft'       , 'shiftLeft'   , false  ],
-      ['shiftLeftSmall'  , 'shiftLeft'   , true   ],
-      ['shiftRight'      , 'shiftRight'  , false  ],
-      ['shiftRightSmall' , 'shiftRight'  , true   ],
+      ['move'            , 'cmd'         , 'flipMove'    , 'small'],
+      ['moveFront'       , 'moveFront'   , 'moveFront'   , false  ],
+      ['moveFrontSmall'  , 'moveFront'   , 'moveFront'   , true   ],
+      ['moveBack'        , 'moveBack'    , 'moveBack'    , false  ],
+      ['moveBackSmall'   , 'moveBack'    , 'moveBack'    , true   ],
+      ['rotateLeft'      , 'rotateLeft'  , 'rotateLeft'  , false  ],
+      ['rotateLeftSmall' , 'rotateLeft'  , 'rotateLeft'  , true   ],
+      ['rotateRight'     , 'rotateRight' , 'rotateRight' , false  ],
+      ['rotateRightSmall', 'rotateRight' , 'rotateRight' , true   ],
+      ['shiftUp'         , 'shiftUp'     , 'shiftDown'   , false  ],
+      ['shiftUpSmall'    , 'shiftUp'     , 'shiftDown'   , true   ],
+      ['shiftDown'       , 'shiftDown'   , 'shiftUp'     , false  ],
+      ['shiftDownSmall'  , 'shiftDown'   , 'shiftUp'     , true   ],
+      ['shiftLeft'       , 'shiftLeft'   , 'shiftRight'  , false  ],
+      ['shiftLeftSmall'  , 'shiftLeft'   , 'shiftRight'  , true   ],
+      ['shiftRight'      , 'shiftRight'  , 'shiftLeft'   , false  ],
+      ['shiftRightSmall' , 'shiftRight'  , 'shiftLeft'   , true   ],
     ], function(e, d) {
       when('user '+e.move+' on model', function() {
-        this.modelModeService.actions[e.move](this.scope);
+        this.modelPlaceModeService.actions[e.move](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameModelSelectionService.get._retVal = ['stamp'];
           spyOn(this.modelsModeService.actions, e.move);
         });
 
-        when('model is not placing', function() {
-          this.modelService.isPlacing._retVal = false;
-        }, function() {
-          it('should forward to modelsMode', function() {
-            expect(this.modelsModeService.actions[e.move])
-              .toHaveBeenCalledWith(this.scope);
-          });
+        it('should place-move model', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', e.cmd+'Place',
+                                  this.scope.factions, e.small,
+                                  ['stamp'], this.scope, this.scope.game);
         });
 
-        when('model is placing', function() {
-          this.modelService.isPlacing._retVal = true;
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map : true };
         }, function() {
-          it('should place-move model with defined target', function() {
+          it('should place-flipMove model', function() {
             expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', e.cmd+'Place',
+              .toHaveBeenCalledWith('onModels', e.flipMove+'Place',
                                     this.scope.factions, e.small,
                                     ['stamp'], this.scope, this.scope.game);
           });
