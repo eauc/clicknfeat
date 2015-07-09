@@ -774,7 +774,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
   }
   function ensurePlaceLength(info, state) {
     if(R.exists(state.pla) &&
-       R.exists(state.pml)) {
+       R.exists(state.pml) &&
+       state.pml > 0) {
       var distance = pointService.distanceTo(state, state.pla.s);
       var max_dist = state.pml[0] * 10 + (state.pml[1] ? info.base_radius * 2 : 0);
       if(distance > max_dist) {
@@ -792,7 +793,8 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
   var ensurePlaceLength$ = R.curry(ensurePlaceLength);
   function ensureChargeLength(state) {
     if(R.exists(state.cha) &&
-       R.exists(state.cml)) {
+       R.exists(state.cml) &&
+       state.cml > 0) {
       var distance = pointService.distanceTo(state, state.cha.s);
       if(distance > state.cml*10) {
         var direction = pointService.directionTo(state, state.cha.s);
