@@ -95,16 +95,6 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
     //     }
     //   )(models);
     // },
-    // modeForStamp: function modelSelectionModeForStamp(stamp, models) {
-    //   var mode = (gameModelsService.isLocked(stamp, models) ?
-    //               'ModelLocked' : 'Model');
-    //   var type = R.defaultTo('aoe',
-    //                          R.path(['state','type'],
-    //                                 gameModelsService.findStamp(stamp, models)
-    //                                )
-    //                         );
-    //   return type+mode;
-    // },
   };
   R.curryService(gameModelsService);
   return gameModelsService;

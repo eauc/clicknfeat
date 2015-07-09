@@ -290,6 +290,7 @@ angular.module('clickApp.services')
   .factory('gameModelSelection', [
     'modes',
     'gameModels',
+    'model',
     gameModelSelectionServiceFactory
   ])
   .factory('gameLayers', [

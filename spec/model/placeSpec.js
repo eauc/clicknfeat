@@ -8,12 +8,7 @@ describe('model place', function() {
         this.modelModeService = modelModeService;
         this.modesService = spyOnService('modes');
         this.gameService = spyOnService('game');
-        this.modelService = spyOnService('model');
-        this.modelService.isCharging._retVal = false;
-        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
-        this.modelsModeService = spyOnService('modelsMode');
-        spyOn(this.modelsModeService.actions, 'clickModel');
       
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
@@ -23,43 +18,6 @@ describe('model place', function() {
                      };
       }
     ]));
-
-    when('user enters Model mode', function() {
-      this.modelModeService.onEnter(this.scope);
-    }, function() {
-      beforeEach(function() {
-        this.gameModelSelectionService.get._retVal = ['stamp'];
-      });
-
-      it('should check whether selected model is placing', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameModelsService.findStamp)
-          .toHaveBeenCalledWith('stamp', 'models');
-        expect(this.modelService.isPlacing)
-          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-      });
-      
-      when('model is not placing', function() {
-        this.modelService.isCharging._retVal = false;
-        this.modelService.isPlacing._retVal = false;
-      }, function() {
-        it('should not switch to ModelPlace mode', function() {
-          expect(this.modesService.switchToMode)
-            .not.toHaveBeenCalled();
-        });
-      });
-      
-      when('model is placing', function() {
-        this.modelService.isCharging._retVal = false;
-        this.modelService.isPlacing._retVal = true;
-      }, function() {
-        it('should switch to place mode', function() {
-          expect(this.modesService.switchToMode)
-            .toHaveBeenCalledWith('ModelPlace', this.scope, 'modes');
-        });
-      });
-    });
 
     when('user starts place on model', function() {
       this.modelModeService.actions.startPlace(this.scope);

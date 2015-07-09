@@ -8,12 +8,7 @@ describe('model charge', function() {
         this.modelModeService = modelModeService;
         this.modesService = spyOnService('modes');
         this.gameService = spyOnService('game');
-        this.modelService = spyOnService('model');
-        this.modelService.isPlacing._retVal = false;
-        this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
-        this.modelsModeService = spyOnService('modelsMode');
-        spyOn(this.modelsModeService.actions, 'clickModel');
       
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
@@ -23,43 +18,6 @@ describe('model charge', function() {
                      };
       }
     ]));
-
-    when('user enters Model mode', function() {
-      this.modelModeService.onEnter(this.scope);
-    }, function() {
-      beforeEach(function() {
-        this.gameModelSelectionService.get._retVal = ['stamp'];
-      });
-
-      it('should check whether selected model is charging', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameModelsService.findStamp)
-          .toHaveBeenCalledWith('stamp', 'models');
-        expect(this.modelService.isCharging)
-          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-      });
-      
-      when('model is not charging', function() {
-        this.modelService.isCharging._retVal = false;
-        this.modelService.isPlacing._retVal = false;
-      }, function() {
-        it('should not switch to ModelCharge mode', function() {
-          expect(this.modesService.switchToMode)
-            .not.toHaveBeenCalled();
-        });
-      });
-      
-      when('model is charging', function() {
-        this.modelService.isCharging._retVal = true;
-        this.modelService.isPlacing._retVal = false;
-      }, function() {
-        it('should switch to charge mode', function() {
-          expect(this.modesService.switchToMode)
-            .toHaveBeenCalledWith('ModelCharge', this.scope, 'modes');
-        });
-      });
-    });
 
     when('user starts charge on model', function() {
       this.modelModeService.actions.startCharge(this.scope);

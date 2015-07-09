@@ -46,16 +46,6 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
                                                        start_place: true });
   var model_mode = {
     onEnter: function modelOnEnter(scope) {
-      self.requestAnimationFrame(function _modelOnEnter() {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-        if(modelService.isCharging(model)) {
-          modesService.switchToMode('ModelCharge', scope, scope.modes);
-        }
-        if(modelService.isPlacing(model)) {
-          modesService.switchToMode('ModelPlace', scope, scope.modes);
-        }
-      });
     },
     onLeave: function modelOnLeave(scope) {
     },

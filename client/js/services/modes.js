@@ -42,10 +42,10 @@ self.modesServiceFactory = function modesServiceFactory() {
     switchToMode: function(name, scope, modes) {
       var mode = currentMode(modes);
       var next = modes.register[name];
-      // if(next === mode) {
-      //   console.log('already in '+name+' mode');
-      //   return;
-      // }
+      if(next === mode) {
+        console.log('already in '+name+' mode');
+        return;
+      }
       if(R.isNil(next)) {
         console.log('error switching to mode '+name+' : does not exists');
         return;

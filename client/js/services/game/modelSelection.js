@@ -1,7 +1,8 @@
 'use strict';
 
 self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactory(modesService,
-                                                                                  gameModelsService) {
+                                                                                  gameModelsService,
+                                                                                  modelService) {
   var gameModelSelectionService = {
     create: function modelSelectionCreate() {
       return {
@@ -21,18 +22,25 @@ self.gameModelSelectionServiceFactory = function gameModelSelectionServiceFactor
     get: function modelSelectionGet(where, selection) {
       return R.defaultTo([], R.path([where,'stamps'], selection));
     },
-    modeFor: function(selection) {
+    modeFor: function(models, selection) {
       var local = gameModelSelectionService.get('local', selection);
       if(R.isEmpty(local)) {
         return 'Default';
       }
       if(R.length(local) === 1) {
+        var model = gameModelsService.findStamp(local[0], models);
+        if(modelService.isCharging(model)) {
+          return 'ModelCharge';
+        }
+        if(modelService.isPlacing(model)) {
+          return 'ModelPlace';
+        }
         return 'Model';
       }
       return 'Models';
     },
     checkMode: function modelSelectionCheckMode(scope, selection) {
-      var mode = gameModelSelectionService.modeFor(selection);
+      var mode = gameModelSelectionService.modeFor(scope.game.models, selection);
       modesService.switchToMode(mode, scope, scope.modes);
       return false;
     },

@@ -9,9 +9,8 @@ template:
 - rework onTemplates/onStamps similar to model
 - better color on locked AoEs
 model
-- select all friendly
+- select all (friendly)
 - lock
-----> place : place & charge modes / exclude charge & place
 - generate objectives/flags
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
