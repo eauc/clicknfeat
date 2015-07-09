@@ -1,6 +1,63 @@
 'use strict';
 
 describe('misc model', function() {
+  describe('modelMode service', function() {
+    beforeEach(inject([
+      'modelMode',
+      function(modelModeService) {
+        this.modelModeService = modelModeService;
+        this.gameService = spyOnService('game');
+        this.gameModelsService = spyOnService('gameModels');
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+      
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                       factions: 'factions'
+                     };
+      }
+    ]));
+
+    describe('when user select all friendly models', function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp1'];
+        this.gameModelsService.findStamp._retVal = {
+          state: { user: 'user' }
+        };
+        this.scope.game.models = {
+          active: [
+            { state: { stamp: 'a1', user: 'user' } },
+            { state: { stamp: 'a2', user: 'other' } },
+            { state: { stamp: 'a3', user: 'user' } },
+            { state: { stamp: 'a4', user: 'other' } },
+          ],
+          locked: [
+            { state: { stamp: 'l1', user: 'user' } },
+            { state: { stamp: 'l2', user: 'other' } },
+            { state: { stamp: 'l3', user: 'user' } },
+            { state: { stamp: 'l4', user: 'other' } },
+          ]
+        };
+        this.gameModelsService.all.and.callThrough();
+        
+        this.modelModeService.actions.selectAllFriendly(this.scope);
+      });
+
+      it('should fetch selected model', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.gameModelsService.findStamp)
+          .toHaveBeenCalledWith('stamp1', this.scope.game.models);
+      });
+      
+      it('should select all models with the same user', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'set', [ 'a1', 'a3', 'l1', 'l3' ],
+                                this.scope, this.scope.game);
+      });
+    });
+  });
+
   describe('onModelsCommand service', function() {
     beforeEach(inject([
       'onModelsCommand',

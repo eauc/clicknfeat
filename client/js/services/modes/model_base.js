@@ -30,6 +30,17 @@ self.modelBaseModeServiceFactory = function modelBaseModeServiceFactory(modesSer
                                                 { target: model },
                                                 { ctrlKey: true });
   };
+  model_actions.selectAllFriendly = function modelSelectAllFriendly(scope, event) {
+    var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+    var model = gameModelsService.findStamp(selection[0], scope.game.models);
+    var stamps = R.pipe(
+      gameModelsService.all,
+      R.filter(modelService.userIs$(modelService.user(model))),
+      R.map(modelService.stamp)
+    )(scope.game.models);
+    gameService.executeCommand('setModelSelection', 'set', stamps,
+                               scope, scope.game);
+  };
   model_actions.selectAllUnit = function modelSelectAllUnit(scope, event) {
     var selection = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(selection[0], scope.game.models);
@@ -60,6 +71,7 @@ self.modelBaseModeServiceFactory = function modelBaseModeServiceFactory(modesSer
     'createAoEOnModel': 'ctrl+a',
     'createSprayOnModel': 'ctrl+s',
     'selectAllUnit': 'ctrl+u',
+    'selectAllFriendly': 'ctrl+f',
   };
   var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                  model_default_bindings);

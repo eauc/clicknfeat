@@ -519,6 +519,7 @@ self.modelsModeServiceFactory = function modelsModeServiceFactory(modesService,
                         ]);
     if(R.prop('single', options)) {
       ret = R.append([ 'Select All', 'selectAllUnit', 'unit' ], ret);
+      ret = R.append([ 'Select Friends', 'selectAllFriendly' ], ret);
     }
 
     return ret;
