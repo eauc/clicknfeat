@@ -56,7 +56,6 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
       };
     },
     add: function modelsAdd(mods, models) {
-      console.log(arguments);
       return R.pipe(
         gameModelsService.removeStamps$(R.map(R.path(['state','stamp']), mods)),
         function(models) {

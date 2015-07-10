@@ -53,6 +53,9 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
          info.type === 'jack') {
         model.state.dsp = R.append('c', model.state.dsp);
       }
+      if(info.immovable) {
+        model.state.dsp = R.append('lk', model.state.dsp);
+      }
       model.state = R.deepExtend(model.state, temp);
       return model;
     },

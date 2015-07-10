@@ -7,11 +7,15 @@ angular.module('clickApp.controllers')
     'gameScenario',
     'gameLayers',
     'game',
+    'gameModels',
+    'gameFactions',
     function($scope,
              gameBoardService,
              gameScenarioService,
              gameLayersService,
-             gameService) {
+             gameService,
+             gameModelsService,
+             gameFactionsService) {
       console.log('init gameSetupCtrl');
 
       if(R.exists($scope.game)) {
@@ -67,6 +71,43 @@ angular.module('clickApp.controllers')
         $scope.scenario_group = group;
         $scope.scenario_name = name;
         $scope.doSetScenario();
+      };
+      $scope.doGenerateObjectives = function doGenerateObjectives() {
+        var previous = R.pipe(
+          gameModelsService.all,
+          R.filter(function(m) {
+            var info = gameFactionsService.getModelInfo(m.state.info, $scope.factions);
+            return ( info.type === 'objective' ||
+                     info.type === 'flag'
+                   );
+          }),
+          R.map(R.path(['state','stamp']))
+        )($scope.game.models);
+        if(!R.isEmpty(previous)) {
+          gameService.executeCommand('deleteModel', previous,
+                                     $scope, $scope.game);
+        }
+        
+        var objectives = R.map(function(o) {
+          return {
+            info: R.concat(['scenario','models'], o.path),
+            x: o.x, y: o.y
+          };
+        }, R.defaultTo([], $scope.game.scenario.objectives));
+        var flags = R.map(function(o) {
+          return {
+            info: R.concat(['scenario','models'], o.path),
+            x: o.x, y: o.y
+          };
+        }, R.defaultTo([], $scope.game.scenario.flags));
+        var create = {
+          base: { x: 0, y: 0 },
+          models: R.concat(objectives, flags)
+        };
+        if(!R.isEmpty(create.models)) {
+          gameService.executeCommand('createModel', create,
+                                     $scope, $scope.game);
+        }
       };
 
       $scope.isLayerDisplayed = function isLayerDisplayed(l) {

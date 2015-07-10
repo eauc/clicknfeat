@@ -490,7 +490,8 @@ angular.module('clickApp.directives')
       function updateModelDamage(img, info, model, element) {
         if(R.isNil(element.damage_bar_red)) return;
 
-        if(modelService.isWreckDisplayed(model)) {
+        if(info.damage.type === 'none' ||
+           modelService.isWreckDisplayed(model)) {
           element.damage_bar_red.style.visibility = 'hidden';
           element.damage_bar_green.style.visibility = 'hidden';
           if(R.isNil(element.field_bar_red)) return;

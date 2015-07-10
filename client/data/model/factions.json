@@ -5,6 +5,7 @@
   "legion" : "/data/model/legion.json",
   "menoth" : "/data/model/menoth.json",
   "orboros" : "/data/model/orboros.json",
+  "scenario" : "/data/model/scenario.json",
   "scyrah" : "/data/model/scyrah.json",
   "trollblood" : "/data/model/trollblood.json"
 }

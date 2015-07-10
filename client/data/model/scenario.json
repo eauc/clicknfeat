@@ -1,0 +1,203 @@
+{
+  "name": "Scenario",
+  "color": "#999",
+  "models": {
+    "sr15_objectives": {
+      "sr15gen": {
+        "name": "SR15 Generic",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged."
+        }
+      },
+      "sr15arc": {
+        "name": "SR15 Arcane Wonder",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Wondrous Power": "While within 4\" of this model, friendly models gain Empowered. (Once per turn when a model with Empowered casts an upkeep spell, reduce the COST of the spell by 1.)",
+          "Plasma Nimbus": "If this model is hit by a melee attack, immediately after the attack is resolved the attacking model suffers a POW 10 electrical damage roll unless this model was destroyed or removed from play by the attack."
+        }
+      },
+      "sr15arm": {
+        "name": "SR15 Armory",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Asset protection": "If this model is disabled, you can choose a non-disabled friendly model that you own within 4 ̋ to be destroyed. If another model is destroyed as a result of Asset Protection remove 1 damage from this model.",
+          "Firepower": "While this objective is not contested by an enemy model, the ranged weapons of friendly models with Light Artillery within 4 ̋ of this model gain boosted damage rolls."
+        }
+      },
+      "sr15bun": {
+        "name": "SR15 Bunker",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Girded": "This model does not suffer blast damage. Friendly models B2B with it do not suffer blast damage",
+          "Impervious flesh": "When this model is hit by a ranged attack, the attacker rolls one less damage die."
+        }
+      },
+      "sr15eff": {
+        "name": "SR15 Effigy of Valor",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Obstruct": "This model provides cover as if it were an obstruction.",
+          "Valor": "Friendly models/units within 4 ̋ of this model cannot flee and immediately rally. Additionally, friendly models/units that for begin their activation within 4 ̋ of this model gain Fearless one round."
+        }
+      },
+      "sr15fue": {
+        "name": "SR15 Fuel Cache",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Fuel": "While this objective is not contested by an enemy model, friendly models beginning their activation within 4 ̋ of this model can run or charge without being forced or spending focus.",
+          "It burns !": "If this model is hit by a melee attack, immediately after the attack is resolved the attacking model suffers the Fire continuous effect unless this model was destroyed or removed from play by the attack."
+        }
+      },
+      "sr15sto": {
+        "name": "SR15 Stockpile",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Lash": "This model and friendly warrior models B2B with it cannot be knocked down.",
+          "Up and at'em": "After resolving continuous effects during your Maintenance Phase, friendly knocked down models within 4 ̋ of this model stand up."
+        }
+      }
+    },
+    "sr14_objectives": {
+      "sr14ac": {
+        "name": "SR14 Ammunition Cache",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Firepower": "While this objective is not contested by an enemy model, the ranged weapons of friendly models with Light Artillery within 4 ̋ of this model gain boosted damage rolls."
+        }
+      },
+      "sr14ca": {
+        "name": "SR14 Critical Asset",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Asset Protection": "If this model is disabled, you can choose a non-disabled friendly model that you own within 4 ̋ to be destroyed. If another model is destroyed as a result of Asset Protection remove 1 damage from this model."
+        }
+      },
+      "sr14ef": {
+        "name": "SR14 Effigy",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Valor": "While this objective is not contested by an enemy model, friendly Faction solos within 4 ̋ of this model gain Inspiration[faction] for one round."
+        }
+      },
+      "sr14ml": {
+        "name": "SR14 Monolith",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Inexorable": "This model cannot be placed, is immune to continuous effects, and cannot be chosen as a Prey target.",
+          "Linked": "When another Monolith is damaged this model cannot be damaged for one turn."
+        }
+      },
+      "sr14sc": {
+        "name": "SR14 Supply Cache",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Fuel": "While this objective is not contested by an enemy model, friendly models beginning their activation within 4 ̋ of this model can run or charge without being forced or spending focus."
+        }
+      },
+      "sr14obj": {
+        "name": "SR14 Objective",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        }
+      }
+    },
+    "flags": {
+      "sr15flag": {
+        "name": "SR15 Flag",
+        "type": "flag",
+        "base": "medium",
+        "immovable": true,
+        "damage": {
+          "type": "none"
+        }
+      },
+      "sr14flag": {
+        "name": "SR14 Flag",
+        "type": "flag",
+        "base": "medium",
+        "immovable": true,
+        "damage": {
+          "type": "none"
+        }
+      }
+    }
+  }
+}

@@ -188,5 +188,6 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
       R.max
     )(damage);
   }
+  R.curryService(gameFactionsService);
   return gameFactionsService;
 };

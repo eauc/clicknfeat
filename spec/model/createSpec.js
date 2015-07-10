@@ -640,10 +640,10 @@ describe('create model', function() {
 
       using([
         [ 'type'    , 'dsp' ],
-        [ 'warrior' , ['i'] ],
-        [ 'wardude' , ['i','c'] ],
-        [ 'beast'   , ['i','c'] ],
-        [ 'jack'    , ['i','c'] ],
+        [ 'warrior' , false ],
+        [ 'wardude' , true ],
+        [ 'beast'   , true ],
+        [ 'jack'    , true ],
       ], function(e, d) {
         when('<state.info> type is '+e.type, function() {
           this.gameFactionsService.getModelInfo._retVal = {
@@ -652,9 +652,22 @@ describe('create model', function() {
           };
         }, function() {
           it('should init counter display', function() {
-            expect(this.ret.state.dsp)
-              .toEqual(e.dsp);
+            expect(this.modelService.isCounterDisplayed('c', this.ret))
+              .toBe(e.dsp);
           });
+        });
+      });
+
+      when('<state.info> is immovable', function() {
+        this.gameFactionsService.getModelInfo._retVal = {
+          type: 'objective',
+          immovable: true,
+          damage: { type: 'warrior', n: 1 }
+        };
+      }, function() {
+        it('should init lock model', function() {
+          expect(this.modelService.isLocked(this.ret))
+            .toBe(true);
         });
       });
     });
