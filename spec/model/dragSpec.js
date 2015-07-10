@@ -212,40 +212,60 @@ describe('drag model', function() {
     describe('setPosition(<pos>)', function() {
       beforeEach(function() {
         this.model = {
-          state: { info: 'info', x: 240, y: 240, r: 180 }
+          state: { info: 'info', x: 240, y: 240, r: 180, dsp:[] }
         };
       });
 
       it('should set model position', function() {
         this.modelService.setPosition('factions', { x: 15, y: 42 }, this.model);
-        expect(this.model.state)
-          .toEqual({ info: 'info', x: 15, y: 42, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 15, y: 42, r: 180 });
       });
 
       it('should stay on board', function() {
         this.modelService.setPosition('factions', { x: -15, y: 494 }, this.model);
-        expect(this.model.state)
-          .toEqual({ info: 'info', x: 7.874, y: 472.126, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 7.874, y: 472.126, r: 180 });
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not move model', function() {
+          this.modelService.setPosition('factions', { x: -15, y: 494 }, this.model);
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 240, y: 240, r: 180 });
+        });
       });
     });
 
     describe('shiftPosition(<pos>)', function() {
       beforeEach(function() {
         this.model = {
-          state: { info: 'info', x: 440, y: 440, r: 180 }
+          state: { info: 'info', x: 440, y: 440, r: 180, dsp:[] }
         };
       });
 
       it('should set model position', function() {
         this.modelService.shiftPosition('factions', { x: 15, y: 20 }, this.model);
-        expect(this.model.state)
-          .toEqual({ info: 'info', x: 455, y: 460, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 455, y: 460, r: 180 });
       });
 
       it('should stay on board', function() {
         this.modelService.shiftPosition('factions', { x: 40, y: 50 }, this.model);
-        expect(this.model.state)
-          .toEqual({ info: 'info', x: 472.126, y: 472.126, r: 180 });
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 472.126, y: 472.126, r: 180 });
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not move model', function() {
+          this.modelService.shiftPosition('factions', { x: 40, y: 50 }, this.model);
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 440, y: 440, r: 180 });
+        });
       });
     });
   });

@@ -47,18 +47,28 @@ describe('model target', function() {
     ]));
 
     describe('orientTo(<factions>, <other>)', function() {
-      it('should orient model to directly face <other>', function() {
+      beforeEach(function() {
         this.model = {
-          state: { x: 240, y: 240, r: 0 }
+          state: { x: 240, y: 240, r: 0, dsp:[] }
         };
         this.other = {
           state: { x: 360, y: 360, r: 0 }
         };
-          
+      });
+      
+      it('should orient model to directly face <other>', function() {
         this.modelService.orientTo('factions', this.other, this.model);
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 240, y: 240, r: 135 });
+      });
 
-        expect(this.model.state).toEqual({
-          x: 240, y: 240, r: 135
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not orient model', function() {
+          this.modelService.orientTo('factions', this.other, this.model);
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 240, y: 240, r: 0 });
         });
       });
     });

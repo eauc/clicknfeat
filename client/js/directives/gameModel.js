@@ -96,6 +96,7 @@ angular.module('clickApp.directives')
               updateModelMelee(img, info, scope.model, element);
               updateModelChargePlace(map_flipped, zoom_factor, scope,
                                      info, scope.model, element.charge);
+              updateModelLock(img, info, scope.model, element);
 
               self.requestAnimationFrame(function _updateModel2() {
                 if(gameModelSelectionService.inSingle('local',
@@ -350,6 +351,16 @@ angular.module('clickApp.directives')
           parent.appendChild(image);
           return R.assoc(effect[0], image, mem);
         }, {}, EFFECTS);
+        
+        var lock = document.createElementNS(svgNS, 'image');
+        lock.classList.add('model-image');
+        lock.setAttribute('x', '0');
+        lock.setAttribute('y', '0');
+        lock.setAttribute('width', '10');
+        lock.setAttribute('height', '10');
+        lock.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'data/icons/Lock.png');
+        lock.style.visibility = 'visible';
+        parent.appendChild(lock);
 
         var ctrl_area = document.createElementNS(svgNS, 'circle');
         ctrl_area.classList.add('model-ctrl-area');
@@ -396,6 +407,7 @@ angular.module('clickApp.directives')
                  unit: unit,
                  leader: leader_image,
                  effects: effects,
+                 lock: lock,
                  ctrl_area: ctrl_area,
                  area: area,
                  melee: melee,
@@ -618,6 +630,15 @@ angular.module('clickApp.directives')
             element.effects[effect].style.visibility = 'hidden';
           })
         )(element.effects);
+      }
+      function updateModelLock(img, info, model, element) {        
+        if(!modelService.isLocked(model)) {
+          element.lock.style.visibility = 'hidden';
+          return;
+        }
+        element.lock.setAttribute('x', (img.width/2+info.base_radius-5)+'');
+        element.lock.setAttribute('y', (img.height/2-5)+'');
+        element.lock.style.visibility = 'visible';
       }
       function updateModelCtrlArea(factions, img, info, model, element) {
         element.ctrl_area.setAttribute('cx', (img.width/2)+'');

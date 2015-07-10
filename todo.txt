@@ -9,7 +9,6 @@ template:
 - rework onTemplates/onStamps similar to model
 - better color on locked AoEs
 model
-- select all (friendly)
 - lock
 - generate objectives/flags
 - ruler origin target : update when model change ?

@@ -39,6 +39,22 @@ self.gameModelsServiceFactory = function gameModelsServiceFactory(modelService) 
         })
       )(stamps);
     },
+    lockStamps: function modelsLockStamps(lock, stamps, models) {
+      R.pipe(
+        R.map(function(stamp) {
+          return gameModelsService.findStamp(stamp, models);
+        }),
+        R.forEach(modelService.setLock$(lock))
+      )(stamps);
+      var partition = R.pipe(
+        gameModelsService.all,
+        R.partition(modelService.isLocked)
+      )(models);
+      return {
+        active: partition[1],
+        locked: partition[0]
+      };
+    },
     add: function modelsAdd(mods, models) {
       console.log(arguments);
       return R.pipe(

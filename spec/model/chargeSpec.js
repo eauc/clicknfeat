@@ -252,11 +252,13 @@ describe('model charge', function() {
     ]));
 
     describe('startCharge()', function() {
-      it('should start charge on model', function() {
+      beforeEach(function() {
         this.model = {
-          state: { x: 240, y:240, r: 180 }
+          state: { x: 240, y:240, r: 180, dsp: [] }
         };
-        
+      });
+      
+      it('should start charge on model', function() {
         this.modelService.startCharge(this.model);
 
         expect(this.model.state.cha)
@@ -266,6 +268,17 @@ describe('model charge', function() {
           });
         expect(this.modelService.isCharging(this.model))
           .toBeTruthy();
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not start charge on model', function() {
+          this.modelService.startCharge(this.model);
+          
+          expect(this.modelService.isCharging(this.model))
+            .toBeFalsy();
+        });
       });
     });
 
@@ -289,7 +302,9 @@ describe('model charge', function() {
       });
     });
 
-    describe('setChargeTarget(<factions>, <target>)', function() {
+    when('setChargeTarget(<factions>, <target>)', function() {
+      this.modelService.setChargeTarget('factions', this.target, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info',
@@ -297,7 +312,8 @@ describe('model charge', function() {
                    cha: {
                      s: { x: 160, y: 160 },
                      t: null
-                   }
+                   },
+                   dsp: []
                  }
         };
         this.target = {
@@ -307,7 +323,6 @@ describe('model charge', function() {
           base_radius: 9.842,
         };
         
-        this.modelService.setChargeTarget('factions', this.target, this.model);
       });
       
       it('should set charge <target> on model', function() {
@@ -318,6 +333,15 @@ describe('model charge', function() {
       it('should orient model toward <target>', function() {
         expect(this.model.state.r)
           .toBe(-45);
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not orient model', function() {
+          expect(this.model.state.r)
+            .toBe(180);
+        });
       });
     });
 
@@ -403,7 +427,8 @@ describe('model charge', function() {
         beforeEach(function() {
           this.model = {
             state: { info: 'info', x: 240, y: 240, r: 180,
-                     cha: { s: e.start, t: null }
+                     cha: { s: e.start, t: null },
+                     dsp: []
                    }
           };
           this.target = {
@@ -449,6 +474,15 @@ describe('model charge', function() {
           this.modelService[e.move]('factions', this.target, false, this.model);
           expect(this.modelService.checkState)
             .toHaveBeenCalledWith('factions', this.target, jasmine.any(Object));
+        });
+
+        when('model is locked', function() {
+          this.modelService.setLock(true, this.model);
+        }, function() {
+          it('should not '+e.move+' model', function() {
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+          });
         });
       });
     });

@@ -92,7 +92,12 @@ describe('model b2b', function() {
       });
     });
 
-    describe('setB2B(<factions>, <other>)', function() {
+    when('setB2B(<factions>, <other>)', function() {
+      this.modelService.setB2B('factions', {
+        state: { info: 'other_info',
+                 x: 260, y: 260 }
+      }, this.model);
+    }, function() {
       beforeEach(function() {
         this.fake_info = {
           info: { base_radius: 9.842 },
@@ -101,21 +106,24 @@ describe('model b2b', function() {
         this.gameFactionsService.getModelInfo.and.callFake(R.bind(function(i) {
           return this.fake_info[i];
         }, this));
-      });
-
-      it('should move model B2B with <other>', function() {
         this.model = {
           state: { info: 'info',
                    x: 240, y: 240 }
         };
+      });
 
-        this.modelService.setB2B('factions', {
-          state: { info: 'other_info',
-                   x: 260, y: 260 }
-        }, this.model);
-
+      it('should move model B2B with <other>', function() {
         expect(R.pick(['x','y'], this.model.state))
           .toEqual({ x: 247.47289626449913, y: 247.47289626449913 });
+      });
+      
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not move model', function() {
+          expect(R.pick(['x','y'], this.model.state))
+            .toEqual({ x: 240, y: 240 });
+        });
       });
     });
   });

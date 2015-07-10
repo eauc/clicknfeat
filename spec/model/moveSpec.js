@@ -184,34 +184,34 @@ describe('move model', function() {
     using([
       [ 'move', 'base', 'result', 'small_result' ],
       [ 'rotateLeft', 5.905,
-        { info: 'info', x: 240, y: 240, r: 165 },
-        { info: 'info', x: 240, y: 240, r: 175 } ],
+        { x: 240, y: 240, r: 165 },
+        { x: 240, y: 240, r: 175 } ],
       [ 'rotateRight', 5.905,
-        { info: 'info', x: 240, y: 240, r: 195 },
-        { info: 'info', x: 240, y: 240, r: 185 } ],
+        { x: 240, y: 240, r: 195 },
+        { x: 240, y: 240, r: 185 } ],
       [ 'moveFront', 5.905,
-        { info: 'info', x: 240, y: 250, r: 180 },
-        { info: 'info', x: 240, y: 245, r: 180 } ],
+        { x: 240, y: 250, r: 180 },
+        { x: 240, y: 245, r: 180 } ],
       [ 'moveBack', 7.874,
-        { info: 'info', x: 240, y: 230, r: 180 },
-        { info: 'info', x: 240, y: 235, r: 180 } ],
+        { x: 240, y: 230, r: 180 },
+        { x: 240, y: 235, r: 180 } ],
       [ 'shiftLeft', 9.842,
-        { info: 'info', x: 230, y: 240, r: 180 },
-        { info: 'info', x: 239, y: 240, r: 180 } ],
+        { x: 230, y: 240, r: 180 },
+        { x: 239, y: 240, r: 180 } ],
       [ 'shiftRight', 24.605,
-        { info: 'info', x: 250, y: 240, r: 180 },
-        { info: 'info', x: 241, y: 240, r: 180 } ],
+        { x: 250, y: 240, r: 180 },
+        { x: 241, y: 240, r: 180 } ],
       [ 'shiftUp', 5.905,
-        { info: 'info', x: 240, y: 230, r: 180 },
-        { info: 'info', x: 240, y: 239, r: 180 } ],
+        { x: 240, y: 230, r: 180 },
+        { x: 240, y: 239, r: 180 } ],
       [ 'shiftDown', 5.905,
-        { info: 'info', x: 240, y: 250, r: 180 },
-        { info: 'info', x: 240, y: 241, r: 180 } ],
+        { x: 240, y: 250, r: 180 },
+        { x: 240, y: 241, r: 180 } ],
     ], function(e, d) {
       describe(e.move+'(<small>)', function() {
         beforeEach(function() {
           this.model = {
-            state: { info: 'info', x: 240, y: 240, r: 180 }
+            state: { info: 'info', x: 240, y: 240, r: 180, dsp:[] }
           };
           this.gameFactionsService.getModelInfo._retVal = {
             base_radius: e.base
@@ -228,7 +228,7 @@ describe('move model', function() {
         ], function(ee, dd) {
           it('should '+e.move+' model, '+dd, function() {
             this.modelService[e.move]('factions', ee.small, this.model);
-            expect(this.model.state)
+            expect(R.pick(['x','y','r'], this.model.state))
               .toEqual(ee.result);
           });
         });
@@ -238,13 +238,23 @@ describe('move model', function() {
           expect(this.modelService.checkState)
             .toHaveBeenCalledWith('factions', null, jasmine.any(Object));
         });
+        
+        when('model is locked', function() {
+          this.modelService.setLock(true, this.model);
+        }, function() {
+          it('should not move model', function() {
+            this.modelService[e.move]('factions', true, this.model);
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+          });
+        });
       });
     });
 
     describe('setOrientation(<dir>)', function() {
       beforeEach(function() {
         this.model = {
-          state: { info: 'info', x: 240, y: 240, r: 180 }
+          state: { info: 'info', x: 240, y: 240, r: 180, dsp: [] }
         };
         this.gameFactionsService.getModelInfo._retVal = {
           base_radius: 7.874
@@ -253,8 +263,18 @@ describe('move model', function() {
 
       it('should set model orientation', function() {
         this.modelService.setOrientation('factions', 15, this.model);
-        expect(this.model.state)
-          .toEqual({ info: 'info', x: 240, y: 240, r: 15 });
+        expect(R.pick(['x','y','r'], this.model.state))
+          .toEqual({ x: 240, y: 240, r: 15 });
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not orient model', function() {
+          this.modelService.setOrientation('factions', 15, this.model);
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 240, y: 240, r: 180 });
+        });
       });
     });
   });

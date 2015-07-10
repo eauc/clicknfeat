@@ -308,20 +308,31 @@ describe('model place', function() {
       }
     ]));
 
-    describe('startPlace()', function() {
-      it('should start place on model', function() {
+    when('startPlace()', function() {
+      this.modelService.startPlace(this.model);
+    }, function() {
+      beforeEach(function() {
         this.model = {
           state: { x: 240, y:240, r: 180 }
         };
-        
-        this.modelService.startPlace(this.model);
-
+      });
+      
+      it('should start place on model', function() {
         expect(this.model.state.pla)
           .toEqual({
             s: { x: 240, y: 240, r: 180 }
           });
         expect(this.modelService.isPlacing(this.model))
           .toBeTruthy();
+      });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not start place on model', function() {
+          expect(this.modelService.isPlacing(this.model))
+            .toBeFalsy();
+        });
       });
     });
 
@@ -344,7 +355,9 @@ describe('model place', function() {
       });
     });
 
-    describe('setPlaceTarget(<factions>, <target>)', function() {
+    when('setPlaceTarget(<factions>, <target>)', function() {
+      this.modelService.setPlaceTarget('factions', this.target, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info',
@@ -360,8 +373,6 @@ describe('model place', function() {
         this.gameFactionsService.getModelInfo._retVal = {
           base_radius: 9.842,
         };
-        
-        this.modelService.setPlaceTarget('factions', this.target, this.model);
       });
       
       it('should orient place lane toward <target>', function() {
@@ -370,9 +381,22 @@ describe('model place', function() {
         expect(R.pick(['x','y','r'], this.model.state.pla.s))
           .toEqual({ x: 160, y: 160, r: -44.99999999999999 });
       });
+
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not orient place lane toward <target>', function() {
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 240, y: 240, r: 180 });
+          expect(R.pick(['x','y','r'], this.model.state.pla.s))
+            .toEqual({ x: 160, y: 160 });
+        });
+      });
     });
 
-    describe('setPlaceOrigin(<factions>, <origin>)', function() {
+    when('setPlaceOrigin(<factions>, <origin>)', function() {
+      this.modelService.setPlaceOrigin('factions', this.origin, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info',
@@ -388,8 +412,6 @@ describe('model place', function() {
         this.gameFactionsService.getModelInfo._retVal = {
           base_radius: 9.842,
         };
-        
-        this.modelService.setPlaceOrigin('factions', this.origin, this.model);
       });
       
       it('should orient place lane toward <target>', function() {
@@ -398,8 +420,19 @@ describe('model place', function() {
         expect(R.pick(['x','y','r'], this.model.state.pla.s))
           .toEqual({ x: 160, y: 160, r: 26.56505117707799 });
       });
-    });
 
+      when('model is locked', function() {
+        this.modelService.setLock(true, this.model);
+      }, function() {
+        it('should not orient place lane toward <target>', function() {
+          expect(R.pick(['x','y','r'], this.model.state))
+            .toEqual({ x: 240, y: 240, r: 180 });
+          expect(R.pick(['x','y','r'], this.model.state.pla.s))
+            .toEqual({ x: 160, y: 160 });
+        });
+      });
+    });
+    
     describe('setPlaceMaxLength(<length>)', function() {
       beforeEach(function() {
         this.model = {
@@ -502,6 +535,15 @@ describe('model place', function() {
           this.modelService[e.move]('factions', false, this.model);
           expect(this.modelService.checkState)
             .toHaveBeenCalledWith('factions', null, jasmine.any(Object));
+        });
+        
+        when('model is locked', function() {
+          this.modelService.setLock(true, this.model);
+        }, function() {
+          it('should not '+e.move+' model', function() {
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+          });
         });
       });
     });

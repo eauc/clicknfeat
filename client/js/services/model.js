@@ -169,6 +169,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(state);
     },
     setPosition: function modelSet(factions, pos, model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.pipe(
         R.assoc('x', pos.x),
         R.assoc('y', pos.y),
@@ -176,18 +177,21 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     setOrientation: function modelSet(factions, orientation, model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.pipe(
         R.assoc('r', orientation),
         modelService.checkState$(factions, null)
       )(model.state);
     },
     orientTo: function modelSet(factions, other, model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.pipe(
         R.assoc('r', pointService.directionTo(other.state, model.state)),
         modelService.checkState$(factions, null)
       )(model.state);
     },
     shiftPosition: function modelSet(factions, shift, model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.pipe(
         R.assoc('x', model.state.x + shift.x),
         R.assoc('y', model.state.y + shift.y),
@@ -195,6 +199,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     moveFront: function modelMoveFront(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       model.state = R.pipe(
         pointService.moveFront$(dist),
@@ -202,6 +207,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     moveBack: function modelMoveBack(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       model.state = R.pipe(
         pointService.moveBack$(dist),
@@ -209,6 +215,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateLeft: function modelRotateLeft(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       model.state = R.pipe(
         pointService.rotateLeft$(angle),
@@ -216,6 +223,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateRight: function modelRotateRight(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       model.state = R.pipe(
         pointService.rotateRight$(angle),
@@ -223,6 +231,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftLeft: function modelShiftLeft(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftLeft$(dist),
@@ -230,6 +239,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftRight: function modelShiftRight(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftRight$(dist),
@@ -237,6 +247,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftUp: function modelShiftUp(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftUp$(dist),
@@ -244,6 +255,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftDown: function modelShiftDown(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftDown$(dist),
@@ -521,6 +533,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       }
     },
     startCharge: function modelStartCharge(model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.assoc('cha', {
         s: R.pick(['x','y','r'], model.state),
         t: null
@@ -537,6 +550,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.assoc('cha', null, model.state);
     },
     setChargeTarget: function modelSetChargeTarget(factions, other, model) {
+      if(modelService.isLocked(model)) return;
       model.state.cha = R.assoc('t', other.state.stamp, model.state.cha);
       model.state = R.pipe(
         R.assoc('r', pointService.directionTo(other.state, model.state)),
@@ -550,6 +564,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.assoc('cml', value, model.state);
     },
     moveFrontCharge: function modelMoveFrontCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       var direction = model.state.cha.s.r;
       var distance = pointService.distanceTo(model.state, model.state.cha.s);
@@ -559,6 +574,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     moveBackCharge: function modelMoveBackCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       var direction = model.state.cha.s.r+180;
       var distance = pointService.distanceTo(model.state, model.state.cha.s);
@@ -569,6 +585,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateLeftCharge: function modelRotateLeftCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe(
         pointService.rotateLeftAround$(angle, model.state.cha.s),
@@ -577,6 +594,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateRightCharge: function modelRotateRightCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe( 
         pointService.rotateRightAround$(angle, model.state.cha.s),
@@ -585,6 +603,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftLeftCharge: function modelShiftLeftCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftLeft$(dist),
@@ -592,6 +611,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftRightCharge: function modelShiftRightCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftRight$(dist),
@@ -599,6 +619,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftUpCharge: function modelShiftUpCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftUp$(dist),
@@ -606,6 +627,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftDownCharge: function modelShiftDownCharge(factions, target, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftDown$(dist),
@@ -613,6 +635,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     startPlace: function modelStartPlace(model) {
+      if(modelService.isLocked(model)) return;
       model.state = R.assoc('pla', {
         s: R.pick(['x','y','r'], model.state)
       }, model.state);
@@ -624,6 +647,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.assoc('pla', null, model.state);
     },
     setPlaceOrigin: function modelSetPlaceOrigin(factions, other, model) {
+      if(modelService.isLocked(model)) return;
       var direction = pointService.directionTo(model.state.pla.s, other.state);
       model.state = R.pipe(
         pointService.rotateAroundTo$(direction, model.state.pla.s),
@@ -632,6 +656,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     setPlaceTarget: function modelSetPlaceTarget(factions, other, model) {
+      if(modelService.isLocked(model)) return;
       var direction = pointService.directionTo(other.state, model.state.pla.s);
       model.state = R.pipe(
         pointService.rotateAroundTo$(direction, model.state.pla.s),
@@ -652,6 +677,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       model.state = R.assoc('pml', [ model.state.pml[0], value ], model.state);
     },
     moveFrontPlace: function modelMoveFrontPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       var direction = model.state.pla.s.r;
       var distance = pointService.distanceTo(model.state, model.state.pla.s);
@@ -661,6 +687,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     moveBackPlace: function modelMoveBackPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       var direction = model.state.pla.s.r+180;
       var distance = pointService.distanceTo(model.state, model.state.pla.s);
@@ -671,6 +698,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateLeftPlace: function modelRotateLeftPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe(
         pointService.rotateLeftAround$(angle, model.state.pla.s),
@@ -679,6 +707,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     rotateRightPlace: function modelRotateRightPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
       model.state = R.pipe( 
         pointService.rotateRightAround$(angle, model.state.pla.s),
@@ -687,6 +716,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftLeftPlace: function modelShiftLeftPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftLeft$(dist),
@@ -694,6 +724,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftRightPlace: function modelShiftRightPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftRight$(dist),
@@ -701,6 +732,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftUpPlace: function modelShiftUpPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftUp$(dist),
@@ -708,6 +740,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
       )(model.state);
     },
     shiftDownPlace: function modelShiftDownPlace(factions, small, model) {
+      if(modelService.isLocked(model)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       model.state = R.pipe(
         pointService.shiftDown$(dist),
@@ -731,6 +764,7 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
              );
     },
     setB2B: function modelSetB2B(factions, other, model) {
+      if(modelService.isLocked(model)) return;
       var direction = pointService.directionTo(model.state, other.state); 
       var info = gameFactionsService.getModelInfo(model.state.info, factions);
       var other_info = gameFactionsService.getModelInfo(other.state.info, factions);
@@ -742,6 +776,17 @@ self.modelServiceFactory = function modelServiceFactory(settingsService,
         R.assoc('y', position.y),
         modelService.checkState$(factions, null)
       )(model.state);
+    },
+    isLocked: function modelIsLocked(model) {
+      return !!R.find(R.eq('lk'), R.defaultTo([], R.path(['state', 'dsp'], model)));
+    },
+    setLock: function modelSetLock(set, model) {
+      if(set) {
+        model.state.dsp = R.uniq(R.append('lk', model.state.dsp));
+      }
+      else {
+        model.state.dsp = R.reject(R.eq('lk'), model.state.dsp);
+      }
     },
   };
   function initDamage(info) {
