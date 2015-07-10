@@ -18,6 +18,7 @@ self.modelPlaceModeServiceFactory = function modelPlaceModeServiceFactory(modesS
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
     if(dom_event.shiftKey &&
+       !dom_event.ctrlKey &&
        model.state.stamp !== event.target.state.stamp) {
       gameService.executeCommand('onModels', 'setPlaceTarget',
                                  scope.factions, event.target,
@@ -25,6 +26,7 @@ self.modelPlaceModeServiceFactory = function modelPlaceModeServiceFactory(modesS
       return;
     }
     if(dom_event.ctrlKey &&
+       !dom_event.shiftKey &&
        model.state.stamp !== event.target.state.stamp) {
       gameService.executeCommand('onModels', 'setPlaceOrigin',
                                  scope.factions, event.target,

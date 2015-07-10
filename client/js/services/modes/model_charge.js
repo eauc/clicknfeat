@@ -19,6 +19,7 @@ self.modelChargeModeServiceFactory = function modelChargeModeServiceFactory(mode
     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
     if(dom_event.shiftKey &&
+       !dom_event.ctrlKey &&
        model.state.stamp !== event.target.state.stamp) {
       gameService.executeCommand('onModels', 'setChargeTarget',
                                  scope.factions, event.target,

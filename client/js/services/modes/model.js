@@ -27,7 +27,7 @@ self.modelModeServiceFactory = function modelModeServiceFactory(modesService,
     if(dom_event.shiftKey &&
        !dom_event.ctrlKey &&
        model.state.stamp !== event.target.state.stamp) {
-      gameService.executeCommand('onModels', 'setChargeTarget',
+      gameService.executeCommand('onModels', 'orientTo',
                                  scope.factions, event.target,
                                  stamps, scope, scope.game);
       return;
