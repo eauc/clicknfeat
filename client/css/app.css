@@ -368,7 +368,8 @@ ul.nav-tabs li {
     fill-opacity:0.5;
 }
 #game-templates-locked .template {
-    fill-opacity:0.2;
+    fill:#F06;
+    fill-opacity:0.4;
 }
 
 #game .template-aoe-direction {
