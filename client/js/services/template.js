@@ -16,6 +16,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     return R.path(['state','s'], temp);
   };
   aoeTemplateService.deviate = function aoeTemplateDeviate(dir, len, temp) {
+    if(templateService.isLocked(temp)) return;
     dir = temp.state.r + 60 * (dir-1);
     var max_len = R.defaultTo(len, R.path(['state','m'], temp));
     len = Math.min(len, max_len);
@@ -31,6 +32,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     temp.state = R.assoc('m', max, temp.state);
   };
   aoeTemplateService.setToRuler = function aoeTemplateSetToRuler(pos, temp) {
+    if(templateService.isLocked(temp)) return;
     temp.state = R.pipe(
       R.assoc('x', pos.x),
       R.assoc('y', pos.y),
@@ -40,6 +42,7 @@ self.aoeTemplateServiceFactory = function aoeTemplateServiceFactory(templateServ
     )(temp.state);
   };
   aoeTemplateService.setOrigin = function aoeTemplateSetOrigin(factions, origin, temp) {
+    if(templateService.isLocked(temp)) return;
     var direction = pointService.directionTo(temp.state, origin.state);
     var base_edge = modelService.baseEdgeInDirection(factions, direction, origin);
     var max_dev = pointService.distanceTo(temp.state, base_edge) / 20;
@@ -84,11 +87,13 @@ self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(template
     return R.path(['state','o'], temp);
   };
   sprayTemplateService.setOrigin = function sprayTemplateSetOrigin(factions, origin, temp) {
+    if(templateService.isLocked(temp)) return;
     var position = modelService.baseEdgeInDirection(factions, temp.state.r, origin);
     temp.state = R.assoc('o', origin.state.stamp, temp.state);
     templateService.setPosition(position, temp);
   };
   sprayTemplateService.setTarget = function sprayTemplateSetTarget(factions, origin, target, temp) {
+    if(templateService.isLocked(temp)) return;
     var direction = pointService.directionTo(target.state, origin.state);
     var position = modelService.baseEdgeInDirection(factions, direction, origin);
     temp.state = R.assoc('r', direction, temp.state);
@@ -105,12 +110,14 @@ self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(template
   ];
   R.forEach(function(move) {
     sprayTemplateService[move] = function sprayTemplateForwardMove(small, template) {
+      if(templateService.isLocked(template)) return;
       template.state = R.assoc('o', null, template.state);
       templateService[move](small, template);
     };
   }, FORWARD_MOVES);
   sprayTemplateService.rotateLeft = function sprayTemplateRotateLeft(factions, origin,
                                                                      small, template) {
+    if(templateService.isLocked(template)) return;
     if(R.exists(origin)) {
       var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
       template.state = pointService.rotateLeft(angle, template.state);
@@ -124,6 +131,7 @@ self.sprayTemplateServiceFactory = function sprayTemplateServiceFactory(template
   };
   sprayTemplateService.rotateRight = function sprayTemplateRotateRight(factions, origin,
                                                                        small, template) {
+    if(templateService.isLocked(template)) return;
     if(R.exists(origin)) {
       var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
       template.state = pointService.rotateRight(angle, template.state);
@@ -212,7 +220,14 @@ self.templateServiceFactory = function templateServiceFactory(settingsService,
       state.y = Math.max(0, Math.min(480, state.y));
       return state;
     },
+    isLocked: function templateIsLocked(template) {
+      return template.state.lk;
+    },
+    setLock: function templateIsLocked(lock, template) {
+      template.state.lk = lock;
+    },
     setPosition: function templateSet(pos, template) {
+      if(templateService.isLocked(template)) return;
       template.state = R.pipe(
         R.assoc('x', pos.x),
         R.assoc('y', pos.y),
@@ -220,41 +235,49 @@ self.templateServiceFactory = function templateServiceFactory(settingsService,
       )(template.state);
     },
     moveFront: function templateMoveFront(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       template.state = templateService
         .checkState(pointService.moveFront(dist, template.state));
     },
     moveBack: function templateMoveBack(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
       template.state = templateService
         .checkState(pointService.moveBack(dist, template.state));
     },
     rotateLeft: function templateRotateLeft(small, template) {
+      if(templateService.isLocked(template)) return;
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       template.state = templateService
         .checkState(pointService.rotateLeft(angle, template.state));
     },
     rotateRight: function templateRotateRight(small, template) {
+      if(templateService.isLocked(template)) return;
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
       template.state = templateService
         .checkState(pointService.rotateRight(angle, template.state));
     },
     shiftLeft: function templateShiftLeft(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       template.state = templateService
         .checkState(pointService.shiftLeft(dist, template.state));
     },
     shiftRight: function templateShiftRight(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       template.state = templateService
         .checkState(pointService.shiftRight(dist, template.state));
     },
     shiftUp: function templateShiftUp(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       template.state = templateService
         .checkState(pointService.shiftUp(dist, template.state));
     },
     shiftDown: function templateShiftDown(small, template) {
+      if(templateService.isLocked(template)) return;
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
       template.state = templateService
         .checkState(pointService.shiftDown(dist, template.state));

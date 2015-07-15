@@ -9,8 +9,8 @@ describe('misc template', function() {
         this.templateService = spyOnService('template');
         this.templateService.eventName.and.callThrough();
         this.gameTemplatesService = spyOnService('gameTemplates');
-        this.gameTemplatesService.findStamp.and.callFake(function(s) {
-          return { state: { stamp: s } };
+        this.gameTemplatesService.onStamps.and.callFake(function(m) {
+          return 'gameTemplates.onStamps.returnValue('+m+')';
         });
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       }
@@ -36,35 +36,28 @@ describe('misc template', function() {
         });
       });
 
-      it('should find <stamps> in game templates', function() {
-        expect(this.gameTemplatesService.findStamp)
-          .toHaveBeenCalledWith('stamp1', 'templates');
-        expect(this.gameTemplatesService.findStamp)
-          .toHaveBeenCalledWith('stamp2', 'templates');
-      });
-
       it('should save <stamps> states before change', function() {
+        expect(this.gameTemplatesService.onStamps)
+          .toHaveBeenCalledWith('saveState', this.stamps, 'templates');
         expect(this.ctxt.before)
-          .toEqual(['stamp1State', 'stamp2State']);
+          .toEqual('gameTemplates.onStamps.returnValue(saveState)');
       });
 
       it('should apply <method> on <stamps>', function() {
-        expect(this.templateService.call)
-          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp1After' } });
-        expect(this.templateService.call)
-          .toHaveBeenCalledWith('method', 'arg1', 'arg2', { state: { stamp: 'stamp2After' } });
+        expect(this.gameTemplatesService.onStamps)
+          .toHaveBeenCalledWith('method', 'arg1', 'arg2', this.stamps, 'templates');
       });
 
       it('should save <stamps> states after change', function() {
-        expect(this.ctxt.after)
-          .toEqual(['stamp1AfterState', 'stamp2AfterState']);
+        expect(this.ctxt.before)
+          .toEqual('gameTemplates.onStamps.returnValue(saveState)');
       });
 
       it('should emit changeTemplate gameEvents', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTemplate-stamp1After');
+          .toHaveBeenCalledWith('changeTemplate-stamp1');
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTemplate-stamp2After');
+          .toHaveBeenCalledWith('changeTemplate-stamp2');
       });
 
       it('should return context', function() {
@@ -74,9 +67,13 @@ describe('misc template', function() {
     });
 
     when('replay(<ctxt>, <scope>, <game>)', function() {
-      this.onTemplatesCommandService.replay(this.ctxt, this.scope, this.game);
+      this.onTemplatesCommandService
+        .replay(this.ctxt, this.scope, this.game);
     }, function() {
       beforeEach(function() {
+        this.gameTemplatesService.findStamp.and.callFake(function(s) {
+          return { state: { stamp: s } };
+        });
         this.ctxt = {
           before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
           after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
@@ -104,7 +101,8 @@ describe('misc template', function() {
 
       it('should set remote templateSelection to modified templates', function() {
         expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('remote', 'after2', this.scope, 'selection');
+          .toHaveBeenCalledWith('remote', ['after1','after2'],
+                                this.scope, 'selection');
       });
 
       it('should emit changeTemplate gameEvents', function() {
@@ -119,6 +117,9 @@ describe('misc template', function() {
       this.onTemplatesCommandService.undo(this.ctxt, this.scope, this.game);
     }, function() {
       beforeEach(function() {
+        this.gameTemplatesService.findStamp.and.callFake(function(s) {
+          return { state: { stamp: s } };
+        });
         this.ctxt = {
           before: [ { stamp: 'before1' }, { stamp: 'before2' } ],
           after: [ { stamp: 'after1' }, { stamp: 'after2' } ],
@@ -146,7 +147,8 @@ describe('misc template', function() {
 
       it('should set remote templateSelection to modified templates', function() {
         expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('remote', 'before2', this.scope, 'selection');
+          .toHaveBeenCalledWith('remote', ['before1','before2'],
+                                this.scope, 'selection');
       });
 
       it('should emit changeTemplate gameEvents', function() {
@@ -167,7 +169,7 @@ describe('misc template', function() {
       }
     ]));
 
-    describe('onStamp(<stamp>, <method>, <...args...>)', function() {
+    describe('onStamps(<stamps>, <method>, <...args...>)', function() {
       beforeEach(function() {
         this.templates = {
           active: [
@@ -181,18 +183,14 @@ describe('misc template', function() {
       });
 
       it('should call <method> on <stamp> template', function() {
-        this.gameTemplatesService.onStamp('stamp2',
-                                          'method', 'arg1', 'arg2',
-                                          this.templates);
+        this.gameTemplatesService.onStamps('method', 'arg1', 'arg2',
+                                           ['stamp2', 'stamp3'],
+                                           this.templates);
         expect(this.templateService.call)
           .toHaveBeenCalledWith('method', 'arg1', 'arg2',
                                 { state: { stamp: 'stamp2' } });
-
-        this.gameTemplatesService.onStamp('stamp3',
-                                          'method',
-                                          this.templates);
         expect(this.templateService.call)
-          .toHaveBeenCalledWith('method',
+          .toHaveBeenCalledWith('method', 'arg1', 'arg2',
                                 { state: { stamp: 'stamp3' } });
       });
     });

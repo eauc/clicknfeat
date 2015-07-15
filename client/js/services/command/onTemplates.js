@@ -15,21 +15,16 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
         after: [],
         desc: method,
       };
-      args = R.slice(0, -3, args);
+
+      args = R.append(game.templates, R.slice(0, -2, args));
+
+      ctxt.before = gameTemplatesService.onStamps('saveState', stamps, game.templates);
+      gameTemplatesService.onStamps.apply(null, args);
+      ctxt.after = gameTemplatesService.onStamps('saveState', stamps, game.templates);
+
       R.forEach(function(stamp) {
-        var template = gameTemplatesService.findStamp(stamp, game.templates);
-        if(!templateService.respondTo(method, template)) {
-          console.log('onTemplate : template does not respond to method', template, method);
-          return;
-        }
-
-        ctxt.before.push(templateService.saveState(template));
-        templateService.call.apply(null, R.append(template, args));
-        ctxt.after.push(templateService.saveState(template));
-
-        scope.gameEvent('changeTemplate-'+templateService.eventName(template));
+        scope.gameEvent('changeTemplate-'+stamp);
       }, stamps);
-      if(R.isEmpty(ctxt.after)) return;
       return ctxt;
     },
     replay: function onTemplatesRedo(ctxt, scope, game) {
@@ -43,7 +38,7 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
         })
       )(ctxt.after);
       game.template_selection =
-        gameTemplateSelectionService.set('remote', R.last(ctxt.after).stamp,
+        gameTemplateSelectionService.set('remote', R.map(R.prop('stamp'), ctxt.after),
                                          scope, game.template_selection);
     },
     undo: function onTemplatesUndo(ctxt, scope, game) {
@@ -57,7 +52,7 @@ self.onTemplatesCommandServiceFactory = function onTemplatesCommandServiceFactor
         })
       )(ctxt.before);
       game.template_selection =
-        gameTemplateSelectionService.set('remote', R.last(ctxt.before).stamp,
+        gameTemplateSelectionService.set('remote', R.map(R.prop('stamp'), ctxt.before),
                                          scope, game.template_selection);
     }
   };

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('move template', function() {
+describe('drag template', function() {
   describe('defaultMode service', function() {
     beforeEach(inject([
       'defaultMode',
@@ -65,7 +65,8 @@ describe('move template', function() {
 
       it('should set current selection', function() {
         expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
+          .toHaveBeenCalledWith('local', ['stamp'],
+                                this.scope, 'selection');
       });
 
       it('should update target position', function() {
@@ -165,6 +166,16 @@ describe('move template', function() {
         this.templateService.setPosition({ x: -15, y: 494 }, this.template);
         expect(this.template.state)
           .toEqual({ x: 0, y: 480, r: 180 });
+      });
+
+      when('template is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should not set template position', function() {
+          this.templateService.setPosition({ x: 15, y: 42 }, this.template);
+          expect(R.pick(['x','y','r'], this.template.state))
+            .toEqual({ x: 240, y: 240, r: 180 });
+        });
       });
     });
   });

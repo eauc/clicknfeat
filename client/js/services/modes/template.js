@@ -3,21 +3,26 @@
 self.templateModeServiceFactory = function templateModeServiceFactory(modesService,
                                                                       settingsService,
                                                                       defaultModeService,
-                                                                      templateLockedModeService,
                                                                       templateService,
                                                                       gameService,
                                                                       gameTemplatesService,
                                                                       gameTemplateSelectionService) {
-  var template_actions = Object.create(templateLockedModeService.actions);
-  template_actions.delete = function templateDelete(scope) {
-    var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-    gameService.executeCommand('deleteTemplates', [target], scope, scope.game);
+  var template_actions = Object.create(defaultModeService.actions);
+  template_actions.clickMap = function templateClickMap(scope, event) {
+    scope.game.template_selection =
+      gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
   };
-  template_actions.lock = function templateLock(scope) {
-    var stamp = gameTemplateSelectionService.get('local', scope.game.template_selection);
-    gameService.executeCommand('lockTemplates', [stamp], true, scope, scope.game);
-    modesService.switchToMode(gameTemplatesService.modeForStamp(stamp, scope.game.templates),
-                              scope, scope.modes);
+  template_actions.rightClickMap = template_actions.clickMap;
+  template_actions.delete = function templateDelete(scope) {
+    var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+    gameService.executeCommand('deleteTemplates', stamps, scope, scope.game);
+  };
+  template_actions.toggleLock = function templateLock(scope) {
+    var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+    var template = gameTemplatesService.findStamp(stamps[0], scope.game.templates);
+    var present = templateService.isLocked(template);
+    
+    gameService.executeCommand('lockTemplates', !present, stamps, scope, scope.game);
   };
   var moves = [
     ['moveFront', 'up'],
@@ -31,12 +36,14 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
   ];
   R.forEach(function(move) {
     template_actions[move[0]] = function templateMove(scope) {
-      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-      gameService.executeCommand('onTemplates', move[0], false, [target], scope, scope.game);
+      var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      gameService.executeCommand('onTemplates', move[0], false,
+                                 stamps, scope, scope.game);
     };
     template_actions[move[0]+'Small'] = function templateMove(scope) {
-      var target = gameTemplateSelectionService.get('local', scope.game.template_selection);
-      gameService.executeCommand('onTemplates', move[0], true, [target], scope, scope.game);
+      var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      gameService.executeCommand('onTemplates', move[0], true,
+                                 stamps, scope, scope.game);
     };
   }, moves);
 
@@ -52,7 +59,7 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
       drag_template_start_state = R.clone(event.target.state);
       template_actions.dragTemplate(scope, event);
       scope.game.template_selection =
-        gameTemplateSelectionService.set('local', event.target.state.stamp,
+        gameTemplateSelectionService.set('local', [event.target.state.stamp],
                                          scope, scope.game.template_selection);
     };
     template_actions.dragTemplate = function templateDragTemplate(scope, event) {
@@ -63,15 +70,15 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
       templateService.setPosition(drag_template_start_state, event.target);
       var end_state = R.clone(drag_template_start_state);
       updateStateWithDelta(event, end_state);
-      gameService.executeCommand('onTemplates',
-                                 'setPosition', end_state, [event.target.state.stamp],
+      gameService.executeCommand('onTemplates', 'setPosition', end_state,
+                                 [event.target.state.stamp],
                                  scope, scope.game);
     };
   })();
 
   var template_default_bindings = {
     'delete': 'del',
-    'lock': 'l',
+    'toggleLock': 'l',
   };
   R.forEach(function(move) {
     template_default_bindings[move[0]] = move[1];
@@ -81,7 +88,7 @@ self.templateModeServiceFactory = function templateModeServiceFactory(modesServi
                                    template_default_bindings);
   var template_buttons = [
     [ 'Delete', 'delete' ],
-    [ 'Lock', 'lock' ],
+    [ 'Lock/Unlock', 'toggleLock' ],
   ];
   var template_mode = {
     onEnter: function templateOnEnter(scope) {

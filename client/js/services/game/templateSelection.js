@@ -20,83 +20,62 @@ self.gameTemplateSelectionServiceFactory = function gameTemplateSelectionService
              );
     },
     get: function templateSelectionGet(where, selection) {
-      return R.defaultTo([], R.path([where,'stamps'], selection))[0];
+      return R.defaultTo([], R.path([where,'stamps'], selection));
     },
     checkMode: function templateSelectionCheckMode(scope, selection) {
-      var stamp = gameTemplateSelectionService.get('local', selection);
+      var stamp = R.head(gameTemplateSelectionService.get('local', selection));
       if(R.exists(stamp)) {
         var mode = gameTemplatesService.modeForStamp(stamp, scope.game.templates);
         modesService.switchToMode(mode, scope, scope.modes);
         return true;
       }
+      else {
+        modesService.switchToMode('Default', scope, scope.modes);
+      }
       return false;
     },
-    set: function templateSelectionSet(where, stamp, scope, selection) {
-      var previous_selection = gameTemplateSelectionService.get(where, selection);
-      var ret = R.pipe(
-        R.prop(where),
-        R.assoc('stamps', [stamp]),
-        function(sel) {
-          return R.assoc(where, sel, selection);
-        }
-      )(selection);
+    set: function templateSelectionSet(where, stamps, scope, selection) {
+      var previous = gameTemplateSelectionService.get(where, selection);
+      var ret = R.assocPath([where, 'stamps'], stamps, selection);
 
       if('local' === where) {
-        var mode = gameTemplatesService.modeForStamp(stamp, scope.game.templates);
-        modesService.switchToMode(mode, scope, scope.modes);
-        checkSingleTemplateSelection(scope, ret);
+        var mode = gameTemplateSelectionService.checkMode(scope, ret);
+        checkSingleSelection(scope, ret);
       }
       
-      scope.gameEvent('changeTemplate-'+stamp);
-      if(R.exists(previous_selection) &&
-         previous_selection !== stamp) {
-        scope.gameEvent('changeTemplate-'+previous_selection);
-      }
+      R.forEach(function(stamp) {
+        scope.gameEvent('changeTemplate-'+stamp);
+      }, stamps);
+      R.forEach(function(stamp) {
+        scope.gameEvent('changeTemplate-'+stamp);
+      }, previous);
 
       return ret;
     },
-    removeFrom: function templateSelectionRemoveFrom(where, stamp, scope, selection) {
-      var ret = selection;
-      if(gameTemplateSelectionService.in(where, stamp, selection)) {
-        ret = R.pipe(
-          R.prop(where),
-          R.assoc('stamps', []),
-          function(sel) {
-            return R.assoc(where, sel, selection);
-          }
-        )(selection);
-
-        if('local' === where) {
-          modesService.switchToMode('Default', scope, scope.modes);
-          checkSingleTemplateSelection(scope, ret);
-        }
-
-        scope.gameEvent('changeTemplate-'+stamp);
+    removeFrom: function templateSelectionRemoveFrom(where, stamps, scope, selection) {
+      var path = [where, 'stamps'];
+      var previous = R.path(path, selection);
+      var new_selection = R.difference(previous, stamps);
+      var ret = R.assocPath(path, new_selection, selection);
+      
+      if('local' === where) {
+        gameTemplateSelectionService.checkMode(scope, ret);
+        checkSingleSelection(scope, ret);
       }
+
+      R.forEach(function(stamp) {
+        scope.gameEvent('changeTemplate-'+stamp);
+      }, R.uniq(R.concat(previous, stamps)));
+
       return ret;
     },
     clear: function templateSelectionClear(where, scope, selection) {
-      var previous_selection = gameTemplateSelectionService.get(where, selection);
-      var ret = R.pipe(
-        R.prop(where),
-        R.assoc('stamps', []),
-        function(sel) {
-          return R.assoc(where, sel, selection);
-        }
-      )(selection);
-
-      if('local' === where) {
-        modesService.switchToMode('Default', scope, scope.modes);
-        checkSingleTemplateSelection(scope, ret);
-      }
-
-      if(R.exists(previous_selection)) {
-        scope.gameEvent('changeTemplate-'+previous_selection);
-      }
-      return ret;
+      var path = [where, 'stamps'];
+      var previous = R.path(path, selection);
+      return gameTemplateSelectionService.removeFrom(where, previous, scope, selection);
     },
   };
-  function checkSingleTemplateSelection(scope, selection) {
+  function checkSingleSelection(scope, selection) {
     if(R.length(R.path(['local','stamps'], selection)) !== 1) {
       scope.gameEvent('disableSingleAoESelection');
     }

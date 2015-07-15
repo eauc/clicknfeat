@@ -7,46 +7,51 @@ self.deleteTemplatesCommandServiceFactory =
                                                 gameTemplateSelectionService) {
     var deleteTemplatesCommandService = {
       execute: function deleteTemplatesExecute(stamps, scope, game) {
-        var ctxt = {
-          templates: []
-        };
-        R.forEach(function(stamp) {
-          var template = gameTemplatesService.findStamp(stamp, game.templates);
-          if(R.isNil(template)) return;
+        var states = R.pipe(
+          R.map(function(stamp) {
+            return gameTemplatesService.findStamp(stamp, game.templates);
+          }),
+          R.reject(R.isNil),
+          R.map(templateService.saveState)
+        )(stamps);
 
-          ctxt.templates.push(templateService.saveState(template));
-          game.templates = gameTemplatesService.removeStamp(stamp, game.templates);
-          game.template_selection =
-            gameTemplateSelectionService.removeFrom('local', stamp,
-                                                    scope, game.template_selection);
-          game.template_selection =
-            gameTemplateSelectionService.removeFrom('remote', stamp,
-                                                    scope, game.template_selection);
-        }, stamps);
+        var ctxt = {
+          templates: states,
+          desc: '',
+        };
+
+        game.templates = gameTemplatesService.removeStamps(stamps, game.templates);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('local', stamps,
+                                                  scope, game.template_selection);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('remote', stamps,
+                                                  scope, game.template_selection);
+
         scope.gameEvent('createTemplate');
         return ctxt;
       },
       replay: function deleteTemplatesReplay(ctxt, scope, game) {
-        R.forEach(function(state) {
-          game.templates = gameTemplatesService.removeStamp(state.stamp, game.templates);
-          game.template_selection =
-            gameTemplateSelectionService.removeFrom('local', state.stamp,
-                                                    scope, game.template_selection);
-          game.template_selection =
-            gameTemplateSelectionService.removeFrom('remote', state.stamp,
-                                                    scope, game.template_selection);
-        }, ctxt.templates);
+        var stamps = R.map(R.prop('stamp'), ctxt.templates);
+        game.templates = gameTemplatesService.removeStamps(stamps, game.templates);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('local', stamps,
+                                                  scope, game.template_selection);
+        game.template_selection =
+          gameTemplateSelectionService.removeFrom('remote', stamps,
+                                                  scope, game.template_selection);
         scope.gameEvent('createTemplate');
       },
       undo: function deleteTemplatesUndo(ctxt, scope, game) {
-        R.forEach(function(state) {
-          var template = templateService.create(state);
-          if(R.isNil(template)) return;
+        var templates = R.pipe(
+          R.map(templateService.create),
+          R.reject(R.isNil)
+        )(ctxt.templates);
+        if(R.isEmpty(templates)) return;
 
-          game.templates = gameTemplatesService.add(template, game.templates);
-        }, ctxt.templates);
+        game.templates = gameTemplatesService.add(templates, game.templates);
         game.template_selection =
-          gameTemplateSelectionService.set('remote', R.last(ctxt.templates).stamp,
+          gameTemplateSelectionService.set('remote', R.map(R.path(['state','stamp']), templates),
                                            scope, game.template_selection);
         scope.gameEvent('createTemplate');
       }

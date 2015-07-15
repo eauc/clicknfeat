@@ -150,50 +150,10 @@ angular.module('clickApp.services')
     'game',
     createTemplateModeServiceFactory
   ])
-  .factory('templateLockedMode', [
-    'modes',
-    'settings',
-    'defaultMode',
-    'game',
-    'gameTemplates',
-    'gameTemplateSelection',
-    templateLockedModeServiceFactory
-  ])
-  .factory('aoeTemplateLockedMode', [
-    'modes',
-    'settings',
-    'templateLockedMode',
-    'game',
-    'gameTemplates',
-    'gameTemplateSelection',
-    'gameRuler',
-    'prompt',
-    aoeTemplateModeServiceFactory(true)
-  ])
-  .factory('sprayTemplateLockedMode', [
-    'modes',
-    'settings',
-    'templateMode',
-    'sprayTemplate',
-    'game',
-    'gameTemplates',
-    'gameTemplateSelection',
-    'gameModels',
-    sprayTemplateModeServiceFactory
-  ])
-  .factory('wallTemplateLockedMode', [
-    'modes',
-    'settings',
-    'templateLockedMode',
-    'game',
-    'gameTemplateSelection',
-    wallTemplateModeServiceFactory
-  ])
   .factory('templateMode', [
     'modes',
     'settings',
     'defaultMode',
-    'templateLockedMode',
     'template',
     'game',
     'gameTemplates',
@@ -209,7 +169,7 @@ angular.module('clickApp.services')
     'gameTemplateSelection',
     'gameRuler',
     'prompt',
-    aoeTemplateModeServiceFactory(false)
+    aoeTemplateModeServiceFactory
   ])
   .factory('sprayTemplateMode', [
     'modes',
@@ -239,9 +199,6 @@ angular.module('clickApp.services')
     'modelChargeMode',
     'modelPlaceMode',
     'createTemplateMode',
-    'aoeTemplateLockedMode',
-    'sprayTemplateLockedMode',
-    'wallTemplateLockedMode',
     'templateMode',
     'aoeTemplateMode',
     'sprayTemplateMode',

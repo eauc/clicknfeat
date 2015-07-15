@@ -12,7 +12,7 @@ self.createTemplateModeServiceFactory = function createTemplateModeServiceFactor
   createTemplate_actions.clickMap = function createTemplateMoveMap(scope, coord) {
     scope.create.template.x = coord.x;
     scope.create.template.y = coord.y;
-    gameService.executeCommand('createTemplate', scope.create.template, scope, scope.game);
+    gameService.executeCommand('createTemplate', [scope.create.template], scope, scope.game);
   };
   var createTemplate_bindings = Object.create(commonModeService.bindings);
   var createTemplate_buttons = [];

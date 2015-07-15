@@ -20,7 +20,7 @@ describe('set origin/target template', function() {
       this.aoeTemplateModeService.actions.clickModel(this.scope, this.event, { ctrlKey: true });
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
         this.event = { target: { state: { stamp: 'origin' } } };
       });
       
@@ -37,7 +37,7 @@ describe('set origin/target template', function() {
       this.aoeTemplateModeService.actions.clickModel(this.scope, this.event, { shiftKey: true });
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
         this.event = { target: { state: { stamp: 'target' } } };
       });
       
@@ -76,7 +76,7 @@ describe('set origin/target template', function() {
       this.sprayTemplateModeService.actions.clickModel(this.scope, this.event, { ctrlKey: true });
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
         this.event = { target: { state: { stamp: 'origin' } } };
       });
       
@@ -93,7 +93,7 @@ describe('set origin/target template', function() {
       this.sprayTemplateModeService.actions.clickModel(this.scope, this.event, { shiftKey: true });
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
         this.sprayTemplateService.origin._retVal = null;
         this.event = { target: { state: { stamp: 'target' } } };
       });
@@ -139,7 +139,7 @@ describe('set origin/target template', function() {
         this.sprayTemplateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.get._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = ['stamp'];
           this.sprayTemplateService.origin._retVal = 'origin';
           this.event = { target: { state: { stamp: 'target' } } };
         });
@@ -197,6 +197,15 @@ describe('set origin/target template', function() {
         expect(this.template.state.m)
           .toEqual(8.202438661763951);
       });
+
+      when('aoe is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should no set template orientation', function() {
+          expect(this.template.state.r)
+            .toEqual(0);
+        });
+      });
     });
 
     when('setTarget(<factions>, <origin>, <target>), ', function() {
@@ -214,6 +223,15 @@ describe('set origin/target template', function() {
       it('should center template on <target>', function() {
         expect(this.template.state)
           .toEqual({ x: 120, y: 120, r: 0 });
+      });
+
+      when('aoe is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should center template on <target>', function() {
+          expect(this.template.state)
+            .toEqual({ x: 240, y: 240, r: 0, lk: true });
+        });
       });
     });
   });
@@ -246,17 +264,22 @@ describe('set origin/target template', function() {
         expect(this.modelService.baseEdgeInDirection)
           .toHaveBeenCalledWith('factions', 42, this.origin);
         
-        expect(this.template.state.x)
-          .toEqual(124);
-        expect(this.template.state.y)
-          .toEqual(124);
-        expect(this.template.state.r)
-          .toEqual(42);
+        expect(R.pick(['x','y','r'], this.template.state))
+          .toEqual({ x: 124, y: 124, r: 42 });
       });
       
       it('should set template origin', function() {
         expect(this.sprayTemplateService.origin(this.template))
           .toEqual('origin');
+      });
+
+      when('spray is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should set template position to <origin> base edge', function() {
+          expect(R.pick(['x','y','r'], this.template.state))
+            .toEqual({ x: 240, y: 240, r: 42 });
+        });
       });
     });
 
@@ -285,8 +308,17 @@ describe('set origin/target template', function() {
         expect(this.template.state)
           .toEqual({ x: 236, y: 236, r: -45 });
       });
-    });
 
+      when('spray is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should not center template on <target>', function() {
+          expect(R.pick(['x','y','r'], this.template.state))
+            .toEqual({ x: 240, y: 240, r: 0 });
+        });
+      });
+    });
+    
     using([
       ['move'],
       ['moveFront'],
@@ -303,6 +335,7 @@ describe('set origin/target template', function() {
         beforeEach(function() {
           this.template = { state: { o: 'origin', stamp: 'template' } };
           this.templateService = spyOnService('template');
+          this.templateService.isLocked._retVal = false;
         });
       
         it('should reset template origin', function() {
@@ -313,6 +346,15 @@ describe('set origin/target template', function() {
         it('should forward to templateService', function() {
           expect(this.templateService[e.move])
             .toHaveBeenCalledWith(true, this.template);
+        });
+
+        when('spray is locked', function() {
+          this.templateService.isLocked._retVal = true;
+        }, function() {
+          it('should forward to templateService', function() {
+            expect(this.templateService[e.move])
+              .not.toHaveBeenCalled();
+          });
         });
       });
     });
@@ -333,6 +375,7 @@ describe('set origin/target template', function() {
                                    } };
           this.templateService = spyOnService('template');
           this.templateService.moves.and.callThrough();
+          this.templateService.isLocked._retVal = false;
         });
         
         when('<origin> is Nil', function() {
@@ -353,6 +396,16 @@ describe('set origin/target template', function() {
             expect(this.templateService.setPosition)
               .toHaveBeenCalledWith('model.baseEdgeInDirection.returnValue',
                                     this.template);
+          });
+        });
+
+        when('spray is locked', function() {
+          this.origin = null;
+          this.templateService.isLocked._retVal = true;
+        }, function() {
+          it('should not forward to templateService', function() {
+            expect(this.templateService[e.move])
+              .not.toHaveBeenCalled();
           });
         });
       });

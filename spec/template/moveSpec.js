@@ -30,7 +30,7 @@ describe('move template', function() {
         this.templateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.get._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = ['stamp'];
         });
 
         it('should get current selection', function() {
@@ -40,8 +40,8 @@ describe('move template', function() {
 
         it('should execute onTemplates/'+e.action+' command', function() {
           expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, false, ['stamp'],
-                                  this.scope, this.scope.game);
+            .toHaveBeenCalledWith('onTemplates', e.action, false,
+                                  ['stamp'], this.scope, this.scope.game);
         });
       });
 
@@ -49,7 +49,7 @@ describe('move template', function() {
         this.templateModeService.actions[e.action+'Small'](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.get._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = ['stamp'];
         });
 
         it('should get current selection', function() {
@@ -59,8 +59,8 @@ describe('move template', function() {
 
         it('should execute onTemplates/'+e.action+'Small command', function() {
           expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, true, ['stamp'],
-                                  this.scope, this.scope.game);
+            .toHaveBeenCalledWith('onTemplates', e.action, true,
+                                  ['stamp'], this.scope, this.scope.game);
         });
       });
     });
@@ -139,6 +139,16 @@ describe('move template', function() {
               .toEqual(e.after_check);
           });
         }
+        when('template is locked', function() {
+          this.template.state.lk = true;
+        }, function() {
+          it('should not '+e.move+' template', function() {
+            this.templateService[e.move](false, this.template);
+
+            expect(R.pick(['x','y','r'], this.template.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+          });
+        });
       });
     });
   });

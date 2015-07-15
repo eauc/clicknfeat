@@ -1,11 +1,11 @@
 'use strict';
 
 describe('setSize template', function() {
-  describe('aoeTemplateLockedMode service', function() {
+  describe('aoeTemplateMode service', function() {
     beforeEach(inject([
-      'aoeTemplateLockedMode',
-      function(aoeTemplateLockedModeService) {
-        this.aoeTemplateLockedModeService = aoeTemplateLockedModeService;
+      'aoeTemplateMode',
+      function(aoeTemplateModeService) {
+        this.aoeTemplateModeService = aoeTemplateModeService;
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
@@ -22,10 +22,10 @@ describe('setSize template', function() {
       [ 'aoeSize5', 5 ],
     ], function(e, d) {
       when('user set '+e.action+' on template selection', function() {
-        this.aoeTemplateLockedModeService.actions[e.action](this.scope);
+        this.aoeTemplateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.get._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = ['stamp'];
         });
 
         it('should get current selection', function() {
@@ -42,11 +42,11 @@ describe('setSize template', function() {
     });
   });
 
-  describe('sprayTemplateLockedMode service', function() {
+  describe('sprayTemplateMode service', function() {
     beforeEach(inject([
-      'sprayTemplateLockedMode',
-      function(sprayTemplateLockedModeService) {
-        this.sprayTemplateLockedModeService = sprayTemplateLockedModeService;
+      'sprayTemplateMode',
+      function(sprayTemplateModeService) {
+        this.sprayTemplateModeService = sprayTemplateModeService;
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
@@ -63,10 +63,10 @@ describe('setSize template', function() {
       [ 'spraySize10', 10 ],
     ], function(e, d) {
       when('user set '+e.action+' on template selection', function() {
-        this.sprayTemplateLockedModeService.actions[e.action](this.scope);
+        this.sprayTemplateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
-          this.gameTemplateSelectionService.get._retVal = 'stamp';
+          this.gameTemplateSelectionService.get._retVal = ['stamp'];
         });
 
         it('should get current selection', function() {

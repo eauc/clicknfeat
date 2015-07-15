@@ -20,7 +20,7 @@ describe('select template', function() {
     }, function() {
       it('should set gameTemplateSelection', function() {
         expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
+          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
       });
     });
 
@@ -36,16 +36,16 @@ describe('select template', function() {
 
       it('should set gameTemplateSelection', function() {
         expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
+          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
       });
     });
   });
 
-  describe('temlateLockedMode service', function() {
+  describe('temlateMode service', function() {
     beforeEach(inject([
-      'templateLockedMode',
-      function(templateLockedModeService) {
-        this.templateLockedModeService = templateLockedModeService;
+      'templateMode',
+      function(templateModeService) {
+        this.templateModeService = templateModeService;
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = { game: { template_selection: 'selection' } };
@@ -58,7 +58,7 @@ describe('select template', function() {
       [ 'rightClick' ],
     ], function(e,d) {
       when('user '+e.action+' on map', function() {
-        this.templateLockedModeService
+        this.templateModeService
           .actions[e.action+'Map'](this.scope);
       }, function() {
         it('should clear gameTemplateSelection', function() {
@@ -89,7 +89,7 @@ describe('select template', function() {
       [ 'remote' ],
     ], function(e, d) {
       when('set(<where>, <stamp>, <scope>)', function() {
-        this.ret = this.gameTemplateSelectionService.set(e.where, 'stamp',
+        this.ret = this.gameTemplateSelectionService.set(e.where, ['stamp'],
                                                          this.scope, this.selection);
       }, function() {
         beforeEach(function() {
@@ -129,7 +129,7 @@ describe('select template', function() {
       });
 
       when('removeFrom(<where>, <stamp>, <scope>)', function() {
-        this.ret = this.gameTemplateSelectionService.removeFrom(e.where, 'stamp',
+        this.ret = this.gameTemplateSelectionService.removeFrom(e.where, ['stamp'],
                                                                 this.scope, this.selection);
       }, function() {
         when('<stamp> is in previous selection', function() {
@@ -143,7 +143,7 @@ describe('select template', function() {
           });
 
           if(e.where === 'local') {
-            it('should switch to Default mode', function() {            
+            it('should switch to Default mode', function() {
               expect(this.modesService.switchToMode)
                 .toHaveBeenCalledWith('Default', this.scope, 'modes');
             });
@@ -163,10 +163,6 @@ describe('select template', function() {
           it('should do nothing', function() {
             expect(this.gameTemplateSelectionService.in(e.where, 'other', this.selection))
               .toBeTruthy();
-            expect(this.modesService.switchToMode)
-              .not.toHaveBeenCalled();
-            expect(this.scope.gameEvent)
-              .not.toHaveBeenCalled();
           });
         });
       });
@@ -211,14 +207,14 @@ describe('select template', function() {
         });
         
         it('should check whether <stamp> is alone in selection', function() {
-          this.selection = this.gameTemplateSelectionService.set(e.where, 'stamp',
+          this.selection = this.gameTemplateSelectionService.set(e.where, ['stamp'],
                                                                  this.scope, this.selection);
           expect(this.gameTemplateSelectionService.inSingle(e.where, 'other', this.selection))
             .toBeFalsy();
           expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
             .toBeTruthy();
           
-          this.selection = this.gameTemplateSelectionService.set(e.where, 'other',
+          this.selection = this.gameTemplateSelectionService.set(e.where, ['other'],
                                                                  this.scope, this.selection);
           expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
             .toBeFalsy();
@@ -251,8 +247,8 @@ describe('select template', function() {
         [ 'stamp'  , 'mode' ],
         [ 'stamp1' , 'aoeTemplate' ],
         [ 'stamp2' , 'sprayTemplate' ],
-        [ 'stamp3' , 'wallTemplateLocked' ],
-        [ 'stamp4' , 'aoeTemplateLocked' ],
+        [ 'stamp3' , 'wallTemplate' ],
+        [ 'stamp4' , 'aoeTemplate' ],
       ], function(e, d) {
         it('should return correct mode for <stamp>, '+d, function() {
           expect(this.gameTemplatesService.modeForStamp(e.stamp, this.templates))

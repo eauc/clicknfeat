@@ -22,7 +22,7 @@ describe('set aoe to ruler', function() {
       this.aoeTemplateModeService.actions['setToRulerTarget'](this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
       });
 
       when('ruler is not displayed', function() {
@@ -50,8 +50,8 @@ describe('set aoe to ruler', function() {
         it('should execute onTemplates/setToRuler command', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onTemplates', 'setToRuler',
-                                  'gameRuler.targetAoEPosition.returnValue', ['stamp'],
-                                  this.scope, this.scope.game);
+                                  'gameRuler.targetAoEPosition.returnValue',
+                                  ['stamp'], this.scope, this.scope.game);
         });
       });
     });
@@ -164,21 +164,26 @@ describe('set aoe to ruler', function() {
       }
     ]));
 
-    describe('setToRuler(<position>)', function() {
-        beforeEach(function() {
-          this.template = {
-            state: { stamp: 'stamp', x: 240, y: 240, r: 180, m: null }
-          };
+    when('setToRuler(<position>)', function() {
+      this.aoeTemplateService.setToRuler({
+        x: 42, y: 71, r: 83, m: 32
+      }, this.template);
+    }, function() {
+      beforeEach(function() {
+        this.template = {
+          state: { stamp: 'stamp', x: 240, y: 240, r: 180, m: null }
+        };
+      });
+      
+      when('aoe is locked', function() {
+        this.template.state.lk = true;
+      }, function() {
+        it('should set aoe to ruler position', function() {
+          expect(this.template.state)
+            .toEqual({
+              stamp: 'stamp', x: 240, y: 240, r: 180, m: null, lk: true
+            });
         });
-
-      it('should set aoe to ruler position', function() {
-        this.aoeTemplateService.setToRuler({
-          x: 42, y: 71, r: 83, m: 32
-        }, this.template);
-        expect(this.template.state)
-          .toEqual({
-            stamp: 'stamp', x: 42, y: 71, r: 83, m: 32
-          });
       });
     });
   });

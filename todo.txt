@@ -9,7 +9,6 @@ template:
 - rework onTemplates/onStamps similar to model
 - better color on locked AoEs
 model
-- generate objectives/flags
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
@@ -22,6 +21,7 @@ los
 - from model
 - update when origin/target move ?
 refac backToDefault :
+- [right]clickMap -> clear all selections (commonMode ?)
 - enforce escape in all modes
 - model/template selection -> back to models/templates mode -> back to default mode
 - ruler + bug show/hide button + toggle use ruler button

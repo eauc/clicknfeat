@@ -33,13 +33,13 @@ self.defaultModeServiceFactory = function defaultModeServiceFactory(modesService
   };
   default_actions.clickTemplate = function defaultClickTemplate(scope, event) {
     scope.game.template_selection =
-      gameTemplateSelectionService.set('local', event.target.state.stamp,
+      gameTemplateSelectionService.set('local', [event.target.state.stamp],
                                        scope, scope.game.template_selection);
   };
   default_actions.rightClickTemplate = function defaultRightClickTemplate(scope, event) {
     scope.gameEvent('openSelectionDetail', 'template', event.target);
     scope.game.template_selection =
-      gameTemplateSelectionService.set('local', event.target.state.stamp,
+      gameTemplateSelectionService.set('local', [event.target.state.stamp],
                                        scope, scope.game.template_selection);
   };
   default_actions.dragStartModel = function defaultDragStartModel(scope, event) {

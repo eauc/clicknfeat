@@ -15,6 +15,7 @@ describe('modes', function() {
           'test3': 'ctrl+test3',
         };
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       }
     ]));
 

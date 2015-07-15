@@ -1,6 +1,6 @@
 'use strict';
 
-describe('setSize template', function() {
+describe('deviate template', function() {
   describe('rollDeviationCommand service', function() {
     beforeEach(inject([ 'rollDeviationCommand', function(rollDeviationCommand) {
       this.rollDeviationCommandService = rollDeviationCommand;
@@ -113,7 +113,7 @@ describe('setSize template', function() {
       this.aoeTemplateModeService.actions.deviate(this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
         this.gameService.executeCommand.and.callFake(R.bind(function(c) {
           if(c === 'rollDeviation') {
             return { r: 4, d: 2 };
@@ -142,8 +142,8 @@ describe('setSize template', function() {
 
     describe('when user set max deviation', function() {
       beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = 'stamp';
-        this.gameTemplatesService.onStamp._retVal = 42;
+        this.gameTemplateSelectionService.get._retVal = ['stamp'];
+        this.gameTemplatesService.onStamps._retVal = [42];
 
         this.aoeTemplateModeService.actions.setMaxDeviation(this.scope);
       });
@@ -151,8 +151,8 @@ describe('setSize template', function() {
       it('should get current selection max deviation', function() {
         expect(this.gameTemplateSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameTemplatesService.onStamp)
-          .toHaveBeenCalledWith('stamp', 'maxDeviation', 'templates');
+        expect(this.gameTemplatesService.onStamps)
+          .toHaveBeenCalledWith(['stamp'], 'maxDeviation', 'templates');
       });
 
       it('should prompt user for max deviation', function() {
@@ -168,8 +168,8 @@ describe('setSize template', function() {
         });
 
         it('should set max deviation', function() {
-          expect(this.gameTemplatesService.onStamp)
-            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', 42, 'templates');
+          expect(this.gameTemplatesService.onStamps)
+            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', 42, 'templates');
         });
       });
 
@@ -179,8 +179,8 @@ describe('setSize template', function() {
         });
 
         it('should set max deviation', function() {
-          expect(this.gameTemplatesService.onStamp)
-            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', null, 'templates');
+          expect(this.gameTemplatesService.onStamps)
+            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', null, 'templates');
         });
       });
 
@@ -190,8 +190,8 @@ describe('setSize template', function() {
         });
 
         it('should reset max deviation', function() {
-          expect(this.gameTemplatesService.onStamp)
-            .toHaveBeenCalledWith('stamp', 'setMaxDeviation', null, 'templates');
+          expect(this.gameTemplatesService.onStamps)
+            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', null, 'templates');
         });
       });
     });
@@ -211,6 +211,7 @@ describe('setSize template', function() {
           state: { x: 240, y:240, r: 30 }
         };
       });
+
       using([
         [ 'dir', 'len' , 'result' ],
         [ 1     , 2    , { x: 250, y: 222.67949192431124, r: 30 } ],
@@ -247,6 +248,16 @@ describe('setSize template', function() {
             expect(this.template.state)
               .toEqual(e.result);
           });
+        });
+      });
+
+      when('aoe is locked', function() {
+      }, function() {
+        it('should not deviate template', function() {
+          this.template.state.lk = true;
+          this.aoeTemplateService.deviate(42, 71, this.template);
+          expect(this.template.state)
+            .toEqual({ x: 240, y: 240, r: 30, lk: true });
         });
       });
     });

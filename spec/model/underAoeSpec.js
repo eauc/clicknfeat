@@ -16,7 +16,7 @@ describe('model image', function() {
     ]));
 
     when('set(local, <stamps>, <scope>)', function() {
-      this.ret = this.gameTemplateSelectionService.set('local', 'stamp',
+      this.ret = this.gameTemplateSelectionService.set('local', ['stamp'],
                                                        this.scope, this.selection);
     }, function() {
       beforeEach(function() {
@@ -41,7 +41,7 @@ describe('model image', function() {
     });
 
     when('removeFrom(local, <stamps>, <scope>)', function() {
-      this.ret = this.gameTemplateSelectionService.removeFrom('local', 'stamp',
+      this.ret = this.gameTemplateSelectionService.removeFrom('local', ['stamp'],
                                                               this.scope, this.selection);
     }, function() {
       beforeEach(function() {

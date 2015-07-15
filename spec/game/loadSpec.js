@@ -11,6 +11,7 @@ describe('load game', function() {
         this.gamesService = spyOnService('games');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         mockReturnPromise(this.gamesService.loadLocalGames);
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
         
         this.createController = function(params) {
           this.scope = $rootScope.$new();
