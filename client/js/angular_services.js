@@ -214,6 +214,8 @@ angular.module('clickApp.services')
   ])
   .factory('gameFactions', [
     'http',
+    'jsonParser',
+    'jsonStringifier',
     gameFactionsServiceFactory
   ])
   .factory('gameMap', [

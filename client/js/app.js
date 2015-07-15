@@ -39,6 +39,11 @@ angular.module('clickApp', [
         templateUrl: 'partials/settings/main.html',
         controller: 'settingsMainCtrl',
       })
+      .state('settings.Models', {
+        url: '/models',
+        templateUrl: 'partials/settings/models.html',
+        controller: 'settingsModelsCtrl',
+      })
       .state('settings.Bindings', {
         url: '/bindings',
         templateUrl: 'partials/settings/bindings.html',

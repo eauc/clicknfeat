@@ -19,7 +19,9 @@ angular.module('clickApp.controllers')
                                                          $scope.factions);
         },
       };
+      $scope.show = { info: false };
       $scope.updateOnOpen = function updateOnOpen() {
+        $scope.show.info = false;
         updateOnOpenType[$scope.type]();
       };
       $scope.labelDisplay = function labelDisplay(l) {

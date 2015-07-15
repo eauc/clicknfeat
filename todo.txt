@@ -4,10 +4,6 @@ binding:
 - click events as bindings ?
 specs :
 - mockCtrl
-template:
-- locked flag in state / divide templates list by flag
-- rework onTemplates/onStamps similar to model
-- better color on locked AoEs
 model
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?

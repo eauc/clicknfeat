@@ -10,10 +10,10 @@ angular.module('clickApp.controllers')
              settingsService) {
       console.log('init settingsCtrl');
       if($state.current.name === 'settings') {
-        $scope.goToState('.Bindings');
+        $scope.goToState('.Main');
       }
       console.log($scope.settings);
-      $scope.menu = R.prepend('Main', R.keys($scope.settings.default));
+      $scope.menu = R.concat(['Main', 'Models'], R.keys($scope.settings.default));
       $scope.doUpdateSettings = function doUpdateSettings() {
         settingsService.update($scope.settings);
       };

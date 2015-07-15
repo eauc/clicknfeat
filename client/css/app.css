@@ -10,6 +10,16 @@ ul.nav-tabs li {
     cursor: pointer;
 }
 
+.hint {
+    color: #999;
+    font-style: italic;
+    font-size: 90%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
 /******************************************************/
 /* prompt
 /******************************************************/

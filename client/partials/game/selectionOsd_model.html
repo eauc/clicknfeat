@@ -31,6 +31,17 @@
       <strong>Focus :</strong>
       {{info.focus}}
     </div>
+    <div class="hint clickable"
+         ng-hide="show.info"
+         ng-click="show.info = true">
+      Show Info...
+    </div>
+    <div class="bg-info"
+         ng-show="show.info">
+      <div ng-repeat="d in info.desc">
+        <strong>{{d[0]}}</strong> {{d[1]}}
+      </div>
+    </div>
     <form ng-submit="doAddLabel()">
       <label for="new-label">Label</label>
       <input id="new-label"

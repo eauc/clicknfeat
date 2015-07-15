@@ -1,0 +1,33 @@
+<div id="settings-main">
+  <p class="text-danger"><strong>{{error}}</strong></p>
+  <p class="text-success"><strong>{{success}}</strong></p>
+  <form class="form-inline">
+    <fieldset>
+      <div class="form-group"
+           ng-repeat="(f, faction) in factions">
+        <label class="
+               control-label
+               {{ hasDesc(f) ? 'text-info' : '' }}
+               ">
+          {{f}}
+          <span class="clickable glyphicon glyphicon-trash"
+                ng-click="doClearFactionDesc(f)">
+          </span>
+        </label>
+        <input type="file"
+               multiple
+               ea-file="doOpenFactionFile(f, file)" />
+      </div>
+    </fieldset>
+    <br />
+    <fieldset>
+      <button type="button"
+              class="btn btn-default"
+              ng-click="doClearAllDesc(f)">
+        Clear All
+        <span class="glyphicon glyphicon-trash">
+        </span>
+      </button>
+    </fieldset>
+  </form>
+</div>

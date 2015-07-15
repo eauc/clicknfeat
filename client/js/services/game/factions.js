@@ -1,12 +1,15 @@
 'use strict';
 
-self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpService) {
+self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpService,
+                                                                      jsonParserService,
+                                                                      jsonStringifierService) {
   var BASE_RADIUS = {
     huge: 24.605,
     large: 9.842,
     medium: 7.874,
     small: 5.905
   };
+  var STORAGE_KEY = 'clickApp.factions_desc';
   var gameFactionsService = {
     init: function gameFactionsInit() {
       var factions = {};
@@ -27,14 +30,32 @@ self.gameFactionsServiceFactory = function gameFactionsServiceFactory(httpServic
         })
         .then(function() { return factions; })
         .then(function(factions) {
-          // console.log('before', factions);
           return R.reduce(function(mem, faction) {
             return R.assoc(faction, updateFaction(factions[faction]), mem);
           }, {}, R.keys(factions));
         })
+        .then(function(factions) {
+          return gameFactionsService.loadDesc()
+            .then(gameFactionsService.applyDesc$(factions));
+        })
         .catch(function(reason) {
           console.log('error getting factions description', reason);
         });
+    },
+    loadDesc: function() {
+      var data = self.localStorage.getItem(STORAGE_KEY);
+      return jsonParserService.parse(data)
+        .catch(function() {
+          console.log('factions : no stored desc');
+        })
+        .then(R.defaultTo({}));
+    },
+    applyDesc: function(factions, desc) {
+      return R.deepExtend(factions, desc);
+    },
+    storeDesc: function(desc) {
+      var string = jsonStringifierService.stringify(desc);
+      self.localStorage.setItem(STORAGE_KEY, string);
     },
     getModelInfo: function factionsGetModelInfo(path, factions) {
       return R.path(path, factions);

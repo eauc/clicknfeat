@@ -55,6 +55,13 @@ angular.module('clickApp.controllers')
           settingsService.update
         )(data);
       };
+      $scope.reloadFactions = function reloadFactions() {
+        gameFactionsService.init()
+          .then(function(factions) {
+            $scope.factions = factions;
+            console.log('factions', factions);
+          });
+      };
 
       $scope.user = userService.load();
       console.log('loaded user', $scope.user);
