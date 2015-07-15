@@ -8,7 +8,6 @@ model
 - ruler origin target : update when model change ?
 - template origin target : update when model change ?
 - highlight models in melee ?
-- import/merge own model desc
 scenarios
 - white aura on contesting models
 - red aura on killboxing wardudes

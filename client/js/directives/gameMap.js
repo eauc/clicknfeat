@@ -106,7 +106,7 @@ angular.module('clickApp.directives')
                           event);
             }
             function moveMap(event) {
-              log('clickMap', event);
+              log('moveMap', event);
               event.preventDefault();
 
               var now = gameMapService.eventToMapCoordinates(map, event);

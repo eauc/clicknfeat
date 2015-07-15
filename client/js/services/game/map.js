@@ -2,6 +2,7 @@
 
 self.gameMapServiceFactory = function gameMapServiceFactory(gameModelsService,
                                                             gameTemplatesService) {
+  var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
   var gameMapService = {
     isFlipped: function mapIsFlipped(map) {
       return map.hasAttribute('flipped');
@@ -12,13 +13,13 @@ self.gameMapServiceFactory = function gameMapServiceFactory(gameModelsService,
     },
     eventToMapCoordinates: function gameMapEventToMapCoordinates(map, event) {
       var event_x, event_y;
-      if(event.offsetX) {
-        event_x = event.offsetX;
-        event_y = event.offsetY;
-      }
-      else {
+      if(is_firefox) {
         event_x = event.layerX;
         event_y = event.layerY;
+      }
+      else {
+        event_x = event.offsetX;
+        event_y = event.offsetY;
       }
       var rect = map.getBoundingClientRect();
       var map_x = event_x * 480 / rect.width;
