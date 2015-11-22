@@ -9,6 +9,7 @@ describe('modes', function() {
       function(modesService, defaultModeService) {
         this.modesService = modesService;
         this.defaultModeService = defaultModeService;
+        this.defaultModeService.onEnter = jasmine.createSpy('onEnterDefault');
         this.defaultModeService.bindings = {
           'test2': 'ctrl+test2',
           'test1': 'ctrl+test1',
@@ -20,9 +21,13 @@ describe('modes', function() {
     ]));
 
     describe('currentModeBindingsPairs', function() {
-      beforeEach(function() {
+      beforeEach(function(done) {
         this.scope = { game: { template_selection: 'selection' } };
-        this.modes = this.modesService.init(this.scope);
+        this.modesService.init(this.scope)
+          .then(R.bind(function(modes) {
+            this.modes = modes;
+            done();
+          }, this));
       });
 
       it('should proxy current mode\'s action', function() {

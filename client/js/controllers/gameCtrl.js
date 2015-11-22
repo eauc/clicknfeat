@@ -79,8 +79,11 @@ angular.module('clickApp.controllers')
         return modesService.currentModeName($scope.modes) === mode;
       };
       $scope.doModeAction = function doModeAction(action) {
-        var ok = modesService.currentModeAction(action, $scope, $scope.modes);
-        if(!ok) $scope.gameEvent('modeUnknownAction', action);
+        return modesService.currentModeAction(action, $scope, $scope.modes)
+          .catch(function(reason) {
+            $scope.gameEvent('modeUnknownAction', action);
+            return self.Promise.reject(reason);
+          });
       };
       $scope.show_action_group = null;
       $scope.doActionButton = function doActionButton(action) {
@@ -113,8 +116,10 @@ angular.module('clickApp.controllers')
         $scope.$on(fwd, function onForwardEvent(e, target, event) {
           console.log('$on '+fwd, arguments);
           $scope.gameEvent('closeSelectionDetail');
-          var ok = modesService.currentModeAction(fwd, $scope, target, event, $scope.modes);
-          if(!ok) $scope.gameEvent('modeUnknownAction', fwd);
+          modesService.currentModeAction(fwd, $scope, target, event, $scope.modes)
+            .catch(function(reason) {
+              $scope.gameEvent('modeActionError', reason);
+            });
         });
       }, forward_events);
       $scope.$on('$destroy', function onGameCtrlDestroy() {

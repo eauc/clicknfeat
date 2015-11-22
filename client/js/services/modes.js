@@ -1,105 +1,152 @@
 'use strict';
 
-self.modesServiceFactory = function modesServiceFactory() {
-  var MODES_REG = {};
-  var modesService = {
-    registerMode: function registerMode(mode) {
-      console.log('registering mode '+mode.name, mode);
-      MODES_REG[mode.name] = mode;
-    },
-    init: function modesInit(scope) {
-      var modes = {
-        current: 'Default',
-        register: MODES_REG,
+angular.module('clickApp.services')
+  .factory('modes', [
+    function modesServiceFactory() {
+      var MODES_REG = {};
+      var modesService = {
+        registerMode: function registerMode(mode) {
+          console.log('modes: registering '+mode.name, mode);
+          MODES_REG[mode.name] = mode;
+        },
+        init: function modesInit(scope) {
+          var modes = {
+            register: MODES_REG,
+          };
+          // TODO : import customized bindings
+          return enterMode('Default', scope, modes);
+        },
+        currentModeName: function(modes) {
+          return currentMode(modes).name;
+        },
+        currentModeBindings: function(modes) {
+          return currentMode(modes).bindings;
+        },
+        currentModeBindingsPairs: function(modes) {
+          return R.pipe(
+            R.toPairsIn,
+            R.sortBy(R.head)
+          )(currentMode(modes).bindings);
+        },
+        currentModeAction: function(action /* ...args..., modes */) {
+          var args = Array.prototype.slice.call(arguments);
+          var modes = R.last(args);
+          var mode = currentMode(modes);
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            function() {
+              if(R.isNil(mode.actions[action])) {
+                console.log('modes: unknown mode '+mode.name+' action '+action);
+                return self.Promise.reject('Unknown action '+action);
+              }
+            },
+            function() {
+              return mode.actions[action].apply(null, R.init(R.tail(args)));
+            }
+          )();
+        },
+        switchToMode: function(name, scope, modes) {
+          var previous_mode = currentMode(modes);
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            // function() {
+            //   if(next === mode) {
+            //     console.log('modes: already in '+name+' mode');
+            //     return self.Promise.reject('already in '+name+' mode');
+            //   }
+            // },
+            function() {
+              if(R.isNil(R.prop(name, modes.register))) {
+                console.log('modes: error switching to mode '+name+' : does not exists');
+                return self.Promise.reject('mode '+name+' does not exists');
+              }
+              return modes;
+            },
+            leaveMode(scope),
+            enterMode(name, scope),
+            function(modes) {
+              console.log('modes: switch mode from '+ previous_mode.name +
+                          ' to '+ name);
+              scope.gameEvent('switchMode');
+              return modes;
+            }
+          )();
+        }
       };
-      // TODO : import customized bindings
-      enterMode(modes, scope);
-      return modes;
-    },
-    currentModeName: function(modes) {
-      return currentMode(modes).name;
-    },
-    currentModeBindings: function(modes) {
-      return currentMode(modes).bindings;
-    },
-    currentModeBindingsPairs: function(modes) {
-      return R.pipe(
-        R.toPairsIn,
-        R.sortBy(R.head)
-      )(currentMode(modes).bindings);
-    },
-    currentModeAction: function(action /* ...args..., modes */) {
-      var args = Array.prototype.slice.call(arguments);
-      var modes = R.last(args);
-      var mode = currentMode(modes);
-      if(R.isNil(mode.actions[action])) {
-        console.log('unknown mode '+mode.name+' action '+action);
-        return false;
-      }
-      mode.actions[action].apply(null, R.init(R.tail(args)));
-      return true;
-    },
-    switchToMode: function(name, scope, modes) {
-      var mode = currentMode(modes);
-      var next = modes.register[name];
-      if(next === mode) {
-        console.log('already in '+name+' mode');
-        return;
-      }
-      if(R.isNil(next)) {
-        console.log('error switching to mode '+name+' : does not exists');
-        return;
-      }
-      console.log('switch mode from '+
-                  modesService.currentModeName(modes)+
-                  ' to '+
-                  name);
-      leaveMode(modes, scope);
-      modes.current = name;
-      enterMode(modes, scope);
-      scope.gameEvent('switchMode');
-    }
-  };
 
-  function currentMode(modes) {
-    return modes.register[modes.current];
-  }
-  function enterMode(modes, scope) {
-    var mode = currentMode(modes);
-    if(R.exists(mode.onEnter)) {
-      mode.onEnter(scope);
+      function currentMode(modes) {
+        return modes.register[modes.current];
+      }
+      var enterMode = R.curry(function _enterMode(name, scope, modes) {
+        return R.pipeP(
+          R.bind(self.Promise.resolve, self.Promise),
+          function() {
+            var next_mode = modes.register[name];
+            return ( R.exists(next_mode.onEnter) ?
+                     next_mode.onEnter(scope) :
+                     null
+                   );
+          },
+          function() {
+            modes.current = name;
+            return modes;
+          },
+          setupCurrentModeBindings(scope),
+          setupCurrentModeButtons(scope)
+        )();
+      });
+      var leaveMode = R.curry(function _leaveMode(scope, modes) {
+        var mode = currentMode(modes);
+        if(R.exists(mode.onLeave)) {
+          return self.Promise.resolve(mode.onLeave(scope))
+            .then(R.always(modes));
+        }
+        return modes;
+      });
+      var setupCurrentModeButtons = R.curry(function _setupCurrentModeButtons(scope, modes) {
+        scope.action_buttons = currentMode(modes).buttons;
+        scope.action_bindings = modesService.currentModeBindings(modes);
+        return modes;
+      });
+      var setupCurrentModeBindings = R.curry(function _setupCurrentModeBindings(scope, modes) {
+        Mousetrap.reset();
+        setupBindings(currentMode(modes), scope);
+        return modes;
+      });
+      function setupBindings(mode, scope) {
+        R.forEach(function(action) {
+          Mousetrap.bind(mode.bindings[action],
+                         actionBinding(mode.actions, action,
+                                       scope)
+                        );
+        }, R.keysIn(mode.bindings));
+      }
+      function actionBinding(actions, name, scope) {
+        return function binding(event, keys) {
+          console.log('binding', actions, name, keys, event);
+          var res = actions[name](scope);
+          event.preventDefault();
+          return self.Promise.resolve(res)
+            .catch(function(reason) {
+              scope.gameEvent('modeActionError', reason);
+            });
+        };
+      }
+      R.curryService(modesService);
+      return modesService;
     }
-    setupCurrentModeBindings(modes, scope);
-    setupCurrentModeButtons(modes, scope);
-  }
-  function leaveMode(modes, scope) {
-    var mode = currentMode(modes);
-    if(R.exists(mode.onLeave)) {
-      mode.onLeave(scope);
-    }
-  }
-  function setupCurrentModeButtons(modes, scope) {
-    scope.action_buttons = currentMode(modes).buttons;
-    scope.action_bindings = modesService.currentModeBindings(modes);
-  }
-  function setupCurrentModeBindings(modes, scope) {
-    Mousetrap.reset();
-    setupBindings(currentMode(modes), scope);
-  }
-  function setupBindings(mode, scope) {
-    R.forEach(function(action) {
-      Mousetrap.bind(mode.bindings[action],
-                     actionBinding(mode.actions[action],
-                                   scope));
-    }, R.keysIn(mode.bindings));
-  }
-  function actionBinding(action, scope) {
-    return function binding(event, keys) {
-      console.log('binding', keys, event, action);
-      action(scope);
-      event.preventDefault();
-    };
-  }
-
-  return modesService;
-};
+  ])
+  .factory('allModes', [
+    'defaultMode',
+    'rulerMode',
+    // 'createModelMode',
+    // 'modelsMode',
+    // 'modelMode',
+    // 'modelChargeMode',
+    // 'modelPlaceMode',
+    'createTemplateMode',
+    'aoeTemplateMode',
+    'sprayTemplateMode',
+    'wallTemplateMode',
+    function() { return {}; }
+  ]);
