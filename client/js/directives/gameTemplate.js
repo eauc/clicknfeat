@@ -26,14 +26,13 @@ angular.module('clickApp.directives')
           if(R.isNil(template)) return;
 
           var element = templates[template.state.type].create(svgNS, el[0], template);
-
+          element.container = el[0];
+          
           scope.onGameEvent('mapFlipped', function onMapFlipped() {
             labelElementService.updateOnFlipMap(map, template.state, element.label);
           }, scope);
           function updateTemplate() {
-            self.requestAnimationFrame(function _updateTemplate() {
-              templates[template.state.type].update(map, scope, template, element);
-            });
+            templates[template.state.type].update(map, scope, template, element);
           }
           updateTemplate();
           scope.onGameEvent('changeTemplate-'+template.state.stamp,
@@ -49,8 +48,11 @@ angular.module('clickApp.directives')
     function($window) {
       return {
         restrict: 'A',
+        templateUrl: 'partials/game/templates_list.html',
+        scope: true,
         link: function(scope, element, attrs) {
-          scope.digestOnGameEvent('createTemplate', scope);
+          scope.type = element[0].getAttribute('click-game-templates-list');
+          console.log('clickGameTemplatesList', scope.type);
         }
       };
     }

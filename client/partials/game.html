@@ -20,8 +20,8 @@
       <strong>aoeTemplateLocked</strong>
     </div>
     <div id="selection-osd"
-         click-game-selection-detail
-         ng-include="'partials/game/selectionOsd.html'">
+         ng-include="'partials/game/selectionOsd.html'"
+         click-game-selection-detail>
     </div>
     <div id="viewport">
       <svg id="map"
@@ -127,7 +127,7 @@
              click-create-model>
           </g>
         </g>
-        <g click-create-template>
+        <g click-game-create-template>
         </g>
         <rect id="game-dragbox"
               click-game-dragbox>
@@ -178,8 +178,9 @@
         </li>
       </ul>
       <div ui-view
-           id="menu-view">
+           id="menu-view"
+           class="{{currentModeIs('CreateTemplate') ? 'disabled' : ''}}">
       </div>
-            </p>
     </div>
   </div>
+</div>

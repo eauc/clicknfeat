@@ -41,10 +41,6 @@ angular.module('clickApp.directives')
               gameTemplateSelectionService.in('remote', template.state.stamp,
                                               selection);
           var selected = (local || remote);
-          var stroke_color = ( selected ?
-                               ( local ? '#0F0' : '#FFF') :
-                               '#C60'
-                             );
 
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
@@ -54,8 +50,8 @@ angular.module('clickApp.directives')
                                   };
           var label_text = templateService.fullLabel(template);
           $window.requestAnimationFrame(function _wallTemplateElementUpdate() {
-            updateWall(stroke_color, template, wall.wall);
-            updateContainer(template, wall.container);
+            updateWall(template, wall.wall);
+            updateContainer(selected, local, remote, template, wall.container);
             labelElementService.update(map_flipped,
                                        zoom_factor,
                                        label_flip_center,
@@ -71,12 +67,18 @@ angular.module('clickApp.directives')
           });
         },
       };
-      function updateWall(stroke_color, template, wall) {
+      function updateWall(template, wall) {
         wall.setAttribute('x', (template.state.x-20)+'');
         wall.setAttribute('y', (template.state.y-3.75)+'');
-        wall.style.stroke = stroke_color;
       }
-      function updateContainer(template, container) {
+      function updateContainer(selected, local, remote, template, container) {
+        if(selected) container.classList.add('selection');
+        else container.classList.remove('selection');
+        if(local) container.classList.add('local');
+        else container.classList.remove('local');
+        if(remote) container.classList.add('remote');
+        else container.classList.remove('remote');
+            
         container.setAttribute('transform', ('rotate('+
                                              template.state.r+','+
                                              template.state.x+','+

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('lock template', function() {
-  describe('templatLockedMode service', function() {
+  describe('templateMode service', function() {
     beforeEach(inject([
       'templateMode',
       function(templateModeService) {
@@ -10,6 +10,7 @@ describe('lock template', function() {
         this.modesService = spyOnService('modes');
         this.templateService = spyOnService('template');
         this.gameTemplatesService = spyOnService('gameTemplates');
+        mockReturnPromise(this.gameTemplatesService.findStamp);
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = {
@@ -21,10 +22,11 @@ describe('lock template', function() {
     ]));
 
     when('user toggles lock on current template selection', function() {
-      this.templateModeService.actions.toggleLock(this.scope);
+      this.ret = this.templateModeService.actions.toggleLock(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
+        this.gameTemplatesService.findStamp.resolveWith = true;
       });
 
       it('should get current selection', function() {
@@ -40,9 +42,11 @@ describe('lock template', function() {
           this.templateService.isLocked._retVal = e.lock;
         }, function() {
           it('should execute lockTemplates command, '+d, function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('lockTemplates', e.set, ['stamp'],
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function() {
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('lockTemplates', e.set, ['stamp'],
+                                      this.scope, this.scope.game);
+            });
           });
         });
       });
@@ -55,11 +59,14 @@ describe('lock template', function() {
       function(lockTemplatesCommandService) {
         this.lockTemplatesCommandService = lockTemplatesCommandService;
         this.gameTemplatesService = spyOnService('gameTemplates');
+        mockReturnPromise(this.gameTemplatesService.lockStamps);
+        this.gameTemplatesService.lockStamps
+          .resolveWith = 'gameTemplates.lockStamps.returnValue';
       }
     ]));
 
     when('execute(<stamps>, <lock>, <scope>, <game>)', function() {
-      this.ctxt = this.lockTemplatesCommandService
+      this.ret = this.lockTemplatesCommandService
         .execute('lock', this.stamps, this.scope, this.game);
     }, function() {
       beforeEach(function() {
@@ -71,28 +78,33 @@ describe('lock template', function() {
       });
 
       it('should lock <stamps>', function() {
-        expect(this.gameTemplatesService.lockStamps)
-          .toHaveBeenCalledWith('lock', this.stamps, 'templates');
-        expect(this.game.templates)
-              .toBe('gameTemplates.lockStamps.returnValue');
+        this.thenExpect(this.ret, function(ctxt) {
+          expect(this.gameTemplatesService.lockStamps)
+            .toHaveBeenCalledWith('lock', this.stamps, 'templates');
+          expect(this.game.templates)
+            .toBe('gameTemplates.lockStamps.returnValue');
+        });
       });
           
       it('should return ctxt', function() {
-        expect(this.ctxt)
-          .toEqual({
+        this.thenExpect(this.ret, function(ctxt) {
+          expect(ctxt).toEqual({
             stamps: this.stamps,
             desc: 'lock'
           });
+        });
       });
 
       it('should emit createTemplate gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createTemplate');
+        });
       });
     });
 
     when('replay(<ctxt>, <scope>, <game>)', function() {
-      this.lockTemplatesCommandService
+      this.ret = this.lockTemplatesCommandService
         .replay(this.ctxt, this.scope, this.game);
     }, function() {
       beforeEach(function() {
@@ -107,20 +119,24 @@ describe('lock template', function() {
       });
       
       it('should lock <stamps>', function() {
-        expect(this.gameTemplatesService.lockStamps)
-          .toHaveBeenCalledWith('lock', ['stamp1', 'stamp2'], 'templates');
-        expect(this.game.templates)
-          .toBe('gameTemplates.lockStamps.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplatesService.lockStamps)
+            .toHaveBeenCalledWith('lock', ['stamp1', 'stamp2'], 'templates');
+          expect(this.game.templates)
+            .toBe('gameTemplates.lockStamps.returnValue');
+        });
       });
 
       it('should emit createTemplate gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createTemplate');
+        });
       });
     });
 
     when('undo(<ctxt>, <scope>, <game>)', function() {
-      this.lockTemplatesCommandService
+      this.ret = this.lockTemplatesCommandService
         .undo(this.ctxt, this.scope, this.game);
     }, function() {
       beforeEach(function() {
@@ -135,15 +151,19 @@ describe('lock template', function() {
       });
       
       it('should !lock <stamps>', function() {
-        expect(this.gameTemplatesService.lockStamps)
-          .toHaveBeenCalledWith(true, ['stamp1', 'stamp2'], 'templates');
-        expect(this.game.templates)
-          .toBe('gameTemplates.lockStamps.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplatesService.lockStamps)
+            .toHaveBeenCalledWith(true, ['stamp1', 'stamp2'], 'templates');
+          expect(this.game.templates)
+            .toBe('gameTemplates.lockStamps.returnValue');
+        });
       });
 
       it('should emit createTemplate gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createTemplate');
+        });
       });
     });
   });
@@ -200,8 +220,13 @@ describe('lock template', function() {
                                 } ],
       ], function(e, d) {
         it('should set lock for <stamps>, '+d, function() {
-          expect(this.gameTemplatesService.lockStamps(e.lock, e.stamps, this.templates))
-            .toEqual(e.result);
+          this.ret = this.gameTemplatesService
+            .lockStamps(e.lock, e.stamps, this.templates);
+
+          this.thenExpect(this.ret, function(templates) {
+            expect(templates)
+              .toEqual(e.result);
+          });
         });
       });
     });

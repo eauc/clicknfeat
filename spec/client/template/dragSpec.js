@@ -1,40 +1,6 @@
 'use strict';
 
 describe('drag template', function() {
-  describe('defaultMode service', function() {
-    beforeEach(inject([
-      'defaultMode',
-      function(defaultModeService) {
-        this.defaultModeService = defaultModeService;
-        this.modesService = spyOnService('modes');
-        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
-
-        this.scope = {
-          game: { template_selection: 'selection' },
-          modes: 'modes'
-        };
-        this.event = {
-          target: { state: { stamp: 'stamp' } },
-        };
-      }
-    ]));
-
-    when('user starts dragging template', function() {
-      this.defaultModeService.actions.dragStartTemplate(this.scope, this.event);
-    }, function() {
-      it('should set current selection', function() {
-        expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', 'stamp', this.scope, 'selection');
-      });
-
-      it('should forward dragStart action to new mode', function() {
-        expect(this.modesService.currentModeAction)
-          .toHaveBeenCalledWith('dragStartTemplate', this.scope, this.event, null,
-                                'modes');
-      });
-    });
-  });
-
   describe('templateMode service', function() {
     beforeEach(inject([
       'templateMode',
@@ -53,7 +19,8 @@ describe('drag template', function() {
     ]));
 
     when('user starts dragging template', function() {
-      this.templateModeService.actions.dragStartTemplate(this.scope, this.event);
+      this.ret = this.templateModeService.actions
+        .dragStartTemplate(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -63,6 +30,16 @@ describe('drag template', function() {
         };
       });
 
+      when('template is locked', function() {
+        this.event.target.state.lk = true;
+      }, function() {
+        it('should reject action', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Template is locked');
+          });
+        });
+      });
+      
       it('should set current selection', function() {
         expect(this.gameTemplateSelectionService.set)
           .toHaveBeenCalledWith('local', ['stamp'],
@@ -81,7 +58,8 @@ describe('drag template', function() {
     });
 
     when('user drags template', function() {
-        this.templateModeService.actions.dragTemplate(this.scope, this.event);
+      this.ret = this.templateModeService.actions
+        .dragTemplate(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -96,6 +74,16 @@ describe('drag template', function() {
           start: { x: 200, y: 200 },
           now: { x: 230, y: 190 },
         };
+      });
+
+      when('template is locked', function() {
+        this.event.target.state.lk = true;
+      }, function() {
+        it('should reject action', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Template is locked');
+          });
+        });
       });
 
       it('should update target position', function() {
@@ -110,7 +98,8 @@ describe('drag template', function() {
     });
 
     when('user ends draging template', function() {
-        this.templateModeService.actions.dragEndTemplate(this.scope, this.event);
+      this.ret = this.templateModeService.actions
+        .dragEndTemplate(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -127,6 +116,16 @@ describe('drag template', function() {
         };
       });
 
+      when('template is locked', function() {
+        this.event.target.state.lk = true;
+      }, function() {
+        it('should reject action', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Template is locked');
+          });
+        });
+      });
+
       it('should restore dragStart template position', function() {
         expect(this.event.target.state)
           .toEqual({ stamp: 'stamp', x: 240, y: 240, r: 180 });
@@ -137,6 +136,8 @@ describe('drag template', function() {
           .toHaveBeenCalledWith('onTemplates', 'setPosition',
                                 { stamp: 'stamp', x: 270, y: 230, r: 180 }, ['stamp'],
                                 this.scope, this.scope.game);
+
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
   });

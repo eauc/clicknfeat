@@ -16,7 +16,7 @@ describe('delete template', function() {
     ]));
 
     when('user deletes current template selection', function() {
-      this.templateModeService.actions.delete(this.scope);
+      this.ret = this.templateModeService.actions.delete(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -31,6 +31,8 @@ describe('delete template', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('deleteTemplates', ['stamp'],
                                 this.scope, this.scope.game);
+
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
   });
@@ -47,7 +49,7 @@ describe('delete template', function() {
     ]));
 
     when('execute(<stamps>, <scope>, <game>)', function() {
-      this.ctxt = this.deleteTemplatesCommandService
+      this.ret = this.deleteTemplatesCommandService
         .execute(this.stamps, this.scope, this.game);
     }, function() {
       beforeEach(function() {
@@ -58,51 +60,69 @@ describe('delete template', function() {
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
 
-        this.gameTemplatesService.findStamp.and.callFake(function(s) {
-          return { state: { stamp: s } };
-        });
+        mockReturnPromise(this.gameTemplatesService.findAnyStamps);
+        this.gameTemplatesService.findAnyStamps.resolveWith = [
+          { state: { stamp: 'stamp' } }
+        ];
+
         this.templateService.saveState.and.callFake(function(t) {
           return t.state.stamp+'State';
         });
       });
 
       it('should find <stamps> in <game> templates', function() {
-        expect(this.gameTemplatesService.findStamp)
-          .toHaveBeenCalledWith('stamp1', 'templates');
-        expect(this.gameTemplatesService.findStamp)
-          .toHaveBeenCalledWith('stamp2', jasmine.any(String));
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplatesService.findAnyStamps)
+            .toHaveBeenCalledWith(['stamp1','stamp2'], 'templates');
+        });
       });
 
-      it('should save <stamps> state in context', function() {
-        expect(this.templateService.saveState)
-          .toHaveBeenCalledWith({ state: { stamp: 'stamp1' } });
-        expect(this.templateService.saveState)
-          .toHaveBeenCalledWith({ state: { stamp: 'stamp2' } });
-        expect(this.ctxt.templates)
-          .toEqual(['stamp1State', 'stamp2State']);
-      });
+      when('stamp is found', function() {
+        this.gameTemplatesService.findAnyStamps.resolveWith = [
+          { state: { stamp: 'stamp1' } },
+          { state: { stamp: 'stamp2' } },
+        ];
+      }, function() {
+        it('should save <stamps> state in context', function() {
+          this.thenExpect(this.ret, function(ctxt) {
+            expect(this.templateService.saveState)
+              .toHaveBeenCalledWith({ state: { stamp: 'stamp1' } });
+            expect(this.templateService.saveState)
+              .toHaveBeenCalledWith({ state: { stamp: 'stamp2' } });
 
-      it('should remove <stamps> from game templates', function() {
-        expect(this.gameTemplatesService.removeStamps)
-          .toHaveBeenCalledWith(['stamp1','stamp2'], jasmine.any(String));
-        expect(this.game.templates)
-          .toBe('gameTemplates.removeStamps.returnValue');
-      });
+            expect(ctxt.templates)
+              .toEqual(['stamp1State', 'stamp2State']);
+          });
+        });
+        
+        it('should remove <stamps> from game templates', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameTemplatesService.removeStamps)
+              .toHaveBeenCalledWith(['stamp1','stamp2'], jasmine.any(String));
+            expect(this.game.templates)
+              .toBe('gameTemplates.removeStamps.returnValue');
+          });
+        });
 
-      it('should remove <stamps> from local selection', function() {
-        expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.scope,
-                                'selection');
-        expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.scope,
-                                'gameTemplateSelection.removeFrom.returnValue');
-        expect(this.game.template_selection)
-          .toBe('gameTemplateSelection.removeFrom.returnValue');
-      });
+        it('should remove <stamps> from local selection', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameTemplateSelectionService.removeFrom)
+              .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.scope,
+                                    'selection');
+            expect(this.gameTemplateSelectionService.removeFrom)
+              .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.scope,
+                                    'gameTemplateSelection.removeFrom.returnValue');
+            expect(this.game.template_selection)
+              .toBe('gameTemplateSelection.removeFrom.returnValue');
+          });
+        });
 
-      it('should emit createTemplate gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        it('should emit createTemplate gameEvent', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('createTemplate');
+          });
+        });
       });
     });
 
@@ -146,7 +166,7 @@ describe('delete template', function() {
     });
 
     when('undo(<ctxt>, <scope>, <game>)', function() {
-      this.deleteTemplatesCommandService
+      this.ret = this.deleteTemplatesCommandService
         .undo(this.ctxt, this.scope, this.game);
     }, function() {
       beforeEach(function() {
@@ -159,35 +179,45 @@ describe('delete template', function() {
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
 
-        this.templateService.create.and.callFake(function(st) {
+        mockReturnPromise(this.templateService.create);
+        this.templateService.create.resolveWith = function(st) {
           return { state: st };
-        });
+        };
       });
 
       it('should create templates from <ctxt.templates>', function() {
-        expect(this.templateService.create)
-          .toHaveBeenCalledWith({ stamp: 'stamp1' });
-        expect(this.templateService.create)
-          .toHaveBeenCalledWith({ stamp: 'stamp2' });
+        this.thenExpect(this.ret, function() {
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({ stamp: 'stamp1' });
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({ stamp: 'stamp2' });
+        });
       });
 
       it('should add new templates to <game> templates', function() {
-        expect(this.gameTemplatesService.add)
-          .toHaveBeenCalledWith([ { state: { stamp: 'stamp1' } },
-                                  { state: { stamp: 'stamp2' } } ], 'templates');
-        expect(this.game.templates)
-          .toBe('gameTemplates.add.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplatesService.add)
+            .toHaveBeenCalledWith([ { state: { stamp: 'stamp1' } },
+                                    { state: { stamp: 'stamp2' } } ],
+                                  'templates');
+          expect(this.game.templates)
+            .toBe('gameTemplates.add.returnValue');
+        });
       });
 
       it('should set remote templateSelection to new templates', function() {
-        expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('remote', ['stamp1','stamp2'],
-                                this.scope, 'selection');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplateSelectionService.set)
+            .toHaveBeenCalledWith('remote', ['stamp1','stamp2'],
+                                  this.scope, 'selection');
+        });
       });
 
       it('should emit createTemplate event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createTemplate');
+        });
       });
     });
   });

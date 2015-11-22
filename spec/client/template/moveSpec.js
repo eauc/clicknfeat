@@ -27,7 +27,7 @@ describe('move template', function() {
       [ 'shiftRight' ],
     ], function(e, d) {
       when('user '+e.action+' template selection', function() {
-        this.templateModeService.actions[e.action](this.scope);
+        this.ret = this.templateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -42,6 +42,8 @@ describe('move template', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onTemplates', e.action, false,
                                   ['stamp'], this.scope, this.scope.game);
+
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
 
@@ -147,6 +149,14 @@ describe('move template', function() {
 
             expect(R.pick(['x','y','r'], this.template.state))
               .toEqual({ x: 240, y: 240, r: 180 });
+          });
+
+          it('should reject move', function() {
+            this.ret = this.templateService[e.move](false, this.template);
+
+            this.thenExpectError(this.ret, function(reason) {
+              expect(reason).toBe('Template is locked');
+            });
           });
         });
       });

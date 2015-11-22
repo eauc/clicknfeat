@@ -41,11 +41,6 @@ angular.module('clickApp.directives')
               gameTemplateSelectionService.in('remote', template.state.stamp,
                                               selection);
           var selected = (local || remote);
-          var stroke_color = ( selected ?
-                               ( local ? '#0F0' : '#FFF') :
-                               '#C60'
-                             );
-          var dir_visibility = ( local ? 'visible' : 'hidden' );
 
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
@@ -55,8 +50,15 @@ angular.module('clickApp.directives')
                                   };
           var label_text = templateService.fullLabel(template);
           $window.requestAnimationFrame(function _aoeTemplateElementUpdate() {
-            updateAoe(stroke_color, template, aoe.aoe);
-            updateDir(dir_visibility, template, aoe.dir);
+            if(selected) aoe.container.classList.add('selection');
+            else aoe.container.classList.remove('selection');
+            if(local) aoe.container.classList.add('local');
+            else aoe.container.classList.remove('local');
+            if(remote) aoe.container.classList.add('remote');
+            else aoe.container.classList.remove('remote');
+            
+            updateAoe(template, aoe.aoe);
+            updateDir(template, aoe.dir);
             labelElementService.update(map_flipped,
                                        zoom_factor,
                                        label_flip_center,
@@ -72,13 +74,12 @@ angular.module('clickApp.directives')
           });
         },
       };
-      function updateAoe(stroke_color, template, aoe) {
+      function updateAoe(template, aoe) {
         aoe.setAttribute('cx', template.state.x+'');
         aoe.setAttribute('cy', template.state.y+'');
         aoe.setAttribute('r', template.state.s+'');
-        aoe.style.stroke = stroke_color;
       }
-      function updateDir(visibility, template, dir) {
+      function updateDir(template, dir) {
         dir.setAttribute('x1', template.state.x+'');
         dir.setAttribute('y1', template.state.y+'');
         dir.setAttribute('x2', template.state.x+'');
@@ -89,7 +90,6 @@ angular.module('clickApp.directives')
                                        template.state.y+
                                        ')'
                                       ));
-        dir.style.visibility = visibility;
       }
       return aoeTemplateElementService;
     }

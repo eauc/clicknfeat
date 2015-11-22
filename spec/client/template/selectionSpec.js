@@ -41,7 +41,7 @@ describe('select template', function() {
     });
   });
 
-  describe('temlateMode service', function() {
+  describe('templateMode service', function() {
     beforeEach(inject([
       'templateMode',
       function(templateModeService) {
@@ -54,12 +54,13 @@ describe('select template', function() {
 
     using([
       [ 'action' ],
-      [ 'click' ],
-      [ 'rightClick' ],
+      [ 'clickMap' ],
+      [ 'rightClickMap' ],
+      [ 'modeBackToDefault' ],
     ], function(e,d) {
-      when('user '+e.action+' on map', function() {
+      when('user does '+e.action, function() {
         this.templateModeService
-          .actions[e.action+'Map'](this.scope);
+          .actions[e.action](this.scope);
       }, function() {
         it('should clear gameTemplateSelection', function() {
           expect(this.gameTemplateSelectionService.clear)
@@ -93,9 +94,7 @@ describe('select template', function() {
                                                          this.scope, this.selection);
       }, function() {
         beforeEach(function() {
-          this.selection = { local: { stamps: [] },
-                             remote: { stamps: [] }
-                           };
+          this.selection = { local: [], remote: [] };
         });
 
         it('should set <where> selection', function() {
@@ -110,16 +109,13 @@ describe('select template', function() {
 
         if(e.where === 'local') {
           it('should switch to correct mode', function() {
-            expect(this.gameTemplatesService.modeForStamp)
-              .toHaveBeenCalledWith('stamp', 'templates');
             expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('gameTemplates.modeForStamp.returnValue',
-                                    this.scope, 'modes');
+              .toHaveBeenCalledWith('Default', this.scope, 'modes');
           });
         }
         
         when('there is a previous selection', function() {
-          this.selection[e.where].stamps = [ 'previous' ];
+          this.selection[e.where] = [ 'previous' ];
         }, function() {
           it('should emit changeTemplate event', function() {
             expect(this.scope.gameEvent)
@@ -133,9 +129,7 @@ describe('select template', function() {
                                                                 this.scope, this.selection);
       }, function() {
         when('<stamp> is in previous selection', function() {
-          this.selection = { local: { stamps: ['stamp'] },
-                             remote: { stamps: ['stamp'] }
-                           };
+          this.selection = { local: ['stamp'], remote: ['stamp'] };
         }, function() {
           it('should clear <where> selection', function() {
             expect(this.gameTemplateSelectionService.in(e.where, 'stamp', this.ret))
@@ -156,9 +150,7 @@ describe('select template', function() {
         });
 
         when('<stamp> is not in previous selection', function() {
-          this.selection = { local: { stamps: ['other'] },
-                             remote: { stamps: ['other'] }
-                           };
+          this.selection = { local: ['other'], remote: ['other'] };
         }, function() {
           it('should do nothing', function() {
             expect(this.gameTemplateSelectionService.in(e.where, 'other', this.selection))
@@ -172,9 +164,7 @@ describe('select template', function() {
                                                            this.selection);
       }, function() {
         beforeEach(function() {
-          this.selection = { local: { stamps: ['stamp'] },
-                             remote: { stamps: ['stamp'] }
-                           };
+          this.selection = { local: ['stamp'], remote: ['stamp'] };
         });
 
         it('should clear <where> selection', function() {
@@ -190,7 +180,7 @@ describe('select template', function() {
         }
 
         when('there is a previous selection', function() {
-          this.selection[e.where].stamps = [ 'previous' ];
+          this.selection[e.where] = [ 'previous' ];
         }, function() {
           it('should emit changeTemplate event', function() {
             expect(this.scope.gameEvent)
@@ -201,9 +191,7 @@ describe('select template', function() {
 
       describe('inSingle(<where>, <stamp>)', function() {
         beforeEach(function() {
-          this.selection = { local: { stamps: [] },
-                             remote: { stamps: [] }
-                           };
+          this.selection = { local: [], remote: [] };
         });
         
         it('should check whether <stamp> is alone in selection', function() {
@@ -251,8 +239,11 @@ describe('select template', function() {
         [ 'stamp4' , 'aoeTemplate' ],
       ], function(e, d) {
         it('should return correct mode for <stamp>, '+d, function() {
-          expect(this.gameTemplatesService.modeForStamp(e.stamp, this.templates))
-            .toBe(e.mode);
+          this.ret = this.gameTemplatesService.modeForStamp(e.stamp, this.templates);
+
+          this.thenExpect(this.ret, function(mode) {
+            expect(mode).toBe(e.mode);
+          });
         });
       });
     });

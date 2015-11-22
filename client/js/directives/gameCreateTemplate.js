@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clickApp.directives')
-  .directive('clickCreateTemplate', [
+  .directive('clickGameCreateTemplate', [
     '$window',
     function($window) {
       var templates = {};
@@ -25,24 +25,18 @@ angular.module('clickApp.directives')
           };
 
           scope.onGameEvent('enableCreateTemplate', function onEnableCreateTemplate() {
-            $window.requestAnimationFrame(function _onEnableCreateTemplate() {
-              var type = scope.create.template.type;
-              templates[type].setPosition(scope.create.template);
-              templates[type].element.style.visibility = 'visible';
-            });
+            var type = scope.create.template.type;
+            templates[type].setPosition(scope.create.template);
+            templates[type].element.style.visibility = 'visible';
           }, scope);
           scope.onGameEvent('moveCreateTemplate', function onMoveCreateTemplate() {
-            $window.requestAnimationFrame(function _onMoveCreateTemplate() {
-              var type = scope.create.template.type;
-              templates[type].setPosition(scope.create.template);
-            });
+            var type = scope.create.template.type;
+            templates[type].setPosition(scope.create.template);
           }, scope);
           scope.onGameEvent('disableCreateTemplate', function onDisableCreateTemplate() {
-            $window.requestAnimationFrame(function _onDisableCreateTemplate() {
-              templates['aoe'].element.style.visibility = 'hidden';
-              templates['spray'].element.style.visibility = 'hidden';
-              templates['wall'].element.style.visibility = 'hidden';
-            });
+            templates['aoe'].element.style.visibility = 'hidden';
+            templates['spray'].element.style.visibility = 'hidden';
+            templates['wall'].element.style.visibility = 'hidden';
           }, scope);
         }
       };

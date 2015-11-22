@@ -110,16 +110,17 @@ describe('deviate template', function() {
     ]));
 
     when('user deviates template selection', function() {
-      this.aoeTemplateModeService.actions.deviate(this.scope);
+      this.ret = this.aoeTemplateModeService.actions.deviate(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
-        this.gameService.executeCommand.and.callFake(R.bind(function(c) {
+        mockReturnPromise(this.gameService.executeCommand);
+        this.gameService.executeCommand.resolveWith = function(c) {
           if(c === 'rollDeviation') {
-            return { r: 4, d: 2 };
+            return self.Promise.resolve({ r: 4, d: 2 });
           }
-          return this.gameService.executeCommand._retVal;
-        }, this));
+          return 'game.executeCommand.returnValue';
+        };
       });
 
       it('should get current selection', function() {
@@ -134,64 +135,76 @@ describe('deviate template', function() {
       });
 
       it('should execute onTemplates/deviate command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onTemplates', 'deviate', 4, 2, ['stamp'],
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onTemplates', 'deviate', 4, 2, ['stamp'],
+                                  this.scope, this.scope.game);
+        });
       });
     });
 
     describe('when user set max deviation', function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
-        this.gameTemplatesService.onStamps._retVal = [42];
+        mockReturnPromise(this.gameTemplatesService.onStamps);
+        this.gameTemplatesService.onStamps.resolveWith = [42];
 
-        this.aoeTemplateModeService.actions.setMaxDeviation(this.scope);
+        this.ret = this.aoeTemplateModeService.actions
+          .setMaxDeviation(this.scope);
       });
 
       it('should get current selection max deviation', function() {
         expect(this.gameTemplateSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameTemplatesService.onStamps)
-          .toHaveBeenCalledWith(['stamp'], 'maxDeviation', 'templates');
+          .toHaveBeenCalledWith('maxDeviation', ['stamp'], 'templates');
       });
 
       it('should prompt user for max deviation', function() {
-        expect(this.promptService.prompt)
-          .toHaveBeenCalledWith('prompt',
-                                'Set AoE max deviation :',
-                                42);
+        this.thenExpect(this.gameTemplatesService.onStamps.promise, function() {
+          expect(this.promptService.prompt)
+            .toHaveBeenCalledWith('prompt',
+                                  'Set AoE max deviation :',
+                                  42);
+        });
       });
 
       describe('when user set max deviation', function() {
         beforeEach(function() {
-          this.promptService.prompt.resolve(42);
+          this.promptService.prompt.resolveWith = 42;
         });
 
         it('should set max deviation', function() {
-          expect(this.gameTemplatesService.onStamps)
-            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', 42, 'templates');
+          this.thenExpect(this.ret, function() {
+            expect(this.gameTemplatesService.onStamps)
+              .toHaveBeenCalledWith('setMaxDeviation', 42, ['stamp'], 'templates');
+          });
         });
       });
 
       describe('when user reset max deviation', function() {
         beforeEach(function() {
-          this.promptService.prompt.resolve(0);
+          this.promptService.prompt.resolveWith = 0;
         });
 
         it('should set max deviation', function() {
-          expect(this.gameTemplatesService.onStamps)
-            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', null, 'templates');
+          this.thenExpect(this.ret, function() {
+            expect(this.gameTemplatesService.onStamps)
+              .toHaveBeenCalledWith('setMaxDeviation', null, ['stamp'], 'templates');
+          });
         });
       });
 
       describe('when user cancels prompt', function() {
         beforeEach(function() {
-          this.promptService.prompt.reject('canceled');
+          this.promptService.prompt.rejectWith = 'canceled';
         });
 
         it('should reset max deviation', function() {
-          expect(this.gameTemplatesService.onStamps)
-            .toHaveBeenCalledWith(['stamp'], 'setMaxDeviation', null, 'templates');
+          this.thenExpect(this.ret, function() {
+            expect(this.gameTemplatesService.onStamps)
+              .toHaveBeenCalledWith('setMaxDeviation', null, ['stamp'], 'templates');
+          });
         });
       });
     });

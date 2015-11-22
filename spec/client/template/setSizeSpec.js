@@ -22,7 +22,8 @@ describe('setSize template', function() {
       [ 'aoeSize5', 5 ],
     ], function(e, d) {
       when('user set '+e.action+' on template selection', function() {
-        this.aoeTemplateModeService.actions[e.action](this.scope);
+        this.ret = this.aoeTemplateModeService
+          .actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -37,6 +38,8 @@ describe('setSize template', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onTemplates', 'setSize', e.size, ['stamp'],
                                   this.scope, this.scope.game);
+
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
     });
@@ -63,7 +66,7 @@ describe('setSize template', function() {
       [ 'spraySize10', 10 ],
     ], function(e, d) {
       when('user set '+e.action+' on template selection', function() {
-        this.sprayTemplateModeService.actions[e.action](this.scope);
+        this.ret = this.sprayTemplateModeService.actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -78,6 +81,8 @@ describe('setSize template', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onTemplates', 'setSize', e.size, ['stamp'],
                                   this.scope, this.scope.game);
+
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
     });
@@ -111,6 +116,16 @@ describe('setSize template', function() {
         });
       });
     });
+
+    describe('when size is not valid', function() {
+      it('should reject size', function() {
+        this.ret = this.aoeTemplateService.setSize(42, this.template);
+
+        this.thenExpectError(this.ret, function(reason) {
+          expect(reason).toBe('Invalid size for an AoE');
+        });
+      });
+    });
   });
 
   describe('sprayTemplate service', function() {
@@ -138,6 +153,16 @@ describe('setSize template', function() {
           this.sprayTemplateService.setSize(e.size, this.template);
           expect(this.sprayTemplateService.size(this.template))
             .toEqual(e.result);
+        });
+      });
+    });
+
+    describe('when size is not valid', function() {
+      it('should reject size', function() {
+        this.ret = this.sprayTemplateService.setSize(42, this.template);
+
+        this.thenExpectError(this.ret, function(reason) {
+          expect(reason).toBe('Invalid size for a Spray');
         });
       });
     });
