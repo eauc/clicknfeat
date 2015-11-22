@@ -51,6 +51,25 @@ module.exports = function(grunt) {
         }
       }
     },
+    ngtemplates: {
+      'clickApp.services': {
+        cwd:      'client',
+        src:      'partials/**/*.html',
+        dest:     'client/js/services/htmlTemplates.js',
+        options: {
+          htmlmin: {
+            collapseBooleanAttributes:      true,
+            collapseWhitespace:             true,
+            removeAttributeQuotes:          true,
+            removeComments:                 true,
+            removeEmptyAttributes:          true,
+            removeRedundantAttributes:      true,
+            removeScriptTypeAttributes:     true,
+            removeStyleLinkTypeAttributes:  true
+          }
+        }
+      }
+    },
     jasmine: {
       spec: {
         src: app_js_src,
@@ -93,4 +112,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-angular-templates');
+
+  grunt.registerTask('build', [ 'ngtemplates', 'uglify', 'sass' ]);
 };
