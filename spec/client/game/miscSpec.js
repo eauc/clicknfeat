@@ -29,20 +29,20 @@ describe('game', function() {
     
     describe('toJson()', function() {
       it('should pick selected keys', function() {
-        expect(this.gameService.toJson({
+        this.thenExpect(this.gameService.toJson({
           players: 'players',
           commands: 'commands',
           undo: 'undo',
           other: 'other',
-        })).toEqual('{"players":"players","commands":"commands","undo":"undo"}');
-      });
+        }), function(json) {
+          expect(this.jsonStringifierService.stringify)
+            .toHaveBeenCalledWith({"players":"players","commands":"commands","undo":"undo"});
 
-      it('should drop angular tags', function() {
-        expect(this.gameService.toJson({
-          players: { $$tag: 'tag', p1: 'p1' },
-          commands: [ { $$key: 'key', cmd: 'cmd' } ],
-          other: 'other',
-        })).toEqual('{"players":{"p1":"p1"},"commands":[{"cmd":"cmd"}]}');
+          expect(json).toEqual('jsonStringifier.stringify.returnValue');
+        });
+
+        this.jsonStringifierService.stringify
+          .resolve('jsonStringifier.stringify.returnValue');
       });
     });
   });

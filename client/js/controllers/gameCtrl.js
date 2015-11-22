@@ -22,17 +22,8 @@ angular.module('clickApp.controllers')
              modesService,
              pubSubService) {
       console.log('init gameCtrl', $stateParams, $state.current.name);
-      var onLoad;
-      if($stateParams.where === 'offline') {
-        onLoad = gamesService.loadLocalGames()
-            .then(function(local_games) {
-              $scope.local_games = local_games;
-              $scope.game_index = $stateParams.id >> 0;
-              $scope.game = R.nth($scope.game_index,
-                                  $scope.local_games);
-              console.log('load game', $scope.game);
-            });
-      }
+      var online = ($stateParams.where === 'online');
+      $scope.ui_state = {};
 
       var game_event_channel = pubSubService.init();
       pubSubService.subscribe('#watch#', function() {
@@ -63,11 +54,22 @@ angular.module('clickApp.controllers')
       };
 
       $scope.saveGame = function saveGame(game) {
-        $scope.game = game;
-        console.log('save game', $scope.game);
-        $scope.local_games[$scope.game_index] = $scope.game;
-        gamesService.storeLocalGames($scope.local_games);
-        $scope.gameEvent('saveGame');
+        var res;
+        if(!online) {
+          res = gamesService.updateLocalGame($scope.game_index, game,
+                                             $scope.local_games)
+            .then(function(games) {
+              $scope.local_games = games;
+              return game;
+            });
+        }
+        return self.Promise.resolve(res)
+          .then(function(game) {
+            if(R.isNil(game)) return;
+
+            $scope.game = game;
+            $scope.gameEvent('saveGame', game);
+          });
       };
 
       $scope.currentModeName = function currentModeName(mode) {
@@ -135,21 +137,43 @@ angular.module('clickApp.controllers')
         Mousetrap.reset();
       });
 
-      $scope.ui_state = {};
-      $scope.onGameLoad = onLoad.then(function() {
-        if(R.isNil($scope.game)) {
-          $scope.goToState('lounge');
-          return;
-        }
-        $scope.modes = modesService.init($scope);
-        if($state.current.name === 'game') {
-          $scope.goToState('.main');
-        } 
-        $scope.create = {};
-        return $scope.data_ready
-          .then(function() {
-            $scope.game = gameService.load($scope, $scope.game);
-          });
-      });
+      var onLoad;
+      if(!online) {
+        onLoad = gamesService.loadLocalGames()
+            .then(function(local_games) {
+              $scope.local_games = local_games;
+              $scope.game_index = $stateParams.id >> 0;
+              var game = R.nth($scope.game_index,
+                               $scope.local_games);
+              console.log('load local game', game);
+              return game;
+            });
+      }
+      $scope.onGameLoad = self.Promise.resolve(onLoad)
+        .then(function(game) {
+          if(R.isNil(game)) {
+            $scope.goToState('lounge');
+            return self.Promise.reject('load game: unknown');
+          }
+          $scope.game = game;
+          return modesService.init($scope);
+        })
+        .then(function(modes) {
+          $scope.modes = modes;
+          
+          if($state.current.name === 'game') {
+            $scope.goToState('.main');
+          } 
+          $scope.create = {};
+          
+          return $scope.data_ready;
+        })
+        .then(function() {
+          return gameService.load($scope, $scope.game);
+        })
+        .then(function(game) {
+          $scope.game = game;
+          console.log('#### Game Loaded', $scope.game);
+        });
     }
   ]);
