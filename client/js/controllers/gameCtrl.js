@@ -85,6 +85,14 @@ angular.module('clickApp.controllers')
             return self.Promise.reject(reason);
           });
       };
+      $scope.doExecuteCommand = function doExecuteCommand() {
+        var args = Array.prototype.slice.apply(arguments);
+        args = R.concat(args, [$scope, $scope.game]);
+        return gameService.executeCommand.apply(gameService, args)
+          .catch(function(reason) {
+            $scope.gameEvent('modeUnknownAction', reason);
+          });
+      };
       $scope.show_action_group = null;
       $scope.doActionButton = function doActionButton(action) {
         if(action[1] === 'toggle') {

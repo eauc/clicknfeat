@@ -7,10 +7,11 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
-          console.log('logReplayList');
-          scope.$on('logReplayList', function onLogReplayList() {
+          var list = element[0].getAttribute('click-log-replay-list');
+          console.log('logReplayList', list);
+          scope.$watch(list, function() {
             console.log('on logReplayList');
-            $window.requestAnimationFrame(function _onLogReplayList() {
+            self.requestAnimationFrame(function _onLogReplayList() {
               element[0].scrollTop = 1000000;
             });
           });
