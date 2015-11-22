@@ -9,10 +9,17 @@ angular.module('clickApp.controllers')
              $state,
              userService) {
       console.log('init userCtrl');
-      $scope.edit_user = R.clone($scope.user);
-      $scope.doPlayOffline = function doPlayOffline() {
-        $scope.setUser($scope.edit_user);
-        $state.go('lounge');
+
+      $scope.user_ready.then(function() {
+        console.log('copy user for edition', $scope.user);
+        $scope.edit_user = R.clone($scope.user);
+      });
+
+      $scope.doSaveUser = function doSaveUser() {
+        $scope.setUser($scope.edit_user)
+          .then(function() {
+            $state.go('lounge');
+          });
       };
     }
   ]);

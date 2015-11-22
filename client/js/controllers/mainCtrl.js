@@ -49,31 +49,40 @@ angular.module('clickApp.controllers')
       ]).then(function() {
         console.log('data ready');
       });
-      $scope.doResetSettings = function doResetSettings(data) {
-        $scope.settings = R.pipe(
-          settingsService.bind,
-          settingsService.update
-        )(data);
-      };
-      $scope.reloadFactions = function reloadFactions() {
-        gameFactionsService.init()
-          .then(function(factions) {
-            $scope.factions = factions;
-            console.log('factions', factions);
-          });
-      };
+      // $scope.doResetSettings = function doResetSettings(data) {
+      //   $scope.settings = R.pipe(
+      //     settingsService.bind,
+      //     settingsService.update
+      //   )(data);
+      // };
+      // $scope.reloadFactions = function reloadFactions() {
+      //   gameFactionsService.init()
+      //     .then(function(factions) {
+      //       $scope.factions = factions;
+      //       console.log('factions', factions);
+      //     });
+      // };
 
-      $scope.user = userService.load();
-      console.log('loaded user', $scope.user);
-      $scope.checkUser = function checkUser() {
-        if(R.isNil($scope.user.name)) {
+      $scope.userIsValid = function() {
+        return R.exists(R.path(['user','name'], $scope));
+      };
+      $scope.checkUser = function() {
+        if(!$scope.userIsValid()) {
           $state.go('user');
         }
       };
+      $scope.user_ready = userService.load()
+        .then(function onLoadUser(user) {
+          $scope.user = user;
+          console.log('loaded user', $scope.user);
+          $scope.checkUser();
+        });
       $scope.setUser = function(new_user) {
-        $scope.user = new_user;
-        userService.store($scope.user);
-        console.log('set user', $scope.user);
+        return userService.save(new_user)
+          .then(function onSaveUser(user) {
+            $scope.user = user;
+            console.log('set user', $scope.user);
+          });
       };
 
       $scope.goToState = function() {
@@ -90,12 +99,12 @@ angular.module('clickApp.controllers')
         return $state.current;
       };
 
-      $scope.deferDigest = function deferDigest(scope) {
-        // console.log('deferDigest');
-        $window.requestAnimationFrame(function _deferDigest() {
-          // console.log('_deferDigest');
-          scope.$digest();
-        });
-      };
+      // $scope.deferDigest = function deferDigest(scope) {
+      //   // console.log('deferDigest');
+      //   $window.requestAnimationFrame(function _deferDigest() {
+      //     // console.log('_deferDigest');
+      //     scope.$digest();
+      //   });
+      // };
     }
   ]);

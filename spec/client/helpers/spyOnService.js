@@ -6,7 +6,7 @@ self.spyOnService = (function() {
     angular.mock.inject([ service_name, function(service) {
       _service = service;
       R.pipe(R.functions,
-             R.reject(R.match(/\$$/)),
+             R.reject(R.compose(R.not, R.isEmpty, R.match(/\$$/))),
              R.forEach(function(k) {
                var arity = service[k].length;
                spyOn(service, k).and.callFake(function() {

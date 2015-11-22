@@ -7,7 +7,7 @@ self.using = (function() {
     R.pipe(
       R.tail,
       R.map(function(row) {
-        return R.reduceIndexed(function(mem, k, i) {
+        return R.addIndex(R.reduce)(function(mem, k, i) {
           mem[k] = row[i];
           return mem;
         }, {}, keys);

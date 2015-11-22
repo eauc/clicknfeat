@@ -17,13 +17,16 @@
           <li class="{{stateIs('user') ? 'active' : ''}}">
             <a href="#/user">User</a>
           </li>
-          <li class="{{stateIs('lounge') ? 'active' : ''}}">
+          <li class="{{stateIs('lounge') ? 'active' : ''}}
+                     {{userIsValid() ? '' : 'disabled'}}">
             <a href="#/lounge">Lounge</a>
           </li>
-          <li class="{{stateMatches('settings') ? 'active' : ''}}">
+          <li class="{{stateMatches('settings') ? 'active' : ''}}
+                     {{userIsValid() ? '' : 'disabled'}}">
             <a href="#/settings">Settings</a>
           </li>
-          <li class="{{stateIs('debug') ? 'active' : ''}}">
+          <li class="{{stateIs('debug') ? 'active' : ''}}
+                     {{userIsValid() ? '' : 'disabled'}}">
             <a href="#/debug">Debug</a>
           </li>
         </ul>

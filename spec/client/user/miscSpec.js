@@ -1,39 +1,6 @@
 'use strict';
 
 describe('user', function() {
-  describe('loungeCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.userService = spyOnService('user');
-
-        this.createController = function() {
-          this.scope = $rootScope.$new();
-          this.scope.checkUser = function() {};
-          this.scope.user = { name: 'user' };
-          $controller('loungeCtrl', { 
-            '$scope': this.scope,
-            '$state': {}
-          });
-          $rootScope.$digest();
-        };
-      }
-    ]));
-
-    when('page loads', function() {
-      this.createController();
-    }, function() {
-      it('should get user description', function() {
-        expect(this.userService.description)
-          .toHaveBeenCalledWith({ name: 'user' });
-        expect(this.scope.user_desc)
-          .toBe('user.description.returnValue');
-      });
-    });
-  });
-
   describe('user service', function() {
     beforeEach(inject([ 'user', function(userService) {
       this.userService = userService;

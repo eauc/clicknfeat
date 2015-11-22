@@ -4,12 +4,11 @@ module.exports = function(grunt) {
                      'client/js/app.js',
                      'client/js/controllers/**/*.js',
                      'client/js/services/**/*.js',
-                     'client/js/angular_services.js',
                      'client/js/filters/**/*.js',
                      'client/js/directives/**/*.js',
                      '!**/*.min.js' ];
-  var spec_js_src = [ 'spec/**/*Spec.js' ];
-  var spec_js_helpers = [ 'spec/helpers/*.js' ];
+  var spec_js_src = [ 'spec/client/**/*Spec.js' ];
+  var spec_js_helpers = [ 'spec/client/helpers/*.js' ];
   var spec_js = spec_js_helpers.concat(spec_js_src);
 
   grunt.initConfig({
@@ -84,7 +83,7 @@ module.exports = function(grunt) {
               'client/lib/angular/angular-mocks.js',
               'client/lib/mousetrap/mousetrap.js',
           ],
-          outfile: 'spec/SpecRunner.html',
+          outfile: 'spec/client/SpecRunner.html',
           keepRunner: true
         }
       }

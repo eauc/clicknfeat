@@ -10,6 +10,7 @@
     "console": false,
     "self": false,
     "document": false,
+    "navigator": false,
     "Exception": false,
     "Uint8Array": false
   },
