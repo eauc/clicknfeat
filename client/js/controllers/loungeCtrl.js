@@ -13,17 +13,20 @@ angular.module('clickApp.controllers')
              gamesService,
              fileImportService) {
       console.log('init loungeCtrl');
-      $scope.checkUser();
 
-      $scope.user_desc = userService.description($scope.user);
+      $scope.user_ready
+        .then(function onUserReady() {
+          $scope.user_desc = userService.description($scope.user);
+        });
+      
       gamesService.loadLocalGames()
-        .then(function(local_games) {
-          $scope.local_games = local_games;
+        .then(function(games) {
+          $scope.local_games = games;
         });
 
       $scope.local_games_selection = [];
       $scope.isInLocalGamesSelection = function(index) {
-        return R.exists(R.find(R.eq(index), $scope.local_games_selection));
+        return R.exists(R.find(R.equals(index), $scope.local_games_selection));
       };
       $scope.localGamesSelectionIsEmpty = function() {
         return R.isEmpty($scope.local_games_selection);
@@ -41,14 +44,18 @@ angular.module('clickApp.controllers')
       };
 
       function loadNewLocalGame(game) {
-        $scope.local_games = gamesService.newLocalGame(game, $scope.local_games);
-        $scope.goToState('game', { where: 'offline', id: R.length($scope.local_games)-1 });
+        gamesService.newLocalGame(game, $scope.local_games)
+          .then(function onNewLocalGame(games) {
+            $scope.local_games = games;
+            $scope.goToState('game', { where: 'offline', id: R.length($scope.local_games)-1 });
+            $scope.$digest();
+          });
       }
-      $scope.doCreateLocalGame = function doCreateLocalGame() {
+      $scope.doCreateLocalGame = function() {
         var game = gameService.create($scope.user);
         loadNewLocalGame(game);
       };
-      $scope.doOpenLocalGameFile = function doOpenLocalGameFile(files) {
+      $scope.doOpenLocalGameFile = function(files) {
         fileImportService.read('json', files[0])
           .then(function(game) {
             loadNewLocalGame(game);
@@ -57,14 +64,17 @@ angular.module('clickApp.controllers')
             console.log('Failed to open local game file');
           });
       };
-      $scope.doLoadLocalGame = function doLoadLocalGame() {
+      $scope.doLoadLocalGame = function() {
         $scope.goToState('game', { where: 'offline', id: $scope.local_games_selection[0] });
       };
-      $scope.doDeleteLocalGame = function doDeleteLocalGame() {
-        $scope.local_games = R.remove($scope.local_games_selection[0], 1,
-                                      $scope.local_games);
-        gamesService.storeLocalGames($scope.local_games);
-        $scope.setLocalGamesSelection($scope.local_games_selection[0]);
+      $scope.doDeleteLocalGame = function() {
+        gamesService.removeLocalGame($scope.local_games_selection[0],
+                                     $scope.local_games)
+          .then(function onRemoveLocalGame(games) {
+            $scope.local_games = games;
+            $scope.setLocalGamesSelection($scope.local_games_selection[0]);
+            $scope.$digest();
+          });
       };
     }
   ]);
