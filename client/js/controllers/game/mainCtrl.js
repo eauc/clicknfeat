@@ -33,12 +33,7 @@ angular.module('clickApp.controllers')
       };
 
       $scope.doRollDice = function doRoll(sides, nb_dice) {
-        gameService.executeCommand('rollDice',
-                                   sides, nb_dice,
-                                   $scope, $scope.game);
+        $scope.doExecuteCommand('rollDice', sides, nb_dice);
       };
-
-      $scope.digestOnGameEvent('diceRoll', $scope);
-      $scope.digestOnGameEvent('switchMode', $scope);
     }
   ]);

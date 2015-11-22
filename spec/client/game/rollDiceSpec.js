@@ -1,42 +1,6 @@
 'use strict';
 
 describe('roll dice', function() {
-  describe('gameMainCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameBoardService = spyOnService('gameBoard');
-        this.gameService = spyOnService('game');
-
-        this.createController = function() {
-          this.scope = $rootScope.$new();
-          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
-          this.scope.digestOnGameEvent = jasmine.createSpy('digestOnGameEvent');
-          this.scope.game = { 'this': 'game' };
-
-          $controller('gameMainCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user roll dice', function() {
-      this.scope.doRollDice(6, 4);
-    }, function() {
-      it('should execute rollDice command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('rollDice',
-                                6, 4,
-                                this.scope, this.scope.game);
-      });
-    });
-  });
-
   describe('rollDiceCommand service', function() {
     beforeEach(inject([ 'rollDiceCommand', function(rollDiceCommand) {
       this.rollDiceCommandService = rollDiceCommand;
