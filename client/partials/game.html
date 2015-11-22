@@ -81,7 +81,7 @@
           </marker>
         </defs>
         <g id="game-board"
-           click-game-board>
+           ng-show="game.layers | gameLayers:'isDisplayed':'b'">
           <image id="board-preview"
                  x="0" y="0" width="480" height="480"
                  xlink:href="{{game.board.preview || ''}}" />
@@ -89,41 +89,35 @@
                  x="0" y="0" width="480" height="480"
                  xlink:href="{{game.board.img || ''}}" />
         </g>
-        <g id="game-deploiement">
-          <g ng-include="'partials/game/deploiement.html'">
-          </g>
+        <g id="game-deploiement"
+           ng-show="game.layers | gameLayers:'isDisplayed':'d'"
+           ng-include="'partials/game/deploiement.html'">
         </g>
-        <g id="game-scenario">
-          <g ng-include="'partials/game/scenario.html'">
-          </g>
+        <g id="game-scenario"
+           ng-show="game.layers | gameLayers:'isDisplayed':'s'"
+           ng-include="'partials/game/scenario.html'">
         </g>
         <g id="game-templates-locked"
-           click-game-templates-list>
-          <g ng-repeat="template in game.templates.locked track by template.state.stamp"
-             click-game-template>
-          </g>
+           ng-show="game.layers | gameLayers:'isDisplayed':'t'"
+           click-game-templates-list="locked">
         </g>
-        <g id="game-under-models">
+        <g id="game-under-models"
+           ng-show="game.layers | gameLayers:'isDisplayed':'m'">
         </g>
-        <g id="game-models"
-           click-game-models-list>
-          <g ng-repeat="(i,model) in game.models.locked track by model.state.stamp"
-             click-game-model>
-          </g>
+        <g id="game-models-locked"
+           ng-show="game.layers | gameLayers:'isDisplayed':'m'"
+           click-game-models-list="locked">
         </g>
         <g id="game-models"
-           click-game-models-list>
-          <g ng-repeat="(i,model) in game.models.active track by model.state.stamp"
-             click-game-model>
-          </g>
+           ng-show="game.layers | gameLayers:'isDisplayed':'m'"
+           click-game-models-list="active">
         </g>
-        <g id="game-over-models">
+        <g id="game-over-models"
+           ng-show="game.layers | gameLayers:'isDisplayed':'m'">
         </g>
         <g id="game-templates"
-           click-game-templates-list>
-          <g ng-repeat="template in game.templates.active track by template.state.stamp"
-             click-game-template>
-          </g>
+           ng-show="game.layers | gameLayers:'isDisplayed':'t'"
+           click-game-templates-list="active">
         </g>
         <g id="game-ruler"
            click-game-ruler>

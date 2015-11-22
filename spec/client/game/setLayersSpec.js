@@ -1,40 +1,6 @@
 'use strict';
 
 describe('set layers', function() {
-  describe('setupCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameLayersService = spyOnService('gameLayers');
-        this.gameService = spyOnService('game');
-
-        this.createController = function() {
-          this.scope = $rootScope.$new();
-          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
-          this.scope.game = { board: {}, layers: {}, scenario: {} };
-
-          $controller('gameSetupCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user toggle layers', function() {
-      this.scope.doToggleLayer('l');
-    }, function() {
-      it('should execute setLayers command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setLayers', 'toggle', 'l',
-                                this.scope, this.scope.game);
-      });
-    });
-  });
-
   describe('setLayersCommand service', function() {
     beforeEach(inject([ 'setLayersCommand', function(setLayersCommand) {
       this.setLayersCommandService = setLayersCommand;

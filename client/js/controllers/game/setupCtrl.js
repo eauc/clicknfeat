@@ -100,8 +100,7 @@ angular.module('clickApp.controllers')
       //   return gameLayersService.isDisplayed(l, R.defaultTo({}, $scope.game).layers);
       // };
       $scope.doToggleLayer = function doToggleLayer(l) {
-        gameService.executeCommand('setLayers', 'toggle', l,
-                                   $scope, $scope.game);
+        $scope.doExecuteCommand('setLayers', 'toggle', l);
       };
     }
   ]);
