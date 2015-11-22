@@ -3,39 +3,43 @@
 angular.module('clickApp.controllers')
   .controller('gameHelpCtrl', [
     '$scope',
+    'game',
     'modes',
     'fileExport',
     function($scope,
+             gameService,
              modesService,
              fileExportService) {
       console.log('init gameHelpCtrl');
 
-      self.Promise.resolve($scope.onGameLoad)
-        .then(function() {
-          $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
-        });
-      $scope.onGameEvent('switchMode', function onSwitchMode() {
-        $scope.current_bindings = modesService.currentModeBindingsPairs($scope.modes);
-        $scope.deferDigest($scope);
-      }, $scope);
-      
+      $scope.debug = {
+        name: 'clicknfeat_debug.json',
+        url: null
+      };
       $scope.updateExports = function updateExports() {
-        $scope.debug = {
-          name: 'clicknfeat_debug.json',
-          url: fileExportService.generate('json', {
-            settings: $scope.settings.current,
-            game: $scope.game
-          })
-        };
-        $scope.deferDigest($scope);
+        fileExportService.cleanup($scope.debug.url);
+        fileExportService.generate('json', {
+          settings: $scope.settings.current,
+          game: $scope.game
+        }).then(function(url) {
+          $scope.debug.url = url;
+          $scope.deferDigest($scope);
+        });
       };
       $scope.$on('$destroy', function onDestroy() {
         fileExportService.cleanup($scope.debug.url);
       });
-      $scope.updateExports();
       $scope.onGameEvent('saveGame', function onSaveGame() {
-        fileExportService.cleanup($scope.debug.url);
         $scope.updateExports();
       }, $scope);
+
+      $scope.onGameEvent('switchMode', function onSwitchMode() {
+        $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
+      }, $scope);
+
+      $scope.onGameLoad.then(function() {
+        $scope.updateExports();
+        $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
+      });
     }
   ]);
