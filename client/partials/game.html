@@ -43,9 +43,9 @@
                   orient="auto">
             <polygon points="0,8 6,4 0,0"
                      style="
-                     fill:#0F0;
-                     "
-                     />
+                            fill:#0F0;
+                            "
+            />
           </marker>
           <marker id="ruler-start"
                   markerWidth="6" markerHeight="8"
@@ -53,15 +53,15 @@
                   orient="auto">
             <polygon points="6,8 0,4 6,0"
                      style="
-                     fill:#0EE;
-                     "
-                     />
+                            fill:#0EE;
+                            "
+            />
             <line x1="0" y1="1" x2="0" y2="7"
                   style="
-                  stroke:#0CC;
-                  stroke-width:2px;
-                  "
-                  />
+                         stroke:#0CC;
+                         stroke-width:2px;
+                         "
+            />
           </marker>
           <marker id="ruler-end"
                   markerWidth="6" markerHeight="8"
@@ -69,25 +69,25 @@
                   orient="auto">
             <polygon points="0,8 6,4 0,0"
                      style="
-                     fill:#0EE;
-                     "
-                     />
+                            fill:#0EE;
+                            "
+            />
             <line x1="6" y1="1" x2="6" y2="7"
                   style="
-                  stroke:#0CC;
-                  stroke-width:2px;
-                  "
-                  />
+                         stroke:#0CC;
+                         stroke-width:2px;
+                         "
+            />
           </marker>
         </defs>
         <g id="game-board"
            click-game-board>
           <image id="board-preview"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="" />
+                 xlink:href="{{game.board.preview || ''}}" />
           <image id="board-view"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="" />
+                 xlink:href="{{game.board.img || ''}}" />
         </g>
         <g id="game-deploiement">
           <g ng-include="'partials/game/deploiement.html'">

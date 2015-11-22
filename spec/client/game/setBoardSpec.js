@@ -1,50 +1,6 @@
 'use strict';
 
 describe('set board', function() {
-  describe('setupCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameBoardService = spyOnService('gameBoard');
-        this.gameService = spyOnService('game');
-
-        this.createController = function() {
-          this.scope = $rootScope.$new();
-          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
-          this.scope.game = { board: {}, scenario: {} };
-          this.scope.boards = ['boards'];
-
-          $controller('gameSetupCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user set board', function() {
-      this.scope.board_name = 'name';
-      this.scope.doSetBoard();
-    }, function() {
-      it('should find board_name in boards', function() {
-        expect(this.gameBoardService.forName)
-          .toHaveBeenCalledWith('name',
-                                ['boards']);
-      });
-
-      it('should execute setBoard command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setBoard',
-                                'gameBoard.forName.returnValue',
-                                this.scope,
-                                this.scope.game);
-      });
-    });
-  });
-
   describe('setBoardCommand service', function() {
     beforeEach(inject([ 'setBoardCommand', function(setBoardCommand) {
       this.setBoardCommandService = setBoardCommand;
