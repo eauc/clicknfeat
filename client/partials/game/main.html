@@ -2,18 +2,12 @@
   <div class="panel panel-info">
     <div class="panel-heading">Tools</div>
     <div class="panel-content">
-      <button class="
-              btn btn-default
-              {{ currentModeIs('Ruler') ? 'active' : '' }}
-              "
+      <button class="btn {{ currentModeIs('Ruler') ? 'btn-primary' : 'btn-default' }}"
               title="{{action_bindings['enterRulerMode'] || ''}}"
               ng-click="doUseRuler()">
         User<br />Ruler
       </button>
-      <button class="
-              btn btn-default
-              {{ ruler_displayed ? 'active' : '' }}
-              "
+      <button class="btn {{ (game.ruler | gameRuler:'isDisplayed') ? 'btn-primary' : 'btn-default' }}"
               ng-click="doToggleShowRuler()">
         Show<br />Ruler
       </button>

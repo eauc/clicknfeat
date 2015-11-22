@@ -24,30 +24,24 @@ angular.module('clickApp.directives')
           var remote_element = createRulerElement(svgNS, el[0]);
           
           scope.onGameEvent('changeLocalRuler', function onChangeLocalRuler() {
-            self.requestAnimationFrame(function _onChangeLocalRuler() {
-              updateRuler(map, scope.game.ruler.local, local_element);
-            });
+            updateRuler(map, scope.game.ruler.local, local_element);
           }, scope);
           scope.onGameEvent('changeRemoteRuler', function onChangeRemoteRuler() {
-            self.requestAnimationFrame(function _onChangeRemoteRuler() {
-              updateRuler(map, scope.game.ruler.remote, remote_element);
+            updateRuler(map, scope.game.ruler.remote, remote_element);
 
-              var display = ( gameRulerService.isDisplayed(scope.game.ruler) ||
-                              'Ruler' === modesService.currentModeName(scope.modes)
-                            );
-              updateOrigin(scope.factions, scope.game.models,
-                           scope.game.ruler, display,
-                           remote_element.origin);
-              updateTarget(scope.factions, scope.game.models,
-                           scope.game.ruler, display,
-                           remote_element.target);
-            });
+            var display = ( gameRulerService.isDisplayed(scope.game.ruler) ||
+                            'Ruler' === modesService.currentModeName(scope.modes)
+                          );
+            updateOrigin(scope.factions, scope.game.models,
+                         scope.game.ruler, display,
+                         remote_element.origin);
+            updateTarget(scope.factions, scope.game.models,
+                         scope.game.ruler, display,
+                         remote_element.target);
           }, scope);
           scope.onGameEvent('mapFlipped', function onMapFlippedRuler(event) {
-            self.requestAnimationFrame(function _onMapFlippedRuler() {
-              updateRulerOnMapFlipped(map, scope.game.ruler.local, local_element);
-              updateRulerOnMapFlipped(map, scope.game.ruler.remote, remote_element);
-            });
+            updateRulerOnMapFlipped(map, scope.game.ruler.local, local_element);
+            updateRulerOnMapFlipped(map, scope.game.ruler.remote, remote_element);
           }, scope);
         }
       };
