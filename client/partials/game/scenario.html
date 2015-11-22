@@ -1,22 +1,22 @@
-<g click-game-scenario>
-  <circle ng-repeat="c in game.scenario.circle"
+<g>
+  <circle ng-repeat="(i,c) in game.scenario.circle track by i"
           ng-attr-cx="{{::c.x}}"
           ng-attr-cy="{{::c.y}}"
           ng-attr-r="{{::c.r}}"
           class="zone"
           />
-  <rect ng-repeat="r in game.scenario.rect"
+  <rect ng-repeat="(i,r) in game.scenario.rect track by i"
         ng-attr-x="{{::r.x-r.width/2}}" ng-attr-y="{{::r.y-r.height/2}}"
         ng-attr-width="{{::r.width}}" ng-attr-height="{{::r.height}}"
         class="zone"
         />
-  <circle ng-repeat="o in game.scenario.objectives"
+  <circle ng-repeat="(i,o) in game.scenario.objectives track by i"
           ng-attr-cx="{{::o.x}}"
           ng-attr-cy="{{::o.y}}"
           r="9.842"
           class="objective"
           />
-  <circle ng-repeat="f in game.scenario.flags"
+  <circle ng-repeat="(i,f) in game.scenario.flags track by i"
           ng-attr-cx="{{::f.x}}"
           ng-attr-cy="{{::f.y}}"
           r="7.874"
@@ -28,13 +28,13 @@
           width="200" height="200"
           class="area"
           />
-    <circle ng-repeat="o in game.scenario.objectives"
+    <circle ng-repeat="(i,o) in game.scenario.objectives track by i"
             ng-attr-cx="{{::o.x}}"
             ng-attr-cy="{{::o.y}}"
             r="49.842"
             class="area"
             />
-    <circle ng-repeat="f in game.scenario.flags"
+    <circle ng-repeat="(i,f) in game.scenario.flags track by i"
             ng-attr-cx="{{::f.x}}"
             ng-attr-cy="{{::f.y}}"
             r="47.874"

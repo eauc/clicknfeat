@@ -1,90 +1,43 @@
 'use strict';
 
 describe('set scenario', function() {
-  describe('setupCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameScenarioService = spyOnService('gameScenario');
-        this.gameService = spyOnService('game');
-        this.gameModelsService = spyOnService('gameModels');
-        this.gameFactionsService = spyOnService('gameFactions');
-
-        this.createController = function() {
-          this.scope = $rootScope.$new();
-          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
-          this.scope.game = { board: {}, scenario: {}, models: 'models' };
-          this.scope.scenarios = ['scenarios'];
-          this.scope.factions = 'factions';
-
-          $controller('gameSetupCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user set scenario', function() {
-      this.scope.scenario_name = 'name';
-      this.scope.scenario_group = 'group';
-      this.scope.doSetScenario();
-    }, function() {
-      it('should find scenario_name in scenarios', function() {
-        expect(this.gameScenarioService.forName)
-          .toHaveBeenCalledWith('name','group');
-      });
-
-      it('should execute setScenario command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setScenario',
-                                'gameScenario.forName.returnValue',
-                                this.scope,
-                                this.scope.game);
-      });
-    });
-
-    when('user generate objectives', function() {
-      this.scope.doGenerateObjectives();
-    }, function() {
-      beforeEach(function() {
-        this.gameModelsService.all._retVal = [
-          { state: { stamp: 'm1', info: 'model' } },
-          { state: { stamp: 'm2', info: 'objective' } },
-          { state: { stamp: 'm3', info: 'flag' } },
-        ];
-        this.gameFactionsService.getModelInfo.and.callFake(function(i, f) {
-          return { type: i };
-        });
-        this.scope.game.scenario = {
-          objectives: [ { path: ['objectives','obj1'], x: 240, y: 120 },
-                       { path: ['objectives','obj2'], x: 120, y: 240 } ],
-          flags: [ { path: ['flags','flg1'], x: 360, y: 120 },
-                   { path: ['flags','flg2'], x: 120, y: 360 } ],
-        };
-      });
+    // when('user generate objectives', function() {
+    //   this.scope.doGenerateObjectives();
+    // }, function() {
+    //   beforeEach(function() {
+    //     this.gameModelsService.all._retVal = [
+    //       { state: { stamp: 'm1', info: 'model' } },
+    //       { state: { stamp: 'm2', info: 'objective' } },
+    //       { state: { stamp: 'm3', info: 'flag' } },
+    //     ];
+    //     this.gameFactionsService.getModelInfo.and.callFake(function(i, f) {
+    //       return { type: i };
+    //     });
+    //     this.scope.game.scenario = {
+    //       objectives: [ { path: ['objectives','obj1'], x: 240, y: 120 },
+    //                    { path: ['objectives','obj2'], x: 120, y: 240 } ],
+    //       flags: [ { path: ['flags','flg1'], x: 360, y: 120 },
+    //                { path: ['flags','flg2'], x: 120, y: 360 } ],
+    //     };
+    //   });
       
-      it('should delete previous objectives & flags', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('deleteModel', ['m2','m3'],
-                                this.scope, this.scope.game);
-      });
+    //   it('should delete previous objectives & flags', function() {
+    //     expect(this.gameService.executeCommand)
+    //       .toHaveBeenCalledWith('deleteModel', ['m2','m3'],
+    //                             this.scope, this.scope.game);
+    //   });
 
-      it('should create new objectives & flags', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('createModel', {
-            base: { x: 0, y: 0 },
-            models: [ { info: [ 'scenario', 'models', 'objectives', 'obj1' ], x: 240, y: 120 },
-                      { info: [ 'scenario', 'models', 'objectives', 'obj2' ], x: 120, y: 240 },
-                      { info: [ 'scenario', 'models', 'flags', 'flg1' ], x: 360, y: 120 },
-                      { info: [ 'scenario', 'models', 'flags', 'flg2' ], x: 120, y: 360 } ],
-          }, this.scope, this.scope.game);
-      });
-    });
-  });
+    //   it('should create new objectives & flags', function() {
+    //     expect(this.gameService.executeCommand)
+    //       .toHaveBeenCalledWith('createModel', {
+    //         base: { x: 0, y: 0 },
+    //         models: [ { info: [ 'scenario', 'models', 'objectives', 'obj1' ], x: 240, y: 120 },
+    //                   { info: [ 'scenario', 'models', 'objectives', 'obj2' ], x: 120, y: 240 },
+    //                   { info: [ 'scenario', 'models', 'flags', 'flg1' ], x: 360, y: 120 },
+    //                   { info: [ 'scenario', 'models', 'flags', 'flg2' ], x: 120, y: 360 } ],
+    //       }, this.scope, this.scope.game);
+    //   });
+    // });
 
   describe('setScenarioCommand service', function() {
     beforeEach(inject([ 'setScenarioCommand', function(setScenarioCommand) {

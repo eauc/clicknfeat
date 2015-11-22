@@ -35,19 +35,15 @@ angular.module('clickApp.controllers')
         $scope.doSetBoard();
       };
 
-      $scope.onGameEvent('changeScenario', function() {
-        $scope.scenario_name = gameScenarioService.name($scope.game.scenario);
+      $scope.$watch('game.scenario.name', function(value) {
+        $scope.scenario_name = value;
         $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
                                                                  $scope.scenarios);
-        $scope.deferDigest($scope);
-      }, $scope);
+      });
       $scope.doSetScenario = function doSetScenario() {
         var scenario = gameScenarioService.forName($scope.scenario_name,
                                                    $scope.scenario_group);
-        gameService.executeCommand('setScenario',
-                                   scenario,
-                                   $scope,
-                                   $scope.game);
+        $scope.doExecuteCommand('setScenario', scenario);
       };
       $scope.doSetRandomScenario = function doSetRandomScenario() {
         var group = gameScenarioService.group('SR15', $scope.scenarios);
