@@ -1,0 +1,6 @@
+#game {
+    #game-dragbox {
+        @include selection-box;
+        stroke: $dragbox-stroke-color;
+    }
+}

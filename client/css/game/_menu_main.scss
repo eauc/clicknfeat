@@ -1,0 +1,6 @@
+#game {
+    #main-dice-list {
+        @extend %scrollbox-y;
+        max-height: 15vh;
+    }
+}

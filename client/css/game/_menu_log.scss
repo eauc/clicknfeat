@@ -1,0 +1,18 @@
+#game {
+    #log-replay-list {
+        @extend %scrollbox-y;
+        max-height: 30vh;
+        border-bottom: 1px solid #EEE;
+        color: #999;
+        font-style: italic;
+    }
+
+    #log-command-list {
+        @extend %scrollbox-y;
+        max-height: 30vh;
+
+        div:first-child {
+            background-color: #dff0d8;
+        }
+    }
+}

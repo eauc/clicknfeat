@@ -1,0 +1,135 @@
+#game {
+    .create-model {
+        fill: $create-model-fill-color;
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    %model-base {
+        stroke: black;
+        stroke-width: 0.5px;
+        pointer-events: none;
+    }
+    .model-base {
+        @extend %model-base;
+        fill-opacity: 1.0;
+        pointer-events: visible;
+    }
+    .model-edge {
+        @extend %model-base;
+        fill: transparent;
+    }
+    .model-los {
+        @extend %model-base;
+    }
+    .model-los-selection {
+        @extend %model-base;
+        visibility: hidden;
+    }
+    .model-image {
+        pointer-events: none;
+    }
+
+    .remote-selection {
+        .model-edge {
+            stroke-width: 0.75px;
+            stroke: $selection-remote-stroke-color;
+        }
+        &.single-remote {
+            .model-los-selection {
+                stroke-width: 0.75px;
+                stroke: $selection-remote-stroke-color;
+                visibility: visible;
+            }
+        }
+    }
+    
+    .local-selection {
+        .model-edge {
+            stroke-width: 0.75px;
+            stroke: $selection-local-stroke-color;
+        }
+        &.single-local {
+            .model-los-selection {
+                stroke-width: 0.75px;
+                stroke: $selection-local-stroke-color;
+                visibility: visible;
+            }
+        }
+    }
+    
+    .model-damage-bar {
+        stroke-width: 1px;
+        pointer-events: none;
+    }
+
+    .model-ctrl-area {
+        fill: $model-ctrlarea-fill-color;
+        fill-opacity: 0.15;
+        stroke: $model-ctrlarea-stroke-color;
+        stroke-width: 1px;
+        pointer-events: none;
+    }
+    .model-area {
+        fill: $model-area-fill-color;
+        fill-opacity: 0.15;
+        stroke: $model-area-stroke-color;
+        stroke-width: 0.5px;
+        pointer-events: none;
+    }
+
+    .model-melee {
+        fill: $model-melee-fill-color;
+        fill-opacity: 0.3;
+        stroke: $model-melee-stroke-color;
+        stroke-width: 0.5px;
+        pointer-events: none;
+    }
+
+    .model-charge-path {
+        fill: $model-charge-fill-color;
+        fill-opacity: 0.3;
+        stroke: $model-charge-stroke-color;
+        stroke-width: 0.5px;
+    }
+    .model-charge-target {
+        @include selection-box;
+        stroke: $model-target-stroke-color;
+    }
+    .model-charge-target.reached {
+        stroke: $model-target-reached-stroke-color;
+    }
+
+    .state-aura {
+        fill: transparent;
+        pointer-events: none;
+        visibility: hidden;
+    }
+    .b2b {
+        .color-aura {
+            visibility: hidden !important;
+        }
+        .state-aura {
+            fill: $model-b2b-aura-fill-color;
+            visibility: visible;
+        }
+    }
+    .overlap {
+        .color-aura {
+            visibility: hidden !important;
+        }
+        .state-aura {
+            fill: $model-overlap-aura-fill-color;
+            visibility: visible;
+        }
+    }
+    .under-aoe {
+        .color-aura {
+            visibility: hidden !important;
+        }
+        .state-aura {
+            fill: $model-aoe-aura-fill-color;
+            visibility: visible;
+        }
+    }
+}

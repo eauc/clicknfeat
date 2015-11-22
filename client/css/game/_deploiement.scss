@@ -1,0 +1,50 @@
+#game {
+    #game-deploiement {
+        %deploiement-line-base {
+            stroke: $deploiement-stroke-color;
+            stroke-width: 1px;
+        }
+        %deploiement-line-fine {
+            @extend %deploiement-line-base;
+            stroke-width: 0.25px;
+        }
+        
+        .deploiement-line {
+            @extend %deploiement-line-base;
+        }
+
+        .extended-deploiement-line {
+            @extend %deploiement-line-fine;
+            stroke-dasharray: 2 1;
+        }
+
+        .advance-deploiement-line {
+            @extend %deploiement-line-base;
+            stroke-width: 0.5px;
+        }
+
+        .extended-advance-deploiement-line {
+            @extend %deploiement-line-fine;
+            stroke-dasharray: 2 3;
+        }
+
+        .ambush-line {
+            @extend %deploiement-line-fine;
+            stroke-dasharray: 5 5;
+        }
+
+        #deploiement-labels {
+            .dep-label {
+                font-size: 12px;
+            }
+            .dep-label-sm {
+                font-size: 8px;
+            }
+            rect {
+                fill: $deploiement-fill-color;
+                fill-opacity: 0.5;
+                stroke: none;
+            }
+        }
+    }
+}

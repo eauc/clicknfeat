@@ -1,0 +1,27 @@
+#game {
+    #game-ruler {
+        pointer-events: none;
+
+        line {
+            stroke-width: 1px;
+            marker-start: url(#ruler-start);
+            marker-end: url(#ruler-end);
+            stroke: $ruler-stroke-color;
+        }
+    }
+
+    .ruler-origin,
+    .ruler-target {
+        @include selection-box;
+    }
+
+    .ruler-origin {
+        stroke: $model-origin-stroke-color;
+    }
+    .ruler-target {
+        stroke: $model-target-stroke-color;
+    }
+    .ruler-target.reached {
+        stroke: $model-target-reached-stroke-color;
+    }
+}

@@ -1,0 +1,67 @@
+#game {
+    #create-template-aoe,
+    #create-template-wall,
+    #create-template-spray {
+        fill: $create-template-fill-color;
+        opacity: 0.8;
+        pointer-events: none;
+        visibility: hidden;
+    }
+
+    .template {
+        fill: $template-fill-color;
+        stroke: $template-stroke-color;
+        stroke-width: 0.5px;
+        pointer-events: visible;
+    }
+    .wall {
+        fill: $template-wall-fill-color;
+        fill-opacity: 0.6;
+        stroke: $template-wall-stroke-color;
+        stroke-width: 0.5px;
+    }
+    .template-aoe-direction {
+        stroke-width: 0.75px;
+        pointer-events: none;
+        stroke: $selection-local-stroke-color;
+        visibility: hidden;
+    }
+    #game-templates {
+        .template {
+            fill-opacity: 0.5;
+        }
+    }
+    #game-templates-locked {
+        .template {
+            fill-opacity: 0.4;
+        }
+        .wall {
+            fill-opacity: 1.0;
+        }
+        .template-aoe-direction {
+            stroke-width: 0px;
+        }
+    }
+
+    .selection.remote {
+        .template.aoe,
+        .template.wall {
+            stroke: $selection-remote-stroke-color;
+        }
+    }
+    
+    .selection.local {
+        .template.aoe,
+        .template.wall {
+            stroke: $selection-local-stroke-color;
+        }
+        .template-aoe-direction {
+            visibility: visible;
+        }
+    }
+    
+    .spray-origin {
+        @include selection-box;
+        stroke: $model-origin-stroke-color;
+    }
+}

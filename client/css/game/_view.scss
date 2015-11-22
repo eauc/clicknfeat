@@ -1,0 +1,21 @@
+#game {
+    #gameview {
+        position: relative;
+        background-color: blue;
+        height: 100vh;
+        max-width: 100%;
+        overflow: hidden;
+
+        &.resizable {
+            float: left;
+            resize: horizontal;
+        }
+    }
+
+    #viewport {
+        background-color: #999;
+        height: 100%;
+        width: 100%;
+        overflow: scroll;
+    }
+}

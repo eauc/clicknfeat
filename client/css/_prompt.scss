@@ -1,0 +1,26 @@
+$mask-zindex: 2000;
+
+%full-screen {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.prompt-mask {
+    z-index: $mask-zindex;
+    @extend %full-screen;
+    background-color: black;
+    opacity: 0.5;
+}
+.prompt-container {
+    z-index: $mask-zindex+10;
+    @extend %full-screen;
+}
+.prompt-panel {
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 300px;
+}

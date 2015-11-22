@@ -1,0 +1,33 @@
+input.ng-invalid-required {
+    border-color: #A94442;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+ul.nav-tabs li {
+    @extend .clickable;
+}
+
+.hint {
+    color: #999;
+    font-style: italic;
+    font-size: 90%;
+}
+
+%scrollbox-y {
+    overflow-y: auto;
+}
+
+input[type='file'].form-control {
+    padding: 0px;
+}
+
+/* .section { */
+/*     text-align:center; */
+/*     font-weight:bold; */
+/*     background-color:#CCC; */
+/*     margin-bottom:10px; */
+/* } */

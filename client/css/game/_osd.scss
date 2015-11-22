@@ -1,0 +1,81 @@
+#game {
+    #zoom-osd {
+        z-index: $osd-zindex;
+        position: absolute;
+        left: 3px;
+        bottom: 16px;
+        opacity: 0.75;
+    }
+
+    #cmd-osd {
+        z-index: $osd-zindex;
+        position: absolute;
+        right: 15px;
+        top: 0;
+        max-height: 98vh;
+        overflow: hidden;
+        background-color: #EEE;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+
+        $cmd-button-width: 100px;
+        .scroll-container {
+            @extend %scrollbox-y;
+            margin-right: -$scrollbar-width;
+            padding-right: $scrollbar-width;
+            min-width: ($cmd-button-width+$scrollbar-width);
+            max-height: 98vh;
+            overflow-x: hidden;
+
+            .mode-title {
+                min-height: 3em;
+            }
+        }
+        button {
+            min-width: $cmd-button-width;
+        }
+    }
+
+    #game-loading {
+        display: none;
+        z-index: $osd-zindex;
+        position: absolute;
+        width: 100%;
+        font-size: 1.5em;
+        opacity: 0.8;
+    }
+
+    #game-warn-mode {
+        z-index: $osd-zindex;
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        color: $warn-text-color;
+        background-color: $warn-fill-color;
+        opacity: 0.8;
+
+        .warn-mode-name {
+            font-size: 3em;
+            font-weight: bold;
+        }
+        .warn-reason {
+            font-size: 2em;
+        }
+    }
+
+    #selection-osd {
+        z-index: (2*$osd-zindex);
+        position: absolute;
+
+        .panel {
+            margin-bottom:0px;
+        }
+        .panel-heading {
+            @extend .clickable;
+        }
+        .panel-content {
+            min-width: 300px;
+            padding: 10px;
+        }
+    }
+}

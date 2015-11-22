@@ -1,0 +1,61 @@
+#game {
+    #menu {
+        display: block !important;
+        background-color: white;
+        overflow: auto;
+        height:100vh;
+
+        #menu-toggle {
+            z-index: (2*$osd-zindex);
+            position: absolute;
+            top: 50%;
+            right: 0;
+            padding: 8px;
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+            border-top-left-radius: 50%;
+            border-bottom-left-radius: 50%;
+            
+            .glyphicon-chevron-right {
+                display: inline;
+            }
+            .glyphicon-chevron-left {
+                display: none;
+            }
+        }
+        #menu-content {
+            min-width:400px;
+        }
+        #menu-view {
+            padding:3px;
+
+            &.disabled {
+                button,
+                input,
+                select {
+                    background-color: #DDD;
+                    pointer-events: none;
+                }
+            }
+        }
+        
+        &.hidden {
+            position: absolute;
+            top: 0;
+            right: 0;
+            overflow: visible;
+            
+            #menu-toggle {
+                .glyphicon-chevron-right {
+                    display: none;
+                }
+                .glyphicon-chevron-left {
+                    display: inline;
+                }
+            }
+            #menu-content {
+                display: none;
+            }
+        }
+    }
+}

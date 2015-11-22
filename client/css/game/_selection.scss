@@ -1,0 +1,5 @@
+@mixin selection-box {
+    stroke-width: 1.25px;
+    fill: none;
+    pointer-events: none;
+}
