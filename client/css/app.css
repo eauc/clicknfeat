@@ -16,12 +16,13 @@ input.ng-invalid-required {
 input[type='file'].form-control {
   padding: 0px; }
 
-/* .section { */
-/*     text-align:center; */
-/*     font-weight:bold; */
-/*     background-color:#CCC; */
-/*     margin-bottom:10px; */
-/* } */
+.ie-warning {
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  margin: 0px;
+  padding: 5px 20px; }
+
 .prompt-mask, .prompt-container {
   position: fixed;
   top: 0px;
