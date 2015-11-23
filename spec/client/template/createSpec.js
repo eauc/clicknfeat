@@ -51,10 +51,10 @@ describe('create template', function() {
       });
     });
 
-    when('user click on map', function() {
+    when('user create\'s template', function() {
       this.ret = this.createTemplateModeService
-        .actions.clickMap(this.scope, {
-          x: 42, y: 71
+        .actions.create(this.scope, {
+          'click#': { x: 42, y: 71 }
         });
     }, function() {
       using([

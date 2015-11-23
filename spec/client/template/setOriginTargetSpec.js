@@ -1,6 +1,6 @@
 'use strict';
 
-describe('set origin/target template', function() {
+xdescribe('set origin/target template', function() {
   describe('aoeTemplateMode service', function() {
     beforeEach(inject([
       'aoeTemplateMode',

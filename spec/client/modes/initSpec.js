@@ -98,7 +98,7 @@ describe('init modes', function() {
       }, function() {
         it('should should call associated mode action', function() {
           expect(this.defaultModeService.actions.test)
-            .toHaveBeenCalledWith(this.scope);
+            .toHaveBeenCalledWith(this.scope, this.event);
         });
 
         it('should prevent event default', function() {

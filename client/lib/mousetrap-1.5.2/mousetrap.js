@@ -565,15 +565,19 @@
                 // chrome will not fire a keypress if meta or control is down
                 // safari will fire a keypress if meta or meta+shift is down
                 // firefox will fire a keypress if meta or control is down
-                if ((action == 'keypress' && !e.metaKey && !e.ctrlKey) || _modifiersMatch(modifiers, callback.modifiers)) {
+              if ((action == 'keypress' && !e.metaKey && !e.ctrlKey) ||
+                  _modifiersMatch(modifiers, callback.modifiers)) {
 
                     // when you bind a combination or sequence a second time it
                     // should overwrite the first one.  if a sequenceName or
                     // combination is specified in this call it does just that
                     //
                     // @todo make deleting its own method?
-                    var deleteCombo = !sequenceName && callback.combo == combination;
-                    var deleteSequence = sequenceName && callback.seq == sequenceName && callback.level == level;
+                var deleteCombo = ( !sequenceName &&
+                                    callback.combo == combination );
+                var deleteSequence = ( sequenceName &&
+                                       callback.seq == sequenceName &&
+                                       callback.level == level );
                     if (deleteCombo || deleteSequence) {
                         self._callbacks[character].splice(i, 1);
                     }
@@ -930,10 +934,10 @@
      * @param {string=} action
      * @returns void
      */
-    Mousetrap.prototype.trigger = function(keys, action) {
+  Mousetrap.prototype.trigger = function(keys, action, event) {
         var self = this;
         if (self._directMap[keys + ':' + action]) {
-            self._directMap[keys + ':' + action]({}, keys);
+            self._directMap[keys + ':' + action](event || {}, keys);
         }
         return self;
     };

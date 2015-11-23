@@ -3,9 +3,11 @@
 angular.module('clickApp.services')
   .factory('createTemplateMode', [
     'modes',
+    'settings',
     'commonMode',
     'game',
     function createTemplateModeServiceFactory(modesService,
+                                              settingsService,
                                               commonModeService,
                                               gameService) {
       var createTemplate_actions = Object.create(commonModeService.actions);
@@ -14,14 +16,18 @@ angular.module('clickApp.services')
         scope.create.template.y = coord.y;
         scope.gameEvent('moveCreateTemplate');
       };
-      createTemplate_actions.clickMap = function createTemplateMoveMap(scope, coord) {
-        scope.create.template.x = coord.x;
-        scope.create.template.y = coord.y;
+      createTemplate_actions.create = function createTemplateCreate(scope, event) {
+        scope.create.template.x = event['click#'].x;
+        scope.create.template.y = event['click#'].y;
         scope.create.template.r = R.path(['ui_state','flip_map'], scope) ? 180 : 0;
         return gameService.executeCommand('createTemplate', [scope.create.template],
                                           scope, scope.game);
       };
-      var createTemplate_bindings = Object.create(commonModeService.bindings);
+      var createTemplate_default_bindings = {
+        create: 'clickMap',
+      };
+      var createTemplate_bindings = R.extend(Object.create(commonModeService.bindings),
+                                             createTemplate_default_bindings);
       var createTemplate_buttons = [];
       var createTemplate_mode = {
         onEnter: function createTemplateOnEnter(scope) {
@@ -39,6 +45,12 @@ angular.module('clickApp.services')
         bindings: createTemplate_bindings,
       };
       modesService.registerMode(createTemplate_mode);
+      settingsService.register('Bindings',
+                               createTemplate_mode.name,
+                               createTemplate_default_bindings,
+                               function(bs) {
+                                 R.extend(createTemplate_mode.bindings, bs);
+                               });
       return createTemplate_mode;
     }
   ]);

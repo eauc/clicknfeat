@@ -10,13 +10,13 @@ describe('select template', function() {
       
         this.scope = { game: { template_selection: 'selection' } };
         this.scope.gameEvent = jasmine.createSpy('gameEvent');
-        this.event = { target: { state: { stamp: 'stamp' } } };
+        this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
       }
     ]));
 
-    when('user click on template', function() {
+    when('user selects template', function() {
       this.defaultModeService.actions
-        .clickTemplate(this.scope, this.event);
+        .selectTemplate(this.scope, this.event);
     }, function() {
       it('should set gameTemplateSelection', function() {
         expect(this.gameTemplateSelectionService.set)
@@ -26,7 +26,7 @@ describe('select template', function() {
 
     when('user right-click on template', function() {
       this.defaultModeService.actions
-        .rightClickTemplate(this.scope, this.event);
+        .detailTemplate(this.scope, this.event);
     }, function() {
       it('should open template selection detail', function() {
         expect(this.scope.gameEvent)

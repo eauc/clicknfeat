@@ -102,6 +102,8 @@ angular.module('clickApp.services')
       })();
 
       var template_default_bindings = {
+        'clickMap': 'clickMap',
+        'rightClickMap': 'rightClickMap',
         'delete': 'del',
         'toggleLock': 'l',
       };

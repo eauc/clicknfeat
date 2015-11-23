@@ -124,7 +124,7 @@ angular.module('clickApp.services')
       function actionBinding(actions, name, scope) {
         return function binding(event, keys) {
           console.log('binding', actions, name, keys, event);
-          var res = actions[name](scope);
+          var res = actions[name](scope, event);
           event.preventDefault();
           return self.Promise.resolve(res)
             .catch(function(reason) {

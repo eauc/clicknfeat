@@ -6,6 +6,27 @@ angular.module('clickApp.directives')
     'gameMap',
     function($window,
              gameMapService) {
+      function _eventModifiers(e) {
+        var modifiers = [];
+        
+        if (e.shiftKey) {
+          modifiers.push('shift');
+        }
+        
+        if (e.altKey) {
+          modifiers.push('alt');
+        }
+        
+        if (e.ctrlKey) {
+          modifiers.push('ctrl');
+        }
+        
+        if (e.metaKey) {
+          modifiers.push('meta');
+        }
+        
+        return modifiers.sort();
+      }
       return {
         restrict: 'A',
         link: function(scope, element, attrs) {
@@ -27,12 +48,16 @@ angular.module('clickApp.directives')
               if(event.which !== 1) return;
 
               map.addEventListener('mousemove', dragMap);
-              drag = {
-                active: false,
-                start: gameMapService.eventToMapCoordinates(map, event),
-                target: gameMapService.findEventTarget(scope.game, event),
-                now: null,
-              };
+              var start = gameMapService.eventToMapCoordinates(map, event);
+              gameMapService.findEventTarget(scope.game, event)
+                .then(function onFindEventTarget(target) {
+                  drag = {
+                    active: false,
+                    start: start,
+                    target: target,
+                    now: null,
+                  };
+                });
             }
             function dragMap(event) {
               log('dragMap', event);
@@ -83,13 +108,21 @@ angular.module('clickApp.directives')
                             event);
               }
               else {
-                var target = gameMapService.findEventTarget(scope.game, event);
-                scope.$emit('click'+target.type,
-                            { target: target.target,
-                              x: now.x,
-                              y: now.y
-                            },
-                            event);
+                gameMapService.findEventTarget(scope.game, event)
+                  .then(function onFindEventTarget(target) {
+                    var event_name = R.pipe(
+                      R.append('click'+target.type),
+                      R.join('+')
+                    )(_eventModifiers(event));
+                    event['click#'] = {
+                      target: target.target,
+                      x: now.x,
+                      y: now.y
+                    };
+                    Mousetrap.trigger(event_name,
+                                      undefined,
+                                      event);
+                  });
               }
             }
             function rightClickMap(event) {
@@ -97,13 +130,21 @@ angular.module('clickApp.directives')
               event.preventDefault();
 
               var now = gameMapService.eventToMapCoordinates(map, event);
-              var target = gameMapService.findEventTarget(scope.game, event);
-              scope.$emit('rightClick'+target.type,
-                          { target: target.target,
-                            x: now.x,
-                            y: now.y
-                          },
-                          event);
+              gameMapService.findEventTarget(scope.game, event)
+                .then(function onFindEventTarget(target) {
+                  var event_name = R.pipe(
+                    R.append('rightClick'+target.type),
+                    R.join('+')
+                  )(_eventModifiers(event));
+                  event['click#'] = {
+                    target: target.target,
+                    x: now.x,
+                    y: now.y
+                  };
+                  Mousetrap.trigger(event_name,
+                                    undefined,
+                                    event);
+                });
             }
             function moveMap(event) {
               log('moveMap', event);
@@ -141,18 +182,18 @@ angular.module('clickApp.directives')
           })();
 
           var flipMap = (function() {
+            var deploiement_labels;
             scope.ui_state.flip_map = false;
+            map.classList.remove('flipped');
             return function flipMap() {
-              var deploiement_labels = document.querySelector('#deploiement-labels');
-              scope.ui_state.flip_map = !scope.ui_state.flip_map;
+              deploiement_labels = R.defaultTo(document.querySelector('#deploiement-labels'),
+                                               deploiement_labels);
+              scope.ui_state.flip_map = !map.classList.contains('flipped');
+              map.classList.toggle('flipped');
               if(scope.ui_state.flip_map) {
-                map.setAttribute('flipped', 'flipped');
-                map.style.transform = 'scaleX(-1) scaleY(-1)';
                 deploiement_labels.setAttribute('transform','rotate(180,240,240)');
               }
               else {
-                map.removeAttribute('flipped');
-                map.style.transform = '';
                 deploiement_labels.setAttribute('transform','');
               }
               scope.gameEvent('mapFlipped');
@@ -241,8 +282,8 @@ angular.module('clickApp.directives')
             var vw = rect.width;
             var vh = rect.height;
 
-            var cx = viewport.scrollLeft + rect.width/2;
-            var cy = viewport.scrollTop + rect.height/2;
+            var cx = viewport.scrollLeft + vw/2;
+            var cy = viewport.scrollTop + vh/2;
 
             return [[cx, cy], [vw, vh]];
           }
@@ -261,6 +302,7 @@ angular.module('clickApp.directives')
             event.preventDefault();
           });
           map.addEventListener('contextmenu', mouseEvents.rightClick);
+          
           scope.onGameEvent('flipMap', flipMap, scope);
           scope.onGameEvent('enableMoveMap', moveEvents.enable, scope);
           scope.onGameEvent('disableMoveMap', moveEvents.disable, scope);

@@ -30,12 +30,12 @@ angular.module('clickApp.services')
         bindings: template_bindings,
       };
       modesService.registerMode(template_mode);
-      settingsService.register('Bindings',
-                               template_mode.name,
-                               template_default_bindings,
-                               function(bs) {
-                                 R.extend(template_mode.bindings, bs);
-                               });
+      // settingsService.register('Bindings',
+      //                          template_mode.name,
+      //                          template_default_bindings,
+      //                          function(bs) {
+      //                            R.extend(template_mode.bindings, bs);
+      //                          });
       return template_mode;
     }
   ]);

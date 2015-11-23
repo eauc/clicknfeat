@@ -1,6 +1,6 @@
 'use strict';
 
-describe('set aoe to ruler', function() {
+xdescribe('set aoe to ruler', function() {
   describe('aoeTemplateMode service', function() {
     beforeEach(inject([
       'aoeTemplateMode',
