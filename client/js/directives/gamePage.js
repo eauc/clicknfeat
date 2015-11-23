@@ -11,9 +11,9 @@ angular.module('clickApp.directives')
           var menu = element[0].querySelector('#menu');
 
           var toggleMenuClick = (function() {
-            var menu_hidden = false;
             var gameview_width_mem;
             return function toggleMenuClick(event) {
+              var menu_hidden = menu.classList.contains('hidden');
               if(!menu_hidden) {
                 var rect = gameview.getBoundingClientRect();
                 gameview_width_mem = rect.width;
@@ -24,7 +24,6 @@ angular.module('clickApp.directives')
               }
               gameview.classList.toggle('resizable');
               menu.classList.toggle('hidden');
-              menu_hidden = !menu_hidden;
             };
           })();
 

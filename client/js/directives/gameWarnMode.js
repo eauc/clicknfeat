@@ -11,12 +11,16 @@ angular.module('clickApp.directives')
         link: function(scope, element, attrs) {
           console.log('gameWarnMode');
           element[0].style.display = 'none';
+          var mode_span = element[0].querySelector('.warn-mode-name');
+          var reason_span = element[0].querySelector('.warn-reason');
 
           var timeout;
-          scope.onGameEvent('modeUnknownAction', function onModeUnknownAction() {
+          scope.onGameEvent('modeActionError', function onModeActionError(event, reason) {
             if(R.exists(timeout)) $timeout.cancel(timeout);
             
-            element[0].innerHTML = scope.currentModeName();
+            mode_span.innerHTML = scope.currentModeName();
+            reason_span.innerHTML = reason;
+
             element[0].style.display = 'initial';
             timeout = $timeout(function hideWarnMode() {
               element[0].style.display = 'none';
