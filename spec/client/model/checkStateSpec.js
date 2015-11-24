@@ -7,14 +7,25 @@ describe('model check state', function() {
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
       }
     ]));
 
-    describe('checkState(<factions>, <target>)', function() {
+    when('checkState(<factions>, <target>)', function() {
+      this.ret = this.modelService.checkState('factions', null, this.model);
+    }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           base_radius: 7.874
         };
+        this.model = { state: { info: 'info' } };
+      });
+
+      it('should fetch model info', function() {
+        this.thenExpect(this.ret, function(model) {
+          expect(this.gameFactionsService.getModelInfo)
+            .toHaveBeenCalledWith('info', 'factions');
+        });
       });
 
       using([
@@ -24,13 +35,15 @@ describe('model check state', function() {
         [ { x: 240, y: 480 }, { x: 240, y: 472.126 } ],
         [ { x: 240, y: 0 }, { x: 240, y: 7.874 } ],
       ], function(e, d) {
-        it('should keep model on board, '+d, function() {
-          this.state = R.merge(e.pos, { info: 'info' });
-
-          this.res = this.modelService.checkState('factions', null, this.state);
-
-          expect(R.pick(['x','y'], this.res))
-            .toEqual(e.res);
+        when(d, function() {
+          this.model.state = R.merge(e.pos, this.model.state);
+        }, function() {          
+          it('should keep model on board, '+d, function() {
+            this.thenExpect(this.ret, function(model) {
+              expect(R.pick(['x','y'], model.state))
+                .toEqual(e.res);
+            });
+          });
         });
       });
 
@@ -43,7 +56,7 @@ describe('model check state', function() {
         [ { x: 0, y: 0 }, { x: 169.28932188134524, y: 169.28932188134524 } ],
         [ { x: 480, y: 480 }, { x: 310.71067811865476, y: 310.71067811865476 } ],
       ], function(e, d) {
-        it('should ensure max charge distance, '+d, function() {
+        xit('should ensure max charge distance, '+d, function() {
           this.state = R.merge(e.pos, {
             info: 'info',
             cml: 10,
@@ -66,7 +79,7 @@ describe('model check state', function() {
         [ { x: 0, y: 0 }, { r: -45 } ],
         [ { x: 480, y: 480 }, { r: 135 } ],
       ], function(e, d) {
-        it('should ensure charge orientation, '+d, function() {
+        xit('should ensure charge orientation, '+d, function() {
           this.state = R.merge(e.pos, {
             info: 'info',
             cha: { s: { x: 240, y: 240 } }
@@ -86,7 +99,7 @@ describe('model check state', function() {
         [ { x: 240, y: 480 }, { r: -18.81844820037043 } ],
         [ { x: 240, y: 0 }, { r: -133.05720147751566 } ],
       ], function(e, d) {
-        it('should orient model to target, '+d, function() {
+        xit('should orient model to target, '+d, function() {
           this.state = R.merge(e.pos, {
             info: 'info',
             cha: { s: { x: 240, y: 240 } }

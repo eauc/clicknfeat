@@ -21,6 +21,7 @@ angular.module('clickApp.services')
                                      gameModelSelectionService,
                                      promptService) {
       var ruler_actions = Object.create(commonModeService.actions);
+      ruler_actions.exitRulerMode = commonModeService.actions.modeBackToDefault;
       ruler_actions.dragStartMap = function rulerDragStartMap(scope, drag, event) {
         scope.game.ruler = gameRulerService.setLocal(drag.start, drag.now,
                                                      scope, scope.game.ruler);
@@ -85,7 +86,7 @@ angular.module('clickApp.services')
       //                              scope, scope.game);
       // };
       var ruler_default_bindings = {
-        modeBackToDefault: 'shift+r',
+        exitRulerMode: 'shift+r',
         setMaxLength: 'm',
         // createAoEOnTarget: 'a',
       };

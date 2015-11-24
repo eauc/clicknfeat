@@ -40,9 +40,7 @@ angular.module('clickApp.controllers')
       $scope.onModelChange = function onModelChange() {
         $scope.repeat = 1;
       };
-      $scope.$watch('factions', function() {
-        if(R.isNil($scope.factions)) return;
-
+      $scope.data_ready.then(function() {
         $scope.faction = R.head(R.keys($scope.factions));
         $scope.onFactionChange();
       });
@@ -103,9 +101,7 @@ angular.module('clickApp.controllers')
             };
           }, $scope.repeat)
         };
-        modesService.switchToMode('CreateModel', $scope, $scope.modes);
+        $scope.doSwitchToMode('CreateModel');
       };
-
-      $scope.digestOnGameEvent('switchMode', $scope);
     }
   ]);

@@ -1,119 +1,6 @@
 'use strict';
 
 describe('create model', function() {
-  describe('gameModelCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.modesService = spyOnService('modes');
-
-        this.createController = function(params) {
-          this.scope = $rootScope.$new();
-          this.scope.onGameEvent = jasmine.createSpy('onGameEvent');
-          this.scope.modes = 'modes';
-          this.scope.create = {};
-          this.scope.digestOnGameEvent = function() {};
-          this.scope.user = { name: 'user' };
-
-          this.scope.factions = {
-            legion: {
-              models: {
-                locks: {
-                  absylonia1: {
-                    name: 'Absylonia, Terror of Everblight'
-                  }
-                },
-                units: {
-                  archers: {
-                    name: 'Blighted Nyss Archers',
-                    entries: {
-                      unit: {
-                        grunt: {
-                          name: 'Leader & Grunts'
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          };
-            
-          $controller('gameModelCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user creates a model', function() {
-      this.scope.doCreateModel();
-    }, function() {
-      when('model is a single entry', function() {
-        this.scope.faction = 'legion';
-        this.scope.section = 'locks';
-        this.scope.entry = 'absylonia1';
-        this.scope.model = 'absylonia1';
-        this.scope.repeat = 1;
-      }, function() {
-        it('should init scope\'s create object', function() {
-          expect(this.scope.create)
-            .toEqual({ model: {
-              base: { x: 240, y: 240 },
-              models: [ {
-                info: ['legion','models','locks','absylonia1'],
-                x: 0, y: 0,
-                user: 'user'
-              } ]
-            } });
-        });
-      });
-
-      it('should switch to CreateModel mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('CreateModel', this.scope, 'modes');
-      });
-
-      when('model is a unit entry', function() {
-        this.scope.faction = 'legion';
-        this.scope.section = 'units';
-        this.scope.entry = 'archers';
-        this.scope.type = 'unit';
-        this.scope.model = 'grunt';
-        this.scope.repeat = 3;
-      }, function() {
-        it('should init scope\'s create object', function() {
-          expect(this.scope.create)
-            .toEqual({ model: {
-              base: { x: 240, y: 240 },
-              models: [ {
-                info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 0, y: 0,
-                user: 'user'
-              }, {
-                info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 20, y: 0,
-                user: 'user'
-              }, {
-                info: ['legion','models','units','archers','entries','unit','grunt'],
-                x: 40, y: 0,
-                user: 'user'
-              } ]
-            } });
-        });
-      });
-
-      it('should switch to CreateModel mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('CreateModel', this.scope, 'modes');
-      });
-    });
-  });
-
   describe('createModelMode service', function() {
     beforeEach(inject([
       'createModelMode',
@@ -164,9 +51,9 @@ describe('create model', function() {
       });
     });
 
-    when('user click on map', function() {
-      this.createModelModeService.actions.clickMap(this.scope, {
-        x: 42, y: 71
+    when('user create model', function() {
+      this.ret = this.createModelModeService.actions.create(this.scope, {
+        'click#': { x: 42, y: 71 }
       });
     }, function() {
       it('should update scope\'s create object', function() {
@@ -181,6 +68,8 @@ describe('create model', function() {
           .toHaveBeenCalledWith('createModel',
                                 this.scope.create.model,
                                 this.scope, this.scope.game);
+
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
 
@@ -224,13 +113,17 @@ describe('create model', function() {
                       model_selection: 'selection' };
 
         var stamp_index = 1;
-        this.modelService.create.and.callFake(function(f,m) {
+        mockReturnPromise(this.modelService.create);
+        this.modelService.create.resolveWith = function(f, m) {
           return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
-        });
+        };
       }
     ]));
 
-    describe('execute(<create>, <scope>, <game>)', function() {
+    when('execute(<create>, <scope>, <game>)', function() {
+      this.ret = this.createModelCommandService
+        .execute(this.create, this.scope, this.game);
+    }, function() {
       beforeEach(function() {
         this.create = {
           base: { x: 240, y: 240 },
@@ -246,95 +139,117 @@ describe('create model', function() {
           } ]
         };
 
-        this.ret = this.createModelCommandService
-          .execute(this.create, this.scope, this.game);
       });
 
       it('should create new models from <create>', function() {
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-            x: 240, y: 240
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+              x: 240, y: 240
+            });
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: ['legion','models','units','archers','entries','unit','grunt'],
+              x: 260, y: 240
+            });
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: ['legion','models','units','archers','entries','unit','grunt'],
+              x: 280, y: 240
+            });
+        });
+      });
+
+      when('create models fails', function() {
+        this.modelService.create.rejectWith = 'reason';
+      }, function() {
+        it('should reject command', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No valid model definition');
           });
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: ['legion','models','units','archers','entries','unit','grunt'],
-            x: 260, y: 240
-          });
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: ['legion','models','units','archers','entries','unit','grunt'],
-            x: 280, y: 240
-          });
+        });
       });
 
       it('should add new model to <game> models', function() {
-        expect(this.gameModelsService.add)
-          .toHaveBeenCalledWith([
-            { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                       x: 240, y: 240,
-                       stamp: 'stamp1'
-                     }
-            },
-            { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 260, y: 240,
-                       stamp: 'stamp2'
-                     }
-            },
-            { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 280, y: 240,
-                       stamp: 'stamp3'
-                     }
-            }
-          ], 'models');
-        expect(this.game.models)
-          .toBe('gameModels.add.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameModelsService.add)
+            .toHaveBeenCalledWith([
+              { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+                         x: 240, y: 240,
+                         stamp: 'stamp1'
+                       }
+              },
+              { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                         x: 260, y: 240,
+                         stamp: 'stamp2'
+                       }
+              },
+              { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                         x: 280, y: 240,
+                         stamp: 'stamp3'
+                       }
+              }
+            ], 'models');
+          expect(this.game.models)
+            .toBe('gameModels.add.returnValue');
+        });
       });
 
       it('should set local modelSelection to new model', function() {
-        expect(this.gameModelSelectionService.set)
-          .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
-                                this.scope, 'selection');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameModelSelectionService.set)
+            .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
+                                  this.scope, 'selection');
+        });
       });
 
       it('should emit createModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createModel');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createModel');
+        });
       });
 
       it('should return context', function() {
-        expect(this.modelService.saveState)
-          .toHaveBeenCalledWith({
-            state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                     x: 240, y: 240,
-                     stamp: 'stamp1'
-                   }
-          });
-        expect(this.modelService.saveState)
-          .toHaveBeenCalledWith({
-            state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                     x: 260, y: 240,
-                     stamp: 'stamp2'
-                   }
-          });
-        expect(this.modelService.saveState)
-          .toHaveBeenCalledWith({
-            state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                     x: 280, y: 240,
-                     stamp: 'stamp3'
-                   }
-          });
-        expect(this.ret)
-          .toEqual({
-            models: [ 'model.saveState.returnValue',
-                     'model.saveState.returnValue',
-                     'model.saveState.returnValue' ],
-            desc: 'legion.models.locks.absylonia1',
-          });
+        this.thenExpect(this.ret, function(ctxt) {
+          expect(this.modelService.saveState)
+            .toHaveBeenCalledWith({
+              state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+                       x: 240, y: 240,
+                       stamp: 'stamp1'
+                     }
+            });
+          expect(this.modelService.saveState)
+            .toHaveBeenCalledWith({
+              state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                       x: 260, y: 240,
+                       stamp: 'stamp2'
+                     }
+            });
+          expect(this.modelService.saveState)
+            .toHaveBeenCalledWith({
+              state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                       x: 280, y: 240,
+                       stamp: 'stamp3'
+                     }
+            });
+
+          expect(ctxt)
+            .toEqual({
+              models: [ 'model.saveState.returnValue',
+                        'model.saveState.returnValue',
+                        'model.saveState.returnValue' ],
+              desc: 'legion.models.locks.absylonia1',
+            });
+        });
       });
     });
 
-    describe('replay(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <scope>, <game>)', function() {
+      this.ret = this.createModelCommandService
+        .replay(this.ctxt, this.scope, this.game);
+    }, function() {
       beforeEach(function() {
         this.ctxt = {
           models: [
@@ -353,63 +268,79 @@ describe('create model', function() {
           ],
           desc: 'type',
         };
-        
-        this.createModelCommandService.replay(this.ctxt, this.scope, this.game);
       });
 
       it('should create new models from <ctxt.models>', function() {
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-            x: 240, y: 240,
-            stamp: 'stamp'
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+              x: 240, y: 240,
+              stamp: 'stamp'
+            });
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+              x: 260, y: 240,
+              stamp: 'stamp'
+            });
+          expect(this.modelService.create)
+            .toHaveBeenCalledWith('factions', {
+              info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+              x: 280, y: 240,
+              stamp: 'stamp'
+            });
+        });
+      });
+
+      when('create models fails', function() {
+        this.modelService.create.rejectWith = 'reason';
+      }, function() {
+        it('should reject command', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No valid model definition');
           });
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-            x: 260, y: 240,
-            stamp: 'stamp'
-          });
-        expect(this.modelService.create)
-          .toHaveBeenCalledWith('factions', {
-            info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-            x: 280, y: 240,
-            stamp: 'stamp'
-          });
+        });
       });
 
       it('should add new model to <game> models', function() {
-        expect(this.gameModelsService.add)
-          .toHaveBeenCalledWith([
-            { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                       x: 240, y: 240,
-                       stamp: 'stamp1'
-                     }
-            },
-            { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 260, y: 240,
-                       stamp: 'stamp2'
-                     }
-            },
-            { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 280, y: 240,
-                       stamp: 'stamp3'
-                     }
-            }
-          ], 'models');
-        expect(this.game.models)
-          .toBe('gameModels.add.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameModelsService.add)
+            .toHaveBeenCalledWith([
+              { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+                         x: 240, y: 240,
+                         stamp: 'stamp1'
+                       }
+              },
+              { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                         x: 260, y: 240,
+                         stamp: 'stamp2'
+                       }
+              },
+              { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+                         x: 280, y: 240,
+                         stamp: 'stamp3'
+                       }
+              }
+            ], 'models');
+          expect(this.game.models)
+            .toBe('gameModels.add.returnValue');
+        });
       });
 
       it('should set remote modelSelection to new model', function() {
-        expect(this.gameModelSelectionService.set)
-          .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                this.scope, 'selection');
+        this.thenExpect(this.ret, function() {
+          expect(this.gameModelSelectionService.set)
+            .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
+                                  this.scope, 'selection');
+        });
       });
 
       it('should emit createModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createModel');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('createModel');
+        });
       });
     });
 
@@ -545,8 +476,10 @@ describe('create model', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
+        spyOn(this.modelService, 'checkState')
+          .and.callFake(function(f,t,m) { return m; });
         this.gameFactionsService = spyOnService('gameFactions');
-        this.gameFactionsService.getModelInfo._retVal = null;
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
         spyOn(R, 'guid').and.returnValue('newGuid');
       }
     ]));
@@ -564,10 +497,12 @@ describe('create model', function() {
       });
       
       when('<state.info> is unknown', function() {
-        this.gameFactionsService.getModelInfo._retVal = null;
+        this.gameFactionsService.getModelInfo.rejectWith = 'reason';
       }, function() {
-        it('should return Nil', function() {
-          expect(this.ret).toBe(undefined);
+        it('should reject creation', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('reason');
+          });
         });
       });
 
@@ -577,32 +512,60 @@ describe('create model', function() {
                        l: ['label'],
                        stamp: 'stamp'
                      };
-        this.gameFactionsService.getModelInfo._retVal = {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           damage: { type: 'warrior', n: 1 }
         };
       }, function() {
+        it('should check <state>', function() {
+          this.thenExpect(this.ret, function(model) {
+            expect(this.modelService.checkState)
+              .toHaveBeenCalledWith('factions', null, {
+                state: { x: 240, y: 0, r: 0,
+                         dmg: { n: 0, t: 0 },
+                         dsp: ['i'],
+                         eff: [],
+                         img: 0,
+                         l: [ 'label' ],
+                         c: 0, s: 0,
+                         u : null,
+                         aur: null,
+                         are: null,
+                         rml: null,
+                         cml: null,
+                         pml: [null,false],
+                         cha: null,
+                         pla: null,
+                         stamp: 'stamp',
+                         info: [ 'info' ]
+                       }
+              });
+          });
+        });
+        
         it('should extend <state> with default values', function() {
-          expect(this.ret)
-            .toEqual({
-              state: { x: 240, y: 0, r: 0,
-                       dmg: { n: 0, t: 0 },
-                       dsp: ['i'],
-                       eff: [],
-                       img: 0,
-                       l: [ 'label' ],
-                       c: 0, s: 0,
-                       u : null,
-                       aur: null,
-                       are: null,
-                       rml: null,
-                       cml: null,
-                       pml: [null,false],
-                       cha: null,
-                       pla: null,
-                       stamp: 'stamp',
-                       info: [ 'info' ]
-                     }
-            });
+          this.thenExpect(this.ret, function(model) {
+            expect(model)
+              .toEqual({
+                state: { x: 240, y: 0, r: 0,
+                         dmg: { n: 0, t: 0 },
+                         dsp: ['i'],
+                         eff: [],
+                         img: 0,
+                         l: [ 'label' ],
+                         c: 0, s: 0,
+                         u : null,
+                         aur: null,
+                         are: null,
+                         rml: null,
+                         cml: null,
+                         pml: [null,false],
+                         cha: null,
+                         pla: null,
+                         stamp: 'stamp',
+                         info: [ 'info' ]
+                       }
+              });
+          });
         });
       });
 
@@ -627,13 +590,15 @@ describe('create model', function() {
              } ],
       ], function(e, d) {
         when('<state.info> damage type is '+e.info.type, function() {
-          this.gameFactionsService.getModelInfo._retVal = {
+          this.gameFactionsService.getModelInfo.resolveWith = {
             damage: e.info
           };
         }, function() {
           it('should init <state> damage', function() {
-            expect(this.ret.state.dmg)
-              .toEqual(e.state);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.dmg)
+                .toEqual(e.state);
+            });
           });
         });
       });
@@ -646,28 +611,32 @@ describe('create model', function() {
         [ 'jack'    , true ],
       ], function(e, d) {
         when('<state.info> type is '+e.type, function() {
-          this.gameFactionsService.getModelInfo._retVal = {
+          this.gameFactionsService.getModelInfo.resolveWith = {
             type: e.type,
             damage: { type: 'warrior', n: 1 }
           };
         }, function() {
           it('should init counter display', function() {
-            expect(this.modelService.isCounterDisplayed('c', this.ret))
-              .toBe(e.dsp);
+            this.thenExpect(this.ret, function(model) {
+              expect(this.modelService.isCounterDisplayed('c', model))
+                .toBe(e.dsp);
+            });
           });
         });
       });
 
       when('<state.info> is immovable', function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           type: 'objective',
           immovable: true,
           damage: { type: 'warrior', n: 1 }
         };
       }, function() {
         it('should init lock model', function() {
-          expect(this.modelService.isLocked(this.ret))
-            .toBe(true);
+          this.thenExpect(this.ret, function(model) {
+            expect(this.modelService.isLocked(model))
+              .toBe(true);
+          });
         });
       });
     });

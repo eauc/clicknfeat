@@ -19,21 +19,28 @@ angular.module('clickApp.services')
                                        gameModelsService,
                                        gameModelSelectionService) {
       var default_actions = Object.create(commonModeService.actions);
-      // default_actions.clickModel = function defaultClickModel(scope, event, dom_event) {
-      //   var stamp = event.target.state.stamp;
-      //   if(dom_event.ctrlKey) {
-      //     if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
-      //       return gameService.executeCommand('setModelSelection', 'removeFrom', [stamp],
-      //                                         scope, scope.game);
-      //     }
-      //     else {
-      //       return gameService.executeCommand('setModelSelection', 'addTo', [stamp],
-      //                                         scope, scope.game);
-      //     }
-      //   }
-      //   return gameService.executeCommand('setModelSelection', 'set', [stamp],
-      //                                     scope, scope.game);
-      // };
+      function clearTemplateSelection(scope, event) {
+        scope.game.template_selection =
+          gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
+      }
+      default_actions.setModelSelection = function defaultSetModelSelection(scope, event) {
+        clearTemplateSelection(scope, event);
+        var stamp = event['click#'].target.state.stamp;
+        return gameService.executeCommand('setModelSelection', 'set', [stamp],
+                                          scope, scope.game);
+      };
+      default_actions.toggleModelSelection = function modelsToggleSelection(scope, event) {
+        clearTemplateSelection(scope, event);
+        var stamp = event['click#'].target.state.stamp;
+        if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
+          return gameService.executeCommand('setModelSelection', 'removeFrom', [stamp],
+                                            scope, scope.game);
+        }
+        else {
+          return gameService.executeCommand('setModelSelection', 'addTo', [stamp],
+                                            scope, scope.game);
+        }
+      };
       // default_actions.rightClickModel = function defaultRightClickModel(scope, event) {
       //   var stamp = event.target.state.stamp;
       //   scope.gameEvent('openSelectionDetail', 'model', event.target);
@@ -94,6 +101,8 @@ angular.module('clickApp.services')
 
       var default_default_bindings = {
         enterRulerMode: 'shift+r',
+        setModelSelection: 'clickModel',
+        toggleModelSelection: 'ctrl+clickModel',
         selectTemplate: 'clickTemplate',
         detailTemplate: 'rightClickTemplate',
       };
@@ -104,8 +113,9 @@ angular.module('clickApp.services')
         name: 'Default',
         onEnter: function defaultOnEnter(scope) {
           gameTemplateSelectionService.checkMode(scope, scope.game.template_selection)
-          // gameModelSelectionService.checkMode(scope, scope.game.model_selection)
-              .catch(R.always(null));
+            .catch(function() {
+              return gameModelSelectionService.checkMode(scope, scope.game.model_selection);
+            });
         },
         actions: default_actions,
         buttons: default_buttons,

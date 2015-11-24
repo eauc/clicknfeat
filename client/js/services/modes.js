@@ -139,9 +139,9 @@ angular.module('clickApp.services')
   .factory('allModes', [
     'defaultMode',
     'rulerMode',
-    // 'createModelMode',
-    // 'modelsMode',
-    // 'modelMode',
+    'createModelMode',
+    'modelsMode',
+    'modelMode',
     // 'modelChargeMode',
     // 'modelPlaceMode',
     'createTemplateMode',

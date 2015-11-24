@@ -1,61 +1,108 @@
 'use strict';
 
-self.deleteModelCommandServiceFactory =
-  function deleteModelCommandServiceFactory(commandsService,
-                                            modelService,
-                                            gameModelsService,
-                                            gameModelSelectionService) {
-    var deleteModelCommandService = {
-      execute: function deleteModelExecute(stamps, scope, game) {
-        var states = R.pipe(
-          R.map(function(stamp) {
-            return gameModelsService.findStamp(stamp, game.models);
-          }),
-          R.reject(R.isNil),
-          R.map(modelService.saveState)
-        )(stamps);
-        if(R.isEmpty(states)) return;
-        console.log(states);
-        
-        var ctxt = {
-          models: states,
-          desc: '',
-        };
-        game.models = gameModelsService.removeStamps(stamps, game.models);
-        game.model_selection =
-          gameModelSelectionService.removeFrom('local', stamps,
-                                               scope, game.model_selection);
-        game.model_selection =
-          gameModelSelectionService.removeFrom('remote', stamps,
-                                               scope, game.model_selection);
-        scope.gameEvent('createModel');
-        return ctxt;
-      },
-      replay: function deleteModelReplay(ctxt, scope, game) {
-        var stamps = R.map(R.prop('stamp'), ctxt.models);
-        game.models = gameModelsService.removeStamps(stamps, game.models);
-        game.model_selection =
-          gameModelSelectionService.removeFrom('local', stamps,
-                                               scope, game.model_selection);
-        game.model_selection =
-          gameModelSelectionService.removeFrom('remote', stamps,
-                                               scope, game.model_selection);
-        scope.gameEvent('createModel');
-      },
-      undo: function deleteModelUndo(ctxt, scope, game) {
-        var models = R.pipe(
-          R.map(modelService.create$(scope.factions)),
-          R.reject(R.isNil)
-        )(ctxt.models);
-        if(R.isEmpty(models)) return;
+angular.module('clickApp.services')
+  .factory('deleteModelCommand', [
+    'commands',
+    'model',
+    'gameModels',
+    'gameModelSelection',
+    function deleteModelCommandServiceFactory(commandsService,
+                                              modelService,
+                                              gameModelsService,
+                                              gameModelSelectionService) {
+      var deleteModelCommandService = {
+        execute: function deleteModelExecute(stamps, scope, game) {
+          return R.pipeP(
+            function(stamps) {
+              return gameModelsService.findAnyStamps(stamps, game.models);
+            },
+            R.spy('find any'),
+            R.reject(R.isNil),
+            R.spy('not nil'),
+            R.map(modelService.saveState),
+            R.spy('save'),
+            function(states) {
+              var ctxt = {
+                models: states,
+                desc: '',
+              };
+              return R.pipe(
+                gameModelsService.removeStamps$(stamps),
+                function(game_models) {
+                  game.models = game_models;
 
-        game.models = gameModelsService.add(models, game.models);
-        game.model_selection =
-          gameModelSelectionService.set('remote', R.map(R.path(['state','stamp']), models),
-                                        scope, game.model_selection);
-        scope.gameEvent('createModel');
-      }
-    };
-    commandsService.registerCommand('deleteModel', deleteModelCommandService);
-    return deleteModelCommandService;
-  };
+                  return gameModelSelectionService
+                    .removeFrom('local', stamps, scope, game.model_selection);
+                },
+                gameModelSelectionService.removeFrom$('remote', stamps, scope),
+                function(selection) {
+                  game.model_selection = selection;
+                  
+                  scope.gameEvent('createModel');
+                  return ctxt;
+                }
+              )(game.models);
+            }
+          )(stamps);
+        },
+        replay: function deleteModelReplay(ctxt, scope, game) {
+          return R.pipe(
+            R.map(R.prop('stamp')),
+            function(stamps) {
+              return R.pipe(
+                function() {
+                  return gameModelsService.removeStamps(stamps, game.models);
+                },
+                function(game_models) {
+                  game.models = game_models;
+
+                  return gameModelSelectionService
+                    .removeFrom('local', stamps, scope, game.model_selection);
+                },
+                gameModelSelectionService.removeFrom$('remote', stamps, scope),
+                function(selection) {
+                  game.model_selection = selection;
+                  
+                  scope.gameEvent('createModel');
+                }
+              )();
+            }
+          )(ctxt.models);
+        },
+        undo: function deleteModelUndo(ctxt, scope, game) {
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            R.map(function(model) {
+              return modelService.create(scope.factions, model)
+                .catch(R.always(null));
+            }),
+            R.bind(self.Promise.all, self.Promise),
+            R.reject(R.isNil),
+            function(models) {
+              if(R.isEmpty(models)) {
+                return self.Promise.reject('No valid model definition');
+              }
+              
+              return R.pipe(
+                gameModelsService.add$(models),
+                function(game_models) {
+                  game.models = game_models;
+
+                  var stamps = R.map(R.path(['state','stamp']), models);
+                  return gameModelSelectionService
+                    .set('remote', stamps, scope, game.model_selection);
+                },
+                function(selection) {
+                  game.model_selection = selection;
+                  
+                  scope.gameEvent('createModel');
+                }
+              )(game.models);
+            }
+          )(ctxt.models);
+        }
+      };
+      commandsService.registerCommand('deleteModel', deleteModelCommandService);
+      return deleteModelCommandService;
+    }
+  ]);

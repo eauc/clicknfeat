@@ -56,7 +56,11 @@ angular.module('clickApp.services')
           return localStorageService.save(STORAGE_KEY, desc);
         },
         getModelInfo: function factionsGetModelInfo(path, factions) {
-          return R.path(path, factions);
+          return new self.Promise(function(resolve, reject) {
+            var info = R.path(path, factions);
+            if(R.isNil(info)) reject('Model info '+path.join('.')+' not found');
+            else resolve(info);
+          });
         },
       };
       function updateFaction(faction) {

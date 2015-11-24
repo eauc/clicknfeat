@@ -55,9 +55,9 @@ angular.module('clickApp.services')
     }
   ])
   .factory('allCommands', [
-    // 'createModelCommand',
-    // 'deleteModelCommand',
-    // 'setModelSelectionCommand',
+    'createModelCommand',
+    'deleteModelCommand',
+    'setModelSelectionCommand',
     // 'onModelsCommand',
     // 'lockModelsCommand',
     'createTemplateCommand',

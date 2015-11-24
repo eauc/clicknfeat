@@ -48,10 +48,10 @@ describe('load game', function() {
                   length: null,
                 },
               },
-              // models: { active: [], locked: [] },
-              // model_selection: { local: { stamps: [] },
-              //                    remote: { stamps: [] }
-              //                  },
+              models: { active: [], locked: [] },
+              model_selection: { local: [],
+                                 remote: []
+                               },
               templates: { active: [], locked: [] },
               template_selection: { local: [],
                                     remote: []

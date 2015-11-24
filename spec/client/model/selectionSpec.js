@@ -9,60 +9,77 @@ describe('select model', function() {
         this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       
         this.scope = { game: { models: 'models',
-                               model_selection: 'selection' } };
+                               model_selection: 'selection',
+                               template_selection: 'template_selection'
+                             }
+                     };
         this.scope.gameEvent = jasmine.createSpy('gameEvent');
-        this.event = { target: { state: { stamp: 'stamp' } } };
-        this.dom_event = { ctrlKey: false };
+        this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
       }
     ]));
 
-    when('user click on model', function() {
-      this.defaultModeService.actions
-        .clickModel(this.scope, this.event, this.dom_event);
+    when('user set model selection', function() {
+      this.ret = this.defaultModeService.actions
+        .setModelSelection(this.scope, this.event);
     }, function() {
-      when('ctrlKey is not active', function() {
-        this.dom_event.ctrlKey = false;
-      }, function() {
-        it('should set gameModelSelection', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
-                                  this.scope, this.scope.game);
-        });
+      it('should set gameModelSelection', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
+                                this.scope, this.scope.game);
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
 
-      when('ctrlKey is active', function() {
-        this.dom_event.ctrlKey = true;
-      }, function() {
-        it('should check if the model is already in local selection', function() {
-          expect(this.gameModelSelectionService.in)
-            .toHaveBeenCalledWith('local', 'stamp', 'selection');
-        });
-        
-        when('model is not in selection', function() {
-          this.gameModelSelectionService.in._retVal = false;
-        }, function() {
-          it('should add model to selection', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('setModelSelection', 'addTo', ['stamp'],
-                                    this.scope, this.scope.game);
-          });
-        });
-        
-        when('model is already in selection', function() {
-          this.gameModelSelectionService.in._retVal = true;
-        }, function() {
-          it('should remove model from selection', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('setModelSelection', 'removeFrom', ['stamp'],
-                                    this.scope, this.scope.game);
-          });
-        });
+      it('should clear gameTemplateSelection', function() {
+        expect(this.gameTemplateSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'template_selection');
+        expect(this.scope.game.template_selection)
+          .toBe('gameTemplateSelection.clear.returnValue');
       });
     });
 
-    when('user starts dragging on map', function() {
+    when('user toggle model selection', function() {
+      this.ret = this.defaultModeService.actions
+        .toggleModelSelection(this.scope, this.event);
+    }, function() {
+      it('should check if the model is already in local selection', function() {
+        expect(this.gameModelSelectionService.in)
+          .toHaveBeenCalledWith('local', 'stamp', 'selection');
+      });
+        
+      when('model is not in selection', function() {
+        this.gameModelSelectionService.in._retVal = false;
+      }, function() {
+        it('should add model to selection', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setModelSelection', 'addTo', ['stamp'],
+                                  this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
+        });
+      });
+        
+      when('model is already in selection', function() {
+        this.gameModelSelectionService.in._retVal = true;
+      }, function() {
+        it('should remove model from selection', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setModelSelection', 'removeFrom', ['stamp'],
+                                  this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
+        });
+      });
+
+      it('should clear gameTemplateSelection', function() {
+        expect(this.gameTemplateSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'template_selection');
+        expect(this.scope.game.template_selection)
+          .toBe('gameTemplateSelection.clear.returnValue');
+      });
+    });
+
+    xwhen('user starts dragging on map', function() {
       this.defaultModeService.actions
         .dragStartMap(this.scope, { start: 'start', now: 'now' });
     }, function() {
@@ -72,7 +89,7 @@ describe('select model', function() {
       });
     });
 
-    when('user drags on map', function() {
+    xwhen('user drags on map', function() {
       this.defaultModeService.actions
         .dragMap(this.scope, { start: 'start', now: 'now' });
     }, function() {
@@ -82,7 +99,7 @@ describe('select model', function() {
       });
     });
 
-    when('user ends dragging on map', function() {
+    xwhen('user ends dragging on map', function() {
       this.defaultModeService.actions
         .dragEndMap(this.scope, {
           start: { x: 180, y: 150 },
@@ -121,7 +138,7 @@ describe('select model', function() {
       });
     });
 
-    when('user right-click on model', function() {
+    xwhen('user right-click on model', function() {
       this.defaultModeService.actions
         .rightClickModel(this.scope, this.event);
     }, function() {
@@ -150,25 +167,20 @@ describe('select model', function() {
       }
     ]));
 
-    when('user click on map', function() {
-      this.modelsModeService.actions
-        .clickMap(this.scope, 'event');
-    }, function() {
-      it('should clear local model selection', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setModelSelection', 'clear', null,
-                                this.scope, this.scope.game);
-      });
-    });
-
-    when('user right click on map', function() {
-      this.modelsModeService.actions
-        .rightClickMap(this.scope, 'event');
-    }, function() {
-      it('should clear local model selection', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setModelSelection', 'clear', null,
-                                this.scope, this.scope.game);
+    using([
+      [ 'action' ],
+      [ 'clickMap' ],
+      [ 'rightClickMap' ],
+    ], function(e, d) {
+      when('user '+e.action, function() {
+        this.ret = this.modelsModeService.actions[e.action](this.scope, 'event');
+      }, function() {
+        it('should clear local model selection', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setModelSelection', 'clear', null,
+                                  this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
+        });
       });
     });
   });
@@ -219,9 +231,10 @@ describe('select model', function() {
       when('<method> does not exist', function() {
         this.method = 'whatever';
       }, function() {        
-        it('should return Nil', function() {
-          expect(this.ret)
-            .toBe(undefined);
+        it('should reject command', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('SetModelSelection unknown method whatever');
+          });
         });
       });
     });
@@ -257,8 +270,8 @@ describe('select model', function() {
         this.modesService = spyOnService('modes');
         this.gameModelsService = spyOnService('gameModels');
         this.modelService = spyOnService('model');
-        this.modelService.isCharging._retVal = false;
-        this.modelService.isPlacing._retVal = false;
+        // this.modelService.isCharging._retVal = false;
+        // this.modelService.isPlacing._retVal = false;
         spyOn(this.gameModelSelectionService, 'checkMode');
         
         this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
@@ -267,18 +280,44 @@ describe('select model', function() {
       }
     ]));
 
+    function testChangeLocalSelection(whenMultipleSelection,
+                                      whenSingleSelection) {
+      it('should switch to Default mode', function() {
+        expect(this.modesService.switchToMode)
+          .toHaveBeenCalledWith('Default', this.scope, this.scope.modes);
+      });
+      
+      when('resulting selection contains multiple models',
+           whenMultipleSelection,
+           function() {
+             it('should disable singleModelSelection', function() {
+               expect(this.scope.gameEvent)
+                 .toHaveBeenCalledWith('disableSingleModelSelection');
+             });
+           });
+      
+      when('resulting selection contains single model',
+           whenSingleSelection,
+           function() {
+             it('should not disable singleModelSelection', function() {
+               expect(this.scope.gameEvent)
+                 .not.toHaveBeenCalledWith('disableSingleModelSelection');
+             });
+           });
+    }
+    
     using([
       [ 'where' ],
       [ 'local' ],
       [ 'remote' ],
     ], function(e, d) {
-      when('set(<where>, <stamps>, <scope>)', function() {
+      when('set('+e.where+', <stamps>, <scope>)', function() {
         this.ret = this.gameModelSelectionService.set(e.where, this.after,
                                                       this.scope, this.selection);
-      }, function() {
+      }, function() {        
         beforeEach(function() {
-          this.selection = { local: { stamps: [ 'before1', 'before2' ] },
-                             remote: { stamps: [ 'before1', 'before2' ] }
+          this.selection = { local: [ 'before1', 'before2' ],
+                             remote: [ 'before1', 'before2' ]
                            };
           this.after = [ 'after1', 'after2' ];
         });
@@ -306,41 +345,33 @@ describe('select model', function() {
         });
 
         if(e.where === 'local') {
-          it('should check mode for new selection', function() {
-            expect(this.gameModelSelectionService.checkMode)
-              .toHaveBeenCalledWith(this.scope, {
-                local: { stamps: [ 'after1', 'after2' ] },
-                remote: { stamps: [ 'before1', 'before2' ] }
-              });
+          testChangeLocalSelection(function() {
+            this.after = [ 'after1', 'after2' ];
+          }, function() {
+            this.after = [ 'after1' ];
           });
         }
       });
 
-      when('removeFrom(<where>, <stamps>, <scope>)', function() {
+      when('removeFrom('+e.where+', <stamps>, <scope>)', function() {
         this.ret = this.gameModelSelectionService.removeFrom(e.where, this.remove,
                                                              this.scope, this.selection);
       }, function() {
         beforeEach(function() {
-          this.remove = ['stamp2', 'stamp3'];
-          this.selection = { local: { stamps: [ 'stamp1', 'stamp2' ] },
-                             remote: { stamps: [ 'stamp1', 'stamp2' ] }
+          this.selection = { local: [ 'stamp1', 'stamp2' ],
+                             remote: [ 'stamp1', 'stamp2' ]
                            };
+          this.remove = ['stamp2', 'stamp3'];
         });
         
         it('should remove stamps from <where> selection', function() {
+          expect(this.gameModelSelectionService.in(e.where, 'stamp1', this.ret))
+            .toBeTruthy();
           expect(this.gameModelSelectionService.in(e.where, 'stamp2', this.ret))
             .toBeFalsy();
+          expect(this.gameModelSelectionService.in(e.where, 'stamp3', this.ret))
+            .toBeFalsy();
         });
-
-        if(e.where === 'local') {
-          it('should check mode for new selection', function() {
-            expect(this.gameModelSelectionService.checkMode)
-              .toHaveBeenCalledWith(this.scope, {
-                local: { stamps: [ 'stamp1' ] },
-                remote: { stamps: [ 'stamp1', 'stamp2' ] }
-              });
-          });
-        }
 
         it('should emit changeModel event', function() {
           // also emit stamp1 to update single selection styles
@@ -351,16 +382,24 @@ describe('select model', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp3');
         });
+
+        if(e.where === 'local') {
+          testChangeLocalSelection(function() {
+            this.remove = [ 'stamp3' ];
+          }, function() {
+            this.remove = [ 'stamp2' ];
+          });
+        }
       });
 
-      when('addTo(<where>, <stamps>, <scope>)', function() {
+      when('addTo('+e.where+', <stamps>, <scope>)', function() {
         this.ret = this.gameModelSelectionService.addTo(e.where, this.add,
                                                         this.scope, this.selection);
       }, function() {
         beforeEach(function() {
           this.add = ['stamp2', 'stamp3'];
-          this.selection = { local: { stamps: [ 'stamp1' ] },
-                             remote: { stamps: [ 'stamp1' ] }
+          this.selection = { local: [ 'stamp1' ],
+                             remote: [ 'stamp1' ]
                            };
         });
         
@@ -371,16 +410,6 @@ describe('select model', function() {
             .toBeTruthy();
         });
 
-        if(e.where === 'local') {
-          it('should check mode for new selection', function() {
-            expect(this.gameModelSelectionService.checkMode)
-              .toHaveBeenCalledWith(this.scope, {
-                local: { stamps: [ 'stamp1', 'stamp2', 'stamp3' ] },
-                remote: { stamps: [ 'stamp1' ] }
-              });
-          });
-        }
-
         it('should emit changeModel event', function() {            
           // also emit stamp1 to update single selection styles
           expect(this.scope.gameEvent)
@@ -390,17 +419,24 @@ describe('select model', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp3');
         });
+
+        if(e.where === 'local') {
+          testChangeLocalSelection(function() {
+            this.add = [ 'stamp2' ];
+          }, function() {
+            this.add = [ 'stamp2' ];
+            this.selection.local = [];
+          });
+        }
       });
 
-      when('clear(<where>, <stamps>, <scope>)', function() {
-        this.ret = this.gameModelSelectionService.clear(e.where,
-                                                        null,
-                                                        this.scope,
-                                                        this.selection);
+      when('clear('+e.where+', <stamps>, <scope>)', function() {
+        this.ret = this.gameModelSelectionService
+          .clear(e.where, null, this.scope, this.selection);
       }, function() {
         beforeEach(function() {
-          this.selection = { local: { stamps: ['stamp1', 'stamp2'] },
-                             remote: { stamps: ['stamp1', 'stamp2'] }
+          this.selection = { local: ['stamp1', 'stamp2'],
+                             remote: ['stamp1', 'stamp2']
                            };
         });
 
@@ -411,29 +447,29 @@ describe('select model', function() {
             .toBeFalsy();
         });
 
-        if(e.where === 'local') {
-          it('should check mode for selection', function() {   
-            expect(this.gameModelSelectionService.checkMode)
-              .toHaveBeenCalledWith(this.scope, {
-                local: { stamps: [  ] },
-                remote: { stamps: [ 'stamp1', 'stamp2' ] }
-              });
-          });
-        }
-
         it('should emit changeModel event', function() {            
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp1');
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp2');
         });
+
+        if(e.where === 'local') {
+          it('should check mode for selection', function() {   
+            expect(this.modesService.switchToMode)
+              .toHaveBeenCalledWith('Default', this.scope, this.scope.modes);
+          });
+
+          it('should disable singleModelSelection', function() {   
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('disableSingleModelSelection');
+          });
+        }
       });
 
       describe('inSingle(<where>, <stamp>)', function() {
         beforeEach(function() {
-          this.selection = { local: { stamps: [] },
-                             remote: { stamps: [] }
-                           };
+          this.selection = { local: [], remote: [] };
         });
         
         it('should check whether <stamp> is alone in selection', function() {
@@ -452,182 +488,48 @@ describe('select model', function() {
       });
     });
 
-    when('set(local, <stamps>, <scope>)', function() {
-      this.ret = this.gameModelSelectionService.set('local', this.after,
-                                                    this.scope, this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.selection = { local: { stamps: [ 'before1', 'before2' ] },
-                           remote: { stamps: [ 'before1', 'before2' ] }
-                         };
-      });
-
-      when('<stamps> is multiple', function() {
-        this.after = [ 'after1', 'after2' ];
-      }, function() {
-        it('should send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-
-      when('<stamps> is single', function() {
-        this.after = [ 'after1' ];
-      }, function() {
-        it('should not send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .not.toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-    });
-
-    when('addTo(local, <stamps>, <scope>)', function() {
-      this.ret = this.gameModelSelectionService.addTo('local', this.add,
-                                                      this.scope, this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.add = ['stamp2', 'stamp3'];
-        this.selection = { local: { stamps: [ ] },
-                           remote: { stamps: [ 'stamp1' ] }
-                         };
-      });
-
-      when('resulting selection is multiple', function() {
-        this.add = [ 'after1', 'after2' ];
-      }, function() {
-        it('should send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-
-      when('resulting selection is single', function() {
-        this.add = [ 'after1' ];
-      }, function() {
-        it('should not send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .not.toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-    });
-
-    when('removeFrom(local, <stamps>, <scope>)', function() {
-      this.ret = this.gameModelSelectionService.removeFrom('local', this.remove,
-                                                           this.scope, this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.remove = ['stamp2', 'stamp3'];
-        this.selection = { local: { stamps: [ 'stamp1', 'stamp2' ] },
-                           remote: { stamps: [ 'stamp1', 'stamp2' ] }
-                         };
-      });
-
-      when('resulting selection is multiple', function() {
-        this.remove = [ 'stamp1', 'stamp2' ];
-      }, function() {
-        it('should send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-
-      when('resulting selection is single', function() {
-        this.add = [ 'stamp1' ];
-      }, function() {
-        it('should not send disableSingleModelSelection gameEvent', function() {
-          expect(this.scope.gameEvent)
-            .not.toHaveBeenCalledWith('disableSingleModelSelection');
-        });
-      });
-    });
-
-    when('clear(<where>, <stamps>, <scope>)', function() {
-      this.ret = this.gameModelSelectionService.clear('local',
-                                                      null,
-                                                      this.scope,
-                                                      this.selection);
-    }, function() {
-      beforeEach(function() {
-        this.selection = { local: { stamps: ['stamp1', 'stamp2'] },
-                           remote: { stamps: ['stamp1', 'stamp2'] }
-                         };
-      });
-
-      it('should send disableSingleModelSelection gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('disableSingleModelSelection');
-      });
-    });
-
     when('checkMode(<scope>)', function() {
-      this.gameModelSelectionService.checkMode(this.scope, this.selection);
+      this.ret = this.gameModelSelectionService
+        .checkMode(this.scope, this.selection);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.checkMode.and.callThrough();
         this.scope = { modes: 'modes',
                        game: { models: 'models' } };
-        this.selection = { local: { stamps: [] } };
-        this.modelService.isCharging._retVal = false;
-        this.modelService.isPlacing._retVal = false;
+        this.selection = { local: [] };
+        // this.modelService.isCharging._retVal = false;
+        // this.modelService.isPlacing._retVal = false;
       });
 
       when('<selection> is empty', function() {
-        this.selection.local.stamps = [];
+        this.selection.local = [];
       }, function() {
-        it('should switch to Default mode', function() {
-          expect(this.modesService.switchToMode)
-            .toHaveBeenCalledWith('Default', this.scope, 'modes');
+        it('should reject check', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No model selection');
+          });
         });
       });
 
       when('<selection> is multiple', function() {
-        this.selection.local.stamps = [ 'stamp1', 'stamp2' ];
+        this.selection.local = [ 'stamp1', 'stamp2' ];
       }, function() {
         it('should switch to Models mode', function() {
-          expect(this.modesService.switchToMode)
-            .toHaveBeenCalledWith('Models', this.scope, 'modes');
+          this.thenExpect(this.ret, function() {
+            expect(this.modesService.switchToMode)
+              .toHaveBeenCalledWith('Models', this.scope, 'modes');
+          });
         });
       });
 
       when('<selection> is single', function() {
-        this.selection.local.stamps = [ 'stamp' ];
+        this.selection.local = [ 'stamp' ];
       }, function() {
-        it('should check whether model is charging or placing', function() {
-          expect(this.gameModelsService.findStamp)
-            .toHaveBeenCalledWith('stamp', 'models');
-          expect(this.modelService.isCharging)
-            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.modelService.isPlacing)
-            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-        });
-
-        when('selected model is neither charging nor placing', function() {
-          this.modelService.isCharging._retVal = false;
-          this.modelService.isPlacing._retVal = false;
-        }, function() {
-          it('should switch to Model mode', function() {
+        it('should switch to mode for model', function() {
+          this.thenExpect(this.ret, function() {
             expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('Model', this.scope, 'modes');
-          });
-        });
-
-        when('selected model is charging', function() {
-          this.modelService.isCharging._retVal = true;
-          this.modelService.isPlacing._retVal = false;
-        }, function() {
-          it('should switch to ModelCharge mode', function() {
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('ModelCharge', this.scope, 'modes');
-          });
-        });
-
-        when('selected model is placing', function() {
-          this.modelService.isCharging._retVal = false;
-          this.modelService.isPlacing._retVal = true;
-        }, function() {
-          it('should switch to ModelPlace mode', function() {
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('ModelPlace', this.scope, 'modes');
+              .toHaveBeenCalledWith('gameModels.modeForStamp.returnValue',
+                                    this.scope, 'modes');
           });
         });
       });
@@ -643,7 +545,26 @@ describe('select model', function() {
       }
     ]));
 
-    describe('findStampsBetweenPoints', function() {
+    describe('modeForStamp(<stamp>)', function() {
+      beforeEach(function() {
+        this.models = { active: [
+          { state: { stamp: 'stamp1' } },
+          { state: { stamp: 'stamp2' } },
+        ], locked: [] };
+        this.ret = this.gameModelsService
+          .modeForStamp('stamp2', this.models);
+      });
+
+      it('should return mode for model <stamp>', function() {
+        this.thenExpect(this.ret, function(mode) {
+          expect(this.modelService.modeFor)
+            .toHaveBeenCalledWith({ state: { stamp: 'stamp2' } });
+          expect(mode).toBe('model.modeFor.returnValue');
+        });
+      });
+    });
+
+    xdescribe('findStampsBetweenPoints', function() {
       beforeEach(function() {
         this.models = {
           active: [ { state : { stamp: 'stamp1' } }, { state : { stamp: 'stamp2' } } ],
@@ -680,7 +601,7 @@ describe('select model', function() {
       }
     ]));
 
-    describe('findStampsBetweenPoints', function() {
+    xdescribe('findStampsBetweenPoints', function() {
       beforeEach(function() {
         this.model = {
           state : { stamp: 'stamp1',

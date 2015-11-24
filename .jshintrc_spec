@@ -15,6 +15,7 @@
     "describe": false,
     "xdescribe": false,
     "when": false,
+    "xwhen": false,
     "beforeEach": false,
     "it": false,
     "xit": false,

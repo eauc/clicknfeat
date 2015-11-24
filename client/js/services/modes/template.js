@@ -17,12 +17,13 @@ angular.module('clickApp.services')
                                         gameTemplatesService,
                                         gameTemplateSelectionService) {
       var template_actions = Object.create(defaultModeService.actions);
-      template_actions.modeBackToDefault = function templateModeBackToDefault(scope, event) {
+      function clearTemplateSelection(scope, event) {
         scope.game.template_selection =
           gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
-      };
-      template_actions.clickMap = template_actions.modeBackToDefault;
-      template_actions.rightClickMap = template_actions.modeBackToDefault;
+      }
+      template_actions.modeBackToDefault = clearTemplateSelection;
+      template_actions.clickMap = clearTemplateSelection;
+      template_actions.rightClickMap = clearTemplateSelection;
       template_actions.delete = function templateDelete(scope) {
         var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
         return gameService.executeCommand('deleteTemplates', stamps,
