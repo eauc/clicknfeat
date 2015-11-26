@@ -11,98 +11,114 @@ angular.module('clickApp.services')
       return function(MOVES, modelService) {
         var modelMoveService = {
           setPosition: function modelSet(factions, pos, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+            
             model.state = R.pipe(
               R.assoc('x', pos.x),
-              R.assoc('y', pos.y),
-              modelService.checkState$(factions, null)
+              R.assoc('y', pos.y)
             )(model.state);
+            return modelService.checkState(factions, null, model);
           },
           setOrientation: function modelSet(factions, orientation, model) {
-            if(modelService.isLocked(model)) return;
-            model.state = R.pipe(
-              R.assoc('r', orientation),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
+            model.state = R.assoc('r', orientation, model.state);
+            return modelService.checkState(factions, null, model);
           },
           orientTo: function modelSet(factions, other, model) {
-            if(modelService.isLocked(model)) return;
-            model.state = R.pipe(
-              R.assoc('r', pointService.directionTo(other.state, model.state)),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
+            model.state = R.assoc('r', pointService.directionTo(other.state, model.state), model.state);
+            return modelService.checkState(factions, null, model);
           },
           shiftPosition: function modelSet(factions, shift, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             model.state = R.pipe(
               R.assoc('x', model.state.x + shift.x),
-              R.assoc('y', model.state.y + shift.y),
-              modelService.checkState$(factions, null)
+              R.assoc('y', model.state.y + shift.y)
             )(model.state);
+            return modelService.checkState(factions, null, model);
           },
           moveFront: function modelMoveFront(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-            model.state = R.pipe(
-              pointService.moveFront$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.moveFront(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
           moveBack: function modelMoveBack(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-            model.state = R.pipe(
-              pointService.moveBack$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.moveBack(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
           rotateLeft: function modelRotateLeft(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-            model.state = R.pipe(
-              pointService.rotateLeft$(angle),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.rotateLeft(angle, model.state);
+            return modelService.checkState(factions, null, model);
           },
           rotateRight: function modelRotateRight(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-            model.state = R.pipe(
-              pointService.rotateRight$(angle),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.rotateRight(angle, model.state);
+            return modelService.checkState(factions, null, model);
           },
           shiftLeft: function modelShiftLeft(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-            model.state = R.pipe(
-              pointService.shiftLeft$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.shiftLeft(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
           shiftRight: function modelShiftRight(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-            model.state = R.pipe(
-              pointService.shiftRight$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.shiftRight(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
           shiftUp: function modelShiftUp(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-            model.state = R.pipe(
-              pointService.shiftUp$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.shiftUp(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
           shiftDown: function modelShiftDown(factions, small, model) {
-            if(modelService.isLocked(model)) return;
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-            model.state = R.pipe(
-              pointService.shiftDown$(dist),
-              modelService.checkState$(factions, null)
-            )(model.state);
+            model.state = pointService.shiftDown(dist, model.state);
+            return modelService.checkState(factions, null, model);
           },
         };
         return modelMoveService;

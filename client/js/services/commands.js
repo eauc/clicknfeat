@@ -59,7 +59,7 @@ angular.module('clickApp.services')
     'deleteModelCommand',
     'setModelSelectionCommand',
     'lockModelsCommand',
-    // 'onModelsCommand',
+    'onModelsCommand',
     'createTemplateCommand',
     'deleteTemplatesCommand',
     'lockTemplatesCommand',

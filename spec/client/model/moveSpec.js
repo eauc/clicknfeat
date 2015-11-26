@@ -25,7 +25,7 @@ describe('move model', function() {
       [ 'rotateRight' ],
     ], function(e, d) {
       when('user '+e.action+' model selection', function() {
-        this.modelsModeService.actions[e.action](this.scope);
+        this.ret = this.modelsModeService.actions[e.action](this.scope);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -36,11 +36,13 @@ describe('move model', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', e.action, 'factions', false,
                                   'stamps', this.scope, this.scope.game);
+
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
 
       when('user '+e.action+'Small model selection', function() {
-        this.modelsModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.modelsModeService.actions[e.action+'Small'](this.scope);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -51,6 +53,7 @@ describe('move model', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
                                   'stamps', this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
     });
@@ -62,7 +65,7 @@ describe('move model', function() {
       [ 'shiftLeft'  , 'shiftRight'     ],
       [ 'shiftRight' , 'shiftLeft'      ],
     ], function(e, d) {
-      when('user '+e.action+' model selection', function() {
+      xwhen('user '+e.action+' model selection', function() {
         this.modelsModeService.actions[e.action](this.scope);
       }, function() {
         it('should get current selection', function() {
@@ -87,7 +90,7 @@ describe('move model', function() {
         });
       });
 
-      when('user '+e.action+'Small model selection', function() {
+      xwhen('user '+e.action+'Small model selection', function() {
         this.modelsModeService.actions[e.action+'Small'](this.scope);
       }, function() {
         it('should get current selection', function() {
@@ -113,7 +116,7 @@ describe('move model', function() {
       });
     });
 
-    when('user set orientation up on model selection', function() {
+    xwhen('user set orientation up on model selection', function() {
       this.modelsModeService.actions.setOrientationUp(this.scope);
     }, function() {
       beforeEach(function() {
@@ -142,7 +145,7 @@ describe('move model', function() {
       });
     });
 
-    when('user set orientation down on model selection', function() {
+    xwhen('user set orientation down on model selection', function() {
       this.modelsModeService.actions.setOrientationDown(this.scope);
     }, function() {
       beforeEach(function() {
@@ -177,7 +180,8 @@ describe('move model', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
-        this.gameFactionsService = spyOnService('gameFactions');
+        spyOn(this.modelService, 'checkState')
+          .and.returnValue('model.checkState.returnValue');
       }
     ]));
 
@@ -208,50 +212,48 @@ describe('move model', function() {
         { x: 240, y: 250, r: 180 },
         { x: 240, y: 241, r: 180 } ],
     ], function(e, d) {
-      describe(e.move+'(<small>)', function() {
-        beforeEach(function() {
-          this.model = {
-            state: { info: 'info', x: 240, y: 240, r: 180, dsp:[] }
-          };
-          this.gameFactionsService.getModelInfo._retVal = {
-            base_radius: e.base
-          };
-          spyOn(this.modelService, 'checkState')
-            .and.callThrough();
-          this.modelService.checkState$ = R.curryN(3, this.modelService.checkState);
-        });
+      using([
+        [ 'small', 'result' ],
+        [ false  , e.result ],
+        [ true   , e.small_result ],
+      ], function(ee, dd) {
+        when(e.move+'(<small>)', function() {
+          this.ret = this.modelService[e.move]('factions', ee.small, this.model);
+        }, function() {
+          beforeEach(function() {
+            this.model = {
+              state: { stamp: 'stamp', info: 'info', x: 240, y: 240, r: 180, dsp:[] }
+            };
+          });
 
-        using([
-          [ 'small', 'result' ],
-          [ false  , e.result ],
-          [ true   , e.small_result ],
-        ], function(ee, dd) {
           it('should '+e.move+' model, '+dd, function() {
-            this.modelService[e.move]('factions', ee.small, this.model);
             expect(R.pick(['x','y','r'], this.model.state))
               .toEqual(ee.result);
           });
-        });
 
-        it('should check state', function() {
-          this.modelService[e.move]('factions', false, this.model);
-          expect(this.modelService.checkState)
-            .toHaveBeenCalledWith('factions', null, jasmine.any(Object));
-        });
+          it('should check state', function() {
+            expect(this.modelService.checkState)
+              .toHaveBeenCalledWith('factions', null, this.model);
+            expect(this.ret).toBe('model.checkState.returnValue');
+          });
         
-        when('model is locked', function() {
-          this.modelService.setLock(true, this.model);
-        }, function() {
-          it('should not move model', function() {
-            this.modelService[e.move]('factions', true, this.model);
-            expect(R.pick(['x','y','r'], this.model.state))
-              .toEqual({ x: 240, y: 240, r: 180 });
+          when('model is locked', function() {
+            this.modelService.setLock(true, this.model);
+          }, function() {
+            it('should reject move', function() {
+              this.thenExpectError(this.ret, function(reason) {
+                expect(reason).toBe('Model stamp is locked');
+                
+                expect(R.pick(['x','y','r'], this.model.state))
+                  .toEqual({ x: 240, y: 240, r: 180 });
+              });
+            });
           });
         });
       });
     });
 
-    describe('setOrientation(<dir>)', function() {
+    xdescribe('setOrientation(<dir>)', function() {
       beforeEach(function() {
         this.model = {
           state: { info: 'info', x: 240, y: 240, r: 180, dsp: [] }

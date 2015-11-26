@@ -290,24 +290,24 @@ angular.module('clickApp.services')
       //                                stamps, scope, scope.game);
       //   };
       // }, effects);
-      // var moves = [
-      //   ['moveFront', 'up'],
-      //   ['moveBack', 'down'],
-      //   ['rotateLeft', 'left'],
-      //   ['rotateRight', 'right'],
-      // ];
-      // R.forEach(function(move) {
-      //   models_actions[move[0]] = function modelsMove(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     gameService.executeCommand('onModels', move[0], scope.factions, false,
-      //                                stamps, scope, scope.game);
-      //   };
-      //   models_actions[move[0]+'Small'] = function modelsMoveSmall(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     gameService.executeCommand('onModels', move[0], scope.factions, true,
-      //                                stamps, scope, scope.game);
-      //   };
-      // }, moves);
+      var moves = [
+        ['moveFront', 'up'],
+        ['moveBack', 'down'],
+        ['rotateLeft', 'left'],
+        ['rotateRight', 'right'],
+      ];
+      R.forEach(function(move) {
+        models_actions[move[0]] = function modelsMove(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          return gameService.executeCommand('onModels', move[0], scope.factions, false,
+                                            stamps, scope, scope.game);
+        };
+        models_actions[move[0]+'Small'] = function modelsMoveSmall(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          return gameService.executeCommand('onModels', move[0], scope.factions, true,
+                                            stamps, scope, scope.game);
+        };
+      }, moves);
       // var shifts = [
       //   ['shiftUp', 'ctrl+up', 'shiftDown'],
       //   ['shiftDown', 'ctrl+down', 'shiftUp'],
@@ -420,10 +420,10 @@ angular.module('clickApp.services')
         // 'toggleWreckDisplay': 'alt+w',
         // 'toggleIncorporealDisplay': 'alt+i',
       };
-      // R.forEach(function(move) {
-      //   models_default_bindings[move[0]] = move[1];
-      //   models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
-      // }, moves);
+      R.forEach(function(move) {
+        models_default_bindings[move[0]] = move[1];
+        models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
+      }, moves);
       // R.forEach(function(shift) {
       //   models_default_bindings[shift[0]] = shift[1];
       //   models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];

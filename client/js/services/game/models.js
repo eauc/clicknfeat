@@ -61,15 +61,32 @@ angular.module('clickApp.services')
           var stamps = R.nth(-2, args);
 
           args = R.slice(1, -2, args);
+          var reason;
           return R.pipeP(
-            function() {
-              return gameModelsService.findAnyStamps(stamps, models);
-            },
+            gameModelsService.findAnyStamps$(stamps),
             R.reject(R.isNil),
             R.map(function(model) {
-              return modelService[method].apply(null, R.append(model, args));
-            })
-          )();
+              return self.Promise.resolve(modelService[method]
+                                          .apply(null, R.append(model, args)))
+                .catch(function(_reason) {
+                  console.error(_reason);
+                  reason = _reason;
+                  return '##failed##';
+                });
+            }),
+            R.bind(self.Promise.all, self.Promise),
+            function(results) {
+              if(R.isEmpty(R.reject(R.equals('##failed##'), results))) {
+                console.error('Models: onStamps all failed', args);
+                return self.Promise.reject(reason);
+              }
+              return R.map(function(res) {
+                return ( res === '##failed##' ?
+                         null : res
+                       );
+              }, results);
+            }
+          )(models);
         },
         lockStamps: function modelsLockStamps(lock, stamps, models) {
           return R.pipeP(
