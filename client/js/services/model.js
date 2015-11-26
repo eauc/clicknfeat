@@ -20,7 +20,7 @@ angular.module('clickApp.services')
     'modelMove',
     // 'modelPlace',
     // 'modelRuler',
-    // 'modelUnit',
+    'modelUnit',
     'modelWreck',
     function modelServiceFactory(settingsService,
                                  pointService,
@@ -40,7 +40,7 @@ angular.module('clickApp.services')
                                  modelMoveService,
                                  // modelPlaceService,
                                  // modelRulerService,
-                                 // modelUnitService,
+                                 modelUnitService,
                                  modelWreckService) {
       var DEFAULT_MOVES = {
         Move: 10,
@@ -201,7 +201,7 @@ angular.module('clickApp.services')
         // modelMeleeService(modelService),
         modelMoveService(MOVES, modelService),
         // modelRulerService(modelService),
-        // modelUnitService(modelService),
+        modelUnitService(modelService),
         modelWreckService(modelService)
       );
       R.curryService(modelService);

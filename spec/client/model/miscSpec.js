@@ -8,6 +8,8 @@ describe('misc model', function() {
         this.modelModeService = modelModeService;
         this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
+        this.gameModelsService.all.and.callThrough();
+        mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
         this.scope = { game: { model_selection: 'selection',
@@ -18,12 +20,11 @@ describe('misc model', function() {
       }
     ]));
 
-    xdescribe('when user select all friendly models', function() {
+    when('user select all friendly models', function() {
+      this.ret = this.modelModeService.actions
+        .selectAllFriendly(this.scope);
+    }, function() {
       beforeEach(function() {
-        this.gameModelSelectionService.get._retVal = ['stamp1'];
-        this.gameModelsService.findStamp._retVal = {
-          state: { user: 'user' }
-        };
         this.scope.game.models = {
           active: [
             { state: { stamp: 'a1', user: 'user' } },
@@ -38,9 +39,10 @@ describe('misc model', function() {
             { state: { stamp: 'l4', user: 'other' } },
           ]
         };
-        this.gameModelsService.all.and.callThrough();
-        
-        this.modelModeService.actions.selectAllFriendly(this.scope);
+        this.gameModelSelectionService.get._retVal = ['stamp1'];
+        this.gameModelsService.findStamp.resolveWith = {
+          state: { user: 'user' }
+        };
       });
 
       it('should fetch selected model', function() {
@@ -51,9 +53,13 @@ describe('misc model', function() {
       });
       
       it('should select all models with the same user', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setModelSelection', 'set', [ 'a1', 'a3', 'l1', 'l3' ],
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setModelSelection',
+                                  'set', [ 'a1', 'a3', 'l1', 'l3' ],
+                                  this.scope, this.scope.game);
+          expect(result).toBe('game.executeCommand.returnValue');
+        });
       });
     });
   });

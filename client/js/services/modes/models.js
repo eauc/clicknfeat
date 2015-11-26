@@ -68,31 +68,36 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      // models_actions.toggleUnitDisplay = function modelsToggleUnitDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isUnitDisplayed(model);
-      //   gameService.executeCommand('onModels', 'setUnitDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.setUnit = function modelsSetUnit(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var value = R.defaultTo(0, modelService.unit(model));
-      //   promptService.prompt('prompt',
-      //                        'Set unit number :',
-      //                        value)
-      //     .then(function(value) {
-      //       gameService.executeCommand('onModels', 'setUnit', value,
-      //                                  stamps, scope, scope.game);
-      //       return value;
-      //     })
-      //     .catch(function(error) {
-      //       gameService.executeCommand('onModels', 'setUnit', null,
-      //                                  stamps, scope, scope.game);
-      //       return null;
-      //     });
-      // };
+      models_actions.toggleUnitDisplay = function modelsToggleUnitDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isUnitDisplayed(model);
+            
+            return gameService.executeCommand('onModels', 'setUnitDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.setUnit = function modelsSetUnit(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var value = R.defaultTo(0, modelService.unit(model));
+
+            return promptService.prompt('prompt',
+                                        'Set unit number :',
+                                        value)
+              .catch(R.always(null));
+          },
+          function(value) {
+            return gameService.executeCommand('onModels', 'setUnit', value,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       // models_actions.toggleMeleeDisplay = function modelsToggleMeleeDisplay(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -444,8 +449,8 @@ angular.module('clickApp.services')
         // 'toggleMeleeDisplay': 'm',
         // 'toggleReachDisplay': 'r',
         // 'toggleStrikeDisplay': 's',
-        // 'toggleUnitDisplay': 'alt+u',
-        // 'setUnit': 'shift+u',
+        'toggleUnitDisplay': 'alt+u',
+        'setUnit': 'shift+u',
         // 'toggleIncorporealDisplay': 'alt+i',
       };
       R.forEach(function(move) {
@@ -562,15 +567,15 @@ angular.module('clickApp.services')
         // }
         // ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
         // ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
-        // ret = R.concat(ret, [ [ 'Unit', 'toggle', 'unit' ],
-        //                       [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
-        //                       [ 'Set #', 'setUnit', 'unit' ],
-        //                       [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
-        //                     ]);
-        // if(R.prop('single', options)) {
-        //   ret = R.append([ 'Select All', 'selectAllUnit', 'unit' ], ret);
-        //   ret = R.append([ 'Select Friends', 'selectAllFriendly' ], ret);
-        // }
+        ret = R.concat(ret, [ [ 'Unit', 'toggle', 'unit' ],
+                              [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
+                              [ 'Set #', 'setUnit', 'unit' ],
+                              [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
+                            ]);
+        if(R.prop('single', options)) {
+          ret = R.append([ 'Select All', 'selectAllUnit', 'unit' ], ret);
+          ret = R.append([ 'Select Friends', 'selectAllFriendly' ], ret);
+        }
 
         return ret;
       }

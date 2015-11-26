@@ -40,29 +40,44 @@ angular.module('clickApp.services')
       //                                               { target: model },
       //                                               { ctrlKey: true });
       // };
-      // model_actions.selectAllFriendly = function modelSelectAllFriendly(scope, event) {
-      //   var selection = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(selection[0], scope.game.models);
-      //   var stamps = R.pipe(
-      //     gameModelsService.all,
-      //     R.filter(modelService.userIs$(modelService.user(model))),
-      //     R.map(modelService.stamp)
-      //   )(scope.game.models);
-      //   gameService.executeCommand('setModelSelection', 'set', stamps,
-      //                              scope, scope.game);
-      // };
-      // model_actions.selectAllUnit = function modelSelectAllUnit(scope, event) {
-      //   var selection = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(selection[0], scope.game.models);
-      //   var stamps = R.pipe(
-      //     gameModelsService.all,
-      //     R.filter(modelService.userIs$(modelService.user(model))),
-      //     R.filter(modelService.unitIs$(modelService.unit(model))),
-      //     R.map(modelService.stamp)
-      //   )(scope.game.models);
-      //   gameService.executeCommand('setModelSelection', 'set', stamps,
-      //                              scope, scope.game);
-      // };
+      model_actions.selectAllFriendly = function modelSelectAllFriendly(scope, event) {
+        var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(selection[0]),
+          function(model) {
+            var stamps = R.pipe(
+              gameModelsService.all,
+              R.filter(modelService.userIs$(modelService.user(model))),
+              R.map(modelService.stamp)
+            )(scope.game.models);
+
+            return gameService.executeCommand('setModelSelection', 'set', stamps,
+                                              scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      model_actions.selectAllUnit = function modelSelectAllUnit(scope, event) {
+        var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(selection[0]),
+          function(model) {
+            var unit = modelService.unit(model);
+            if(R.isNil(unit)) {
+              return self.Promise.reject('Model not in unit');
+            }
+            
+            var stamps = R.pipe(
+              gameModelsService.all,
+              R.filter(modelService.userIs$(modelService.user(model))),
+              R.filter(modelService.unitIs$(unit)),
+              R.map(modelService.stamp)
+            )(scope.game.models);
+            
+            return gameService.executeCommand('setModelSelection', 'set', stamps,
+                                              scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       // model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -80,8 +95,8 @@ angular.module('clickApp.services')
       var model_default_bindings = {
         // 'createAoEOnModel': 'ctrl+a',
         // 'createSprayOnModel': 'ctrl+s',
-        // 'selectAllUnit': 'ctrl+u',
-        // 'selectAllFriendly': 'ctrl+f',
+        'selectAllUnit': 'ctrl+u',
+        'selectAllFriendly': 'ctrl+f',
       };
       var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                     model_default_bindings);

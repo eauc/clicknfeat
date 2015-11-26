@@ -6,10 +6,16 @@ describe('model unit', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
       
         this.scope = { game: { models: 'models',
@@ -20,7 +26,7 @@ describe('model unit', function() {
     ]));
 
     when('user toggles unit display on models', function() {
-      this.modelsModeService.actions
+      this.ret = this.modelsModeService.actions
         .toggleUnitDisplay(this.scope);
     }, function() {
       using([
@@ -36,23 +42,28 @@ describe('model unit', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            expect(this.modelService.isUnitDisplayed)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setUnitDisplay', e.set,
-                                    this.gameModelSelectionService.get._retVal,
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.isUnitDisplayed)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setUnitDisplay', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
     });
     
-    describe('when user set unit number', function() {
+    when('user set unit number', function() {
+      this.ret = this.modelsModeService.actions.setUnit(this.scope);
+    }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
         this.modelService.unit._retVal = 42;
 
-        this.modelsModeService.actions.setUnit(this.scope);
+        this.promptService.prompt.resolveWith = 71;
       });
 
       it('should fetch first model\'s unit number', function() {
@@ -60,15 +71,19 @@ describe('model unit', function() {
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameModelsService.findStamp)
           .toHaveBeenCalledWith('stamp1', 'models');
-        expect(this.modelService.unit)
-          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.unit)
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        });
       });
       
       it('should prompt user for unit number', function() {
-        expect(this.promptService.prompt)
-          .toHaveBeenCalledWith('prompt',
-                                'Set unit number :',
-                                42);
+        this.thenExpect(this.ret, function() {
+          expect(this.promptService.prompt)
+            .toHaveBeenCalledWith('prompt',
+                                  'Set unit number :',
+                                  42);
+        });
       });
 
       using([
@@ -76,28 +91,30 @@ describe('model unit', function() {
         [ 42     , 42    ],
         [ 0      , 0  ],
       ], function(e, d) {
-        describe('when user validates prompt, '+d, function() {
-          beforeEach(function() {
-            this.promptService.prompt.resolve(e.value);
-          });
-          
+        when('user validates prompt, '+d, function() {
+          this.promptService.prompt.resolveWith = e.value;
+        }, function() {
           it('should set model\'s unit number', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setUnit', e.unit,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setUnit', e.unit,
+                                      ['stamp1','stamp2'], this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
 
-      describe('when user cancel prompt', function() {
-        beforeEach(function() {
-          this.promptService.prompt.reject('canceled');
-        });
-        
+      when('user cancel prompt', function() {
+        this.promptService.prompt.rejectWith = 'canceled';
+      }, function() {
         it('should reset model\'s unit', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setUnit', null,
-                                  ['stamp1','stamp2'], this.scope, this.scope.game);
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setUnit', null,
+                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });
@@ -108,8 +125,10 @@ describe('model unit', function() {
       'modelMode',
       function(modelModeService) {
         this.modelModeService = modelModeService;
+
         this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
         this.scope = { game: { model_selection: 'selection',
@@ -120,12 +139,10 @@ describe('model unit', function() {
       }
     ]));
 
-    describe('when user select all unit', function() {
+    when('user select all unit', function() {
+      this.ret = this.modelModeService.actions.selectAllUnit(this.scope);
+    }, function() {
       beforeEach(function() {
-        this.gameModelSelectionService.get._retVal = ['stamp1'];
-        this.gameModelsService.findStamp._retVal = {
-          state: { user: 'user', u: 42 }
-        };
         this.scope.game.models = {
           active: [
             { state: { stamp: 'a1', user: 'user', u: 42 } },
@@ -141,8 +158,10 @@ describe('model unit', function() {
           ]
         };
         this.gameModelsService.all.and.callThrough();
-        
-        this.modelModeService.actions.selectAllUnit(this.scope);
+        this.gameModelSelectionService.get._retVal = ['stamp1'];
+        this.gameModelsService.findStamp.resolveWith = {
+          state: { user: 'user', u: 42 }
+        };
       });
 
       it('should fetch selected model', function() {
@@ -153,9 +172,12 @@ describe('model unit', function() {
       });
       
       it('should select all models with the same user & unit number', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setModelSelection', 'set', ['a1', 'l1'],
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('setModelSelection', 'set', ['a1', 'l1'],
+                                  this.scope, this.scope.game);
+          expect(result).toBe('game.executeCommand.returnValue');
+        });
       });
     });
   });

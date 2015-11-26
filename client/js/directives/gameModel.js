@@ -100,7 +100,7 @@ angular.module('clickApp.directives')
         var los = clickGameModelLoSService.create(svgNS, info, parent);
         // var label = labelElementService.create(svgNS, over_models_container);
         // var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
-        // var unit = labelElementService.create(svgNS, parent);
+        var unit = labelElementService.create(svgNS, parent);
         var icon = clickGameModelIconService.create(svgNS, parent);
         // var area = clickGameModelAreaService.create(svgNS, parent);
         // var charge = clickGameModelChargeService.create(svgNS,
@@ -115,7 +115,7 @@ angular.module('clickApp.directives')
                  los: los,
                  // label: label,
                  // counter: counter,
-                 // unit: unit,
+                 unit: unit,
                  icon: icon,
                  // area: area,
                  // melee: melee,
@@ -234,8 +234,8 @@ angular.module('clickApp.directives')
               //                            element.label);
               // clickGameModelCounterService.update(map_flipped, zoom_factor,
               //                                     info, model, img, element.counter);
-              // updateUnit(map_flipped, zoom_factor,
-              //            img, info, model, element);
+              updateUnit(map_flipped, zoom_factor,
+                         img, info, model, element);
               clickGameModelIconService.update(info, model, img, element.icon);
               // clickGameModelAreaService.update(factions, info, model, img, element.area);
               // clickGameModelMeleeService.update(info, model, img, element.melee);
