@@ -19,6 +19,7 @@ angular.module('clickApp.services')
               return R.pipe(
                 R.assoc('x', create.base.x + model.x),
                 R.assoc('y', create.base.y + model.y),
+                R.assoc('r', create.base.r),
                 function(model) {
                   return modelService.create(scope.factions, model)
                     .catch(R.always(null));

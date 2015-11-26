@@ -19,6 +19,7 @@ angular.module('clickApp.services')
       createModel_actions.create = function createModelCreate(scope, event) {
         scope.create.model.base.x = event['click#'].x;
         scope.create.model.base.y = event['click#'].y;
+        scope.create.model.base.r = R.path(['ui_state','flip_map'], scope) ? 180 : 0;
         return gameService.executeCommand('createModel', scope.create.model,
                                           scope, scope.game);
       };

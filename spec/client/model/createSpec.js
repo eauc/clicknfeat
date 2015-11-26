@@ -56,11 +56,21 @@ describe('create model', function() {
         'click#': { x: 42, y: 71 }
       });
     }, function() {
-      it('should update scope\'s create object', function() {
-        expect(this.scope.create.model.base)
-          .toEqual({
-            x: 42, y: 71
+      using([
+        [ 'flip_map', 'r' ],
+        [ true      , 180 ],
+        [ false     , 0   ],
+      ], function(e, d) {
+        when('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
+          this.scope.ui_state = { flip_map: e.flip_map };
+        }, function() {
+          it('should update scope\'s create object', function() {
+            expect(this.scope.create.model.base)
+              .toEqual({
+                x: 42, y: 71, r: e.r
+              });
           });
+        });
       });
 
       it('should execute createModelCommand', function() {
@@ -126,7 +136,7 @@ describe('create model', function() {
     }, function() {
       beforeEach(function() {
         this.create = {
-          base: { x: 240, y: 240 },
+          base: { x: 240, y: 240, r: 180 },
           models: [ {
             info: ['legion','models','locks','absylonia1'],
             x: 0, y: 0
@@ -146,17 +156,17 @@ describe('create model', function() {
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-              x: 240, y: 240
+              x: 240, y: 240, r: 180
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
-              x: 260, y: 240
+              x: 260, y: 240, r: 180
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
-              x: 280, y: 240
+              x: 280, y: 240, r: 180
             });
         });
       });
@@ -176,17 +186,17 @@ describe('create model', function() {
           expect(this.gameModelsService.add)
             .toHaveBeenCalledWith([
               { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                         x: 240, y: 240,
+                         x: 240, y: 240, r: 180,
                          stamp: 'stamp1'
                        }
               },
               { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                         x: 260, y: 240,
+                         x: 260, y: 240, r: 180,
                          stamp: 'stamp2'
                        }
               },
               { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                         x: 280, y: 240,
+                         x: 280, y: 240, r: 180,
                          stamp: 'stamp3'
                        }
               }
@@ -216,21 +226,21 @@ describe('create model', function() {
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                       x: 240, y: 240,
+                       x: 240, y: 240, r: 180,
                        stamp: 'stamp1'
                      }
             });
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 260, y: 240,
+                       x: 260, y: 240, r: 180,
                        stamp: 'stamp2'
                      }
             });
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 280, y: 240,
+                       x: 280, y: 240, r: 180,
                        stamp: 'stamp3'
                      }
             });
