@@ -6,10 +6,16 @@ describe('model melee', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
       
         this.scope = { game: { models: 'models',
@@ -26,7 +32,8 @@ describe('model melee', function() {
       [ 'Strike', 'ms' ],
     ], function(e, d) {
       when('user toggles melee display on models, '+d, function() {
-        this.modelsModeService.actions['toggle'+e.melee+'Display'](this.scope);
+        this.ret = this.modelsModeService
+          .actions['toggle'+e.melee+'Display'](this.scope);
       }, function() {
         using([
           ['first', 'set'],
@@ -41,12 +48,15 @@ describe('model melee', function() {
                 .toHaveBeenCalledWith('local', 'selection');
               expect(this.gameModelsService.findStamp)
                 .toHaveBeenCalledWith('stamp1', 'models');
-              expect(this.modelService.isMeleeDisplayed)
-                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setMeleeDisplay', e.flag, ee.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.isMeleeDisplayed)
+                  .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+                expect(this.gameService.executeCommand)
+                  .toHaveBeenCalledWith('onModels', 'setMeleeDisplay', e.flag, ee.set,
+                                        this.gameModelSelectionService.get._retVal,
+                                        this.scope, this.scope.game);
+                expect(result).toBe('game.executeCommand.returnValue');
+              });
             });
           });
         });

@@ -98,27 +98,42 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      // models_actions.toggleMeleeDisplay = function modelsToggleMeleeDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isMeleeDisplayed('mm', model);
-      //   gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.toggleReachDisplay = function modelsToggleReachDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isMeleeDisplayed('mr', model);
-      //   gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.toggleStrikeDisplay = function modelsToggleStrikeDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isMeleeDisplayed('ms', model);
-      //   gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.toggleMeleeDisplay = function modelsToggleMeleeDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isMeleeDisplayed('mm', model);
+
+            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.toggleReachDisplay = function modelsToggleReachDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isMeleeDisplayed('mr', model);
+
+            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.toggleStrikeDisplay = function modelsToggleStrikeDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isMeleeDisplayed('ms', model);
+
+            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       // models_actions.toggleCounterDisplay = function modelsToggleCounterDisplay(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -249,35 +264,49 @@ angular.module('clickApp.services')
       //                                stamps, scope, scope.game);
       //   };
       // }, auras);
-      // models_actions.toggleCtrlAreaDisplay = function modelsToggleCtrlAreaDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isCtrlAreaDisplayed(scope.factions, model);
-      //   gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // var areas = R.range(0, 10);
-      // R.forEach(function(area) {
-      //   var size = area === 0 ? 10 : area;
-      //   models_actions['toggle'+size+'InchesAreaDisplay'] = function modelsToggleAreaDisplay(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //     var present = modelService.areaDisplay(model);
-      //     gameService.executeCommand('onModels', 'setAreaDisplay',
-      //                                (present === size) ? null : size,
-      //                                stamps, scope, scope.game);
-      //   };
-      //   var big_size = size + 10;
-      //   models_actions['toggle'+big_size+'InchesAreaDisplay'] =
-      //     function modelsToggle10InchesAreaDisplay(scope) {
-      //       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //       var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //       var present = modelService.areaDisplay(model);
-      //       gameService.executeCommand('onModels', 'setAreaDisplay',
-      //                                  (present === big_size) ? null : big_size,
-      //                                  stamps, scope, scope.game);
-      //     };
-      // }, areas);
+      models_actions.toggleCtrlAreaDisplay = function modelsToggleCtrlAreaDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isCtrlAreaDisplayed$(scope.factions),
+          function(present) {
+            return gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      var areas = R.range(0, 10);
+      R.forEach(function(area) {
+        var size = area === 0 ? 10 : area;
+        models_actions['toggle'+size+'InchesAreaDisplay'] = function modelsToggleAreaDisplay(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          return R.pipeP(
+            gameModelsService.findStamp$(stamps[0]),
+            function(model) {
+              var present = modelService.areaDisplay(model);
+
+              return gameService.executeCommand('onModels', 'setAreaDisplay',
+                                                (present === size) ? null : size,
+                                                stamps, scope, scope.game);
+            }
+          )(scope.game.models);
+        };
+        var big_size = size + 10;
+        models_actions['toggle'+big_size+'InchesAreaDisplay'] =
+          function modelsToggle10InchesAreaDisplay(scope) {
+            var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+            return R.pipeP(
+              gameModelsService.findStamp$(stamps[0]),
+              function(model) {
+                var present = modelService.areaDisplay(model);
+
+                return gameService.executeCommand('onModels', 'setAreaDisplay',
+                                                  (present === big_size) ? null : big_size,
+                                                  stamps, scope, scope.game);
+              }
+            )(scope.game.models);
+          };
+      }, areas);
       // var effects = [
       //   [ 'Blind', 'b' ],
       //   [ 'Corrosion', 'c' ],
@@ -441,14 +470,14 @@ angular.module('clickApp.services')
         // 'incrementSouls': 'shift++',
         // 'decrementSouls': 'shift+-',
         // 'toggleLeaderDisplay': 'alt+l',
-        // 'toggleCtrlAreaDisplay': 'shift+c',
+        'toggleCtrlAreaDisplay': 'shift+c',
         // 'setRulerMaxLength': 'shift+m',
         // 'setChargeMaxLength': 'shift+m',
         // 'setPlaceMaxLength': 'shift+p',
         // 'togglePlaceWithin': 'shift+w',
-        // 'toggleMeleeDisplay': 'm',
-        // 'toggleReachDisplay': 'r',
-        // 'toggleStrikeDisplay': 's',
+        'toggleMeleeDisplay': 'm',
+        'toggleReachDisplay': 'r',
+        'toggleStrikeDisplay': 's',
         'toggleUnitDisplay': 'alt+u',
         'setUnit': 'shift+u',
         // 'toggleIncorporealDisplay': 'alt+i',
@@ -461,12 +490,12 @@ angular.module('clickApp.services')
         models_default_bindings[shift[0]] = shift[1];
         models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
       }, shifts);
-      // R.forEach(function(area) {
-      //   var size = area === 0 ? 10 : area;
-      //   models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;
-      //   size += 10;
-      //   models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+shift+'+area;
-      // }, areas);
+      R.forEach(function(area) {
+        var size = area === 0 ? 10 : area;
+        models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;
+        size += 10;
+        models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+shift+'+area;
+      }, areas);
       // R.forEachIndexed(function(aura, index) {
       //   models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
       // }, auras);
@@ -487,7 +516,7 @@ angular.module('clickApp.services')
         buttons: models_buttons,
         buildButtons: buildModelsModesButtons,
         bindings: models_bindings,
-        // areas: areas,
+        areas: areas,
         // auras: auras,
         // effects: effects,
       };
@@ -520,10 +549,10 @@ angular.module('clickApp.services')
           // [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
           // [ 'Inc.', 'incrementSouls', 'souls' ],
           // [ 'Dec.', 'decrementSouls', 'souls' ],
-          // [ 'Melee', 'toggle', 'melee' ],
-          // [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
-          // [ 'Reach', 'toggleReachDisplay', 'melee' ],
-          // [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
+          [ 'Melee', 'toggle', 'melee' ],
+          [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
+          [ 'Reach', 'toggleReachDisplay', 'melee' ],
+          [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
         ];
         // if(R.prop('single', options)) {
         //   ret = R.concat(ret, [ [ 'Templates', 'toggle', 'templates' ],
@@ -531,16 +560,16 @@ angular.module('clickApp.services')
         //                         [ 'Spray', 'createSprayOnModel', 'templates' ],
         //                       ]);
         // }
-        // ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
-        // ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
-        // ret = R.concat(ret, R.map(function(area) {
-        //   var size = area + 1;
-        //   return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
-        // }, areas));
-        // ret = R.concat(ret, R.map(function(area) {
-        //   var size = area + 11;
-        //   return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
-        // }, areas));
+        ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
+        ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
+        ret = R.concat(ret, R.map(function(area) {
+          var size = area + 1;
+          return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
+        }, areas));
+        ret = R.concat(ret, R.map(function(area) {
+          var size = area + 11;
+          return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
+        }, areas));
         // ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
         // ret = R.concat(ret, R.map(function(aura) {
         //   return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];

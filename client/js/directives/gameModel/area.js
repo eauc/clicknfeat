@@ -28,14 +28,17 @@ angular.module('clickApp.directives')
           var ctrl_area = el[1];
           ctrl_area.setAttribute('cx', (img.width/2)+'');
           ctrl_area.setAttribute('cy', (img.height/2)+'');
-          if(modelService.isCtrlAreaDisplayed(factions, model)) {
-            var radius = ((info.focus || info.fury)*20 + info.base_radius);
-            ctrl_area.setAttribute('r', radius+'');
-            ctrl_area.style.visibility = 'visible';
-          }
-          else {
-            ctrl_area.style.visibility = 'hidden';
-          }
+          modelService.isCtrlAreaDisplayed(factions, model)
+            .then(function(is_displayed) {
+              if(is_displayed) {
+                var radius = ((info.focus || info.fury)*20 + info.base_radius);
+                ctrl_area.setAttribute('r', radius+'');
+                ctrl_area.style.visibility = 'visible';
+              }
+              else {
+                ctrl_area.style.visibility = 'hidden';
+              }
+            });
 
           var area = el[0];
           area.setAttribute('cx', (img.width/2)+'');

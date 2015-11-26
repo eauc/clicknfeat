@@ -7,7 +7,7 @@ angular.module('clickApp.directives')
     'gameModelSelection',
     'model',
     'labelElement',
-    // 'clickGameModelArea',
+    'clickGameModelArea',
     // 'clickGameModelAura',
     'clickGameModelBase',
     // 'clickGameModelCharge',
@@ -15,22 +15,22 @@ angular.module('clickApp.directives')
     // 'clickGameModelDamage',
     'clickGameModelIcon',
     'clickGameModelLoS',
-    // 'clickGameModelMelee',
+    'clickGameModelMelee',
     function(
       gameMapService,
       gameFactionsService,
       gameModelSelectionService,
       modelService,
       labelElementService,
-      // clickGameModelAreaService,
+      clickGameModelAreaService,
       // clickGameModelAuraService,
       clickGameModelBaseService,
       // clickGameModelChargeService,
       // clickGameModelCounterService,
       // clickGameModelDamageService,
       clickGameModelIconService,
-      clickGameModelLoSService
-      // clickGameModelMeleeService
+      clickGameModelLoSService,
+      clickGameModelMeleeService
       // gameRulerService,
     ) {
       var map;
@@ -94,7 +94,7 @@ angular.module('clickApp.directives')
       }
       function createModelElement(info, model, parent) {
         // var aura = clickGameModelAuraService.create(svgNS, parent);
-        // var melee = clickGameModelMeleeService.create(svgNS, parent);
+        var melee = clickGameModelMeleeService.create(svgNS, parent);
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
         // var damage = clickGameModelDamageService.create(svgNS, info, parent);
         var los = clickGameModelLoSService.create(svgNS, info, parent);
@@ -102,7 +102,7 @@ angular.module('clickApp.directives')
         // var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
         var unit = labelElementService.create(svgNS, parent);
         var icon = clickGameModelIconService.create(svgNS, parent);
-        // var area = clickGameModelAreaService.create(svgNS, parent);
+        var area = clickGameModelAreaService.create(svgNS, parent);
         // var charge = clickGameModelChargeService.create(svgNS,
         //                                                 under_models_container,
         //                                                 over_models_container,
@@ -117,8 +117,8 @@ angular.module('clickApp.directives')
                  // counter: counter,
                  unit: unit,
                  icon: icon,
-                 // area: area,
-                 // melee: melee,
+                 area: area,
+                 melee: melee,
                  // charge: charge,
                };
       }
@@ -237,8 +237,8 @@ angular.module('clickApp.directives')
               updateUnit(map_flipped, zoom_factor,
                          img, info, model, element);
               clickGameModelIconService.update(info, model, img, element.icon);
-              // clickGameModelAreaService.update(factions, info, model, img, element.area);
-              // clickGameModelMeleeService.update(info, model, img, element.melee);
+              clickGameModelAreaService.update(factions, info, model, img, element.area);
+              clickGameModelMeleeService.update(info, model, img, element.melee);
               // clickGameModelChargeService.update(map_flipped, zoom_factor, scope.game,
               //                                    scope.factions, info, model, img, element.charge);
 
