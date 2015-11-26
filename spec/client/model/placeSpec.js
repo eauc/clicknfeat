@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model place', function() {
+xdescribe('model place', function() {
   describe('modelMode service', function() {
     beforeEach(inject([
       'modelMode',

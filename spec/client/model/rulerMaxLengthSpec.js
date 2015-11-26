@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model ruler', function() {
+xdescribe('model ruler', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',

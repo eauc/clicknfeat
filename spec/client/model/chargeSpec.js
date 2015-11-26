@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model charge', function() {
+xdescribe('model charge', function() {
   describe('modelMode service', function() {
     beforeEach(inject([
       'modelMode',

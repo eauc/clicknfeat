@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model auras', function() {
+xdescribe('model auras', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',

@@ -6,10 +6,16 @@ describe('model effects', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
       
         this.scope = { game: { models: 'models',
@@ -20,7 +26,7 @@ describe('model effects', function() {
     ]));
 
     when('user toggles leader display on models', function() {
-      this.modelsModeService.actions
+      this.ret = this.modelsModeService.actions
         .toggleLeaderDisplay(this.scope);
     }, function() {
       using([
@@ -36,19 +42,22 @@ describe('model effects', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            expect(this.modelService.isLeaderDisplayed)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setLeaderDisplay', e.set,
-                                    this.gameModelSelectionService.get._retVal,
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.isLeaderDisplayed)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setLeaderDisplay', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
     });
 
     when('user toggles incorporeal display on models', function() {
-      this.modelsModeService.actions
+      this.ret = this.modelsModeService.actions
         .toggleIncorporealDisplay(this.scope);
     }, function() {
       using([
@@ -64,12 +73,15 @@ describe('model effects', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            expect(this.modelService.isIncorporealDisplayed)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setIncorporealDisplay', e.set,
-                                    this.gameModelSelectionService.get._retVal,
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.isIncorporealDisplayed)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setIncorporealDisplay', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
@@ -86,7 +98,8 @@ describe('model effects', function() {
       [ 'Stationary' , 's' ],
     ], function(e, d) {
       when('user toggles '+e.effect+' display on models', function() {
-        this.modelsModeService.actions['toggle'+e.effect+'EffectDisplay'](this.scope);
+        this.ret = this.modelsModeService
+          .actions['toggle'+e.effect+'EffectDisplay'](this.scope);
       }, function() {
         using([
           ['first', 'set'],
@@ -101,12 +114,15 @@ describe('model effects', function() {
                 .toHaveBeenCalledWith('local', 'selection');
               expect(this.gameModelsService.findStamp)
                 .toHaveBeenCalledWith('stamp1', 'models');
-              expect(this.modelService.isEffectDisplayed)
-                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setEffectDisplay', e.flag, ee.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.isEffectDisplayed)
+                  .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+                expect(this.gameService.executeCommand)
+                  .toHaveBeenCalledWith('onModels', 'setEffectDisplay', e.flag, ee.set,
+                                        this.gameModelSelectionService.get._retVal,
+                                        this.scope, this.scope.game);
+                expect(result).toBe('game.executeCommand.returnValue');
+              });
             });
           });
         });
@@ -119,7 +135,6 @@ describe('model effects', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
-        this.gameFactionsService = spyOnService('gameFactions');
       }
     ]));
 

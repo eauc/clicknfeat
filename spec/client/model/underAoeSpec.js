@@ -1,6 +1,6 @@
 'use strict';
 
-describe('model image', function() {
+xdescribe('model image', function() {
   describe('gameTemplateSelection service', function() {
     beforeEach(inject([
       'gameTemplateSelection',

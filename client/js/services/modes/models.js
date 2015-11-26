@@ -38,7 +38,8 @@ angular.module('clickApp.services')
           function(present) {
             return gameService.executeCommand('lockModels', !present,
                                               stamps, scope, scope.game);
-          });
+          }
+        )(scope.game.models);
       };
       models_actions.toggleImageDisplay = function modelsToggleImageDisplay(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
@@ -235,20 +236,50 @@ angular.module('clickApp.services')
       //   gameService.executeCommand('onModels', 'setPlaceWithin', !present,
       //                              stamps, scope, scope.game);
       // };
-      // models_actions.toggleLeaderDisplay = function modelsToggleLeaderDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isLeaderDisplayed(model);
-      //   gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.toggleIncorporealDisplay = function modelsToggleIncorporealDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isIncorporealDisplayed(model);
-      //   gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.toggleLeaderDisplay = function modelsToggleLeaderDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isLeaderDisplayed,
+          function(present) {
+            return gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.toggleIncorporealDisplay = function modelsToggleIncorporealDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isIncorporealDisplayed,
+          function(present) {
+            return gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      var effects = [
+        [ 'Blind', 'b' ],
+        [ 'Corrosion', 'c' ],
+        [ 'Disrupt', 'd' ],
+        [ 'Fire', 'f' ],
+        [ 'Fleeing', 'r' ],
+        [ 'KD', 'k' ],
+        [ 'Stationary', 's' ],
+      ];
+      R.forEach(function(effect) {
+        models_actions['toggle'+effect[0]+'EffectDisplay'] = function modelsToggleEffectDisplay(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          return R.pipeP(
+            gameModelsService.findStamp$(stamps[0]),
+            modelService.isEffectDisplayed$(effect[1]),
+            function(present) {
+              return gameService.executeCommand('onModels', 'setEffectDisplay', effect[1], !present,
+                                                stamps, scope, scope.game);
+            }
+          )(scope.game.models);
+        };
+      }, effects);
       // var auras = [
       //   [ 'Red', '#F00' ],
       //   [ 'Green', '#0F0' ],
@@ -310,24 +341,6 @@ angular.module('clickApp.services')
             )(scope.game.models);
           };
       }, areas);
-      // var effects = [
-      //   [ 'Blind', 'b' ],
-      //   [ 'Corrosion', 'c' ],
-      //   [ 'Disrupt', 'd' ],
-      //   [ 'Fire', 'f' ],
-      //   [ 'Fleeing', 'r' ],
-      //   [ 'KD', 'k' ],
-      //   [ 'Stationary', 's' ],
-      // ];
-      // R.forEach(function(effect) {
-      //   models_actions['toggle'+effect[0]+'EffectDisplay'] = function modelsToggleEffectDisplay(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //     var present = modelService.isEffectDisplayed(effect[1], model);
-      //     gameService.executeCommand('onModels', 'setEffectDisplay', effect[1], !present,
-      //                                stamps, scope, scope.game);
-      //   };
-      // }, effects);
       var moves = [
         ['moveFront', 'up'],
         ['moveBack', 'down'],
@@ -472,7 +485,6 @@ angular.module('clickApp.services')
         'toggleSoulsDisplay': 'shift+s',
         'incrementSouls': 'shift++',
         'decrementSouls': 'shift+-',
-        // 'toggleLeaderDisplay': 'alt+l',
         'toggleCtrlAreaDisplay': 'shift+c',
         // 'setRulerMaxLength': 'shift+m',
         // 'setChargeMaxLength': 'shift+m',
@@ -483,7 +495,8 @@ angular.module('clickApp.services')
         'toggleStrikeDisplay': 's',
         'toggleUnitDisplay': 'alt+u',
         'setUnit': 'shift+u',
-        // 'toggleIncorporealDisplay': 'alt+i',
+        'toggleLeaderDisplay': 'alt+l',
+        'toggleIncorporealDisplay': 'alt+i',
       };
       R.forEach(function(move) {
         models_default_bindings[move[0]] = move[1];
@@ -502,9 +515,9 @@ angular.module('clickApp.services')
       // R.forEachIndexed(function(aura, index) {
       //   models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
       // }, auras);
-      // R.forEach(function(effect) {
-      //   models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
-      // }, effects);
+      R.forEach(function(effect) {
+        models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
+      }, effects);
       var models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                      models_default_bindings);
 
@@ -521,7 +534,7 @@ angular.module('clickApp.services')
         bindings: models_bindings,
         areas: areas,
         // auras: auras,
-        // effects: effects,
+        effects: effects,
       };
       modesService.registerMode(models_mode);
       settingsService.register('Bindings',
@@ -577,11 +590,11 @@ angular.module('clickApp.services')
         // ret = R.concat(ret, R.map(function(aura) {
         //   return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
         // }, auras));
-        // ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
-        // ret = R.concat(ret, R.map(function(effect) {
-        //   return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
-        // }, effects));
-        // ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
+        ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
+        ret = R.concat(ret, R.map(function(effect) {
+          return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
+        }, effects));
+        ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
         // ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
         // if(R.prop('start_charge', options)) {
         //   ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);

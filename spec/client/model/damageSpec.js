@@ -1,6 +1,6 @@
 'use strict';
 
-describe('damage model', function() {
+xdescribe('damage model', function() {
   describe('model service', function() {
     beforeEach(inject([
       'model',

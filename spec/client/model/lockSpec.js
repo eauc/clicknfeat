@@ -6,12 +6,16 @@ describe('model lock', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
      
         this.scope = { game: { models: 'models',
@@ -34,11 +38,11 @@ describe('model lock', function() {
           this.modelService.isLocked._retVal = e.first;
         }, function() {
           it('should toggle lock on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
             this.thenExpect(this.ret, function(ret) {
-              expect(this.gameModelSelectionService.get)
-                .toHaveBeenCalledWith('local', 'selection');
-              expect(this.gameModelsService.findStamp)
-                .toHaveBeenCalledWith('stamp1', 'models');
               expect(this.modelService.isLocked)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
               expect(this.gameService.executeCommand)
