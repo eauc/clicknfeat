@@ -280,7 +280,7 @@ describe('misc model', function() {
             ]);
           });
         });
-      })
+      });
 
       when('none of the <stamps> exist', function() {
         this.stamps = ['whatever', 'unknown'];
@@ -290,7 +290,7 @@ describe('misc model', function() {
             expect(reason).toBe('No model found');
           });
         });
-      })
+      });
     });
     
     when('onStamp(<method>, <...args...>, <stamps>)', function() {

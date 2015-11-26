@@ -336,58 +336,77 @@ angular.module('clickApp.services')
         return gameService.executeCommand('onModels',
                                           'orientTo', scope.factions, event['click#'].target,
                                           stamps, scope, scope.game);
-        return;
       };
 
-      // (function() {
-      //   var drag_models_start_states;
-      //   var drag_models_start_selection;
-      //   models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
-      //     var stamp = event.target.state.stamp;
-      //     if(!gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
-      //       gameService.executeCommand('setModelSelection', 'set', [stamp],
-      //                                  scope, scope.game);
-      //     }
+      (function() {
+        var drag_models_start_states;
+        var drag_models_start_selection;
+        models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
+          var stamp = event.target.state.stamp;
+          return R.pipeP(
+            function() {
+              if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
+                return self.Promise.resolve();
+              }
+              return gameService.executeCommand('setModelSelection', 'set', [stamp],
+                                                scope, scope.game);
+            },
+            function() {
+              return gameModelSelectionService.get('local', scope.game.model_selection);
+            },
+            function(stamps) {
+              return gameModelsService.findAnyStamps(stamps, scope.game.models);
+            },
+            R.reject(R.isNil),
+            function(models) {
+              drag_models_start_selection = models;
 
-      //     drag_models_start_selection = R.pipe(
-      //       gameModelSelectionService.get$('local'),
-      //       R.map(function(stamp) {
-      //         return gameModelsService.findStamp(stamp, scope.game.models);
-      //       })
-      //     )(scope.game.model_selection);
-      //     drag_models_start_states = R.map(modelService.saveState, drag_models_start_selection);
+              return R.map(modelService.saveState, models);
+            },
+            function(states) {
+              drag_models_start_states = states;
 
-      //     models_actions.dragModel(scope, event);
-      //   };
-      //   models_actions.dragModel = function modelsDragModel(scope, event) {
-      //     R.pipe(
-      //       R.forEachIndexed(function(model, index) {
-      //         var pos = {
-      //           x: drag_models_start_states[index].x + event.now.x - event.start.x,
-      //           y: drag_models_start_states[index].y + event.now.y - event.start.y,
-      //         };
-      //         modelService.setPosition(scope.factions, pos, model);
-      //       }),
-      //       R.forEach(function(model) {
-      //         scope.gameEvent('changeModel-'+modelService.eventName(model));
-      //       })
-      //     )(drag_models_start_selection);
-      //   };
-      //   models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
-      //     R.pipe(
-      //       R.forEachIndexed(function(model, index) {
-      //         modelService.setPosition(scope.factions, drag_models_start_states[index], model);
-      //       })
-      //     )(drag_models_start_selection);
-      //     var stamps = R.map(R.path(['state','stamp']), drag_models_start_selection);
-      //     var shift = {
-      //       x: event.now.x - event.start.x,
-      //       y: event.now.y - event.start.y,
-      //     };
-      //     gameService.executeCommand('onModels', 'shiftPosition', scope.factions, shift,
-      //                                stamps, scope, scope.game);
-      //   };
-      // })();
+              return models_actions.dragModel(scope, event);
+            }
+          )();
+        };
+        defaultModeService.actions.dragStartModel = models_actions.dragStartModel;
+        models_actions.dragModel = function modelsDragModel(scope, event) {
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            R.addIndex(R.map)(function(model, index) {
+              var pos = {
+                x: drag_models_start_states[index].x + event.now.x - event.start.x,
+                y: drag_models_start_states[index].y + event.now.y - event.start.y,
+              };
+              return modelService.setPosition(scope.factions, pos, model);
+            }),
+            R.bind(self.Promise.all, self.Promise),
+            R.forEach(function(model) {
+              scope.gameEvent('changeModel-'+modelService.eventName(model));
+            })
+          )(drag_models_start_selection);
+        };
+        models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            R.addIndex(R.map)(function(model, index) {
+              return modelService.setPosition(scope.factions, drag_models_start_states[index], model);
+            }),
+            R.bind(self.Promise.all, self.Promise),
+            R.map(R.path(['state','stamp'])),
+            function(stamps) {
+              var shift = {
+                x: event.now.x - event.start.x,
+                y: event.now.y - event.start.y,
+              };
+              return gameService.executeCommand('onModels',
+                                                'shiftPosition', scope.factions, shift,
+                                                stamps, scope, scope.game);
+            }
+          )(drag_models_start_selection);
+        };
+      })();
 
       var models_default_bindings = {
         'clickMap': 'clickMap',

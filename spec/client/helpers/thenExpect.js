@@ -20,7 +20,7 @@ self.it = (function() {
     this._auto_call_done = false;
     return promise.then(R.bind(cbk, this))
       .catch(function(error) {
-        expect('This promise').not.toBe('rejected');
+        expect('This promise').toBe('not rejected');
         expect(error).toBe(null);
       })
       .then(this._done);

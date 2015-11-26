@@ -21,6 +21,17 @@ angular.module('clickApp.services')
             )(model.state);
             return modelService.checkState(factions, null, model);
           },
+          shiftPosition: function modelSet(factions, shift, model) {
+            if(modelService.isLocked(model)) {
+              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+            }
+
+            model.state = R.pipe(
+              R.assoc('x', model.state.x + shift.x),
+              R.assoc('y', model.state.y + shift.y)
+            )(model.state);
+            return modelService.checkState(factions, null, model);
+          },
           setOrientation: function modelSet(factions, orientation, model) {
             if(modelService.isLocked(model)) {
               return self.Promise.reject('Model '+model.state.stamp+' is locked');
@@ -35,17 +46,6 @@ angular.module('clickApp.services')
             }
 
             model.state = R.assoc('r', pointService.directionTo(other.state, model.state), model.state);
-            return modelService.checkState(factions, null, model);
-          },
-          shiftPosition: function modelSet(factions, shift, model) {
-            if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
-            }
-
-            model.state = R.pipe(
-              R.assoc('x', model.state.x + shift.x),
-              R.assoc('y', model.state.y + shift.y)
-            )(model.state);
             return modelService.checkState(factions, null, model);
           },
           moveFront: function modelMoveFront(factions, small, model) {

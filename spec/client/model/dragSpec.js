@@ -1,40 +1,6 @@
 'use strict';
 
 describe('drag model', function() {
-  describe('defaultMode service', function() {
-    beforeEach(inject([
-      'defaultMode',
-      function(defaultModeService) {
-        this.defaultModeService = defaultModeService;
-        this.modesService = spyOnService('modes');
-        this.gameModelSelectionService = spyOnService('gameModelSelection');
-
-        this.scope = {
-          game: { model_selection: 'selection' },
-          modes: 'modes'
-        };
-        this.event = {
-          target: { state: { stamp: 'stamp' } },
-        };
-      }
-    ]));
-
-    when('user starts dragging model', function() {
-      this.defaultModeService.actions.dragStartModel(this.scope, this.event);
-    }, function() {
-      it('should set current selection', function() {
-        expect(this.gameModelSelectionService.set)
-          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
-      });
-
-      it('should forward dragStart action to new mode', function() {
-        expect(this.modesService.currentModeAction)
-          .toHaveBeenCalledWith('dragStartModel', this.scope, this.event, null,
-                                'modes');
-      });
-    });
-  });
-
   describe('modelMode service', function() {
     beforeEach(inject([
       'modelsMode',
@@ -57,11 +23,27 @@ describe('drag model', function() {
           factions: 'factions',
           gameEvent: jasmine.createSpy('gameEvent')
         };
+
+        mockReturnPromise(this.gameService.executeCommand);
+        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
+        
+        mockReturnPromise(this.gameModelsService.findAnyStamps);
+        this.gameModelsService.findAnyStamps.resolveWith = function(ss, ms) {
+          return R.map(function(s) {
+            return R.find(R.pathEq(['state','stamp'], s), ms);
+          }, ss);
+        };
+
+        mockReturnPromise(this.modelService.setPosition);
+        this.modelService.setPosition.resolveWith = function(f, p, m) {
+          return m;
+        };
       }
     ]));
 
     when('user starts dragging model', function() {
-      this.modelModeService.actions.dragStartModel(this.scope, this.event);
+      this.ret = this.modelModeService.actions
+        .dragStartModel(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -71,9 +53,7 @@ describe('drag model', function() {
         };
 
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
-        this.gameModelsService.findStamp.and.callFake(R.bind(function(s) {
-          return R.find(R.pathEq(['state','stamp'], s), this.scope.game.models);
-        }, this));
+        this.gameModelSelectionService.in._retVal = true;
       });
 
       when('target model is not in current selection', function() {
@@ -84,50 +64,99 @@ describe('drag model', function() {
             .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
                                   this.scope, this.scope.game);
         });
+
+        when('set current selection fails', function() {
+          this.gameService.executeCommand.rejectWith = 'reason';
+        }, function() {
+          it('should reject drag', function() {
+            this.thenExpectError(this.ret, function(reason) {
+              expect(reason).toBe('reason');
+              expect(this.modelService.setPosition)
+                .not.toHaveBeenCalled();
+              expect(this.scope.gameEvent)
+                .not.toHaveBeenCalled();
+            });
+          });
+        });
       });
 
       it('should get local model selection', function() {
-        expect(this.gameModelSelectionService.get)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameModelsService.findStamp)
-          .toHaveBeenCalledWith('stamp1', this.scope.game.models);
-        expect(this.gameModelsService.findStamp)
-          .toHaveBeenCalledWith('stamp2', this.scope.game.models);
+        this.thenExpect(this.ret, function() {
+          expect(this.gameModelSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+          expect(this.gameModelsService.findAnyStamps)
+            .toHaveBeenCalledWith(['stamp1', 'stamp2'], this.scope.game.models);
+        });
       });
 
+      when('current selection is not found', function() {
+        this.gameModelsService.findAnyStamps.rejectWith = 'reason';
+      }, function() {
+        it('should reject drag', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('reason');
+            expect(this.modelService.setPosition)
+              .not.toHaveBeenCalled();
+            expect(this.scope.gameEvent)
+              .not.toHaveBeenCalled();
+          });
+        });
+      });
+      
       it('should update selection positions', function() {
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
-                                { x: 250, y: 241 },
-                                this.scope.game.models[0]);
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
-                                { x: 210, y: 301 },
-                                this.scope.game.models[1]);
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
+                                  { x: 250, y: 241 },
+                                  this.scope.game.models[0]);
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
+                                  { x: 210, y: 301 },
+                                  this.scope.game.models[1]);
+        });
       });
 
+      when('update selection positions fails', function() {
+        this.modelService.setPosition.rejectWith = 'reason';
+      }, function() {
+        it('should reject drag', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('reason');
+            expect(this.scope.gameEvent)
+              .not.toHaveBeenCalled();
+          });
+        });
+      });
+      
       it('should emit changeModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-stamp1');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-stamp2');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp1');
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp2');
+        });
       });
     });
 
     when('user drags model', function() {
-      this.modelModeService.actions.dragModel(this.scope, this.event);
+      this.ret = this.modelModeService.actions
+        .dragModel(this.scope, this.event);
     }, function() {
-      beforeEach(function() {
+      beforeEach(function(done) {
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
           start: { x: 200, y: 200 },
           now: { x: 210, y: 201 },
         };
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
-        this.gameModelsService.findStamp.and.callFake(R.bind(function(s) {
-          return R.find(R.pathEq(['state','stamp'], s), this.scope.game.models);
-        }, this));
-        this.modelModeService.actions.dragStartModel(this.scope, this.event);
+        this.gameModelSelectionService.in._retVal = true;
+        this.modelModeService.actions
+          .dragStartModel(this.scope, this.event)
+          .then(R.bind(function() {
+            this.modelService.setPosition.calls.reset();
+            this.scope.gameEvent.calls.reset();
+            done();
+          }, this));
 
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -137,38 +166,59 @@ describe('drag model', function() {
       });
 
       it('should update target position', function() {
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
-                                { x: 270, y: 230 },
-                                this.scope.game.models[0]);
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
-                                { x: 230, y: 290 },
-                                this.scope.game.models[1]);
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
+                                  { x: 270, y: 230 },
+                                  this.scope.game.models[0]);
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
+                                  { x: 230, y: 290 },
+                                  this.scope.game.models[1]);
+        });
+      });
+
+      when('update selection positions fails', function() {
+        this.modelService.setPosition.rejectWith = 'reason';
+      }, function() {
+        it('should reject drag', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('reason');
+            expect(this.scope.gameEvent)
+              .not.toHaveBeenCalled();
+          });
+        });
       });
 
       it('should emit changeModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-stamp1');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeModel-stamp2');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp1');
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeModel-stamp2');
+        });
       });
     });
 
     when('user ends draging model', function() {
-      this.modelModeService.actions.dragEndModel(this.scope, this.event);
+      this.ret = this.modelModeService.actions
+        .dragEndModel(this.scope, this.event);
     }, function() {
-      beforeEach(function() {
+      beforeEach(function(done) {
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
           start: { x: 200, y: 200 },
           now: { x: 210, y: 201 },
         };
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
-        this.gameModelsService.findStamp.and.callFake(R.bind(function(s) {
-          return R.find(R.pathEq(['state','stamp'], s), this.scope.game.models);
-        }, this));
-        this.modelModeService.actions.dragStartModel(this.scope, this.event);
+        this.gameModelSelectionService.in._retVal = true;
+        this.modelModeService.actions
+          .dragStartModel(this.scope, this.event)
+          .then(R.bind(function() {
+            this.scope.gameEvent.calls.reset();
+            this.modelService.setPosition.calls.reset();
+            done();
+          }, this));
 
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -178,21 +228,38 @@ describe('drag model', function() {
       });
 
       it('should restore dragStart model position', function() {
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
                                 { stamp: 'stamp1', x: 240, y: 240, r: 180 },
-                                this.scope.game.models[0]);
-        expect(this.modelService.setPosition)
-          .toHaveBeenCalledWith('factions',
-                                { stamp: 'stamp2', x: 200, y: 300, r:  90 },
-                                this.scope.game.models[1]);
+                                  this.scope.game.models[0]);
+          expect(this.modelService.setPosition)
+            .toHaveBeenCalledWith('factions',
+                                  { stamp: 'stamp2', x: 200, y: 300, r:  90 },
+                                  this.scope.game.models[1]);
+        });
       });
 
+      when('update selection positions fails', function() {
+        this.modelService.setPosition.rejectWith = 'reason';
+      }, function() {
+        it('should reject drag', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('reason');
+            expect(this.gameService.executeCommand)
+              .not.toHaveBeenCalled();
+          });
+        });
+      });
+      
       it('should execute onModels/shiftPosition command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'shiftPosition', 'factions',
-                                { x: 30, y: -10 }, ['stamp1','stamp2'],
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', 'shiftPosition', 'factions',
+                                  { x: 30, y: -10 }, ['stamp1','stamp2'],
+                                  this.scope, this.scope.game);
+          expect(result).toBe('game.executeCommand.returnValue');
+        });
       });
     });
   });
@@ -202,69 +269,79 @@ describe('drag model', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
-        this.gameFactionsService = spyOnService('gameFactions');
-        this.gameFactionsService.getModelInfo._retVal = {
-          base_radius: 7.874
-        };
+        spyOn(this.modelService, 'checkState')
+          .and.returnValue('model.checkState.returnValue');
       }
     ]));
 
-    describe('setPosition(<pos>)', function() {
+    when('setPosition(<pos>)', function() {
+      this.ret = this.modelService
+        .setPosition('factions', { x: 15, y: 42 }, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
-          state: { info: 'info', x: 240, y: 240, r: 180, dsp:[] }
+          state: { stamp: 'stamp', info: 'info',
+                   x: 240, y: 240, r: 180, dsp:[] }
         };
       });
 
       it('should set model position', function() {
-        this.modelService.setPosition('factions', { x: 15, y: 42 }, this.model);
         expect(R.pick(['x','y','r'], this.model.state))
           .toEqual({ x: 15, y: 42, r: 180 });
       });
 
-      it('should stay on board', function() {
-        this.modelService.setPosition('factions', { x: -15, y: 494 }, this.model);
-        expect(R.pick(['x','y','r'], this.model.state))
-          .toEqual({ x: 7.874, y: 472.126, r: 180 });
+      it('should check state', function() {
+        expect(this.modelService.checkState)
+          .toHaveBeenCalledWith('factions', null, this.model);
+        expect(this.ret).toBe('model.checkState.returnValue');
       });
 
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not move model', function() {
-          this.modelService.setPosition('factions', { x: -15, y: 494 }, this.model);
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 240, y: 240, r: 180 });
+        it('should reject move', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Model stamp is locked');
+
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+          });
         });
       });
     });
 
-    describe('shiftPosition(<pos>)', function() {
+    when('shiftPosition(<pos>)', function() {
+      this.ret = this.modelService
+        .shiftPosition('factions', { x: 15, y: 20 }, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
-          state: { info: 'info', x: 440, y: 440, r: 180, dsp:[] }
+          state: { stamp: 'stamp', info: 'info',
+                   x: 440, y: 440, r: 180, dsp:[] }
         };
       });
-
+      
       it('should set model position', function() {
-        this.modelService.shiftPosition('factions', { x: 15, y: 20 }, this.model);
         expect(R.pick(['x','y','r'], this.model.state))
           .toEqual({ x: 455, y: 460, r: 180 });
       });
 
-      it('should stay on board', function() {
-        this.modelService.shiftPosition('factions', { x: 40, y: 50 }, this.model);
-        expect(R.pick(['x','y','r'], this.model.state))
-          .toEqual({ x: 472.126, y: 472.126, r: 180 });
+      it('should check state', function() {
+        expect(this.modelService.checkState)
+          .toHaveBeenCalledWith('factions', null, this.model);
+        expect(this.ret).toBe('model.checkState.returnValue');
       });
 
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not move model', function() {
-          this.modelService.shiftPosition('factions', { x: 40, y: 50 }, this.model);
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 440, y: 440, r: 180 });
+        it('should reject move', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Model stamp is locked');
+
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 440, y: 440, r: 180 });
+          });
         });
       });
     });
