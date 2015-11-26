@@ -58,46 +58,37 @@ angular.module('clickApp.services')
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
                                            scope, scope.game.template_selection);
       };
-      // default_actions.dragStartModel = function defaultDragStartModel(scope, event) {
-      //   scope.game.model_selection =
-      //     gameModelSelectionService.set('local', [event.target.state.stamp],
-      //                                   scope, scope.game.model_selection);
-      //   return modesService.currentModeAction('dragStartModel', scope, event,
-      //                                         null, scope.modes);
-      // };
-      // default_actions.dragStartTemplate = function defaultDragStartTemplate(scope, event) {
-      //   scope.game.template_selection =
-      //     gameTemplateSelectionService.set('local', event.target.state.stamp,
-      //                                      scope, scope.game.template_selection);
-      //   return modesService.currentModeAction('dragStartTemplate', scope, event,
-      //                                         null, scope.modes);
-      // };
       default_actions.enterRulerMode = function defaultEnterRulerMode(scope, event) {
         return modesService.switchToMode('Ruler', scope, scope.modes);
       };
-      // default_actions.dragStartMap = function defaultDragStartMap(scope, event) {
-      //   scope.gameEvent('enableDragbox', event.start, event.now);
-      // };
-      // default_actions.dragMap = function defaultDragMap(scope, event) {
-      //   scope.gameEvent('enableDragbox', event.start, event.now);
-      // };
-      // default_actions.dragEndMap = function defaultDragEndTemplate(scope, event) {
-      //   scope.gameEvent('disableDragbox');
-      //   var top_left = {
-      //     x: Math.min(event.now.x, event.start.x),
-      //     y: Math.min(event.now.y, event.start.y),
-      //   };
-      //   var bottom_right = {
-      //     x: Math.max(event.now.x, event.start.x),
-      //     y: Math.max(event.now.y, event.start.y),
-      //   };
-      //   var stamps = gameModelsService.findStampsBetweenPoints(top_left, bottom_right,
-      //                                                          scope.game.models);
-      //   console.log('stamps', stamps);
-      //   if(R.isEmpty(stamps)) return;
-      //   return gameService.executeCommand('setModelSelection', 'set', stamps,
-      //                                     scope, scope.game);
-      // };
+      default_actions.dragStartMap = function defaultDragStartMap(scope, event) {
+        scope.gameEvent('enableDragbox', event.start, event.now);
+      };
+      default_actions.dragMap = function defaultDragMap(scope, event) {
+        scope.gameEvent('enableDragbox', event.start, event.now);
+      };
+      default_actions.dragEndMap = function defaultDragEndMap(scope, event) {
+        scope.gameEvent('disableDragbox');
+        var top_left = {
+          x: Math.min(event.now.x, event.start.x),
+          y: Math.min(event.now.y, event.start.y),
+        };
+        var bottom_right = {
+          x: Math.max(event.now.x, event.start.x),
+          y: Math.max(event.now.y, event.start.y),
+        };
+        return R.pipeP(
+          gameModelsService.findStampsBetweenPoints$(top_left, bottom_right),
+          function(stamps) {
+            if(R.isEmpty(stamps)) {
+              return;
+            }
+            
+            return gameService.executeCommand('setModelSelection', 'set', stamps,
+                                              scope, scope.game);
+          }
+        )(scope.game.models);
+      };
 
       var default_default_bindings = {
         enterRulerMode: 'shift+r',

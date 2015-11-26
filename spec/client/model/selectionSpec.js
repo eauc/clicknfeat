@@ -6,9 +6,14 @@ describe('select model', function() {
       'defaultMode',
       function(defaultModeService) {
         this.defaultModeService = defaultModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStampsBetweenPoints);
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       
         this.scope = { game: { models: 'models',
@@ -79,7 +84,7 @@ describe('select model', function() {
       });
     });
 
-    xwhen('user starts dragging on map', function() {
+    when('user starts dragging on map', function() {
       this.defaultModeService.actions
         .dragStartMap(this.scope, { start: 'start', now: 'now' });
     }, function() {
@@ -89,7 +94,7 @@ describe('select model', function() {
       });
     });
 
-    xwhen('user drags on map', function() {
+    when('user drags on map', function() {
       this.defaultModeService.actions
         .dragMap(this.scope, { start: 'start', now: 'now' });
     }, function() {
@@ -99,8 +104,8 @@ describe('select model', function() {
       });
     });
 
-    xwhen('user ends dragging on map', function() {
-      this.defaultModeService.actions
+    when('user select box', function() {
+      this.ret = this.defaultModeService.actions
         .dragEndMap(this.scope, {
           start: { x: 180, y: 150 },
           now: { x: 240, y:120 }
@@ -119,7 +124,7 @@ describe('select model', function() {
       });
 
       when('there is no model in the dragbox', function() {
-        this.gameModelsService.findStampsBetweenPoints._retVal = [];
+        this.gameModelsService.findStampsBetweenPoints.rejectWith = 'reason';
       }, function() {
         it('should do nothing', function() {
           expect(this.gameService.executeCommand)
@@ -128,12 +133,15 @@ describe('select model', function() {
       });
 
       when('there are models in the dragbox', function() {
-        this.gameModelsService.findStampsBetweenPoints._retVal = [ 'stamp1', 'stamp2' ];
+        this.gameModelsService.findStampsBetweenPoints.resolveWith = [ 'stamp1', 'stamp2' ];
       }, function() {
         it('should set selection to those models', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('setModelSelection', 'set', [ 'stamp1', 'stamp2' ],
-                                  this.scope, this.scope.game);
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('setModelSelection', 'set', [ 'stamp1', 'stamp2' ],
+                                    this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });
@@ -564,7 +572,11 @@ describe('select model', function() {
       });
     });
 
-    xdescribe('findStampsBetweenPoints', function() {
+    when('findStampsBetweenPoints', function() {
+      this.ret = this.gameModelsService
+        .findStampsBetweenPoints('topleft', 'bottomright',
+                                 this.models);
+    }, function() {
       beforeEach(function() {
         this.models = {
           active: [ { state : { stamp: 'stamp1' } }, { state : { stamp: 'stamp2' } } ],
@@ -576,19 +588,26 @@ describe('select model', function() {
                    m.state.stamp === 'stamp3'
                  );
         });
-
-        this.ret = this.gameModelsService
-          .findStampsBetweenPoints('topleft', 'bottomright',
-                                   this.models);
       });
 
       it('should find all models between the 2 points', function() {
-        expect(this.modelService.isBetweenPoints)
-          .toHaveBeenCalledWith('topleft', 'bottomright',
-                                { state: { stamp: 'stamp1' } });
+        this.thenExpect(this.ret, function(result) {
+          expect(this.modelService.isBetweenPoints)
+            .toHaveBeenCalledWith('topleft', 'bottomright',
+                                  { state: { stamp: 'stamp1' } });
+          
+          expect(result).toEqual([ 'stamp2', 'stamp3' ]);
+        });
+      });
 
-        expect(this.ret)
-          .toEqual([ 'stamp2', 'stamp3' ]);
+      when('no stamps are found', function() {
+        this.modelService.isBetweenPoints.and.returnValue(false);
+      }, function() {
+        it('should find all models between the 2 points', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No model found between points');
+          });
+        });
       });
     });
   });
@@ -601,7 +620,7 @@ describe('select model', function() {
       }
     ]));
 
-    xdescribe('findStampsBetweenPoints', function() {
+    describe('findStampsBetweenPoints', function() {
       beforeEach(function() {
         this.model = {
           state : { stamp: 'stamp1',

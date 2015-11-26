@@ -31,19 +31,6 @@ angular.module('clickApp.services')
       //                              stamps, scope, scope.game);
       //   modesService.switchToMode('ModelPlace', scope, scope.modes);
       // };
-      // model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   if(dom_event.shiftKey &&
-      //      !dom_event.ctrlKey &&
-      //      model.state.stamp !== event.target.state.stamp) {
-      //     gameService.executeCommand('onModels', 'orientTo',
-      //                                scope.factions, event.target,
-      //                                stamps, scope, scope.game);
-      //     return;
-      //   }
-      //   modelBaseModeService.actions.clickModel(scope, event, dom_event);
-      // };
 
       var model_default_bindings = {
         // 'startCharge': 'c',
