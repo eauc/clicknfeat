@@ -6,10 +6,16 @@ describe('model counter', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
       
         this.scope = { game: { models: 'models',
@@ -25,7 +31,8 @@ describe('model counter', function() {
       [ 'Souls'   , 's' ],
     ], function(e, d) {
       when('user toggles '+e.type+' display on models', function() {
-        this.modelsModeService.actions['toggle'+e.type+'Display'](this.scope);
+        this.ret = this.modelsModeService
+          .actions['toggle'+e.type+'Display'](this.scope);
       }, function() {
         using([
           ['first', 'set'],
@@ -40,19 +47,23 @@ describe('model counter', function() {
                 .toHaveBeenCalledWith('local', 'selection');
               expect(this.gameModelsService.findStamp)
                 .toHaveBeenCalledWith('stamp1', 'models');
-              expect(this.modelService.isCounterDisplayed)
-                .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setCounterDisplay', e.flag, ee.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.isCounterDisplayed)
+                  .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
+                expect(this.gameService.executeCommand)
+                  .toHaveBeenCalledWith('onModels', 'setCounterDisplay', e.flag, ee.set,
+                                        this.gameModelSelectionService.get._retVal,
+                                        this.scope, this.scope.game);
+                expect(result).toBe('game.executeCommand.returnValue');
+              });
             });
           });
         });
       });
 
       when('user increment '+e.type+' on models', function() {
-        this.modelsModeService.actions['increment'+e.type](this.scope);
+        this.ret = this.modelsModeService
+          .actions['increment'+e.type](this.scope);
       }, function() {
         it('should increment counter on local selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -61,11 +72,13 @@ describe('model counter', function() {
             .toHaveBeenCalledWith('onModels', 'incrementCounter', e.flag,
                                   this.gameModelSelectionService.get._retVal,
                                   this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
 
       when('user decrement '+e.type+' on models', function() {
-        this.modelsModeService.actions['decrement'+e.type](this.scope);
+        this.ret = this.modelsModeService
+          .actions['decrement'+e.type](this.scope);
       }, function() {
         it('should decrement '+e.type+' on local selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -74,6 +87,7 @@ describe('model counter', function() {
             .toHaveBeenCalledWith('onModels', 'decrementCounter', e.flag,
                                   this.gameModelSelectionService.get._retVal,
                                   this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
         });
       });
     });

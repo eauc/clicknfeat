@@ -32,9 +32,10 @@ angular.module('clickApp.services')
       };
       models_actions.toggleLock = function modelsToggleLock(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameModelsService.findStamp(stamps[0], scope.game.models)
-          .then(function(model) {
-            var present = modelService.isLocked(model);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isLocked,
+          function(present) {
             return gameService.executeCommand('lockModels', !present,
                                               stamps, scope, scope.game);
           });
@@ -43,9 +44,8 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isImageDisplayed(model);
-
+          modelService.isImageDisplayed,
+          function(present) {
             return gameService.executeCommand('onModels', 'setImageDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -60,9 +60,8 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isWreckDisplayed(model);
-
+          modelService.isWreckDisplayed,
+          function(present) {
             return gameService.executeCommand('onModels', 'setWreckDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -72,9 +71,8 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isUnitDisplayed(model);
-            
+          modelService.isUnitDisplayed,
+          function(present) {
             return gameService.executeCommand('onModels', 'setUnitDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -102,9 +100,8 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isMeleeDisplayed('mm', model);
-
+          modelService.isMeleeDisplayed$('mm'),
+          function(present) {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
                                               stamps, scope, scope.game);
           }
@@ -114,9 +111,8 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isMeleeDisplayed('mr', model);
-
+          modelService.isMeleeDisplayed$('mr'),
+          function(present) {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
                                               stamps, scope, scope.game);
           }
@@ -126,48 +122,55 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            var present = modelService.isMeleeDisplayed('ms', model);
-
+          modelService.isMeleeDisplayed$('ms'),
+          function(present) {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
                                               stamps, scope, scope.game);
           }
         )(scope.game.models);
       };
-      // models_actions.toggleCounterDisplay = function modelsToggleCounterDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isCounterDisplayed('c', model);
-      //   gameService.executeCommand('onModels', 'setCounterDisplay', 'c', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.incrementCounter = function modelsIncrementCounter(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'incrementCounter', 'c',
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.decrementCounter = function modelsDecrementCounter(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'decrementCounter', 'c',
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.toggleSoulsDisplay = function modelsToggleSoulsDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isCounterDisplayed('s', model);
-      //   gameService.executeCommand('onModels', 'setCounterDisplay', 's', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.incrementSouls = function modelsIncrementSouls(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'incrementCounter', 's',
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.decrementSouls = function modelsDecrementSouls(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'decrementCounter', 's',
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.toggleCounterDisplay = function modelsToggleCounterDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isCounterDisplayed$('c'),
+          function(present) {
+            return gameService.executeCommand('onModels', 'setCounterDisplay', 'c', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.incrementCounter = function modelsIncrementCounter(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'incrementCounter', 'c',
+                                          stamps, scope, scope.game);
+      };
+      models_actions.decrementCounter = function modelsDecrementCounter(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'decrementCounter', 'c',
+                                          stamps, scope, scope.game);
+      };
+      models_actions.toggleSoulsDisplay = function modelsToggleSoulsDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.isCounterDisplayed$('s'),
+          function(present) {
+            return gameService.executeCommand('onModels', 'setCounterDisplay', 's', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.incrementSouls = function modelsIncrementSouls(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'incrementCounter', 's',
+                                          stamps, scope, scope.game);
+      };
+      models_actions.decrementSouls = function modelsDecrementSouls(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'decrementCounter', 's',
+                                          stamps, scope, scope.game);
+      };
       // models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope, event) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -463,12 +466,12 @@ angular.module('clickApp.services')
         'setOrientationUp': 'pageup',
         'setOrientationDown': 'pagedown',
         'orientToModel': 'shift+clickModel',
-        // 'toggleCounterDisplay': 'n',
-        // 'incrementCounter': '+',
-        // 'decrementCounter': '-',
-        // 'toggleSoulsDisplay': 'shift+s',
-        // 'incrementSouls': 'shift++',
-        // 'decrementSouls': 'shift+-',
+        'toggleCounterDisplay': 'n',
+        'incrementCounter': '+',
+        'decrementCounter': '-',
+        'toggleSoulsDisplay': 'shift+s',
+        'incrementSouls': 'shift++',
+        'decrementSouls': 'shift+-',
         // 'toggleLeaderDisplay': 'alt+l',
         'toggleCtrlAreaDisplay': 'shift+c',
         // 'setRulerMaxLength': 'shift+m',
@@ -541,14 +544,14 @@ angular.module('clickApp.services')
           [ 'Orient.', 'toggle', 'orientation' ],
           [ 'Face Up', 'setOrientationUp', 'orientation' ],
           [ 'Face Down', 'setOrientationDown', 'orientation' ],
-          // [ 'Counter', 'toggle', 'counter' ],
-          // [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
-          // [ 'Inc.', 'incrementCounter', 'counter' ],
-          // [ 'Dec.', 'decrementCounter', 'counter' ],
-          // [ 'Souls', 'toggle', 'souls' ],
-          // [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
-          // [ 'Inc.', 'incrementSouls', 'souls' ],
-          // [ 'Dec.', 'decrementSouls', 'souls' ],
+          [ 'Counter', 'toggle', 'counter' ],
+          [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
+          [ 'Inc.', 'incrementCounter', 'counter' ],
+          [ 'Dec.', 'decrementCounter', 'counter' ],
+          [ 'Souls', 'toggle', 'souls' ],
+          [ 'Show/Hide', 'toggleSoulsDisplay', 'souls' ],
+          [ 'Inc.', 'incrementSouls', 'souls' ],
+          [ 'Dec.', 'decrementSouls', 'souls' ],
           [ 'Melee', 'toggle', 'melee' ],
           [ '0.5"', 'toggleMeleeDisplay', 'melee' ],
           [ 'Reach', 'toggleReachDisplay', 'melee' ],

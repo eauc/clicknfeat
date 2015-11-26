@@ -11,7 +11,7 @@ angular.module('clickApp.directives')
     // 'clickGameModelAura',
     'clickGameModelBase',
     // 'clickGameModelCharge',
-    // 'clickGameModelCounter',
+    'clickGameModelCounter',
     // 'clickGameModelDamage',
     'clickGameModelIcon',
     'clickGameModelLoS',
@@ -26,7 +26,7 @@ angular.module('clickApp.directives')
       // clickGameModelAuraService,
       clickGameModelBaseService,
       // clickGameModelChargeService,
-      // clickGameModelCounterService,
+      clickGameModelCounterService,
       // clickGameModelDamageService,
       clickGameModelIconService,
       clickGameModelLoSService,
@@ -99,7 +99,7 @@ angular.module('clickApp.directives')
         // var damage = clickGameModelDamageService.create(svgNS, info, parent);
         var los = clickGameModelLoSService.create(svgNS, info, parent);
         // var label = labelElementService.create(svgNS, over_models_container);
-        // var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
+        var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
         var unit = labelElementService.create(svgNS, parent);
         var icon = clickGameModelIconService.create(svgNS, parent);
         var area = clickGameModelAreaService.create(svgNS, parent);
@@ -114,7 +114,7 @@ angular.module('clickApp.directives')
                  // damage: damage,
                  los: los,
                  // label: label,
-                 // counter: counter,
+                 counter: counter,
                  unit: unit,
                  icon: icon,
                  area: area,
@@ -126,6 +126,9 @@ angular.module('clickApp.directives')
         return function _gameModelOnDestroy() {
           console.log('gameModelOnDestroy');
 
+          clickGameModelCounterService.cleanup(under_models_container,
+                                               over_models_container,
+                                               element.counter);
           // over_models_container.removeChild(element.label.label);
           // over_models_container.removeChild(element.counter.label);
           // over_models_container.removeChild(element.charge.label.label);
@@ -232,8 +235,8 @@ angular.module('clickApp.directives')
               //                            label_center.text,
               //                            label_text,
               //                            element.label);
-              // clickGameModelCounterService.update(map_flipped, zoom_factor,
-              //                                     info, model, img, element.counter);
+              clickGameModelCounterService.update(map_flipped, zoom_factor,
+                                                  info, model, img, element.counter);
               updateUnit(map_flipped, zoom_factor,
                          img, info, model, element);
               clickGameModelIconService.update(info, model, img, element.icon);
