@@ -30,15 +30,6 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return gameService.executeCommand('deleteModel', stamps, scope, scope.game);
       };
-      // models_actions.clickModel = function modelsClickModel(scope, event, dom_event) {
-      //   if(dom_event.shiftKey) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     gameService.executeCommand('onModels', 'orientTo', scope.factions, event.target,
-      //                                stamps, scope, scope.game);
-      //     return;
-      //   }
-      //   defaultModeService.actions.clickModel(scope, event, dom_event);
-      // };
       models_actions.toggleLock = function modelsToggleLock(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return gameModelsService.findStamp(stamps[0], scope.game.models)
@@ -308,38 +299,45 @@ angular.module('clickApp.services')
                                             stamps, scope, scope.game);
         };
       }, moves);
-      // var shifts = [
-      //   ['shiftUp', 'ctrl+up', 'shiftDown'],
-      //   ['shiftDown', 'ctrl+down', 'shiftUp'],
-      //   ['shiftLeft', 'ctrl+left', 'shiftRight'],
-      //   ['shiftRight', 'ctrl+right', 'shiftLeft'],
-      // ];
-      // R.forEach(function(shift) {
-      //   models_actions[shift[0]] = function modelsShift(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-      //     gameService.executeCommand('onModels', model_shift, scope.factions, false,
-      //                                stamps, scope, scope.game);
-      //   };
-      //   models_actions[shift[0]+'Small'] = function modelsShiftSmall(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-      //     gameService.executeCommand('onModels', model_shift, scope.factions, true,
-      //                                stamps, scope, scope.game);
-      //   };
-      // }, shifts);
-      // models_actions.setOrientationUp = function modelsSetOrientationUp(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var orientation = scope.ui_state.flip_map ? 180 : 0;
-      //   gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.setOrientationDown = function modelsSetOrientationDown(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var orientation = scope.ui_state.flip_map ? 0 : 180;
-      //   gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
-      //                              stamps, scope, scope.game);
-      // };
+      var shifts = [
+        ['shiftUp', 'ctrl+up', 'shiftDown'],
+        ['shiftDown', 'ctrl+down', 'shiftUp'],
+        ['shiftLeft', 'ctrl+left', 'shiftRight'],
+        ['shiftRight', 'ctrl+right', 'shiftLeft'],
+      ];
+      R.forEach(function(shift) {
+        models_actions[shift[0]] = function modelsShift(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+          return gameService.executeCommand('onModels', model_shift, scope.factions, false,
+                                            stamps, scope, scope.game);
+        };
+        models_actions[shift[0]+'Small'] = function modelsShiftSmall(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+          return gameService.executeCommand('onModels', model_shift, scope.factions, true,
+                                            stamps, scope, scope.game);
+        };
+      }, shifts);
+      models_actions.setOrientationUp = function modelsSetOrientationUp(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        var orientation = scope.ui_state.flip_map ? 180 : 0;
+        gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
+                                   stamps, scope, scope.game);
+      };
+      models_actions.setOrientationDown = function modelsSetOrientationDown(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        var orientation = scope.ui_state.flip_map ? 0 : 180;
+        gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
+                                   stamps, scope, scope.game);
+      };
+      models_actions.orientToModel = function modelsOrientToModel(scope, event, dom_event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels',
+                                          'orientTo', scope.factions, event['click#'].target,
+                                          stamps, scope, scope.game);
+        return;
+      };
 
       // (function() {
       //   var drag_models_start_states;
@@ -398,8 +396,9 @@ angular.module('clickApp.services')
         'toggleLock': 'shift+l',
         // 'toggleImageDisplay': 'i',
         // 'setNextImage': 'shift+i',
-        // 'setOrientationUp': 'pageup',
-        // 'setOrientationDown': 'pagedown',
+        'setOrientationUp': 'pageup',
+        'setOrientationDown': 'pagedown',
+        'orientToModel': 'shift+clickModel',
         // 'toggleCounterDisplay': 'n',
         // 'incrementCounter': '+',
         // 'decrementCounter': '-',
@@ -424,10 +423,10 @@ angular.module('clickApp.services')
         models_default_bindings[move[0]] = move[1];
         models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
       }, moves);
-      // R.forEach(function(shift) {
-      //   models_default_bindings[shift[0]] = shift[1];
-      //   models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
-      // }, shifts);
+      R.forEach(function(shift) {
+        models_default_bindings[shift[0]] = shift[1];
+        models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
+      }, shifts);
       // R.forEach(function(area) {
       //   var size = area === 0 ? 10 : area;
       //   models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;
@@ -476,9 +475,9 @@ angular.module('clickApp.services')
           // [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
           // [ 'Next', 'setNextImage', 'image' ],
           // [ 'Wreck', 'toggleWreckDisplay', 'image' ],
-          // [ 'Orient.', 'toggle', 'orientation' ],
-          // [ 'Face Up', 'setOrientationUp', 'orientation' ],
-          // [ 'Face Down', 'setOrientationDown', 'orientation' ],
+          [ 'Orient.', 'toggle', 'orientation' ],
+          [ 'Face Up', 'setOrientationUp', 'orientation' ],
+          [ 'Face Down', 'setOrientationDown', 'orientation' ],
           // [ 'Counter', 'toggle', 'counter' ],
           // [ 'Show/Hide', 'toggleCounterDisplay', 'counter' ],
           // [ 'Inc.', 'incrementCounter', 'counter' ],
