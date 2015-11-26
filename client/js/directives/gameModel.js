@@ -8,7 +8,7 @@ angular.module('clickApp.directives')
     'model',
     'labelElement',
     'clickGameModelArea',
-    // 'clickGameModelAura',
+    'clickGameModelAura',
     'clickGameModelBase',
     // 'clickGameModelCharge',
     'clickGameModelCounter',
@@ -23,7 +23,7 @@ angular.module('clickApp.directives')
       modelService,
       labelElementService,
       clickGameModelAreaService,
-      // clickGameModelAuraService,
+      clickGameModelAuraService,
       clickGameModelBaseService,
       // clickGameModelChargeService,
       clickGameModelCounterService,
@@ -93,7 +93,7 @@ angular.module('clickApp.directives')
         //                   scope);
       }
       function createModelElement(info, model, parent) {
-        // var aura = clickGameModelAuraService.create(svgNS, parent);
+        var aura = clickGameModelAuraService.create(svgNS, parent);
         var melee = clickGameModelMeleeService.create(svgNS, parent);
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
         // var damage = clickGameModelDamageService.create(svgNS, info, parent);
@@ -109,7 +109,7 @@ angular.module('clickApp.directives')
         //                                                 parent);
         
         return { container: parent,
-                 // aura: aura,
+                 aura: aura,
                  base: base,
                  // damage: damage,
                  los: los,
@@ -225,7 +225,7 @@ angular.module('clickApp.directives')
               updateModelPosition(img, model, element);
               updateModelSelection(game.model_selection, game.ruler,
                                    model, element);
-              // clickGameModelAuraService.update(info, model, img, element.aura);
+              clickGameModelAuraService.update(info, model, img, element.aura);
               clickGameModelBaseService.update(info, model, img, element.base);
               // clickGameModelDamageService.update(info, model, img, element.damage);
               // clickGameModelLoSService.update(info, model, img, element.damage);

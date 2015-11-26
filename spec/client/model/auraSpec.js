@@ -1,15 +1,21 @@
 'use strict';
 
-xdescribe('model auras', function() {
+describe('model auras', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
       
         this.scope = { game: { models: 'models',
@@ -29,7 +35,8 @@ xdescribe('model auras', function() {
       [ 'Cyan' , '#0FF' ],
     ], function(e, d) {
       when('user toggles '+e.aura+' aura display on models', function() {
-        this.modelsModeService.actions['toggle'+e.aura+'AuraDisplay'](this.scope);
+        this.ret = this.modelsModeService
+          .actions['toggle'+e.aura+'AuraDisplay'](this.scope);
       }, function() {
         using([
           ['first' , 'set'],
@@ -44,12 +51,15 @@ xdescribe('model auras', function() {
                 .toHaveBeenCalledWith('local', 'selection');
               expect(this.gameModelsService.findStamp)
                 .toHaveBeenCalledWith('stamp1', 'models');
-              expect(this.modelService.auraDisplay)
-                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setAuraDisplay', ee.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.auraDisplay)
+                  .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+                expect(this.gameService.executeCommand)
+                  .toHaveBeenCalledWith('onModels', 'setAuraDisplay', ee.set,
+                                        this.gameModelSelectionService.get._retVal,
+                                        this.scope, this.scope.game);
+                expect(result).toBe('game.executeCommand.returnValue');
+              });
             });
           });
         });
@@ -62,7 +72,6 @@ xdescribe('model auras', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
-        this.gameFactionsService = spyOnService('gameFactions');
       }
     ]));
 

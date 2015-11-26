@@ -280,24 +280,28 @@ angular.module('clickApp.services')
           )(scope.game.models);
         };
       }, effects);
-      // var auras = [
-      //   [ 'Red', '#F00' ],
-      //   [ 'Green', '#0F0' ],
-      //   [ 'Blue', '#00F' ],
-      //   [ 'Yellow', '#FF0' ],
-      //   [ 'Purple', '#F0F' ],
-      //   [ 'Cyan', '#0FF' ],
-      // ];
-      // R.forEach(function(aura) {
-      //   models_actions['toggle'+aura[0]+'AuraDisplay'] = function modelsToggleAuraDisplay(scope) {
-      //     var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //     var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //     var present = modelService.auraDisplay(model);
-      //     gameService.executeCommand('onModels', 'setAuraDisplay',
-      //                                (present === aura[1]) ? null : aura[1],
-      //                                stamps, scope, scope.game);
-      //   };
-      // }, auras);
+      var auras = [
+        [ 'Red', '#F00' ],
+        [ 'Green', '#0F0' ],
+        [ 'Blue', '#00F' ],
+        [ 'Yellow', '#FF0' ],
+        [ 'Purple', '#F0F' ],
+        [ 'Cyan', '#0FF' ],
+      ];
+      R.forEach(function(aura) {
+        models_actions['toggle'+aura[0]+'AuraDisplay'] = function modelsToggleAuraDisplay(scope) {
+          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+          return R.pipeP(
+            gameModelsService.findStamp$(stamps[0]),
+            modelService.auraDisplay,
+            function(present) {
+              return gameService.executeCommand('onModels', 'setAuraDisplay',
+                                                (present === aura[1]) ? null : aura[1],
+                                                stamps, scope, scope.game);
+            }
+          )(scope.game.models);
+        };
+      }, auras);
       models_actions.toggleCtrlAreaDisplay = function modelsToggleCtrlAreaDisplay(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
@@ -512,9 +516,9 @@ angular.module('clickApp.services')
         size += 10;
         models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+shift+'+area;
       }, areas);
-      // R.forEachIndexed(function(aura, index) {
-      //   models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
-      // }, auras);
+      R.addIndex(R.forEach)(function(aura, index) {
+        models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
+      }, auras);
       R.forEach(function(effect) {
         models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
       }, effects);
@@ -586,10 +590,10 @@ angular.module('clickApp.services')
           var size = area + 11;
           return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
         }, areas));
-        // ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
-        // ret = R.concat(ret, R.map(function(aura) {
-        //   return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
-        // }, auras));
+        ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
+        ret = R.concat(ret, R.map(function(aura) {
+          return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
+        }, auras));
         ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
         ret = R.concat(ret, R.map(function(effect) {
           return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
