@@ -25,7 +25,7 @@ angular.module('clickApp.services')
             }
           },
         };
-        return modelService;
+        return modelLeaderService;
       };
     }
   ]);

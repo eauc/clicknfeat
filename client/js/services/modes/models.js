@@ -39,25 +39,35 @@ angular.module('clickApp.services')
                                               stamps, scope, scope.game);
           });
       };
-      // models_actions.toggleImageDisplay = function modelsToggleImageDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isImageDisplayed(model);
-      //   gameService.executeCommand('onModels', 'setImageDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.setNextImage = function modelsSetNextImage(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'setNextImage', scope.factions,
-      //                              stamps, scope, scope.game);
-      // };
-      // models_actions.toggleWreckDisplay = function modelsToggleWreckDisplay(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isWreckDisplayed(model);
-      //   gameService.executeCommand('onModels', 'setWreckDisplay', !present,
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.toggleImageDisplay = function modelsToggleImageDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isImageDisplayed(model);
+
+            return gameService.executeCommand('onModels', 'setImageDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.setNextImage = function modelsSetNextImage(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'setNextImage', scope.factions,
+                                          stamps, scope, scope.game);
+      };
+      models_actions.toggleWreckDisplay = function modelsToggleWreckDisplay(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          function(model) {
+            var present = modelService.isWreckDisplayed(model);
+
+            return gameService.executeCommand('onModels', 'setWreckDisplay', !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       // models_actions.toggleUnitDisplay = function modelsToggleUnitDisplay(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -413,8 +423,9 @@ angular.module('clickApp.services')
         'rightClickMap': 'rightClickMap',
         'deleteSelection': 'del',
         'toggleLock': 'shift+l',
-        // 'toggleImageDisplay': 'i',
-        // 'setNextImage': 'shift+i',
+        'toggleImageDisplay': 'i',
+        'setNextImage': 'shift+i',
+        'toggleWreckDisplay': 'alt+w',
         'setOrientationUp': 'pageup',
         'setOrientationDown': 'pagedown',
         'orientToModel': 'shift+clickModel',
@@ -435,7 +446,6 @@ angular.module('clickApp.services')
         // 'toggleStrikeDisplay': 's',
         // 'toggleUnitDisplay': 'alt+u',
         // 'setUnit': 'shift+u',
-        // 'toggleWreckDisplay': 'alt+w',
         // 'toggleIncorporealDisplay': 'alt+i',
       };
       R.forEach(function(move) {
@@ -490,10 +500,10 @@ angular.module('clickApp.services')
           [ 'Delete', 'deleteSelection' ],
           [ 'Lock', 'toggleLock' ],
           // [ 'Ruler Max Len.', 'setRulerMaxLength' ],
-          // [ 'Image', 'toggle', 'image' ],
-          // [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
-          // [ 'Next', 'setNextImage', 'image' ],
-          // [ 'Wreck', 'toggleWreckDisplay', 'image' ],
+          [ 'Image', 'toggle', 'image' ],
+          [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
+          [ 'Next', 'setNextImage', 'image' ],
+          [ 'Wreck', 'toggleWreckDisplay', 'image' ],
           [ 'Orient.', 'toggle', 'orientation' ],
           [ 'Face Up', 'setOrientationUp', 'orientation' ],
           [ 'Face Down', 'setOrientationDown', 'orientation' ],

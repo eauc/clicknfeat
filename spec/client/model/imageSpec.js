@@ -6,10 +6,15 @@ describe('model image', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
+
         this.modelService = spyOnService('model');
      
         this.scope = { game: { models: 'models',
@@ -20,7 +25,7 @@ describe('model image', function() {
     ]));
 
     when('user toggles image display on models', function() {
-      this.modelsModeService.actions
+      this.ret = this.modelsModeService.actions
         .toggleImageDisplay(this.scope);
     }, function() {
       using([
@@ -36,12 +41,15 @@ describe('model image', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            expect(this.modelService.isImageDisplayed)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setImageDisplay', e.set,
-                                    this.gameModelSelectionService.get._retVal,
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.isImageDisplayed)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setImageDisplay', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
@@ -60,6 +68,37 @@ describe('model image', function() {
                                 this.scope, this.scope.game);
       });
     });
+
+    when('user toggles wreck display on models', function() {
+      this.ret = this.modelsModeService.actions
+        .toggleWreckDisplay(this.scope);
+    }, function() {
+      using([
+        ['first', 'set'],
+        [ true  , false],
+        [ false , true ],
+      ], function(e, d) {
+        when('first selected model\'s wreckDisplayed is '+e.first, function() {
+          this.modelService.isWreckDisplayed._retVal = e.first;
+        }, function() {
+          it('should toggle wreck display on local selection, '+d, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp1', 'models');
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.isWreckDisplayed)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setWreckDisplay', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
+          });
+        });
+      });
+    });
   });
 
   describe('model service', function() {
@@ -68,19 +107,23 @@ describe('model image', function() {
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
       }
     ]));
 
-    describe('getImage(<factions>)', function() {
-      it('should fetch model info from <factions>', function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+    when('getImage(<factions>)', function() {
+      this.ret = this.modelService.getImage('factions', this.model);
+    }, function() {
+      beforeEach(function() {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
         };
-
-        this.modelService.getImage('factions', {
+        this.model = {
           state: { dsp:[], img: 0, info: 'info' }
-        });
-
+        };
+      });
+      
+      it('should fetch model info from <factions>', function() {
         expect(this.gameFactionsService.getModelInfo)
           .toHaveBeenCalledWith('info', 'factions');
       });
@@ -117,106 +160,118 @@ describe('model image', function() {
           { type: 'default', width: 180, height: 180, link: 'link3' }
         ],
       ], function(e, d) {
-        it('should return image info for <model>, '+d, function() {
-          this.gameFactionsService.getModelInfo._retVal = {
-            img: e.info_img
-          };
-          
-          expect(this.modelService.getImage('factions', {
-            state: { dsp: e.dsp, img: e.img, info: 'info' }
-          })).toEqual(e.result);
-        });
-      });
-
-      when('model is a unit leader', function() {
-      }, function() {
-        using([
-          [ 'info_img', 'is_leader', 'is_displayed', 'result' ],
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'leader', width: 60, height: 60, link: 'link2' } ], true, true,
-            { type: 'leader', width: 60, height: 60, link: 'link2' }
-          ],
-          // no leader image
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ], true, true,
-            { type: 'default', width: 60, height: 60, link: 'link1' }
-          ],
-          // not leader
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'leader', width: 60, height: 60, link: 'link2' } ], false, true,
-            { type: 'default', width: 60, height: 60, link: 'link1' }
-          ],
-          // image not displayed
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'leader', width: 60, height: 60, link: 'link2' } ], true, false,
-            { type: 'leader', width: 60, height: 60, link: null }
-          ],
-        ], function(e, d) {
-          it('should return leader image info for <model> if it exists, '+d, function() {
-            this.gameFactionsService.getModelInfo._retVal = {
-              img: e.info_img
-            };
+        describe(d, function() {
+          beforeEach(function() {
+            this.gameFactionsService.getModelInfo.resolveWith = { img: e.info_img };
             this.model = {
-              state: { dsp: [], img: 0, info: 'info' }
+              state: { dsp: e.dsp, img: e.img, info: 'info' }
             };
-            this.modelService.setLeaderDisplay(e.is_leader, this.model);
-            this.modelService.setImageDisplay(e.is_displayed, this.model);
-            
-            expect(this.modelService.getImage('factions', this.model))
-              .toEqual(e.result);
+          });
+          
+          it('should return image info for <model>, '+d, function() {
+            this.thenExpect(this.ret, function(image) {
+              expect(image).toEqual(e.result);
+            });
           });
         });
       });
 
-      when('model is incorporeal', function() {
-      }, function() {
-        using([
-          [ 'info_img', 'is_incorporeal', 'is_displayed', 'result' ],
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, true,
-            { type: 'incorporeal', width: 60, height: 60, link: 'link2' }
-          ],
-          // no incorporeal image
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ], true, true,
-            { type: 'default', width: 60, height: 60, link: 'link1' }
-          ],
-          // not incorporeal
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], false, true,
-            { type: 'default', width: 60, height: 60, link: 'link1' }
-          ],
-          // image not displayed
-          [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
-              { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, false,
-            { type: 'incorporeal', width: 60, height: 60, link: null }
-          ],
-        ], function(e, d) {
-          it('should return incorporeal image info for <model> if it exists, '+d, function() {
-            this.gameFactionsService.getModelInfo._retVal = {
+      using([
+        [ 'info_img', 'is_leader', 'is_displayed', 'result' ],
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'leader', width: 60, height: 60, link: 'link2' } ],
+          true, true,
+          { type: 'leader', width: 60, height: 60, link: 'link2' }
+        ],
+        // no leader image
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ],
+          true, true,
+          { type: 'default', width: 60, height: 60, link: 'link1' }
+        ],
+        // not leader
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'leader', width: 60, height: 60, link: 'link2' } ],
+          false, true,
+          { type: 'default', width: 60, height: 60, link: 'link1' }
+        ],
+        // image not displayed
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'leader', width: 60, height: 60, link: 'link2' } ],
+          true, false,
+          { type: 'leader', width: 60, height: 60, link: null }
+        ],
+      ], function(e, d) {
+        when('model is '+(e.is_leader ? '':'not ')+'a unit leader', function() {
+          this.modelService.setLeaderDisplay(e.is_leader, this.model);
+          this.modelService.setImageDisplay(e.is_displayed, this.model);
+        }, function() {
+          beforeEach(function() {
+            this.gameFactionsService.getModelInfo.resolveWith = {
               img: e.info_img
             };
-            this.model = {
-              state: { dsp: [], img: 0, info: 'info' }
+          });
+          
+          it('should return leader image info for <model> if it exists, '+d, function() {
+            this.thenExpect(this.ret, function(image) {
+              expect(image).toEqual(e.result);
+            });
+          });
+        });
+      });
+
+      using([
+        [ 'info_img', 'is_incorporeal', 'is_displayed', 'result' ],
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, true,
+          { type: 'incorporeal', width: 60, height: 60, link: 'link2' }
+        ],
+        // no incorporeal image
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' } ], true, true,
+          { type: 'default', width: 60, height: 60, link: 'link1' }
+        ],
+        // not incorporeal
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], false, true,
+          { type: 'default', width: 60, height: 60, link: 'link1' }
+        ],
+        // image not displayed
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'incorporeal', width: 60, height: 60, link: 'link2' } ], true, false,
+          { type: 'incorporeal', width: 60, height: 60, link: null }
+        ],
+      ], function(e, d) {
+        when('model is incorporeal', function() {
+          this.modelService.setIncorporealDisplay(e.is_incorporeal, this.model);
+          this.modelService.setImageDisplay(e.is_displayed, this.model);
+        }, function() {
+          beforeEach(function() {
+            this.gameFactionsService.getModelInfo.resolveWith = {
+              img: e.info_img
             };
-            this.modelService.setIncorporealDisplay(e.is_incorporeal, this.model);
-            this.modelService.setImageDisplay(e.is_displayed, this.model);
-            
-            expect(this.modelService.getImage('factions', this.model))
-              .toEqual(e.result);
+          });
+          
+          it('should return incorporeal image info for <model> if it exists, '+d, function() {
+            this.thenExpect(this.ret, function(image) {
+              expect(image).toEqual(e.result);
+            });
           });
         });
       });
     });
 
-    describe('setNextImage(<factions>)', function() {
-      it('should fetch model info from <factions>', function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+    when('setNextImage(<factions>)', function() {
+      this.ret = this.modelService.setNextImage('factions', this.model);
+    }, function() {
+      beforeEach(function() {
+        this.model = {
+          state: { dsp:[], img: 0, info: 'info' }
+        };
+        this.gameFactionsService.getModelInfo.resolveWith = {
           img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
         };
-
-        this.modelService.setNextImage('factions', {
-          state: { dsp:[], img: 0, info: 'info' }
-        });
-
+      });
+      
+      it('should fetch model info from <factions>', function() {
         expect(this.gameFactionsService.getModelInfo)
           .toHaveBeenCalledWith('info', 'factions');
       });
@@ -238,17 +293,21 @@ describe('model image', function() {
             { type: 'wreck', width: 60, height: 60, link: 'link2' },
             { type: 'default', width: 180, height: 180, link: 'link3' } ], 1, 0 ],
       ], function(e, d) {
-        it('should set next image <model>, '+d, function() {
-          this.gameFactionsService.getModelInfo._retVal = {
-            img: e.info_img
-          };
-          this.model = {
-            state: { img: e.img, info: 'info' }
-          };
+        describe(d, function() {
+          beforeEach(function() {
+            this.model = {
+              state: { img: e.img, info: 'info' }
+            };
+            this.gameFactionsService.getModelInfo.resolveWith = {
+              img: e.info_img
+            };
+          });
           
-          this.modelService.setNextImage('factions', this.model);
-
-          expect(this.model.state.img).toBe(e.next_img);
+          it('should set next image <model>, '+d, function() {
+            this.thenExpect(this.ret, function() {
+              expect(this.model.state.img).toBe(e.next_img);
+            });
+          });
         });
       });
     });
@@ -277,6 +336,89 @@ describe('model image', function() {
         
         this.modelService.setImageDisplay(false, this.model);
         expect(this.modelService.isImageDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
+
+    when('getWreckImage(<factions>)', function() {
+      this.ret = this.modelService.getWreckImage('factions', this.model);
+    }, function() {
+      beforeEach(function() {
+        this.model = {
+          state: { dsp:[], img: 0, info: 'info' }
+        };
+        this.gameFactionsService.getModelInfo.resolveWith = {
+          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
+        };
+      });
+      
+      it('should fetch model info from <factions>', function() {
+        expect(this.gameFactionsService.getModelInfo)
+          .toHaveBeenCalledWith('info', 'factions');
+      });
+
+      using([
+        [ 'info_img', 'dsp', 'result' ],
+        // now wreck -> return first default without link
+        [ [ { type: 'default', width: 60, height: 60, link: 'link' } ], ['w'],
+          { type: 'default', width: 60, height: 60, link: null }
+        ],
+        // info has multiple images > return wreck image
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'wreck', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], ['i'],
+          { type: 'wreck', width: 60, height: 60, link: 'link2' }
+        ],
+        // image not displayed > return wreck image without link
+        [ [ { type: 'default', width: 60, height: 60, link: 'link1' },
+            { type: 'wreck', width: 60, height: 60, link: 'link2' },
+            { type: 'default', width: 180, height: 180, link: 'link3' } ], ['a'],
+          { type: 'wreck', width: 60, height: 60, link: null }
+        ],
+      ], function(e, d) {
+        describe(d, function() {
+          beforeEach(function() {
+            this.gameFactionsService.getModelInfo.resolveWith = {
+              img: e.info_img
+            };
+            this.model = {
+              state: { dsp: e.dsp, info: 'info' }
+            };
+          });
+
+          it('should return image info for <model>, '+d, function() {
+            this.thenExpect(this.ret, function(image) {
+              expect(image).toEqual(e.result);
+            });
+          });
+        });
+      });
+    });
+
+    describe('toggleWreckDisplay()', function() {
+      it('should toggle wreck display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.toggleWreckDisplay(this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.toggleWreckDisplay(this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeFalsy();
+      });
+    });
+
+    describe('setWreckDisplay(<set>)', function() {
+      it('should set wreck display for <model>', function() {
+        this.model = { state: { dsp: [] } };
+        
+        this.modelService.setWreckDisplay(true, this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
+          .toBeTruthy();
+        
+        this.modelService.setWreckDisplay(false, this.model);
+        expect(this.modelService.isWreckDisplayed(this.model))
           .toBeFalsy();
       });
     });

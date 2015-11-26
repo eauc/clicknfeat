@@ -18,20 +18,20 @@ angular.module('clickApp.services')
                   R.filter(R.propEq('type','default')),
                   R.prop(model.state.img)
                 )(info_img);
-                // if(modelService.isLeaderDisplayed(model)) {
-                //   img = R.pipe(
-                //     R.filter(R.propEq('type','leader')),
-                //     R.head,
-                //     R.defaultTo(img)
-                //   )(info_img);
-                // }
-                // if(modelService.isIncorporealDisplayed(model)) {
-                //   img = R.pipe(
-                //     R.filter(R.propEq('type','incorporeal')),
-                //     R.head,
-                //     R.defaultTo(img)
-                //   )(info_img);
-                // }
+                if(modelService.isLeaderDisplayed(model)) {
+                  img = R.pipe(
+                    R.filter(R.propEq('type','leader')),
+                    R.head,
+                    R.defaultTo(img)
+                  )(info_img);
+                }
+                if(modelService.isIncorporealDisplayed(model)) {
+                  img = R.pipe(
+                    R.filter(R.propEq('type','incorporeal')),
+                    R.head,
+                    R.defaultTo(img)
+                  )(info_img);
+                }
                 var link = modelService.isImageDisplayed(model) ? img.link : null;
                 return R.assoc('link', link, img);
               }

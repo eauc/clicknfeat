@@ -10,7 +10,7 @@ angular.module('clickApp.services')
             return !!R.find(R.equals('w'), model.state.dsp);
           },
           getWreckImage: function modelGetWreckImage(factions, model) {
-            return R.pipeR(
+            return R.pipeP(
               gameFactionsService.getModelInfo$(model.state.info),
               R.prop('img'),
               function(info_img) {
