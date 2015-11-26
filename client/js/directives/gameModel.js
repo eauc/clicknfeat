@@ -13,7 +13,7 @@ angular.module('clickApp.directives')
     // 'clickGameModelCharge',
     // 'clickGameModelCounter',
     // 'clickGameModelDamage',
-    // 'clickGameModelIcon',
+    'clickGameModelIcon',
     // 'clickGameModelLoS',
     // 'clickGameModelMelee',
     function(
@@ -24,11 +24,11 @@ angular.module('clickApp.directives')
       labelElementService,
       // clickGameModelAreaService,
       // clickGameModelAuraService,
-      clickGameModelBaseService
+      clickGameModelBaseService,
       // clickGameModelChargeService,
       // clickGameModelCounterService,
       // clickGameModelDamageService,
-      // clickGameModelIconService,
+      clickGameModelIconService
       // clickGameModelLoSService,
       // clickGameModelMeleeService
       // labelElementService,
@@ -102,7 +102,7 @@ angular.module('clickApp.directives')
         // var label = labelElementService.create(svgNS, over_models_container);
         // var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
         // var unit = labelElementService.create(svgNS, parent);
-        // var icon = clickGameModelIconService.create(svgNS, parent);
+        var icon = clickGameModelIconService.create(svgNS, parent);
         // var area = clickGameModelAreaService.create(svgNS, parent);
         // var charge = clickGameModelChargeService.create(svgNS,
         //                                                 under_models_container,
@@ -116,7 +116,7 @@ angular.module('clickApp.directives')
                  // label: label,
                  // counter: counter,
                  // unit: unit,
-                 // icon: icon,
+                 icon: icon,
                  // area: area,
                  // melee: melee,
                  // charge: charge,
@@ -235,7 +235,7 @@ angular.module('clickApp.directives')
               //                                     info, model, img, element.counter);
               // updateUnit(map_flipped, zoom_factor,
               //            img, info, model, element);
-              // clickGameModelIconService.update(info, model, img, element.icon);
+              clickGameModelIconService.update(info, model, img, element.icon);
               // clickGameModelAreaService.update(factions, info, model, img, element.area);
               // clickGameModelMeleeService.update(info, model, img, element.melee);
               // clickGameModelChargeService.update(map_flipped, zoom_factor, scope.game,

@@ -39,13 +39,15 @@ angular.module('clickApp.services')
       //   }
       //   defaultModeService.actions.clickModel(scope, event, dom_event);
       // };
-      // models_actions.toggleLock = function modelsToggleLock(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.isLocked(model);
-      //   gameService.executeCommand('lockModels', !present,
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.toggleLock = function modelsToggleLock(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameModelsService.findStamp(stamps[0], scope.game.models)
+          .then(function(model) {
+            var present = modelService.isLocked(model);
+            return gameService.executeCommand('lockModels', !present,
+                                              stamps, scope, scope.game);
+          });
+      };
       // models_actions.toggleImageDisplay = function modelsToggleImageDisplay(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -393,6 +395,7 @@ angular.module('clickApp.services')
         'clickMap': 'clickMap',
         'rightClickMap': 'rightClickMap',
         'deleteSelection': 'del',
+        'toggleLock': 'shift+l',
         // 'toggleImageDisplay': 'i',
         // 'setNextImage': 'shift+i',
         // 'setOrientationUp': 'pageup',
@@ -416,7 +419,6 @@ angular.module('clickApp.services')
         // 'setUnit': 'shift+u',
         // 'toggleWreckDisplay': 'alt+w',
         // 'toggleIncorporealDisplay': 'alt+i',
-        // 'toggleLock': 'shift+l',
       };
       // R.forEach(function(move) {
       //   models_default_bindings[move[0]] = move[1];
@@ -468,7 +470,7 @@ angular.module('clickApp.services')
         options = R.defaultTo({}, options);
         var ret = [
           [ 'Delete', 'deleteSelection' ],
-          // [ 'Lock', 'toggleLock' ],
+          [ 'Lock', 'toggleLock' ],
           // [ 'Ruler Max Len.', 'setRulerMaxLength' ],
           // [ 'Image', 'toggle', 'image' ],
           // [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
