@@ -14,7 +14,7 @@ angular.module('clickApp.directives')
     // 'clickGameModelCounter',
     // 'clickGameModelDamage',
     'clickGameModelIcon',
-    // 'clickGameModelLoS',
+    'clickGameModelLoS',
     // 'clickGameModelMelee',
     function(
       gameMapService,
@@ -28,10 +28,9 @@ angular.module('clickApp.directives')
       // clickGameModelChargeService,
       // clickGameModelCounterService,
       // clickGameModelDamageService,
-      clickGameModelIconService
-      // clickGameModelLoSService,
+      clickGameModelIconService,
+      clickGameModelLoSService
       // clickGameModelMeleeService
-      // labelElementService,
       // gameRulerService,
     ) {
       var map;
@@ -98,7 +97,7 @@ angular.module('clickApp.directives')
         // var melee = clickGameModelMeleeService.create(svgNS, parent);
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
         // var damage = clickGameModelDamageService.create(svgNS, info, parent);
-        // var los = clickGameModelLoSService.create(svgNS, info, parent);
+        var los = clickGameModelLoSService.create(svgNS, info, parent);
         // var label = labelElementService.create(svgNS, over_models_container);
         // var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
         // var unit = labelElementService.create(svgNS, parent);
@@ -113,6 +112,7 @@ angular.module('clickApp.directives')
                  // aura: aura,
                  base: base,
                  // damage: damage,
+                 los: los,
                  // label: label,
                  // counter: counter,
                  // unit: unit,
@@ -225,6 +225,7 @@ angular.module('clickApp.directives')
               // clickGameModelAuraService.update(info, model, img, element.aura);
               clickGameModelBaseService.update(info, model, img, element.base);
               // clickGameModelDamageService.update(info, model, img, element.damage);
+              // clickGameModelLoSService.update(info, model, img, element.damage);
               // labelElementService.update(map_flipped,
               //                            zoom_factor,
               //                            label_center.flip,
