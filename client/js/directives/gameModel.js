@@ -98,7 +98,7 @@ angular.module('clickApp.directives')
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
         // var damage = clickGameModelDamageService.create(svgNS, info, parent);
         var los = clickGameModelLoSService.create(svgNS, info, parent);
-        // var label = labelElementService.create(svgNS, over_models_container);
+        var label = labelElementService.create(svgNS, over_models_container);
         var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
         var unit = labelElementService.create(svgNS, parent);
         var icon = clickGameModelIconService.create(svgNS, parent);
@@ -113,7 +113,7 @@ angular.module('clickApp.directives')
                  base: base,
                  // damage: damage,
                  los: los,
-                 // label: label,
+                 label: label,
                  counter: counter,
                  unit: unit,
                  icon: icon,
@@ -126,11 +126,10 @@ angular.module('clickApp.directives')
         return function _gameModelOnDestroy() {
           console.log('gameModelOnDestroy');
 
+          over_models_container.removeChild(element.label.label);
           clickGameModelCounterService.cleanup(under_models_container,
                                                over_models_container,
                                                element.counter);
-          // over_models_container.removeChild(element.label.label);
-          // over_models_container.removeChild(element.counter.label);
           // over_models_container.removeChild(element.charge.label.label);
           // over_models_container.removeChild(element.charge.target);
           // under_models_container.removeChild(element.charge.path);
@@ -138,13 +137,13 @@ angular.module('clickApp.directives')
       }
       function gameModelOnMapFlipped(info, model, element) {
         return function _gameModelOnMapFlipped() {
-          // var label_center = computeLabelCenter(info, model);
-          // labelElementService.updateOnFlipMap(map,
-          //                                     label_center.flip,
-          //                                     element.label);
-          // labelElementService.updateOnFlipMap(map,
-          //                                     model.state,
-          //                                     element.counter);
+          var label_center = computeLabelCenter(info, model);
+          labelElementService.updateOnFlipMap(map,
+                                              label_center.flip,
+                                              element.label);
+          labelElementService.updateOnFlipMap(map,
+                                              model.state,
+                                              element.counter[0]);
           // if(modelService.isCharging(model) ||
           //    modelService.isPlacing(model)) {
           //   labelElementService.updateOnFlipMap(map,
@@ -219,8 +218,8 @@ angular.module('clickApp.directives')
            modelService.getWreckImage(factions, model) :
            modelService.getImage(factions, model))
             .then(function(img) {
-              // var label_text = modelService.fullLabel(model);
-              // var label_center = computeLabelCenter(info, model);
+              var label_text = modelService.fullLabel(model);
+              var label_center = computeLabelCenter(info, model);
 
               updateModelPosition(img, model, element);
               updateModelSelection(game.model_selection, game.ruler,
@@ -229,12 +228,12 @@ angular.module('clickApp.directives')
               clickGameModelBaseService.update(info, model, img, element.base);
               // clickGameModelDamageService.update(info, model, img, element.damage);
               // clickGameModelLoSService.update(info, model, img, element.damage);
-              // labelElementService.update(map_flipped,
-              //                            zoom_factor,
-              //                            label_center.flip,
-              //                            label_center.text,
-              //                            label_text,
-              //                            element.label);
+              labelElementService.update(map_flipped,
+                                         zoom_factor,
+                                         label_center.flip,
+                                         label_center.text,
+                                         label_text,
+                                         element.label);
               clickGameModelCounterService.update(map_flipped, zoom_factor,
                                                   info, model, img, element.counter);
               updateUnit(map_flipped, zoom_factor,

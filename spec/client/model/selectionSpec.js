@@ -146,9 +146,9 @@ describe('select model', function() {
       });
     });
 
-    xwhen('user right-click on model', function() {
-      this.defaultModeService.actions
-        .rightClickModel(this.scope, this.event);
+    when('user right-click on model', function() {
+      this.ret = this.defaultModeService.actions
+        .modelSelectionDetail(this.scope, this.event);
     }, function() {
       it('should open model selection detail', function() {
         expect(this.scope.gameEvent)
@@ -160,6 +160,7 @@ describe('select model', function() {
         expect(this.gameService.executeCommand)
           .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
                                 this.scope, this.scope.game);
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
   });

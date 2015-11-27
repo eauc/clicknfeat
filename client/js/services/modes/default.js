@@ -41,12 +41,12 @@ angular.module('clickApp.services')
                                             scope, scope.game);
         }
       };
-      // default_actions.rightClickModel = function defaultRightClickModel(scope, event) {
-      //   var stamp = event.target.state.stamp;
-      //   scope.gameEvent('openSelectionDetail', 'model', event.target);
-      //   return gameService.executeCommand('setModelSelection', 'set', [stamp],
-      //                                     scope, scope.game);
-      // };
+      default_actions.modelSelectionDetail = function defaultModelSelectionDetail(scope, event) {
+        var stamp = event['click#'].target.state.stamp;
+        scope.gameEvent('openSelectionDetail', 'model', event['click#'].target);
+        return gameService.executeCommand('setModelSelection', 'set', [stamp],
+                                          scope, scope.game);
+      };
       default_actions.selectTemplate = function defaultSelectTemplate(scope, event) {
         scope.game.template_selection =
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
@@ -94,6 +94,7 @@ angular.module('clickApp.services')
         enterRulerMode: 'shift+r',
         setModelSelection: 'clickModel',
         toggleModelSelection: 'ctrl+clickModel',
+        modelSelectionDetail: 'rightClickModel',
         selectTemplate: 'clickTemplate',
         detailTemplate: 'rightClickTemplate',
       };

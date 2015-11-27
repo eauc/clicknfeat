@@ -1,63 +1,6 @@
 'use strict';
 
-xdescribe('label model', function() {
-  describe('clickGameSelectionDetailCtrl', function(c) {
-    beforeEach(inject([
-      '$rootScope',
-      '$controller',
-      function($rootScope,
-               $controller) {
-        this.gameService = spyOnService('game');
-
-        this.createController = function(params) {
-          this.scope = $rootScope.$new();
-          this.scope.type = 'model';
-          this.scope.selection = { state: { stamp: 'stamp' } };
-          this.scope.game = 'game';
-
-          $controller('clickGameSelectionDetailCtrl', { 
-            '$scope': this.scope,
-          });
-          $rootScope.$digest();
-        };
-        this.createController();
-      }
-    ]));
-
-    when('user adds a label to model selection', function() {
-      this.scope.doAddLabel();
-    }, function() {
-      when('new label is not empty', function() {
-        this.scope.label = { new: '    yoo ' };
-      }, function() {
-        it('should execute onModels/addLabel command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'addLabel', 'yoo', ['stamp'],
-                                  this.scope, this.scope.game);
-        });
-      });
-
-      when('new label is empty', function() {
-        this.scope.label = { new: '     ' };
-      }, function() {
-        it('should do nothing', function() {
-          expect(this.gameService.executeCommand)
-            .not.toHaveBeenCalled();
-        });
-      });
-    });
-
-    when('user removes a label to model selection', function() {
-      this.scope.doRemoveLabel('label');
-    }, function() {
-      it('should execute onModels/removeLabel command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'removeLabel', 'label', ['stamp'],
-                                this.scope, this.scope.game);
-      });
-    });
-  });
-
+describe('label model', function() {
   describe('model service', function() {
     beforeEach(inject([
       'model',

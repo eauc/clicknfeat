@@ -17,8 +17,10 @@ angular.module('clickApp.controllers')
           $scope.edit.max_deviation = R.defaultTo(0, R.path(['state','m'], $scope.selection));
         },
         model: function updateOnOpenModel() {
-          $scope.info = gameFactionsService.getModelInfo($scope.selection.state.info,
-                                                         $scope.factions);
+          gameFactionsService.getModelInfo($scope.selection.state.info, $scope.factions)
+            .then(function(info) {
+              $scope.info = info;
+            });
         },
       };
       $scope.show = { info: false };
@@ -41,13 +43,15 @@ angular.module('clickApp.controllers')
         if(R.length(new_label) === 0) return;
         
         $scope.doExecuteCommand(cmd, 'addLabel', new_label,
-                                [$scope.selection.state.stamp]);
+                                [$scope.selection.state.stamp])
+          .then(function() { $scope.$digest(); });
         $scope.edit.label = '';
       };
       $scope.doRemoveLabel = function doRemoveLabel(label) {
         var cmd = ($scope.type === 'template') ? 'onTemplates' : 'onModels';
         $scope.doExecuteCommand(cmd, 'removeLabel', label,
-                                [$scope.selection.state.stamp]);
+                                [$scope.selection.state.stamp])
+          .then(function() { $scope.$digest(); });
       };
     }
   ]);

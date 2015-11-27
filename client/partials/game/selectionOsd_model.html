@@ -10,10 +10,12 @@
   </div>
   <div class="panel-content">
     <div ng-if="info.unit_name">
-      <strong>Unit :</strong> {{info.unit_name}}
+      <strong>Unit :</strong>
+      {{info.unit_name}}
     </div>
     <div>
-      <strong>Name :</strong> {{info.name}}
+      <strong>Name :</strong>
+      {{info.name}}
     </div>
     <div>
       <strong>Created By :</strong>
@@ -39,16 +41,21 @@
     <div class="bg-info"
          ng-show="show.info">
       <div ng-repeat="d in info.desc">
-        <strong>{{d[0]}}</strong> {{d[1]}}
+        <strong>{{d[0]}}</strong>
+        {{d[1]}}
       </div>
     </div>
     <form ng-submit="doAddLabel()">
-      <label for="new-label">Label</label>
-      <input id="new-label"
-             type="text"
-             class="form-control"
-             ng-model="label.new"
-             placeholder="New Label" />
+      <div class="form-group">
+        <label for="new-label">
+          Label
+        </label>
+        <input id="new-label"
+               class="form-control"
+               type="text"
+               ng-model="edit.label"
+               placeholder="New Label" />
+      </div>
       <button type="button"
               class="btn btn-default"
               ng-repeat="l in selection.state.l"
