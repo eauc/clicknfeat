@@ -122,6 +122,37 @@ describe('model check state', function() {
           });
         });
       });
+
+      using([
+        [ 'within', 'pos'              , 'res'                      ],
+        [ false   , { x: 480, y: 240 } , { x: 340    , y: 240     } ],
+        [ true    , { x: 480, y: 240 } , { x: 355.748, y: 240     } ],
+        [ false   , { x: 0, y: 240 }   , { x: 140    , y: 240     } ],
+        [ true    , { x: 0, y: 240 }   , { x: 124.252, y: 240     } ],
+        [ false   , { x: 240, y: 480 } , { x: 240    , y: 340     } ],
+        [ true    , { x: 240, y: 480 } , { x: 240    , y: 355.748 } ],
+        [ false   , { x: 240, y: 0 }   , { x: 240    , y: 140     } ],
+        [ true    , { x: 240, y: 0 }   , { x: 240    , y: 124.252 } ],
+        [ false   , { x: 0, y: 0 }     , { x: 169.28932188134524 , y: 169.28932188134524 } ],
+        [ true    , { x: 0, y: 0 }     , { x: 158.1538042912195  , y: 158.1538042912195  } ],
+        [ false   , { x: 480, y: 480 } , { x: 310.71067811865476 , y: 310.71067811865476 } ],
+        [ true    , { x: 480, y: 480 } , { x: 321.8461957087805  , y: 321.8461957087805  } ],
+      ], function(e, d) {
+        when(d, function() {
+          this.model.state = R.merge(e.pos, {
+            info: 'info',
+            pml: [ 10, e.within ],
+            pla: { s: { x: 240, y: 240 } }
+          });
+        }, function() {
+          it('should ensure max place distance, '+d, function() {
+            this.thenExpect(this.ret, function(model) {
+              expect(R.pick(['x','y'], model.state))
+                .toEqual(e.res);
+            });
+          });
+        });
+      });
     });
   });
 });

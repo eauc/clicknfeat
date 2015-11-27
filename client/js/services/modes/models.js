@@ -209,32 +209,37 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      // models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var value = R.defaultTo(0, modelService.placeMaxLength(model));
-      //   promptService.prompt('prompt',
-      //                        'Set place max length :',
-      //                        value)
-      //     .then(function(value) {
-      //       value = (value === 0) ? null : value;
-      //       gameService.executeCommand('onModels', 'setPlaceMaxLength', value,
-      //                                  stamps, scope, scope.game);
-      //       return value;
-      //     })
-      //     .catch(function(error) {
-      //       gameService.executeCommand('onModels', 'setPlaceMaxLength', null,
-      //                                  stamps, scope, scope.game);
-      //       return null;
-      //     });
-      // };
-      // models_actions.togglePlaceWithin = function modelsTogglePlaceWithin(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var present = modelService.placeWithin(model);
-      //   gameService.executeCommand('onModels', 'setPlaceWithin', !present,
-      //                              stamps, scope, scope.game);
-      // };
+      models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.placeMaxLength,
+          R.defaultTo(0),
+          function(value) {
+            return promptService.prompt('prompt','Set place max length :', value)
+              .catch(R.always(null));
+          },
+          function(value) {
+            value = (value === 0) ? null : value;
+
+            return gameService.executeCommand('onModels',
+                                              'setPlaceMaxLength', scope.factions, value,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
+      models_actions.togglePlaceWithin = function modelsTogglePlaceWithin(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.placeWithin,
+          function(present) {
+            return gameService.executeCommand('onModels',
+                                              'setPlaceWithin', scope.factions, !present,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       models_actions.toggleLeaderDisplay = function modelsToggleLeaderDisplay(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
@@ -510,8 +515,8 @@ angular.module('clickApp.services')
         'toggleCtrlAreaDisplay': 'shift+c',
         // 'setRulerMaxLength': 'shift+m',
         'setChargeMaxLength': 'shift+m',
-        // 'setPlaceMaxLength': 'shift+p',
-        // 'togglePlaceWithin': 'shift+w',
+        'setPlaceMaxLength': 'shift+p',
+        'togglePlaceWithin': 'shift+w',
         'toggleMeleeDisplay': 'm',
         'toggleReachDisplay': 'r',
         'toggleStrikeDisplay': 's',
@@ -625,15 +630,15 @@ angular.module('clickApp.services')
           ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
         }
         ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
-        // ret = R.append([ 'Place', 'toggle', 'place' ], ret);
-        // if(R.prop('start_place', options)) {
-        //   ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
-        // }
-        // if(R.prop('end_place', options)) {
-        //   ret = R.append([ 'End', 'endPlace', 'place' ], ret);
-        // }
-        // ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
-        // ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
+        ret = R.append([ 'Place', 'toggle', 'place' ], ret);
+        if(R.prop('start_place', options)) {
+          ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
+        }
+        if(R.prop('end_place', options)) {
+          ret = R.append([ 'End', 'endPlace', 'place' ], ret);
+        }
+        ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
+        ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
         ret = R.concat(ret, [ [ 'Unit', 'toggle', 'unit' ],
                               [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
                               [ 'Set #', 'setUnit', 'unit' ],

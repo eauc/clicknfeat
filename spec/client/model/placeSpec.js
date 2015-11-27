@@ -1,13 +1,16 @@
 'use strict';
 
-xdescribe('model place', function() {
+describe('model place', function() {
   describe('modelMode service', function() {
     beforeEach(inject([
       'modelMode',
       function(modelModeService) {
         this.modelModeService = modelModeService;
-        this.modesService = spyOnService('modes');
+
         this.gameService = spyOnService('game');
+        mockReturnPromise(this.gameService.executeCommand);
+        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
         this.scope = { game: { model_selection: 'selection',
@@ -15,26 +18,32 @@ xdescribe('model place', function() {
                              },
                        factions: 'factions',
                        modes: 'modes',
+                       doSwitchToMode: jasmine.createSpy('doSwitchToMode'),
                      };
       }
     ]));
 
     when('user starts place on model', function() {
-      this.modelModeService.actions.startPlace(this.scope);
+      this.ret = this.modelModeService.actions
+        .startPlace(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
       });
 
       it('should start place for model', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'startPlace', ['stamp'],
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onModels', 'startPlace', ['stamp'],
+                                  this.scope, this.scope.game);
+        });
       });
 
       it('should switch to ModelPlace mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('ModelPlace', this.scope, 'modes');
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.doSwitchToMode)
+            .toHaveBeenCalledWith('ModelPlace');
+        });
       });
     });
   });
@@ -44,26 +53,38 @@ xdescribe('model place', function() {
       'modelPlaceMode',
       function(modelPlaceModeService) {
         this.modelPlaceModeService = modelPlaceModeService;
+
         this.modesService = spyOnService('modes');
+
         this.gameService = spyOnService('game');
+        mockReturnPromise(this.gameService.executeCommand);
+        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
+
         this.modelService = spyOnService('model');
-        this.modelService.isCharging._retVal = false;
+        // this.modelService.isCharging._retVal = false;
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
+
         this.modelsModeService = spyOnService('modelsMode');
-        spyOn(this.modelsModeService.actions, 'clickModel');
+        // spyOn(this.modelsModeService.actions, 'clickModel');
       
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
                              },
                        factions: 'factions',
                        modes: 'modes',
+                       doSwitchToMode: jasmine.createSpy('doSwitchToMode'),
                      };
       }
     ]));
 
     when('user ends place on model', function() {
-      this.modelPlaceModeService.actions.endPlace(this.scope);
+      this.ret = this.modelPlaceModeService.actions
+        .endPlace(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -76,118 +97,136 @@ xdescribe('model place', function() {
       });
 
       it('should switch to Model mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Model', this.scope, 'modes');
-      });
-    });
-
-    when('user shift click on model', function() {
-      this.modelPlaceModeService.actions
-        .clickModel(this.scope, this.event, { shiftKey: true });
-    }, function() {
-      beforeEach(function() {
-        this.gameModelSelectionService.get._retVal = ['stamp'];
-        this.gameModelsService.findStamp._retVal = {
-          state: { stamp: 'stamp' }
-        };
-        this.event = { target: { state: { stamp: 'target' } } };
-      });
-
-      when('target is the same as selection', function() {
-        this.event.target.state.stamp = 'stamp';
-      }, function() {
-        it('should forward to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event, { shiftKey: true });
-        });
-      });
-
-      when('target is another model', function() {
-      }, function() {
-        it('should set place target for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setPlaceTarget',
-                                  this.scope.factions, this.event.target,
-                                  ['stamp'], this.scope, this.scope.game);
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.doSwitchToMode)
+            .toHaveBeenCalledWith('Model');
         });
       });
     });
 
-    when('user ctrl click on model', function() {
-      this.modelPlaceModeService.actions
-        .clickModel(this.scope, this.event, { ctrlKey: true });
+    when('user set target model', function() {
+      this.ret = this.modelPlaceModeService.actions
+        .setTargetModel(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
-        this.gameModelsService.findStamp._retVal = {
+        this.gameModelsService.findStamp.resolveWith = {
           state: { stamp: 'stamp' }
         };
-        this.event = { target: { state: { stamp: 'target' } } };
+        this.target = { state: { stamp: 'target' } };
+        this.event = { 'click#': { target: this.target } };
       });
 
       when('target is the same as selection', function() {
-        this.event.target.state.stamp = 'stamp';
+        this.target.state.stamp = 'stamp';
       }, function() {
-        it('should forward to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event, { ctrlKey: true });
+        it('should do nothing', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameService.executeCommand)
+              .not.toHaveBeenCalled();
+          });
         });
       });
 
       when('target is another model', function() {
+        this.target.state.stamp = 'target';
       }, function() {
         it('should set place target for model', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setPlaceOrigin',
-                                  this.scope.factions, this.event.target,
-                                  ['stamp'], this.scope, this.scope.game);
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setPlaceTarget',
+                                    'factions', this.target,
+                                    ['stamp'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
+        });
+      });
+    });
+
+    when('user set origin model', function() {
+      this.ret = this.modelPlaceModeService.actions
+        .toggleModelSelection(this.scope, this.event);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+        this.gameModelsService.findStamp.resolveWith = {
+          state: { stamp: 'stamp' }
+        };
+        this.target = { state: { stamp: 'target' } };
+        this.event = { 'click#': { target: this.target } };
+      });
+
+      when('origin is the same as selection', function() {
+        this.target.state.stamp = 'stamp';
+      }, function() {
+        it('should do nothing', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameService.executeCommand)
+              .not.toHaveBeenCalled();
+          });
+        });
+      });
+
+      when('origin is another model', function() {
+        this.target.state.stamp = 'origin';
+      }, function() {
+        it('should set place target for model', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setPlaceOrigin',
+                                    'factions', this.target,
+                                    ['stamp'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });
 
     using([
-      ['move'            , 'cmd'         , 'flipMove'    , 'small'],
-      ['moveFront'       , 'moveFront'   , 'moveFront'   , false  ],
-      ['moveFrontSmall'  , 'moveFront'   , 'moveFront'   , true   ],
-      ['moveBack'        , 'moveBack'    , 'moveBack'    , false  ],
-      ['moveBackSmall'   , 'moveBack'    , 'moveBack'    , true   ],
-      ['rotateLeft'      , 'rotateLeft'  , 'rotateLeft'  , false  ],
-      ['rotateLeftSmall' , 'rotateLeft'  , 'rotateLeft'  , true   ],
-      ['rotateRight'     , 'rotateRight' , 'rotateRight' , false  ],
-      ['rotateRightSmall', 'rotateRight' , 'rotateRight' , true   ],
-      ['shiftUp'         , 'shiftUp'     , 'shiftDown'   , false  ],
-      ['shiftUpSmall'    , 'shiftUp'     , 'shiftDown'   , true   ],
-      ['shiftDown'       , 'shiftDown'   , 'shiftUp'     , false  ],
-      ['shiftDownSmall'  , 'shiftDown'   , 'shiftUp'     , true   ],
-      ['shiftLeft'       , 'shiftLeft'   , 'shiftRight'  , false  ],
-      ['shiftLeftSmall'  , 'shiftLeft'   , 'shiftRight'  , true   ],
-      ['shiftRight'      , 'shiftRight'  , 'shiftLeft'   , false  ],
-      ['shiftRightSmall' , 'shiftRight'  , 'shiftLeft'   , true   ],
+      ['action'          , 'flipped' , 'move'        , 'small'],
+      ['moveFront'       , false     , 'moveFront'   , false  ],
+      ['moveFront'       , true      , 'moveFront'   , false  ],
+      ['moveFrontSmall'  , false     , 'moveFront'   , true   ],
+      ['moveFrontSmall'  , true      , 'moveFront'   , true   ],
+      ['moveBack'        , false     , 'moveBack'    , false  ],
+      ['moveBack'        , true      , 'moveBack'    , false  ],
+      ['moveBackSmall'   , false     , 'moveBack'    , true   ],
+      ['moveBackSmall'   , true      , 'moveBack'    , true   ],
+      ['rotateRight'     , false     , 'rotateRight' , false  ],
+      ['rotateRight'     , true      , 'rotateRight' , false  ],
+      ['rotateRightSmall', false     , 'rotateRight' , true   ],
+      ['rotateRightSmall', true      , 'rotateRight' , true   ],
+      ['shiftUp'         , false     , 'shiftUp'     , false  ],
+      ['shiftUp'         , true      , 'shiftDown'   , false  ],
+      ['shiftUpSmall'    , false     , 'shiftUp'     , true   ],
+      ['shiftUpSmall'    , true      , 'shiftDown'   , true   ],
+      ['shiftDown'       , false     , 'shiftDown'   , false  ],
+      ['shiftDown'       , true      , 'shiftUp'     , false  ],
+      ['shiftDownSmall'  , false     , 'shiftDown'   , true   ],
+      ['shiftDownSmall'  , true      , 'shiftUp'     , true   ],
+      ['shiftLeft'       , false     , 'shiftLeft'   , false  ],
+      ['shiftLeft'       , true      , 'shiftRight'  , false  ],
+      ['shiftLeftSmall'  , false     , 'shiftLeft'   , true   ],
+      ['shiftLeftSmall'  , true      , 'shiftRight'  , true   ],
+      ['shiftRight'      , false     , 'shiftRight'  , false  ],
+      ['shiftRight'      , true      , 'shiftLeft'   , false  ],
+      ['shiftRightSmall' , false     , 'shiftRight'  , true   ],
+      ['shiftRightSmall' , true      , 'shiftLeft'   , true   ],
     ], function(e, d) {
-      when('user '+e.move+' on model', function() {
-        this.modelPlaceModeService.actions[e.move](this.scope);
+      when('user '+e.action+' on model, '+d, function() {
+        this.ret = this.modelPlaceModeService
+          .actions[e.action](this.scope);
       }, function() {
         beforeEach(function() {
           this.gameModelSelectionService.get._retVal = ['stamp'];
-          spyOn(this.modelsModeService.actions, e.move);
+          this.scope.ui_state = { flip_map : e.flipped };
         });
 
         it('should place-move model', function() {
           expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.cmd+'Place',
-                                  this.scope.factions, e.small,
+            .toHaveBeenCalledWith('onModels', e.move+'Place',
+                                  'factions', e.small,
                                   ['stamp'], this.scope, this.scope.game);
-        });
-
-        when('map is flipped', function() {
-          this.scope.ui_state = { flip_map : true };
-        }, function() {
-          it('should place-flipMove model', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', e.flipMove+'Place',
-                                    this.scope.factions, e.small,
-                                    ['stamp'], this.scope, this.scope.game);
-          });
         });
       });
     });
@@ -198,11 +237,19 @@ xdescribe('model place', function() {
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.modelService = spyOnService('model');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
-      
+
+        this.promptService.prompt.resolveWith = 71;
+        
         this.scope = { game: { model_selection: 'selection',
                                models: 'models'
                              },
@@ -211,12 +258,13 @@ xdescribe('model place', function() {
       }
     ]));
 
-    describe('when user set place max length', function() {
+    when('user set place max length', function() {
+      this.ret = this.modelsModeService.actions
+        .setPlaceMaxLength(this.scope);
+    }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
         this.modelService.placeMaxLength._retVal = 42;
-
-        this.modelsModeService.actions.setPlaceMaxLength(this.scope);
       });
 
       it('should fetch first model\'s place max length', function() {
@@ -224,15 +272,33 @@ xdescribe('model place', function() {
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameModelsService.findStamp)
           .toHaveBeenCalledWith('stamp1', 'models');
-        expect(this.modelService.placeMaxLength)
-          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.placeMaxLength)
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        });
       });
       
       it('should prompt user for max length', function() {
-        expect(this.promptService.prompt)
-          .toHaveBeenCalledWith('prompt',
-                                'Set place max length :',
-                                42);
+        this.thenExpect(this.ret, function() {
+          expect(this.promptService.prompt)
+            .toHaveBeenCalledWith('prompt',
+                                  'Set place max length :',
+                                  42);
+        });
+      });
+
+      when('user cancel prompt', function() {
+        this.promptService.prompt.rejectWith = 'canceled';
+      }, function() {        
+        it('should reset model\'s place max length', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels',
+                                    'setPlaceMaxLength', 'factions', null,
+                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
+        });
       });
 
       using([
@@ -240,34 +306,24 @@ xdescribe('model place', function() {
         [ 42     , 42    ],
         [ 0      , null  ],
       ], function(e, d) {
-        describe('when user validates prompt, '+d, function() {
-          beforeEach(function() {
-            this.promptService.prompt.resolve(e.value);
-          });
-          
+        when('user validates prompt, '+d, function() {
+          this.promptService.prompt.resolveWith = e.value;
+        }, function() {
           it('should set model\'s place max length', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setPlaceMaxLength', e.max,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels',
+                                      'setPlaceMaxLength', 'factions', e.max,
+                                      ['stamp1','stamp2'], this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
-        });
-      });
-
-      describe('when user cancel prompt', function() {
-        beforeEach(function() {
-          this.promptService.prompt.reject('canceled');
-        });
-        
-        it('should reset model\'s place max length', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setPlaceMaxLength', null,
-                                  ['stamp1','stamp2'], this.scope, this.scope.game);
         });
       });
     });
 
     when('user toggles placeWithin on models', function() {
-      this.modelsModeService.actions
+      this.ret = this.modelsModeService.actions
         .togglePlaceWithin(this.scope);
     }, function() {
       beforeEach(function() {
@@ -287,12 +343,16 @@ xdescribe('model place', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            expect(this.modelService.placeWithin)
-              .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setPlaceWithin', e.set,
-                                    this.gameModelSelectionService.get._retVal,
-                                    this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.modelService.placeWithin)
+                .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels',
+                                      'setPlaceWithin', 'factions', e.set,
+                                      this.gameModelSelectionService.get._retVal,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
@@ -304,12 +364,13 @@ xdescribe('model place', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
-        this.gameFactionsService = spyOnService('gameFactions');
+        spyOn(this.modelService, 'checkState')
+          .and.returnValue('model.checkState.returnValue');
       }
     ]));
 
     when('startPlace()', function() {
-      this.modelService.startPlace(this.model);
+      this.ret = this.modelService.startPlace(this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -329,15 +390,21 @@ xdescribe('model place', function() {
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not start place on model', function() {
-          expect(this.modelService.isPlacing(this.model))
-            .toBeFalsy();
+        it('should reject place start', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Model is locked');
+
+            expect(this.modelService.isPlacing(this.model))
+              .toBeFalsy();
+          });
         });
       });
     });
 
-    describe('endPlace()', function() {
-      it('should start place on model', function() {
+    when('endPlace()', function() {
+      this.modelService.endPlace(this.model);
+    }, function() {
+      beforeEach(function() {
         this.model = {
           state: { x: 240, y:240, r: 180,
                    sta: {
@@ -345,9 +412,9 @@ xdescribe('model place', function() {
                    }
                  }
         };
-        
-        this.modelService.endPlace(this.model);
-
+      });
+      
+      it('should end place on model', function() {
         expect(this.model.state.pla)
           .toBe(null);
         expect(this.modelService.isPlacing(this.model))
@@ -356,7 +423,8 @@ xdescribe('model place', function() {
     });
 
     when('setPlaceTarget(<factions>, <target>)', function() {
-      this.modelService.setPlaceTarget('factions', this.target, this.model);
+      this.ret = this.modelService
+        .setPlaceTarget('factions', this.target, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -370,32 +438,40 @@ xdescribe('model place', function() {
         this.target = {
           state: { x: 120, y: 120, stamp: 'target' }
         };
-        this.gameFactionsService.getModelInfo._retVal = {
-          base_radius: 9.842,
-        };
       });
       
       it('should orient place lane toward <target>', function() {
         expect(R.pick(['x','y','r'], this.model.state))
           .toEqual({ x: 80, y: 79.99999999999999, r: 180 });
         expect(R.pick(['x','y','r'], this.model.state.pla.s))
-          .toEqual({ x: 160, y: 160, r: -44.99999999999999 });
+          .toEqual({ x: 160, y: 160, r: -45 });
+      });
+
+      it('should check state', function() {
+        expect(this.modelService.checkState)
+          .toHaveBeenCalledWith('factions', null, this.model);
+        expect(this.ret).toBe('model.checkState.returnValue');
       });
 
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not orient place lane toward <target>', function() {
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 240, y: 240, r: 180 });
-          expect(R.pick(['x','y','r'], this.model.state.pla.s))
-            .toEqual({ x: 160, y: 160 });
+        it('should reject place start', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Model is locked');
+
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+            expect(R.pick(['x','y','r'], this.model.state.pla.s))
+              .toEqual({ x: 160, y: 160 });
+          });
         });
       });
     });
 
     when('setPlaceOrigin(<factions>, <origin>)', function() {
-      this.modelService.setPlaceOrigin('factions', this.origin, this.model);
+      this.ret = this.modelService
+        .setPlaceOrigin('factions', this.origin, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -409,9 +485,6 @@ xdescribe('model place', function() {
         this.origin = {
           state: { x: 120, y: 240, stamp: 'origin' }
         };
-        this.gameFactionsService.getModelInfo._retVal = {
-          base_radius: 9.842,
-        };
       });
       
       it('should orient place lane toward <target>', function() {
@@ -421,30 +494,47 @@ xdescribe('model place', function() {
           .toEqual({ x: 160, y: 160, r: 26.56505117707799 });
       });
 
+      it('should check state', function() {
+        expect(this.modelService.checkState)
+          .toHaveBeenCalledWith('factions', null, this.model);
+        expect(this.ret).toBe('model.checkState.returnValue');
+      });
+
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not orient place lane toward <target>', function() {
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 240, y: 240, r: 180 });
-          expect(R.pick(['x','y','r'], this.model.state.pla.s))
-            .toEqual({ x: 160, y: 160 });
+        it('should reject place start', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Model is locked');
+
+            expect(R.pick(['x','y','r'], this.model.state))
+              .toEqual({ x: 240, y: 240, r: 180 });
+            expect(R.pick(['x','y','r'], this.model.state.pla.s))
+              .toEqual({ x: 160, y: 160 });
+          });
         });
       });
     });
     
-    describe('setPlaceMaxLength(<length>)', function() {
+    when('setPlaceMaxLength(<length>)', function() {
+      this.ret = this.modelService
+        .setPlaceMaxLength('factions', 42, this.model);
+    }, function() {
       beforeEach(function() {
         this.model = {
           state: { stamp: 'stamp', pml: [] }
         };
-        
-        this.modelService.setPlaceMaxLength(42, this.model);
       });
       
       it('should set place max length on model', function() {
         expect(this.modelService.placeMaxLength(this.model))
           .toBe(42);
+      });
+
+      it('should check state', function() {
+        expect(this.modelService.checkState)
+          .toHaveBeenCalledWith('factions', null, this.model);
+        expect(this.ret).toBe('model.checkState.returnValue');
       });
     });
 
@@ -454,13 +544,13 @@ xdescribe('model place', function() {
         'start_small_result', 'small_result' ],
       [ 'rotateLeftPlace',
         { x: 200, y: 240, r: 90 },
-        { x: 200, y: 240, r: 80.00000000000003 },
+        { x: 200, y: 240, r: 80 },
         { x: 239.39231012048833, y: 233.0540728933228, r: 180 },
-        { x: 200, y: 240, r: 87.99999999999999 },
+        { x: 200, y: 240, r: 88 },
         { x: 239.97563308076383, y: 238.60402013189994, r: 180 } ],
       [ 'rotateRightPlace',
         { x: 200, y: 240, r: 90 },
-        { x: 200, y: 240, r: 99.99999999999999 },
+        { x: 200, y: 240, r: 100 },
         { x: 239.39231012048833, y: 246.9459271066772, r: 180 },
         { x: 200, y: 240, r: 92 },
         { x: 239.97563308076383, y: 241.39597986810003, r: 180 } ],
@@ -492,26 +582,22 @@ xdescribe('model place', function() {
         { x: 200, y: 240, r: 90 }, { x: 241, y: 240, r: 180 } ],
       [ 'shiftUpPlace',
         { x: 200, y: 240, r: 90 },
-        { x: 200, y: 240, r: 75.96375653207353 }, { x: 240, y: 230, r: 180 },
-        { x: 200, y: 240, r: 88.56790381583536 }, { x: 240, y: 239, r: 180 } ],
+        { x: 200, y: 240, r: 90 }, { x: 240, y: 230, r: 180 },
+        { x: 200, y: 240, r: 90 }, { x: 240, y: 239, r: 180 } ],
       [ 'shiftDownPlace',
         { x: 200, y: 240, r: 90 },
-        { x: 200, y: 240, r: 104.0362434679265 }, { x: 240, y: 250, r: 180 },
-        { x: 200, y: 240, r: 91.43209618416466 }, { x: 240, y: 241, r: 180 } ],
+        { x: 200, y: 240, r: 90 }, { x: 240, y: 250, r: 180 },
+        { x: 200, y: 240, r: 90 }, { x: 240, y: 241, r: 180 } ],
     ], function(e, d) {
-      describe(e.move+'(<small>)', function() {
+      when(e.move+'(<small>)', function() {
+        this.ret = this.modelService[e.move]('factions', this.small, this.model);
+      }, function() {
         beforeEach(function() {
           this.model = {
             state: { info: 'info', x: 240, y: 240, r: 180,
                      pla: { s: e.start }
                    }
           };
-          this.gameFactionsService.getModelInfo._retVal = {
-            base_radius: 7.874
-          };
-          spyOn(this.modelService, 'checkState')
-            .and.callThrough();
-          this.modelService.checkState$ = R.curryN(3, this.modelService.checkState);
         });
 
         using([
@@ -519,10 +605,10 @@ xdescribe('model place', function() {
           [ false  , e.result, e.start_result ],
           [ true   , e.small_result, e.start_small_result ],
         ], function(ee, dd) {
-          when('target is not set', function() {
-            this.modelService[e.move]('factions', ee.small, this.model);
+          when(dd, function() {
+            this.small = ee.small;
           }, function() {
-            it('should '+e.move+' model, '+dd, function() {
+            it('should '+e.move+' model', function() {
               expect(R.pick(['x','y','r'], this.model.state))
                 .toEqual(ee.result);
               expect(this.model.state.pla.s)
@@ -532,17 +618,22 @@ xdescribe('model place', function() {
         });
 
         it('should check state', function() {
-          this.modelService[e.move]('factions', false, this.model);
           expect(this.modelService.checkState)
-            .toHaveBeenCalledWith('factions', null, jasmine.any(Object));
+            .toHaveBeenCalledWith('factions', null, this.model);
+          expect(this.ret).toBe('model.checkState.returnValue');
         });
         
+
         when('model is locked', function() {
           this.modelService.setLock(true, this.model);
         }, function() {
-          it('should not '+e.move+' model', function() {
-            expect(R.pick(['x','y','r'], this.model.state))
-              .toEqual({ x: 240, y: 240, r: 180 });
+          it('should reject place start', function() {
+            this.thenExpectError(this.ret, function(reason) {
+              expect(reason).toBe('Model is locked');
+
+              expect(R.pick(['x','y','r'], this.model.state))
+                .toEqual({ x: 240, y: 240, r: 180 });
+            });
           });
         });
       });

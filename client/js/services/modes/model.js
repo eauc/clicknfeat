@@ -27,20 +27,26 @@ angular.module('clickApp.services')
                                                stamps, scope, scope.game);
           },
           function() {
-            scope.doSwitchToMode('ModelCharge');
+            return scope.doSwitchToMode('ModelCharge');
           }
         )();
       };
-      // model_actions.startPlace = function modelStartPlace(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'startPlace',
-      //                              stamps, scope, scope.game);
-      //   scope.doSwitchToMode('ModelPlace');
-      // };
+      model_actions.startPlace = function modelStartPlace(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          function() {
+            return gameService.executeCommand('onModels', 'startPlace',
+                                              stamps, scope, scope.game);
+          },
+          function() {
+            return scope.doSwitchToMode('ModelPlace');
+          }
+        )();
+      };
 
       var model_default_bindings = {
         'startCharge': 'c',
-        // 'startPlace': 'p',
+        'startPlace': 'p',
       };
       var model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                     model_default_bindings);

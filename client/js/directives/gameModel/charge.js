@@ -45,8 +45,8 @@ angular.module('clickApp.directives')
           var charge_path = el[0];
           var charge_target = el[1];
           var charge_label = el[2];
-          if(!modelService.isCharging(model)) {// &&
-             // !modelService.isPlacing(model)) {
+          if(!modelService.isCharging(model)  &&
+             !modelService.isPlacing(model)) {
             charge_path.style.visibility = 'hidden';
             charge_target.style.visibility = 'hidden';
             labelElementService.update(map_flipped,
@@ -129,42 +129,41 @@ angular.module('clickApp.directives')
               )(game.models);
             }
           }
-          // if(modelService.isPlacing(model)) {
-          //   var place_length = pointService.distanceTo(model.state, model.state.pla.s);
-          //   var place_dir = model.state.pla.s.r;
-          //   var place_middle = pointService.translateInDirection(400,
-          //                                                        place_dir,
-          //                                                        model.state.pla.s);
-          //   charge_path.setAttribute('width', (info.base_radius*2)+'');
-          //   charge_path.setAttribute('height', '800');
-          //   charge_path.setAttribute('x', (place_middle.x-info.base_radius)+'');
-          //   charge_path.setAttribute('y', (place_middle.y-400)+'');
-          //   charge_path.setAttribute('transform', [
-          //     'rotate(',
-          //     place_dir,
-          //     ',',
-          //     place_middle.x,
-          //     ',',
-          //     place_middle.y,
-          //     ')'
-          //   ].join(''));
-          //   charge_path.style.visibility = 'visible';
+          if(modelService.isPlacing(model)) {
+            var place_length = pointService.distanceTo(model.state, model.state.pla.s);
+            var place_dir = model.state.pla.s.r;
+            var place_middle = pointService.translateInDirection(400,
+                                                                 place_dir,
+                                                                 model.state.pla.s);
+            charge_path.setAttribute('width', (info.base_radius*2)+'');
+            charge_path.setAttribute('height', '800');
+            charge_path.setAttribute('x', (place_middle.x-info.base_radius)+'');
+            charge_path.setAttribute('y', (place_middle.y-400)+'');
+            charge_path.setAttribute('transform', [
+              'rotate(',
+              place_dir,
+              ',',
+              place_middle.x,
+              ',',
+              place_middle.y,
+              ')'
+            ].join(''));
+            charge_path.style.visibility = 'visible';
 
-          //   var place_label = (Math.round(place_length*10)/100)+'"';
-          //   var within = modelService.placeWithin(model);
-          //   max_dist = modelService.placeMaxLength(model);
-          //   if(R.exists(max_dist)) {
-          //     place_label += '/'+(within ? 'w.' : '')+max_dist+'"';
-          //   }
-          //   labelElementService.update(map_flipped,
-          //                              zoom_factor,
-          //                              model.state.pla.s,
-          //                              model.state.pla.s,
-          //                              place_label,
-          //                              charge_label);
+            var place_label = (Math.round(place_length*10)/100)+'"';
+            var within = modelService.placeWithin(model);
+            max_dist = modelService.placeMaxLength(model);
+            if(R.exists(max_dist)) {
+              place_label += '/'+(within ? 'w.' : '')+max_dist+'"';
+            }
+            labelElementService.update(map_flipped,
+                                       zoom_factor,
+                                       model.state.pla.s,
+                                       model.state.pla.s,
+                                       place_label,
+                                       charge_label);
 
-          //   charge_target.style.visibility = 'hidden';
-          // }
+          }
           charge_target.style.visibility = 'hidden';
         },
       };

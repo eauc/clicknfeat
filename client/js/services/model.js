@@ -18,7 +18,7 @@ angular.module('clickApp.services')
     'modelLeader',
     'modelMelee',
     'modelMove',
-    // 'modelPlace',
+    'modelPlace',
     // 'modelRuler',
     'modelUnit',
     'modelWreck',
@@ -38,7 +38,7 @@ angular.module('clickApp.services')
                                  modelLeaderService,
                                  modelMeleeService,
                                  modelMoveService,
-                                 // modelPlaceService,
+                                 modelPlaceService,
                                  // modelRulerService,
                                  modelUnitService,
                                  modelWreckService) {
@@ -165,9 +165,9 @@ angular.module('clickApp.services')
           if(modelService.isCharging(model)) {
             return 'ModelCharge';
           }
-          // if(modelService.isPlacing(model)) {
-          //   return 'ModelPlace';
-          // }
+          if(modelService.isPlacing(model)) {
+            return 'ModelPlace';
+          }
           return 'Model';
         },
       };
@@ -201,7 +201,7 @@ angular.module('clickApp.services')
         modelIncorporealService(modelService),
         modelLabelService(modelService),
         modelLeaderService(modelService),
-        // modelPlaceService(MOVES, modelService),
+        modelPlaceService(MOVES, modelService),
         modelMeleeService(modelService),
         modelMoveService(MOVES, modelService),
         // modelRulerService(modelService),

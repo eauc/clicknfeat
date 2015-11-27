@@ -639,6 +639,14 @@ describe('select model', function() {
           expect(this.ret).toBe('ModelCharge');
         });
       });
+
+      when('model is placing', function() {
+        this.modelService.startPlace(this.model);
+      }, function() {
+        it('should return "ModelPlace" mode', function() {
+          expect(this.ret).toBe('ModelPlace');
+        });
+      });
     });
 
     describe('findStampsBetweenPoints', function() {

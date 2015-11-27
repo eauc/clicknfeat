@@ -144,8 +144,8 @@ angular.module('clickApp.directives')
           labelElementService.updateOnFlipMap(map,
                                               model.state,
                                               element.counter[0]);
-          if(modelService.isCharging(model)) {// ||
-             // modelService.isPlacing(model)) {
+          if(modelService.isCharging(model) ||
+             modelService.isPlacing(model)) {
             labelElementService.updateOnFlipMap(map,
                                                 model.state.cha.s,
                                                 element.charge[2]);
