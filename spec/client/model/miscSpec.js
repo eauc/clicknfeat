@@ -412,6 +412,22 @@ describe('misc model', function() {
       });
     });
 
+    describe('descriptionFromInfo', function() {
+      using([
+        [ 'info' , 'state' , 'desc' ],
+        [ { name: 'Name' }, { user: 'User' }, 'User/Name' ],
+        [ { unit_name: 'Unit', name: 'Name' }, { user: 'User' }, 'User/Unit/Name' ],
+        [ { unit_name: 'Unit', name: 'Name' }, { }, 'Unit/Name' ],
+        [ { unit_name: 'Unit' }, { user: 'User' }, 'User/Unit' ],
+      ], function(e, d) {
+        it('should give model\'s description, '+d, function() {
+          var desc = this.modelService
+              .descriptionFromInfo(e.info, { state: e.state });
+          expect(desc).toBe(e.desc);
+        });
+      });
+    });
+    
     xdescribe('shortestLineTo(<factions>, <other>)', function() {
       beforeEach(function() {
         var info = {

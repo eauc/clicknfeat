@@ -170,6 +170,14 @@ angular.module('clickApp.services')
           }
           return 'Model';
         },
+        descriptionFromInfo: function modelDescriptionFromInfo(info, model) {
+          return R.pipe(
+            R.props(['unit_name', 'name']),
+            R.prepend(modelService.user(model)),
+            R.reject(R.isNil),
+            R.join('/')
+          )(info);
+        },
       };
       function initDamage(info) {
         if(info.type === 'warrior') {

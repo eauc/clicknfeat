@@ -2,7 +2,8 @@
 
 angular.module('clickApp.directives')
   .factory('clickGameModelBase', [
-    function() {
+    'model',
+    function(modelService) {
       return {
         create: function clickGameModelBaseCreate(svgNS, info, model, parent) {
           var base = document.createElementNS(svgNS, 'circle');
@@ -16,6 +17,10 @@ angular.module('clickApp.directives')
           base.setAttribute('data-stamp', model.state.stamp);
           parent.appendChild(base);
 
+          var title = document.createElementNS(svgNS, 'title');
+          base.appendChild(title);
+          title.innerHTML = modelService.descriptionFromInfo(info, model);
+          
           var direction = document.createElementNS(svgNS, 'line');
           direction.classList.add('model-los');
           direction.setAttribute('x1', (info.img[0].width/2)+'');
