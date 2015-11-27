@@ -99,7 +99,7 @@ angular.module('clickApp.controllers')
               user: $scope.user.name,
               x: 20*i, y: 0
             };
-          }, $scope.repeat)
+          }, R.defaultTo(1, $scope.repeat))
         };
         $scope.doSwitchToMode('CreateModel');
       };
