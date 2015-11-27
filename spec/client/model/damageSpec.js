@@ -1,17 +1,18 @@
 'use strict';
 
-xdescribe('damage model', function() {
+describe('damage model', function() {
   describe('model service', function() {
     beforeEach(inject([
       'model',
       function(modelService) {
         this.modelService = modelService;
         this.gameFactionsService = spyOnService('gameFactions');
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
       }
     ]));
 
     when('resetDamage()', function() {
-      this.modelService.resetDamage(this.model);
+      this.ret = this.modelService.resetDamage(this.model);
     }, function() {
       when('damage type is warrior', function() {
         this.model = { state: { info: ['info'], dmg: { n: 3, t: 3 } } };
@@ -43,10 +44,12 @@ xdescribe('damage model', function() {
     });
 
     when('setWarriorDamage(<factions>, <i>)', function() {
-      this.modelService.setWarriorDamage('factions', this.i, this.model);
+      this.ret = this.modelService
+        .setWarriorDamage('factions', this.i, this.model);
     }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = { damage: { n: 10 } };
+        this.gameFactionsService.getModelInfo
+          .resolveWith = { damage: { n: 10 } };
       });
 
       when('<i> is different from current damage', function() {
@@ -54,7 +57,9 @@ xdescribe('damage model', function() {
         this.i = 5;
       }, function() {
         it('should set current damage to <i>', function() {
-          expect(this.model.state.dmg).toEqual({ n: 5, t: 5 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ n: 5, t: 5 });
+          });
         });
       });
 
@@ -63,7 +68,9 @@ xdescribe('damage model', function() {
         this.i = 3;
       }, function() {
         it('should reset current damage', function() {
-          expect(this.model.state.dmg).toEqual({ n: 0, t: 0 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ n: 0, t: 0 });
+          });
         });
       });
 
@@ -72,16 +79,19 @@ xdescribe('damage model', function() {
         this.i = 15;
       }, function() {
         it('should set maximum info damage', function() {
-          expect(this.model.state.dmg).toEqual({ n: 10, t: 10 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ n: 10, t: 10 });
+          });
         });
       });
     });
 
     when('setFieldDamage(<factions>, <i>)', function() {
-      this.modelService.setFieldDamage('factions', this.i, this.model);
+      this.ret = this.modelService
+        .setFieldDamage('factions', this.i, this.model);
     }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = { damage: { field: 10 } };
+        this.gameFactionsService.getModelInfo.resolveWith = { damage: { field: 10 } };
       });
 
       when('<i> is different from current field damage', function() {
@@ -89,7 +99,9 @@ xdescribe('damage model', function() {
         this.i = 5;
       }, function() {
         it('should set current field damage to <i>', function() {
-          expect(this.model.state.dmg).toEqual({ f: 5 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ f: 5 });
+          });
         });
       });
 
@@ -98,7 +110,9 @@ xdescribe('damage model', function() {
         this.i = 3;
       }, function() {
         it('should reset current damage', function() {
-          expect(this.model.state.dmg).toEqual({ f: 0 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ f: 0 });
+          });
         });
       });
 
@@ -107,18 +121,19 @@ xdescribe('damage model', function() {
         this.i = 15;
       }, function() {
         it('should set maximum info damage', function() {
-          expect(this.model.state.dmg).toEqual({ f: 10 });
+          this.thenExpect(this.ret, function() {
+            expect(this.model.state.dmg).toEqual({ f: 10 });
+          });
         });
       });
     });
 
     when('setGridDamage(<factions>, <line>, <col>)', function() {
-      this.modelService.setGridDamage('factions',
-                                      this.line, this.col,
-                                      this.model);
+      this.ret = this.modelService
+        .setGridDamage('factions', this.line, this.col, this.model);
     }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           damage: { 'col': [ null, 'b', 'b', null ] }
         };
         this.col = 'col';
@@ -137,7 +152,9 @@ xdescribe('damage model', function() {
           } } };
         }, function() {
           it('should set current box damage', function() {
-            expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function() {
+              expect(this.model.state.dmg).toEqual(e.result);
+            });
           });
         });
       });
@@ -154,19 +171,20 @@ xdescribe('damage model', function() {
           } } };
         }, function() {
           it('should not set current box damage', function() {
-            expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function() {
+              expect(this.model.state.dmg).toEqual(e.result);
+            });
           });
         });
       });
     });
 
     when('setGridColDamage(<factions>, <col>)', function() {
-      this.modelService.setGridColDamage('factions',
-                                         this.col,
-                                         this.model);
+      this.ret = this.modelService
+        .setGridColDamage('factions', this.col, this.model);
     }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+        this.gameFactionsService.getModelInfo.resolveWith = {
           damage: { 'col1': [ null, 'b', 'b', null ],
                     'col2': [  'b', 'b', 'b', null ],
                     'col3': [ null, 'b', 'b',  'b' ] }
@@ -231,7 +249,9 @@ xdescribe('damage model', function() {
           this.model = { state: { info: ['info'], dmg: e.current } };
         }, function() {
           it('should set full damage to <col>', function() {
-            expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function() {
+              expect(this.model.state.dmg).toEqual(e.result);
+            });
           });
         });
       });
@@ -274,7 +294,9 @@ xdescribe('damage model', function() {
           this.model = { state: { info: ['info'], dmg: e.current } };
         }, function() {
           it('should clear all damage from <col>', function() {
-            expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function() {
+              expect(this.model.state.dmg).toEqual(e.result);
+            });
           });
         });
       });

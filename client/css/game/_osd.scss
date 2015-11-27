@@ -46,7 +46,7 @@
     }
 
     #game-warn-mode {
-        z-index: $osd-zindex;
+        z-index: (3*$osd-zindex);
         position: absolute;
         top: 50%;
         width: 100%;

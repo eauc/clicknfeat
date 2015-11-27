@@ -216,7 +216,7 @@ input[type='file'].form-control {
   font-size: 1.5em;
   opacity: 0.8; }
 #game #game-warn-mode {
-  z-index: 1000;
+  z-index: 3000;
   position: absolute;
   top: 50%;
   width: 100%;
@@ -378,5 +378,51 @@ input[type='file'].form-control {
   max-height: 30vh; }
   #game #log-command-list div:first-child {
     background-color: #dff0d8; }
+
+.damage-box {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid black;
+  margin: 0;
+  text-align: center;
+  background-color: white; }
+
+div.damage-box {
+  display: inline-block; }
+
+.damage-box.mark {
+  background-color: #999; }
+
+.damage-box.none {
+  background-color: black; }
+
+.damage-warrior .damage-box:nth-child(5n) {
+  width: 25px;
+  border-right: 5px solid black; }
+
+.damage-grid .damage-box:nth-child(6n) {
+  border-right: 5px solid black; }
+
+.damage-grid .damage-box:nth-child(6n+1) {
+  width: 25px; }
+
+.damage-warrior .damage-box:last-child {
+  width: 20px;
+  border-right: 1px solid black; }
+
+.damage-grid .damage-box:first-child {
+  width: 20px; }
+
+.damage-grid .damage-box:last-child {
+  border-right: 1px solid black; }
+
+.damage-grid {
+  border-collapse: collapse;
+  text-align: center; }
+
+.damage-col-header {
+  width: 20px;
+  height: 20px; }
 
 /*# sourceMappingURL=app.css.map */

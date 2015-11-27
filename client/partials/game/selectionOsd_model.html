@@ -65,9 +65,10 @@
     </form>
     <div>
       <strong>Damage :</strong>
-      <click-model-damage info="info.damage"
-                          state="selection.state">
-      </click-model-damage>
+      <click-game-model-damage info="info.damage"
+                               state="selection.state"
+                               on-error="gameEvent('modeActionError', reason)">
+      </click-game-model-damage>
     </div>
   </div>
 </div>

@@ -12,7 +12,7 @@ angular.module('clickApp.directives')
     'clickGameModelBase',
     // 'clickGameModelCharge',
     'clickGameModelCounter',
-    // 'clickGameModelDamage',
+    'clickGameModelDamage',
     'clickGameModelIcon',
     'clickGameModelLoS',
     'clickGameModelMelee',
@@ -27,7 +27,7 @@ angular.module('clickApp.directives')
       clickGameModelBaseService,
       // clickGameModelChargeService,
       clickGameModelCounterService,
-      // clickGameModelDamageService,
+      clickGameModelDamageService,
       clickGameModelIconService,
       clickGameModelLoSService,
       clickGameModelMeleeService
@@ -96,7 +96,7 @@ angular.module('clickApp.directives')
         var aura = clickGameModelAuraService.create(svgNS, parent);
         var melee = clickGameModelMeleeService.create(svgNS, parent);
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
-        // var damage = clickGameModelDamageService.create(svgNS, info, parent);
+        var damage = clickGameModelDamageService.create(svgNS, info, parent);
         var los = clickGameModelLoSService.create(svgNS, info, parent);
         var label = labelElementService.create(svgNS, over_models_container);
         var counter = clickGameModelCounterService.create(svgNS, over_models_container, parent);
@@ -111,7 +111,7 @@ angular.module('clickApp.directives')
         return { container: parent,
                  aura: aura,
                  base: base,
-                 // damage: damage,
+                 damage: damage,
                  los: los,
                  label: label,
                  counter: counter,
@@ -226,8 +226,7 @@ angular.module('clickApp.directives')
                                    model, element);
               clickGameModelAuraService.update(info, model, img, element.aura);
               clickGameModelBaseService.update(info, model, img, element.base);
-              // clickGameModelDamageService.update(info, model, img, element.damage);
-              // clickGameModelLoSService.update(info, model, img, element.damage);
+              clickGameModelDamageService.update(info, model, img, element.damage);
               labelElementService.update(map_flipped,
                                          zoom_factor,
                                          label_center.flip,

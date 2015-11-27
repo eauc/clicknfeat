@@ -63,7 +63,7 @@ angular.module('clickApp.services')
               gameFactionsService.getModelInfo$(model.state.info),
               function(info) {
                 var full = R.pipe(
-                  R.filterIndexed(function(val, line) {
+                  R.addIndex(R.filter)(function(val, line) {
                     return R.exists(info.damage[col][line]);
                   }),
                   R.reject(R.equals(1)),

@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('clickApp.controllers')
-  .controller('clickModelDamageCtrl', [
+  .controller('clickGameModelDamageCtrl', [
     '$scope',
     'game',
     function($scope,
              gameService) {
       console.log('init clickModelDamageCtrl', $scope.info, $scope.state);
-      $scope.range = function(n) { return R.range(0, n); };
+      $scope.range = function(n) {
+        return R.range(0, n);
+      };
 
       $scope.warriorBoxClass = function warriorBoxClass(i) {
         return ($scope.state && $scope.state.dmg.n > i) ? 'mark' : '';
@@ -26,49 +28,75 @@ angular.module('clickApp.controllers')
         if(R.isNil($scope.state)) return;
         gameService.executeCommand('onModels', 'resetDamage',
                                    [$scope.state.stamp],
-                                   $scope.$parent, $scope.$parent.game);
+                                   $scope.$parent, $scope.$parent.game)
+          .then(function() { $scope.$digest(); })
+          .catch(function(reason) {
+            console.error('Damage: ', reason);
+            $scope.onError({ reason: reason });
+          });
       };
       $scope.doWarriorDamage = function doWarriorDamage(i) {
         if(R.isNil($scope.state)) return;
         gameService.executeCommand('onModels', 'setWarriorDamage', $scope.$parent.factions, i,
                                    [$scope.state.stamp],
-                                   $scope.$parent, $scope.$parent.game);
+                                   $scope.$parent, $scope.$parent.game)
+          .then(function() { $scope.$digest(); })
+          .catch(function(reason) {
+            console.error('Damage: ', reason);
+            $scope.onError({ reason: reason });
+          });
       };
       $scope.doFieldDamage = function doFieldDamage(i) {
         if(R.isNil($scope.state)) return;
         gameService.executeCommand('onModels', 'setFieldDamage', $scope.$parent.factions, i,
                                    [$scope.state.stamp],
-                                   $scope.$parent, $scope.$parent.game);
+                                   $scope.$parent, $scope.$parent.game)
+          .then(function() { $scope.$digest(); })
+          .catch(function(reason) {
+            console.error('Damage: ', reason);
+            $scope.onError({ reason: reason });
+          });
       };
       $scope.doGridDamage = function doGridDamage(line, col) {
         if(R.isNil($scope.state)) return;
         if(R.isNil($scope.info[col][line])) return;
         gameService.executeCommand('onModels', 'setGridDamage', $scope.$parent.factions, line, col,
                                    [$scope.state.stamp],
-                                   $scope.$parent, $scope.$parent.game);
+                                   $scope.$parent, $scope.$parent.game)
+          .then(function() { $scope.$digest(); })
+          .catch(function(reason) {
+            console.error('Damage: ', reason);
+            $scope.onError({ reason: reason });
+          });
       };
       $scope.doGridColDamage = function doGridColDamage(col) {
         if(R.isNil($scope.state)) return;
         gameService.executeCommand('onModels', 'setGridColDamage', $scope.$parent.factions, col,
                                    [$scope.state.stamp],
-                                   $scope.$parent, $scope.$parent.game);
+                                   $scope.$parent, $scope.$parent.game)
+          .then(function() { $scope.$digest(); })
+          .catch(function(reason) {
+            console.error('Damage: ', reason);
+            $scope.onError({ reason: reason });
+          });
       };
     }
   ]);
 
 angular.module('clickApp.directives')
-  .directive('clickModelDamage', [
+  .directive('clickGameModelDamage', [
     function() {
       return {
         restrict: 'E',
         scope: {
           info: '=',
           state: '=',
+          onError: '&',
         },
-        controller: 'clickModelDamageCtrl',
-        templateUrl: '/partials/directives/model_damage.html',
+        controller: 'clickGameModelDamageCtrl',
+        templateUrl: '/partials/game/model_damage.html',
         link: function(scope, element, attrs) {
-          console.log('modelDamage');
+          console.log('gameModelDamage', scope);
         }
       };
     }

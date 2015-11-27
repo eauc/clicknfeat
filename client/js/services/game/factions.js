@@ -212,7 +212,7 @@ angular.module('clickApp.services')
           R.map(function(key) {
             return R.length(damage[key]);
           }),
-          R.max
+          R.reduce(R.max, 0)
         )(damage);
       }
       R.curryService(gameFactionsService);
