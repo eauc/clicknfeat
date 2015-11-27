@@ -10,31 +10,31 @@ angular.module('clickApp.services')
                                      gameFactionsService) {
       return function(MOVES, modelService) {
         var modelMoveService = {
-          setPosition: function modelSet(factions, pos, model) {
+          setPosition: function modelSet(factions, target, pos, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
             
             model.state = R.pipe(
               R.assoc('x', pos.x),
               R.assoc('y', pos.y)
             )(model.state);
-            return modelService.checkState(factions, null, model);
+            return modelService.checkState(factions, target, model);
           },
-          shiftPosition: function modelSet(factions, shift, model) {
+          shiftPosition: function modelSet(factions, target, shift, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             model.state = R.pipe(
               R.assoc('x', model.state.x + shift.x),
               R.assoc('y', model.state.y + shift.y)
             )(model.state);
-            return modelService.checkState(factions, null, model);
+            return modelService.checkState(factions, target, model);
           },
           setOrientation: function modelSet(factions, orientation, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             model.state = R.assoc('r', orientation, model.state);
@@ -42,7 +42,7 @@ angular.module('clickApp.services')
           },
           orientTo: function modelSet(factions, other, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             model.state = R.assoc('r', pointService.directionTo(other.state, model.state), model.state);
@@ -50,7 +50,7 @@ angular.module('clickApp.services')
           },
           moveFront: function modelMoveFront(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -59,7 +59,7 @@ angular.module('clickApp.services')
           },
           moveBack: function modelMoveBack(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -68,7 +68,7 @@ angular.module('clickApp.services')
           },
           rotateLeft: function modelRotateLeft(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
@@ -77,7 +77,7 @@ angular.module('clickApp.services')
           },
           rotateRight: function modelRotateRight(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
@@ -86,7 +86,7 @@ angular.module('clickApp.services')
           },
           shiftLeft: function modelShiftLeft(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -95,7 +95,7 @@ angular.module('clickApp.services')
           },
           shiftRight: function modelShiftRight(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -104,7 +104,7 @@ angular.module('clickApp.services')
           },
           shiftUp: function modelShiftUp(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -113,7 +113,7 @@ angular.module('clickApp.services')
           },
           shiftDown: function modelShiftDown(factions, small, model) {
             if(modelService.isLocked(model)) {
-              return self.Promise.reject('Model '+model.state.stamp+' is locked');
+              return self.Promise.reject('Model is locked');
             }
 
             var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];

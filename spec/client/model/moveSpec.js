@@ -151,9 +151,9 @@ describe('move model', function() {
       });
     });
 
-    when('user orients model towards other model, ', function() {
+    when('user set target model, ', function() {
       this.ret = this.modelsModeService.actions
-        .orientToModel(this.scope, this.event);
+        .setTargetModel(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'target' } };
@@ -239,7 +239,7 @@ describe('move model', function() {
           }, function() {
             it('should reject move', function() {
               this.thenExpectError(this.ret, function(reason) {
-                expect(reason).toBe('Model stamp is locked');
+                expect(reason).toBe('Model is locked');
                 
                 expect(R.pick(['x','y','r'], this.model.state))
                   .toEqual({ x: 240, y: 240, r: 180 });

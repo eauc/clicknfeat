@@ -35,9 +35,11 @@ describe('drag model', function() {
         };
 
         mockReturnPromise(this.modelService.setPosition);
-        this.modelService.setPosition.resolveWith = function(f, p, m) {
+        this.modelService.setPosition.resolveWith = function(f, t, p, m) {
           return m;
         };
+        mockReturnPromise(this.modelService.chargeTarget);
+        this.modelService.chargeTarget.resolveWith = 'model.chargeTarget.returnValue';
       }
     ]));
 
@@ -102,15 +104,57 @@ describe('drag model', function() {
           });
         });
       });
+
+      when('selection is a single model', function() {
+        this.gameModelSelectionService.get._retVal = ['stamp1'];
+      }, function() {
+        it('should get charge target', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.modelService.chargeTarget)
+              .toHaveBeenCalledWith(this.scope.game.models[0]);
+          });
+        });
+
+        when('no charge target is set', function() {
+          this.modelService.chargeTarget.rejectWith = 'reason';
+        }, function() {
+          it('should update selection positions without target', function() {
+            this.thenExpect(this.ret, function() {
+              expect(this.gameModelsService.findStamp)
+                .not.toHaveBeenCalled();
+              expect(this.modelService.setPosition)
+                .toHaveBeenCalledWith('factions',
+                                      null, 
+                                      { x: 250, y: 241 },
+                                      this.scope.game.models[0]);
+            });
+          });
+        });
+
+        it('should update selection positions with target', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('model.chargeTarget.returnValue',
+                                    this.scope.game.models);
+            expect(this.modelService.setPosition)
+              .toHaveBeenCalledWith('factions',
+                                    'gameModels.findStamp.returnValue', 
+                                    { x: 250, y: 241 },
+                                    this.scope.game.models[0]);
+          });
+        });
+      });
       
       it('should update selection positions', function() {
         this.thenExpect(this.ret, function() {
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
+                                  null, 
                                   { x: 250, y: 241 },
                                   this.scope.game.models[0]);
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
+                                  null, 
                                   { x: 210, y: 301 },
                                   this.scope.game.models[1]);
         });
@@ -169,10 +213,12 @@ describe('drag model', function() {
         this.thenExpect(this.ret, function() {
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
+                                  null,
                                   { x: 270, y: 230 },
                                   this.scope.game.models[0]);
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
+                                  null,
                                   { x: 230, y: 290 },
                                   this.scope.game.models[1]);
         });
@@ -231,10 +277,12 @@ describe('drag model', function() {
         this.thenExpect(this.ret, function() {
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
-                                { stamp: 'stamp1', x: 240, y: 240, r: 180 },
+                                  null,
+                                  { stamp: 'stamp1', x: 240, y: 240, r: 180 },
                                   this.scope.game.models[0]);
           expect(this.modelService.setPosition)
             .toHaveBeenCalledWith('factions',
+                                  null,
                                   { stamp: 'stamp2', x: 200, y: 300, r:  90 },
                                   this.scope.game.models[1]);
         });
@@ -255,9 +303,9 @@ describe('drag model', function() {
       it('should execute onModels/shiftPosition command', function() {
         this.thenExpect(this.ret, function(result) {
           expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'shiftPosition', 'factions',
-                                  { x: 30, y: -10 }, ['stamp1','stamp2'],
-                                  this.scope, this.scope.game);
+            .toHaveBeenCalledWith('onModels',
+                                  'shiftPosition', 'factions', null, { x: 30, y: -10 },
+                                  ['stamp1','stamp2'], this.scope, this.scope.game);
           expect(result).toBe('game.executeCommand.returnValue');
         });
       });
@@ -276,13 +324,14 @@ describe('drag model', function() {
 
     when('setPosition(<pos>)', function() {
       this.ret = this.modelService
-        .setPosition('factions', { x: 15, y: 42 }, this.model);
+        .setPosition('factions', this.target, { x: 15, y: 42 }, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
           state: { stamp: 'stamp', info: 'info',
                    x: 240, y: 240, r: 180, dsp:[] }
         };
+        this.target = 'target';
       });
 
       it('should set model position', function() {
@@ -292,7 +341,7 @@ describe('drag model', function() {
 
       it('should check state', function() {
         expect(this.modelService.checkState)
-          .toHaveBeenCalledWith('factions', null, this.model);
+          .toHaveBeenCalledWith('factions', 'target', this.model);
         expect(this.ret).toBe('model.checkState.returnValue');
       });
 
@@ -301,7 +350,7 @@ describe('drag model', function() {
       }, function() {
         it('should reject move', function() {
           this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('Model stamp is locked');
+            expect(reason).toBe('Model is locked');
 
             expect(R.pick(['x','y','r'], this.model.state))
               .toEqual({ x: 240, y: 240, r: 180 });
@@ -312,13 +361,14 @@ describe('drag model', function() {
 
     when('shiftPosition(<pos>)', function() {
       this.ret = this.modelService
-        .shiftPosition('factions', { x: 15, y: 20 }, this.model);
+        .shiftPosition('factions', this.target, { x: 15, y: 20 }, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
           state: { stamp: 'stamp', info: 'info',
                    x: 440, y: 440, r: 180, dsp:[] }
         };
+        this.target = 'target';
       });
       
       it('should set model position', function() {
@@ -328,7 +378,7 @@ describe('drag model', function() {
 
       it('should check state', function() {
         expect(this.modelService.checkState)
-          .toHaveBeenCalledWith('factions', null, this.model);
+          .toHaveBeenCalledWith('factions', 'target', this.model);
         expect(this.ret).toBe('model.checkState.returnValue');
       });
 
@@ -337,7 +387,7 @@ describe('drag model', function() {
       }, function() {
         it('should reject move', function() {
           this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('Model stamp is locked');
+            expect(reason).toBe('Model is locked');
 
             expect(R.pick(['x','y','r'], this.model.state))
               .toEqual({ x: 440, y: 440, r: 180 });

@@ -278,7 +278,6 @@ describe('select model', function() {
         this.gameModelSelectionService = gameModelSelectionService;
         this.gameModelsService = spyOnService('gameModels');
         this.modelService = spyOnService('model');
-        // this.modelService.isCharging._retVal = false;
         // this.modelService.isPlacing._retVal = false;
         spyOn(this.gameModelSelectionService, 'checkMode');
         
@@ -509,7 +508,6 @@ describe('select model', function() {
                        doSwitchToMode: jasmine.createSpy('doSwitchToMode')
                      };
         this.selection = { local: [] };
-        // this.modelService.isCharging._retVal = false;
         // this.modelService.isPlacing._retVal = false;
       });
 
@@ -622,6 +620,26 @@ describe('select model', function() {
         this.modelService = modelService;
       }
     ]));
+
+    when('modeFor', function() {
+      this.ret = this.modelService.modeFor(this.model);
+    }, function() {
+      beforeEach(function() {
+        this.model = { state: {} };
+      });
+
+      it('should return "Model" mode', function() {
+        expect(this.ret).toBe('Model');
+      });
+
+      when('model is charging', function() {
+        this.modelService.startCharge(this.model);
+      }, function() {
+        it('should return "ModelCharge" mode', function() {
+          expect(this.ret).toBe('ModelCharge');
+        });
+      });
+    });
 
     describe('findStampsBetweenPoints', function() {
       beforeEach(function() {

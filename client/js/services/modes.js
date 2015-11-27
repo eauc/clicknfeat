@@ -142,7 +142,7 @@ angular.module('clickApp.services')
     'createModelMode',
     'modelsMode',
     'modelMode',
-    // 'modelChargeMode',
+    'modelChargeMode',
     // 'modelPlaceMode',
     'createTemplateMode',
     'aoeTemplateMode',

@@ -191,25 +191,24 @@ angular.module('clickApp.services')
       //       return null;
       //     });
       // };
-      // models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var value = R.defaultTo(0, modelService.chargeMaxLength(model));
-      //   promptService.prompt('prompt',
-      //                        'Set charge max length :',
-      //                        value)
-      //     .then(function(value) {
-      //       value = (value === 0) ? null : value;
-      //       gameService.executeCommand('onModels', 'setChargeMaxLength', value,
-      //                                  stamps, scope, scope.game);
-      //       return value;
-      //     })
-      //     .catch(function(error) {
-      //       gameService.executeCommand('onModels', 'setChargeMaxLength', null,
-      //                                  stamps, scope, scope.game);
-      //       return null;
-      //     });
-      // };
+      models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.chargeMaxLength,
+          function(value) {
+            return promptService.prompt('prompt', 'Set charge max length :', value)
+              .catch(R.always(null));
+          },
+          function(value) {
+            value = (value === 0) ? null : value;
+
+            return gameService.executeCommand('onModels',
+                                              'setChargeMaxLength', scope.factions, value,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       // models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope, event) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
@@ -395,7 +394,7 @@ angular.module('clickApp.services')
         gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
                                    stamps, scope, scope.game);
       };
-      models_actions.orientToModel = function modelsOrientToModel(scope, event, dom_event) {
+      models_actions.setTargetModel = function modelsSetTargetModel(scope, event, dom_event) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return gameService.executeCommand('onModels',
                                           'orientTo', scope.factions, event['click#'].target,
@@ -403,6 +402,7 @@ angular.module('clickApp.services')
       };
 
       (function() {
+        var drag_charge_target;
         var drag_models_start_states;
         var drag_models_start_selection;
         models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
@@ -422,6 +422,21 @@ angular.module('clickApp.services')
               return gameModelsService.findAnyStamps(stamps, scope.game.models);
             },
             R.reject(R.isNil),
+            function(models) {
+              drag_charge_target = null;
+              if(R.length(models) === 1) {
+                R.pipeP(
+                  modelService.chargeTarget,
+                  function(target_stamp) {
+                    return gameModelsService.findStamp(target_stamp, scope.game.models);
+                  },
+                  function(target_model) {
+                    drag_charge_target = target_model;
+                  }
+                )(models[0]);
+              }
+              return models;
+            },
             function(models) {
               drag_models_start_selection = models;
 
@@ -443,7 +458,8 @@ angular.module('clickApp.services')
                 x: drag_models_start_states[index].x + event.now.x - event.start.x,
                 y: drag_models_start_states[index].y + event.now.y - event.start.y,
               };
-              return modelService.setPosition(scope.factions, pos, model);
+              return modelService.setPosition(scope.factions, drag_charge_target,
+                                              pos, model);
             }),
             R.bind(self.Promise.all, self.Promise),
             R.forEach(function(model) {
@@ -455,7 +471,8 @@ angular.module('clickApp.services')
           return R.pipeP(
             R.bind(self.Promise.resolve, self.Promise),
             R.addIndex(R.map)(function(model, index) {
-              return modelService.setPosition(scope.factions, drag_models_start_states[index], model);
+              return modelService.setPosition(scope.factions, drag_charge_target,
+                                              drag_models_start_states[index], model);
             }),
             R.bind(self.Promise.all, self.Promise),
             R.map(R.path(['state','stamp'])),
@@ -465,7 +482,8 @@ angular.module('clickApp.services')
                 y: event.now.y - event.start.y,
               };
               return gameService.executeCommand('onModels',
-                                                'shiftPosition', scope.factions, shift,
+                                                'shiftPosition',
+                                                scope.factions, drag_charge_target, shift,
                                                 stamps, scope, scope.game);
             }
           )(drag_models_start_selection);
@@ -482,7 +500,7 @@ angular.module('clickApp.services')
         'toggleWreckDisplay': 'alt+w',
         'setOrientationUp': 'pageup',
         'setOrientationDown': 'pagedown',
-        'orientToModel': 'shift+clickModel',
+        'setTargetModel': 'shift+clickModel',
         'toggleCounterDisplay': 'n',
         'incrementCounter': '+',
         'decrementCounter': '-',
@@ -491,7 +509,7 @@ angular.module('clickApp.services')
         'decrementSouls': 'shift+-',
         'toggleCtrlAreaDisplay': 'shift+c',
         // 'setRulerMaxLength': 'shift+m',
-        // 'setChargeMaxLength': 'shift+m',
+        'setChargeMaxLength': 'shift+m',
         // 'setPlaceMaxLength': 'shift+p',
         // 'togglePlaceWithin': 'shift+w',
         'toggleMeleeDisplay': 'm',
@@ -599,14 +617,14 @@ angular.module('clickApp.services')
           return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
         }, effects));
         ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
-        // ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
-        // if(R.prop('start_charge', options)) {
-        //   ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
-        // }
-        // if(R.prop('end_charge', options)) {
-        //   ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
-        // }
-        // ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
+        ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
+        if(R.prop('start_charge', options)) {
+          ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
+        }
+        if(R.prop('end_charge', options)) {
+          ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
+        }
+        ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
         // ret = R.append([ 'Place', 'toggle', 'place' ], ret);
         // if(R.prop('start_place', options)) {
         //   ret = R.append([ 'Start', 'startPlace', 'place' ], ret);

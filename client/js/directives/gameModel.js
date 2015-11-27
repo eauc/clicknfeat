@@ -10,7 +10,7 @@ angular.module('clickApp.directives')
     'clickGameModelArea',
     'clickGameModelAura',
     'clickGameModelBase',
-    // 'clickGameModelCharge',
+    'clickGameModelCharge',
     'clickGameModelCounter',
     'clickGameModelDamage',
     'clickGameModelIcon',
@@ -25,7 +25,7 @@ angular.module('clickApp.directives')
       clickGameModelAreaService,
       clickGameModelAuraService,
       clickGameModelBaseService,
-      // clickGameModelChargeService,
+      clickGameModelChargeService,
       clickGameModelCounterService,
       clickGameModelDamageService,
       clickGameModelIconService,
@@ -103,10 +103,10 @@ angular.module('clickApp.directives')
         var unit = labelElementService.create(svgNS, parent);
         var icon = clickGameModelIconService.create(svgNS, parent);
         var area = clickGameModelAreaService.create(svgNS, parent);
-        // var charge = clickGameModelChargeService.create(svgNS,
-        //                                                 under_models_container,
-        //                                                 over_models_container,
-        //                                                 parent);
+        var charge = clickGameModelChargeService.create(svgNS,
+                                                        under_models_container,
+                                                        over_models_container,
+                                                        parent);
         
         return { container: parent,
                  aura: aura,
@@ -119,7 +119,7 @@ angular.module('clickApp.directives')
                  icon: icon,
                  area: area,
                  melee: melee,
-                 // charge: charge,
+                 charge: charge,
                };
       }
       function gameModelOnDestroy(element) {
@@ -130,9 +130,9 @@ angular.module('clickApp.directives')
           clickGameModelCounterService.cleanup(under_models_container,
                                                over_models_container,
                                                element.counter);
-          // over_models_container.removeChild(element.charge.label.label);
-          // over_models_container.removeChild(element.charge.target);
-          // under_models_container.removeChild(element.charge.path);
+          clickGameModelChargeService.cleanup(under_models_container,
+                                              over_models_container,
+                                              element.charge);
         };
       }
       function gameModelOnMapFlipped(info, model, element) {
@@ -144,12 +144,12 @@ angular.module('clickApp.directives')
           labelElementService.updateOnFlipMap(map,
                                               model.state,
                                               element.counter[0]);
-          // if(modelService.isCharging(model) ||
-          //    modelService.isPlacing(model)) {
-          //   labelElementService.updateOnFlipMap(map,
-          //                                       model.state.cha.s,
-          //                                       element.charge.label);
-          // }
+          if(modelService.isCharging(model)) {// ||
+             // modelService.isPlacing(model)) {
+            labelElementService.updateOnFlipMap(map,
+                                                model.state.cha.s,
+                                                element.charge[2]);
+          }
         };
       }
       function gameModelOnchangeSingleModelSelection(factions, model, element) {
@@ -240,8 +240,8 @@ angular.module('clickApp.directives')
               clickGameModelIconService.update(info, model, img, element.icon);
               clickGameModelAreaService.update(factions, info, model, img, element.area);
               clickGameModelMeleeService.update(info, model, img, element.melee);
-              // clickGameModelChargeService.update(map_flipped, zoom_factor, scope.game,
-              //                                    scope.factions, info, model, img, element.charge);
+              clickGameModelChargeService.update(map_flipped, zoom_factor, scope.game,
+                                                 scope.factions, info, model, img, element.charge);
 
               self.requestAnimationFrame(function _updateModel2() {
                 if(gameModelSelectionService.inSingle('local',

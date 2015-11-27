@@ -7,7 +7,7 @@ angular.module('clickApp.services')
     'gameFactions',
     'modelArea',
     'modelAura',
-    // 'modelCharge',
+    'modelCharge',
     'modelCounter',
     'modelDamage',
     'modelEffect',
@@ -27,7 +27,7 @@ angular.module('clickApp.services')
                                  gameFactionsService,
                                  modelAreaService,  
                                  modelAuraService,  
-                                 // modelChargeService,  
+                                 modelChargeService,  
                                  modelCounterService,  
                                  modelDamageService, 
                                  modelEffectService,  
@@ -126,18 +126,22 @@ angular.module('clickApp.services')
             function(info) {
               var radius = info.base_radius;
               return R.pipe(
+                // R.spyError('start'),
                 R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
                 R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
+                // R.spyError('afterBoard'),
                 function(state) {
                   return R.reduce(function(state, checker) {
                     return checker(info, target, state);
                   }, state, modelService.state_checkers);
                 },
+                // R.spyError('afterCheck'),
                 function(state) {
                   return R.reduce(function(state, updater) {
                     return updater(state);
                   }, state, modelService.state_updaters);
                 }
+                // R.spyError('afterUpdate')
               )(model.state);
             },
             function(state) {
@@ -158,9 +162,9 @@ angular.module('clickApp.services')
           }
         },
         modeFor: function modelModeFor(model) {
-          // if(modelService.isCharging(model)) {
-          //   return 'ModelCharge';
-          // }
+          if(modelService.isCharging(model)) {
+            return 'ModelCharge';
+          }
           // if(modelService.isPlacing(model)) {
           //   return 'ModelPlace';
           // }
@@ -188,7 +192,7 @@ angular.module('clickApp.services')
         modelService,
         modelAreaService(modelService),
         modelAuraService(modelService),
-        // modelChargeService(MOVES, modelService),
+        modelChargeService(MOVES, modelService),
         modelCounterService(modelService),
         modelDamageService(modelService),
         modelEffectService(modelService),

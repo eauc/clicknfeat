@@ -19,12 +19,18 @@ angular.module('clickApp.services')
                                      gameModelsService,
                                      gameModelSelectionService) {
       var model_actions = Object.create(modelBaseModeService.actions);
-      // model_actions.startCharge = function modelStartCharge(scope) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   gameService.executeCommand('onModels', 'startCharge',
-      //                              stamps, scope, scope.game);
-      //   scope.doSwitchToMode('ModelCharge');
-      // };
+      model_actions.startCharge = function modelStartCharge(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          function() {
+            return gameService.executeCommand$('onModels', 'startCharge',
+                                               stamps, scope, scope.game);
+          },
+          function() {
+            scope.doSwitchToMode('ModelCharge');
+          }
+        )();
+      };
       // model_actions.startPlace = function modelStartPlace(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   gameService.executeCommand('onModels', 'startPlace',
@@ -33,7 +39,7 @@ angular.module('clickApp.services')
       // };
 
       var model_default_bindings = {
-        // 'startCharge': 'c',
+        'startCharge': 'c',
         // 'startPlace': 'p',
       };
       var model_bindings = R.extend(Object.create(modelBaseModeService.bindings),

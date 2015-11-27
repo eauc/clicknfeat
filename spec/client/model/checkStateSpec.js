@@ -12,13 +12,14 @@ describe('model check state', function() {
     ]));
 
     when('checkState(<factions>, <target>)', function() {
-      this.ret = this.modelService.checkState('factions', null, this.model);
+      this.ret = this.modelService.checkState('factions', this.target, this.model);
     }, function() {
       beforeEach(function() {
         this.gameFactionsService.getModelInfo.resolveWith = {
           base_radius: 7.874
         };
         this.model = { state: { info: 'info' } };
+        this.target = null;
       });
 
       it('should fetch model info', function() {
@@ -56,17 +57,19 @@ describe('model check state', function() {
         [ { x: 0, y: 0 }, { x: 169.28932188134524, y: 169.28932188134524 } ],
         [ { x: 480, y: 480 }, { x: 310.71067811865476, y: 310.71067811865476 } ],
       ], function(e, d) {
-        xit('should ensure max charge distance, '+d, function() {
-          this.state = R.merge(e.pos, {
+        when(d, function() {
+          this.model.state = R.merge(e.pos, {
             info: 'info',
             cml: 10,
             cha: { s: { x: 240, y: 240 } }
           });
-
-          this.res = this.modelService.checkState('factions', null, this.state);
-
-          expect(R.pick(['x','y'], this.res))
-            .toEqual(e.res);
+        }, function() {
+          it('should ensure max charge distance, '+d, function() {
+            this.thenExpect(this.ret, function(model) {
+              expect(R.pick(['x','y'], model.state))
+                .toEqual(e.res);
+            });
+          });
         });
       });
 
@@ -79,16 +82,18 @@ describe('model check state', function() {
         [ { x: 0, y: 0 }, { r: -45 } ],
         [ { x: 480, y: 480 }, { r: 135 } ],
       ], function(e, d) {
-        xit('should ensure charge orientation, '+d, function() {
-          this.state = R.merge(e.pos, {
+        when(d, function() {
+          this.model.state = R.merge(e.pos, {
             info: 'info',
             cha: { s: { x: 240, y: 240 } }
           });
-
-          this.res = this.modelService.checkState('factions', null, this.state);
-
-          expect(R.pick(['r'], this.res))
-            .toEqual(e.res);
+        }, function() {
+          it('should ensure charge orientation, '+d, function() {
+            this.thenExpect(this.ret, function(model) {
+              expect(R.pick(['r'], model.state))
+                .toEqual(e.res);
+            });
+          });
         });
       });
 
@@ -99,17 +104,22 @@ describe('model check state', function() {
         [ { x: 240, y: 480 }, { r: -18.81844820037043 } ],
         [ { x: 240, y: 0 }, { r: -133.05720147751566 } ],
       ], function(e, d) {
-        xit('should orient model to target, '+d, function() {
-          this.state = R.merge(e.pos, {
+        when(d, function() {
+          this.model.state = R.merge(e.pos, {
             info: 'info',
             cha: { s: { x: 240, y: 240 } }
           });
-          this.target = { state: { x: 120, y: 120 } };
-
-          this.res = this.modelService.checkState('factions', this.target, this.state);
-
-          expect(R.pick(['r'], this.res))
-            .toEqual(e.res);
+        }, function() {
+          beforeEach(function() {
+            this.target = { state: { x: 120, y: 120 } };
+          });
+          
+          it('should orient model to target, '+d, function() {
+            this.thenExpect(this.ret, function(model) {
+              expect(R.pick(['r'], model.state))
+                .toEqual(e.res);
+            });
+          });
         });
       });
     });
