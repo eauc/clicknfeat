@@ -78,7 +78,9 @@ describe('select template', function() {
         this.gameTemplatesService = spyOnService('gameTemplates');
         this.modesService = spyOnService('modes');
 
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.scope = jasmine.createSpyObj('scope', [
+          'gameEvent', 'doSwitchToMode'
+        ]);
         this.scope.game = { templates: 'templates' };
         this.scope.modes = 'modes';
       }
@@ -109,8 +111,8 @@ describe('select template', function() {
 
         if(e.where === 'local') {
           it('should switch to correct mode', function() {
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('Default', this.scope, 'modes');
+            expect(this.scope.doSwitchToMode)
+              .toHaveBeenCalledWith('Default');
           });
         }
         
@@ -138,8 +140,8 @@ describe('select template', function() {
 
           if(e.where === 'local') {
             it('should switch to Default mode', function() {
-              expect(this.modesService.switchToMode)
-                .toHaveBeenCalledWith('Default', this.scope, 'modes');
+              expect(this.scope.doSwitchToMode)
+                .toHaveBeenCalledWith('Default');
             });
           }
 
@@ -174,8 +176,8 @@ describe('select template', function() {
 
         if(e.where === 'local') {
           it('should switch to Default mode', function() {            
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('Default', this.scope, 'modes');
+            expect(this.scope.doSwitchToMode)
+              .toHaveBeenCalledWith('Default');
           });
         }
 

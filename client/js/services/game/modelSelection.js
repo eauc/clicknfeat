@@ -41,7 +41,7 @@ angular.module('clickApp.services')
           return self.Promise.resolve(gameModelSelectionService
                                       .modeFor(scope.game.models, selection))
             .then(function(mode) {
-              return modesService.switchToMode(mode, scope, scope.modes);
+              return scope.doSwitchToMode(mode);
             });
         },
         set: function modelSelectionSet(where, stamps, scope, selection) {
@@ -49,7 +49,7 @@ angular.module('clickApp.services')
           var ret = R.assoc(where, stamps, selection);
 
           if('local' === where) {
-            modesService.switchToMode('Default', scope, scope.modes);
+            scope.doSwitchToMode('Default');
             checkSingleSelection(scope, ret);
           }
           
@@ -68,7 +68,7 @@ angular.module('clickApp.services')
           var ret = R.assoc(where, new_selection, selection);
 
           if('local' === where) {
-            modesService.switchToMode('Default', scope, scope.modes);
+            scope.doSwitchToMode('Default');
             checkSingleSelection(scope, ret);
           }
           
@@ -84,7 +84,7 @@ angular.module('clickApp.services')
           var ret = R.assoc(where, new_selection, selection);
           
           if('local' === where) {
-            modesService.switchToMode('Default', scope, scope.modes);
+            scope.doSwitchToMode('Default');
             checkSingleSelection(scope, ret);
           }
 

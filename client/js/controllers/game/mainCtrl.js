@@ -27,7 +27,7 @@ angular.module('clickApp.controllers')
       
       $scope.doCreateTemplate = function doCreateTemplate(type) {
         $scope.create.template = { type: type, x: 240, y: 240 };
-        modesService.switchToMode('CreateTemplate', $scope, $scope.modes);
+        $scope.doSwitchToMode('CreateTemplate', $scope, $scope.modes);
       };
 
       $scope.doRollDice = function doRoll(sides, nb_dice) {

@@ -39,7 +39,7 @@ angular.module('clickApp.services')
               return R.pipeP(
                 gameTemplatesService.modeForStamp$(stamp),
                 function(mode) {
-                  return modesService.switchToMode(mode, scope, scope.modes);
+                  return scope.doSwitchToMode(mode);
                 }
               )(scope.game.templates);
             }
@@ -50,8 +50,7 @@ angular.module('clickApp.services')
           var ret = R.assoc(where, stamps, selection);
 
           if('local' === where) {
-            // gameTemplateSelectionService.checkMode(scope, ret);
-            modesService.switchToMode('Default', scope, scope.modes);
+            scope.doSwitchToMode('Default');
             checkSingleSelection(scope, ret);
           }
           
@@ -70,8 +69,7 @@ angular.module('clickApp.services')
           var ret = R.assoc(where, new_selection, selection);
           
           if('local' === where) {
-            // gameTemplateSelectionService.checkMode(scope, ret);
-            modesService.switchToMode('Default', scope, scope.modes);
+            scope.doSwitchToMode('Default');
             checkSingleSelection(scope, ret);
           }
 

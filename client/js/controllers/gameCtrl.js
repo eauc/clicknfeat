@@ -44,8 +44,8 @@ angular.module('clickApp.controllers')
       $scope.digestOnGameEvent = function digestOnGameEvent(event, scope) {
         // console.log('subscribe digestOnGameEvent', arguments);
         var unsubscribe = pubSubService.subscribe(event, function _digestOnGameEvent() {
-          // console.log('digestOnGameEvent', event);
-          $scope.deferDigest(scope);
+          console.log('digestOnGameEvent', event);
+          $scope.$digest(scope);
         }, game_event_channel);
         scope.$on('$destroy', function unsubscribeDigestOnGameEvent() {
           // console.log('unsubscribe digestOnGameEvent', event, game_event_channel);
@@ -80,10 +80,17 @@ angular.module('clickApp.controllers')
         if(!R.exists($scope.modes)) return false;
         return modesService.currentModeName($scope.modes) === mode;
       };
+      $scope.doSwitchToMode = function doSwitchToMode(mode) {
+        return modesService.switchToMode(mode, $scope, $scope.modes)
+          .catch(function(reason) {
+            $scope.gameEvent('modeActionError', reason);
+            return self.Promise.reject(reason);
+          });
+      };
       $scope.doModeAction = function doModeAction(action) {
         return modesService.currentModeAction(action, $scope, $scope.modes)
           .catch(function(reason) {
-            $scope.gameEvent('modeUnknownAction', action);
+            $scope.gameEvent('modeActionError', reason);
             return self.Promise.reject(reason);
           });
       };
@@ -92,7 +99,8 @@ angular.module('clickApp.controllers')
         args = R.concat(args, [$scope, $scope.game]);
         return gameService.executeCommand.apply(gameService, args)
           .catch(function(reason) {
-            $scope.gameEvent('modeUnknownAction', reason);
+            $scope.gameEvent('modeActionError', reason);
+            return self.Promise.reject(reason);
           });
       };
       $scope.show_action_group = null;

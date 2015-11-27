@@ -23,13 +23,13 @@ angular.module('clickApp.services')
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   gameService.executeCommand('onModels', 'startCharge',
       //                              stamps, scope, scope.game);
-      //   modesService.switchToMode('ModelCharge', scope, scope.modes);
+      //   scope.doSwitchToMode('ModelCharge');
       // };
       // model_actions.startPlace = function modelStartPlace(scope) {
       //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
       //   gameService.executeCommand('onModels', 'startPlace',
       //                              stamps, scope, scope.game);
-      //   modesService.switchToMode('ModelPlace', scope, scope.modes);
+      //   scope.doSwitchToMode('ModelPlace');
       // };
 
       var model_default_bindings = {

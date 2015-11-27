@@ -276,14 +276,15 @@ describe('select model', function() {
       'gameModelSelection',
       function(gameModelSelectionService) {
         this.gameModelSelectionService = gameModelSelectionService;
-        this.modesService = spyOnService('modes');
         this.gameModelsService = spyOnService('gameModels');
         this.modelService = spyOnService('model');
         // this.modelService.isCharging._retVal = false;
         // this.modelService.isPlacing._retVal = false;
         spyOn(this.gameModelSelectionService, 'checkMode');
         
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.scope = jasmine.createSpyObj('scope', [
+          'gameEvent', 'doSwitchToMode'
+        ]);
         this.scope.game = { models: 'models' };
         this.scope.modes = 'modes';
       }
@@ -292,8 +293,8 @@ describe('select model', function() {
     function testChangeLocalSelection(whenMultipleSelection,
                                       whenSingleSelection) {
       it('should switch to Default mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Default', this.scope, this.scope.modes);
+        expect(this.scope.doSwitchToMode)
+          .toHaveBeenCalledWith('Default');
       });
       
       when('resulting selection contains multiple models',
@@ -465,8 +466,8 @@ describe('select model', function() {
 
         if(e.where === 'local') {
           it('should check mode for selection', function() {   
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('Default', this.scope, this.scope.modes);
+            expect(this.scope.doSwitchToMode)
+              .toHaveBeenCalledWith('Default');
           });
 
           it('should disable singleModelSelection', function() {   
@@ -504,7 +505,9 @@ describe('select model', function() {
       beforeEach(function() {
         this.gameModelSelectionService.checkMode.and.callThrough();
         this.scope = { modes: 'modes',
-                       game: { models: 'models' } };
+                       game: { models: 'models' },
+                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+                     };
         this.selection = { local: [] };
         // this.modelService.isCharging._retVal = false;
         // this.modelService.isPlacing._retVal = false;
@@ -525,8 +528,8 @@ describe('select model', function() {
       }, function() {
         it('should switch to Models mode', function() {
           this.thenExpect(this.ret, function() {
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('Models', this.scope, 'modes');
+            expect(this.scope.doSwitchToMode)
+              .toHaveBeenCalledWith('Models');
           });
         });
       });
@@ -536,9 +539,8 @@ describe('select model', function() {
       }, function() {
         it('should switch to mode for model', function() {
           this.thenExpect(this.ret, function() {
-            expect(this.modesService.switchToMode)
-              .toHaveBeenCalledWith('gameModels.modeForStamp.returnValue',
-                                    this.scope, 'modes');
+            expect(this.scope.doSwitchToMode)
+              .toHaveBeenCalledWith('gameModels.modeForStamp.returnValue');
           });
         });
       });

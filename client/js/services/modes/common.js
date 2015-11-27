@@ -12,7 +12,7 @@ angular.module('clickApp.services')
                                       gameTemplateSelectionService) {
       var common_actions = {
         modeBackToDefault: function modeBackToDefault(scope) {
-          return modesService.switchToMode('Default', scope, scope.modes);
+          return scope.doSwitchToMode('Default');
         },
         commandUndoLast: function commandUndoLast(scope) {
           return gameService.undoLastCommand(scope, scope.game);
