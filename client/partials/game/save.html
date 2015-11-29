@@ -1,10 +1,24 @@
 <div>
+  <button type="button"
+          class="btn btn-default"
+          ng-click="updateExports()">
+    Update files
+  </button>
   <div class="panel panel-info">
-    <div class="panel-heading">Export file</div>
+    <div class="panel-heading">Save current game</div>
     <div class="panel-body">
       <a ng-href="{{save.url}}"
          download="{{::save.name}}">
         Download Game File
+      </a>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Save current models selection</div>
+    <div class="panel-body">
+      <a ng-href="{{selection_save.url}}"
+         download="{{::selection_save.name}}">
+        Download Models File
       </a>
     </div>
   </div>

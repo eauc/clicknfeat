@@ -4,8 +4,10 @@ angular.module('clickApp.controllers')
   .controller('gameModelCtrl', [
     '$scope',
     'modes',
+    'fileImport',
     function($scope,
-             modesService) {
+             modesService,
+             fileImportService) {
       console.log('init gameModelCtrl');
 
       $scope.onFactionChange = function onFactionChange() {
@@ -102,6 +104,21 @@ angular.module('clickApp.controllers')
           }, R.defaultTo(1, $scope.repeat))
         };
         $scope.doSwitchToMode('CreateModel');
+      };
+
+      $scope.doImportModelsFile = function doImportModelsFile(files) {
+        console.log('doImportModelsFile', files);
+        R.pipeP(
+          fileImportService.read$('json'),
+          function(create) {
+            $scope.create.model = create;
+            $scope.doSwitchToMode('CreateModel');
+          }
+        )(files[0])
+          .catch(function(reason) {
+            $scope.gameEvent('modeActionError', reason);
+            return self.Promise.reject(reason);
+          });;
       };
     }
   ]);

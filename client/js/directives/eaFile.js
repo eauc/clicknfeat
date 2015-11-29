@@ -13,10 +13,14 @@ angular.module('clickApp.directives')
         }
       ],
       link: function(scope, element, attrs) {
+        element[0].onclick = function() {
+          this.value = null;
+        };
         element[0].onchange = function() {
           // console.log('ea-file', element, element[0].files[0]);
           var files = element[0].files;
           scope.eaFile({ file: files });
+          element[0].blur();
         };
       }
     };
