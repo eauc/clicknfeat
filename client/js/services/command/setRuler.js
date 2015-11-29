@@ -22,11 +22,26 @@ angular.module('clickApp.services')
           };
           args = R.append(game.ruler, R.slice(1, -1, args));
 
-          ctxt.before = gameRulerService.saveRemoteState(game.ruler);
-          game.ruler = gameRulerService[method].apply(null, args);
-          ctxt.after = gameRulerService.saveRemoteState(game.ruler);
-
-          return ctxt;
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            function() {
+              return gameRulerService.saveRemoteState(game.ruler);
+            },
+            function(before) {
+              ctxt.before = before;
+              
+              return gameRulerService[method].apply(null, args);
+            },
+            function(ruler) {
+              game.ruler = ruler;
+              
+              return gameRulerService.saveRemoteState(game.ruler);
+            },
+            function(after) {
+              ctxt.after = after;
+              return ctxt;
+            }
+          )();
         },
         replay: function setRulerRedo(ctxt, scope, game) {
           game.ruler = gameRulerService.resetRemote(ctxt.after, scope, game.ruler);

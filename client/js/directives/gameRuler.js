@@ -113,43 +113,65 @@ angular.module('clickApp.directives')
       }
       function updateOrigin(factions, models, ruler, display, element) {
         var origin = gameRulerService.origin(ruler);
-        var origin_model;
-        if(R.exists(origin)) {
-          origin_model = gameModelsService.findStamp(origin, models);
-        }
-        if(!display ||
-           R.isNil(origin_model)) {
-          element.style.visibility = 'hidden';
-          return;
-        }
-        var info = gameFactionsService.getModelInfo(origin_model.state.info, factions);
-        element.setAttribute('cx', origin_model.state.x+'');
-        element.setAttribute('cy', origin_model.state.y+'');
-        element.setAttribute('r', info.base_radius+'');
-        element.style.visibility = 'visible';
+        R.pipeP(
+          function(origin) {
+            if(R.exists(origin)) {
+              return gameModelsService.findStamp(origin, models);
+            }
+            return self.Promise.resolve(null);
+          },
+          function(origin_model) {
+            if(!display ||
+               R.isNil(origin_model)) {
+              element.style.visibility = 'hidden';
+              return;
+            }
+            R.pipeP(
+              gameFactionsService.getModelInfo$(origin_model.state.info),
+              function(info) {
+                element.setAttribute('cx', origin_model.state.x+'');
+                element.setAttribute('cy', origin_model.state.y+'');
+                element.setAttribute('r', info.base_radius+'');
+                element.style.visibility = 'visible';
+              }
+            )(factions);
+          }
+        )(origin);
       }
       function updateTarget(factions, models, ruler, display, element) {
         var target = gameRulerService.target(ruler);
-        var target_model;
-        if(R.exists(target)) {
-          target_model = gameModelsService.findStamp(target, models);
-        }
-        if(!display ||
-           R.isNil(target_model)) {
-          element.style.visibility = 'hidden';
-          return;
-        }
-        if(gameRulerService.targetReached(ruler)) {
-          element.classList.add('reached');
-        }
-        else {
-          element.classList.remove('reached');
-        }
-        var info = gameFactionsService.getModelInfo(target_model.state.info, factions);
-        element.setAttribute('cx', target_model.state.x+'');
-        element.setAttribute('cy', target_model.state.y+'');
-        element.setAttribute('r', info.base_radius+'');
-        element.style.visibility = 'visible';
+        R.pipeP(
+          function(target) {
+            if(R.exists(target)) {
+              return gameModelsService.findStamp(target, models);
+            }
+            return self.Promise.resolve(null);
+          },
+          function(target_model) {
+            if(!display ||
+               R.isNil(target_model)) {
+              element.style.visibility = 'hidden';
+              return;
+            }
+            
+            if(gameRulerService.targetReached(ruler)) {
+              element.classList.add('reached');
+            }
+            else {
+              element.classList.remove('reached');
+            }
+            
+            R.pipeP(
+              gameFactionsService.getModelInfo$(target_model.state.info),
+              function(info) {
+                element.setAttribute('cx', target_model.state.x+'');
+                element.setAttribute('cy', target_model.state.y+'');
+                element.setAttribute('r', info.base_radius+'');
+                element.style.visibility = 'visible';
+              }
+            )(factions);
+          }
+        )(target);
       }
     }
   ]);

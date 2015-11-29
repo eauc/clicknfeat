@@ -59,7 +59,7 @@ angular.module('clickApp.services')
                                            scope, scope.game.template_selection);
       };
       default_actions.enterRulerMode = function defaultEnterRulerMode(scope, event) {
-        return scope.doSwitchToMode('Ruler', scope, scope.modes);
+        return scope.doSwitchToMode('Ruler');
       };
       default_actions.dragStartMap = function defaultDragStartMap(scope, event) {
         scope.gameEvent('enableDragbox', event.start, event.now);

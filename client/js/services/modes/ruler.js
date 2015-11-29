@@ -32,7 +32,8 @@ angular.module('clickApp.services')
       };
       ruler_actions.dragEndMap = function rulerDragEndMap(scope, drag, event) {
         return gameService
-          .executeCommand('setRuler', 'setRemote', drag.start, drag.now,
+          .executeCommand('setRuler',
+                          'setRemote', drag.start, drag.now,
                           scope,  scope.game);
       };
       ruler_actions.dragStartTemplate = ruler_actions.dragStartMap;
@@ -41,30 +42,32 @@ angular.module('clickApp.services')
       ruler_actions.dragStartModel = ruler_actions.dragStartMap;
       ruler_actions.dragModel = ruler_actions.dragMap;
       ruler_actions.dragEndModel = ruler_actions.dragEndMap;
-      // ruler_actions.clickModel = function rulerClickModel(scope, event, dom_event) {
-      //   if(dom_event.ctrlKey) {
-      //     gameService.executeCommand('setRuler', 'setOrigin', scope.game.models, event.target,
-      //                                scope,  scope.game);
-      //     updateMaxLengthFromModel(event.target, scope);
-      //   }
-      //   else if(dom_event.shiftKey) {
-      //     gameService.executeCommand('setRuler', 'setTarget', scope.game.models, event.target,
-      //                                scope,  scope.game);
-      //   }
-      // };
+      ruler_actions.setOriginModel = function rulerSetOriginModel(scope, event) {
+        return gameService
+          .executeCommand('setRuler',
+                          'setOrigin', event['click#'].target,
+                          scope,  scope.game);
+        // updateMaxLengthFromModel(event.target, scope);
+      };
+      ruler_actions.setTargetModel = function rulerSetTargetModel(scope, event) {
+        return gameService
+          .executeCommand('setRuler',
+                          'setTarget', event['click#'].target,
+                          scope,  scope.game);
+      };
       ruler_actions.setMaxLength = function rulerSetMaxLength(scope, event) {
         return R.pipeP(
           function() {
             return promptService.prompt('prompt', 'Set ruler max length :',
                                         gameRulerService.maxLength(scope.game.ruler))
-              .catch(function() {
-                return null;
-              });
+              .catch(R.always(null));
           },
           function(value) {
             value = (value === 0) ? null : value;
-            scope.game.ruler = gameRulerService.setMaxLength(value, scope.game.ruler);
-            return value;
+            return gameService
+              .executeCommand('setRuler',
+                              'setMaxLength', value,
+                              scope,  scope.game);
           },
           // function(value) {
           //   var origin = gameRulerService.origin(scope.game.ruler);
@@ -73,8 +76,9 @@ angular.module('clickApp.services')
           //   return gameService.executeCommand('onModels', 'setRulerMaxLength', value,
           //                              [origin], scope,  scope.game);
           // },
-          function() {
+          function(result) {
             updateMaxLengthButton(scope);
+            return result;
           }
         )();
       };
@@ -87,7 +91,9 @@ angular.module('clickApp.services')
       // };
       var ruler_default_bindings = {
         exitRulerMode: 'shift+r',
-        setMaxLength: 'm',
+        setMaxLength: 'shift+m',
+        setOriginModel: 'ctrl+clickModel',
+        setTargetModel: 'shift+clickModel',
         // createAoEOnTarget: 'a',
       };
       var ruler_bindings = R.extend(Object.create(commonModeService.bindings),

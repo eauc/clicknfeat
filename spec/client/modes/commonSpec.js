@@ -37,14 +37,16 @@ describe('commonMode', function() {
     describe('modeBackToDefault', function() {
       beforeEach(function() {
         this.modesService = spyOnService('modes');
-        this.scope = { modes: 'modes' };
+        this.scope = { modes: 'modes',
+                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+                     };
         
         this.commonModeService.actions.modeBackToDefault(this.scope);
       });
 
       it('should switch to default mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Default', this.scope, 'modes');
+        expect(this.scope.doSwitchToMode)
+          .toHaveBeenCalledWith('Default');
       });
     });
   });

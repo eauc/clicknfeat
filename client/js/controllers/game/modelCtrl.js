@@ -118,7 +118,7 @@ angular.module('clickApp.controllers')
           .catch(function(reason) {
             $scope.gameEvent('modeActionError', reason);
             return self.Promise.reject(reason);
-          });;
+          });
       };
     }
   ]);

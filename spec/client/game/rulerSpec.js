@@ -5,14 +5,19 @@ describe('user ruler', function() {
     beforeEach(inject([ 'defaultMode', function(defaultMode) {
       this.defaultModeService = defaultMode;
       this.modesService = spyOnService('modes');
+
+      this.scope = {
+        modes: 'modes',
+        doSwitchToMode: jasmine.createSpy('doSwitchToMode'),
+      };
     }]));
 
     when('user uses ruler', function() {
-      this.defaultModeService.actions.enterRulerMode({ modes: 'modes' });
+      this.defaultModeService.actions.enterRulerMode(this.scope);
     }, function() {
       it('should switch to ruler mode', function() {
-        expect(this.modesService.switchToMode)
-          .toHaveBeenCalledWith('Ruler', { modes: 'modes' }, 'modes');
+        expect(this.scope.doSwitchToMode)
+          .toHaveBeenCalledWith('Ruler');
       });
     });
   });
@@ -20,13 +25,19 @@ describe('user ruler', function() {
   describe('rulerMode service', function() {
     beforeEach(inject([ 'rulerMode', function(rulerMode) {
       this.rulerModeService = rulerMode;
+
       this.modesService = spyOnService('modes');
+
       this.gameService = spyOnService('game');
+
       this.gameRulerService = spyOnService('gameRuler');
+
       this.modelService = spyOnService('model');
-      this.modelService.rulerMaxLength._retVal = null;
+
       this.gameModelsService = spyOnService('gameModels');
+
       this.gameModelSelectionService = spyOnService('gameModelSelection');
+
       this.scope = { modes: 'modes',
                      game: { ruler: 'ruler',
                              models: 'models',
@@ -86,11 +97,11 @@ describe('user ruler', function() {
           this.promptService.prompt.resolveWith = e.value;
         }, function() {
           it('should set ruler max length', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.gameRulerService.setMaxLength)
-                .toHaveBeenCalledWith(e.max, 'ruler');
-              expect(this.scope.game.ruler)
-                .toBe('gameRuler.setMaxLength.returnValue');
+            this.thenExpect(this.ret, function(result) {
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('setRuler', 'setMaxLength', e.max,
+                                      this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
             });
           });
           
@@ -107,11 +118,11 @@ describe('user ruler', function() {
         this.promptService.prompt.rejectWith = 'canceled';
       }, function() {
         it('should reset ruler max length', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.gameRulerService.setMaxLength)
-              .toHaveBeenCalledWith(null, 'ruler');
-            expect(this.scope.game.ruler)
-              .toBe('gameRuler.setMaxLength.returnValue');
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('setRuler', 'setMaxLength', null,
+                                    this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
           });
         });
           
@@ -143,30 +154,36 @@ describe('user ruler', function() {
       });
     });
     
-    when('user release ruler', function() {
+    when('user endDrags ruler', function() {
       this.drag = { start: 'start', now: 'now' };
       this.rulerModeService.actions.dragEndMap(this.scope, this.drag);
     }, function() {
       it('should execute setRemote command', function() {
         expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setRuler', 'setRemote',
-                                'start', 'now',
+          .toHaveBeenCalledWith('setRuler',
+                                'setRemote', 'start', 'now',
                                 this.scope, this.scope.game);
       });
     });
 
-    xwhen('user set ruler origin', function() {
-      this.event = { target: { state: { stamp: 'stamp' } } };
-      this.dom_event = { ctrlKey: true };
-      this.rulerModeService.actions.clickModel(this.scope, this.event, this.dom_event);
+    when('user set ruler origin', function() {
+      this.ret = this.rulerModeService.actions
+        .setOriginModel(this.scope, this.event);
     }, function() {
+      beforeEach(function() {
+        this.target = { state: { stamp: 'stamp' } };
+        this.event = { 'click#': { target: this.target } };
+      });
+      
       it('should set ruler origin model', function() {
         expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setRuler', 'setOrigin', 'models', this.event.target,
+          .toHaveBeenCalledWith('setRuler',
+                                'setOrigin', this.target,
                                 this.scope, this.scope.game);
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
 
-      when('selected model has a ruler max length', function() {
+      xwhen('selected model has a ruler max length', function() {
         this.modelService.rulerMaxLength._retVal = 42;
       }, function() {
         it('should set ruler max length', function() {
@@ -178,15 +195,21 @@ describe('user ruler', function() {
       });
     });
 
-    xwhen('user set ruler target', function() {
-      this.event = { target: { state: { stamp: 'stamp' } } };
-      this.dom_event = { shiftKey: true };
-      this.rulerModeService.actions.clickModel(this.scope, this.event, this.dom_event);
+    when('user set ruler target', function() {
+      this.ret = this.rulerModeService.actions
+        .setTargetModel(this.scope, this.event);
     }, function() {
+      beforeEach(function() {
+        this.target = { state: { stamp: 'stamp' } };
+        this.event = { 'click#': { target: this.target } };
+      });
+      
       it('should set ruler target model', function() {
         expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setRuler', 'setTarget', 'models', this.event.target,
+          .toHaveBeenCalledWith('setRuler',
+                                'setTarget', this.target,
                                 this.scope, this.scope.game);
+        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
   });
@@ -213,8 +236,8 @@ describe('user ruler', function() {
     }]));
 
     when('execute(<method>, <...args...>, <scope>, <game>)', function() {
-      this.ctxt = this.setRulerCommandService.execute(this.method, 'args',
-                                                      this.scope, this.game);
+      this.ret = this.setRulerCommandService
+        .execute(this.method, 'args', this.scope, this.game);
     }, function() {
       beforeEach(function() {
         this.game = { ruler: 'ruler' };
@@ -224,7 +247,7 @@ describe('user ruler', function() {
         this.method = 'unknown';
       }, function() {
         it('should reject command', function() {
-          this.thenExpectError(this.ctxt, function(reason) {
+          this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('Ruler unknown method unknown');
           });
         });
@@ -234,19 +257,25 @@ describe('user ruler', function() {
         this.method = 'setRemote';
       }, function() {
         it('should save previous remote ruler state', function() {
-          expect(this.ctxt.before).toEqual('rulerSave');
+          this.thenExpect(this.ret, function(ctxt) {
+            expect(ctxt.before).toEqual('rulerSave');
+          });
         });
         
         it('should apply <method> on game ruler', function() {
-          expect(this.gameRulerService.setRemote)
-            .toHaveBeenCalledWith('args', this.scope, 'ruler');
-          expect(this.game.ruler)
-            .toBe('gameRuler.setRemote.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.gameRulerService.setRemote)
+              .toHaveBeenCalledWith('args', this.scope, 'ruler');
+            expect(this.game.ruler)
+              .toBe('gameRuler.setRemote.returnValue');
+          });
         });
         
         it('should save new remote ruler state', function() {
-          expect(this.ctxt.after)
-            .toBe('gameRuler.setRemote.returnValueSave');
+          this.thenExpect(this.ret, function(ctxt) {
+            expect(ctxt.after)
+              .toBe('gameRuler.setRemote.returnValueSave');
+          });
         });
       });
     });
@@ -256,15 +285,15 @@ describe('user ruler', function() {
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
     ], function(e, d) {
-      describe(e.method+'(<ctxt>, <scope>, <game>)', function() {
+      when(e.method+'(<ctxt>, <scope>, <game>)', function() {
+        this.setRulerCommandService[e.method](this.ctxt, this.scope, this.game);
+      }, function() {
         beforeEach(function() {
           this.ctxt = {
             before: 'before',
             after: 'after'
           };
           this.game = { 'ruler': e.previous };
-
-          this.setRulerCommandService[e.method](this.ctxt, this.scope, this.game);
         });
       
         it('should set game remote ruler', function() {
@@ -280,9 +309,20 @@ describe('user ruler', function() {
   describe('gameRuler service', function() {
     beforeEach(inject([ 'gameRuler', function(gameRulerService) {
       this.gameRulerService = gameRulerService;
+
       this.modelService = spyOnService('model');
       this.gameModelsService = spyOnService('gameModels');
+
       this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+      this.scope.factions = 'factions';
+      this.scope.game = { models: 'models' };
+
+      mockReturnPromise(this.gameModelsService.findStamp);
+      this.gameModelsService.findStamp.resolveWith = R.bind(function(s, m) {
+        return ( s === 'origin' ? this.origin_model :
+                 ( s === 'target' ? this.target_model : null )
+               );
+      }, this);
     }]));
 
     describe('toggleDisplay()', function() {
@@ -303,17 +343,125 @@ describe('user ruler', function() {
       });
     });
 
-    describe('setMaxLength(<start>, <end>, <scope>)', function() {
+    when('setMaxLength(<start>, <end>, <scope>)', function() {
+      this.ret = this.gameRulerService
+        .setMaxLength(this.length, this.scope, this.ruler);
+    }, function() {
+      beforeEach(function() {
+        this.ruler = this.gameRulerService.create();
+        this.ruler.remote.start = { x: 240, y: 240 };
+        this.ruler.remote.end = { x: 360, y: 240 };
+        this.ruler.remote.origin = 'origin';
+        this.ruler.remote.target = 'target';
+        this.length = 5;
+      });
+      
+      it('should set ruler max length', function() {
+        this.thenExpect(this.ret, function(result) {
+          expect(result.local.max)
+            .toBe(this.length);
+          expect(this.gameRulerService.maxLength(result))
+            .toBe(this.length);
+        });
+      });
+
+      it('should look up ruler origin & target', function() {
+        this.thenExpect(this.ret, function(result) {
+          expect(this.gameModelsService.findStamp)
+            .toHaveBeenCalledWith('origin', 'models');
+          expect(this.gameModelsService.findStamp)
+            .toHaveBeenCalledWith('target', 'models');
+        });
+      });
+
+      when('neither target nor origin is set', function() {
+        this.origin_model = null;
+        this.target_model = null;
+      }, function() {
+        using([
+          [ 'max_length', 'length', 'reached', 'end' ],
+          [ 5           , 5       , false    , { x: 290, y: 240 } ],
+          [ 140         , 12      , true     , { x: 360, y: 240 } ],
+          [ null        , 12      , true     , { x: 360, y: 240 } ],
+        ], function(e, d) {
+          when(d, function() {
+            this.length = e.max_length;
+          }, function() {
+            it('should set ruler according to start/end points', function() {
+              this.thenExpect(this.ret, function(result) {
+                expect(result.remote.start)
+                  .toEqual(this.ruler.remote.start);
+                expect(result.remote.end)
+                  .toEqual(e.end);
+                expect(result.remote.length)
+                  .toEqual(e.length);
+                expect(result.remote.reached)
+                  .toEqual(e.reached);
+              });
+            });
+          });
+        });
+      });
+
       using([
-        [ 'set', 'get'],
-        [ 42   , 42   ],
-        [ null , 0    ],
+        [ 'only' ],
+        [ 'origin' ],
+        [ 'target' ],
       ], function(e, d) {
-        it('should set local ruler max length, '+d, function() {
-          this.ruler = {};
-          this.ruler = this.gameRulerService.setMaxLength(e.set, this.ruler);
-          expect(this.gameRulerService.maxLength(this.ruler))
-            .toBe(e.get);
+        when('only '+e.only+' is set', function() {
+          this[e.only+'_model'] = { state: { x: 120, y: 120 } };
+        }, function() {
+          it('should set ruler on '+e.only, function() {
+            this.thenExpect(this.ret, function(result) {
+              expect(result.remote.start)
+                .toEqual(this[e.only+'_model'].state);
+            expect(result.remote.end)
+              .toEqual(this[e.only+'_model'].state);
+              expect(result.remote.length)
+                .toEqual(0);
+              expect(result.remote.reached)
+                .toEqual(true);
+            });
+          });
+        });
+      });
+      
+      when('only both origin and target are set', function() {
+        this.origin_model = 'origin_model';
+        this.target_model = 'target_model';
+      }, function() {
+        beforeEach(function() {
+          this.modelService.shortestLineTo._retVal = {
+            start: { x: 120, y: 120 },
+            end:   { x: 120, y: 240 },
+          };
+        });
+        
+        using([
+          [ 'max_length', 'length', 'reached', 'end' ],
+          [ 5           , 5       , false    , { x: 120, y: 170 } ],
+          [ 140         , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+          [ null        , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+        ], function(e, d) {
+          when(d, function() {
+            this.length = e.max_length;
+          }, function() {
+            it('should set ruler according to origin/target models', function() {
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.shortestLineTo)
+                  .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+                
+                expect(result.remote.start)
+                  .toEqual({ x: 120, y: 120 });
+                expect(result.remote.end)
+                  .toEqual(e.end);
+                expect(result.remote.length)
+                  .toEqual(e.length);
+                expect(result.remote.reached)
+                  .toEqual(e.reached);
+              });
+            });
+          });
         });
       });
     });
@@ -345,7 +493,7 @@ describe('user ruler', function() {
       });
 
       when('with max length', function() {
-        this.ruler = this.gameRulerService.setMaxLength(5, this.ruler);
+        this.ruler.local.max = 5;
       }, function() {
         it('should enforce max length', function() {
           expect(this.ret)
@@ -379,46 +527,48 @@ describe('user ruler', function() {
       });
 
       it('should reset local ruler state', function() {
-        expect(this.ret.local)
-          .toEqual({ display: false });
+        this.thenExpect(this.ret, function(result) {
+          expect(result.local)
+            .toEqual({ display: false });
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeLocalRuler');
+        });
       });
 
       it('should set remote ruler state', function() {
-        expect(this.ret.remote)
-          .toEqual({ max: undefined,
-                     origin: null,
-                     target: null,
-                     reached: null,
-                     start: { x: 100, y: 0 },
-                     end: { x: 100.00000000000001,
-                            y: 100 },
-                     length: 10,
-                     display: true
-                   });
-      });
-
-      it('should emit changeLocalRuler & changeRemoteRuler game events', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeLocalRuler');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
+        this.thenExpect(this.ret, function(result) {
+          expect(result.remote)
+            .toEqual({ origin: null,
+                       target: null,
+                       start: { x: 100, y: 0 },
+                       end: { x: 100.00000000000001,
+                              y: 100 },
+                       length: 10,
+                       reached: true,
+                       display: true
+                     });
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('changeRemoteRuler');
+        });
       });
 
       when('with max length', function() {
-        this.ruler = this.gameRulerService.setMaxLength(5, this.ruler);
+        this.ruler.remote.max = 5;
       }, function() {
         it('should enforce max length', function() {
-          expect(this.ret.remote)
-            .toEqual({ max: 5,
-                       origin: null,
-                       target: null,
-                       reached: null,
-                       start: { x: 100, y: 0},
-                       end: { x: 100,
-                              y: 50 },
-                       length: 5,
-                       display: true
-                     });
+          this.thenExpect(this.ret, function(result) {
+            expect(result.remote)
+              .toEqual({ max: 5,
+                         origin: null,
+                         target: null,
+                         start: { x: 100, y: 0},
+                         end: { x: 100,
+                                y: 50 },
+                         length: 5,
+                         reached: false,
+                         display: true
+                       });
+          });
         });
       });
     });
@@ -459,230 +609,230 @@ describe('user ruler', function() {
     });
 
     when('setOrigin(<models>, <origin>, <scope>)', function() {
-      this.ret = this.gameRulerService.setOrigin('models', this.origin,
-                                                 this.scope, this.ruler);
+      this.ret = this.gameRulerService
+        .setOrigin(this.origin, this.scope, this.ruler);
     }, function() {
       beforeEach(function() {
         this.origin = { state: { stamp: 'origin' } };
         this.ruler = {
-          remote: { target: null }
+          remote: { max: null,
+                    target: null
+                  }
         };
       });
 
-      it('should store ruler origin', function() {
-        expect(this.gameRulerService.origin(this.ret))
-          .toBe('origin');
-      });
-
-      it('refresh remote ruler', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
-      });
-
-      when('ruler target is not set', function() {
+      when('only origin is set', function() {
+        this.origin_model = { state: { x: 240, y: 240 } };
         this.ruler.remote.target = null;
       }, function() {
-        it('should not display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeFalsy();
+        it('should set ruler on origin', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(result.remote.start)
+              .toEqual(this.origin_model.state);
+            expect(result.remote.end)
+              .toEqual(this.origin_model.state);
+            expect(result.remote.length)
+              .toEqual(0);
+            expect(result.remote.reached)
+              .toEqual(true);
+            expect(result.remote.display)
+              .toBe(false);
+          });
         });
       });
 
-      when('ruler target is the same as <origin>', function() {
+      when('target is the same as origin', function() {
+        this.origin_model = { state: { x: 240, y: 240 } };
         this.ruler.remote.target = 'origin';
       }, function() {
-        it('should reset ruler target', function() {
-          expect(this.gameRulerService.target(this.ret))
-            .toBe(null);
-        });
-
-        it('should not display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeFalsy();
+        it('should set ruler on origin and reset target', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(result.remote.start)
+              .toEqual(this.origin_model.state);
+            expect(result.remote.end)
+              .toEqual(this.origin_model.state);
+            expect(result.remote.length)
+              .toEqual(0);
+            expect(result.remote.reached)
+              .toEqual(true);
+            expect(result.remote.display)
+              .toBe(false);
+            expect(result.remote.target)
+              .toBe(null);
+          });
         });
       });
-
-      when('ruler target is set and different from <origin>', function() {
+      
+      when('both origin and target are set', function() {
+        this.ruler.remote.origin = 'origin';
         this.ruler.remote.target = 'target';
+        this.origin_model = 'origin_model';
+        this.target_model = 'target_model';
       }, function() {
         beforeEach(function() {
-          this.scope.factions = 'factions';
           this.modelService.shortestLineTo._retVal = {
-            start: { x: 240, y: 240 },
-            end: { x: 120, y: 120 },
+            start: { x: 120, y: 120 },
+            end:   { x: 120, y: 240 },
           };
         });
         
-        it('should fetch shortest line between models', function() {
-          expect(this.gameModelsService.findStamp)
-            .toHaveBeenCalledWith('target', 'models');
-          expect(this.modelService.shortestLineTo)
-            .toHaveBeenCalledWith('factions',
-                                  'gameModels.findStamp.returnValue',
-                                  this.origin);
-        });
-        
-        it('should display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeTruthy();
-          expect(this.ret.remote.start)
-            .toEqual({ x: 240, y: 240 });
-        });
-
-        when('target model is within max range', function() {
-          this.ruler.local = { max: 48 };
-        }, function() {
-          it('should display target reached', function() {
-            expect(this.gameRulerService.targetReached(this.ret))
-              .toBeTruthy();
-            expect(this.ret.remote.end)
-              .toEqual({ x: 120, y: 119.99999999999999 });
-            expect(this.ret.remote.length)
-              .toBe(16.97);
-          });
-        });
-
-        when('target model is not within max range', function() {
-          this.ruler.local = { max: 13 };
-        }, function() {
-          it('should display target not reached', function() {
-            expect(this.gameRulerService.targetReached(this.ret))
-              .toBeFalsy();
-            expect(this.ret.remote.end)
-              .toEqual({ x: 148.07611844574882, y: 148.07611844574882 });
-            expect(this.ret.remote.length)
-              .toBe(13.00);
+        using([
+          [ 'max_length', 'length', 'reached', 'end' ],
+          [ 5           , 5       , false    , { x: 120, y: 170 } ],
+          [ 140         , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+          [ null        , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+        ], function(e, d) {
+          when(d, function() {
+            this.ruler.remote.max = e.max_length;
+          }, function() {
+            it('should set ruler according to origin/target models', function() {
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.shortestLineTo)
+                  .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+                
+                expect(result.remote.start)
+                  .toEqual({ x: 120, y: 120 });
+                expect(result.remote.end)
+                  .toEqual(e.end);
+                expect(result.remote.length)
+                  .toEqual(e.length);
+                expect(result.remote.reached)
+                  .toEqual(e.reached);
+                expect(result.remote.display)
+                  .toEqual(true);
+              });
+            });
           });
         });
       });
     });
 
     when('setOriginResetTarget(<models>, <origin>, <scope>)', function() {
-      this.ret = this.gameRulerService.setOriginResetTarget('models', this.origin,
-                                                 this.scope, this.ruler);
+      this.ret = this.gameRulerService
+        .setOriginResetTarget(this.origin, this.scope, this.ruler);
     }, function() {
       beforeEach(function() {
         this.origin = { state: { stamp: 'origin' } };
+        this.origin_model = { state: { x: 240, y: 240 } };
         this.ruler = {
-          remote: { target: 'target' }
+          remote: { max: null,
+                    target: null
+                  }
         };
       });
 
-      it('should store ruler origin', function() {
-        expect(this.gameRulerService.origin(this.ret))
-          .toBe('origin');
-      });
-
-      it('refresh remote ruler', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
-      });
-
-      it('should reset ruler target', function() {
-        expect(this.gameRulerService.target(this.ret))
-          .toBe(null);
-      });
-
-      it('should not display ruler', function() {
-        expect(this.gameRulerService.isDisplayed(this.ret))
-          .toBeFalsy();
+      it('should set ruler on origin and reset target', function() {
+        this.thenExpect(this.ret, function(result) {
+          expect(result.remote.start)
+            .toEqual(this.origin_model.state);
+          expect(result.remote.end)
+            .toEqual(this.origin_model.state);
+          expect(result.remote.length)
+            .toEqual(0);
+          expect(result.remote.reached)
+            .toEqual(true);
+          expect(result.remote.display)
+            .toBe(false);
+          expect(result.remote.target)
+            .toBe(null);
+        });
       });
     });
 
     when('setTarget(<models>, <target>, <scope>)', function() {
-      this.ret = this.gameRulerService.setTarget('models', this.target,
-                                                 this.scope, this.ruler);
+      this.ret = this.gameRulerService
+        .setTarget(this.target, this.scope, this.ruler);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'target' } };
         this.ruler = {
-          remote: { origin: null }
+          remote: { max: null,
+                    target: null
+                  }
         };
       });
 
-      it('should store ruler target', function() {
-        expect(this.gameRulerService.target(this.ret))
-          .toBe('target');
-      });
-
-      it('refresh remote ruler', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
-      });
-
-      when('ruler origin is not set', function() {
+      when('only target is set', function() {
+        this.target_model = { state: { x: 240, y: 240 } };
         this.ruler.remote.origin = null;
       }, function() {
-        it('should not display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeFalsy();
+        it('should set ruler on target', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(result.remote.start)
+              .toEqual(this.target_model.state);
+            expect(result.remote.end)
+              .toEqual(this.target_model.state);
+            expect(result.remote.length)
+              .toEqual(0);
+            expect(result.remote.reached)
+              .toEqual(true);
+            expect(result.remote.display)
+              .toBe(false);
+          });
         });
       });
 
-      when('ruler origin is the same as <target>', function() {
+      when('target is the same as origin', function() {
+        this.target_model = { state: { x: 240, y: 240 } };
         this.ruler.remote.origin = 'target';
       }, function() {
-        it('should reset ruler target', function() {
-          expect(this.gameRulerService.origin(this.ret))
-            .toBe(null);
-        });
-
-        it('should not display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeFalsy();
+        it('should set ruler on target and reset origin', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(result.remote.start)
+              .toEqual(this.target_model.state);
+            expect(result.remote.end)
+              .toEqual(this.target_model.state);
+            expect(result.remote.length)
+              .toEqual(0);
+            expect(result.remote.reached)
+              .toEqual(true);
+            expect(result.remote.display)
+              .toBe(false);
+            expect(result.remote.origin)
+              .toBe(null);
+          });
         });
       });
-
-      when('ruler origin is set and different from <target>', function() {
+      
+      when('both origin and target are set', function() {
         this.ruler.remote.origin = 'origin';
+        this.ruler.remote.target = 'target';
+        this.origin_model = 'origin_model';
+        this.target_model = 'target_model';
       }, function() {
         beforeEach(function() {
-          this.scope.factions = 'factions';
           this.modelService.shortestLineTo._retVal = {
-            start: { x: 240, y: 240 },
-            end: { x: 120, y: 120 },
+            start: { x: 120, y: 120 },
+            end:   { x: 120, y: 240 },
           };
         });
         
-        it('should fetch shortest line between models', function() {
-          expect(this.gameModelsService.findStamp)
-            .toHaveBeenCalledWith('origin', 'models');
-          expect(this.modelService.shortestLineTo)
-            .toHaveBeenCalledWith('factions',
-                                  this.target,
-                                  'gameModels.findStamp.returnValue');
-        });
-        
-        it('should display ruler', function() {
-          expect(this.gameRulerService.isDisplayed(this.ret))
-            .toBeTruthy();
-          expect(this.ret.remote.start)
-            .toEqual({ x: 240, y: 240 });
-        });
-
-        when('target model is within max range', function() {
-          this.ruler.local = { max: 48 };
-        }, function() {
-          it('should display target reached', function() {
-            expect(this.gameRulerService.targetReached(this.ret))
-              .toBeTruthy();
-            expect(this.ret.remote.end)
-              .toEqual({ x: 120, y: 119.99999999999999 });
-            expect(this.ret.remote.length)
-              .toBe(16.97);
-          });
-        });
-
-        when('target model is not within max range', function() {
-          this.ruler.local = { max: 13 };
-        }, function() {
-          it('should display target not reached', function() {
-            expect(this.gameRulerService.targetReached(this.ret))
-              .toBeFalsy();
-            expect(this.ret.remote.end)
-              .toEqual({ x: 148.07611844574882, y: 148.07611844574882 });
-            expect(this.ret.remote.length)
-              .toBe(13.00);
+        using([
+          [ 'max_length', 'length', 'reached', 'end' ],
+          [ 5           , 5       , false    , { x: 120, y: 170 } ],
+          [ 140         , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+          [ null        , 12      , true     , { x: 120.00000000000001, y: 240 } ],
+        ], function(e, d) {
+          when(d, function() {
+            this.ruler.remote.max = e.max_length;
+          }, function() {
+            it('should set ruler according to origin/target models', function() {
+              this.thenExpect(this.ret, function(result) {
+                expect(this.modelService.shortestLineTo)
+                  .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+                
+                expect(result.remote.start)
+                  .toEqual({ x: 120, y: 120 });
+                expect(result.remote.end)
+                  .toEqual(e.end);
+                expect(result.remote.length)
+                  .toEqual(e.length);
+                expect(result.remote.reached)
+                  .toEqual(e.reached);
+                expect(result.remote.display)
+                  .toEqual(true);
+              });
+            });
           });
         });
       });
