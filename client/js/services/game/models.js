@@ -2,8 +2,10 @@
 
 angular.module('clickApp.services')
   .factory('gameModels', [
+    'point',
     'model',
-    function gameModelsServiceFactory(modelService) {
+    function gameModelsServiceFactory(pointService,
+                                      modelService) {
       var gameModelsService = {
         create: function() {
           return {
@@ -131,6 +133,22 @@ angular.module('clickApp.services')
             },
             modelService.modeFor$
           )();
+        },
+        copyStamps: function modelsCopyStamps(stamps, models) {
+          return R.pipeP(
+            gameModelsService.findAnyStamps$(stamps),
+            R.reject(R.isNil),
+            function(selection) {
+              var base = R.pick(['x','y','r'], selection[0].state);
+
+              return {
+                base: base,
+                models: R.map(R.compose(pointService.differenceFrom$(base),
+                                        modelService.saveState),
+                              selection)
+              };
+            }
+          )(models);
         },
       };
       R.curryService(gameModelsService);

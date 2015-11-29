@@ -3,23 +3,25 @@
 angular.module('clickApp.services')
   .factory('createModelCommand', [
     'commands',
+    'point',
     'model',
     'gameModels',
     'gameModelSelection',
     function createModelCommandServiceFactory(commandsService,
+                                              pointService,
                                               modelService,
                                               gameModelsService,
                                               gameModelSelectionService) {
       var createModelCommandService = {
-        execute: function createModelExecute(create, scope, game) {
+        execute: function createModelExecute(create, is_flipped, scope, game) {
+          var add$ = pointService.addToWithFlip$(is_flipped);
           return R.pipeP(
             R.bind(self.Promise.resolve, self.Promise),
             R.prop('models'),
             R.map(function(model) {
               return R.pipe(
-                R.assoc('x', create.base.x + model.x),
-                R.assoc('y', create.base.y + model.y),
-                R.assoc('r', create.base.r),
+                add$(create.base),
+                R.omit(['stamp']),
                 function(model) {
                   return modelService.create(scope.factions, model)
                     .catch(R.always(null));

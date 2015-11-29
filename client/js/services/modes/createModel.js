@@ -19,8 +19,8 @@ angular.module('clickApp.services')
       createModel_actions.create = function createModelCreate(scope, event) {
         scope.create.model.base.x = event['click#'].x;
         scope.create.model.base.y = event['click#'].y;
-        scope.create.model.base.r = R.path(['ui_state','flip_map'], scope) ? 180 : 0;
-        return gameService.executeCommand('createModel', scope.create.model,
+        var is_flipped = R.path(['ui_state','flip_map'], scope);
+        return gameService.executeCommand('createModel', scope.create.model, is_flipped,
                                           scope, scope.game);
       };
       var createModel_default_bindings = {

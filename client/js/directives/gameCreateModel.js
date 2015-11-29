@@ -4,8 +4,10 @@ angular.module('clickApp.directives')
   .directive('clickGameCreateModel', [
     '$window',
     'gameFactions',
+    'gameMap',
     function($window,
-             gameFactionsService) {
+             gameFactionsService,
+             gameMapService) {
       return {
         restrict: 'A',
         link: function(scope, el, attrs) {
@@ -19,10 +21,12 @@ angular.module('clickApp.directives')
             gameFactionsService.getModelInfo$(model.info),
             function(info) {
               var element = createModelElement(info, document, svgNS, el[0]);
-              setModelPosition(scope.create.model.base, model, element);
+              var is_flipped = gameMapService.isFlipped(map);
+              setModelPosition(scope.create.model.base, is_flipped, model, element);
           
               scope.onGameEvent('moveCreateModel', function onMoveCreateModel() {
-                setModelPosition(scope.create.model.base, model, element);
+                is_flipped = gameMapService.isFlipped(map);
+                setModelPosition(scope.create.model.base, is_flipped, model, element);
               }, scope);
             }
           )(scope.factions);
@@ -37,9 +41,10 @@ angular.module('clickApp.directives')
         parent.appendChild(element);
         return element;
       }
-      function setModelPosition(base, model, element) {
-        element.setAttribute('cx', (base.x+model.x)+'');
-        element.setAttribute('cy', (base.y+model.y)+'');
+      function setModelPosition(base, is_flipped, model, element) {
+        var coeff = is_flipped ? -1 : 1;
+        element.setAttribute('cx', (base.x + coeff * model.x)+'');
+        element.setAttribute('cy', (base.y + coeff * model.y)+'');
       }
     }
   ]);

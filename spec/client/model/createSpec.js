@@ -56,30 +56,30 @@ describe('create model', function() {
         'click#': { x: 42, y: 71 }
       });
     }, function() {
+      it('should update scope\'s create object', function() {
+        expect(this.scope.create.model.base)
+          .toEqual({
+            x: 42, y: 71
+          });
+      });
+
       using([
-        [ 'flip_map', 'r' ],
-        [ true      , 180 ],
-        [ false     , 0   ],
+        [ 'flip_map' ],
+        [ true       ],
+        [ false      ],
       ], function(e, d) {
         when('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
           this.scope.ui_state = { flip_map: e.flip_map };
         }, function() {
-          it('should update scope\'s create object', function() {
-            expect(this.scope.create.model.base)
-              .toEqual({
-                x: 42, y: 71, r: e.r
-              });
+          it('should execute createModelCommand', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('createModel',
+                                    this.scope.create.model, e.flip_map,
+                                    this.scope, this.scope.game);
+
+            expect(this.ret).toBe('game.executeCommand.returnValue');
           });
         });
-      });
-
-      it('should execute createModelCommand', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('createModel',
-                                this.scope.create.model,
-                                this.scope, this.scope.game);
-
-        expect(this.ret).toBe('game.executeCommand.returnValue');
       });
     });
 
@@ -130,25 +130,28 @@ describe('create model', function() {
       }
     ]));
 
-    when('execute(<create>, <scope>, <game>)', function() {
+    when('execute(<create>, <flip>, <scope>, <game>)', function() {
       this.ret = this.createModelCommandService
-        .execute(this.create, this.scope, this.game);
+        .execute(this.create, this.flip, this.scope, this.game);
     }, function() {
       beforeEach(function() {
         this.create = {
           base: { x: 240, y: 240, r: 180 },
           models: [ {
             info: ['legion','models','locks','absylonia1'],
-            x: 0, y: 0
+            x: 0, y: 0, r: 45,
+            l: [ 'toto' ],
           }, {
             info: ['legion','models','units','archers','entries','unit','grunt'],
-            x: 20, y: 0
+            x: 20, y: 0, r: 0,
+            l: [ 'titi' ],
           }, {
             info: ['legion','models','units','archers','entries','unit','grunt'],
-            x: 40, y: 0
+            x: 40, y: 0, r: -45,
+            l: [ 'tata' ],
           } ]
         };
-
+        this.flip = false;
       });
 
       it('should create new models from <create>', function() {
@@ -156,18 +159,48 @@ describe('create model', function() {
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-              x: 240, y: 240, r: 180
+              x: 240, y: 240, r: 225,
+              l: [ 'toto' ],
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
-              x: 260, y: 240, r: 180
+              x: 260, y: 240, r: 180,
+              l: [ 'titi' ],
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
-              x: 280, y: 240, r: 180
+              x: 280, y: 240, r: 135,
+              l: [ 'tata' ],
             });
+        });
+      });
+
+      when('map is flipped', function() {
+        this.flip = true;
+      }, function() {
+        it('should flip new models positions', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.modelService.create)
+              .toHaveBeenCalledWith('factions', {
+                info: [ 'legion', 'models', 'locks', 'absylonia1' ],
+                x: 240, y: 240, r: 405,
+                l: [ 'toto' ],
+              });
+            expect(this.modelService.create)
+              .toHaveBeenCalledWith('factions', {
+                info: ['legion','models','units','archers','entries','unit','grunt'],
+                x: 220, y: 240, r: 360,
+                l: [ 'titi' ],
+              });
+            expect(this.modelService.create)
+              .toHaveBeenCalledWith('factions', {
+                info: ['legion','models','units','archers','entries','unit','grunt'],
+                x: 200, y: 240, r: 315,
+                l: [ 'tata' ],
+              });
+          });
         });
       });
 
@@ -186,17 +219,20 @@ describe('create model', function() {
           expect(this.gameModelsService.add)
             .toHaveBeenCalledWith([
               { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                         x: 240, y: 240, r: 180,
+                         x: 240, y: 240, r: 225,
+                         l: [ 'toto' ],
                          stamp: 'stamp1'
                        }
               },
               { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                          x: 260, y: 240, r: 180,
+                         l: [ 'titi' ],
                          stamp: 'stamp2'
                        }
               },
               { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                         x: 280, y: 240, r: 180,
+                         x: 280, y: 240, r: 135,
+                         l: [ 'tata' ],
                          stamp: 'stamp3'
                        }
               }
@@ -226,7 +262,8 @@ describe('create model', function() {
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
-                       x: 240, y: 240, r: 180,
+                       x: 240, y: 240, r: 225,
+                       l: [ 'toto' ],
                        stamp: 'stamp1'
                      }
             });
@@ -234,13 +271,15 @@ describe('create model', function() {
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
                        x: 260, y: 240, r: 180,
+                       l: [ 'titi' ],
                        stamp: 'stamp2'
                      }
             });
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
-                       x: 280, y: 240, r: 180,
+                       x: 280, y: 240, r: 135,
+                       l: [ 'tata' ],
                        stamp: 'stamp3'
                      }
             });

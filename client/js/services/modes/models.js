@@ -9,6 +9,7 @@ angular.module('clickApp.services')
     'game',
     'gameModels',
     'gameModelSelection',
+    'point',
     'prompt',
     function modelsModeServiceFactory(modesService,
                                       settingsService,
@@ -17,6 +18,7 @@ angular.module('clickApp.services')
                                       gameService,
                                       gameModelsService,
                                       gameModelSelectionService,
+                                      pointService,
                                       promptService) {
       var models_actions = Object.create(defaultModeService.actions);
       function modelsClearSelection(scope, event) {
@@ -495,10 +497,22 @@ angular.module('clickApp.services')
         };
       })();
 
+      models_actions.copySelection = function modelsCopySelection(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.copyStamps$(stamps),
+          function(copy) {
+            scope.create.model = copy;
+            return scope.doSwitchToMode('CreateModel');
+          }
+        )(scope.game.models);
+      };
+      
       var models_default_bindings = {
         'clickMap': 'clickMap',
         'rightClickMap': 'rightClickMap',
         'deleteSelection': 'del',
+        'copySelection': 'ctrl+c',
         'toggleLock': 'shift+l',
         'toggleImageDisplay': 'i',
         'setNextImage': 'shift+i',
@@ -575,6 +589,7 @@ angular.module('clickApp.services')
         options = R.defaultTo({}, options);
         var ret = [
           [ 'Delete', 'deleteSelection' ],
+          [ 'Copy', 'copySelection' ],
           [ 'Lock', 'toggleLock' ],
           // [ 'Ruler Max Len.', 'setRulerMaxLength' ],
           [ 'Image', 'toggle', 'image' ],

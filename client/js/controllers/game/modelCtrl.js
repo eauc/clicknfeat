@@ -92,12 +92,12 @@ angular.module('clickApp.controllers')
       $scope.doCreateModel = function doCreateModel() {
         var model_path = getModelPath();
         $scope.create.model = {
-          base: { x: 240, y: 240 },
+          base: { x: 240, y: 240, r: 0 },
           models: R.times(function(i) {
             return {
               info: model_path,
               user: $scope.user.name,
-              x: 20*i, y: 0
+              x: 20*i, y: 0, r: 0
             };
           }, R.defaultTo(1, $scope.repeat))
         };
