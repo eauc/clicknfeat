@@ -3,7 +3,9 @@
 angular.module('clickApp.directives')
   .factory('labelElement', [
     '$window',
-    function($window) {
+    'gameMap',
+    function($window,
+             gameMapService) {
       var labelElementService = {
         create: function labelElementServiceCreate(svgNS, parent) {
           var gLabel = document.createElementNS(svgNS, 'g');
@@ -21,7 +23,7 @@ angular.module('clickApp.directives')
                  };
         },
         updateOnFlipMap: function labelElementUpdateOnFlipMap(map, center, label) {
-          var map_flipped = map.hasAttribute('flipped');
+          var map_flipped = gameMapService.isFlipped(map);
           $window.requestAnimationFrame(function _labelElementUpdateOnFlipMap() {
             label.label.setAttribute('transform',
                                      map_flipped ? 'rotate(180,'+
