@@ -1,6 +1,15 @@
 'use strict';
 
 angular.module('clickApp.filters')
+  .filter('gameLayers', [
+    'gameLayers',
+    function(gameLayersService) {
+      return function(input, method) {
+        var args = R.tail(R.tail(arguments));
+        return gameLayersService[method].apply(null, R.append(input, args));
+      };
+    }
+  ])
   .filter('game', [
     'game',
     function(gameService) {
@@ -16,6 +25,15 @@ angular.module('clickApp.filters')
       return function(input, method) {
         var args = R.tail(R.tail(arguments));
         return modesService[method].apply(null, R.append(input, args));
+      };
+    }
+  ])
+  .filter('gameRuler', [
+    'gameRuler',
+    function(gameRulerService) {
+      return function(input, method) {
+        var args = R.tail(R.tail(arguments));
+        return gameRulerService[method].apply(null, R.append(input, args));
       };
     }
   ]);
