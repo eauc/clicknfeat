@@ -52,7 +52,7 @@ angular.module('clickApp.services')
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
                                            scope, scope.game.template_selection);
       };
-      default_actions.detailTemplate = function defaultDetailTemplate(scope, event) {
+      default_actions.templateSelectionDetail = function defaultTemplateSelectionDetail(scope, event) {
         scope.gameEvent('openSelectionDetail', 'template', event['click#'].target);
         scope.game.template_selection =
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
@@ -96,7 +96,7 @@ angular.module('clickApp.services')
         toggleModelSelection: 'ctrl+clickModel',
         modelSelectionDetail: 'rightClickModel',
         selectTemplate: 'clickTemplate',
-        detailTemplate: 'rightClickTemplate',
+        templateSelectionDetail: 'rightClickTemplate',
       };
       var default_bindings = R.extend(Object.create(commonModeService.bindings),
                                       default_default_bindings);

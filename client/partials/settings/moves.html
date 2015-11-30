@@ -15,11 +15,9 @@
       <th>Current</th>
     </tr>
     <tr ng-repeat="(a,b) in settings.default.Moves[mode]"
-        style="
-        font-weight: {{settings.current.Moves[mode][a] !== b ? 'bold' : 'normal'}};
-        ">
-      <td style="vertical-align:middle;">{{::a}}</td>
-      <td style="vertical-align:middle;">{{::b}}</td>
+        class="{{settings.current.Moves[mode][a] !== b ? 'modified' : ''}}">
+      <td class="vertical-center">{{::a}}</td>
+      <td class="vertical-center">{{::b}}</td>
       <td>
         <div class="input-group">
           <input type="number"

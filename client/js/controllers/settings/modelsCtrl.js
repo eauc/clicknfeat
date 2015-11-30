@@ -22,22 +22,30 @@ angular.module('clickApp.controllers')
       
       $scope.doOpenFactionFile = function(faction, files) {
         console.log('openFactionFile', faction, files);
+
         $scope.success = ''; 
         $scope.error = '';
-        fileImportService.read('json', files[0])
-          .then(function(data) {
+        R.pipeP(
+          function() {
+            return fileImportService.read('json', files[0])
+              .catch(function(error) {
+                $scope.error = 'error loading file : '+error;
+              });
+          },
+          function(data) {
+            if(R.isNil(data)) return;
+
             console.log(data);
             $scope.success = 'file loaded';
+
             $scope.desc[faction] = data;
             gameFactionsService.storeDesc($scope.desc);
-            $scope.reloadFactions();
-          })
-          .catch(function(error) {
-            $scope.error = 'error loading file : '+error;
-          })
-          .then(function() {
-            $scope.deferDigest($scope);
-          });
+            return $scope.reloadFactions();
+          },
+          function() {
+            $scope.$digest();
+          }
+        )();
       };
       $scope.doClearFactionDesc = function(faction) {
         $scope.desc = R.omit([faction], $scope.desc);

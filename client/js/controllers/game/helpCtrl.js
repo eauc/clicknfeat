@@ -23,7 +23,7 @@ angular.module('clickApp.controllers')
           game: $scope.game
         }).then(function(url) {
           $scope.debug.url = url;
-          $scope.deferDigest($scope);
+          $scope.$digest();
         });
       };
       $scope.$on('$destroy', function onDestroy() {

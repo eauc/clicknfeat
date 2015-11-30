@@ -1,26 +1,29 @@
 <div id="settings-main">
   <p class="text-danger"><strong>{{error}}</strong></p>
   <p class="text-success"><strong>{{success}}</strong></p>
-  <form class="form-inline">
-    <fieldset>
-      <div class="form-group"
-           ng-repeat="(f, faction) in factions">
-        <label class="
-               control-label
-               {{ hasDesc(f) ? 'text-info' : '' }}
-               ">
-          {{f}}
-          <span class="clickable glyphicon glyphicon-trash"
-                ng-click="doClearFactionDesc(f)">
-          </span>
-        </label>
-        <input type="file"
-               multiple
-               ea-file="doOpenFactionFile(f, file)" />
-      </div>
-    </fieldset>
-    <br />
-    <fieldset>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-import"></span>
+      Models Descriptions
+    </div>
+    <div class="panel-body row">
+      <form class="">
+        <div class="form-group {{ hasDesc(f) ? 'bg-info' : '' }}"
+             ng-repeat="(f, faction) in factions">
+          <label class="control-label col-xs-3 text-right">
+            <span class="clickable glyphicon glyphicon-trash"
+                  ng-click="doClearFactionDesc(f)">
+            </span>
+            {{::faction.name}}
+          </label>
+          <input id="file-{{::f}}"
+                 type="file"
+                 multiple
+                 ea-file="doOpenFactionFile(f, file)" />
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
       <button type="button"
               class="btn btn-default"
               ng-click="doClearAllDesc(f)">
@@ -28,6 +31,6 @@
         <span class="glyphicon glyphicon-trash">
         </span>
       </button>
-    </fieldset>
-  </form>
+    </div>
+  </div>
 </div>

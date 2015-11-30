@@ -145,7 +145,7 @@ describe('model place', function() {
 
     when('user set origin model', function() {
       this.ret = this.modelPlaceModeService.actions
-        .toggleModelSelection(this.scope, this.event);
+        .setOriginModel(this.scope, this.event);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];

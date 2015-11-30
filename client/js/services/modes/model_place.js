@@ -42,7 +42,7 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      model_actions.toggleModelSelection = function modelSetOriginModel(scope, event) {
+      model_actions.setOriginModel = function modelSetOriginModel(scope, event) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -87,6 +87,8 @@ angular.module('clickApp.services')
 
       var model_default_bindings = {
         'endPlace': 'p',
+        'setTargetModel': 'shift+clickModel',
+        'setOriginModel': 'ctrl+clickModel',
       };
       var model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                     model_default_bindings);

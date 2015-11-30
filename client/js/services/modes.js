@@ -114,12 +114,22 @@ angular.module('clickApp.services')
         return modes;
       });
       function setupBindings(mode, scope) {
+        var own_bindings = R.keys(mode.bindings);
+        var all_bindings = R.keysIn(mode.bindings);
+        var inherited_bindings = R.difference(all_bindings,
+                                              own_bindings);
         R.forEach(function(action) {
           Mousetrap.bind(mode.bindings[action],
                          actionBinding(mode.actions, action,
                                        scope)
                         );
-        }, R.keysIn(mode.bindings));
+        }, inherited_bindings);
+        R.forEach(function(action) {
+          Mousetrap.bind(mode.bindings[action],
+                         actionBinding(mode.actions, action,
+                                       scope)
+                        );
+        }, own_bindings);
       }
       function actionBinding(actions, name, scope) {
         return function binding(event, keys) {

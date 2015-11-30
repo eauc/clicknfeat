@@ -49,19 +49,24 @@ angular.module('clickApp.controllers')
       ]).then(function() {
         console.log('data ready');
       });
-      // $scope.doResetSettings = function doResetSettings(data) {
-      //   $scope.settings = R.pipe(
-      //     settingsService.bind,
-      //     settingsService.update
-      //   )(data);
-      // };
-      // $scope.reloadFactions = function reloadFactions() {
-      //   gameFactionsService.init()
-      //     .then(function(factions) {
-      //       $scope.factions = factions;
-      //       console.log('factions', factions);
-      //     });
-      // };
+      $scope.doResetSettings = function doResetSettings(data) {
+        R.pipeP(
+          R.bind(self.Promise.resolve, self.Promise),
+          settingsService.bind,
+          settingsService.update,
+          function(settings) {
+            $scope.settings = settings;
+            $scope.$digest();
+          }
+        )(data);
+      };
+      $scope.reloadFactions = function reloadFactions() {
+        return gameFactionsService.init()
+          .then(function(factions) {
+            $scope.factions = factions;
+            console.log('factions', factions);
+          });
+      };
 
       $scope.userIsValid = function() {
         return R.exists(R.path(['user','name'], $scope));

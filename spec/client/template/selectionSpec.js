@@ -26,7 +26,7 @@ describe('select template', function() {
 
     when('user right-click on template', function() {
       this.defaultModeService.actions
-        .detailTemplate(this.scope, this.event);
+        .templateSelectionDetail(this.scope, this.event);
     }, function() {
       it('should open template selection detail', function() {
         expect(this.scope.gameEvent)

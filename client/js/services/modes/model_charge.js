@@ -105,6 +105,7 @@ angular.module('clickApp.services')
 
       var charge_default_bindings = {
         'endCharge': 'c',
+        'setTargetModel': 'shift+clickModel',
       };
       var charge_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                      charge_default_bindings);

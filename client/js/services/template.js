@@ -193,12 +193,12 @@ angular.module('clickApp.services')
         ShiftSmall: 1,
       };
       var MOVES = R.clone(DEFAULT_MOVES);
-      // settingsService.register('Moves',
-      //                          'Template',
-      //                          DEFAULT_MOVES,
-      //                          function(moves) {
-      //                            R.extend(MOVES, moves);
-      //                          });
+      settingsService.register('Moves',
+                               'Template',
+                               DEFAULT_MOVES,
+                               function(moves) {
+                                 R.extend(MOVES, moves);
+                               });
       var templateService = {
         registerTemplate: function templateRegister(type, service) {
           TEMP_REGS[type] = service;

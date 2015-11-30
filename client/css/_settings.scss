@@ -1,0 +1,12 @@
+#settings{
+    .error-list {
+        @extend %scrollbox-y;
+        max-height: 10em;
+    }
+    .modified {
+        font-weight: bold;
+    }
+    .vertical-center {
+        vertical-align: middle;
+    }
+}

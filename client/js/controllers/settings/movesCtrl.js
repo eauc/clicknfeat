@@ -5,7 +5,11 @@ angular.module('clickApp.controllers')
     '$scope',
     function($scope) {
       console.log('init settingsMovesCtrl');
-      $scope.modes = R.keys($scope.settings.default['Moves']);
-      $scope.mode = R.head($scope.modes);
+
+      $scope.data_ready
+        .then(function() {
+          $scope.modes = R.keys($scope.settings.default['Moves']).sort();
+          $scope.mode = R.head($scope.modes);
+        });
     }
   ]);

@@ -10,30 +10,53 @@ angular.module('clickApp.controllers')
              fileExportService) {
       console.log('init settingsMainCtrl');
       
-      $scope.updateExports = function updateExports() {
-        $scope.save = {
-          name: 'clicknfeat_settings.json',
-          url: fileExportService.generate('json', $scope.settings.current)
-        };
+      $scope.save = {
+        name: 'clicknfeat_settings.json',
+        url: null,
       };
-      $scope.$on('$destroy', function onDestroy() {
+      function cleanup() {
         fileExportService.cleanup($scope.save.url);
-      });
-      $scope.updateExports();
+      }
+      $scope.updateExports = function updateExports() {
+        cleanup();
+        
+        R.pipeP(
+          function() {
+            return fileExportService
+              .generate('json', $scope.settings.current);
+          },
+          function(url) {
+            $scope.save.url = url;
+          }
+        )();
+      };
+      $scope.$on('$destroy', cleanup);
+      $scope.data_ready
+        .then(function() {
+          $scope.updateExports();
+        });
 
       $scope.doOpenSettingsFile = function(files) {
         console.log('openSettingsFile', files);
-        fileImportService.read('json', files[0])
-          .then(function(data) {
+
+        $scope['open_result'] = '';
+        R.pipe(
+          function() {
+            return fileImportService.read('json', files[0])
+              .catch(function(error) {
+                $scope['open_result'] = error;
+              });
+          },
+          function(data) {
+            if(R.isNil(data)) return;
+            
             $scope.doResetSettings(data);
             $scope['open_result'] = [ 'Settings loaded' ];
-          })
-          .catch(function(error) {
-            $scope['open_result'] = error;
-          })
-          .then(function() {
-            $scope.deferDigest($scope);
-          });
+          },
+          function() {
+            $scope.$digest();
+          }
+        )();
       };
     }
   ]);

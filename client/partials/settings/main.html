@@ -1,44 +1,47 @@
 <div id="settings-main">
-  <button type="button"
-          class="btn btn-default"
-          style="margin-top: 30px;"
-          ng-click="doResetSettings({})">
-    Reset Settings
-  </button>
-  <form class="form-inline">
-    <fieldset style="margin-top:10px">
-      <legend>  
-        <span class="glyphicon glyphicon-import"></span>
-        Import
-      </legend>
-      <div class="form-group">
-        <label class="control-label"
-               for="import-file">
-          Choose file
-        </label>
-        <input id="import-file"
-               type="file"
-               multiple
-               ea-file="doOpenSettingsFile(file)" />
-      </div>
-      <div style="
-           max-height: 300px;
-           overflow-y: auto;
-           ">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-import"></span>
+      Import
+    </div>
+    <div class="panel-content">
+      <form>
+        <div class="form-group">
+          <label class="control-label"
+                 for="import-file">
+            Choose file
+          </label>
+          <input id="import-file"
+                 type="file"
+                 multiple
+                 ea-file="doOpenSettingsFile(file)" />
+        </div>
+      </form>
+      <div class="error-list">
         <div ng-repeat="err in open_result">
-          <strong class="text-warning">{{::err}}</strong><br />
+          <strong class="text-warning">{{::err}}</strong>
         </div>
       </div>
-    </fieldset>
-    <fieldset style="margin-top:10px">
-      <legend>  
-        <span class="glyphicon glyphicon-save"></span>
-        Export
-      </legend>
-      <a ng-href="{{::save.url}}"
+    </div>
+    <div class="panel-footer">
+      <button type="button"
+              class="btn btn-default"
+              ng-click="doResetSettings({})">
+        Reset Settings
+      </button>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-export"></span>
+      Export
+    </div>
+    <div class="panel-content">
+      <a class="btn btn-default"
+         ng-href="{{save.url}}"
          download="{{::save.name}}">
         Download Settings File
       </a>
-    </fieldset>
-  </form>  
+    </div>
+  </div>
 </div>
