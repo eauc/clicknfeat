@@ -52,7 +52,15 @@ angular.module('clickApp.controllers')
           unsubscribe();
         });
       };
-
+      $scope.digestOnGameEvent('diceRoll', $scope);
+      $scope.digestOnGameEvent('changeBoard', $scope);
+      $scope.digestOnGameEvent('changeLayers', $scope);
+      $scope.digestOnGameEvent('changeScenario', $scope);
+      $scope.digestOnGameEvent('createModel', $scope);
+      $scope.digestOnGameEvent('createTemplate', $scope);
+      $scope.digestOnGameEvent('switchMode', $scope);
+      $scope.digestOnGameEvent('gameLoaded', $scope);
+      
       $scope.saveGame = function saveGame(game) {
         var res;
         if(!online) {
