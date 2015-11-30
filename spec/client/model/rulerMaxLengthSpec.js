@@ -1,14 +1,20 @@
 'use strict';
 
-xdescribe('model ruler', function() {
+describe('model ruler', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
+
         this.gameService = spyOnService('game');
+
         this.modelService = spyOnService('model');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
         this.scope = { game: { model_selection: 'selection',
@@ -19,12 +25,14 @@ xdescribe('model ruler', function() {
       }
     ]));
 
-    describe('when user set ruler max length', function() {
+    when('user sets ruler max length', function() {
+      this.ret = this.modelsModeService.actions
+        .setRulerMaxLength(this.scope);
+    }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
         this.modelService.rulerMaxLength._retVal = 42;
-
-        this.modelsModeService.actions.setRulerMaxLength(this.scope);
+        this.promptService.prompt.resolveWith = 71;
       });
 
       it('should fetch first model\'s ruler max length', function() {
@@ -32,15 +40,19 @@ xdescribe('model ruler', function() {
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameModelsService.findStamp)
           .toHaveBeenCalledWith('stamp1', 'models');
-        expect(this.modelService.rulerMaxLength)
-          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.modelService.rulerMaxLength)
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+        });
       });
       
       it('should prompt user for max length', function() {
-        expect(this.promptService.prompt)
-          .toHaveBeenCalledWith('prompt',
-                                'Set ruler max length :',
-                                42);
+        this.thenExpect(this.ret, function() {
+          expect(this.promptService.prompt)
+            .toHaveBeenCalledWith('prompt',
+                                  'Set ruler max length :',
+                                  42);
+        });
       });
 
       using([
@@ -48,28 +60,30 @@ xdescribe('model ruler', function() {
         [ 42     , 42    ],
         [ 0      , null  ],
       ], function(e, d) {
-        describe('when user validates prompt, '+d, function() {
-          beforeEach(function() {
-            this.promptService.prompt.resolve(e.value);
-          });
-          
+        when('user validates prompt, '+d, function() {
+          this.promptService.prompt.resolveWith = e.value;
+        }, function() {
           it('should set model\'s ruler max length', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', e.max,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            this.thenExpect(this.ret, function(result) {
+              expect(this.gameService.executeCommand)
+                .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', e.max,
+                                      ['stamp1','stamp2'], this.scope, this.scope.game);
+              expect(result).toBe('game.executeCommand.returnValue');
+            });
           });
         });
       });
 
-      describe('when user cancel prompt', function() {
-        beforeEach(function() {
-          this.promptService.prompt.reject('canceled');
-        });
-        
-        it('should reset model\'s ruler max length', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', null,
-                                  ['stamp1','stamp2'], this.scope, this.scope.game);
+      when('user cancels prompt', function() {
+        this.promptService.prompt.rejectWith = 'canceled';
+      }, function() {
+        it('should set model\'s ruler max length', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', null,
+                                    ['stamp1','stamp2'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });

@@ -27,6 +27,8 @@ angular.module('clickApp.directives')
             updateRuler(map, scope.game.ruler.local, local_element);
           }, scope);
           scope.onGameEvent('changeRemoteRuler', function onChangeRemoteRuler() {
+            if(R.isNil(scope.game.ruler)) return;
+            
             updateRuler(map, scope.game.ruler.remote, remote_element);
 
             var display = ( gameRulerService.isDisplayed(scope.game.ruler) ||

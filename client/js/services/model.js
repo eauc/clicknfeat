@@ -19,7 +19,7 @@ angular.module('clickApp.services')
     'modelMelee',
     'modelMove',
     'modelPlace',
-    // 'modelRuler',
+    'modelRuler',
     'modelUnit',
     'modelWreck',
     function modelServiceFactory(settingsService,
@@ -39,7 +39,7 @@ angular.module('clickApp.services')
                                  modelMeleeService,
                                  modelMoveService,
                                  modelPlaceService,
-                                 // modelRulerService,
+                                 modelRulerService,
                                  modelUnitService,
                                  modelWreckService) {
       var DEFAULT_MOVES = {
@@ -212,7 +212,7 @@ angular.module('clickApp.services')
         modelPlaceService(MOVES, modelService),
         modelMeleeService(modelService),
         modelMoveService(MOVES, modelService),
-        // modelRulerService(modelService),
+        modelRulerService(modelService),
         modelUnitService(modelService),
         modelWreckService(modelService)
       );

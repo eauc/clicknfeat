@@ -174,25 +174,26 @@ angular.module('clickApp.services')
         return gameService.executeCommand('onModels', 'decrementCounter', 's',
                                           stamps, scope, scope.game);
       };
-      // models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var value = R.defaultTo(0, modelService.rulerMaxLength(model));
-      //   promptService.prompt('prompt',
-      //                        'Set ruler max length :',
-      //                        value)
-      //     .then(function(value) {
-      //       value = (value === 0) ? null : value;
-      //       gameService.executeCommand('onModels', 'setRulerMaxLength', value,
-      //                                  stamps, scope, scope.game);
-      //       return value;
-      //     })
-      //     .catch(function(error) {
-      //       gameService.executeCommand('onModels', 'setRulerMaxLength', null,
-      //                                  stamps, scope, scope.game);
-      //       return null;
-      //     });
-      // };
+      models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          modelService.rulerMaxLength,
+          R.defaultTo(0),
+          function(value) {
+            return promptService.prompt('prompt',
+                                        'Set ruler max length :',
+                                        value)
+              .catch(R.always(null));
+          },
+          function(value) {
+            value = (value === 0) ? null : value;
+
+            return gameService.executeCommand('onModels', 'setRulerMaxLength', value,
+                                              stamps, scope, scope.game);
+          }
+        )(scope.game.models);
+      };
       models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope, event) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
@@ -527,7 +528,7 @@ angular.module('clickApp.services')
         'incrementSouls': 'shift++',
         'decrementSouls': 'shift+-',
         'toggleCtrlAreaDisplay': 'shift+c',
-        // 'setRulerMaxLength': 'shift+m',
+        'setRulerMaxLength': 'alt+m',
         'setChargeMaxLength': 'shift+m',
         'setPlaceMaxLength': 'shift+p',
         'togglePlaceWithin': 'shift+w',
@@ -591,7 +592,7 @@ angular.module('clickApp.services')
           [ 'Delete', 'deleteSelection' ],
           [ 'Copy', 'copySelection' ],
           [ 'Lock', 'toggleLock' ],
-          // [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+          [ 'Ruler Max Len.', 'setRulerMaxLength' ],
           [ 'Image', 'toggle', 'image' ],
           [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
           [ 'Next', 'setNextImage', 'image' ],
