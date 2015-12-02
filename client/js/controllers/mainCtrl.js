@@ -5,6 +5,7 @@ angular.module('clickApp.controllers')
     '$scope',
     '$state',
     '$window',
+    'pubSub',
     'settings',
     'user',
     'gameBoard',
@@ -14,11 +15,13 @@ angular.module('clickApp.controllers')
     function($scope,
              $state,
              $window,
+             pubSubService,
              settingsService,
              userService,
              gameBoardService,
              gameFactionsService,
-             gameScenarioService) {
+             gameScenarioService,
+             allModesService) {
       console.log('init mainCtrl');
       
       $scope.boards_ready = gameBoardService.init()
@@ -68,26 +71,37 @@ angular.module('clickApp.controllers')
           });
       };
 
+      $scope.user = {};
+      $scope.user_ready = R.pipeP(
+        userService.init,
+        function onLoadUser(user) {
+          $scope.user = user;
+          console.log('loaded user', $scope.user);
+          $scope.checkUser();
+          $scope.$digest();
+          pubSubService.subscribe('#watch#', function() {
+            console.log('UserConnection event', arguments);
+            $scope.$digest();
+          }, $scope.user.connection.channel);
+        }
+      )();
       $scope.userIsValid = function() {
-        return R.exists(R.path(['user','name'], $scope));
+        return userService.isValid($scope.user);
       };
       $scope.checkUser = function() {
         if(!$scope.userIsValid()) {
           $state.go('user');
         }
       };
-      $scope.user_ready = userService.load()
-        .then(function onLoadUser(user) {
-          $scope.user = user;
-          console.log('loaded user', $scope.user);
-          $scope.checkUser();
-        });
       $scope.setUser = function(new_user) {
-        return userService.save(new_user)
-          .then(function onSaveUser(user) {
-            $scope.user = user;
-            console.log('set user', $scope.user);
-          });
+        return R.pipeP(
+          R.bind(self.Promise.resolve, self.Promise),
+          function(new_user) {
+            console.log('set user', new_user);
+            $scope.user = new_user;
+            $scope.$digest();
+          }
+        )(new_user);
       };
 
       $scope.goToState = function() {
@@ -103,13 +117,5 @@ angular.module('clickApp.controllers')
       $scope.currentState = function() {
         return $state.current;
       };
-
-      // $scope.deferDigest = function deferDigest(scope) {
-      //   // console.log('deferDigest');
-      //   $window.requestAnimationFrame(function _deferDigest() {
-      //     // console.log('_deferDigest');
-      //     scope.$digest();
-      //   });
-      // };
     }
   ]);

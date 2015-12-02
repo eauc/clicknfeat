@@ -15,7 +15,8 @@ angular.module('clickApp.services')
             client.send();
           }
           client.onload = function ajaxOnLoad() {
-            if(client.status === 200) {
+            if(client.status >= 200 &&
+               client.status < 300) {
               resolve(client.response);
             }
             else {
@@ -41,6 +42,7 @@ angular.module('clickApp.services')
           return ajaxRequest('DELETE', url);
         },
       };
+      R.curryService(httpService);
       return httpService;
     }
   ]);

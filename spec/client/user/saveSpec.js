@@ -6,18 +6,23 @@ describe('user load/store', function() {
       this.userService = userService;
     }]));
 
-    describe('save()', function() {
+    when('save()', function() {
+      this.ret = this.userService.save(this.user);
+    }, function() {
+      beforeEach(function() {
+        this.user = { state: { name: 'exemple' },
+                      connection: 'connection'
+                    };
+        this.localStorageService.save.resolveWith = 'localStorage.save.returnValue';
+      });
+      
       it('should save user in local storage', function() {
-        this.user = { name: 'exemple' };
-
-        this.thenExpect(this.userService.save(this.user), function(user) {
+        this.thenExpect(this.ret, function(user) {
           expect(this.localStorageService.save)
-            .toHaveBeenCalledWith('clickApp.user', this.user);
+            .toHaveBeenCalledWith('clickApp.user', this.user.state);
           
-          expect(user).toEqual('localStorage.save.returnValue');
+          expect(user).toEqual(this.user);
         });
-
-        this.localStorageService.save.resolve('localStorage.save.returnValue');
       });
     });
   });

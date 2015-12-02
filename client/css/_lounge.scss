@@ -1,4 +1,16 @@
-.game-list {
-    @extend %scrollbox-y;
-    max-height: 10em;
+#lounge {
+    .user {
+        padding: 5px 10px;
+    }
+    .chat {
+        padding: 5px 10px 0px 10px;
+    }
+    .game-list {
+        @extend %scrollbox-y;
+        max-height: 10em;
+    }
+    .chat-list {
+        @extend %scrollbox-y;
+        max-height: 10em;
+    }
 }

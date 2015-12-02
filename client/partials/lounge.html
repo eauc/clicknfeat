@@ -2,13 +2,25 @@
      class="container">
   <div class="panel panel-info">
     <div class="panel-heading">
-      <h4 class="panel-title">{{::user_desc}}</h4>
+      <h4 class="panel-title">
+        {{ user | user:'description' }} /
+        {{ (user | user:'online') ? 'Online' : 'Offline' }}
+        ( {{ user.state.stamp }} )
+      </h4>
     </div>
-    <div class="panel-body">
-      Status : Offline
+    <div class="panel-body"
+         ng-show="user | userConnection:'active'">
+      <click-user-connection>
+      </click-user-connection>
+    </div>
+    <div class="panel-footer">
+      <button type="button"
+              class="btn btn-default"
+              ng-click="doUserToggleOnline()">
+        Go {{ (user | user:'online') ? 'Offline' : 'Online' }}
+      </button>
     </div>
   </div>
-  
   <div class="panel panel-info">
     <div class="panel-heading">
       <h4 class="panel-title">Local games</h4>

@@ -8,4 +8,6 @@ gem "sinatra-websocket"
 group :development do
   gem 'sass'
   gem 'rb-inotify'
+  gem 'rspec'
+  gem 'rerun'
 end

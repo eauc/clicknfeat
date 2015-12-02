@@ -10,7 +10,7 @@ input.ng-invalid-required {
   font-style: italic;
   font-size: 90%; }
 
-.game-list, #settings .error-list, #game #cmd-osd .scroll-container, #game #main-dice-list, #game #log-replay-list, #game #log-command-list {
+#lounge .game-list, #lounge .chat-list, #settings .error-list, #game #cmd-osd .scroll-container, #game #main-dice-list, #game #log-replay-list, #game #log-command-list {
   overflow-y: auto; }
 
 input[type='file'].form-control {
@@ -22,6 +22,12 @@ input[type='file'].form-control {
   font-weight: bold;
   margin: 0px;
   padding: 5px 20px; }
+
+a:not([href]),
+a:not([href]):hover,
+a:not([href]):focus {
+  text-decoration: none;
+  color: inherit; }
 
 .prompt-mask, .prompt-container {
   position: fixed;
@@ -44,7 +50,13 @@ input[type='file'].form-control {
   margin-right: auto;
   max-width: 300px; }
 
-.game-list {
+#lounge .user {
+  padding: 5px 10px; }
+#lounge .chat {
+  padding: 5px 10px 0px 10px; }
+#lounge .game-list {
+  max-height: 10em; }
+#lounge .chat-list {
   max-height: 10em; }
 
 #settings .error-list {

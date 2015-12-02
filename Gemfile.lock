@@ -3,16 +3,36 @@ GEM
   specs:
     addressable (2.3.8)
     daemons (1.2.3)
+    diff-lcs (1.2.5)
     em-websocket (0.3.8)
       addressable (>= 2.1.1)
       eventmachine (>= 0.12.9)
     eventmachine (1.0.8)
     ffi (1.9.10)
+    listen (3.0.5)
+      rb-fsevent (>= 0.9.3)
+      rb-inotify (>= 0.9)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
+    rb-fsevent (0.9.6)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
+    rerun (0.11.0)
+      listen (~> 3.0)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.1)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     sass (3.4.19)
     sinatra (1.4.6)
       rack (~> 1.4)
@@ -33,6 +53,8 @@ PLATFORMS
 
 DEPENDENCIES
   rb-inotify
+  rerun
+  rspec
   sass
   sinatra
   sinatra-websocket

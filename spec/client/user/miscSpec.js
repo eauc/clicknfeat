@@ -6,7 +6,29 @@ describe('user', function() {
       this.userService = userService;
     }]));
 
-    describe('description()', function() {
+    when('isValid()', function() {
+      this.ret = this.userService.isValid(this.user);
+    }, function() {
+      using([
+        [ 'state'              , 'is_valid' ],
+        [ { toto: 'toto' }     , false ],
+        [ { name: null }       , false ],
+        [ { name: '   ' }      , false ],
+        [ { name: 'toto' }     , true ],
+        [ { name: ' to to  ' } , true ],
+      ], function(e, d) {
+        when(d, function() {
+          this.user = { state: e.state };
+        }, function() {
+          it('should check if user is valid', function() {
+            expect(this.ret).toBe(e.is_valid);
+          });
+        });
+      });
+    });
+    when('description()', function() {
+      this.ret = this.userService.description(this.user);
+    }, function() {
       using([
         [ 'user', 'desc' ],
         [ {}    , ''     ],
@@ -24,9 +46,13 @@ describe('user', function() {
         [ { name: 'user',
             ck_position: ['Missionary', '49'] }, 'User - likes Missionary,49' ],
       ], function(e, d) {
-        it('should return a description string for user, '+d, function() {
-          expect(this.userService.description(e.user))
-            .toBe(e.desc);
+        when(d, function() {
+          this.user = { state: e.user };
+        }, function() {
+          it('should return a description string for user', function() {
+            expect(this.ret)
+              .toBe(e.desc);
+          });
         });
       });
     });

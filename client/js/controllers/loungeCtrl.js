@@ -14,11 +14,6 @@ angular.module('clickApp.controllers')
              fileImportService) {
       console.log('init loungeCtrl');
 
-      $scope.user_ready
-        .then(function onUserReady() {
-          $scope.user_desc = userService.description($scope.user);
-        });
-      
       gamesService.loadLocalGames()
         .then(function(games) {
           $scope.local_games = games;
@@ -52,7 +47,7 @@ angular.module('clickApp.controllers')
           });
       }
       $scope.doCreateLocalGame = function() {
-        var game = gameService.create($scope.user);
+        var game = gameService.create($scope.user.state);
         loadNewLocalGame(game);
       };
       $scope.doOpenLocalGameFile = function(files) {
@@ -75,6 +70,13 @@ angular.module('clickApp.controllers')
             $scope.setLocalGamesSelection($scope.local_games_selection[0]);
             $scope.$digest();
           });
+      };
+
+      $scope.doUserToggleOnline = function() {
+        return R.pipeP(
+          userService.toggleOnline,
+          $scope.setUser
+        )($scope.user);
       };
     }
   ]);

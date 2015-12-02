@@ -1,0 +1,46 @@
+<div ng-repeat="u in user.connection.users track by u.stamp"
+     class="user clickable
+            {{ userIsInTo(u.stamp) ? 'bg-info' : '' }}
+            {{ (user.state.stamp === u.stamp) ? 'bg-primary' : '' }}
+            "
+     ng-click="doToggleUserTo(u.stamp)">
+  {{ u | user:'stateDescription' }}
+  ( {{:: u.stamp }} )
+</div>
+<h4>Chat</h4>
+<form ng-submit="doSendChatMessage()">
+  <div class="form-group">
+    <label>
+      To :
+    </label>
+    <em>
+      {{ (user | userConnection:'usersNamesForStamps':chat.to).join(',') }}
+    </em>
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button type="button"
+                class="btn btn-default"
+                ng-click="doSendChatMessageToAll()">
+          ToAll
+        </button>
+      </span>
+      <input type="text"
+             class="form-control"
+             placeholder="Msg..."
+             ng-model="chat.msg" />
+    </div>
+  </div>
+</form>
+<div class="chat-list">
+  <div class="chat"
+       ng-repeat="c in user.connection.chat.slice().reverse() track by c.stamp">
+    <em ng-click="doSetToChat(c)"
+        class="clickable">
+      {{ user | userConnection:'userNameForStamp':c.from }}
+      ➝
+      {{ (user | userConnection:'usersNamesForStamps':c.to).join(',') }}
+    </em>
+    :
+    <a ng-href="{{c.link}}">{{c.msg}}</a>
+  </div>
+</div>

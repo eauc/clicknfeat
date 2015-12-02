@@ -30,7 +30,6 @@ angular.module('clickApp.services')
             },
             R.bind(self.Promise.all, self.Promise),
             R.sortBy(R.compose(R.prop('name'), R.nth(1))),
-            R.spy('factions_pairs'),
             R.reduce(function(mem, pair) {
               return R.assoc(pair[0], updateFaction(pair[1]), mem);
             }, {}),
