@@ -1,0 +1,7 @@
+<div ng-repeat="(i,g) in games"
+     class="clickable
+            {{isInSelection(i) ? 'bg-info':''}}
+            "
+     ng-click="setSelection(i)">
+  {{::g | game:'description'}}
+</div>

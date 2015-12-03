@@ -21,18 +21,52 @@
       </button>
     </div>
   </div>
+  <div class="panel panel-info"
+       ng-show="user | userConnection:'active'">
+    <div class="panel-heading">
+      <h4 class="panel-title">Online Games</h4>
+    </div>
+    <div class="game-list panel-body">
+      <click-games-list games="user.connection.games"
+                        selection="online_games_selection">
+      </click-games-list>
+    </div>
+    <div class="panel-footer">
+      <form>
+        <div class="btn-group">
+          <button type="button"
+                  class="btn btn-default"
+                  ng-click="doCreateOnlineGame()">
+            New Game
+          </button>
+          <button type="button"
+                  class="btn btn-default"
+                  ng-click="doLoadOnlineGame()"
+                  ng-disabled="online_games_selection.list.length <= 0">
+            Watch Game
+          </button>
+        </div>
+        <div class="form-group">
+          <label for="import-file">
+            Upload game file :
+          </label>
+          <input class="form-control"
+                 id="import-file"
+                 type="file"
+                 multiple
+                 ea-file="doOpenOnlineGameFile(file)" />
+        </div>
+      </form>
+    </div>
+  </div>
   <div class="panel panel-info">
     <div class="panel-heading">
       <h4 class="panel-title">Local games</h4>
     </div>
     <div class="game-list panel-body">
-      <div ng-repeat="(i,g) in local_games"
-           class="clickable
-                  {{isInLocalGamesSelection(i) ? 'bg-info':''}}
-                  "
-           ng-click="setLocalGamesSelection(i)">
-        {{::g | game:'description'}}
-      </div>
+      <click-games-list games="local_games"
+                        selection="local_games_selection">
+      </click-games-list>
     </div>
     <div class="panel-footer">
       <form>
@@ -45,13 +79,13 @@
           <button type="button"
                   class="btn btn-default"
                   ng-click="doLoadLocalGame()"
-                  ng-disabled="localGamesSelectionIsEmpty()">
+                  ng-disabled="local_games_selection.list.length <= 0">
             Load Game
           </button>
           <button type="button"
                   class="btn btn-default"
                   ng-click="doDeleteLocalGame(index)"
-                  ng-disabled="localGamesSelectionIsEmpty()">
+                  ng-disabled="local_games_selection.list.length <= 0">
             Delete Game
           </button>
         </div>

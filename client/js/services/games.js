@@ -3,12 +3,10 @@
 angular.module('clickApp.services')
   .factory('games', [
     'localStorage',
-    'jsonParser',
-    'jsonStringifier',
+    'http',
     'game',
     function gamesServiceFactory(localStorageService,
-                                 jsonParserService,
-                                 jsonStringifierService,
+                                 httpService,
                                  gameService) {
       var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
       var gamesService = {
@@ -34,7 +32,28 @@ angular.module('clickApp.services')
           var ret = R.remove(index, 1, games);
           return gamesService.storeLocalGames(ret);
         },
+        newOnlineGame: function gamesNewOnlineGame(game) {
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            gameService.pickForJson,
+            R.spyError('upload game'),
+            httpService.post$('/api/games'),
+            R.spyError('upload game response')
+          )(game);
+        },
+        loadOnlineGame: function gamesLoadOnlineGame(is_private, id) {
+          var url = [
+            '/api/games',
+            (is_private ? 'private' : 'public'),
+            id
+          ].join('/');
+          return R.pipeP(
+            httpService.get,
+            R.spyError('load online game')
+          )(url);
+        },
       };
+      R.curryService(gamesService);
       return gamesService;
     }
   ]);

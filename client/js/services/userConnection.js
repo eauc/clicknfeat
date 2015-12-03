@@ -24,6 +24,7 @@ angular.module('clickApp.services')
           var handlers = {
             close: closeHandler$(user.connection),
             users: usersMessageHandler$(user.connection),
+            games: gamesMessageHandler$(user.connection),
             chat: chatMessageHandler$(user.connection),
           };
 
@@ -115,12 +116,19 @@ angular.module('clickApp.services')
         };
       }
       var usersMessageHandler$ = R.curry(function usersMessageHandler(connection, msg) {
-        console.log('User connection: users list', msg.users);
+        console.log('User connection: users list', msg);
         connection.users = R.pipe(
           R.propOr([], 'users'),
           R.sortBy(R.compose(R.toLower, R.prop('name')))
         )(msg);
         pubSubService.publish('users', connection.users, connection.channel);
+      });
+      var gamesMessageHandler$ = R.curry(function gamesMessageHandler(connection, msg) {
+        console.log('User connection: games list', msg);
+        connection.games = R.pipe(
+          R.propOr([], 'games')
+        )(msg);
+        pubSubService.publish('games', connection.games, connection.channel);
       });
       var chatMessageHandler$ = R.curry(function chatMessageHandler(connection, msg) {
         console.log('User connection: chat msg', msg);

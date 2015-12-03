@@ -237,6 +237,24 @@ describe('user', function() {
         });
       });
       
+      when('games list message', function() {
+        this.handlers.games(this.msg);
+      }, function() {
+        beforeEach(function() {
+          this.msg = { games: 'games' };
+        });
+        
+        it('should set connection\'s users list', function() {
+          expect(this.user.connection.games)
+            .toBe('games');
+        });
+
+        it('should emit "games" event', function() {
+          expect(this.event_listener)
+            .toHaveBeenCalledWith('games', this.user.connection.games);
+        });
+      });
+      
       when('chat message', function() {
         this.handlers.chat(this.msg);
       }, function() {

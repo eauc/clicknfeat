@@ -16,14 +16,27 @@
               ng-click="doModeAction('commandReplayNext')">
         Replay Next
       </button>
-      <div id="log-replay-list"
+      <div class="log-replay-list"
            click-log-replay-list="game.undo">
         <div ng-repeat="(i,cmd) in game.undo.slice(-20) track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
         </div>
       </div>
-      <div id="log-command-list">
+      <div class="log-replay-list log"
+           click-log-replay-list="game.undo_log">
+        <div ng-repeat="(i,cmd) in game.undo_log.slice(-20) track by cmd.stamp">
+          <span class="text-primary">[{{::cmd.user}}]</span>
+          <span class="text-info">{{::cmd.type}} {{::cmd.desc}}</span>
+        </div>
+      </div>
+      <div class="log-command-list log">
+        <div ng-repeat="(i,cmd) in game.commands_log.slice(-20).reverse() track by cmd.stamp">
+          <span class="text-primary">[{{::cmd.user}}]</span>
+          <span class="text-info">{{::cmd.type}} {{::cmd.desc}}</span>
+        </div>
+      </div>
+      <div class="log-command-list">
         <div ng-repeat="(i,cmd) in game.commands.slice(-20).reverse() track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
