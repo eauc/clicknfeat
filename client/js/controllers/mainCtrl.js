@@ -106,7 +106,9 @@ angular.module('clickApp.controllers')
 
       $scope.goToState = function() {
         var args = Array.prototype.slice.call(arguments);
-        $state.go.apply($state, args);
+        self.setTimeout(function() {
+          $state.go.apply($state, args);
+        }, 100);
       };
       $scope.stateIs = function(name) {
         return $state.is(name);
