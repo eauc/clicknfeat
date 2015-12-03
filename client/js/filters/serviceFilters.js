@@ -14,6 +14,19 @@ angular.module('clickApp.filters')
       };
     }
   ])
+  .filter('gameConnection', [
+    'gameConnection',
+    function(gameConnectionService) {
+      return function(input, method) {
+        var args = R.tail(R.tail(arguments));
+        if(!R.exists(gameConnectionService[method])) {
+          console.error('gameConnection Filter: method "'+method+'" does not exist');
+          return;
+        }
+        return gameConnectionService[method].apply(null, R.append(input, args));
+      };
+    }
+  ])
   .filter('gameLayers', [
     'gameLayers',
     function(gameLayersService) {

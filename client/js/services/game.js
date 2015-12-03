@@ -4,27 +4,29 @@ angular.module('clickApp.services')
   .factory('game', [
     'jsonStringifier',
     'commands',
+    'gameConnection',
+    'gameLayers',
+    'gameModels',
+    'gameModelSelection',
     'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
-    'gameModels',
-    'gameModelSelection',
-    'gameLayers',
     function gameServiceFactory(jsonStringifierService,
                                 commandsService,
-                                gameRulerService,
-                                gameTemplatesService,
-                                gameTemplateSelectionService,
+                                gameConnectionService,
+                                gameLayersService,
                                 gameModelsService,
                                 gameModelSelectionService,
-                                gameLayersService) {
+                                gameRulerService,
+                                gameTemplatesService,
+                                gameTemplateSelectionService) {
       var gameService = {
         create: function gameCreate(player1) {
           var new_game = {
             players: {
               p1: { name: R.defaultTo('player1', player1.name) },
               p2: { name: null }
-            }
+            },
           };
           return new_game;
         },
@@ -49,6 +51,7 @@ angular.module('clickApp.services')
             template_selection: gameTemplateSelectionService.create(),
             layers: gameLayersService.create(),
           }, data);
+          game = gameConnectionService.create(game);
           return gameReplayAll(scope, game)
             .then(R.always(game));
         },
