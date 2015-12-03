@@ -42,6 +42,7 @@ angular.module('clickApp.services')
                 function(msg) {
                   if(R.isNil(handlers[msg.type])) {
                     handlers.error('Unknown msg type', msg);
+                    return;
                   }
                   handlers[msg.type](msg);
                 }
