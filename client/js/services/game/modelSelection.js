@@ -25,7 +25,10 @@ angular.module('clickApp.services')
                    stamps[0] === stamp );
         },
         get: function modelSelectionGet(where, selection) {
-          return R.defaultTo([], R.prop(where, selection));
+          return R.pipe(
+            R.defaultTo({}),
+            R.propOr([], where)
+          )(selection);
         },
         modeFor: function(models, selection) {
           var local = gameModelSelectionService.get('local', selection);

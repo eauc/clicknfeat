@@ -33,19 +33,13 @@ angular.module('clickApp.directives')
       clickGameModelMeleeService
       // gameRulerService,
     ) {
-      var map;
-      var under_models_container;
-      var over_models_container;
-      var svgNS;
       var clickGameModeDirective = {
         restrict: 'A',
         link: function(scope, el, attrs) {
-          map = R.defaultTo(document.getElementById('map'), map);
-          under_models_container = R.defaultTo(document.getElementById('game-under-models'),
-                                               under_models_container);
-          over_models_container = R.defaultTo(document.getElementById('game-over-models'),
-                                              over_models_container);
-          svgNS = R.defaultTo(map.namespaceURI, svgNS);
+          var map = document.getElementById('map');
+          var under_models_container = document.getElementById('game-under-models');
+          var over_models_container = document.getElementById('game-over-models');
+          var svgNS = map.namespaceURI;
           
           gameFactionsService.getModelInfo(scope.model.state.info,
                                            scope.factions)
@@ -93,6 +87,11 @@ angular.module('clickApp.directives')
         //                   scope);
       }
       function createModelElement(info, model, parent) {
+        var map = document.getElementById('map');
+        var under_models_container = document.getElementById('game-under-models');
+        var over_models_container = document.getElementById('game-over-models');
+        var svgNS = map.namespaceURI;
+
         var aura = clickGameModelAuraService.create(svgNS, parent);
         var melee = clickGameModelMeleeService.create(svgNS, parent);
         var base = clickGameModelBaseService.create(svgNS, info, model, parent);
@@ -126,6 +125,8 @@ angular.module('clickApp.directives')
         return function _gameModelOnDestroy() {
           console.log('gameModelOnDestroy');
 
+          var under_models_container = document.getElementById('game-under-models');
+          var over_models_container = document.getElementById('game-over-models');
           over_models_container.removeChild(element.label.label);
           clickGameModelCounterService.cleanup(under_models_container,
                                                over_models_container,
@@ -137,6 +138,8 @@ angular.module('clickApp.directives')
       }
       function gameModelOnMapFlipped(info, model, element) {
         return function _gameModelOnMapFlipped() {
+          var map = document.getElementById('map');
+
           var label_center = computeLabelCenter(info, model);
           labelElementService.updateOnFlipMap(map,
                                               label_center.flip,
@@ -211,6 +214,11 @@ angular.module('clickApp.directives')
       }
       function gameModelOnUpdate(factions, info, model, game, scope, element) {
         return function _gameModelOnUpdate(event, selection) {
+          var map = document.getElementById('map');
+          var under_models_container = document.getElementById('game-under-models');
+          var over_models_container = document.getElementById('game-over-models');
+          var svgNS = map.namespaceURI;
+
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
           var is_wreck = modelService.isWreckDisplayed(model);
