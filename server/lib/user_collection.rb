@@ -34,7 +34,7 @@ class UserCollection
 
   def addUserListener user, listener
     user.addListener listener
-    user.signalListener self.usersListEvent, listener
+    User.signalListener self.usersListEvent, listener
   end
   
   def signalAllUsers event
@@ -63,7 +63,7 @@ class UserCollection
     case msg['type']
     when "chat"
       msg['stamp'] = SecureRandom.uuid
-      stamps = (msg['to'].clone << msg['from']).uniq
+      stamps = ((msg['to'].clone) << msg['from']).uniq
       self.signalUsers msg, stamps
     else
       p [ "Users: unknown message type #{msg['type']}", msg]

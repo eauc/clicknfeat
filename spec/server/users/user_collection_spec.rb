@@ -28,32 +28,6 @@ describe UserCollection do
     end
   end
 
-
-  describe "update new user" do
-    before :each do
-      user_info = subject.createUser({ 'name' => 'initial',
-                                       'payload' => 'initial',
-                                     })
-      @initial_stamp = user_info['stamp']
-      @user = subject.user @initial_stamp
-
-      @data = {
-        'name' => 'toto',
-        'payload' => 'info',
-      }
-      subject.updateUser @data, @user
-    end
-
-    it "should update user from data" do
-      expect(@user.info['name']).to eq('toto')
-      expect(@user.info['payload']).to eq('info')
-    end
-
-    it "should not change user stamps" do
-      expect(@user.info['stamp']).to be(@initial_stamp)
-    end
-  end
-
   describe "dropUser" do
     before :each do
       @data = {
@@ -84,6 +58,17 @@ describe UserCollection do
       @user2.addListener @listener2
     end
 
+    describe "signalAllUsers" do
+      it "should send event to all listeners" do
+        event = { payload: "whatever" }
+        
+        expect(@listener1).to receive(:send).once.with(event.to_json)
+        expect(@listener2).to receive(:send).once.with(event.to_json)
+
+        subject.signalAllUsers event
+      end
+    end
+    
     describe "addUserListener" do
       it "should send users list to listener" do
         @listener = double('listener', :send => nil)
@@ -140,26 +125,16 @@ describe UserCollection do
         subject.dropUser @user2.info['stamp']
       end
     end
-  end
-
-  describe "listeners" do
-    before :each do
-      user_info = subject.createUser({ name: "user1" })
-      @user1 = subject.user user_info['stamp']
-      user_info = subject.createUser({ name: "user2" })
-      @user2 = subject.user user_info['stamp']
-      user_info = subject.createUser({ name: "user3" })
-      @user3 = subject.user user_info['stamp']
-
-      @listener1 = double('listener1', :send => nil)
-      @user1.addListener @listener1
-      @listener2 = double('listener2', :send => nil)
-      @user2.addListener @listener2
-      @listener3 = double('listener3', :send => nil)
-      @user3.addListener @listener3
-    end
 
     describe "onMessage 'chat'" do
+      before :each do
+        user_info = subject.createUser({ name: "user3" })
+        @user3 = subject.user user_info['stamp']
+
+        @listener3 = double('listener3', :send => nil)
+        @user3.addListener @listener3
+      end
+
       it "should send chat message to concerned users" do
         msg = {
           'type' => 'chat',

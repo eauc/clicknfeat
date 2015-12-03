@@ -52,7 +52,7 @@ describe User do
       it "should send event to listener" do
         expect(@listener2).to receive(:send).once.with("{\"event\":\"payload\"}")
 
-        subject.signalListener({ event: "payload" }, @listener2)
+        User.signalListener({ event: "payload" }, @listener2)
       end
     end
 

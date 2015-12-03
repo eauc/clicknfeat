@@ -13,7 +13,6 @@ class User
 
   def updateInfo data
     stamp = @info['stamp']
-    data.delete('stamp')
     @info = data
     @info['stamp'] = stamp
     @info
@@ -29,11 +28,11 @@ class User
 
   def signalAllListeners event
     @listeners.each do |l|
-      self.signalListener(event, l)
+      User.signalListener event, l
     end
   end
   
-  def signalListener event, listener
+  def self.signalListener event, listener
     listener.send event.to_json
   end
 
