@@ -33,5 +33,21 @@ angular.module('clickApp.controllers')
       $scope.doRollDice = function doRoll(sides, nb_dice) {
         $scope.doExecuteCommand('rollDice', sides, nb_dice);
       };
+
+      $scope.chat = { msg: '' };
+      $scope.doSendChatMessage = function() {
+        var msg = s.trim($scope.chat.msg);
+        if(R.isEmpty(msg)) return;
+        
+        R.pipeP(
+          gameService.sendChat$(R.path(['user', 'state', 'name'], $scope),
+                                msg),
+          function() {
+            $scope.chat.msg = '';
+            $scope.$digest();
+          }
+        )($scope.game);
+      };
+      $scope.digestOnGameEvent('chat', $scope);
     }
   ]);

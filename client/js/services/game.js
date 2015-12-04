@@ -175,6 +175,16 @@ angular.module('clickApp.services')
             }
           )();
         },
+        sendChat: function gameSendChat(from, msg, game) {
+          return gameConnectionService
+            .sendEvent({
+              type: 'chat',
+              chat: {
+                from: from,
+                msg: msg
+              }
+            }, game);
+        },
       };
       function gameReplayBatchs(batchs, scope, game) {
         if(R.isEmpty(batchs)) return;

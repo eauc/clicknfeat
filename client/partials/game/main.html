@@ -1,4 +1,34 @@
 <div>
+  <div ng-show="game | gameConnection:'active'"
+       class="panel panel-info">
+    <div class="panel-heading">Chat</div>
+    <div class="panel-content">
+      <form ng-submit="doSendChatMessage()">
+        <div class="form-group">
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button type="submit"
+                      class="btn btn-default">
+                Send
+              </button>
+            </span>
+            <input type="text"
+                   class="form-control"
+                   placeholder="Msg..."
+                   ng-model="chat.msg" />
+          </div>
+        </div>
+      </form>
+      <div class="chat-list">
+        <div class="chat"
+             ng-repeat="c in game.chat.slice().reverse().slice(0,20) track by c.stamp">
+          {{ c.from }}
+          ➝
+          {{c.msg}}
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="panel panel-info">
     <div class="panel-heading">Tools</div>
     <div class="panel-content">
