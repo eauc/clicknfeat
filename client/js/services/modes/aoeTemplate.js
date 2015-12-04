@@ -34,20 +34,12 @@ angular.module('clickApp.services')
         return gameService.executeCommand('onTemplates', 'setSize', 5,
                                           stamps, scope, scope.game);
       };
-      // template_actions.clickModel = function aoeClickModel(scope, event, dom_event) {
-      //   var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-      //   if(dom_event.ctrlKey) {
-      //     gameService.executeCommand('onTemplates', 'setOrigin', scope.factions, event.target,
-      //                                stamps, scope,  scope.game);
-      //     return;
-      //   }
-      //   else if(dom_event.shiftKey) {
-      //     gameService.executeCommand('onTemplates', 'setTarget', scope.factions, null, event.target,
-      //                                stamps, scope,  scope.game);
-      //     return;
-      //   }
-      //   templateModeService.actions.clickModel(scope, event, dom_event);
-      // };
+      template_actions.setTargetModel = function aoeSetTargetModel(scope, event) {
+        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+        return gameService.executeCommand('onTemplates',
+                                          'setTarget', scope.factions, null, event['click#'].target,
+                                          stamps, scope,  scope.game);
+      };
       template_actions.setMaxDeviation = function rulerSetMaxDeviation(scope, event) {
         var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
         return R.pipeP(
@@ -93,6 +85,7 @@ angular.module('clickApp.services')
       // };
 
       var template_default_bindings = {
+        setTargetModel: 'shift+clickModel',
         aoeSize3: '3',
         aoeSize4: '4',
         aoeSize5: '5',

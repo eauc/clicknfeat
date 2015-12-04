@@ -25,6 +25,8 @@ angular.module('clickApp.directives')
       };
       var sprayTemplateElementService = {
         create: function sprayTemplateElementServiceCreate(svgNS, parent, spray) {
+          var over_models = document.getElementById('game-over-models');
+          
           var group = document.createElementNS(svgNS, 'g');
           parent.appendChild(group);
 
@@ -42,7 +44,7 @@ angular.module('clickApp.directives')
           origin.setAttribute('cy', '0');
           origin.setAttribute('r', '0');
           origin.style.visibility = 'hidden';
-          parent.appendChild(origin);
+          over_models.appendChild(origin);
 
           return { container: group,
                    spray: polygon,
@@ -63,11 +65,6 @@ angular.module('clickApp.directives')
                                ( local ? '#0F0' : '#FFF') :
                                '#C60'
                              );
-          var origin = sprayTemplateService.origin(template);
-          var origin_model;
-          if(R.exists(origin)) {
-            origin_model = gameModelsService.findStamp(origin, scope.game.models);
-          }
           
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
@@ -85,7 +82,6 @@ angular.module('clickApp.directives')
                                        label_text_center,
                                        label_text,
                                        spray.label);
-            updateOrigin(scope.factions, local, origin_model, spray.origin);
             $window.requestAnimationFrame(function _aoeTemplateElementUpdate2() {
               if(gameTemplateSelectionService.inSingle('local', template.state.stamp,
                                                        scope.game.template_selection)) {
@@ -93,6 +89,21 @@ angular.module('clickApp.directives')
               }
             });
           });
+
+          R.pipeP(
+            function() {
+              return self.Promise
+                .resolve(sprayTemplateService.origin(template));
+            },
+            function(origin) {
+              if(R.isNil(origin)) return;
+              
+              return gameModelsService.findStamp(origin, scope.game.models);
+            },
+            function(origin_model) {
+              updateOrigin(scope.factions, local, origin_model, spray.origin);
+            }
+          )();
         },
       };
       function updateContainer(template, container) {
@@ -118,16 +129,22 @@ angular.module('clickApp.directives')
         spray.style.stroke = stroke_color;
       }
       function updateOrigin(factions, local, model, origin) {
-        if(!local ||
-           R.isNil(model)) {
-          origin.style.visibility = 'hidden';
-          return;
-        }
-        var info = gameFactionsService.getModelInfo(model.state.info, factions);
-        origin.setAttribute('cx', model.state.x+'');
-        origin.setAttribute('cy', model.state.y+'');
-        origin.setAttribute('r', info.base_radius+'');
-        origin.style.visibility = 'visible';
+        $window.requestAnimationFrame(function _aoeTemplateElementUpdateOrigin() {
+          if(!local ||
+             R.isNil(model)) {
+            origin.style.visibility = 'hidden';
+            return;
+          }
+          R.pipeP(
+            gameFactionsService.getModelInfo$(model.state.info),
+            function(info) {
+              origin.setAttribute('cx', model.state.x+'');
+              origin.setAttribute('cy', model.state.y+'');
+              origin.setAttribute('r', info.base_radius+'');
+              origin.style.visibility = 'visible';
+            }
+          )(factions);
+        });
       }
       return sprayTemplateElementService;
     }

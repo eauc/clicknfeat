@@ -52,21 +52,8 @@ angular.module('clickApp.services')
           templateService.checkState
         )(temp.state);
       };
-      aoeTemplateService.setOrigin = function aoeTemplateSetOrigin(factions, origin, temp) {
-        if(templateService.isLocked(temp)) {
-          return self.Promise.reject('Template is locked');
-        }
-        var direction = pointService.directionTo(temp.state, origin.state);
-        var base_edge = modelService.baseEdgeInDirection(factions, direction, origin);
-        var max_dev = pointService.distanceTo(temp.state, base_edge) / 20;
-        temp.state = R.pipe(
-          R.assoc('r', direction),
-          R.assoc('m', max_dev),
-          templateService.checkState
-        )(temp.state);
-      };
       aoeTemplateService.setTarget = function aoeTemplateSetTarget(factions, origin, target, temp) {
-        templateService.setPosition(target.state, temp);
+        return templateService.setPosition(target.state, temp);
       };
       templateService.registerTemplate('aoe', aoeTemplateService);
       return aoeTemplateService;
@@ -111,18 +98,28 @@ angular.module('clickApp.services')
         if(templateService.isLocked(temp)) {
           return self.Promise.reject('Template is locked');
         }
-        var position = modelService.baseEdgeInDirection(factions, temp.state.r, origin);
-        temp.state = R.assoc('o', origin.state.stamp, temp.state);
-        templateService.setPosition(position, temp);
+        return R.pipeP(
+          modelService.baseEdgeInDirection$(factions, temp.state.r),
+          function(position) {
+            temp.state = R.assoc('o', origin.state.stamp, temp.state);
+
+            return templateService.setPosition(position, temp);
+          }
+        )(origin);
       };
       sprayTemplateService.setTarget = function sprayTemplateSetTarget(factions, origin, target, temp) {
         if(templateService.isLocked(temp)) {
           return self.Promise.reject('Template is locked');
         }
         var direction = pointService.directionTo(target.state, origin.state);
-        var position = modelService.baseEdgeInDirection(factions, direction, origin);
-        temp.state = R.assoc('r', direction, temp.state);
-        templateService.setPosition(position, temp);
+        return R.pipeP(
+          modelService.baseEdgeInDirection$(factions, direction),
+          function(position) {
+            temp.state = R.assoc('r', direction, temp.state);
+            
+            return templateService.setPosition(position, temp);
+          }
+        )(origin);
       };
       var FORWARD_MOVES = [
         'moveFront',
@@ -147,32 +144,32 @@ angular.module('clickApp.services')
         if(templateService.isLocked(template)) {
           return self.Promise.reject('Template is locked');
         }
-        if(R.exists(origin)) {
-          var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
-          template.state = pointService.rotateLeft(angle, template.state);
-          var base_edge = modelService.baseEdgeInDirection(factions,
-                                                           template.state.r,
-                                                           origin);
-          templateService.setPosition(base_edge, template);
-          return;
-        }
-        templateService.rotateLeft(small, template);
+        if(R.isNil(origin)) return templateService.rotateLeft(small, template);
+        
+        var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
+        template.state = pointService.rotateLeft(angle, template.state);
+        return R.pipeP(
+          modelService.baseEdgeInDirection$(factions, template.state.r),
+          function(base_edge)  {
+            return templateService.setPosition(base_edge, template);
+          }
+        )(origin);
       };
       sprayTemplateService.rotateRight = function sprayTemplateRotateRight(factions, origin,
                                                                            small, template) {
         if(templateService.isLocked(template)) {
           return self.Promise.reject('Template is locked');
         }
-        if(R.exists(origin)) {
-          var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
-          template.state = pointService.rotateRight(angle, template.state);
-          var base_edge = modelService.baseEdgeInDirection(factions,
-                                                           template.state.r,
-                                                           origin);
-          templateService.setPosition(base_edge, template);
-          return;
-        }
-        templateService.rotateRight(small, template);
+        if(R.isNil(origin)) return templateService.rotateRight(small, template);
+        
+        var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
+        template.state = pointService.rotateRight(angle, template.state);
+        return R.pipeP(
+          modelService.baseEdgeInDirection$(factions, template.state.r),
+          function(base_edge) {
+            return templateService.setPosition(base_edge, template);
+          }
+        )(origin);
       };
       templateService.registerTemplate('spray', sprayTemplateService);
       return sprayTemplateService;
