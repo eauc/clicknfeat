@@ -169,5 +169,55 @@ describe('replay commands', function() {
         });
       });
     });
+    
+    when('replayBatch(<cmds>, <scope>, <game>)', function() {
+      this.ret = this.commandsService
+        .replayBatch(this.cmds, 'scope', 'game');
+    }, function() {
+      beforeEach(function() {
+        spyOn(this.commandsService, 'replay');
+        mockReturnPromise(this.commandsService.replay);
+
+        this.replay = '';
+        this.commandsService.replay.resolveWith = R.bind(function(c) {
+          this.replay += c;
+        }, this);
+
+        this.cmds = [ 'cmd1', 'cmd2', 'cmd3' ];
+      });
+
+      it('should replay each command in batch in order', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.commandsService.replay)
+            .toHaveBeenCalledWith('cmd1', 'scope', 'game');
+          expect(this.commandsService.replay)
+            .toHaveBeenCalledWith('cmd2', 'scope', 'game');
+          expect(this.commandsService.replay)
+            .toHaveBeenCalledWith('cmd3', 'scope', 'game');
+
+          expect(this.replay).toBe('cmd1cmd2cmd3');
+        });
+      });
+
+      when('some command fails', function() {
+        this.commandsService.replay.resolveWith = function(c) {
+          return ( c === 'cmd2' ?
+                   self.Promise.reject('reason') :
+                   true
+                 );
+        };
+      }, function() {
+        it('should still replay all commands in batch', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.commandsService.replay)
+              .toHaveBeenCalledWith('cmd1', 'scope', 'game');
+            expect(this.commandsService.replay)
+              .toHaveBeenCalledWith('cmd2', 'scope', 'game');
+            expect(this.commandsService.replay)
+              .toHaveBeenCalledWith('cmd3', 'scope', 'game');
+          });
+        });
+      });
+    });
   });
 });
