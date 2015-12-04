@@ -21,7 +21,7 @@ describe('local game', function() {
           undo: 'undo',
           chat: 'chat',
           other: 'other',
-        }
+        };
       });
 
       it('should create game online', function() {

@@ -1,0 +1,25 @@
+{
+  "name": "eauc-clicknfeat",
+  "description": "",
+  "main": "client/index.html",
+  "authors": [
+    "Auclair Emmanuel <auclair.emmanuel@gmail.com>"
+  ],
+  "license": "AGPLv3",
+  "homepage": "https://github.com/eauc/clicknfeat",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "angular": "~1.4",
+    "angular-mocks": "~1.4",
+    "angular-ui-router": "~0.2",
+    "bootstrap": "~3.3",
+    "ramda": "~0.18",
+    "underscore.string": "~3.2",
+    "mousetrap": "https://github.com/eauc/mousetrap.git"
+  }
+}

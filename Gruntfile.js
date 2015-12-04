@@ -76,12 +76,12 @@ module.exports = function(grunt) {
           specs: spec_js_src,
           helpers: spec_js_helpers,
           vendor: [
-              'client/lib/ramda/ramda.js',
-              'client/lib/underscore-string/underscore-string.js',
+              'client/lib/ramda/dist/ramda.js',
+              'client/lib/underscore.string/dist/underscore.string.js',
               'client/lib/angular/angular.js',
-              'client/lib/angular-ui-router/angular-ui-router.min.js',
-              'client/lib/angular/angular-mocks.js',
-              'client/lib/mousetrap/mousetrap.js',
+              'client/lib/angular-ui-router/release/angular-ui-router.min.js',
+              'client/lib/angular-mocks/angular-mocks.js',
+              'client/lib/mousetrap-1.5.2/mousetrap.js',
           ],
           outfile: 'spec/client/SpecRunner.html',
           keepRunner: true
@@ -99,6 +99,13 @@ module.exports = function(grunt) {
       spec_src: {
         files: spec_js.concat(app_js_src),
         tasks: [ 'jshint:app_src', 'jshint:spec_src', 'jasmine:spec' ],
+        options: {
+          spawn: true
+        }
+      },
+      jshint: {
+        files: spec_js.concat(app_js_src),
+        tasks: [ 'jshint' ],
         options: {
           spawn: true
         }
