@@ -1,18 +1,29 @@
 #game {
-    #log-replay-list {
+    .log-replay-list {
         @extend %scrollbox-y;
         max-height: 30vh;
         border-bottom: 1px solid #EEE;
-        color: #999;
         font-style: italic;
+        opacity: 0.8;
+
+        &.log {
+            max-height: 5em;
+        }
     }
 
-    #log-command-list {
+    .log-command-list {
         @extend %scrollbox-y;
         max-height: 30vh;
 
         div:first-child {
             background-color: #dff0d8;
+        }
+
+        &.log {
+            max-height: 5em;
+            div:first-child {
+                background-color: #fff0e8;
+            }
         }
     }
 }

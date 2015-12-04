@@ -29,21 +29,30 @@ describe('replay commands', function() {
   describe('gameService', function(c) {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
+
       this.commandsService = spyOnService('commands');
       mockReturnPromise(this.commandsService.replay);
+      this.commandsService.replay.resolveWith = 'commands.replay.returnValue';
+      
+      this.gameConnectionService = spyOnService('gameConnection');
+      this.gameConnectionService.active._retVal = false;
     }]));
 
     when('replayNextCommand(<scope>, <game>)', function() {
-      this.ret = this.gameService.replayNextCommand(this.scope, this.game);
+      this.ret = this.gameService
+        .replayNextCommand(this.scope, this.game);
     }, function() {
       beforeEach(function() {
         this.game = { commands: [ 'cmd1' ],
-                      undo: ['cmd3', 'cmd2' ]
+                      undo: ['cmd3', 'cmd2' ],
+                      undo_log: [],
                     };
+
         this.scope = jasmine.createSpyObj('scope', [
           'saveGame', 'gameEvent'
         ]);
         mockReturnPromise(this.scope.saveGame);
+        this.scope.saveGame.resolveWith = 'scope.saveGame.returnValue';
       });
 
       when('undo history is empty', function() {
@@ -61,20 +70,48 @@ describe('replay commands', function() {
           .toHaveBeenCalledWith('cmd2', this.scope, this.game);
       });
 
-      describe('when undo fails', function() {
+      when('undo fails', function() {
+        this.commandsService.replay.rejectWith = 'reason';
+      }, function() {
         it('should reject promise', function() {
-          this.commandsService.replay.reject('reason');
-
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('reason');
           });
         });
       });
+
+      when('game connection is active', function() {
+        this.gameConnectionService.active._retVal = true;
+      }, function() {
+        it('should store command in log', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.game.commands_log)
+              .toEqual(['cmd2']);
+          });
+        });
+
+        it('should send replayCmd event on connection', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameConnectionService.sendEvent)
+              .toHaveBeenCalledWith({
+                type: 'replayCmd',
+                cmd: 'cmd2'
+              }, this.game);
+          });
+        });
+
+        it('should update game', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.game.commands).toEqual(['cmd1']);
+            expect(this.game.undo).toEqual(['cmd3']);
+            expect(this.scope.saveGame)
+              .toHaveBeenCalledWith(this.game);
+          });
+        });
+      });
       
       it('should switch undo to cmd queue', function() {
-        this.commandsService.replay.resolve();
-
-        this.thenExpect(this.commandsService.replay.promise, function() {
+        this.thenExpect(this.ret, function() {
           expect(this.game.commands)
             .toEqual(['cmd1','cmd2']);
           expect(this.game.undo)
@@ -83,18 +120,13 @@ describe('replay commands', function() {
       });
 
       it('should save game', function() {
-        this.commandsService.replay.resolve();
-
-        this.thenExpect(this.commandsService.replay.promise, function() {
+        this.thenExpect(this.ret, function() {
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
         });
       });
 
       it('should send replay event', function() {
-        this.scope.saveGame.resolveWith = 'game';
-        this.commandsService.replay.resolve();
-        
         this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('command','replay');

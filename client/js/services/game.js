@@ -41,8 +41,11 @@ angular.module('clickApp.services')
             },
             board: {},
             scenario: {},
+            chat: [],
             commands: [],
+            commands_log: [],
             undo: [],
+            undo_log: [],
             dice: [],
             ruler: gameRulerService.create(),
             models: gameModelsService.create(),
@@ -57,7 +60,7 @@ angular.module('clickApp.services')
         },
         pickForJson: function gamePickForJson(game) {
           return R.pick([
-            'players', 'commands', 'undo'
+            'players', 'commands', 'undo', 'chat'
           ], game);
         },
         toJson: function gameToJson(game) {
@@ -69,28 +72,48 @@ angular.module('clickApp.services')
         },
         description: function gameDescription(game) {
           if(R.exists(game.description)) return game.description;
-          return ( gameService.playerName('p1', game) +
+          return ( s.capitalize(gameService.playerName('p1', game)) +
                    ' vs '+
-                   gameService.playerName('p2', game)
+                   s.capitalize(gameService.playerName('p2', game))
                  );
         },
         executeCommand: function gameExecuteCommand(/* ...args..., scope, game */) {
           var args = Array.prototype.slice.apply(arguments);
-          return commandsService.execute.apply(null, args)
-            .then(function(command) {
-              var game = R.last(args);
-              var scope = R.nth(-2, args);
-              command.user = scope.user.name;
+          var game = R.last(args);
+          var scope = R.nth(-2, args);
+          return R.pipeP(
+            function() {
+              return commandsService.execute.apply(null, args);
+            },
+            function(command) {
+              command.user = R.pathOr('Unknown', ['user','state','name'], scope);
               command.stamp = R.guid();
-              if(!command.do_not_log) {
-                game.commands = R.append(command, game.commands);
-              }
-              return scope.saveGame(game)
-                .then(function() {
+
+              return command;
+            },
+            function(command) {
+              return R.pipeP(
+                function() {
+                  if(gameConnectionService.active(game)) {
+                    game.commands_log = R.append(command, game.commands_log);
+                    return gameConnectionService.sendEvent({
+                      type: 'replayCmd',
+                      cmd: command,
+                    }, game);
+                  }
+                  
+                  if(!command.do_not_log) {
+                    game.commands = R.append(command, game.commands);
+                  }
                   scope.gameEvent('command', 'execute');
+                  return scope.saveGame(game);
+                },
+                function() {
                   return R.clone(command);
-                });
-            });
+                }
+              )();
+            }
+          )();
         },
         undoLastCommand: function gameUndoLastCommand(scope, game) {
           if(R.isEmpty(game.commands)) {
@@ -98,15 +121,29 @@ angular.module('clickApp.services')
           }
           
           var command = R.last(game.commands);
-          return commandsService.undo(command, scope, game)
-            .then(function() {
+          return R.pipeP(
+            function() {
+              return commandsService.undo(command, scope, game);
+            },
+            function() {
               game.commands = R.init(game.commands);
+
+              if(gameConnectionService.active(game)) {
+                game.undo_log = R.append(command, game.undo_log);
+                return gameConnectionService.sendEvent({
+                  type: 'undoCmd',
+                  cmd: command,
+                }, game);
+              }
+          
               game.undo = R.append(command, game.undo);
-              return scope.saveGame(game)
-                .then(function() {
-                  scope.gameEvent('command', 'undo');
-                });
-            });
+              scope.gameEvent('command', 'undo');
+              return;
+            },
+            function() {
+              return scope.saveGame(game);
+            }
+          )();
         },
         replayNextCommand: function gameReplayNextCommand(scope, game) {
           if(R.isEmpty(game.undo)) {
@@ -114,47 +151,40 @@ angular.module('clickApp.services')
           }
           
           var command = R.last(game.undo);
-          return commandsService.replay(command, scope, game)
-            .then(function() {
+          return R.pipeP(
+            function() {
+              return commandsService.replay(command, scope, game);
+            },
+            function() {
               game.undo = R.init(game.undo);
+
+              if(gameConnectionService.active(game)) {
+                game.commands_log = R.append(command, game.commands_log);
+                return gameConnectionService.sendEvent({
+                  type: 'replayCmd',
+                  cmd: command,
+                }, game);
+              }
+          
               game.commands = R.append(command, game.commands);
-              return scope.saveGame(game)
-                .then(function() {
-                  scope.gameEvent('command', 'replay');
-                });
-            });
+              scope.gameEvent('command', 'replay');
+              return;
+            },
+            function() {
+              return scope.saveGame(game);
+            }
+          )();
         },
       };
-      var batch_length = 5;
-      function gameReplayOne(i, j, scope, game) {
-        return commandsService.replay(game.commands[i], scope, game)
-          .catch(R.always(null))
+      function gameReplayBatchs(batchs, scope, game) {
+        if(R.isEmpty(batchs)) return;
+        
+        console.log('Game: ReplayBatchs:', batchs);
+        return commandsService.replayBatch(batchs[0], scope, game)
           .then(function() {
-            i++;
-            if(i >= R.length(game.commands)) {
-              return i;
-            }
-            j++;
-            if(j >= batch_length) {
-              return self.Promise.reject(i);
-            }
-            
-            return gameReplayOne(i, j, scope, game);
-          });
-      }
-      function gameReplayBatch(i, scope, game) {
-        return gameReplayOne(i, 0, scope, game)
-          .then(function(i) {
-            console.log('Game: ReplayAll: end', i);
-            scope.$digest(scope);
-            scope.gameEvent('gameLoaded');
-            return;
-          })
-          .catch(function(i) {
-            console.log('Game: ReplayAll: batch_end', i);
             return new self.Promise(function(resolve, reject) {
-              self.requestAnimationFrame(function() {
-                resolve(gameReplayBatch(i, scope, game));
+              self.requestAnimationFrame(function _gameReplayBatch() {
+                resolve(gameReplayBatchs(R.tail(batchs), scope, game));
               });
             });
           });
@@ -164,11 +194,17 @@ angular.module('clickApp.services')
           if(R.isEmpty(game.commands)) {
             resolve();
           }
-          
+
+          var batchs = R.splitEvery(game.commands.length, game.commands);
           self.requestAnimationFrame(function _gameReplayAll() {
             scope.gameEvent('gameLoading');
-            resolve(gameReplayBatch(0, scope, game));
+            resolve(gameReplayBatchs(batchs, scope, game));
           });
+        }).then(function() {
+          console.error('Game: ReplayAll: end');
+          scope.$digest(scope);
+          scope.gameEvent('gameLoaded');
+          return;
         });
       }
       R.curryService(gameService);

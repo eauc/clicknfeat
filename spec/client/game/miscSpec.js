@@ -14,11 +14,11 @@ describe('game', function() {
         [ 'game', 'desc' ],
         [ { description: 'gameDesc' }, 'gameDesc' ],
         [ { players: { p1: { name: 'p1' },
-                       p2: { name: null } } }, 'p1 vs John Doe' ],
+                       p2: { name: null } } }, 'P1 vs John Doe' ],
         [ { players: { p1: { name: null },
-                       p2: { name: 'p2' } } }, 'John Doe vs p2' ],
+                       p2: { name: 'p2' } } }, 'John Doe vs P2' ],
         [ { players: { p1: { name: 'p1' },
-                       p2: { name: 'p2' } } }, 'p1 vs p2' ],
+                       p2: { name: 'p2' } } }, 'P1 vs P2' ],
       ], function(e, d) {
         it('should build description string for the game, '+d, function() {
           expect(this.gameService.description(e.game))

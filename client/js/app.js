@@ -55,7 +55,7 @@ angular.module('clickApp', [
         controller: 'settingsMovesCtrl',
       })
       .state('game', {
-        url: '/game/:where/:id',
+        url: '/game/:online/:private/:id',
         templateUrl: 'partials/game.html',
         controller: 'gameCtrl',
         data: { hide_nav: true }

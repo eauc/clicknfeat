@@ -9,8 +9,8 @@ describe('load game', function() {
     describe('load(scope)', function() {
       beforeEach(function() {
         this.commandsService = spyOnService('commands');
-        mockReturnPromise(this.commandsService.replay);
-        this.commandsService.replay.resolveWith = true;
+        mockReturnPromise(this.commandsService.replayBatch);
+        this.commandsService.replayBatch.resolveWith = true;
         this.game = {
           players: { p1: { name: 'p1' } },
           commands: ['cmd1', 'cmd2']
@@ -24,15 +24,18 @@ describe('load game', function() {
 
       it('should extend game with default values', function() {
         this.thenExpect(this.ret, function(game) {
-          expect(game)
+          expect(R.omit(['toJSON', 'connection'], game))
             .toEqual({
               players: { p1: { name: 'p1' },
                          p2: { name: null }
                        },
               board: {},
               scenario: {},
+              chat: [],
               commands: [ 'cmd1', 'cmd2' ],
               undo: [],
+              commands_log: [ ],
+              undo_log: [],
               dice: [],
               ruler: {
                 local: {
@@ -63,10 +66,8 @@ describe('load game', function() {
 
       it('should replay commands', function() {
         this.thenExpect(this.ret, function(game) {
-          expect(this.commandsService.replay)
-            .toHaveBeenCalledWith('cmd1', this.scope, game);
-          expect(this.commandsService.replay)
-            .toHaveBeenCalledWith('cmd2', this.scope, game);
+          expect(this.commandsService.replayBatch)
+            .toHaveBeenCalledWith(['cmd1', 'cmd2'], this.scope, game);
         });
       });
 

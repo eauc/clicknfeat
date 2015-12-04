@@ -26,21 +26,29 @@ describe('undo commands', function() {
   describe('gameService', function(c) {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
+
       this.commandsService = spyOnService('commands');
       mockReturnPromise(this.commandsService.undo);
+      this.commandsService.undo.resolveWith = 'commands.undo.returnValue';
+      
+      this.gameConnectionService = spyOnService('gameConnection');
+      this.gameConnectionService.active._retVal = false;
     }]));
 
     when('undoLastCommand(<scope>, <game>)', function() {
       this.ret = this.gameService.undoLastCommand(this.scope, this.game);
     }, function() {
       beforeEach(function() {
-        this.game = { commands: [ 'cmd1', 'cmd2' ],
-                      undo: ['cmd3' ]
+        this.game = { commands: ['cmd1','cmd2'],
+                      undo: ['cmd3'],
+                      undo_log: []
                     };
+
         this.scope = jasmine.createSpyObj('scope', [
           'saveGame', 'gameEvent'
         ]);
         mockReturnPromise(this.scope.saveGame);
+        this.scope.saveGame.resolveWith = 'scope.saveGame.returnValue';
       });
 
       when('command history is empty', function() {
@@ -58,20 +66,48 @@ describe('undo commands', function() {
           .toHaveBeenCalledWith('cmd2', this.scope, this.game);
       });
 
-      describe('when undo fails', function() {
+      when('undo fails', function() {
+        this.commandsService.undo.rejectWith = 'reason';
+      }, function() {
         it('should reject promise', function() {
-          this.commandsService.undo.reject('reason');
-
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('reason');
           });
         });
       });
+
+      when('game connection is active', function() {
+        this.gameConnectionService.active._retVal = true;
+      }, function() {
+        it('should store command in undo_log', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.game.undo_log)
+              .toEqual(['cmd2']);
+          });
+        });
+
+        it('should send replayCmd event on connection', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameConnectionService.sendEvent)
+              .toHaveBeenCalledWith({
+                type: 'undoCmd',
+                cmd: 'cmd2'
+              }, this.game);
+          });
+        });
+
+        it('should update game', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.game.commands).toEqual(['cmd1']);
+            expect(this.game.undo).toEqual(['cmd3']);
+            expect(this.scope.saveGame)
+              .toHaveBeenCalledWith(this.game);
+          });
+        });
+      });
       
       it('should switch cmd to undo queue', function() {
-        this.commandsService.undo.resolve();
-        
-        this.thenExpect(this.commandsService.undo.promise, function() {
+        this.thenExpect(this.ret, function() {
           expect(this.game.commands)
             .toEqual(['cmd1']);
           expect(this.game.undo)
@@ -80,18 +116,13 @@ describe('undo commands', function() {
       });
 
       it('should save game', function() {
-        this.commandsService.undo.resolve();
-
-        this.thenExpect(this.commandsService.undo.promise, function() {
+        this.thenExpect(this.ret, function() {
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
         });
       });
 
       it('should send undo event', function() {
-        this.scope.saveGame.resolveWith = 'game';
-        this.commandsService.undo.resolve();
-
         this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('command','undo');
