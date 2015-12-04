@@ -2,4 +2,3 @@
 node_modules
 spec/client/SpecRunner.html
 .sass-cache
-client/lib/*

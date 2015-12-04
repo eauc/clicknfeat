@@ -60,7 +60,7 @@ angular.module('clickApp.directives')
              promptService) {
       return {
         restrict: 'E',
-        templateUrl: '/partials/directives/prompt.html',
+        templateUrl: 'partials/directives/prompt.html',
         scope: true,
         link: function(scope, element, attrs) {
           var form = element[0].querySelector('form');

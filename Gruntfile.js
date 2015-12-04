@@ -31,16 +31,44 @@ module.exports = function(grunt) {
         }
       }
     },
-    uglify: {
-      app_src: {
-        options: {
-          compress: {
-            drop_console: true
+    useminPrepare: {
+      html: 'client/index-dev.html',
+      options: {
+        dest: 'client',
+        flow: {
+          steps: {
+            js: ['uglify']
+          },
+          post: {
+            js: [{
+              name: 'uglify',
+              createConfig: function (context, block) {
+                var generated = context.options.generated;
+                generated.options = {
+                  sourceMap: true,
+                  compress: {
+                    drop_console: true
+                  }
+                };
+              }
+            }]
           }
-        },
-        files: {
-          'client/js/app.min.js': app_js_src
         }
+      }
+    },
+    usemin: {
+      html: ['client/index.html']
+    },
+    copy: {
+      html: {
+	src: 'client/index-dev.html',
+        dest: 'client/index.html'
+      }
+    },
+    concat: {
+      appendTemplates: {
+        src: [ 'client/js/app.min.js', 'client/js/services/htmlTemplates.js' ],
+        dest: 'client/js/app.min.js'
       }
     },
     sass: {
@@ -48,6 +76,9 @@ module.exports = function(grunt) {
         files: {
           'client/css/app.css': 'client/css/app.scss'
         }
+      },
+      options: {
+        style: 'compressed'
       }
     },
     ngtemplates: {
@@ -113,12 +144,23 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-angular-templates');
+  grunt.loadNpmTasks('grunt-copy');
+  grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-angular-templates');
 
-  grunt.registerTask('build', [ 'ngtemplates', 'uglify', 'sass' ]);
+  grunt.registerTask('build', [
+    'ngtemplates',
+    'copy:html',
+    'useminPrepare',
+    'uglify:generated',
+    'usemin',
+    'concat:appendTemplates',
+    'sass'
+  ]);
 };

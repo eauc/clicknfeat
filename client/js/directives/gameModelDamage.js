@@ -94,7 +94,7 @@ angular.module('clickApp.directives')
           onError: '&',
         },
         controller: 'clickGameModelDamageCtrl',
-        templateUrl: '/partials/game/model_damage.html',
+        templateUrl: 'partials/game/model_damage.html',
         link: function(scope, element, attrs) {
           console.log('gameModelDamage', scope);
         }
