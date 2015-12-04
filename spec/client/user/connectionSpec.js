@@ -122,7 +122,40 @@ describe('user', function() {
             type: 'chat',
             from: 'stamp',
             to: [ 'stamp1', 'stamp2' ],
-            msg: 'hello'
+            msg: 'hello',
+            link: null
+          }, 'websocket.create.returnValue');
+        expect(this.ret)
+          .toBe('websocket.send.returnValue');
+      });
+    });
+
+    when('sendChat(<to>, <msg>, <link>)', function() {
+      this.ret = this.userConnectionService
+        .sendChat(this.to, this.msg, this.link, this.user);
+    }, function() {
+      beforeEach(function(done) {
+        this.user = this.userConnectionService.create({
+          state: { stamp: 'stamp' }
+        });
+        this.userConnectionService.open(this.user)
+          .then(function() {
+            done();
+          });
+
+        this.to = [ 'stamp1', 'stamp2' ];
+        this.msg = 'hello';
+        this.link = '#link';
+      });
+
+      it('should send chat msg on websocket', function() {
+        expect(this.websocketService.send)
+          .toHaveBeenCalledWith({
+            type: 'chat',
+            from: 'stamp',
+            to: [ 'stamp1', 'stamp2' ],
+            msg: 'hello',
+            link: '#link',
           }, 'websocket.create.returnValue');
         expect(this.ret)
           .toBe('websocket.send.returnValue');

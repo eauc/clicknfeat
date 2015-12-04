@@ -6,6 +6,7 @@ angular.module('clickApp.controllers')
     '$state',
     '$stateParams',
     '$window',
+    'userConnection',
     'game',
     'gameConnection',
     'games',
@@ -18,6 +19,7 @@ angular.module('clickApp.controllers')
              $state,
              $stateParams,
              $window,
+             userConnectionService,
              gameService,
              gameConnectionService,
              gamesService,
@@ -28,6 +30,23 @@ angular.module('clickApp.controllers')
       $scope.is_private = ($stateParams['private'] === 'private');
       $scope.ui_state = {};
 
+      $scope.invite = { player: null };
+      $scope.doInvitePlayer = function() {
+        var to = [$scope.invite.player];
+        var msg = [
+          s.capitalize(R.pathOr('Unknown', ['user','state','name'], $scope)),
+          'has invited you to join a game'
+        ].join(' ');
+        var link = $window.location.hash;
+        console.log(to, msg, link);
+        
+        return userConnectionService
+          .sendChat(to, msg, link, $scope.user)
+          .then(function() {
+            $scope.$digest();
+          });
+      };
+      
       var game_event_channel = pubSubService.init();
       pubSubService.subscribe('#watch#', function() {
         console.log('gameEvent', arguments);

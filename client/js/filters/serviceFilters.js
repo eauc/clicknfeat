@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('clickApp.filters')
+  .filter('capitalize', [
+    function() {
+      return function(input) {
+        return s.capitalize(input);
+      };
+    }
+  ])
   .filter('game', [
     'game',
     function(gameService) {

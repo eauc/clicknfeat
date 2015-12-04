@@ -64,15 +64,23 @@ angular.module('clickApp.services')
             R.exists
           )(user);
         },
-        sendChat: function userConnectionSendChat(dest, msg, user) {
+        sendChat: function userConnectionSendChat(dest, msg) {
+          var args = Array.prototype.slice.apply(arguments);
+          var user = R.last(args);
+          
           if(!userConnectionService.active(user)) {
             return self.Promise.reject('Not active');
           }
+          
           return websocketService.send({
             type: 'chat',
             from: user.state.stamp,
             to: dest,
-            msg: msg
+            msg: msg,
+            link: ( R.length(args) === 4 ?
+                    R.nth(2, args) :
+                    null
+                  )
           }, user.connection.state.socket);
         },
         userNameForStamp: function userNameForStamp(stamp, user) {
