@@ -85,10 +85,12 @@
            ng-show="game.layers | gameLayers:'isDisplayed':'b'">
           <image id="board-preview"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="{{game.board.preview || ''}}" />
+                 xlink:href="{{game.board.preview || ''}}">
+          </image>
           <image id="board-view"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="{{game.board.img || ''}}" />
+                 xlink:href="{{game.board.img || ''}}">
+          </image>
         </g>
         <g id="game-deploiement"
            ng-show="game.layers | gameLayers:'isDisplayed':'d'"
