@@ -620,6 +620,8 @@
         "base": "huge",
         "img": [
           {
+            "width": 116.6667,
+            "height": 116.6667,
             "link": "data/model/orboros/beasts/WoldWrath.png"
           }
         ],
