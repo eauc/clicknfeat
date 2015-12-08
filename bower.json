@@ -20,6 +20,6 @@
     "bootstrap": "~3.3",
     "ramda": "~0.18",
     "underscore.string": "~3.2",
-    "mousetrap": "https://github.com/eauc/mousetrap.git"
+    "mousetrap": "https://github.com/eauc/mousetrap.git#master"
   }
 }
