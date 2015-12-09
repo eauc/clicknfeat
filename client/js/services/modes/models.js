@@ -613,12 +613,12 @@ angular.module('clickApp.services')
           [ 'Reach', 'toggleReachDisplay', 'melee' ],
           [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
         ];
-        // if(R.prop('single', options)) {
-        //   ret = R.concat(ret, [ [ 'Templates', 'toggle', 'templates' ],
-        //                         [ 'AoE', 'createAoEOnModel', 'templates' ],
-        //                         [ 'Spray', 'createSprayOnModel', 'templates' ],
-        //                       ]);
-        // }
+        if(R.prop('single', options)) {
+          ret = R.concat(ret, [ [ 'Templates', 'toggle', 'templates' ],
+                                [ 'AoE', 'createAoEOnModel', 'templates' ],
+                                [ 'Spray', 'createSprayOnModel', 'templates' ],
+                              ]);
+        }
         ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
         ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
         ret = R.concat(ret, R.map(function(area) {

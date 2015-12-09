@@ -74,15 +74,22 @@ angular.module('clickApp.services')
           }
         )();
       };
-      // template_actions.setToRulerTarget = function aoeSetToRulerTarget(scope) {
-      //   if(!gameRulerService.isDisplayed(scope.game.ruler)) return;
+      template_actions.setToRulerTarget = function aoeSetToRulerTarget(scope) {
+        if(!gameRulerService.isDisplayed(scope.game.ruler)) return;
         
-      //   var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-      //   var position = gameRulerService.targetAoEPosition(scope.game.models,
-      //                                                     scope.game.ruler);
-      //   gameService.executeCommand('onTemplates', 'setToRuler', position,
-      //                              stamps, scope, scope.game);
-      // };
+        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+        return R.pipeP(
+          function() {
+            return gameRulerService.targetAoEPosition(scope.game.models,
+                                                      scope.game.ruler);
+          },
+          function(position) {
+            return gameService.executeCommand('onTemplates',
+                                              'setToRuler', position,
+                                              stamps, scope, scope.game);
+          }
+        )();
+      };
 
       var template_default_bindings = {
         setTargetModel: 'shift+clickModel',
@@ -91,7 +98,7 @@ angular.module('clickApp.services')
         aoeSize5: '5',
         deviate: 'd',
         setMaxDeviation: 'm',
-        // setToRulerTarget: 'e',
+        setToRulerTarget: 'e',
       };
       var template_bindings = R.extend(Object.create(templateModeService.bindings),
                                        template_default_bindings);
@@ -101,7 +108,7 @@ angular.module('clickApp.services')
         [ 'Aoe4', 'aoeSize4', 'size' ],
         [ 'Aoe5', 'aoeSize5', 'size' ],
         [ 'Deviate', 'deviate' ],
-        // [ 'Set to Ruler', 'setToRulerTarget' ],
+        [ 'Set to Ruler', 'setToRulerTarget' ],
       ], templateModeService.buttons);
 
       var template_mode = {

@@ -111,24 +111,28 @@ angular.module('clickApp.services')
           scope.gameEvent('changeRemoteRuler');
           return ret;
         },
-        // targetAoEPosition: function gameRulerTargetAoEPosition(models, ruler) {
-        //   var dir = pointService.directionTo(ruler.remote.end, ruler.remote.start);
-        //   var max = ruler.remote.length / 2;
-        //   var end = ruler.remote.end;
-        //   var target = gameRulerService.target(ruler);
-        //   if( R.exists(target) &&
-        //       gameRulerService.targetReached(ruler) ) {
-        //     var target_model = gameModelsService.findStamp(target, models);
-        //     if(R.exists(target_model)) {
-        //       end = target_model.state;
-        //     }
-        //   }
-        //   return R.pipe(
-        //     R.pick(['x', 'y']),
-        //     R.assoc('r', dir),
-        //     R.assoc('m', max)
-        //   )(end);
-        // },
+        targetAoEPosition: function gameRulerTargetAoEPosition(models, ruler) {
+          var dir = pointService.directionTo(ruler.remote.end, ruler.remote.start);
+          var max = ruler.remote.length / 2;
+          var end = ruler.remote.end;
+          var target = gameRulerService.target(ruler);
+          return R.pipeP(
+            R.bind(self.Promise.resolve, self.Promise),
+            function(end) {
+              if( R.exists(target) &&
+                  gameRulerService.targetReached(ruler) ) {
+                return R.pipeP(
+                  gameModelsService.findStamp$(target),
+                  R.prop('state')
+                )(models);
+              }
+              return end;
+            },
+            R.pick(['x', 'y']),
+            R.assoc('r', dir),
+            R.assoc('m', max)
+          )(end);
+        },
       };
       var enforceEndToMaxLength = R.curry(function _enforceEndToMaxLength(end, ruler) {
         var length = pointService.distanceTo(end, ruler.start);

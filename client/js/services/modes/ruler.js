@@ -95,25 +95,31 @@ angular.module('clickApp.services')
           }
         )();
       };
-      // ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope, event) {
-      //   var position = gameRulerService.targetAoEPosition(scope.game.models,
-      //                                                     scope.game.ruler);
-      //   position.type = 'aoe';
-      //   gameService.executeCommand('createTemplate', position,
-      //                              scope, scope.game);
-      // };
+      ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope, event) {
+        return R.pipeP(
+          function() {
+            return gameRulerService.targetAoEPosition(scope.game.models,
+                                                      scope.game.ruler);
+          },
+          function(position) {
+            position.type = 'aoe';
+            return gameService.executeCommand('createTemplate', [position],
+                                              scope, scope.game);
+          }
+        )();
+      };
       var ruler_default_bindings = {
         exitRulerMode: 'shift+r',
         setMaxLength: 'shift+m',
         setOriginModel: 'ctrl+clickModel',
         setTargetModel: 'shift+clickModel',
-        // createAoEOnTarget: 'a',
+        createAoEOnTarget: 'a',
       };
       var ruler_bindings = R.extend(Object.create(commonModeService.bindings),
                                     ruler_default_bindings);
       var ruler_buttons = [
         [ 'Set Max Len.', 'setMaxLength' ],
-        // [ 'AoE on Target', 'createAoEOnTarget' ],
+        [ 'AoE on Target', 'createAoEOnTarget' ],
       ];
       var ruler_mode = {
         onEnter: function rulerOnEnter(scope) {

@@ -20,26 +20,45 @@ angular.module('clickApp.services')
                                          gameModelSelectionService
                                         ) {
       var model_actions = Object.create(modelsModeService.actions);
-      // model_actions.createAoEOnModel = function modelCreateAoEModel(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var position = R.pick(['x','y'], model.state);
-      //   position.type = 'aoe';
-      //   gameService.executeCommand('createTemplate', position,
-      //                              scope, scope.game);
-      // };
-      // model_actions.createSprayOnModel = function modelCreateSprayModel(scope, event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   var position = R.pick(['x','y'], model.state);
-      //   position.type = 'spray';
-      //   gameService.executeCommand('createTemplate', position,
-      //                              scope, scope.game);
-      //   // simulate ctrl-click on model in sprayTemplateMode
-      //   sprayTemplateModeService.actions.clickModel(scope,
-      //                                               { target: model },
-      //                                               { ctrlKey: true });
-      // };
+      model_actions.createAoEOnModel = function modelCreateAoEModel(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          function() {
+            return gameModelsService.findStamp(stamps[0], scope.game.models);
+          },
+          function(model) {
+            var position = R.pick(['x','y'], model.state);
+            position.type = 'aoe';
+
+            return gameService.executeCommand('createTemplate', [position],
+                                              scope, scope.game);
+          }
+        )();
+      };
+      model_actions.createSprayOnModel = function modelCreateSprayModel(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          function() {
+            return gameModelsService.findStamp(stamps[0], scope.game.models);
+          },
+          function(model) {
+            var position = R.pick(['x','y'], model.state);
+            position.type = 'spray';
+
+            return R.pipeP(
+              function() {
+                return gameService.executeCommand('createTemplate', [position],
+                                                  scope, scope.game);
+              },
+              function() {
+                // simulate set-origin-model in sprayTemplateMode
+                return sprayTemplateModeService
+                  .actions.setOriginModel(scope, { 'click#': { target: model } });
+              }
+            )();
+          }
+        )();
+      };
       model_actions.selectAllFriendly = function modelSelectAllFriendly(scope, event) {
         var selection = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
@@ -93,8 +112,8 @@ angular.module('clickApp.services')
       // };
 
       var model_default_bindings = {
-        // 'createAoEOnModel': 'ctrl+a',
-        // 'createSprayOnModel': 'ctrl+s',
+        'createAoEOnModel': 'ctrl+a',
+        'createSprayOnModel': 'ctrl+s',
         'selectAllUnit': 'ctrl+u',
         'selectAllFriendly': 'ctrl+f',
       };

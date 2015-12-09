@@ -1,13 +1,18 @@
 'use strict';
 
-xdescribe('set aoe to ruler', function() {
+describe('set aoe to ruler', function() {
   describe('aoeTemplateMode service', function() {
     beforeEach(inject([
       'aoeTemplateMode',
       function(aoeTemplateModeService) {
         this.aoeTemplateModeService = aoeTemplateModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameRulerService = spyOnService('gameRuler');
+        mockReturnPromise(this.gameRulerService.targetAoEPosition);
+        this.gameRulerService.targetAoEPosition
+          .resolveWith = 'gameRuler.targetAoEPosition.returnValue';
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
         this.scope = {
@@ -19,7 +24,8 @@ xdescribe('set aoe to ruler', function() {
     ]));
 
     when('user set aoe to ruler target', function() {
-      this.aoeTemplateModeService.actions['setToRulerTarget'](this.scope);
+      this.ret = this.aoeTemplateModeService.actions.
+        setToRulerTarget(this.scope);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -48,10 +54,13 @@ xdescribe('set aoe to ruler', function() {
         });
 
         it('should execute onTemplates/setToRuler command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', 'setToRuler',
-                                  'gameRuler.targetAoEPosition.returnValue',
-                                  ['stamp'], this.scope, this.scope.game);
+          this.thenExpect(this.ret, function(result) {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onTemplates', 'setToRuler',
+                                    'gameRuler.targetAoEPosition.returnValue',
+                                    ['stamp'], this.scope, this.scope.game);
+            expect(result).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });
@@ -62,8 +71,13 @@ xdescribe('set aoe to ruler', function() {
       'rulerMode',
       function(rulerModeService) {
         this.rulerModeService = rulerModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameRulerService = spyOnService('gameRuler');
+        mockReturnPromise(this.gameRulerService.targetAoEPosition);
+        this.gameRulerService.targetAoEPosition
+          .resolveWith = 'gameRuler.targetAoEPosition.returnValue';
 
         this.scope = {
           game: { template_selection: 'selection',
@@ -73,12 +87,13 @@ xdescribe('set aoe to ruler', function() {
       }
     ]));
 
-    when('user set aoe to ruler target', function() {
-      this.rulerModeService.actions['createAoEOnTarget'](this.scope);
+    when('user create aoe on ruler\'s target', function() {
+      this.ret = this.rulerModeService.actions
+        .createAoEOnTarget(this.scope);
     }, function() {
       beforeEach(function() {
-        this.gameRulerService.targetAoEPosition._retVal = {
-          position: 'gameRuler.targetAoEPosition.returnValue'
+        this.gameRulerService.targetAoEPosition.resolveWith = {
+          x: 42, y: 71,
         };
       });
       
@@ -88,11 +103,14 @@ xdescribe('set aoe to ruler', function() {
       });
       
       it('should execute createTemplate command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('createTemplate', {
-            position: 'gameRuler.targetAoEPosition.returnValue',
-            type: 'aoe'
-          }, this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('createTemplate', [{
+              x:42, y:71,
+              type: 'aoe',
+            }], this.scope, this.scope.game);
+          expect(result).toBe('game.executeCommand.returnValue');
+        });
       });
     });
   });
@@ -106,7 +124,10 @@ xdescribe('set aoe to ruler', function() {
       }
     ]));
 
-    describe('targetAoEPosition()', function() {
+    when('targetAoEPosition(<models>)', function() {
+      this.ret = this.gameRulerService
+        .targetAoEPosition('models', this.ruler);
+    }, function() {
         beforeEach(function() {
           this.ruler = {
             remote: { start: { x:0, y: 0 },
@@ -114,7 +135,8 @@ xdescribe('set aoe to ruler', function() {
                       length: 4.5
                     }
           };
-          this.gameModelsService.findStamp._retVal = {
+          mockReturnPromise(this.gameModelsService.findStamp);
+          this.gameModelsService.findStamp.resolveWith = {
             state: { x: 320, y: 320 }
           };
         });
@@ -123,10 +145,11 @@ xdescribe('set aoe to ruler', function() {
         this.ruler.remote.target = null;
       }, function() {
         it('should return end of ruler position', function() {
-          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
-            .toEqual({
+          this.thenExpect(this.ret, function(result) {
+            expect(result).toEqual({
               x: 240, y: 240, r: 135, m: 2.25
             });
+          });
         });
       });
 
@@ -135,10 +158,11 @@ xdescribe('set aoe to ruler', function() {
         this.ruler.remote.reached = false;
       }, function() {
         it('should return end of ruler position', function() {
-          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
-            .toEqual({
+          this.thenExpect(this.ret, function(result) {
+            expect(result).toEqual({
               x: 240, y: 240, r: 135, m: 2.25
             });
+          });
         });
       });
 
@@ -147,10 +171,11 @@ xdescribe('set aoe to ruler', function() {
         this.ruler.remote.reached = true;
       }, function() {
         it('should return end of ruler position', function() {
-          expect(this.gameRulerService.targetAoEPosition('models', this.ruler))
-            .toEqual({
+          this.thenExpect(this.ret, function(result) {
+            expect(result).toEqual({
               x: 320, y: 320, r: 135, m: 2.25
             });
+          });
         });
       });
     });
@@ -165,7 +190,7 @@ xdescribe('set aoe to ruler', function() {
     ]));
 
     when('setToRuler(<position>)', function() {
-      this.aoeTemplateService.setToRuler({
+      this.ret = this.aoeTemplateService.setToRuler({
         x: 42, y: 71, r: 83, m: 32
       }, this.template);
     }, function() {
@@ -178,11 +203,10 @@ xdescribe('set aoe to ruler', function() {
       when('aoe is locked', function() {
         this.template.state.lk = true;
       }, function() {
-        it('should set aoe to ruler position', function() {
-          expect(this.template.state)
-            .toEqual({
-              stamp: 'stamp', x: 240, y: 240, r: 180, m: null, lk: true
-            });
+        it('should reject set to ruler', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('Template is locked');
+          });
         });
       });
     });
