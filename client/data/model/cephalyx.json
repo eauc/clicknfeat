@@ -1,0 +1,168 @@
+{
+  "name": "Cephalyx",
+  "color": "#909",
+  "icon": "",
+  "models": {
+    "casters": {
+      "Cyphon1": {
+        "name": "Cognifex Cyphon",
+        "type": "wardude",
+        "fury": 7,
+        "base": "medium",
+        "damage": {
+          "n": 18
+        }
+      },
+      "Thexus1": {
+        "name": "Exulon Thexus",
+        "type": "wardude",
+        "fury": 8,
+        "base": "medium",
+        "damage": {
+          "n": 15
+        }
+      }
+    },
+    "jacks": {
+      "Subduer": {
+        "name": "Subduer",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b", "b", "b", "l", "l" ],
+          "2": [ "b", "b", "b", "b", "l", "m" ],
+          "3": [ "b", "b", "b", "b", "m", "m" ],
+          "4": [ "b", "b", "b", "b", "B", "B" ],
+          "5": [ "b", "b", "b", "b", "B", "r" ],
+          "6": [ "b", "b", "b", "b", "r", "r" ]
+        }
+      },
+      "Warden": {
+        "name": "Warden",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b", "b", "b", "l", "l" ],
+          "2": [ "b", "b", "b", "b", "l", "m" ],
+          "3": [ "b", "b", "b", "b", "m", "m" ],
+          "4": [ "b", "b", "b", "b", "B", "B" ],
+          "5": [ "b", "b", "b", "b", "B", "r" ],
+          "6": [ "b", "b", "b", "b", "r", "r" ]
+        }
+      },
+      "Wrecker": {
+        "name": "Wrecker",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b", "b", "b", "l", "l" ],
+          "2": [ "b", "b", "b", "b", "l", "m" ],
+          "3": [ "b", "b", "b", "b", "m", "m" ],
+          "4": [ "b", "b", "b", "b", "B", "B" ],
+          "5": [ "b", "b", "b", "b", "B", "r" ],
+          "6": [ "b", "b", "b", "b", "r", "r" ]
+        }
+      }
+    },
+    "units": {
+      "Cephalyx Overlords": {
+	"name": "Cephalyx Overlords",
+	"entries": {
+	  "grunt": {
+	    "grunt": {
+	      "name": "Leader and Grunts",
+	      "ranges": [1, 3],
+	      "type": "warrior",
+	      "base": "small",
+	      "img": [
+                {
+		  "link": "data/model/cryx/units/CephalyxOverlord.png"
+	        }
+              ],
+	      "damage": {
+		"n": 5
+	      }
+	    }
+	  }
+	}
+      },
+      "Cephalyx Mind Slaver & Drudges": {
+        "name": "Cephalyx Mind Slaver & Drudges",
+        "entries": {
+          "unit": {
+	    "leader": {
+              "name": "Mind Slaver",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/CephalyxSlaver.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Grunts",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/DrudgeMindSlave.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Cephalyx Mind Bender & Drudges": {
+        "name": "Cephalyx Mind Bender & Drudges",
+        "entries": {
+          "unit": {
+	    "leader": {
+              "name": "Mind Bender",
+              "fk_name": "Cephalyx Mind Bender & Drudges",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/CephalyxSlaver.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Grunts",
+              "fk_name": "Cephalyx Mind Bender & Drudges",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/DrudgeMindSlave.png"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "solos": {
+      "Cephalyx Agitator": {
+        "name": "Cephalyx Agitator",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      }
+    }
+  }
+}

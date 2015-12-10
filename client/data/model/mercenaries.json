@@ -1,0 +1,2168 @@
+{
+  "name": "Mercenaries",
+  "color": "#959571",
+  "icon": "data/icons/mercenaire_50.png",
+  "wreck": {
+    "medium": { "link": "data/model/mercenaries/jacks/LightWreck.png" },
+    "large": { "link": "data/model/mercenaries/jacks/HeavyWreck.png" },
+    "huge": { "width": 116.667,
+              "height": 116.667,
+              "link": "data/model/mercenaries/jacks/ColossalWreck.png" }
+  },
+  "models": {
+    "casters": {
+      "ashlynn1": {
+        "name": "Ashlynn1 (Ashlynn d'Elyse)",
+        "fk_name": "Ashlynn d'Elyse",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Ashlynn1.png"
+          },
+          {
+            "link": "data/model/mercenaries/casters/AshlynnExlusive.png"
+          }
+        ],
+        "damage": {
+          "n": 14
+        }
+      },
+      "bartolo1": {
+        "name": "Bartolo1 (Captain Bartolo Montador)",
+        "fk_name": "Captain Bartolo Montador",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Bartolo1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "constance1": {
+        "name": "Constance1 (Constance Blaize, Knight of the Prophet)",
+        "fk_name": "Constance Blaize, Knight of the Prophet",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Constance1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "damiano1": {
+        "name": "Damiano1 (Captain Damiano)",
+        "fk_name": "Captain Damiano",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Damiano1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },    
+      "drake1": {
+        "name": "MacBain1 (Drake MacBain)",
+        "fk_name": "Drake MacBain",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Drake1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "fiona": {
+        "name": "Fiona1 (Fiona the Black)",
+        "fk_name": "Fiona the Black",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Fiona1.png"
+          }
+        ],
+        "damage": {
+          "n": 15
+        }
+      },
+      "gorten1": {
+        "name": "Gorten1 (Gorten Grundback)",
+        "fk_name": "Gorten Grundback",
+        "type": "wardude",
+        "focus": 5,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Gorten1.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "madhammer1": {
+        "name": "Madhammer1 (Durgen Madhammer)",
+        "fk_name": "Durgen Madhammer",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Madhammer1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "magnus1": {
+        "name": "Magnus1 (Magnus the Traitor)",
+        "fk_name": "Magnus the Traitor",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Magnus1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "magnus2": {
+        "name": "Magnus2 (Magnus the Warlord)",
+        "fk_name": "Magnus the Warlord",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Magnus2.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },   
+      "ossrum1": {
+        "name": "Ossrum1 (General Ossrum)",
+        "fk_name": "General Ossrum",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Ossrum1.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "shae1": {
+        "name": "Shae1 (Captain Phinneus Shae)",
+        "fk_name": "Captain Phinneus Shae",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/casters/Shae1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      }
+    },
+    "jacks": {
+      "buccaneer": {
+        "name": "Buccaneer",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Buccaneer.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "eartbreaker": {
+        "name": "Ghordson Earthbreaker",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+          {
+            "width": 216.666666667,
+            "height": 216.666666667,
+            "link": "data/model/mercenaries/jacks/Earthbreaker.png"
+          }
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "b",  "l" ],
+          "L2": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L3": [ null,  "b",  "b",  "b",  "l",  "m" ],
+          "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "L6": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null, null,  "b",  "b",  "r",  "m" ],
+          "R5": [ null, null,  "b",  "b",  "r",  "r" ],
+          "R6": [ null, null,  "b",  "b",  "b",  "r" ]
+        }
+      },
+      "freebooter": {
+        "name": "Freebooter",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Freebooter.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [ null, "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null, "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "gallant": {
+        "name": "Gallant",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Gallant.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "galleon": {
+        "name": "Galleon",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+          {
+            "width": 116.667,
+            "height": 116.667,
+            "link": "data/model/mercenaries/jacks/Galleon.png"
+          }
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L2": [ null, null,  "b",  "l",  "l",  "c" ],
+          "L3": [ null, null,  "b",  "l",  "c",  "m" ],
+          "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [ null,  "b",  "s",  "s",  "c",  "m" ],
+          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R2": [ null,  "b",  "s",  "s",  "c",  "m" ],
+          "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null, null,  "b",  "r",  "c",  "m" ],
+          "R5": [ null, null,  "b",  "r",  "r",  "c" ],
+          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
+        }
+      },
+      "ghordson_avalancher": {
+        "name": "Ghordson Avalancher",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Avalancher.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [  "b", "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b", "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b", "b",  "b",  "b",  "c",  "c" ],
+          "5": [  "b", "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "ghordson_basher": {
+        "name": "Ghordson Basher",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Basher.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, "b",  "b",  "h", "h" ],
+          "2": [ null,  "b", "b",  "b",  "c", "h" ],
+          "3": [ null,  "b", "b",  "b",  "c", "h" ],
+          "4": [ null,  "b", "b",  "b",  "c", "m" ],
+          "5": [ null,  "b", "b",  "b",  "c", "m" ],
+          "6": [ null, null, "b",  "b",  "m", "m" ]
+        }
+      },
+      "ghordson_driller": {
+        "name": "Ghordson Driller",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Driller.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "grundback_blaster": {
+        "name": "Grundback Blaster",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Blaster.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null,  null,  "b",  "h" ],
+          "2": [ null, null, null,   "b",  "h",  "h" ],
+          "3": [ null, null,  "b",   "b",  "h",  "c" ],
+          "4": [ null, null,  "b",   "b",  "c",  "c" ],
+          "5": [ null, null, null,   "b",  "m",  "m" ],
+          "6": [ null, null, null,  null,  "b",  "m" ]
+        }
+      },
+      "grundback_gunner": {
+        "name": "Grundback Gunner",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Gunner.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null,  null,  "b",  "h" ],
+          "2": [ null, null, null,   "b",  "h",  "h" ],
+          "3": [ null, null,  "b",   "b",  "h",  "c" ],
+          "4": [ null, null,  "b",   "b",  "c",  "c" ],
+          "5": [ null, null, null,   "b",  "m",  "m" ],
+          "6": [ null, null, null,  null,  "b",  "m" ]
+        }
+      },
+      "mangler": {
+        "name": "Mangler",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Mangler.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "mariner": {
+        "name": "Mariner",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Mariner.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "mule": {
+        "name": "Mule",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Mule.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "nomad": {
+        "name": "Nomad",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Nomad.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "renegade": {
+        "name": "Renegade",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Renegade.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "a",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "a",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "Rocinante": {
+        "name": "Rocinante",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Rocinante.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "rover": {
+        "name": "Rover",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Rover.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "subduer": {
+        "name": "Subduer",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b",  "b",  "b",  "l", "l" ],
+          "2": [ "b", "b",  "b",  "b",  "l", "m" ],
+          "3": [ "b", "b",  "b",  "b",  "m", "m" ],
+          "4": [ "b", "b",  "b",  "b",  "B", "B" ],
+          "5": [ "b", "b",  "b",  "b",  "r", "B" ],
+          "6": [ "b", "b",  "b",  "b",  "r", "r" ]
+        }
+      },
+      "talon": {
+        "name": "Talon",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Talon.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "vanguard": {
+        "name": "Vanguard",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Vanguard.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "warden": {
+        "name": "Warden",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b",  "b",  "b",  "l", "l" ],
+          "2": [ "b", "b",  "b",  "b",  "l", "m" ],
+          "3": [ "b", "b",  "b",  "b",  "m", "m" ],
+          "4": [ "b", "b",  "b",  "b",  "B", "B" ],
+          "5": [ "b", "b",  "b",  "b",  "r", "B" ],
+          "6": [ "b", "b",  "b",  "b",  "r", "r" ]
+        }
+      },
+      "wrecker": {
+        "name": "Wrecker",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b", "b",  "b",  "b",  "l", "l" ],
+          "2": [ "b", "b",  "b",  "b",  "l", "m" ],
+          "3": [ "b", "b",  "b",  "b",  "m", "m" ],
+          "4": [ "b", "b",  "b",  "b",  "B", "B" ],
+          "5": [ "b", "b",  "b",  "b",  "r", "B" ],
+          "6": [ "b", "b",  "b",  "b",  "r", "r" ]
+        }
+      },
+      "wroughthammer_rockram": {
+        "name": "Wroughthammer Rockram",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/jacks/Rockram.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      }
+    },
+    "units": {
+      "alexiaciannor_risen": {
+        "name": "Alexia Ciannor & the Risen",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Alexia",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Alexia.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Risen",
+              "ranges": [1, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Risen.png"
+                }
+              ]
+            },
+            "thrall": {
+              "name": "Thrall Warrior",
+              "type": "warrior",
+              "base": "small",
+              "width": 60,
+              "height": 60,
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/ThrallWarrior.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "arcane_tempest_gun_mages": {
+        "name": "Arcane Tempest Gun Mages",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Gunmage.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Arcane Tempest Gun Mage Officer",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/GunmageOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "captainsammachornethedevildogs": {
+        "name": "Captain Sam MacHorne & the Devil Dogs",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Captain Sam MacHorne",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Sam.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Devil Dogs",
+              "ranges": [1, 5, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/DevilDog.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "cephalyxmindbender_drudges": {
+        "name": "Cephalyx Mind Bender & Drudges",
+        "entries": {
+          "unit": {
+	    "leader": {
+              "name": "Mind Bender",
+              "fk_name": "Cephalyx Mind Bender & Drudges",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/CephalyxSlaver.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Grunts",
+              "fk_name": "Cephalyx Mind Bender & Drudges",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/DrudgeMindSlave.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "cephalyxmindslaver_drudges": {
+        "name": "Cephalyx Mind Slaver & Drudges",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Mind Slaver",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/CephalyxSlaver.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Drudges",
+              "ranges": [1, 5, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/DrudgeMindSlave.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "cephalyxoverlords": {
+        "name": "Cephalyx Overlords",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Cephalyx Overlords",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/CephalyxOverlord.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Commodore Cannon & Crew": {
+        "name": "Commodore Cannon & Crew",
+        "entries": {
+          "unit": {
+            "crew1": {
+              "name": "Crew1",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/CommodoreCrew1.png"
+                }
+              ]
+            },
+            "crew2": {
+              "name": "Crew2",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/CommodoreCrew2.png"
+                }
+              ]
+            },
+            "crew3": {
+              "name": "Crew3",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/CommodoreCrew3.png"
+                }
+              ]
+            },
+            "commodore": {
+              "name": "Commodore",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Commodore.png"
+                }
+              ],
+              "damage": {
+                "n": 10
+              }
+            }
+          }
+        }
+      },
+      "croescutthroats": {
+        "name": "Croe's Cutthroats",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Croe",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Croe.png"
+                }
+              ]
+            },
+            "grunt": {
+              "name": "Cutthroats",
+              "ranges": [1, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Cutthroat.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "cylenaraefyll_nysshunters": {
+        "name": "Cylena Raefyll & Nyss Hunters",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Cylena Raefyll",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Cylena.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "grunt": {
+              "name": "Nyss Hunters",
+              "ranges": [1, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/NyssHunter.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "dannonblythebull": {
+        "name": "Dannon Blythe & Bull",
+        "entries": {
+          "grunt": {
+            "dannon": {
+              "name": "Dannon Blythe",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Dannon.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bull": {
+              "name": "Bull",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Bull.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "greygoreboomhowlerco": {
+        "name": "Greygore Boomhowler & Co.",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Greygore Boomhowler",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/GreygoreBoomhowler.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            },
+            "grunt": {
+              "name": "Boomhowler",
+              "ranges": [1, 5, 9],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Boomhowler.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "hammerfall_high_shield_gun_corps": {
+        "name": "Hammerfall High Shield Gun Corps",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/GunCorp.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Hammerfall High Shield Gun Corps Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/GunCorpOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard",
+              "fk_name": "Hammerfall High Shield Gun Corps Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/GunCorpStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "hernejonne": {
+        "name": "Herne & Jonne",
+        "entries": {
+          "grunt": {
+            "herne": {
+              "name": "Herne",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Herne.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "jonne": {
+              "name": "Jonne",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Jonne.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "horgenholdartillerycorps ": {
+        "name": "Horgenhold Artillery Corps ",
+        "entries": {
+          "grunt": {
+            "siegecannon": {
+              "name": "Siege Cannon",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SiegeCannon.png"
+                }
+              ]
+            },
+            "crew": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/ArtillaryCorpCrew.png"
+                }
+              ]
+            },
+            "shell": {
+              "name": "Shell",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/ArtillaryCorpShell.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "horgenholdforgeguard": {
+        "name": "Horgenhold Forge Guard",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/ForgeGuard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "idrianskirmishers": {
+        "name": "Idrian Skirmishers",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Idrian.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "chieftain": {
+              "name": "Chieftain",
+              "fk_name": "Idrian Skirmishers Chieftain & Guide",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/IdrianChieftain.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "guide": {
+              "name": "Guide",
+              "fk_name": "Idrian Skirmishers Chieftain & Guide",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/IdrianGuide.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "kayazyassassins": {
+        "name": "Kayazy Assassins",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/KayazyAssasins.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "underboss": {
+              "name": "Underboss",
+              "fk_name": "Kayazy Assassin Underboss",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/KayazyUnderboss.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "kayazyeliminators": {
+        "name": "Kayazy Eliminators",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Grunt",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/EliminatorBlonde1.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "leader": {
+              "name": "Leader",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/EliminatorRed2.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },  
+      "lady_aiyana_master_holt": {
+        "name": "Lady Aiyana & Master Holt",
+        "entries": {
+          "grunt": {
+            "aiyana": {
+              "name": "Lady Aiyana",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Aiyana.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "holt": {
+              "name": "Master Holt",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Holt.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "long_gunner_infantry": {
+        "name": "Long Gunner Infantry",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/LongGunner.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Long Gunner Infantry Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/LongGunnerOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Long Gunner Infantry Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/LongGunnerStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "ogrunassaultcorps": {
+        "name": "Ogrun Assault Corps",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/OgrunAssault.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "precursor_knights": {
+        "name": "Precursor Knights",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/PrecursorKnight.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Precursor Knight Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/PrecursorKnightOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Precursor Knight Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/PrecursorKnightStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "pressgangers": {
+        "name": "Press Gangers",
+        "entries": {
+          "grunt": {
+            "leader": {
+              "name": "Lass",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Lass.png"
+                }
+              ]
+            },
+            "grunt": {
+              "name": "Press Ganger",
+              "range" :[1, 5, 9],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/PressGanger.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "rangers": {
+        "name": "Rangers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/Ranger.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "seadogcrew": {
+        "name": "Sea Dog Boarding Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SeaDog.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "data/model/mercenaries/units/SeaDogMate.png"
+                }
+              ]
+            }
+          },
+          "wa": {
+            "rifleman": {
+              "name": "Sea Dog Crew Rifleman",
+              "fk_name": [
+                "Sea Dog Crew Rifleman",
+                "Sea Dog Crew Riflemen"
+              ],
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SeaDogRifleman.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "walls": {
+              "name": "Mr. Walls",
+              "fk_name": "Mr. Walls Sea Dog Crew Quartermaster",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/MrWalls.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "seadogdeckgun": {
+        "name": "Sea Dog Deck Gun",
+        "entries": {
+          "unit": {
+            "crew": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/DeckGunCrew.png"
+                }
+              ]
+            },
+            "gunner": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/DeckGun.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "steelheadhalberdiers": {
+        "name": "Steelhead Halberdiers",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SteelheadHalberdiers.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "steelheadheavycavalry": {
+        "name": "Steelhead Heavy Cavalry",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SteelheadCavalry.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },    
+      "steelheadriflemen": {
+        "name": "Steelhead Riflemen",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/SteelheadRifleman.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "sword_knights": {
+        "name": "Sword Knights",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/SwordKnight.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Sword Knight Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/SwordKnightOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "standard": {
+              "name": "Standard Bearer",
+              "fk_name": "Sword Knight Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/SwordKnightStandardBearer.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "tacticalarcanistcorps": {
+        "name": "Tactical Arcanist Corps",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/TacticalArcanistCorps.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "The Devil's Shadow Mutineers": {
+        "name": "The Devil's Shadow Mutineers",
+        "entries": {
+          "unit": {
+            "Mar": {
+              "name": "Mar",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "Morland": {
+              "name": "Morland",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "Zira": {
+              "name": "Zira",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }                 
+      },
+      "trencher_cannon": {
+        "name": "Trencher Cannon",
+        "entries": {
+          "unit": {
+            "crew1": {
+              "name": "Crew1",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherCannonCrew1.png"
+                }
+              ]
+            },
+            "crew2": {
+              "name": "Crew2",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherCannonCrew2.png"
+                }
+              ]
+            },
+            "cannon": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherCannon.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "trencher_chaingun_crew": {
+        "name": "Trencher Chaingun Crew",
+        "entries": {
+          "unit": {
+            "crew": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherChainGunCrew.png"
+                }
+              ]
+            },
+            "gunner": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherChainGun.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "trencher_commandos": {
+        "name": "Trencher Commandos",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "type": "warrior",
+              "ranges": [1, 6, 10],
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/TrencherCommando.png"
+                }
+              ]
+            }
+          },
+          "wa": {
+            "scatter": {
+              "name": "Scattergunner",
+              "fk_name": "Trencher Commandos Scattergunner",
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/cygnar/units/Trencher_Commando_Scatter.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "trencher_infantry": {
+        "name": "Trencher Infantry",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Trencher.png"
+                }
+              ]
+            }
+          },
+          "wa": {
+            "grenadier": {
+              "name": "Grenadier",
+              "fk_name": "Trencher Infantry Grenadier",
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Trencher_GrenadePorter.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Trencher Infantry Officer & Sniper",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Trencher_Officer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "sniper": {
+              "name": "Sniper",
+              "fk_name": "Trencher Infantry Officer & Sniper",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/mercenaries/units/Trencher_Sharpshooter.png"
+                }
+              ]
+            }
+          }
+        }
+      }      
+    },
+    "solos": {
+      "alexia_mistress_of_the_witchfire": {
+        "name": "Alexia, Mistress of the Witchfire",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Alexia2.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "alten_ashley_monster_hunter": {
+        "name": "Alten Ashley, Monster Hunter",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/AltenAshley.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "anastasia_di_bray": {
+        "name": "Anastasia di Bray",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Anastasia.png"
+          },
+          {
+	    "link":"data/model/mercenaries/solos/Anastasia_Invisible.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "bloody_bradigan": {
+        "name": "Bloody Bradigan",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Bradigan.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "bosun_grogspar": {
+        "name": "Bosun Grogspar",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Grogspar.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "dirtymeg": {
+        "name": "Dirty Meg",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/DirtyMeg.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "doc": {
+        "name": "Doc Killingsworth",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Doc.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "dougalmacnaile": {
+        "name": "Master Gunner Dougal MacNaile",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/MacNaile.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "gastonecrosse": {
+        "name": "Gastone Crosse",
+        "type": "wardude",
+        "focus": 4,
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },   
+      "goblintinker": {
+        "name": "Goblin Tinker",
+        "type": "warrior",
+        "base": "medium",
+        "damage": {
+          "n": 5
+        }
+      },  
+      "gorman": {
+        "name": "Gorman di Wulfe, Rogue Alchemist",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Gorman.png"
+          },
+          {
+	    "link": "data/model/mercenaries/solos/Gorman_invisible.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },   
+      "harlanversh": {
+        "name": "Harlan Versh",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Harlan.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },    
+      "hawk": {
+        "name": "First Mate Hawk",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Hawk.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "kellbailoch": {
+        "name": "Kell Bailoch",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Kell.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },   
+      "madelyncorbeau": {
+        "name": "Madelyn Corbeau, Ordic Courtesan",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Madelyn.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "ogrunbokur": {
+        "name": "Ogrun Bokur",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Bokur.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },  
+      "orinmidwinter": {
+        "name": "Orin Midwinter, Rogue Inquisitor",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Orin.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },    
+      "ragman": {
+        "name": "Ragman",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Ragman.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "reinholdt": {
+        "name": "Reinholdt, Gobber Speculator",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Reinholdt.png"
+          }
+        ]
+      },  
+      "rhupertcarvolo": {
+        "name": "Rhupert Carvolo, Piper of Ord",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Rupert.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },   
+      "rockbottom": {
+        "name": "Lord Rockbottom",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Rockbottom.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "rutgershaw": {
+        "name": "Rutger Shaw",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Rutger_Shaw.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "stannisbrocker": {
+        "name": "Stannis Brocker",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Stannis.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },  
+      "taryndiarovissi": {
+        "name": "Taryn di la Rovissi, Llaeles Gun Mage",
+        "fk_name": "Taryn di la Rovissi",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Taryn.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },  
+      "thorsteinhammer": {
+        "name": "Thor Steinhammer",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/mercenaries/solos/Thor.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      }
+    },
+    "battle_engines": {
+      "hammerfall": {
+        "name": "Hammerfall Siege Crawler",
+        "type": "be",
+        "base": "huge",
+        "damage": {
+          "n": 22
+        }
+      }
+    }
+  }
+}

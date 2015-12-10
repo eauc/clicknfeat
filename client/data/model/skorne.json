@@ -1,0 +1,1325 @@
+{
+  "name": "Skorne",
+  "color": "#5963a2",
+  "icon": "data/icons/skorne_50.png",
+  "models": {
+    "locks": {
+      "Hexeris1": {
+        "name": "Hexeris1 (Lord Tyrant Hexeris)",
+        "fk_name": "Lord Tyrant Hexeris",
+        "type": "wardude",
+        "fury": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Hexeris1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "Hexeris2": {
+        "name": "Hexeris2 (Lord Arbiter Hexeris)",
+        "fk_name": "Lord Arbiter Hexeris",
+        "type": "wardude",
+        "fury": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Hexeris2.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },
+      "Makeda1": {
+        "name": "Makeda1 (Archdomina Makeda)",
+        "fk_name": "Archdomina Makeda",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Makeda1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "Makeda2": {
+        "name": "Makeda2 (Supreme Archdomina Makeda)",
+        "fk_name": "Supreme Archdomina Makeda",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Makeda2.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "Makeda3": {
+        "name": "Makeda3 (Makeda and the Exalted Court)",
+        "entries": {
+          "lock": {
+            "Makeda3": {
+              "name": "Makeda3",
+              "fk_name": "Makeda and the Exalted Court",
+              "type": "wardude",
+              "fury": 6,
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/locks/Makeda3.png"
+                }
+              ],
+              "damage": {
+                "n": 16
+              }
+            }
+          },
+          "unit": {
+            "Exalted1": {
+              "name": "Exalted Guardian 1",
+              "fk_name": "Makeda and the Exalted Court",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/locks/ExaltedCourt1.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "Exalted2": {
+              "name": "Exalted Guardian 2",
+              "fk_name": "Makeda and the Exalted Court",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/locks/ExaltedCourt2.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Mordikaar1": {
+        "name": "Mordikaar1 (Void Seer Mordikaar)",
+        "fk_name": "Void Seer Mordikaar",
+        "type": "wardude",
+        "fury": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Mordikaar1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "Morghoul1": {
+        "name": "Morghoul1 (Master Tormentor Morghoul)",
+        "fk_name": "Master Tormentor Morghoul",
+        "type": "wardude",
+        "fury": 5,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Morghoul1.png"
+          }
+        ],
+        "damage": {
+          "n": 15
+        }
+      },
+      "Morghoul2": {
+        "name": "Morghoul2 (Lord Assassin Morghoul)",
+        "fk_name": "Lord Assassin Morghoul",
+        "type": "wardude",
+        "fury": 5,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Morghoul2.png"
+          }
+        ],
+        "damage": {
+          "n": 15
+        }
+      },                
+      "Naaresh1": {
+        "name": "Naaresh1 (Master Ascetic Naaresh)",
+        "fk_name": "Master Ascetic Naaresh",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Naaresh1.png"
+          }
+        ],
+        "damage": {
+          "n": 17
+        }
+      },        
+      "Rasheth1": {
+        "name": "Rasheth1 (Dominar Rasheth)",
+        "fk_name": "Dominar Rasheth",
+        "type": "wardude",
+        "fury": 8,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Rasheth1.png"
+          }
+        ],
+        "damage": {
+          "n": 20
+        }
+      },        
+      "Xerxis1": {
+        "name": "Xerxis1 (Tyrant Xerxis)",
+        "fk_name": "Tyrant Xerxis",
+        "type": "wardude",
+        "fury": 5,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/locks/Xerxis1.png"
+          }
+        ],
+        "damage": {
+          "n": 19
+        }
+      },        
+      "Xerxis2": {
+        "name": "Xerxis2 (Xerxis Fist of Halaak)",
+        "fk_name": "Xerxis Fist of Halaak",
+        "type": "wardude",
+        "fury": 5,
+        "base": "huge",
+        "damage": {
+          "n": 19
+        }
+      },        
+      "Zaal1": {
+        "name": "Zaal1 (Supreme Aptimus Zaal & Kovaas)",
+        "entries": {
+          "lock": {
+            "Zaal1": {
+              "name": "Supreme Aptimus Zaal",
+              "fk_name": "Supreme Aptimus Zaal & Kovaas",
+              "type": "wardude",
+              "fury": 7,
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/locks/Zaal1.png"
+                }
+              ],
+              "damage": {
+                "n": 15
+              }
+            }
+          },
+          "attachement": {
+            "Kovaas1": {
+              "name": "Kovaas",
+              "fk_name": "Supreme Aptimus Zaal & Kovaas",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/locks/Kovaas.png"
+                },
+                {
+                  "type": "incorporeal",
+                  "link": "data/model/skorne/locks/Kovaas_Incorporeal.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Zaal2": {
+        "name": "Zaal2 (Zaal, The Ancestral Advocate)",
+        "fk_name": "Zaal, The Ancestral Advocate",
+        "type": "wardude",
+        "fury": 7,
+        "base": "medium",
+        "damage": {
+          "n": 18
+        }
+      }
+    },
+    "beasts": {
+      "Archidon": {
+        "name": "Archidon",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Archidon.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b", "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  "b", null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b", "b" ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null, null ]
+        }
+      },
+      "Aradus Sentinel": {
+        "name": "Aradus Sentinel",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b", null, null ],
+          "3": [  "b",  "b",  "b",  "b",  "b",  "b" ],
+          "4": [  "b",  "b",  "b",  "b",  "b",  "b", "b", "b" ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Aradus Soldier": {
+        "name": "Aradus Soldier",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b", null, null ],
+          "3": [  "b",  "b",  "b",  "b",  "b",  "b" ],
+          "4": [  "b",  "b",  "b",  "b",  "b",  "b", "b", "b" ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Basilisk Drake": {
+        "name": "Basilisk Drake",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Basilisk_Drake.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  null,  null, null, null ],
+          "4": [  "b",  "b",  "b",  null,  null, null ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null ]
+        }
+      },
+      "Basilisk Krea": {
+        "name": "Basilisk Krea",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Basilisk_Krea.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  null,  null, null, null ],
+          "4": [  "b",  "b", "b",  null,  null, null ],
+          "5": [  "b",  "b",  "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Bronzeback Titan": {
+        "name": "Bronzeback Titan",
+        "type": "beast",
+        "fury": 5,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Bronzeback_Titan.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b", null, null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b", "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", "b", null, null ]
+        }
+      },
+      "Cyclops Brute": {
+        "name": "Cyclops Brute",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Cyclops_Brute.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b", null ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null, null ]
+        }
+      },
+      "Cyclops Raider": {
+        "name": "Cyclops Raider",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Cyclops_Raider.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b", null ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null, null ]
+        }
+      },
+      "Cyclops Savage": {
+        "name": "Cyclops Savage",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Cyclops_Savage.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b", null ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null, null ]
+        }
+      },
+      "Cyclops Shaman": {
+        "name": "Cyclops Shaman",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Cyclops_Shaman.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  null,  null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  null, null ],
+          "5": [  "b",  "b",  "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Despoiler": {
+        "name": "Despoiler",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Despoiler.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b", null ],
+          "5": [  "b",  "b",  "b", "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", "b", "b" ]
+        }
+      },
+      "Hydra": {
+        "name": "Desert Hydra",
+        "type": "beast",
+        "fury": 4,
+        "base": "huge",
+        "damage": {
+          "type": "gargantuan",
+          "1": [  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null ],
+          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null ],
+          "5": [  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null ]
+        }
+      },
+      "Mammoth": {
+        "name": "Mammoth",
+        "type": "beast",
+        "fury": 5,
+        "base": "huge",
+        "img": [
+          {
+            "width": 116.667,
+            "height": 116.667,
+            "link": "data/model/skorne/beasts/Mammoth.png"
+          }
+        ],
+        "damage": {
+          "type": "gargantuan",
+          "1": [  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null, null, null, null, null ],
+          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null ],
+          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null ],
+          "5": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null,  null, null, null ]
+        }
+      },
+      "Molik Karn": {
+        "name": "Molik Karn",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Molik_Karn.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b", null ],
+          "3": [  "b",  "b",  "b",  "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      }, 
+      "Razor Worm": {
+        "name": "Razor Worm",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Razor_Worm.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  null, null, null, null ],
+          "2": [  "b",  "b",  "b",  null,  null, null ],
+          "3": [  "b",  "b",  "b",  null, null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", null ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Reptile Hound": {
+        "name": "Reptile Hound",
+        "type": "beast",
+        "fury": 2,
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Reptile_Hound.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  null,  null, null, null, null ],
+          "2": [  "b",  "b",  "b",  null,  null, null ],
+          "3": [  "b",  "b",  null,  null, null, null ],
+          "4": [  "b",  "b",  "b",  null,  null, null ],
+          "5": [  "b",  null,  null, null, null, null ],
+          "6": [  "b",  "b",  "b", null,  null ]
+        }
+      },
+      "Rhinodon": {
+        "name": "Rhinodon",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Rhinodon.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+        }
+      },
+      "Scarabs Pack": {
+        "name": "Scarabs Pack",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4],
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 10
+              }
+            }
+          }
+        }
+      },
+      "Tiberion": {
+        "name": "Tiberion",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Tiberion.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b", "b" ],
+          "3": [  "b",  "b",  "b",  "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", "b" ]
+        }
+      },
+      "Titan Cannoneer": {
+        "name": "Titan Cannoneer",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Titan_Cannoneer.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null ],
+          "2": [  "b",  "b",  "b",  "b",  null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
+          "5": [  "b",  "b",  "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  null, null ]
+        }
+      },
+      "Titan Gladiator": {
+        "name": "Titan Gladiator",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Titan_Gladiator.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b", null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null, null ]
+        }
+      },
+      "Titan Sentry": {
+        "name": "Titan Sentry",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/beasts/Titan_Sentry.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b",  "b",  "b", "b", null, null, null ],
+          "2": [  "b",  "b",  "b",  "b",  "b", null, null ],
+          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
+          "4": [  "b",  "b",  "b", "b",  "b", "b", "b" ],
+          "5": [  "b",  "b",  "b", "b", null, null, null ],
+          "6": [  "b",  "b",  "b",  "b",  "b", null, null ]
+        }
+      }
+    },
+    "units":{
+      "Cataphract Arcuarii": {
+        "name": "Cataphract Arcuarii",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Arcuarii.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "Cataphract Cetrati": {
+        "name": "Cataphract Cetrati",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Cetrati.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          },
+          "ua": {
+            "Tyrant Vorkesh": {
+              "name": "Tyrant Vorkesh",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Vorkesh.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "Cataphract Incindiarii": {
+        "name": "Cataphract Incindiarii",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Incindiarii.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
+      "Immortals": {
+        "name": "Immortals",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Immortals.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "advocate": {
+              "name": "Extoller Advocate",
+              "fk_name": "Extoller Advocate",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Legends of Halaak": {
+        "name": "Legends of Halaak",
+        "entries": {
+          "unit": {
+            "Bagesh": {
+              "name": "Valgesh",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "Cidaar": {
+              "name": "Cidaar",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "JDeth": {
+              "name": "J'Deth",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Paingiver Beast Handlers": {
+        "name": "Paingiver Beast Handlers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Beast_Handler.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Paingiver Bloodrunners": {
+        "name": "Paingiver Bloodrunners",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 5],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Bloodrunner.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Praetorian Ferox": {
+        "name": "Praetorian Ferox",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Ferox.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Praetorian Karax": {
+        "name": "Praetorian Karax",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Karax.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Praetorian Keltarii": {
+        "name": "Praetorian Keltarii",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small"
+            }
+          }
+        }
+      },
+      "Praetorian Swordsmen": {
+        "name": "Praetorian Swordsmen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Swordsmen.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Praetorian Swordsmen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Swordsmen_Officer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Praetorian Swordsmen Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Swordsmen_Standard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Nihilators": {
+        "name": "Nihilators",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Nihilator.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Tyrant Commander & Standard": {
+        "name": "Tyrant Commander & Standard Bearer",
+        "entries": {
+          "unit": {
+            "Tyrant Commander": {
+              "name": "Tyrant Commander",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Tyrant.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            },
+            "Standard Bearer": {
+              "name": "Standard Bearer",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Standard_Bearer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Venator Catapult Crew": {
+        "name": "Venator Catapult Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/FlayerCrew.png"
+                }
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/FlayerCannon.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Venator Flayer Cannon Crew": {
+        "name": "Venator Flayer Cannon Crew",
+        "entries": {
+          "unit": {
+            "grunt1": {
+              "name": "Crew 1",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Venator_CatapultCrew1.png"
+                }
+              ]
+            },
+            "grunt2": {
+              "name": "Crew 2",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Venator_CatapultCrew2.png"
+                }
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Venator_Catapult.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Venator Reivers": {
+        "name": "Venator Reivers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/Venator.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Venators Reiver Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/VenatorOfficer.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "bearer": {
+              "name": "Standard Bearer",
+              "fk_name": "Venators Reiver Officer & Standard",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/VenatorStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Venator Slingers": {
+        "name": "Venator Slingers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "data/model/skorne/units/VenatorSlingers.png"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "solos": {
+      "Agonizer": {
+        "name": "Agonizer",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Agonizer.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "Ancestral Guardian": {
+        "name": "Ancestral Guardian",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Ancestral_Guardian.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "Aptimus Marketh": {
+        "name": "Aptimus Marketh",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Marketh.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Extoller Soulward": {
+        "name": "Extoller Soulward",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Soulward.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Hakaar the Destroyer": {
+        "name": "Hakaar the Destroyer",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Hakaar.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "Mortitheurge Willbreaker": {
+        "name": "Mortitheurge Willbreaker",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Willbreaker.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Paingiver Bloodrunner Master Tormentor": {
+        "name": "Paingiver Bloodrunner Master Tormentor",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Master_Tormentor.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Paingiver Task Master": {
+        "name": "Paingiver Task Master",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Task_Master.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Tyrant Rhadiem": {
+        "name": "Tyrant Rhadiem",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Tyrant_Rhadheim.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "Tyrant Rhadiem (Dismounted)": {
+        "name": "Tyrant Rhadiem (Dismounted)",
+        "fk_name": "Tyrant Rhadiem",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/Tyrant_Rhadheim_Dismount.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Tyrant Zaadesh": {
+        "name": "Tyrant Zaadesh",
+        "type": "wardude",
+        "fury": 4,
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "Void Spirit": {
+        "name": "Void Spirit",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "data/model/skorne/solos/VoidSpirit.png"
+          },
+          {
+            "type": "incorporeal",
+            "link": "data/model/skorne/solos/VoidSpirit_Incorporeal.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      }
+    },
+    "battle_engines":{
+      "Siege Animantarax": {
+        "name": "Siege Animantarax",
+        "type": "be",
+        "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "data/model/skorne/bes/SiegeAnimantarax.png"
+          }
+        ],
+        "damage": {
+          "n": 24
+        }
+      }
+    }
+  }
+}
