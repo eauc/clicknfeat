@@ -215,9 +215,8 @@ angular.module('clickApp.services')
           });
         }).then(function() {
           console.error('Game: ReplayAll: end');
-          scope.$digest(scope);
           scope.gameEvent('gameLoaded');
-          return;
+          return scope.saveGame(game);
         });
       }
       R.curryService(gameService);

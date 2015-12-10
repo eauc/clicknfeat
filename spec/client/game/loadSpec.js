@@ -15,10 +15,9 @@ describe('load game', function() {
           players: { p1: { name: 'p1' } },
           commands: ['cmd1', 'cmd2']
         };
-        this.scope = { 'this': 'scope',
-                       $digest: jasmine.createSpy('$digest'),
-                       gameEvent: jasmine.createSpy('gameEvent'),
-                     };
+        this.scope = jasmine.createSpyObj('scope', [
+          '$digest', 'gameEvent', 'saveGame'
+        ]);
         this.ret = this.gameService.load(this.scope, this.game);
       });
 
@@ -92,10 +91,10 @@ describe('load game', function() {
         });
       });
 
-      it('should refresh scope', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.scope.$digest)
-            .toHaveBeenCalled();
+      it('should save game', function() {
+        this.thenExpect(this.ret, function(game) {
+          expect(this.scope.saveGame)
+            .toHaveBeenCalledWith(game);
         });
       });
     });

@@ -51,8 +51,28 @@ angular.module('clickApp.controllers')
       pubSubService.subscribe('#watch#', function() {
         console.log('gameEvent', arguments);
       }, game_event_channel);
-      $scope.gameEvent = function gameEvent() {
+      var game_is_loading = false;
+      var event_loading_queue = [];
+      $scope.gameEvent = function gameEvent(event) {
+        if(event === 'gameLoading') game_is_loading = true;
+
         var args = Array.prototype.slice.apply(arguments);
+        if(event === 'gameLoaded') {
+          R.pipe(
+            R.reverse,
+            R.uniqBy(R.head),
+            R.reverse,
+            R.forEach(function(args) {
+              pubSubService.publish.apply(null, R.append(game_event_channel, args));
+            })
+          )(event_loading_queue);
+          event_loading_queue = [];
+          game_is_loading = false;
+        }
+        if(game_is_loading) {
+          event_loading_queue = R.append(args, event_loading_queue);
+          return;
+        }
         pubSubService.publish.apply(null, R.append(game_event_channel, args));
       };
       $scope.onGameEvent = function onGameEvent(event, listener, scope) {
@@ -101,6 +121,8 @@ angular.module('clickApp.controllers')
 
             $scope.game = game;
             $scope.gameEvent('saveGame', game);
+
+            return game;
           }
         )(game);
       };
@@ -241,7 +263,6 @@ angular.module('clickApp.controllers')
           $scope.$on('$destroy', function gameCtrlOnDestroy() {
             gameConnectionService.close(game);
           });
-          $scope.game = game;
           console.error('#### Game Loaded', $scope.game);
           $scope.$digest();
         }
