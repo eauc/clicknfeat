@@ -61,6 +61,9 @@ angular.module('clickApp.services')
       default_actions.enterRulerMode = function defaultEnterRulerMode(scope, event) {
         return scope.doSwitchToMode('Ruler');
       };
+      default_actions.enterLosMode = function defaultEnterLosMode(scope, event) {
+        return scope.doSwitchToMode('LoS');
+      };
       default_actions.dragStartMap = function defaultDragStartMap(scope, event) {
         scope.gameEvent('enableDragbox', event.start, event.now);
       };
@@ -92,6 +95,7 @@ angular.module('clickApp.services')
 
       var default_default_bindings = {
         enterRulerMode: 'shift+r',
+        enterLosMode: 'shift+l',
         setModelSelection: 'clickModel',
         toggleModelSelection: 'ctrl+clickModel',
         modelSelectionDetail: 'rightClickModel',

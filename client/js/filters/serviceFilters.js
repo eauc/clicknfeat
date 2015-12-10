@@ -60,6 +60,19 @@ angular.module('clickApp.filters')
       };
     }
   ])
+  .filter('gameLos', [
+    'gameLos',
+    function(gameLosService) {
+      return function(input, method) {
+        var args = R.tail(R.tail(arguments));
+        if(!R.exists(gameLosService[method])) {
+          console.error('gameLos Filter: method "'+method+'" does not exist');
+          return;
+        }
+        return gameLosService[method].apply(null, R.append(input, args));
+      };
+    }
+  ])
   .filter('modes', [
     'modes',
     function(modesService) {

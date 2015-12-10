@@ -1,0 +1,10 @@
+#game {
+    #game-los {
+        pointer-events: none;
+
+        line {
+            stroke-width: 0.5px;
+            stroke: $los-stroke-color;
+        }
+    }
+}

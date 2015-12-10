@@ -79,6 +79,7 @@ angular.module('clickApp.services')
     'rollDeviationCommand',
     'setBoardCommand',
     'setLayersCommand',
+    'setLosCommand',
     'setRulerCommand',
     'setScenarioCommand',
     function() { return {}; }

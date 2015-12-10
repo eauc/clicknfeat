@@ -24,6 +24,19 @@ angular.module('clickApp.controllers')
         $scope.doExecuteCommand('setRuler', 'toggleDisplay');
       };
       $scope.digestOnGameEvent('changeRemoteRuler', $scope);
+
+      $scope.doUseLos = function doUseLos() {
+        if($scope.currentModeIs('LoS')) {
+          $scope.doModeAction('modeBackToDefault');
+        }
+        else {
+          $scope.doModeAction('enterLosMode');
+        }
+      };
+      $scope.doToggleShowLos = function doToggleShowLos() {
+        $scope.doExecuteCommand('setLos', 'toggleDisplay');
+      };
+      $scope.digestOnGameEvent('changeRemoteLos', $scope);
       
       $scope.doCreateTemplate = function doCreateTemplate(type) {
         $scope.create.template = { type: type, x: 240, y: 240 };

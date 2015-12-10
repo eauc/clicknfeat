@@ -35,11 +35,20 @@
       <button class="btn {{ currentModeIs('Ruler') ? 'btn-primary' : 'btn-default' }}"
               title="{{action_bindings['enterRulerMode'] || ''}}"
               ng-click="doUseRuler()">
-        User<br />Ruler
+        Use<br />Ruler
       </button>
       <button class="btn {{ (game.ruler | gameRuler:'isDisplayed') ? 'btn-primary' : 'btn-default' }}"
               ng-click="doToggleShowRuler()">
         Show<br />Ruler
+      </button>
+      <button class="btn {{ currentModeIs('LoS') ? 'btn-primary' : 'btn-default' }}"
+              title="{{action_bindings['enterLosMode'] || ''}}"
+              ng-click="doUseLos()">
+        Use<br />LoS
+      </button>
+      <button class="btn {{ (game.los | gameLos:'isDisplayed') ? 'btn-primary' : 'btn-default' }}"
+              ng-click="doToggleShowLos()">
+        Show<br />LoS
       </button>
       <button class="btn btn-default"
               ng-click="doCreateTemplate('aoe')">

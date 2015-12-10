@@ -112,7 +112,7 @@ module.exports = function(grunt) {
               'client/lib/angular/angular.js',
               'client/lib/angular-ui-router/release/angular-ui-router.min.js',
               'client/lib/angular-mocks/angular-mocks.js',
-              'client/lib/mousetrap-1.5.2/mousetrap.js',
+              'client/lib/mousetrap/mousetrap.js',
           ],
           outfile: 'spec/client/SpecRunner.html',
           keepRunner: true
