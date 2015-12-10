@@ -113,6 +113,16 @@
           "n": 16
         }
       },                
+      "Deneghra3": {
+        "name": "Deneghra3 (Deneghra, The Soul Weaver)",
+        "fk_name": "Deneghra, The Soul Weaver",
+        "type": "wardude",
+        "focus": 7,
+        "base": "huge",
+        "damage": {
+          "n": 18
+        }
+      },        
       "Goreshade1": {
         "name": "Goreshade1 (Goreshade the Bastard & Deathwalker)",
         "entries": {
@@ -367,6 +377,20 @@
       }
     },
     "jacks":{
+      "Barathrum": {
+        "name": "Barathrum",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l", "m"  ],
+          "3": [ "b",  "b",  "b",  "b",  "m", "m"  ],
+          "4": [ "b",  "b",  "b",  "b",  "c", "c"  ],
+          "5": [ null,  "b",  "b",  "r",  "r", "c"  ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
       "Cankerworm": {
         "name": "Cankerworm",
         "type": "jack",
@@ -731,6 +755,40 @@
           "6": [ null, null,  "b",  "b",  "r", null ]
         }
       },
+      "Sepulcher": {
+        "name": "Sepulcher",
+        "type": "jack",
+        "base": "huge",
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null, "b", "b", "l", "l" ],
+          "L2": [ null, null, "b", "b", "l", "c" ],
+          "L3": [ null, null, "b", "l", "c", "m" ],
+          "L4": [ null,  "b", "b", "l", "c", "m" ],
+          "L5": [  "b",  "b", "s", "s", "c", "m" ],
+          "L6": [  "b",  "b", "s", "c", "c", "m" ],
+          "R1": [  "b",  "b", "s", "c", "c", "m" ],
+          "R2": [  "b",  "b", "s", "s", "c", "m" ],
+          "R3": [ null,  "b", "b", "r", "c", "m" ],
+          "R4": [ null, null, "b", "r", "c", "m" ],
+          "R5": [ null, null, "b", "b", "r", "c" ],
+          "R6": [ null, null, "b", "b", "r", "r" ]
+        }
+      },
+      "Shrike": {
+        "name": "Shrike",
+        "type": "jack",
+        "base": "medium",
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "h", null ],
+          "2": [ null,  null,  "b",  "b",  "c", "h"  ],
+          "3": [ null,  null,  null,  "b",  "c", "h"  ],
+          "4": [ null,  null,  null,  "b",  "c", "m"  ],
+          "5": [ null,  null,  "b",  "b",  "c", "m"  ],
+          "6": [ null, null,  null,  "b",  "m", null ]
+        }
+      },
       "Slayer": {
         "name": "Slayer",
         "type": "jack",
@@ -798,6 +856,15 @@
               "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "large",
+              "img": [
+                {
+                  "link": "data/model/cryx/units/BaneRider.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "data/model/cryx/units/BaneRiderLeader.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1061,7 +1128,7 @@
                 }
               ],
               "damage": {
-                "n": 5
+                "n": 8
               }
             }
           }
@@ -1504,6 +1571,13 @@
         "damage": {
           "n": 5
         }
+      },
+      "soultrapper": {
+        "name": "Soul Trapper",
+        "fk_repeat": 2,
+        "ranges": [ 1, 2 ],
+        "type": "solo",
+        "base": "small"
       },
       "warwitchsiren": {
         "name": "Warwitch Siren",

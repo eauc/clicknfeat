@@ -223,7 +223,7 @@
         "fk_name": "Kommander Strakhov",
         "type": "wardude",
         "focus": 6,
-        "base": "medium",
+        "base": "small",
         "img": [
           {
             "link": "data/model/khador/casters/Strakhov1.png"
@@ -278,7 +278,7 @@
           "n": 18
         }
       },
-      "zerkova": {
+      "zerkova1": {
         "name": "Zerkova1 (Koldun Kommander Aleksandra Zerkova)",
         "fk_name": "Koldun Kommander Aleksandra Zerkova",
         "type": "wardude",
@@ -292,7 +292,44 @@
         "damage": {
           "n": 16
         }
-      }   
+      },
+      "zerkova2": {
+        "name": "Zerkova2 (Obavnik Kommander Zerkova & Reaver Guard)",
+        "entries": {
+          "lock": {
+            "Zerkova2": {
+              "name": "Zerkova2",
+              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
+              "type": "wardude",
+              "fury": 7,
+              "base": "small",
+              "damage": {
+                "n": 16
+              }
+            }
+          },
+          "unit": {
+            "Reaver1": {
+              "name": "Reaver 1",
+              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "Reaver2": {
+              "name": "Reaver 2",
+              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      }
     },
     "jacks": {
       "beast": {
@@ -531,6 +568,20 @@
           "6": [ "b",  "b",  "b",  "b",  "r", null ]
         }
       },
+      "maddog": {
+        "name": "Mad Dog",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c", null ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
       "marauder": {
         "name": "Marauder",
         "type": "jack",
@@ -540,6 +591,34 @@
             "link": "data/model/khador/jacks/Marauder.png"
           }
         ],
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "rager": {
+        "name": "Rager",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [  "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+         "4": [  "b",  "b",  "b",  "b",  "c", null ],
+          "5": [  "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "ruin": {
+        "name": "Ruin",
+        "type": "jack",
+        "base": "large",
         "damage": {
           "type": "jack",
           "1": [ "b",  "b",  "b",  "b",  "l", null ],
@@ -586,6 +665,26 @@
           "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
           "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
           "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "viktor": {
+        "name": "Viktor",
+        "type": "jack",
+        "base": "huge",
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L2": [ null, null,  "b",  "l",  "l",  "c" ],
+          "L3": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L4": [  "b",  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "R3": [  "b",  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R5": [ null, null,  "b",  "r",  "r",  "c" ],
+          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
         }
       }
     },

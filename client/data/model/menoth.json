@@ -26,6 +26,16 @@
           "n": 17
         }
       },
+      "anson1": {
+        "name": "Anson1 (Anson Durst, Rock of the Faith)",
+        "fk_name": "Anson Durst, Rock of the Faith",
+        "type": "wardude",
+        "focus": 6,
+        "base": "medium",
+        "damage": {
+          "n": 19
+        }
+      },
       "feora1": {
         "name": "Feora1 (Feora, Priestess of the Flame)",
         "type": "wardude",
@@ -121,6 +131,13 @@
         "type": "wardude",
         "focus": 7,
         "base": "huge",
+        "img": [
+          {
+            "width": 70,
+            "height": 70,
+            "link": "data/model/menoth/casters/Reznik2.png"
+          }
+        ],
         "damage": {
           "n": 20
         }
@@ -403,6 +420,20 @@
           "6": [  "b", "b",  "b",  "b",  "r", null ]
         }
       },
+      "handofjudgement": {
+        "name": "Hand of Judgment",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [  "b", "b",  "b",  "l",  "l", "m"  ],
+          "3": [  "b", "b",  "b",  "b",  "m", "m"  ],
+          "4": [  "b", "b",  "b",  "b",  "c", "c"  ],
+          "5": [  "b", "b",  "b",  "r",  "r", "c"  ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
       "indictor": {
         "name": "Indictor",
         "type": "jack",
@@ -442,6 +473,20 @@
           "R4": [ null,  "b", "b", "r", "c", "m" ],
           "R5": [ null, null, "b", "b", "r", "c" ],
           "R6": [ null, null, "b", "b", "r", "r" ]
+        }
+      },
+      "purifier": {
+        "name": "Purifier",
+        "type": "jack",
+        "base": "medium",
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l", "m"  ],
+          "3": [ null,  "b",  "b",  "b",  "m", "m"  ],
+          "4": [ null,  "b",  "b",  "b",  "c", "c"  ],
+          "5": [ null,  "b",  "b",  "r",  "r", "c"  ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
         }
       },
       "reckoner": {
@@ -499,6 +544,26 @@
           "4": [ null,  "b",  "b",  "b",  "c", "c"  ],
           "5": [ null,  "b",  "b",  "r",  "r", "c"  ],
           "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "revelator": {
+        "name": "Revelator",
+        "type": "jack",
+        "base": "huge",
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null, "b", "b", "l", "l" ],
+          "L2": [ null, null, "b", "b", "l", "c" ],
+          "L3": [ null,  "b", "b", "l", "c", "m" ],
+          "L4": [ null,  "b", "b", "l", "c", "m" ],
+          "L5": [  "b",  "b", "s", "s", "c", "m" ],
+          "L6": [  "b",  "b", "s", "c", "c", "m" ],
+          "R1": [  "b",  "b", "s", "c", "c", "m" ],
+          "R2": [  "b",  "b", "s", "s", "c", "m" ],
+          "R3": [ null,  "b", "b", "r", "c", "m" ],
+          "R4": [ null,  "b", "b", "r", "c", "m" ],
+          "R5": [ null, null, "b", "b", "r", "c" ],
+          "R6": [ null, null, "b", "b", "r", "r" ]
         }
       },
       "revenger": {
@@ -1204,6 +1269,14 @@
             "link": "data/model/menoth/solos/Paladin.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "pyrrhus": {
+        "name": "Pyrrhus",
+        "type": "solo",
+        "base": "small",
         "damage": {
           "n": 5
         }

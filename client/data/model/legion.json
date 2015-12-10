@@ -326,6 +326,22 @@
           "6": [ "b", "b", "b", "b", null, null, null ]
         }
       },
+      "blightbringer": {
+        "name": "Blightbringer",
+        "fk_name": "Blightbringer",
+        "type": "beast",
+        "fury": 5,
+        "base": "huge",
+        "damage": {
+          "type": "gargantuan",
+          "1": [ "b", "b", "b", "b", "b", "b",  "b", null, null, null, null, null, null ],
+          "2": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null, null, null, null ],
+          "3": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b",  "b", null, null ],
+          "4": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b" ],
+          "5": [ "b", "b", "b", "b", "b", "b", null, null, null, null, null, null, null ],
+          "6": [ "b", "b", "b", "b", "b", "b",  "b", null, null, null, null, null, null ]
+        }
+      },
       "carnivean": {
         "name": "Carnivean",
         "type": "beast",
@@ -391,6 +407,11 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "link": "data/model/legion/beasts/Bloodseer.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null ],
@@ -421,7 +442,7 @@
           "6": [ "b", "b", "b", "b", null ]
         }
       },
-      "protector": {
+      "nephilim_protector": {
         "name": "Nephilim Protector",
         "type": "beast",
         "fury": 3,
@@ -459,6 +480,26 @@
           "4": [ "b", "b", "b", "b", null ],
           "5": [ "b", "b", "b", null, null ],
           "6": [ "b", "b", "b", "b", null ]
+        }
+      },
+      "neraph": {
+        "name": "Neraph",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "img": [
+          {
+            "link": "data/model/legion/beasts/Neraph.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [ "b", "b", "b", null, null ],
+          "2": [ "b", "b", "b", "b", "b" ],
+          "3": [ "b", "b", "b", "b", null ],
+          "4": [ "b", "b", "b", "b", "b" ],
+          "5": [ "b", "b", "b", null, null ],
+          "6": [ "b", "b", "b", "b", "b" ]
         }
       },
       "proteus": {
@@ -539,21 +580,6 @@
           "4": [ "b", "b", "b", "b", "b", "b", "b" ],
           "5": [ "b", "b", "b", "b", null, null, null ],
           "6": [ "b", "b", "b", "b", "b", "b", null ]
-        }
-      },
-      "neraph": {
-        "name": "Neraph",
-        "type": "beast",
-        "fury": 4,
-        "base": "large",
-        "damage": {
-          "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b" ]
         }
       },
       "seraph": {
@@ -661,6 +687,11 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "link": "data/model/legion/beasts/Zuriel.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", "b", null, null, null ],
@@ -780,12 +811,26 @@
           }
         }
       },
-      "grotesques": {
-        "name": "Blighted Nyss Grotesques",
+      "grotesques banshees": {
+        "name": "Blighted Nyss Grotesques Banshees",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small"
+            }
+          }
+        }
+      },
+      "grotesques_raiders": {
+        "name": "Blighted Nyss Grotesques Raiders",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "fk_name": "Blighted Nyss Grotesques",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
               "base": "small",
@@ -1175,6 +1220,14 @@
       },
       "fyanna": {
         "name": "Fyanna the Lash",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "grotesque assassin": {
+        "name": "Grotesque Assassin",
         "type": "solo",
         "base": "small",
         "damage": {

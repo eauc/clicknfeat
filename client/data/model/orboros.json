@@ -172,6 +172,16 @@
           "n": 17
         }
       },
+      "Kromac2": {
+        "name": "Kromac2 (Kromac, Champion of the Wurm)",
+        "fk_name": "Kromac, Champion of the Wurm",
+        "type": "wardude",
+        "fury": 7,
+        "base": "large",
+        "damage": {
+          "n": 19
+        }
+      },
       "Krueger1": {
         "name": "Krueger1 (Krueger the Stormwrath)",
         "fk_name": "Krueger the Stormwrath",
@@ -254,6 +264,11 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "link": "data/model/orboros/beasts/ArgusMoonhound.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null],
@@ -510,6 +525,21 @@
           "6": [ "b", "b", null, null, null, null ]
         }
       },
+      "Storm Raptor": {
+        "name": "Storm Raptor",
+        "type": "beast",
+        "fury": 4,
+        "base": "huge",
+        "damage": {
+          "type": "gargantuan",
+          "1": [ "b", "b", "b", "b", "b", "b", null, null, null, null ],
+          "2": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
+          "3": [ "b", "b", "b", "b", "b", "b", null, null, null, null ],
+          "4": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
+          "5": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
+          "6": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b" ]
+        }
+      },
       "Warpwolf Stalker": {
         "name": "Warpwolf Stalker",
         "type": "beast",
@@ -658,6 +688,22 @@
       }
     },
     "units": {
+      "Blackclad Mist Riders": {
+        "name": "Blackclad Mist Riders",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "large",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
       "Death wolves": {
         "name": "The Death Wolves",
         "entries": {
@@ -1110,6 +1156,14 @@
             "link": "data/model/orboros/solos/Blackclad.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Bloodweaver Night Witch": {
+        "name": "Bloodweaver Night Witch",
+        "type": "solo",
+        "base": "small",
         "damage": {
           "n": 5
         }

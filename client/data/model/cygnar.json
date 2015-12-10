@@ -136,6 +136,43 @@
           "n": 15
         }
       },
+      "haley3": {
+        "name": "Haley3 (Major Prime Victoria Haley)",
+        "entries": {
+          "lock": {
+            "haley3": {
+              "name": "Haley Present",
+              "fk_name": "Major Prime Victoria Haley",
+              "type": "wardude",
+              "focus": 8,
+              "base": "small",
+              "damage": {
+                "n": 15
+              }
+            },
+            "haley3past": {
+              "name": "Haley Past",
+              "fk_name": "Major Prime Victoria Haley",
+              "type": "wardude",
+              "focus": 4,
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "haley3future": {
+              "name": "Haley Future",
+              "fk_name": "Major Prime Victoria Haley",
+              "type": "wardude",
+              "focus": 4,
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
       "sloan1": {
         "name": "Sloan1 (Captain Kara Sloan)",
         "fk_name": "Captain Kara Sloan",
@@ -286,6 +323,20 @@
       }   
     },
     "jacks": {
+      "ace": {
+        "name": "Ace",
+        "type": "jack",
+        "base": "medium",
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null, null,  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null, null,  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
       "avenger": {
         "name": "Avenger",
         "type": "jack",
@@ -488,6 +539,26 @@
           "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
           "5": [ null, null,  "b",  "r",  "r",  "c" ],
           "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "hurricane": {
+        "name": "Hurricane",
+        "type": "jack",
+        "base": "huge",
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L2": [ null, null,  "b",  "l",  "l",  "c" ],
+          "L3": [ null, null,  "b",  "l",  "c",  "m" ],
+          "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [ null,  "b",  "s",  "s",  "c",  "m" ],
+          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R2": [ null,  "b",  "s",  "s",  "c",  "m" ],
+          "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null, null,  "b",  "r",  "c",  "m" ],
+          "R5": [ null, null,  "b",  "r",  "r",  "c" ],
+          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
         }
       },
       "ironclad": {
@@ -1464,6 +1535,15 @@
           }
         ]
       },          
+      "trenchbuster": {
+        "name": "Trench Buster",
+        "type": "solo",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 8
+        }
+      },
       "trenchermastergunner": {
         "name": "Trencher Master Gunner",
         "type": "solo",
