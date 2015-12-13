@@ -1,30 +1,49 @@
 module.exports = function(grunt) {
 
-  var app_js_src = [ 'client/js/mixins/*.js',
-                     'client/js/app.js',
-                     'client/js/controllers/**/*.js',
-                     'client/js/services/**/*.js',
-                     'client/js/filters/**/*.js',
-                     'client/js/directives/**/*.js',
+  var app_js_src = [ 'client/js/**/*.js',
                      '!**/*.min.js' ];
-  var spec_js_src = [ 'spec/client/**/*Spec.js' ];
-  var spec_js_helpers = [ 'spec/client/helpers/*.js' ];
+  var spec_js_src = [ 'spec/client/js/**/*Spec.js' ];
+  var spec_js_helpers = [ 'spec/client/js/helpers/*.js' ];
   var spec_js = spec_js_helpers.concat(spec_js_src);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     eslint: {
       app_src: {
-        src: app_js_src,
+        src: 'client/es6',
         options: {
           config: '.eslintrc.json'
         }
       },
       spec_src: {
-        src: spec_js_src,
+        src: 'spec/client/es6',
         options: {
           config: '.eslintrc.json'
         }
+      }
+    },
+    babel: {
+      options: {
+        sourceMap: true,
+        presets: ['es2015']
+      },
+      app_src: {
+        files: [{
+          expand: true,
+          cwd: 'client/es6',
+          src: ['**/*.js'],
+          dest: 'client/js',
+          ext: '.js'
+        }]
+      },
+      spec_src: {
+        files: [{
+          expand: true,
+          cwd: 'spec/client/es6',
+          src: ['**/*.js'],
+          dest: 'spec/client/js',
+          ext: '.js'
+        }]
       }
     },
     useminPrepare: {
@@ -38,7 +57,7 @@ module.exports = function(grunt) {
           post: {
             js: [{
               name: 'uglify',
-              createConfig: function (context, block) {
+              createConfig: function (context) {
                 var generated = context.options.generated;
                 generated.options = {
                   sourceMap: true,
@@ -103,6 +122,7 @@ module.exports = function(grunt) {
           specs: spec_js_src,
           helpers: spec_js_helpers,
           vendor: [
+              'client/lib/babel-polyfill/browser-polyfill.js',
               'client/lib/ramda/dist/ramda.js',
               'client/lib/underscore.string/dist/underscore.string.js',
               'client/lib/angular/angular.js',
@@ -117,21 +137,21 @@ module.exports = function(grunt) {
     },
     watch: {
       app_src: {
-        files: app_js_src,
-        tasks: [ 'eslint:app_src', 'uglify:app_src' ],
+        files: [ 'client/es6/**/*.js' ],
+        tasks: [ 'eslint:app_src', 'babel:app_src', 'uglify:app_src' ],
         options: {
           spawn: true
         }
       },
       spec_src: {
-        files: spec_js.concat(app_js_src),
-        tasks: [ 'eslint:app_src', 'eslint:spec_src', 'jasmine:spec' ],
+        files: [ 'client/es6/**/*.js', 'spec/client/es6/**/*.js' ],
+        tasks: [ 'eslint', 'babel', 'jasmine:spec' ],
         options: {
           spawn: true
         }
       },
       eslint: {
-        files: spec_js.concat(app_js_src),
+        files: [ 'client/es6/**/*.js', 'spec/client/es6/**/*.js' ],
         tasks: [ 'eslint' ],
         options: {
           spawn: true
@@ -141,6 +161,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-angular-templates');
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-copy');
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -151,12 +172,18 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('build', [
-    'ngtemplates',
     'copy:html',
+    'babel:app_src',
+    'ngtemplates',
     'useminPrepare',
     'uglify:generated',
     'usemin',
     'concat:appendTemplates',
     'sass'
+  ]);
+
+  grunt.registerTask('test', [
+    'babel',
+    'jasmine'
   ]);
 };

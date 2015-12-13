@@ -1,19 +1,17 @@
 'use strict';
 
-R.countWatchers = (function () {
+R.countWatchers = function () {
   var root = angular.element(document.getElementsByTagName('body'));
 
   var watchers = [];
 
-  var f = function (element) {
+  var f = function f(element) {
     angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
-      if (element.data() &&
-          element.data().hasOwnProperty(scopeProperty)) {
+      if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
 
-        angular.forEach(element.data()[scopeProperty].$$watchers, function
-                        (watcher) {
-                          watchers.push(watcher);
-                        });
+        angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+          watchers.push(watcher);
+        });
       }
     });
 
@@ -26,11 +24,12 @@ R.countWatchers = (function () {
 
   // Remove duplicate watchers
   var watchersWithoutDuplicates = [];
-  angular.forEach(watchers, function(item) {
-    if(watchersWithoutDuplicates.indexOf(item) < 0) {
+  angular.forEach(watchers, function (item) {
+    if (watchersWithoutDuplicates.indexOf(item) < 0) {
       watchersWithoutDuplicates.push(item);
     }
   });
 
   console.log(watchersWithoutDuplicates.length);
-});
+};
+//# sourceMappingURL=countWatchers.js.map

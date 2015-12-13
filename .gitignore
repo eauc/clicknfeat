@@ -1,4 +1,5 @@
 .grunt
 node_modules
 spec/client/SpecRunner.html
+spec/client/js/
 .sass-cache

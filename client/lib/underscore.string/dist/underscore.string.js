@@ -1077,7 +1077,7 @@ module.exports = function words(str, delimiter) {
 // Wrap
 // wraps a string by a certain width
 
-makeString = _dereq_('./helper/makeString');
+var makeString = _dereq_('./helper/makeString');
 
 module.exports = function wrap(str, options){
 	str = makeString(str);

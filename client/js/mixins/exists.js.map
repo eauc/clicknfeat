@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../es6/mixins/exists.js"],"names":[],"mappings":"AAAA,YAAY,CAAC;;AAEb,CAAC,CAAC,MAAM,GAAG,UAAS,CAAC,EAAE;AAAE,SAAO,CAAC,CAAC,CAAC,KAAK,CAAC,CAAC,CAAC,CAAC;CAAE,CAAC","file":"exists.js","sourcesContent":["'use strict';\n\nR.exists = function(a) { return !R.isNil(a); };\n"]}
