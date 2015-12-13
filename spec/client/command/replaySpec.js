@@ -26,7 +26,7 @@ describe('replay commands', function() {
     });
   });
 
-  describe('gameService', function(c) {
+  describe('gameService', function() {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
 
@@ -135,7 +135,7 @@ describe('replay commands', function() {
     });
   });
 
-  describe('commandsService', function(c) {
+  describe('commandsService', function() {
     beforeEach(inject([ 'commands', function(commandsService) {
       this.commandsService = commandsService;
 

@@ -124,7 +124,7 @@ describe('misc model', function() {
         });
 
         it('should apply <method> on <stamps>', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, function() {
             expect(this.gameModelsService.onStamps)
               .toHaveBeenCalledWith(this.method, 'arg1', 'arg2', this.stamps, 'models');
           });
@@ -140,7 +140,7 @@ describe('misc model', function() {
         });
 
         it('should emit changeModel gameEvents', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, function() {
             expect(this.scope.gameEvent)
               .toHaveBeenCalledWith('changeModel-stamp1');
             expect(this.scope.gameEvent)
@@ -165,7 +165,7 @@ describe('misc model', function() {
       [ 'method', 'state'  ],
       [ 'replay', 'after'  ],
       [ 'undo'  , 'before' ],
-    ], function(e, d) {
+    ], function(e) {
       when(e.method+'(<ctxt>, <scope>, <game>)', function() {
         this.ret = this.onModelsCommandService[e.method](this.ctxt, this.scope, this.game);
       }, function() {
@@ -249,7 +249,7 @@ describe('misc model', function() {
         [ 'stamp' ],
         [ 'stamp2' ],
         [ 'stamp3' ],
-      ], function(e, d) {
+      ], function(e) {
         it('should find <stamp> in models', function() {
           this.ret = this.gameModelsService.findStamp(e.stamp, this.models);
           

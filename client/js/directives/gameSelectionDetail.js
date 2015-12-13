@@ -68,7 +68,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         scope: true,
         controller: 'clickGameSelectionDetailCtrl',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           console.log('gameSelectionDetail');
           var viewport = document.getElementById('viewport');
           var map = document.getElementById('map');

@@ -36,7 +36,7 @@ describe('game', function() {
           other: 'other',
         }), function(json) {
           expect(this.jsonStringifierService.stringify)
-            .toHaveBeenCalledWith({"players":"players","commands":"commands","undo":"undo"});
+            .toHaveBeenCalledWith({'players':'players','commands':'commands','undo':'undo'});
 
           expect(json).toEqual('jsonStringifier.stringify.returnValue');
         });

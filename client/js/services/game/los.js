@@ -2,10 +2,10 @@
 
 angular.module('clickApp.services')
   .factory('gameLos', [
-    'point',
+    // 'point',
     // 'model',
     // 'gameModels',
-    function gameLosServiceFactory(pointService
+    function gameLosServiceFactory(// pointService
                                    // modelService,
                                    // gameModelsService
                                   ) {

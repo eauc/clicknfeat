@@ -27,7 +27,7 @@ angular.module('clickApp.directives')
         $scope.chat.to = R.reject(R.equals($scope.user.state.stamp),
                                   $scope.chat.to);
       };
-      $scope.doSetAllUsersTo = function(stamp) {
+      $scope.doSetAllUsersTo = function(/*stamp*/) {
         $scope.chat.to = R.pipe(
           R.pluck('stamp'),
           R.reject(R.equals($scope.user.state.stamp))
@@ -77,14 +77,13 @@ angular.module('clickApp.directives')
     }
   ])
   .directive('clickUserConnection', [
-    '$window',
-    function($window) {
+    function() {
       return {
         restrict: 'E',
         controller: 'userConnectionCtrl',
         templateUrl: 'partials/directives/user_connection.html',
         scope: true,
-        link: function(scope, element, attrs) {
+        link: function(/*scope, element, attrs*/) {
         }
       };
     }

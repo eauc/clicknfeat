@@ -4,10 +4,8 @@ angular.module('clickApp.services')
   .factory('modelMove', [
     'settings',
     'point',
-    'gameFactions',
     function modelMoveServiceFactory(settingsService,
-                                     pointService,
-                                     gameFactionsService) {
+                                     pointService) {
       return function(MOVES, modelService) {
         var modelMoveService = {
           setPosition: function modelSet(factions, target, pos, model) {

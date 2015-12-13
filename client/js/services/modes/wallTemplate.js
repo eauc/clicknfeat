@@ -5,13 +5,9 @@ angular.module('clickApp.services')
     'modes',
     'settings',
     'templateMode',
-    'game',
-    'gameTemplateSelection',
     function wallTemplateModeServiceFactory(modesService,
                                             settingsService,
-                                            templateModeService,
-                                            gameService,
-                                            gameTemplateSelectionService) {
+                                            templateModeService) {
       var template_actions = Object.create(templateModeService.actions);
       var template_default_bindings = {
       };
@@ -20,9 +16,9 @@ angular.module('clickApp.services')
       var template_buttons = R.concat([
       ], templateModeService.buttons);
       var template_mode = {
-        onEnter: function templateOnEnter(scope) {
+        onEnter: function templateOnEnter(/*scope*/) {
         },
-        onLeave: function templateOnLeave(scope) {
+        onLeave: function templateOnLeave(/*scope*/) {
         },
         name: 'wall'+templateModeService.name,
         actions: template_actions,

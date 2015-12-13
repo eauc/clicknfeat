@@ -180,7 +180,7 @@ describe('select model', function() {
       [ 'action' ],
       [ 'clickMap' ],
       [ 'rightClickMap' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user '+e.action, function() {
         this.ret = this.modelsModeService.actions[e.action](this.scope, 'event');
       }, function() {
@@ -319,7 +319,7 @@ describe('select model', function() {
       [ 'where' ],
       [ 'local' ],
       [ 'remote' ],
-    ], function(e, d) {
+    ], function(e) {
       when('set('+e.where+', <stamps>, <scope>)', function() {
         this.ret = this.gameModelSelectionService.set(e.where, this.after,
                                                       this.scope, this.selection);

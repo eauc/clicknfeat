@@ -82,7 +82,7 @@ describe('reset settings', function() {
       });
       
       it('should return settings object', function() {
-        this.thenExpect(this.ret, function(settings) {
+        this.thenExpect(this.ret, function() {
           expect(this.localStorageService.save)
             .toHaveBeenCalledWith('clickApp.settings', {
               Bindings: {

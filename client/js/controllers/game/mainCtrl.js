@@ -4,12 +4,8 @@ angular.module('clickApp.controllers')
   .controller('gameMainCtrl', [
     '$scope',
     'game',
-    'modes',
-    'gameRuler',
     function($scope,
-             gameService,
-             modesService,
-             gameRulerService) {
+             gameService) {
       console.log('init gameMainCtrl');
 
       $scope.doUseRuler = function doUseRuler() {

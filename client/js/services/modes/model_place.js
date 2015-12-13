@@ -71,7 +71,7 @@ angular.module('clickApp.services')
         model_actions[move[0]+'Small'] = buildPlaceMove(move[0], move[2], true,
                                                         move[0]+'Small');
       }, moves);
-      function buildPlaceMove(move, flip_move, small, fwd) {
+      function buildPlaceMove(move, flip_move, small) {
         return function modelDoPlaceMove(scope) {
           var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
           var _move = ( R.path(['ui_state','flip_map'], scope) ?
@@ -95,9 +95,9 @@ angular.module('clickApp.services')
       var model_buttons = modelsModeService.buildButtons({ single: true,
                                                            end_place: true });
       var model_mode = {
-        onEnter: function modelOnEnter(scope) {
+        onEnter: function modelOnEnter(/*scope*/) {
         },
-        onLeave: function modelOnLeave(scope) {
+        onLeave: function modelOnLeave(/*scope*/) {
         },
         name: 'ModelPlace',
         actions: model_actions,

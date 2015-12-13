@@ -25,7 +25,7 @@ describe('move template', function() {
       [ 'shiftDown' ],
       [ 'shiftLeft' ],
       [ 'shiftRight' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user '+e.action+' template selection', function() {
         this.ret = this.templateModeService.actions[e.action](this.scope);
       }, function() {
@@ -114,7 +114,7 @@ describe('move template', function() {
         { x: 240, y: 241, r: 180 },
         { x: 240, y: 475, r: 180 },
         { x: 240, y: 480, r: 180 } ],
-    ], function(e, d) {
+    ], function(e) {
       describe(e.move+'(<small>)', function() {
         beforeEach(function() {
           this.template = {

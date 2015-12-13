@@ -5,11 +5,9 @@ angular.module('clickApp.services')
     'modes',
     'settings',
     'game',
-    'gameTemplateSelection',
     function commonModeServiceFactory(modesService,
                                       settingsService,
-                                      gameService,
-                                      gameTemplateSelectionService) {
+                                      gameService) {
       var common_actions = {
         modeBackToDefault: function modeBackToDefault(scope) {
           return scope.doSwitchToMode('Default');

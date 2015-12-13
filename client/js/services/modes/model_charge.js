@@ -31,7 +31,7 @@ angular.module('clickApp.services')
           }
         )();
       };
-      charge_actions.setTargetModel = function modelSetTargetModel(scope, event, dom_event) {
+      charge_actions.setTargetModel = function modelSetTargetModel(scope, event) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -75,7 +75,7 @@ angular.module('clickApp.services')
         charge_actions[move[0]+'Small'] = buildChargeMove(move[0], move[2], true,
                                                          move[0]+'Small');
       }, moves);
-      function buildChargeMove(move, flip_move, small, fwd) {
+      function buildChargeMove(move, flip_move, small) {
         return function modelDoChargeMove(scope) {
           var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
           var _move = ( R.path(['ui_state','flip_map'], scope) ?
@@ -112,9 +112,9 @@ angular.module('clickApp.services')
       var charge_buttons = modelsModeService.buildButtons({ single: true,
                                                             end_charge: true });
       var charge_mode = {
-        onEnter: function modelOnEnter(scope) {
+        onEnter: function modelOnEnter(/*scope*/) {
         },
-        onLeave: function modelOnLeave(scope) {
+        onLeave: function modelOnLeave(/*scope*/) {
         },
         name: 'ModelCharge',
         actions: charge_actions,

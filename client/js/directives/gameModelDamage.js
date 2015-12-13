@@ -24,7 +24,7 @@ angular.module('clickApp.controllers')
                  ''
                );
       };
-      $scope.doResetDamage = function doResetDamage(i) {
+      $scope.doResetDamage = function doResetDamage() {
         if(R.isNil($scope.state)) return;
         gameService.executeCommand('onModels', 'resetDamage',
                                    [$scope.state.stamp],
@@ -95,7 +95,7 @@ angular.module('clickApp.directives')
         },
         controller: 'clickGameModelDamageCtrl',
         templateUrl: 'partials/game/model_damage.html',
-        link: function(scope, element, attrs) {
+        link: function(scope/*, element, attrs*/) {
           console.log('gameModelDamage', scope);
         }
       };

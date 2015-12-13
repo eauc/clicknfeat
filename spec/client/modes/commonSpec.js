@@ -20,7 +20,7 @@ describe('commonMode', function() {
       [ 'viewZoomReset', 'viewZoomReset' ],
       [ 'flipMap', 'flipMap' ],
       [ 'toggleMenu', 'toggleMenu' ],
-    ], function(e, d) {
+    ], function(e) {
       describe(e.action+'()', function() {
         beforeEach(function() {
           this.scope = jasmine.createSpyObj('scope', ['gameEvent']);

@@ -29,8 +29,7 @@ angular.module('clickApp.directives')
       }
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
-          var log = false ? R.bind(console.log, console) : function() {};
+        link: function(scope, element/*, attrs*/) {
 
           var viewport = document.querySelector('#viewport');
           var map = element[0];

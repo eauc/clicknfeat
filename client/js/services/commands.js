@@ -51,14 +51,14 @@ angular.module('clickApp.services')
         },
         replayBatch: function commandsReplayBatch(commands, scope, game) {
           if(R.isEmpty(commands)) return self.Promise.resolve();
-        
+          
           // console.log('Commands: ReplayBatch:', commands);
           return commandsService.replay(commands[0], scope, game)
             .catch(R.always(null))
-            .then(function() {
-              return commandsService
-                .replayBatch(R.tail(commands), scope, game);
-            });
+              .then(function() {
+                return commandsService
+                  .replayBatch(R.tail(commands), scope, game);
+              });
         },
       };
       R.curryService(commandsService);

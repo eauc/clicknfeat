@@ -16,7 +16,7 @@ angular.module('clickApp.directives')
              modesService) {
       return {
         restrict: 'A',
-        link: function(scope, el, attrs) {
+        link: function(scope, el/*, attrs*/) {
           var map = document.getElementById('map');
           var svgNS = map.namespaceURI;
 
@@ -41,7 +41,7 @@ angular.module('clickApp.directives')
                          scope.game.ruler, display,
                          remote_element.target);
           }, scope);
-          scope.onGameEvent('mapFlipped', function onMapFlippedRuler(event) {
+          scope.onGameEvent('mapFlipped', function onMapFlippedRuler(/*event*/) {
             updateRulerOnMapFlipped(map, scope.game.ruler.local, local_element);
             updateRulerOnMapFlipped(map, scope.game.ruler.remote, remote_element);
           }, scope);

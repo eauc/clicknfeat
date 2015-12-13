@@ -19,7 +19,7 @@ angular.module('clickApp.services')
                                        gameModelsService,
                                        gameModelSelectionService) {
       var default_actions = Object.create(commonModeService.actions);
-      function clearTemplateSelection(scope, event) {
+      function clearTemplateSelection(scope) {
         scope.game.template_selection =
           gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
       }
@@ -58,10 +58,10 @@ angular.module('clickApp.services')
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
                                            scope, scope.game.template_selection);
       };
-      default_actions.enterRulerMode = function defaultEnterRulerMode(scope, event) {
+      default_actions.enterRulerMode = function defaultEnterRulerMode(scope) {
         return scope.doSwitchToMode('Ruler');
       };
-      default_actions.enterLosMode = function defaultEnterLosMode(scope, event) {
+      default_actions.enterLosMode = function defaultEnterLosMode(scope) {
         return scope.doSwitchToMode('LoS');
       };
       default_actions.dragStartMap = function defaultDragStartMap(scope, event) {

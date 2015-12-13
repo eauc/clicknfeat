@@ -27,7 +27,7 @@ angular.module('clickApp.services')
             gameModelSelectionService.set('remote', ctxt.after,
                                           scope, game.model_selection);
         },
-        undo: function setModelSelectionUndo(ctxt, scope, game) {
+        undo: function setModelSelectionUndo(/*ctxt, scope, game*/) {
           console.log('!!! ERROR : WE SHOULD NOT BE HERE !!!');
         }
       };

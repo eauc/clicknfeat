@@ -22,15 +22,15 @@ angular.module('clickApp.services')
                                      promptService) {
       var ruler_actions = Object.create(commonModeService.actions);
       ruler_actions.exitRulerMode = commonModeService.actions.modeBackToDefault;
-      ruler_actions.dragStartMap = function rulerDragStartMap(scope, drag, event) {
+      ruler_actions.dragStartMap = function rulerDragStartMap(scope, drag) {
         scope.game.ruler = gameRulerService.setLocal(drag.start, drag.now,
                                                      scope, scope.game.ruler);
       };
-      ruler_actions.dragMap = function rulerDragMap(scope, drag, event) {
+      ruler_actions.dragMap = function rulerDragMap(scope, drag) {
         scope.game.ruler = gameRulerService.setLocal(drag.start, drag.now,
                                                      scope, scope.game.ruler);
       };
-      ruler_actions.dragEndMap = function rulerDragEndMap(scope, drag, event) {
+      ruler_actions.dragEndMap = function rulerDragEndMap(scope, drag) {
         return gameService
           .executeCommand('setRuler',
                           'setRemote', drag.start, drag.now,
@@ -62,7 +62,7 @@ angular.module('clickApp.services')
                           'setTarget', event['click#'].target,
                           scope,  scope.game);
       };
-      ruler_actions.setMaxLength = function rulerSetMaxLength(scope, event) {
+      ruler_actions.setMaxLength = function rulerSetMaxLength(scope) {
         return R.pipeP(
           function() {
             return promptService.prompt('prompt', 'Set ruler max length :',
@@ -95,7 +95,7 @@ angular.module('clickApp.services')
           }
         )();
       };
-      ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope, event) {
+      ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope) {
         return R.pipeP(
           function() {
             return gameRulerService.targetAoEPosition(scope.game.models,
@@ -150,7 +150,7 @@ angular.module('clickApp.services')
             }
           )();
         },
-        onLeave: function rulerOnLeave(scope) {
+        onLeave: function rulerOnLeave(/*scope*/) {
         },
         name: 'Ruler',
         actions: ruler_actions,

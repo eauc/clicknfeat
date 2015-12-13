@@ -2,7 +2,7 @@
 
 R.extend =(function() {
   return function(obj) {
-    var parentRE = /#{\s*?_\s*?}/,
+    var // parentRE = /#{\s*?_\s*?}/,
         slice = Array.prototype.slice;
 
     // obj = R.clone(obj);

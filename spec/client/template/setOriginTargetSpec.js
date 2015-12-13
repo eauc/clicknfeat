@@ -319,7 +319,7 @@ describe('set origin/target template', function() {
       ['shiftUp'],
       ['shiftDown'],
       ['setPosition'],
-    ], function(e, d) {
+    ], function(e) {
       when(e.move+'(<small>)', function() {
         this.ret = this.sprayTemplateService[e.move](true, this.template);
       }, function() {
@@ -357,7 +357,7 @@ describe('set origin/target template', function() {
       ['move', 'new_dir'],
       ['rotateLeft', -6],
       ['rotateRight', 6],
-    ], function(e, d) {
+    ], function(e) {
       when(e.move+'(<factions>, <origin>, <small>)', function() {
         this.ret = this.sprayTemplateService[e.move]('factions', this.origin,
                                                      true, this.template);

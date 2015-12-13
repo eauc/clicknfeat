@@ -25,7 +25,7 @@ describe('create template', function() {
         [ 'event' ],
         [ 'enableCreateTemplate' ],
         [ 'enableMoveMap' ],
-      ], function(e, d) {
+      ], function(e) {
         it('should emit '+e.event+' event', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith(e.event);
@@ -98,7 +98,7 @@ describe('create template', function() {
         [ 'event' ],
         [ 'disableCreateTemplate' ],
         [ 'disableMoveMap' ],
-      ], function(e, d) {
+      ], function(e) {
         it('should emit '+e.event+' event', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith(e.event);

@@ -5,10 +5,8 @@ angular.module('clickApp.directives')
     function() {
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           console.log('gameDragbox');
-          var viewport = document.getElementById('viewport');
-          var map = document.getElementById('map');
 
           var box = element[0];
           box.style.visibility = 'hidden';

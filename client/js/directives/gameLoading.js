@@ -2,11 +2,10 @@
 
 angular.module('clickApp.directives')
   .directive('clickGameLoading', [
-    '$window',
-    function($window) {
+    function() {
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           console.log('gameLoading');
           scope.onGameEvent('gameLoading', function() {
             element[0].style.display = 'block';

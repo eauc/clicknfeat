@@ -3,7 +3,7 @@
 angular.module('clickApp.services')
   .factory('modelAura', [
     function modelAuraServiceFactory() {
-      return function(modelService) {
+      return function(/*modelService*/) {
         var modelAuraService = {
           isAuraDisplayed: function modelIsAuraDisplayed(model) {
             return R.exists(model.state.aur);

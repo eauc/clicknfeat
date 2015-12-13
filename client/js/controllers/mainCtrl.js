@@ -20,8 +20,7 @@ angular.module('clickApp.controllers')
              userService,
              gameBoardService,
              gameFactionsService,
-             gameScenarioService,
-             allModesService) {
+             gameScenarioService) {
       console.log('init mainCtrl');
       
       $scope.boards_ready = gameBoardService.init()

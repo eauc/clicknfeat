@@ -2,11 +2,10 @@
 
 angular.module('clickApp.directives')
   .directive('clickLogReplayList', [
-    '$window',
-    function($window) {
+    function() {
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           var list = element[0].getAttribute('click-log-replay-list');
           console.log('logReplayList', list);
           scope.$watch(list, function() {

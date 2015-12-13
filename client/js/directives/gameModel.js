@@ -35,12 +35,7 @@ angular.module('clickApp.directives')
     ) {
       var clickGameModeDirective = {
         restrict: 'A',
-        link: function(scope, el, attrs) {
-          var map = document.getElementById('map');
-          var under_models_container = document.getElementById('game-under-models');
-          var over_models_container = document.getElementById('game-over-models');
-          var svgNS = map.namespaceURI;
-          
+        link: function(scope, el/*, attrs*/) {
           gameFactionsService.getModelInfo(scope.model.state.info,
                                            scope.factions)
             .catch(function(reason) {
@@ -155,69 +150,66 @@ angular.module('clickApp.directives')
           }
         };
       }
-      function gameModelOnchangeSingleModelSelection(factions, model, element) {
-        return function _gameModelOnchangeSingleModelSelection(event, selected_model) {
-          // console.log('changeSingleModelSelection',
-          //             selected_model.state.stamp,
-          //             scope.model.state.stamp);
-          if(selected_model.state.stamp !== model.state.stamp) {
-            var dist = modelService.distanceTo(factions,
-                                               selected_model,
-                                               model);
-            if(dist < -0.1) {
-              element.container.classList.add('overlap');
-              element.container.classList.remove('b2b');
-              return;
-            }
-            else if(dist < 0.1) {
-              element.container.classList.remove('overlap');
-              element.container.classList.add('b2b');
-              return;
-            }
-          }
-          element.container.classList.remove('overlap');
-          element.container.classList.remove('b2b');
-        };
-      }
-      function gameModelOnDisableSingleModelSelection(element) {
-        return function _gameModelOnDisableSingleModelSelection(event) {
-          // console.log('disableSingleModelSelection',
-          //             scope.model.state.stamp);
-          element.container.classList.remove('overlap');
-          element.container.classList.remove('b2b');
-        };
-      }
-      function gameModelOnchangeSingleAoESelection(factions, model, element) {
-        return function _gameModelOnchangeSingleAoESelection(event, selected_aoe) {
-          // console.log('changeSingleAoESelection',
-          //             selected_aoe.state.stamp,
-          //             scope.model.state.stamp);
-          if(R.exists(selected_aoe)) {
-            var dist = modelService.distanceToAoE(factions,
-                                                  selected_aoe,
-                                                  model);
-            if(dist <= 0) {
-              element.container.classList.add('under-aoe');
-              return;
-            }
-          }
-          element.container.classList.remove('under-aoe');
-        };
-      }
-      function gameModelOnDisableSingleAoESelection(element) {
-        return function _gameModelOnDisableSingleAoESelection(event) {
-          // console.log('disableSingleAoESelection',
-          //             scope.model.state.stamp);
-          element.container.classList.remove('under-aoe');
-          element.container.classList.remove('b2b');
-        };
-      }
+      // function gameModelOnChangeSingleModelSelection(factions, model, element) {
+      //   return function _gameModelOnchangeSingleModelSelection(event, selected_model) {
+      //     // console.log('changeSingleModelSelection',
+      //     //             selected_model.state.stamp,
+      //     //             scope.model.state.stamp);
+      //     if(selected_model.state.stamp !== model.state.stamp) {
+      //       var dist = modelService.distanceTo(factions,
+      //                                          selected_model,
+      //                                          model);
+      //       if(dist < -0.1) {
+      //         element.container.classList.add('overlap');
+      //         element.container.classList.remove('b2b');
+      //         return;
+      //       }
+      //       else if(dist < 0.1) {
+      //         element.container.classList.remove('overlap');
+      //         element.container.classList.add('b2b');
+      //         return;
+      //       }
+      //     }
+      //     element.container.classList.remove('overlap');
+      //     element.container.classList.remove('b2b');
+      //   };
+      // }
+      // function gameModelOnDisableSingleModelSelection(element) {
+      //   return function _gameModelOnDisableSingleModelSelection() {
+      //     // console.log('disableSingleModelSelection',
+      //     //             scope.model.state.stamp);
+      //     element.container.classList.remove('overlap');
+      //     element.container.classList.remove('b2b');
+      //   };
+      // }
+      // function gameModelOnChangeSingleAoESelection(factions, model, element) {
+      //   return function _gameModelOnchangeSingleAoESelection(event, selected_aoe) {
+      //     // console.log('changeSingleAoESelection',
+      //     //             selected_aoe.state.stamp,
+      //     //             scope.model.state.stamp);
+      //     if(R.exists(selected_aoe)) {
+      //       var dist = modelService.distanceToAoE(factions,
+      //                                             selected_aoe,
+      //                                             model);
+      //       if(dist <= 0) {
+      //         element.container.classList.add('under-aoe');
+      //         return;
+      //       }
+      //     }
+      //     element.container.classList.remove('under-aoe');
+      //   };
+      // }
+      // function gameModelOnDisableSingleAoESelection(element) {
+      //   return function _gameModelOnDisableSingleAoESelection() {
+      //     // console.log('disableSingleAoESelection',
+      //     //             scope.model.state.stamp);
+      //     element.container.classList.remove('under-aoe');
+      //     element.container.classList.remove('b2b');
+      //   };
+      // }
       function gameModelOnUpdate(factions, info, model, game, scope, element) {
-        return function _gameModelOnUpdate(event, selection) {
+        return function _gameModelOnUpdate() {
           var map = document.getElementById('map');
-          var under_models_container = document.getElementById('game-under-models');
-          var over_models_container = document.getElementById('game-over-models');
-          var svgNS = map.namespaceURI;
 
           var map_flipped = gameMapService.isFlipped(map);
           var zoom_factor = gameMapService.zoomFactor(map);
@@ -334,7 +326,7 @@ angular.module('clickApp.directives')
                  flip: label_flip_center
                };
       }
-      function computeUnitCenter(img, info, model) {
+      function computeUnitCenter(img, info/*, model*/) {
         var counter_flip_center = { x: img.width/2, y: img.height/2 };
         var counter_text_center = { x: counter_flip_center.x - info.base_radius*0.7 - 5,
                                     y: counter_flip_center.y - info.base_radius*0.7 - 5 };
@@ -346,13 +338,12 @@ angular.module('clickApp.directives')
     }
   ])
   .directive('clickGameModelsList', [
-    '$window',
-    function($window) {
+    function() {
       return {
         restrict: 'A',
         templateUrl: 'partials/game/models_list.html',
         scope: true,
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           scope.type = element[0].getAttribute('click-game-models-list');
           console.log('clickGameModelsList', scope.type);
         }

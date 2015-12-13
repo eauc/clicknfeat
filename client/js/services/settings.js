@@ -19,7 +19,7 @@ angular.module('clickApp.services')
         },
         load: function settingsLoad() {
           return localStorageService.load(SETTINGS_STORAGE_KEY)
-            .catch(function(error) {
+            .catch(function(/* error */) {
               console.log('settings: failed to load data');
               return {};
             });

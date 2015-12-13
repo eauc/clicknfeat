@@ -2,9 +2,8 @@
 
 angular.module('clickApp.services')
   .factory('modelRuler', [
-    'gameFactions',
-    function modelRulerServiceFactory(gameFactionsService) {
-      return function(modelService) {
+    function modelRulerServiceFactory() {
+      return function(/*modelService*/) {
         var modelRulerService = {
           rulerMaxLength: function modelRulerMaxLength(model) {
             return R.path(['state', 'rml'], model);

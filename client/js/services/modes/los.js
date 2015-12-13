@@ -10,27 +10,26 @@ angular.module('clickApp.services')
     // 'model',
     // 'gameModels',
     // 'gameModelSelection',
-    'prompt',
     function losModeServiceFactory(modesService,
                                    settingsService,
                                    commonModeService,
                                    gameService,
-                                   gameLosService,
+                                   gameLosService
                                    // modelService,
                                    // gameModelsService,
-                                   // gameModelSelectionService,
-                                   promptService) {
+                                   // gameModelSelectionService
+                                  ) {
       var los_actions = Object.create(commonModeService.actions);
       los_actions.exitLosMode = commonModeService.actions.modeBackToDefault;
-      los_actions.dragStartMap = function losDragStartMap(scope, drag, event) {
+      los_actions.dragStartMap = function losDragStartMap(scope, drag) {
         scope.game.los = gameLosService.setLocal(drag.start, drag.now,
                                                  scope, scope.game.los);
       };
-      los_actions.dragMap = function losDragMap(scope, drag, event) {
+      los_actions.dragMap = function losDragMap(scope, drag) {
         scope.game.los = gameLosService.setLocal(drag.start, drag.now,
                                                  scope, scope.game.los);
       };
-      los_actions.dragEndMap = function losDragEndMap(scope, drag, event) {
+      los_actions.dragEndMap = function losDragEndMap(scope, drag) {
         return gameService
           .executeCommand('setLos',
                           'setRemote', drag.start, drag.now,
@@ -70,7 +69,7 @@ angular.module('clickApp.services')
       var los_buttons = [
       ];
       var los_mode = {
-        onEnter: function losOnEnter(scope) {
+        onEnter: function losOnEnter(/*scope*/) {
           // return R.pipeP(
           //   R.bind(self.Promise.resolve, self.Promise),
           //   function() {
@@ -95,7 +94,7 @@ angular.module('clickApp.services')
           //   }
           // )();
         },
-        onLeave: function losOnLeave(scope) {
+        onLeave: function losOnLeave(/*scope*/) {
         },
         name: 'LoS',
         actions: los_actions,

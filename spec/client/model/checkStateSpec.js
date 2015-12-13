@@ -23,7 +23,7 @@ describe('model check state', function() {
       });
 
       it('should fetch model info', function() {
-        this.thenExpect(this.ret, function(model) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameFactionsService.getModelInfo)
             .toHaveBeenCalledWith('info', 'factions');
         });

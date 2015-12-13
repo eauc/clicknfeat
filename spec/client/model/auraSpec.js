@@ -33,7 +33,7 @@ describe('model auras', function() {
       [ 'Yellow' , '#FF0' ],
       [ 'Purple' , '#F0F' ],
       [ 'Cyan' , '#0FF' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user toggles '+e.aura+' aura display on models', function() {
         this.ret = this.modelsModeService
           .actions['toggle'+e.aura+'AuraDisplay'](this.scope);

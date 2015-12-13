@@ -3,7 +3,7 @@
 angular.module('clickApp.services')
   .factory('modelLabel', [
     function modelLabelServiceFactory() {
-      return function(modelService) {
+      return function(/*modelService*/) {
         var modelLabelService = {
           addLabel: function modelAddLabel(label, model) {
             model.state.l = R.uniq(R.append(label, model.state.l));

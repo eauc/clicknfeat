@@ -3,9 +3,7 @@
 angular.module('clickApp.services')
   .factory('modelPlace', [
     'point',
-    'gameFactions',
-    function modelPlaceServiceFactory(pointService,
-                                      gameFactionsService) {
+    function modelPlaceServiceFactory(pointService) {
       var PLACE_EPSILON = 0.1;
       return function(MOVES, modelService) {
         var modelPlaceService = {
@@ -67,7 +65,6 @@ angular.module('clickApp.services')
             }
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
             var direction = model.state.pla.s.r;
-            var distance = pointService.distanceTo(model.state, model.state.pla.s);
             model.state = pointService.translateInDirection$(dist, direction, model.state);
             return modelService.checkState(factions, null, model);
           },

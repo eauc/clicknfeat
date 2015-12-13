@@ -515,7 +515,7 @@ describe('model charge', function() {
         { x: 200, y: 240, r: 90 },
         { x: 200, y: 240, r: 90 }, { x: 240, y: 250, r: 180 },
         { x: 200, y: 240, r: 90 }, { x: 240, y: 241, r: 180 } ],
-    ], function(e, d) {
+    ], function(e) {
       when(e.move+'(<small>)', function() {
         this.ret = this.modelService[e.move]('factions', this.target, this.small, this.model);
       }, function() {

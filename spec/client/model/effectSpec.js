@@ -96,7 +96,7 @@ describe('model effects', function() {
       [ 'Fleeing' , 'r' ],
       [ 'KD' , 'k' ],
       [ 'Stationary' , 's' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user toggles '+e.effect+' display on models', function() {
         this.ret = this.modelsModeService
           .actions['toggle'+e.effect+'EffectDisplay'](this.scope);
@@ -203,7 +203,7 @@ describe('model effects', function() {
       [ 'Fleeing' , 'r' ],
       [ 'KD' , 'k' ],
       [ 'Stationary' , 's' ],
-    ], function(ee, dd) {
+    ], function(ee) {
       describe('toggleEffectDisplay(<effect>)', function() {
         it('should toggle effect display for <model>', function() {
           this.model = { state: { dsp: [] } };

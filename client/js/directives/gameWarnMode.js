@@ -8,7 +8,7 @@ angular.module('clickApp.directives')
              $timeout) {
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           console.log('gameWarnMode');
           element[0].style.display = 'none';
           var mode_span = element[0].querySelector('.warn-mode-name');

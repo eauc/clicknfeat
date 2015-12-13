@@ -21,7 +21,7 @@ angular.module('clickApp.services')
                                       pointService,
                                       promptService) {
       var models_actions = Object.create(defaultModeService.actions);
-      function modelsClearSelection(scope, event) {
+      function modelsClearSelection(scope) {
         return gameService.executeCommand('setModelSelection', 'clear', null,
                                           scope, scope.game);
       }
@@ -81,7 +81,7 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      models_actions.setUnit = function modelsSetUnit(scope, event) {
+      models_actions.setUnit = function modelsSetUnit(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -174,7 +174,7 @@ angular.module('clickApp.services')
         return gameService.executeCommand('onModels', 'decrementCounter', 's',
                                           stamps, scope, scope.game);
       };
-      models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope, event) {
+      models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -194,7 +194,7 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope, event) {
+      models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -212,7 +212,7 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope, event) {
+      models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
@@ -402,7 +402,7 @@ angular.module('clickApp.services')
         gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
                                    stamps, scope, scope.game);
       };
-      models_actions.setTargetModel = function modelsSetTargetModel(scope, event, dom_event) {
+      models_actions.setTargetModel = function modelsSetTargetModel(scope, event) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return gameService.executeCommand('onModels',
                                           'orientTo', scope.factions, event['click#'].target,
@@ -565,9 +565,9 @@ angular.module('clickApp.services')
 
       var models_buttons = buildModelsModesButtons();
       var models_mode = {
-        onEnter: function modelsOnEnter(scope) {
+        onEnter: function modelsOnEnter(/*scope*/) {
         },
-        onLeave: function modelsOnLeave(scope) {
+        onLeave: function modelsOnLeave(/*scope*/) {
         },
         name: 'Models',
         actions: models_actions,

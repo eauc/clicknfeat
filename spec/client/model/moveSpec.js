@@ -23,7 +23,7 @@ describe('move model', function() {
       [ 'moveBack' ],
       [ 'rotateLeft' ],
       [ 'rotateRight' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user '+e.action+' model selection', function() {
         this.ret = this.modelsModeService.actions[e.action](this.scope);
       }, function() {
@@ -64,7 +64,7 @@ describe('move model', function() {
       [ 'shiftDown'  , 'shiftUp'        ],
       [ 'shiftLeft'  , 'shiftRight'     ],
       [ 'shiftRight' , 'shiftLeft'      ],
-    ], function(e, d) {
+    ], function(e) {
       when('user '+e.action+' model selection', function() {
         this.ret = this.modelsModeService.actions[e.action](this.scope);
       }, function() {
@@ -126,7 +126,7 @@ describe('move model', function() {
       [ 'setOrientationUp'   , true      , 180   ],
       [ 'setOrientationDown' , false     , 180   ],
       [ 'setOrientationDown' , true      , 0     ],
-    ], function(e, d) {
+    ], function(e) {
       when('user '+e.action+' on model selection', function() {
         this.modelsModeService.actions[e.action](this.scope);
       }, function() {
@@ -208,7 +208,7 @@ describe('move model', function() {
       [ 'shiftDown', 5.905,
         { x: 240, y: 250, r: 180 },
         { x: 240, y: 241, r: 180 } ],
-    ], function(e, d) {
+    ], function(e) {
       using([
         [ 'small', 'result' ],
         [ false  , e.result ],

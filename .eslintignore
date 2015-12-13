@@ -1,0 +1,3 @@
+**/*.min.js
+**/htmlTemplates.js
+**/es6-promise.js

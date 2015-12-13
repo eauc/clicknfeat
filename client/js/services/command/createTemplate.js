@@ -53,7 +53,6 @@ angular.module('clickApp.services')
           )(temps);
         },
         replay: function createTemplateReplay(ctxt, scope, game) {
-          var templates;
           return R.pipeP(
             R.bind(self.Promise.resolve, self.Promise),
             R.map(function(temp) {

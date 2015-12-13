@@ -4,7 +4,7 @@ angular.module('clickApp.services')
   .factory('modelArea', [
     'gameFactions',
     function modelAreaServiceFactory(gameFactionsService) {
-      return function(modelService) {
+      return function(/*modelService*/) {
         var modelAreaService = {
           isCtrlAreaDisplayed: function modelIsCtrlAreaDisplayed(factions, model) {
             return R.pipeP(
@@ -28,7 +28,7 @@ angular.module('clickApp.services')
             }
           },
           toggleCtrlAreaDisplay: function modelToggleCtrlAreaDisplay(model) {
-            if(!!R.find(R.equals('a'), model.state.dsp)) {
+            if(R.find(R.equals('a'), model.state.dsp)) {
               model.state.dsp = R.reject(R.equals('a'), model.state.dsp);
             }
             else {

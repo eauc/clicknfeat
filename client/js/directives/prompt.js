@@ -2,12 +2,12 @@
 
 angular.module('clickApp.directives')
   .factory('prompt', [
-    function($q) {
+    function() {
       var state;
       var state_resolves = [];
       function getState() {
         if(R.exists(state)) return state;
-        return new self.Promise(function(resolve, reject) {
+        return new self.Promise(function(resolve/*, reject*/) {
           state_resolves.push(resolve);
         });
       }
@@ -62,7 +62,7 @@ angular.module('clickApp.directives')
         restrict: 'E',
         templateUrl: 'partials/directives/prompt.html',
         scope: true,
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           var form = element[0].querySelector('form');
           var msg_container = element[0].querySelector('p');
           var input = element[0].querySelector('input');

@@ -40,7 +40,7 @@ angular.module('clickApp.services')
                                           'setTarget', scope.factions, null, event['click#'].target,
                                           stamps, scope,  scope.game);
       };
-      template_actions.setMaxDeviation = function rulerSetMaxDeviation(scope, event) {
+      template_actions.setMaxDeviation = function rulerSetMaxDeviation(scope) {
         var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
         return R.pipeP(
           function() {
@@ -112,9 +112,9 @@ angular.module('clickApp.services')
       ], templateModeService.buttons);
 
       var template_mode = {
-        onEnter: function templateOnEnter(scope) {
+        onEnter: function templateOnEnter(/*scope*/) {
         },
-        onLeave: function templateOnLeave(scope) {
+        onLeave: function templateOnLeave(/*scope*/) {
         },
         name: 'aoe'+templateModeService.name,
         actions: template_actions,

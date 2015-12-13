@@ -211,7 +211,7 @@ describe('user los', function() {
       [ 'method', 'previous', 'result' ],
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
-    ], function(e, d) {
+    ], function(e) {
       when(e.method+'(<ctxt>, <scope>, <game>)', function() {
         this.setLosCommandService[e.method](this.ctxt, this.scope, this.game);
       }, function() {
@@ -245,7 +245,7 @@ describe('user los', function() {
       this.scope.game = { models: 'models' };
 
       mockReturnPromise(this.gameModelsService.findStamp);
-      this.gameModelsService.findStamp.resolveWith = R.bind(function(s, m) {
+      this.gameModelsService.findStamp.resolveWith = R.bind(function(s) {
         return ( s === 'origin' ? this.origin_model :
                  ( s === 'target' ? this.target_model : null )
                );

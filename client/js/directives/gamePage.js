@@ -6,13 +6,13 @@ angular.module('clickApp.directives')
     function($window) {
       return {
         restrict: 'A',
-        link: function(scope, element, attrs) {
+        link: function(scope, element/*, attrs*/) {
           var gameview = element[0].querySelector('#gameview');
           var menu = element[0].querySelector('#menu');
 
           var toggleMenuClick = (function() {
             var gameview_width_mem;
-            return function toggleMenuClick(event) {
+            return function toggleMenuClick(/*event*/) {
               var menu_hidden = menu.classList.contains('hidden');
               if(!menu_hidden) {
                 var rect = gameview.getBoundingClientRect();

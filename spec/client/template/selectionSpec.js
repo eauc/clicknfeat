@@ -57,7 +57,7 @@ describe('select template', function() {
       [ 'clickMap' ],
       [ 'rightClickMap' ],
       [ 'modeBackToDefault' ],
-    ], function(e,d) {
+    ], function(e) {
       when('user does '+e.action, function() {
         this.templateModeService
           .actions[e.action](this.scope);
@@ -90,7 +90,7 @@ describe('select template', function() {
       [ 'where' ],
       [ 'local' ],
       [ 'remote' ],
-    ], function(e, d) {
+    ], function(e) {
       when('set(<where>, <stamp>, <scope>)', function() {
         this.ret = this.gameTemplateSelectionService.set(e.where, ['stamp'],
                                                          this.scope, this.selection);

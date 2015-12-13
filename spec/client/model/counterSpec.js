@@ -29,7 +29,7 @@ describe('model counter', function() {
       [ 'type' , 'flag' ], 
       [ 'Counter' , 'c' ],
       [ 'Souls'   , 's' ],
-    ], function(e, d) {
+    ], function(e) {
       when('user toggles '+e.type+' display on models', function() {
         this.ret = this.modelsModeService
           .actions['toggle'+e.type+'Display'](this.scope);

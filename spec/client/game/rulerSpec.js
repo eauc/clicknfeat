@@ -110,7 +110,7 @@ describe('user ruler', function() {
             this.gameRulerService.origin._retVal = 'origin';
           }, function() {
             it('should set origin model\'s ruler max length', function() {
-              this.thenExpect(this.ret, function(result) {
+              this.thenExpect(this.ret, function() {
                 expect(this.gameService.executeCommand)
                   .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', e.max,
                                         ['origin'], this.scope, this.scope.game);
@@ -136,7 +136,7 @@ describe('user ruler', function() {
           this.gameRulerService.origin._retVal = 'origin';
         }, function() {
           it('should reset origin model\'s ruler max length', function() {
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.gameService.executeCommand)
                 .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', null,
                                       ['origin'], this.scope, this.scope.game);
@@ -290,7 +290,7 @@ describe('user ruler', function() {
       [ 'method', 'previous', 'result' ],
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
-    ], function(e, d) {
+    ], function(e) {
       when(e.method+'(<ctxt>, <scope>, <game>)', function() {
         this.setRulerCommandService[e.method](this.ctxt, this.scope, this.game);
       }, function() {
@@ -324,7 +324,7 @@ describe('user ruler', function() {
       this.scope.game = { models: 'models' };
 
       mockReturnPromise(this.gameModelsService.findStamp);
-      this.gameModelsService.findStamp.resolveWith = R.bind(function(s, m) {
+      this.gameModelsService.findStamp.resolveWith = R.bind(function(s) {
         return ( s === 'origin' ? this.origin_model :
                  ( s === 'target' ? this.target_model : null )
                );
@@ -372,7 +372,7 @@ describe('user ruler', function() {
       });
 
       it('should look up ruler origin & target', function() {
-        this.thenExpect(this.ret, function(result) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameModelsService.findStamp)
             .toHaveBeenCalledWith('origin', 'models');
           expect(this.gameModelsService.findStamp)
@@ -413,7 +413,7 @@ describe('user ruler', function() {
         [ 'only' ],
         [ 'origin' ],
         [ 'target' ],
-      ], function(e, d) {
+      ], function(e) {
         when('only '+e.only+' is set', function() {
           this[e.only+'_model'] = { state: { x: 120, y: 120 } };
         }, function() {
@@ -717,7 +717,7 @@ describe('user ruler', function() {
           [ 5           , 5       , false    , { x: 120, y: 170 } ],
           [ 140         , 12      , true     , { x: 120.00000000000001, y: 240 } ],
           [ null        , 12      , true     , { x: 120.00000000000001, y: 240 } ],
-        ], function(e, d) {
+        ], function(e) {
           when('origin model\'s rulerMaxLength is '+e.max_length, function() {
             this.modelService.rulerMaxLength._retVal = e.max_length;
           }, function() {

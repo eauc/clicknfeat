@@ -4,10 +4,8 @@ angular.module('clickApp.services')
   .factory('gameModelSelection', [
     'modes',
     'gameModels',
-    'model',
     function gameModelSelectionServiceFactory(modesService,
-                                              gameModelsService,
-                                              modelService) {
+                                              gameModelsService) {
       var gameModelSelectionService = {
         create: function modelSelectionCreate() {
           return {

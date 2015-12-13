@@ -54,9 +54,9 @@ angular.module('clickApp.services')
                                                            start_charge: true,
                                                            start_place: true });
       var model_mode = {
-        onEnter: function modelOnEnter(scope) {
+        onEnter: function modelOnEnter(/*scope*/) {
         },
-        onLeave: function modelOnLeave(scope) {
+        onLeave: function modelOnLeave(/*scope*/) {
         },
         name: 'Model',
         actions: model_actions,

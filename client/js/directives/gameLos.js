@@ -2,19 +2,10 @@
 
 angular.module('clickApp.directives')
   .directive('clickGameLos', [
-    'gameMap',
-    'gameLos',
-    // 'gameModels',
-    // 'gameFactions',
-    'modes',
-    function(gameMapService,
-             gameLosService,
-             // gameModelsService,
-             // gameFactionsService,
-             modesService) {
+    function() {
       return {
         restrict: 'A',
-        link: function(scope, el, attrs) {
+        link: function(scope, el/*, attrs*/) {
           var map = document.getElementById('map');
           var svgNS = map.namespaceURI;
 
@@ -80,8 +71,8 @@ angular.module('clickApp.directives')
                };
       }
       function updateLos(map, los, element) {
-        var map_flipped = gameMapService.isFlipped(map);
-        var zoom_factor = gameMapService.zoomFactor(map);
+        // var map_flipped = gameMapService.isFlipped(map);
+        // var zoom_factor = gameMapService.zoomFactor(map);
         // var label_flip_center = {
         //   x: (los.end.x - los.start.x) / 2 + los.start.x,
         //   y: (los.end.y - los.start.y) / 2 + los.start.y,

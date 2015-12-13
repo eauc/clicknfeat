@@ -1,7 +1,7 @@
 'use strict';
 
 describe('execute commands', function() {
-  describe('gameService', function(c) {
+  describe('gameService', function() {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
 
@@ -92,7 +92,7 @@ describe('execute commands', function() {
       when('command is loggable', function() {
         this.commandsService.execute.resolveWith = { do_not_log: false };
       }, function() {
-        it('should register command', function(done) {
+        it('should register command', function() {
           this.thenExpect(this.ret, function() {
             expect(this.game.commands[0].user)
               .toBe('user');
@@ -105,7 +105,7 @@ describe('execute commands', function() {
       when('command is not loggable', function() {
         this.commandsService.execute.resolveWith = { do_not_log: true };
       }, function() {
-        it('should not register command', function(done) {
+        it('should not register command', function() {
           this.thenExpect(this.ret, function() {
             expect(this.game.commands)
               .toEqual([]);
@@ -113,7 +113,7 @@ describe('execute commands', function() {
         });
       });
         
-      it('should save game', function(done) {
+      it('should save game', function() {
         this.thenExpect(this.ret, function() {
           expect(this.scope.saveGame)
             .toHaveBeenCalledWith(this.game);
@@ -121,7 +121,7 @@ describe('execute commands', function() {
       });
         
       it('should send execute event', function() {
-        this.thenExpect(this.ret, function(cmd) {
+        this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('command','execute');
         });
@@ -138,7 +138,7 @@ describe('execute commands', function() {
     });
   });
 
-  describe('commandsService', function(c) {
+  describe('commandsService', function() {
     beforeEach(inject([ 'commands', function(commandsService) {
       this.commandsService = commandsService;
 

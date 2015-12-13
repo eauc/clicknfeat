@@ -49,7 +49,7 @@ angular.module('clickApp.services')
             }
           )(stamps);
         },
-        onStamps: function templatesOnStamps(method /*, ...args..., stamps, templates*/) {
+        onStamps: function templatesOnStamps(/* method, ...args..., stamps, templates*/) {
           var args = Array.prototype.slice.call(arguments);
           var templates = R.last(args);
           var stamps = R.nth(-2, args);

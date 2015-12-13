@@ -195,7 +195,7 @@ angular.module('clickApp.services')
         console.log('Game: ReplayBatchs:', batchs);
         return commandsService.replayBatch(batchs[0], scope, game)
           .then(function() {
-            return new self.Promise(function(resolve, reject) {
+            return new self.Promise(function(resolve/*, reject*/) {
               self.requestAnimationFrame(function _gameReplayBatch() {
                 resolve(gameReplayBatchs(R.tail(batchs), scope, game));
               });
@@ -203,7 +203,7 @@ angular.module('clickApp.services')
           });
       }
       function gameReplayAll(scope, game) {
-        return new self.Promise(function(resolve, reject) {
+        return new self.Promise(function(resolve/*, reject*/) {
           if(R.isEmpty(game.commands)) {
             resolve();
           }

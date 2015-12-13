@@ -14,7 +14,6 @@ angular.module('clickApp.services')
 
           var args = Array.prototype.slice.call(arguments);
           var game = R.last(args);
-          var scope = R.nth(-2, args);
           var ctxt = {
             before: [],
             after: [],

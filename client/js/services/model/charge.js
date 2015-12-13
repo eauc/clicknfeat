@@ -61,7 +61,6 @@ angular.module('clickApp.services')
             }
             var dist = MOVES[small ? 'MoveSmall' : 'Move'];
             var direction = model.state.cha.s.r;
-            var distance = pointService.distanceTo(model.state, model.state.cha.s);
             model.state = pointService.translateInDirection(dist, direction, model.state);
             return modelService.checkState(factions, target, model);
           },

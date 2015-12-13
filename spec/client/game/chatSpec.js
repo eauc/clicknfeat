@@ -1,7 +1,7 @@
 'use strict';
 
 describe('game chat', function() {
-  describe('gameService', function(c) {
+  describe('gameService', function() {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
       
@@ -21,7 +21,7 @@ describe('game chat', function() {
       });
 
       it('should send chat event on connection', function() {
-        this.thenExpect(this.ret, function(result) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameConnectionService.sendEvent)
             .toHaveBeenCalledWith({
               type: 'chat',

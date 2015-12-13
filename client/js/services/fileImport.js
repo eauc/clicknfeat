@@ -16,10 +16,10 @@ angular.module('clickApp.services')
                 .then(resolve)
                 .catch(reject);
             };
-            reader.onerror = function(e) {
+            reader.onerror = function() {
               reject(['Error reading file']);
             };
-            reader.onabort = function(e) {
+            reader.onabort = function() {
               reject(['Abort reading file']);
             };
             reader.readAsText(file);

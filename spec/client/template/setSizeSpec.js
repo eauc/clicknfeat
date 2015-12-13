@@ -20,7 +20,7 @@ describe('setSize template', function() {
       [ 'aoeSize3', 3 ],
       [ 'aoeSize4', 4 ],
       [ 'aoeSize5', 5 ],
-    ], function(e, d) {
+    ], function(e) {
       when('user set '+e.action+' on template selection', function() {
         this.ret = this.aoeTemplateModeService
           .actions[e.action](this.scope);
@@ -64,7 +64,7 @@ describe('setSize template', function() {
       [ 'spraySize6', 6 ],
       [ 'spraySize8', 8 ],
       [ 'spraySize10', 10 ],
-    ], function(e, d) {
+    ], function(e) {
       when('user set '+e.action+' on template selection', function() {
         this.ret = this.sprayTemplateModeService.actions[e.action](this.scope);
       }, function() {

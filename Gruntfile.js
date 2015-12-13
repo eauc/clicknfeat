@@ -13,21 +13,17 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    jshint: {
+    eslint: {
       app_src: {
+        src: app_js_src,
         options: {
-          jshintrc: '.jshintrc'
-        },
-        files: {
-          src: app_js_src
+          config: '.eslintrc.json'
         }
       },
       spec_src: {
+        src: spec_js_src,
         options: {
-          jshintrc: '.jshintrc_spec'
-        },
-        files: {
-          src: spec_js
+          config: '.eslintrc.json'
         }
       }
     },
@@ -122,21 +118,21 @@ module.exports = function(grunt) {
     watch: {
       app_src: {
         files: app_js_src,
-        tasks: [ 'jshint:app_src', 'uglify:app_src' ],
+        tasks: [ 'eslint:app_src', 'uglify:app_src' ],
         options: {
           spawn: true
         }
       },
       spec_src: {
         files: spec_js.concat(app_js_src),
-        tasks: [ 'jshint:app_src', 'jshint:spec_src', 'jasmine:spec' ],
+        tasks: [ 'eslint:app_src', 'eslint:spec_src', 'jasmine:spec' ],
         options: {
           spawn: true
         }
       },
-      jshint: {
+      eslint: {
         files: spec_js.concat(app_js_src),
-        tasks: [ 'jshint' ],
+        tasks: [ 'eslint' ],
         options: {
           spawn: true
         }
@@ -148,7 +144,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-copy');
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('gruntify-eslint');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');

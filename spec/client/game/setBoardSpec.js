@@ -38,7 +38,7 @@ describe('set board', function() {
       [ 'method', 'previous', 'result' ],
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
-    ], function(e, d) {
+    ], function(e) {
       describe(e.method+'(<ctxt>, <scope>, <game>)', function() {
         beforeEach(function() {
           this.ctxt = {

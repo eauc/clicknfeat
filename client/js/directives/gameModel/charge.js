@@ -17,8 +17,7 @@ angular.module('clickApp.directives')
       return {
         create: function clickGameModelChargeCreate(svgNS,
                                                     under_models_container,
-                                                    over_models_container,
-                                                    parent) {
+                                                    over_models_container) {
           var charge_path = document.createElementNS(svgNS, 'rect');
           charge_path.style.visibility = 'hidden';
           charge_path.classList.add('model-charge-path');

@@ -1,0 +1,50 @@
+{
+  "globals": {
+    "angular": false,
+    "R": false,
+    "s": false,
+    "Mousetrap": false,
+    "jasmine": false,
+    "inject": false,
+    "module": false,
+    "spyOn": false,
+    "spyOnService": false,
+    "mockReturnPromise": false,
+    "findCallByArgs": false,
+    "describe": false,
+    "xdescribe": false,
+    "when": false,
+    "xwhen": false,
+    "beforeEach": false,
+    "it": false,
+    "fit": false,
+    "using": false,
+    "expect": false
+  },
+  "rules": {
+    "indent": [
+      2,
+      2
+    ],
+    "quotes": [
+      2,
+      "single"
+    ],
+    "linebreak-style": [
+      2,
+      "unix"
+    ],
+    "semi": [
+      2,
+      "always"
+    ],
+    "indent": 0,
+    "no-console": 0,
+    "comma-dangle": 0
+  },
+  "env": {
+    "es6": true,
+    "browser": true
+  },
+  "extends": "eslint:recommended"
+}

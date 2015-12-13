@@ -4,7 +4,7 @@ angular.module('clickApp.services')
   .factory('modelDamage', [
     'gameFactions',
     function modelDamageServiceFactory(gameFactionsService) {
-      return function(modelService) {
+      return function(/*modelService*/) {
         var modelDamageService = {
           resetDamage: function modelResetDamage(model) {
             model.state.dmg = R.pipe(

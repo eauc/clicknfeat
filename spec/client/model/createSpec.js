@@ -25,7 +25,7 @@ describe('create model', function() {
         [ 'event' ],
         [ 'enableCreateModel' ],
         [ 'enableMoveMap' ],
-      ], function(e, d) {
+      ], function(e) {
         it('should emit '+e.event+' event', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith(e.event);
@@ -67,7 +67,7 @@ describe('create model', function() {
         [ 'flip_map' ],
         [ true       ],
         [ false      ],
-      ], function(e, d) {
+      ], function(e) {
         when('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
           this.scope.ui_state = { flip_map: e.flip_map };
         }, function() {
@@ -97,7 +97,7 @@ describe('create model', function() {
         [ 'event' ],
         [ 'disableCreateModel' ],
         [ 'disableMoveMap' ],
-      ], function(e, d) {
+      ], function(e) {
         it('should emit '+e.event+' event', function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith(e.event);
@@ -566,7 +566,7 @@ describe('create model', function() {
         };
       }, function() {
         it('should check <state>', function() {
-          this.thenExpect(this.ret, function(model) {
+          this.thenExpect(this.ret, function() {
             expect(this.modelService.checkState)
               .toHaveBeenCalledWith('factions', null, {
                 state: { x: 240, y: 0, r: 0,
@@ -622,12 +622,12 @@ describe('create model', function() {
         [ 'info', 'state' ],
         [ { type: 'warrior', n: 1 }, { n: 0, t: 0 } ],
         [ { type: 'jack',
-            1: [ null, null,  null,  "b",  "l", null ],
-            2: [ null,  "b",  "b",   "l",  "l",  "m" ],
-            3: [ null,  "b",  "g",   "a",  "m",  "m" ],
-            4: [ null,  "b",  "g",   "a",  "c",  "c" ],
-            5: [ null,  "b",  "b",   "r",  "r",  "c" ],
-            6: [ null, null,  null,  "b",  "r", null ],
+            1: [ null, null,  null,  'b',  'l', null ],
+            2: [ null,  'b',  'b',   'l',  'l',  'm' ],
+            3: [ null,  'b',  'g',   'a',  'm',  'm' ],
+            4: [ null,  'b',  'g',   'a',  'c',  'c' ],
+            5: [ null,  'b',  'b',   'r',  'r',  'c' ],
+            6: [ null, null,  null,  'b',  'r', null ],
             field: 10
           }, { 1: [ 0, 0, 0, 0, 0, 0 ],
                2: [ 0, 0, 0, 0, 0, 0 ],
@@ -637,7 +637,7 @@ describe('create model', function() {
                6: [ 0, 0, 0, 0, 0, 0 ],
                f: 0, t: 0
              } ],
-      ], function(e, d) {
+      ], function(e) {
         when('<state.info> damage type is '+e.info.type, function() {
           this.gameFactionsService.getModelInfo.resolveWith = {
             damage: e.info
@@ -658,7 +658,7 @@ describe('create model', function() {
         [ 'wardude' , true ],
         [ 'beast'   , true ],
         [ 'jack'    , true ],
-      ], function(e, d) {
+      ], function(e) {
         when('<state.info> type is '+e.type, function() {
           this.gameFactionsService.getModelInfo.resolveWith = {
             type: e.type,

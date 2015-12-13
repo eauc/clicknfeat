@@ -4,10 +4,8 @@ angular.module('clickApp.services')
   .factory('lockTemplatesCommand', [
     'commands',
     'gameTemplates',
-    'gameTemplateSelection',
     function lockTemplatesCommandServiceFactory(commandsService,
-                                                gameTemplatesService,
-                                                gameTemplateSelectionService) {
+                                                gameTemplatesService) {
       var lockTemplatesCommandService = {
         execute: function lockTemplatesExecute(lock, stamps, scope, game) {
           var ctxt = {

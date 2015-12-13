@@ -40,7 +40,7 @@ angular.module('clickApp.services')
                                           scope.factions, event['click#'].target,
                                           stamps, scope,  scope.game);
       };
-      template_actions.setTargetModel = function spraySetTargetModel(scope, event, dom_event) {
+      template_actions.setTargetModel = function spraySetTargetModel(scope, event) {
         var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
         return R.pipeP(
           gameTemplatesService.findStamp$(stamps[0]),
@@ -107,9 +107,9 @@ angular.module('clickApp.services')
       ], templateModeService.buttons);
 
       var template_mode = {
-        onEnter: function templateOnEnter(scope) {
+        onEnter: function templateOnEnter(/*scope*/) {
         },
-        onLeave: function templateOnLeave(scope) {
+        onLeave: function templateOnLeave(/*scope*/) {
         },
         name: 'spray'+templateModeService.name,
         actions: template_actions,

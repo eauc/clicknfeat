@@ -78,7 +78,7 @@ describe('lock template', function() {
       });
 
       it('should lock <stamps>', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameTemplatesService.lockStamps)
             .toHaveBeenCalledWith('lock', this.stamps, 'templates');
           expect(this.game.templates)

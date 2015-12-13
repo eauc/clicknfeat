@@ -127,7 +127,7 @@ angular.module('clickApp.controllers')
         )(game);
       };
 
-      $scope.currentModeName = function currentModeName(mode) {
+      $scope.currentModeName = function currentModeName() {
         if(!R.exists($scope.modes)) return '';
         return modesService.currentModeName($scope.modes);
       };

@@ -13,7 +13,7 @@ angular.module('clickApp.directives')
                  flip: counter_flip_center,
                };
       }
-      function computeSoulsCenter(img, info, model) {
+      function computeSoulsCenter(img, info/*, model*/) {
         var counter_flip_center = { x: img.width/2, y: img.height/2 };
         var counter_text_center = { x: counter_flip_center.x + info.base_radius * 0.8 + 5,
                                     y: counter_flip_center.y - info.base_radius - 5 };

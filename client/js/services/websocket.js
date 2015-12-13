@@ -15,7 +15,7 @@ angular.module('clickApp.services')
             handlers.error = R.defaultTo(defaultErrorHandler, handlers.error);
             handlers.close = R.defaultTo(defaultCloseHandler, handlers.close);
 
-            var scheme = "ws://";
+            var scheme = 'ws://';
             var uri = scheme + self.document.location.host + url;
             var socket = new self.WebSocket(uri);
             var resolved = false;
@@ -27,7 +27,7 @@ angular.module('clickApp.services')
             socket.onerror = function websocketOnError(event) {
               handlers.error('socketError', event);
             };
-            socket.onclose = function websocketOnClose(event) {
+            socket.onclose = function websocketOnClose(/* event */) {
               if(!resolved) {
                 reject('Connection error');
                 resolved = true;
@@ -65,7 +65,7 @@ angular.module('clickApp.services')
           )(event);
         },
         close: function websocketClose(socket) {
-          return new self.Promise(function(resolve, reject) {
+          return new self.Promise(function(resolve/*, reject */) {
             socket.close();
             resolve();
           });

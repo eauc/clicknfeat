@@ -36,7 +36,7 @@ angular.module('clickApp.directives')
           games: '=',
           selection: '=',
         },
-        link: function(scope, element, attrs) {
+        link: function(/*scope, element, attrs*/) {
         }
       };
     }

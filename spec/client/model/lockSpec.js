@@ -143,7 +143,7 @@ describe('model lock', function() {
       });
 
       it('should apply <lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameModelsService.lockStamps)
             .toHaveBeenCalledWith('lock', this.ctxt.stamps, 'models');
           expect(this.game.models)
@@ -152,7 +152,7 @@ describe('model lock', function() {
       });
 
       it('should emit changeModel gameEvents', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp1');
           expect(this.scope.gameEvent)
@@ -183,7 +183,7 @@ describe('model lock', function() {
       });
 
       it('should apply !<lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameModelsService.lockStamps)
             .toHaveBeenCalledWith(false, this.ctxt.stamps, 'models');
           expect(this.game.models)
@@ -192,7 +192,7 @@ describe('model lock', function() {
       });
 
       it('should emit changeModel gameEvents', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
             .toHaveBeenCalledWith('changeModel-stamp1');
           expect(this.scope.gameEvent)

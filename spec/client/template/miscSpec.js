@@ -73,7 +73,7 @@ describe('misc template', function() {
         this.stamps = ['stamp1', 'stamp2'];
       }, function() {
         it('should apply <method> on <stamps>', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, function() {
             expect(this.templateService.method)
               .toHaveBeenCalledWith('arg1', 'arg2', this.game.templates.active[0]);
             expect(this.templateService.method)
@@ -82,7 +82,7 @@ describe('misc template', function() {
         });
         
         it('should emit changeTemplate gameEvents', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, function() {
             expect(this.scope.gameEvent)
               .toHaveBeenCalledWith('changeTemplate-stamp1');
             expect(this.scope.gameEvent)

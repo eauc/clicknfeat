@@ -5,17 +5,9 @@ angular.module('clickApp.controllers')
     '$scope',
     'gameBoard',
     'gameScenario',
-    'gameLayers',
-    'game',
-    'gameModels',
-    'gameFactions',
     function($scope,
              gameBoardService,
-             gameScenarioService,
-             gameLayersService,
-             gameService,
-             gameModelsService,
-             gameFactionsService) {
+             gameScenarioService) {
       console.log('init gameSetupCtrl');
 
       $scope.$watch('game.board.name', function(value) {

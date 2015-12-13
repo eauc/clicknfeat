@@ -9,10 +9,10 @@ angular.module('clickApp.directives')
       },
       controller: [
         '$scope',
-        function($scope) {
+        function() {
         }
       ],
-      link: function(scope, element, attrs) {
+      link: function(scope, element/*, attrs*/) {
         element[0].onclick = function() {
           this.value = null;
         };

@@ -20,7 +20,7 @@ angular.module('clickApp.services')
                                          gameModelSelectionService
                                         ) {
       var model_actions = Object.create(modelsModeService.actions);
-      model_actions.createAoEOnModel = function modelCreateAoEModel(scope, event) {
+      model_actions.createAoEOnModel = function modelCreateAoEModel(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           function() {
@@ -35,7 +35,7 @@ angular.module('clickApp.services')
           }
         )();
       };
-      model_actions.createSprayOnModel = function modelCreateSprayModel(scope, event) {
+      model_actions.createSprayOnModel = function modelCreateSprayModel(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           function() {
@@ -59,7 +59,7 @@ angular.module('clickApp.services')
           }
         )();
       };
-      model_actions.selectAllFriendly = function modelSelectAllFriendly(scope, event) {
+      model_actions.selectAllFriendly = function modelSelectAllFriendly(scope) {
         var selection = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
@@ -75,7 +75,7 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      model_actions.selectAllUnit = function modelSelectAllUnit(scope, event) {
+      model_actions.selectAllUnit = function modelSelectAllUnit(scope) {
         var selection = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
@@ -121,9 +121,9 @@ angular.module('clickApp.services')
                                     model_default_bindings);
 
       var model_mode = {
-        onEnter: function modelOnEnter(scope) {
+        onEnter: function modelOnEnter(/*scope*/) {
         },
-        onLeave: function modelOnLeave(scope) {
+        onLeave: function modelOnLeave(/*scope*/) {
         },
         name: 'ModelBase',
         actions: model_actions,

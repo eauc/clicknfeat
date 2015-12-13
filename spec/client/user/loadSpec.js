@@ -15,7 +15,7 @@ describe('user load', function() {
       });
       
       it('should read user data from local storage', function() {
-        this.thenExpect(this.ret, function(user) {
+        this.thenExpect(this.ret, function() {
           expect(this.localStorageService.load)
             .toHaveBeenCalledWith('clickApp.user');
         });

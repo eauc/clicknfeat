@@ -17,7 +17,7 @@ angular.module('clickApp.services')
                                         gameTemplatesService,
                                         gameTemplateSelectionService) {
       var template_actions = Object.create(defaultModeService.actions);
-      function clearTemplateSelection(scope, event) {
+      function clearTemplateSelection(scope/*, event*/) {
         scope.game.template_selection =
           gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
       }
@@ -119,9 +119,9 @@ angular.module('clickApp.services')
         [ 'Lock/Unlock', 'toggleLock' ],
       ];
       var template_mode = {
-        onEnter: function templateOnEnter(scope) {
+        onEnter: function templateOnEnter(/*scope*/) {
         },
-        onLeave: function templateOnLeave(scope) {
+        onLeave: function templateOnLeave(/*scope*/) {
         },
         name: 'Template',
         actions: template_actions,
