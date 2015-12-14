@@ -1,7 +1,7 @@
 {
   "name": "Legion of Everblight",
   "color": "#a9bae0",
-  "icon": "data/icons/legion_50.png",
+  "icon": "/data/icons/legion_50.png",
   "models": {
     "locks": {
       "absylonia1": {
@@ -12,7 +12,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Absylonia1.png"
+            "link": "/data/model/legion/warlocks/Absylonia1.png"
           }
         ],
         "damage": {
@@ -37,7 +37,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Bethayne1.png"
+            "link": "/data/model/legion/warlocks/Bethayne1.png"
           }
         ],
         "damage": {
@@ -52,7 +52,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Kallus1.png"
+            "link": "/data/model/legion/warlocks/Kallus1.png"
           }
         ],
         "damage": {
@@ -67,7 +67,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Lylyth1.png"
+            "link": "/data/model/legion/warlocks/Lylyth1.png"
           }
         ],
         "damage": {
@@ -82,7 +82,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Lylyth2.png"
+            "link": "/data/model/legion/warlocks/Lylyth2.png"
           }
         ],
         "damage": {
@@ -107,14 +107,14 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Rhyas1.png"
+            "link": "/data/model/legion/warlocks/Rhyas1.png"
           },
           {
             "type": "incorporeal",
-            "link": "data/model/legion/warlocks/Rhyas1_Incorporeal.png"
+            "link": "/data/model/legion/warlocks/Rhyas1_Incorporeal.png"
           },
           {
-            "link": "data/model/legion/warlocks/Rhyas1_Invisible.png"
+            "link": "/data/model/legion/warlocks/Rhyas1_Invisible.png"
           }
         ],
         "damage": {
@@ -129,7 +129,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Saeryn1.png"
+            "link": "/data/model/legion/warlocks/Saeryn1.png"
           }
         ],
         "damage": {
@@ -148,7 +148,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/warlocks/Saeryn1.png"
+                  "link": "/data/model/legion/warlocks/Saeryn1.png"
                 }
               ],
               "damage": {
@@ -163,7 +163,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/warlocks/Rhyas1.png"
+                  "link": "/data/model/legion/warlocks/Rhyas1.png"
                 }
               ],
               "damage": {
@@ -181,7 +181,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Thagrosh1.png"
+            "link": "/data/model/legion/warlocks/Thagrosh1.png"
           }
         ],
         "damage": {
@@ -196,7 +196,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Thagrosh2.png"
+            "link": "/data/model/legion/warlocks/Thagrosh2.png"
           }
         ],
         "damage": {
@@ -211,7 +211,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Vayl1.png"
+            "link": "/data/model/legion/warlocks/Vayl1.png"
           }
         ],
         "damage": {
@@ -226,7 +226,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/warlocks/Vayl2.png"
+            "link": "/data/model/legion/warlocks/Vayl2.png"
           }
         ],
         "damage": {
@@ -242,7 +242,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Afflictor.png"
+            "link": "/data/model/legion/beasts/Afflictor.png"
           }
         ],
         "damage": {
@@ -262,7 +262,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Angelius.png"
+            "link": "/data/model/legion/beasts/Angelius.png"
           }
         ],
         "damage": {
@@ -284,12 +284,12 @@
           {
             "width": 216.667,
             "height": 216.667,
-            "link": "data/model/legion/beasts/Archangel.png"
+            "link": "/data/model/legion/beasts/Archangel.png"
           },
           {
             "width": 216.667,
             "height": 216.667,
-            "link": "data/model/legion/beasts/Archangel_Fit.png"
+            "link": "/data/model/legion/beasts/Archangel_Fit.png"
           }
         ],
         "damage": {
@@ -310,10 +310,10 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Belphagor.png"
+            "link": "/data/model/legion/beasts/Belphagor.png"
           },
           {
-            "link": "data/model/legion/beasts/Belphagor_Meld.png"
+            "link": "/data/model/legion/beasts/Belphagor_Meld.png"
           }
         ],
         "damage": {
@@ -349,7 +349,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Carnivean.png"
+            "link": "/data/model/legion/beasts/Carnivean.png"
           }
         ],
         "damage": {
@@ -369,7 +369,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/beasts/Harrier.png"
+            "link": "/data/model/legion/beasts/Harrier.png"
           }
         ],
         "damage": {
@@ -389,7 +389,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Naga.png"
+            "link": "/data/model/legion/beasts/Naga.png"
           }
         ],
         "damage": {
@@ -409,7 +409,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Bloodseer.png"
+            "link": "/data/model/legion/beasts/Bloodseer.png"
           }
         ],
         "damage": {
@@ -429,7 +429,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/BoltThrower.png"
+            "link": "/data/model/legion/beasts/BoltThrower.png"
           }
         ],
         "damage": {
@@ -449,7 +449,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Protector.png"
+            "link": "/data/model/legion/beasts/Protector.png"
           }
         ],
         "damage": {
@@ -469,7 +469,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Soldier.png"
+            "link": "/data/model/legion/beasts/Soldier.png"
           }
         ],
         "damage": {
@@ -489,7 +489,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Neraph.png"
+            "link": "/data/model/legion/beasts/Neraph.png"
           }
         ],
         "damage": {
@@ -509,7 +509,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Proteus.png"
+            "link": "/data/model/legion/beasts/Proteus.png"
           }
         ],
         "damage": {
@@ -529,7 +529,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Raek.png"
+            "link": "/data/model/legion/beasts/Raek.png"
           }
         ],
         "damage": {
@@ -549,7 +549,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Ravagore.png"
+            "link": "/data/model/legion/beasts/Ravagore.png"
           }
         ],
         "damage": {
@@ -569,7 +569,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Scythean.png"
+            "link": "/data/model/legion/beasts/Scythean.png"
           }
         ],
         "damage": {
@@ -589,7 +589,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Seraph.png"
+            "link": "/data/model/legion/beasts/Seraph.png"
           }
         ],
         "damage": {
@@ -609,7 +609,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/beasts/Shredder.png"
+            "link": "/data/model/legion/beasts/Shredder.png"
           }
         ],
         "damage": {
@@ -629,7 +629,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/beasts/Stinger.png"
+            "link": "/data/model/legion/beasts/Stinger.png"
           }
         ],
         "damage": {
@@ -649,7 +649,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/beasts/Teraph.png"
+            "link": "/data/model/legion/beasts/Teraph.png"
           }
         ],
         "damage": {
@@ -669,7 +669,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Typhon.png"
+            "link": "/data/model/legion/beasts/Typhon.png"
           }
         ],
         "damage": {
@@ -689,7 +689,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/beasts/Zuriel.png"
+            "link": "/data/model/legion/beasts/Zuriel.png"
           }
         ],
         "damage": {
@@ -714,7 +714,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/BFS_Sevryn.png"
+                  "link": "/data/model/legion/units/BFS_Sevryn.png"
                 }
               ],
               "damage": {
@@ -727,7 +727,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/BFS_Rhylyss.png"
+                  "link": "/data/model/legion/units/BFS_Rhylyss.png"
                 }
               ],
               "damage": {
@@ -740,7 +740,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/BFS_Vysarr.png"
+                  "link": "/data/model/legion/units/BFS_Vysarr.png"
                 }
               ],
               "damage": {
@@ -761,7 +761,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Archer_Grunt.png"
+                  "link": "/data/model/legion/units/Archer_Grunt.png"
                 }
               ]
             }
@@ -774,7 +774,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Archer_Officer.png"
+                  "link": "/data/model/legion/units/Archer_Officer.png"
                 }
               ],
               "damage": {
@@ -788,7 +788,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Archer_Ammo.png"
+                  "link": "/data/model/legion/units/Archer_Ammo.png"
                 }
               ]
             }
@@ -836,7 +836,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Grotesque_Grunt.png"
+                  "link": "/data/model/legion/units/Grotesque_Grunt.png"
                 }
               ]
             }
@@ -854,7 +854,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/HexHunter_Grunt.png"
+                  "link": "/data/model/legion/units/HexHunter_Grunt.png"
                 }
               ]
             }
@@ -867,7 +867,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/HexHunter_Bayal.png"
+                  "link": "/data/model/legion/units/HexHunter_Bayal.png"
                 }
               ],
               "damage": {
@@ -888,7 +888,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Legionaire_Grunt.png"
+                  "link": "/data/model/legion/units/Legionaire_Grunt.png"
                 }
               ]
             }
@@ -901,7 +901,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Legionnaire_Farilor.png"
+                  "link": "/data/model/legion/units/Legionnaire_Farilor.png"
                 }
               ],
               "damage": {
@@ -915,7 +915,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Legionnaire_Standard.png"
+                  "link": "/data/model/legion/units/Legionnaire_Standard.png"
                 }
               ]
             }
@@ -933,7 +933,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/legion/units/Raptor_Grunt.png"
+                  "link": "/data/model/legion/units/Raptor_Grunt.png"
                 }
               ],
               "damage": {
@@ -954,7 +954,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Scather_Grunt.png"
+                  "link": "/data/model/legion/units/Scather_Grunt.png"
                 }
               ]
             },
@@ -964,7 +964,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/legion/units/Scather.png"
+                  "link": "/data/model/legion/units/Scather.png"
                 }
               ]
             }
@@ -982,7 +982,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Swordsmen_Grunt.png"
+                  "link": "/data/model/legion/units/Swordsmen_Grunt.png"
                 }
               ]
             }
@@ -995,7 +995,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Swordsmen_Abbot.png"
+                  "link": "/data/model/legion/units/Swordsmen_Abbot.png"
                 }
               ],
               "damage": {
@@ -1009,7 +1009,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Swordsmen_Champion.png"
+                  "link": "/data/model/legion/units/Swordsmen_Champion.png"
                 }
               ],
               "damage": {
@@ -1030,7 +1030,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/legion/units/Warmonger_Grunt.png"
+                  "link": "/data/model/legion/units/Warmonger_Grunt.png"
                 }
               ],
               "damage": {
@@ -1051,7 +1051,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/legion/units/Warspear_Grunt.png"
+                  "link": "/data/model/legion/units/Warspear_Grunt.png"
                 }]
               ,
               "damage": {
@@ -1067,7 +1067,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/legion/units/Warspear_Chieftain.png"
+                  "link": "/data/model/legion/units/Warspear_Chieftain.png"
                 }
               ],
               "damage": {
@@ -1088,7 +1088,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Vessel_Grunt.png"
+                  "link": "/data/model/legion/units/Vessel_Grunt.png"
                 }
               ]
             },
@@ -1098,7 +1098,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/legion/units/Vessel.png"
+                  "link": "/data/model/legion/units/Vessel.png"
                 }
               ],
               "damage": {
@@ -1120,7 +1120,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Rangers_Grunt.png"
+                  "link": "/data/model/legion/units/Rangers_Grunt.png"
                 }
               ]
             }
@@ -1133,7 +1133,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Ranger_Officer.png"
+                  "link": "/data/model/legion/units/Ranger_Officer.png"
                 }
               ],
               "damage": {
@@ -1147,7 +1147,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/legion/units/Ranger_Musician.png"
+                  "link": "/data/model/legion/units/Ranger_Musician.png"
                 }
               ]
             }
@@ -1175,7 +1175,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/solos/Annyssa.png"
+            "link": "/data/model/legion/solos/Annyssa.png"
           }
         ],
         "damage": {
@@ -1198,7 +1198,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/DeathStalker.png"
+            "link": "/data/model/legion/solos/DeathStalker.png"
           }
         ],
         "damage": {
@@ -1211,7 +1211,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/Forsaken.png"
+            "link": "/data/model/legion/solos/Forsaken.png"
           }
         ],
         "damage": {
@@ -1240,7 +1240,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/legion/solos/Hellion.png"
+            "link": "/data/model/legion/solos/Hellion.png"
           }
         ],
         "damage": {
@@ -1255,7 +1255,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/Incubus.png"
+            "link": "/data/model/legion/solos/Incubus.png"
           }
         ]
       },
@@ -1266,7 +1266,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/Martyr.png"
+            "link": "/data/model/legion/solos/Martyr.png"
           }
         ]
       },
@@ -1276,7 +1276,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/Shepherd.png"
+            "link": "/data/model/legion/solos/Shepherd.png"
           }
         ]
       },
@@ -1286,7 +1286,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/legion/solos/Succubus.png"
+            "link": "/data/model/legion/solos/Succubus.png"
           }
         ],
         "damage": {
@@ -1299,7 +1299,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/legion/solos/WarChief.png"
+            "link": "/data/model/legion/solos/WarChief.png"
           }
         ],
         "damage": {
@@ -1314,7 +1314,7 @@
         "base": "huge",
         "img": [
           {
-            "link": "data/model/legion/bes/Throne.png"
+            "link": "/data/model/legion/bes/Throne.png"
           }
         ],
         "damage": {

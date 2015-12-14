@@ -12,7 +12,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Baldur1.png"
+            "link": "/data/model/orboros/locks/Baldur1.png"
           }
         ],
         "damage": {
@@ -27,7 +27,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Baldur2.png"
+            "link": "/data/model/orboros/locks/Baldur2.png"
           }
         ],
         "damage": {
@@ -56,7 +56,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/locks/Cassius1.png"
+                  "link": "/data/model/orboros/locks/Cassius1.png"
                 }
               ],
               "damage": {
@@ -72,7 +72,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/orboros/locks/Cassius1_Wurmwood.png"
+                  "link": "/data/model/orboros/locks/Cassius1_Wurmwood.png"
                 }
               ]
             }
@@ -87,7 +87,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Grayle1.png"
+            "link": "/data/model/orboros/locks/Grayle1.png"
           }
         ],
         "damage": {
@@ -106,7 +106,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/locks/Kaya2.png"
+                  "link": "/data/model/orboros/locks/Kaya2.png"
                 }
               ],
               "damage": {
@@ -123,7 +123,7 @@
               "fury": 3,
               "img": [
                 {
-                  "link": "data/model/orboros/locks/Kaya2_Laris.png"
+                  "link": "/data/model/orboros/locks/Kaya2_Laris.png"
                 }
               ],
               "damage": {
@@ -147,7 +147,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Kaya1.png"
+            "link": "/data/model/orboros/locks/Kaya1.png"
           }
         ],
         "damage": {
@@ -162,10 +162,10 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/locks/Kromac.png"
+            "link": "/data/model/orboros/locks/Kromac.png"
           },
           {
-            "link": "data/model/orboros/locks/Kromac_Beast.png"
+            "link": "/data/model/orboros/locks/Kromac_Beast.png"
           }
         ],
         "damage": {
@@ -190,7 +190,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Krueger1.png"
+            "link": "/data/model/orboros/locks/Krueger1.png"
           }
         ],
         "damage": {
@@ -205,7 +205,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Krueger2.png"
+            "link": "/data/model/orboros/locks/Krueger2.png"
           }
         ],
         "damage": {
@@ -220,7 +220,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Mohsar1.png"
+            "link": "/data/model/orboros/locks/Mohsar1.png"
           }
         ],
         "damage": {
@@ -235,7 +235,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/locks/Morvahna1.png"
+            "link": "/data/model/orboros/locks/Morvahna1.png"
           }
         ],
         "damage": {
@@ -250,7 +250,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/locks/Morvahna2.png"
+            "link": "/data/model/orboros/locks/Morvahna2.png"
           }
         ],
         "damage": {
@@ -266,7 +266,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/ArgusMoonhound.png"
+            "link": "/data/model/orboros/beasts/ArgusMoonhound.png"
           }
         ],
         "damage": {
@@ -286,7 +286,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/Argus.png"
+            "link": "/data/model/orboros/beasts/Argus.png"
           }
         ],
         "damage": {
@@ -322,7 +322,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WarpwolfFeral.png"
+            "link": "/data/model/orboros/beasts/WarpwolfFeral.png"
           }
         ],
         "damage": {
@@ -342,7 +342,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/Ghetorix.png"
+            "link": "/data/model/orboros/beasts/Ghetorix.png"
           }
         ],
         "damage": {
@@ -362,7 +362,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/GnarlhornSatyr.png"
+            "link": "/data/model/orboros/beasts/GnarlhornSatyr.png"
           }
         ],
         "damage": {
@@ -382,7 +382,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/Gorax.png"
+            "link": "/data/model/orboros/beasts/Gorax.png"
           }
         ],
         "damage": {
@@ -402,7 +402,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/Megalith.png"
+            "link": "/data/model/orboros/beasts/Megalith.png"
           }
         ],
         "damage": {
@@ -422,7 +422,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WarpwolfPureblood.png"
+            "link": "/data/model/orboros/beasts/WarpwolfPureblood.png"
           }
         ],
         "damage": {
@@ -442,7 +442,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/RazorwingGriffon.png"
+            "link": "/data/model/orboros/beasts/RazorwingGriffon.png"
           }
         ],
         "damage": {
@@ -462,7 +462,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/RiphornSatyr.png"
+            "link": "/data/model/orboros/beasts/RiphornSatyr.png"
           }
         ],
         "damage": {
@@ -512,7 +512,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/ShadowhornSatyr.png"
+            "link": "/data/model/orboros/beasts/ShadowhornSatyr.png"
           }
         ],
         "damage": {
@@ -547,7 +547,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WarpwolfStalker.png"
+            "link": "/data/model/orboros/beasts/WarpwolfStalker.png"
           }
         ],
         "damage": {
@@ -567,7 +567,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WinterArgus.png"
+            "link": "/data/model/orboros/beasts/WinterArgus.png"
           }
         ],
         "damage": {
@@ -587,7 +587,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WoldGuardian.png"
+            "link": "/data/model/orboros/beasts/WoldGuardian.png"
           }
         ],
         "damage": {
@@ -607,7 +607,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WoldWarden.png"
+            "link": "/data/model/orboros/beasts/WoldWarden.png"
           }
         ],
         "damage": {
@@ -627,10 +627,10 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WoldWatcher.png"
+            "link": "/data/model/orboros/beasts/WoldWatcher.png"
           },
           {
-            "link": "data/model/orboros/beasts/WoldWatcher_StoneForm.png"
+            "link": "/data/model/orboros/beasts/WoldWatcher_StoneForm.png"
           }
         ],
         "damage": {
@@ -652,7 +652,7 @@
           {
             "width": 116.6667,
             "height": 116.6667,
-            "link": "data/model/orboros/beasts/WoldWrath.png"
+            "link": "/data/model/orboros/beasts/WoldWrath.png"
           }
         ],
         "damage": {
@@ -673,7 +673,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/beasts/WoldWyrd.png"
+            "link": "/data/model/orboros/beasts/WoldWyrd.png"
           }
         ],
         "damage": {
@@ -747,7 +747,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Woldstalker.png"
+                  "link": "/data/model/orboros/units/Woldstalker.png"
                 }
               ]
             },
@@ -758,7 +758,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Stoneward.png"
+                  "link": "/data/model/orboros/units/Stoneward.png"
                 }
               ]
             }
@@ -776,7 +776,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Druid.png"
+                  "link": "/data/model/orboros/units/Druid.png"
                 }
               ]
             }
@@ -789,7 +789,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Druid_Overseer.png"
+                  "link": "/data/model/orboros/units/Druid_Overseer.png"
                 }
               ],
               "damage": {
@@ -810,11 +810,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Reeves.png"
+                  "link": "/data/model/orboros/units/Reeves.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/orboros/units/Reeves_Leader.png"
+                  "link": "/data/model/orboros/units/Reeves_Leader.png"
                 }
               ]
             }
@@ -827,7 +827,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Reeves_Officer.png"
+                  "link": "/data/model/orboros/units/Reeves_Officer.png"
                 }
               ],
               "damage": {
@@ -841,7 +841,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Reeves_Standard.png"
+                  "link": "/data/model/orboros/units/Reeves_Standard.png"
                 }
               ]
             }
@@ -859,7 +859,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Mannikin.png"
+                  "link": "/data/model/orboros/units/Mannikin.png"
                 }
               ]
             },
@@ -869,7 +869,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/SentryStone.png"
+                  "link": "/data/model/orboros/units/SentryStone.png"
                 }
               ],
               "damage": {
@@ -891,7 +891,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/ShiftingStone.png"
+                  "link": "/data/model/orboros/units/ShiftingStone.png"
                 }
               ],
               "damage": {
@@ -907,7 +907,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/StoneKeeper.png"
+                  "link": "/data/model/orboros/units/StoneKeeper.png"
                 }
               ],
               "damage": {
@@ -927,7 +927,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/TharnBloodPack.png"
+                  "link": "/data/model/orboros/units/TharnBloodPack.png"
                 }
               ],
               "damage": {
@@ -948,7 +948,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/BloodTracker.png"
+                  "link": "/data/model/orboros/units/BloodTracker.png"
                 }
               ]
             }
@@ -961,7 +961,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Nuala.png"
+                  "link": "/data/model/orboros/units/Nuala.png"
                 }
               ],
               "damage": {
@@ -982,7 +982,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/BloodWeaver.png"
+                  "link": "/data/model/orboros/units/BloodWeaver.png"
                 }
               ]
             }
@@ -1000,7 +1000,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Ravager.png"
+                  "link": "/data/model/orboros/units/Ravager.png"
                 }
               ],
               "damage": {
@@ -1016,7 +1016,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Ravager_Chieftain.png"
+                  "link": "/data/model/orboros/units/Ravager_Chieftain.png"
                 }
               ],
               "damage": {
@@ -1032,7 +1032,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Ravager_Shaman.png"
+                  "link": "/data/model/orboros/units/Ravager_Shaman.png"
                 }
               ],
               "damage": {
@@ -1053,7 +1053,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/orboros/units/WolfRider.png"
+                  "link": "/data/model/orboros/units/WolfRider.png"
                 }
               ],
               "damage": {
@@ -1074,7 +1074,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/SkinWalker.png"
+                  "link": "/data/model/orboros/units/SkinWalker.png"
                 }
               ],
               "damage": {
@@ -1090,7 +1090,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/orboros/units/SkinWalker_Alpha.png"
+                  "link": "/data/model/orboros/units/SkinWalker_Alpha.png"
                 }
               ],
               "damage": {
@@ -1111,7 +1111,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Wolves.png"
+                  "link": "/data/model/orboros/units/Wolves.png"
                 }
               ]
             }
@@ -1124,7 +1124,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Wolves_Officer.png"
+                  "link": "/data/model/orboros/units/Wolves_Officer.png"
                 }
               ],
               "damage": {
@@ -1138,7 +1138,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/orboros/units/Wolves_Standard.png"
+                  "link": "/data/model/orboros/units/Wolves_Standard.png"
                 }
               ]
             }
@@ -1153,7 +1153,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/solos/Blackclad.png"
+            "link": "/data/model/orboros/solos/Blackclad.png"
           }
         ],
         "damage": {
@@ -1174,7 +1174,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/solos/Wilder.png"
+            "link": "/data/model/orboros/solos/Wilder.png"
           }
         ],
         "damage": {
@@ -1187,7 +1187,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/solos/GallowsGrove.png"
+            "link": "/data/model/orboros/solos/GallowsGrove.png"
           }
         ],
         "damage": {
@@ -1200,7 +1200,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/solos/Lord_of_the_Feast.png"
+            "link": "/data/model/orboros/solos/Lord_of_the_Feast.png"
           }
         ],
         "damage": {
@@ -1214,7 +1214,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/orboros/solos/Morraig.png"
+            "link": "/data/model/orboros/solos/Morraig.png"
           }
         ],
         "damage": {
@@ -1228,7 +1228,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/solos/Morraig_Dismount.png"
+            "link": "/data/model/orboros/solos/Morraig_Dismount.png"
           }
         ],
         "damage": {
@@ -1241,7 +1241,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/orboros/solos/ReeveHunter.png"
+            "link": "/data/model/orboros/solos/ReeveHunter.png"
           }
         ],
         "damage": {
@@ -1254,7 +1254,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/solos/WhiteMane.png"
+            "link": "/data/model/orboros/solos/WhiteMane.png"
           }
         ],
         "damage": {
@@ -1276,7 +1276,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/orboros/solos/WarWolf.png"
+            "link": "/data/model/orboros/solos/WarWolf.png"
           }
         ],
         "damage": {
@@ -1293,7 +1293,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/orboros/bes/CelestalFulcrum.png"
+            "link": "/data/model/orboros/bes/CelestalFulcrum.png"
           }
         ],
         "damage": {

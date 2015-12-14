@@ -1,22 +1,21 @@
 module.exports = function(grunt) {
 
-  var app_js_src = [ 'client/js/**/*.js',
+  var app_js_src = [ 'client/dev/js/**/*.js',
                      '!**/*.min.js' ];
   var spec_js_src = [ 'spec/client/js/**/*Spec.js' ];
   var spec_js_helpers = [ 'spec/client/js/helpers/*.js' ];
-  var spec_js = spec_js_helpers.concat(spec_js_src);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     eslint: {
       app_src: {
-        src: 'client/es6',
+        src: 'client/dev/es6/',
         options: {
           config: '.eslintrc.json'
         }
       },
       spec_src: {
-        src: 'spec/client/es6',
+        src: 'spec/client/es6/',
         options: {
           config: '.eslintrc.json'
         }
@@ -30,9 +29,9 @@ module.exports = function(grunt) {
       app_src: {
         files: [{
           expand: true,
-          cwd: 'client/es6',
+          cwd: 'client/dev/es6',
           src: ['**/*.js'],
-          dest: 'client/js',
+          dest: 'client/dev/js',
           ext: '.js'
         }]
       },
@@ -47,9 +46,9 @@ module.exports = function(grunt) {
       }
     },
     useminPrepare: {
-      html: 'client/index-dev.html',
+      html: 'client/dev/index.html',
       options: {
-        dest: 'client',
+        dest: 'client/dist/',
         flow: {
           steps: {
             js: ['uglify']
@@ -72,24 +71,24 @@ module.exports = function(grunt) {
       }
     },
     usemin: {
-      html: ['client/index.html']
+      html: ['client/dist/index.html']
     },
     copy: {
       html: {
-	src: 'client/index-dev.html',
-        dest: 'client/index.html'
+	src: 'client/dev/index.html',
+        dest: 'client/dist/index.html'
       }
     },
     concat: {
       appendTemplates: {
-        src: [ 'client/js/app.min.js', 'client/js/services/htmlTemplates.js' ],
-        dest: 'client/js/app.min.js'
+        src: [ 'client/dist/js/app.min.js', 'client/dist/js/htmlTemplates.js' ],
+        dest: 'client/dist/js/app.min.js'
       }
     },
     sass: {
       dist: {
         files: {
-          'client/css/app.css': 'client/css/app.scss'
+          'client/dist/css/app.css': 'client/dev/css/app.scss'
         }
       },
       options: {
@@ -98,9 +97,9 @@ module.exports = function(grunt) {
     },
     ngtemplates: {
       'clickApp.services': {
-        cwd:      'client',
+        cwd:      'client/dev/',
         src:      'partials/**/*.html',
-        dest:     'client/js/services/htmlTemplates.js',
+        dest:     'client/dist/js/htmlTemplates.js',
         options: {
           htmlmin: {
             collapseBooleanAttributes:      true,
@@ -122,13 +121,13 @@ module.exports = function(grunt) {
           specs: spec_js_src,
           helpers: spec_js_helpers,
           vendor: [
-              'client/lib/babel-polyfill/browser-polyfill.js',
-              'client/lib/ramda/dist/ramda.js',
-              'client/lib/underscore.string/dist/underscore.string.js',
-              'client/lib/angular/angular.js',
-              'client/lib/angular-ui-router/release/angular-ui-router.min.js',
-              'client/lib/angular-mocks/angular-mocks.js',
-              'client/lib/mousetrap/mousetrap.js',
+              'client/dev/lib/babel-polyfill/browser-polyfill.js',
+              'client/dev/lib/ramda/dist/ramda.js',
+              'client/dev/lib/underscore.string/dist/underscore.string.js',
+              'client/dev/lib/angular/angular.js',
+              'client/dev/lib/angular-ui-router/release/angular-ui-router.min.js',
+              'client/dev/lib/angular-mocks/angular-mocks.js',
+              'client/dev/lib/mousetrap/mousetrap.js',
           ],
           outfile: 'spec/client/SpecRunner.html',
           keepRunner: true
@@ -137,21 +136,21 @@ module.exports = function(grunt) {
     },
     watch: {
       app_src: {
-        files: [ 'client/es6/**/*.js' ],
+        files: [ 'client/dev/es6/**/*.js' ],
         tasks: [ 'eslint:app_src', 'babel:app_src', 'uglify:app_src' ],
         options: {
           spawn: true
         }
       },
       spec_src: {
-        files: [ 'client/es6/**/*.js', 'spec/client/es6/**/*.js' ],
+        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
         tasks: [ 'eslint', 'babel', 'jasmine:spec' ],
         options: {
           spawn: true
         }
       },
       eslint: {
-        files: [ 'client/es6/**/*.js', 'spec/client/es6/**/*.js' ],
+        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
         tasks: [ 'eslint' ],
         options: {
           spawn: true

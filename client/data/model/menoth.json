@@ -1,13 +1,13 @@
 {
   "name" : "Menoth",
   "color" : "#ecc76d",
-  "icon": "data/icons/menoth_50.png",
+  "icon": "/data/icons/menoth_50.png",
   "wreck": {
-    "medium": { "link": "data/model/menoth/jacks/LightWreck.png" },
-    "large": { "link": "data/model/menoth/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/model/menoth/jacks/LightWreck.png" },
+    "large": { "link": "/data/model/menoth/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/model/menoth/jacks/ColossalWreck.png" }
+              "link": "/data/model/menoth/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {
@@ -19,7 +19,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Amon1.png"
+            "link": "/data/model/menoth/casters/Amon1.png"
           }
         ],
         "damage": {
@@ -43,7 +43,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Feora1.png"
+            "link": "/data/model/menoth/casters/Feora1.png"
           }
         ],
         "damage": {
@@ -58,7 +58,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Feora2.png"
+            "link": "/data/model/menoth/casters/Feora2.png"
           }
         ],
         "damage": {
@@ -73,7 +73,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/casters/Harbinger1.png"
+            "link": "/data/model/menoth/casters/Harbinger1.png"
           }
         ],
         "damage": {
@@ -88,7 +88,7 @@
         "base": "small",
         "img":[
           {
-            "link": "data/model/menoth/casters/Reclaimer1.png"
+            "link": "/data/model/menoth/casters/Reclaimer1.png"
           }
         ],
         "damage": {
@@ -103,7 +103,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Testament1.png"
+            "link": "/data/model/menoth/casters/Testament1.png"
           }
         ],
         "damage": {
@@ -118,7 +118,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/casters/Reznik1.png"
+            "link": "/data/model/menoth/casters/Reznik1.png"
           }
         ],
         "damage": {
@@ -135,7 +135,7 @@
           {
             "width": 70,
             "height": 70,
-            "link": "data/model/menoth/casters/Reznik2.png"
+            "link": "/data/model/menoth/casters/Reznik2.png"
           }
         ],
         "damage": {
@@ -150,7 +150,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Kreoss1.png"
+            "link": "/data/model/menoth/casters/Kreoss1.png"
           }
         ],
         "damage": {
@@ -165,7 +165,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Kreoss2.png"
+            "link": "/data/model/menoth/casters/Kreoss2.png"
           }
         ],
         "damage": {
@@ -180,7 +180,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/casters/Kreoss3.png"
+            "link": "/data/model/menoth/casters/Kreoss3.png"
           }
         ],
         "damage": {
@@ -195,7 +195,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Severius1.png"
+            "link": "/data/model/menoth/casters/Severius1.png"
           }
         ],
         "damage": {
@@ -210,7 +210,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Severius2.png"
+            "link": "/data/model/menoth/casters/Severius2.png"
           }
         ],
         "damage": {
@@ -225,7 +225,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Thyra1.png"
+            "link": "/data/model/menoth/casters/Thyra1.png"
           }
         ],
         "damage": {
@@ -240,7 +240,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/casters/Vindictus1.png"
+            "link": "/data/model/menoth/casters/Vindictus1.png"
           }
         ],
         "damage": {
@@ -255,7 +255,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Avatar.png"
+            "link": "/data/model/menoth/jacks/Avatar.png"
           }
         ],
         "damage": {
@@ -274,7 +274,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/BlessingOfVengeance.png"
+            "link": "/data/model/menoth/jacks/BlessingOfVengeance.png"
           }
         ],
         "damage": {
@@ -293,7 +293,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/BloodOfMartyrs.png"
+            "link": "/data/model/menoth/jacks/BloodOfMartyrs.png"
           }
         ],
         "damage": {
@@ -312,7 +312,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Castigator.png"
+            "link": "/data/model/menoth/jacks/Castigator.png"
           }
         ],
         "damage": {
@@ -331,7 +331,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Crusader.png"
+            "link": "/data/model/menoth/jacks/Crusader.png"
           }
         ],
         "damage": {
@@ -350,7 +350,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Dervish.png"
+            "link": "/data/model/menoth/jacks/Dervish.png"
           }
         ],
         "damage": {
@@ -369,7 +369,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Devout.png"
+            "link": "/data/model/menoth/jacks/Devout.png"
           }
         ],
         "damage": {
@@ -388,7 +388,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/FireOfSalvation.png"
+            "link": "/data/model/menoth/jacks/FireOfSalvation.png"
           }
         ],
         "damage": {
@@ -407,7 +407,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Guardian.png"
+            "link": "/data/model/menoth/jacks/Guardian.png"
           }
         ],
         "damage": {
@@ -456,7 +456,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/menoth/jacks/Judicator.png"
+            "link": "/data/model/menoth/jacks/Judicator.png"
           }
         ],
         "damage": {
@@ -495,7 +495,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Reckoner.png"
+            "link": "/data/model/menoth/jacks/Reckoner.png"
           }
         ],
         "damage": {
@@ -514,7 +514,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Redeemer.png"
+            "link": "/data/model/menoth/jacks/Redeemer.png"
           }
         ],
         "damage": {
@@ -533,7 +533,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Repenter.png"
+            "link": "/data/model/menoth/jacks/Repenter.png"
           }
         ],
         "damage": {
@@ -572,7 +572,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Revenger.png"
+            "link": "/data/model/menoth/jacks/Revenger.png"
           }
         ],
         "damage": {
@@ -591,7 +591,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Sanctifier.png"
+            "link": "/data/model/menoth/jacks/Sanctifier.png"
           }
         ],
         "damage": {
@@ -610,7 +610,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/ScourgeOfHeresy.png"
+            "link": "/data/model/menoth/jacks/ScourgeOfHeresy.png"
           }
         ],
         "damage": {
@@ -629,7 +629,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Templar.png"
+            "link": "/data/model/menoth/jacks/Templar.png"
           }
         ],
         "damage": {
@@ -648,7 +648,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Vigilant.png"
+            "link": "/data/model/menoth/jacks/Vigilant.png"
           }
         ],
         "damage": {
@@ -667,7 +667,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/jacks/Vanquisher.png"
+            "link": "/data/model/menoth/jacks/Vanquisher.png"
           }
         ],
         "damage": {
@@ -693,7 +693,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Bastions_Grunt.png"
+                  "link": "/data/model/menoth/units/Bastions_Grunt.png"
                 }
               ],
               "damage": {
@@ -714,11 +714,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Choir_Grunt.png"
+                  "link": "/data/model/menoth/units/Choir_Grunt.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/menoth/units/Choir_Priest.png"
+                  "link": "/data/model/menoth/units/Choir_Priest.png"
                 }
               ]
             }
@@ -736,7 +736,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Cinerator_Grunt.png"
+                  "link": "/data/model/menoth/units/Cinerator_Grunt.png"
                 }
               ],
               "damage": {
@@ -757,7 +757,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Cleanser_Grunt.png"
+                  "link": "/data/model/menoth/units/Cleanser_Grunt.png"
                 }
               ]
             }
@@ -770,7 +770,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Cleanser_Officer.png"
+                  "link": "/data/model/menoth/units/Cleanser_Officer.png"
                 }
               ],
               "damage": {
@@ -792,7 +792,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Daughters_Grunt.png"
+                  "link": "/data/model/menoth/units/Daughters_Grunt.png"
                 }
               ]
             }
@@ -810,7 +810,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Deliverer_Grunt.png"
+                  "link": "/data/model/menoth/units/Deliverer_Grunt.png"
                 }
               ]
             }
@@ -827,7 +827,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/SunburstCrew1.png"
+                  "link": "/data/model/menoth/units/SunburstCrew1.png"
                 }
               ]
             },
@@ -837,7 +837,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/SunburstCrew2.png"
+                  "link": "/data/model/menoth/units/SunburstCrew2.png"
                 }
               ]
             },
@@ -847,7 +847,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Sunburst.png"
+                  "link": "/data/model/menoth/units/Sunburst.png"
                 }
               ]
             }
@@ -865,7 +865,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Errant_Grunt.png"
+                  "link": "/data/model/menoth/units/Errant_Grunt.png"
                 }
               ]
             }
@@ -878,7 +878,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Errant_Officer.png"
+                  "link": "/data/model/menoth/units/Errant_Officer.png"
                 }
               ],
               "damage": {
@@ -892,7 +892,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Errant_StandardBearer.png"
+                  "link": "/data/model/menoth/units/Errant_StandardBearer.png"
                 }
               ]
             }
@@ -926,7 +926,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Idrians_Grunt.png"
+                  "link": "/data/model/menoth/units/Idrians_Grunt.png"
                 }
               ]
             }
@@ -939,7 +939,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Idrians_Chieftain.png"
+                  "link": "/data/model/menoth/units/Idrians_Chieftain.png"
                 }
               ],
               "damage": {
@@ -953,7 +953,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Idrians_Guide.png"
+                  "link": "/data/model/menoth/units/Idrians_Guide.png"
                 }
               ],
               "damage": {
@@ -974,7 +974,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Knights_Grunt.png"
+                  "link": "/data/model/menoth/units/Knights_Grunt.png"
                 }
               ]
             }
@@ -992,7 +992,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/TempleFlameguard_Grunt.png"
+                  "link": "/data/model/menoth/units/TempleFlameguard_Grunt.png"
                 }
               ]
             }
@@ -1005,7 +1005,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/TempleFlameguard_Officer.png"
+                  "link": "/data/model/menoth/units/TempleFlameguard_Officer.png"
                 }
               ],
               "damage": {
@@ -1019,7 +1019,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/TempleFlameguard_StandardBearer.png"
+                  "link": "/data/model/menoth/units/TempleFlameguard_StandardBearer.png"
                 }
               ]
             }
@@ -1037,7 +1037,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Vengers_Grunt.png"
+                  "link": "/data/model/menoth/units/Vengers_Grunt.png"
                 }
               ],
               "damage": {
@@ -1057,7 +1057,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Visigoth_Rhoven.png"
+                  "link": "/data/model/menoth/units/Visigoth_Rhoven.png"
                 }
               ],
               "damage": {
@@ -1070,7 +1070,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Visigoth_Guis.png"
+                  "link": "/data/model/menoth/units/Visigoth_Guis.png"
                 }
               ],
               "damage": {
@@ -1083,7 +1083,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Visigoth_Cassian.png"
+                  "link": "/data/model/menoth/units/Visigoth_Cassian.png"
                 }
               ],
               "damage": {
@@ -1104,7 +1104,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Zealots_Grunt.png"
+                  "link": "/data/model/menoth/units/Zealots_Grunt.png"
                 }
               ]
             }
@@ -1117,7 +1117,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/menoth/units/Zealots_Monolith.png"
+                  "link": "/data/model/menoth/units/Zealots_Monolith.png"
                 }
               ],
               "damage": {
@@ -1135,7 +1135,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/units/AttendantPriest.png"
+            "link": "/data/model/menoth/units/AttendantPriest.png"
           }
         ],
         "damage": {
@@ -1148,7 +1148,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Allegiant.png"
+            "link": "/data/model/menoth/solos/Allegiant.png"
           }
         ],
         "damage": {
@@ -1161,7 +1161,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/solos/BastionSeneschal.png"
+            "link": "/data/model/menoth/solos/BastionSeneschal.png"
           }
         ],
         "damage": {
@@ -1174,7 +1174,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/solos/Covenant.png"
+            "link": "/data/model/menoth/solos/Covenant.png"
           }
         ],
         "damage": {
@@ -1187,7 +1187,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/ErrantSeneschal.png"
+            "link": "/data/model/menoth/solos/ErrantSeneschal.png"
           }
         ],
         "damage": {
@@ -1200,7 +1200,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/menoth/solos/Gravus.png"
+            "link": "/data/model/menoth/solos/Gravus.png"
           }
         ],
         "damage": {
@@ -1214,7 +1214,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/GravusDismount.png"
+            "link": "/data/model/menoth/solos/GravusDismount.png"
           }
         ],
         "damage": {
@@ -1227,7 +1227,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Hierophant.png"
+            "link": "/data/model/menoth/solos/Hierophant.png"
           }
         ],
         "damage": {
@@ -1240,7 +1240,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/KnightSeneschal.png"
+            "link": "/data/model/menoth/solos/KnightSeneschal.png"
           }
         ],
         "damage": {
@@ -1253,7 +1253,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Nicia.png"
+            "link": "/data/model/menoth/solos/Nicia.png"
           }
         ],
         "damage": {
@@ -1266,7 +1266,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Paladin.png"
+            "link": "/data/model/menoth/solos/Paladin.png"
           }
         ],
         "damage": {
@@ -1287,7 +1287,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Reclaimer.png"
+            "link": "/data/model/menoth/solos/Reclaimer.png"
           }
         ],
         "damage": {
@@ -1309,7 +1309,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Mechanik.png"
+            "link": "/data/model/menoth/solos/Mechanik.png"
           }
         ],
         "damage": {
@@ -1322,7 +1322,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Vassal.png"
+            "link": "/data/model/menoth/solos/Vassal.png"
           }
         ],
         "damage": {
@@ -1335,7 +1335,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/menoth/solos/Vilmon.png"
+            "link": "/data/model/menoth/solos/Vilmon.png"
           }
         ],
         "damage": {
@@ -1349,7 +1349,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/menoth/solos/Wrack.png"
+            "link": "/data/model/menoth/solos/Wrack.png"
           }
         ]
       }
@@ -1363,7 +1363,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/menoth/bes/VesselOfJudgement.png"
+            "link": "/data/model/menoth/bes/VesselOfJudgement.png"
           }
         ],
         "damage": {

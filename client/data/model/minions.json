@@ -1,7 +1,7 @@
 {
   "name": "Minions",
   "color": "#889751",
-  "icon": "data/icons/minions_50.png",
+  "icon": "/data/icons/minions_50.png",
   "models": {
     "locks": {
       "Arkadius1": {
@@ -12,7 +12,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Arkadius1.png"
+            "link": "/data/model/minions/warlocks/Arkadius1.png"
           }
         ],
         "damage": {
@@ -27,7 +27,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Barnabas1.png"
+            "link": "/data/model/minions/warlocks/Barnabas1.png"
           }
         ],
         "damage": {
@@ -42,7 +42,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Calaban1.png"
+            "link": "/data/model/minions/warlocks/Calaban1.png"
           }
         ],
         "damage": {
@@ -67,7 +67,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Carver1.png"
+            "link": "/data/model/minions/warlocks/Carver1.png"
           }
         ],
         "damage": {
@@ -92,7 +92,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Maelok1.png"
+            "link": "/data/model/minions/warlocks/Maelok1.png"
           }
         ],
         "damage": {
@@ -107,7 +107,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Midas1.png"
+            "link": "/data/model/minions/warlocks/Midas1.png"
           }
         ],
         "damage": {
@@ -122,7 +122,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/warlocks/Rask1.png"
+            "link": "/data/model/minions/warlocks/Rask1.png"
           }
         ],
         "damage": {
@@ -137,7 +137,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/warlocks/SturmDrang1.png"
+            "link": "/data/model/minions/warlocks/SturmDrang1.png"
           }
         ],
         "damage": {
@@ -168,7 +168,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/minions/beasts/BlackhideWrastler.png"
+            "link": "/data/model/minions/beasts/BlackhideWrastler.png"
           }
         ],
         "damage": {
@@ -203,7 +203,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/beasts/Boneswarm.png"
+            "link": "/data/model/minions/beasts/Boneswarm.png"
           }
         ],
         "damage": {
@@ -223,7 +223,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/beasts/BullSnapper.png"
+            "link": "/data/model/minions/beasts/BullSnapper.png"
           }
         ],
         "damage": {
@@ -243,7 +243,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/beasts/GunBoar.png"
+            "link": "/data/model/minions/beasts/GunBoar.png"
           }
         ],
         "damage": {
@@ -263,7 +263,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/minions/beasts/IronbackSpitter.png"
+            "link": "/data/model/minions/beasts/IronbackSpitter.png"
           }
         ],
         "damage": {
@@ -283,7 +283,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/beasts/Razorboar.png"
+            "link": "/data/model/minions/beasts/Razorboar.png"
           }
         ],
         "damage": {
@@ -303,7 +303,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/minions/beasts/RoadHog.png"
+            "link": "/data/model/minions/beasts/RoadHog.png"
           }
         ],
         "damage": {
@@ -338,7 +338,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/minions/beasts/SwampHorror.png"
+            "link": "/data/model/minions/beasts/SwampHorror.png"
           }
         ],
         "damage": {
@@ -358,7 +358,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/minions/beasts/WarHog.png"
+            "link": "/data/model/minions/beasts/WarHog.png"
           }
         ],
         "damage": {
@@ -384,11 +384,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/Bogtrog_grunt.png"
+                  "link": "/data/model/minions/units/Bogtrog_grunt.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/minions/units/Bogtrog_Leader.png"
+                  "link": "/data/model/minions/units/Bogtrog_Leader.png"
                 }
               ]
             }
@@ -406,7 +406,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/BogTrog_Shambler.png"
+                  "link": "/data/model/minions/units/BogTrog_Shambler.png"
                 }
               ]
             },
@@ -416,7 +416,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/minions/units/BogTrog_Gator.png"
+                  "link": "/data/model/minions/units/BogTrog_Gator.png"
                 }
               ],
               "damage": {
@@ -450,11 +450,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/Bonegrinder_grunt.png"
+                  "link": "/data/model/minions/units/Bonegrinder_grunt.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/minions/units/Bonegrinder_Gatherer.png"
+                  "link": "/data/model/minions/units/Bonegrinder_Gatherer.png"
                 }
               ]
             }
@@ -472,11 +472,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/Brigand_grunt.png"
+                  "link": "/data/model/minions/units/Brigand_grunt.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/minions/units/Brigand_Shaman.png"
+                  "link": "/data/model/minions/units/Brigand_Shaman.png"
                 }
               ]
             }
@@ -505,7 +505,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/Slaughter_grunt.png"
+                  "link": "/data/model/minions/units/Slaughter_grunt.png"
                 }
               ]
             }
@@ -523,11 +523,11 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/minions/units/Gatormen_grunt.png"
+                  "link": "/data/model/minions/units/Gatormen_grunt.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/minions/units/Gatormen_Leader.png"
+                  "link": "/data/model/minions/units/Gatormen_Leader.png"
                 }
               ],
               "damage": {
@@ -570,7 +570,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/Razorback_grunt.png"
+                  "link": "/data/model/minions/units/Razorback_grunt.png"
                 }
               ]
             },
@@ -580,7 +580,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/minions/units/RazorbackGunner.png"
+                  "link": "/data/model/minions/units/RazorbackGunner.png"
                 }
               ]
             }
@@ -597,7 +597,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/SwampGobber_grunt.png"
+                  "link": "/data/model/minions/units/SwampGobber_grunt.png"
                 }
               ]
             },
@@ -607,7 +607,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/units/SwampGobber_Gunner.png"
+                  "link": "/data/model/minions/units/SwampGobber_Gunner.png"
                 }
               ]
             }
@@ -622,7 +622,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Alten_Ashley.png"
+            "link": "/data/model/minions/solos/Alten_Ashley.png"
           }
         ],
         "damage": {
@@ -640,7 +640,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Brun.png"
+                  "link": "/data/model/minions/solos/Brun.png"
                 }
               ],
               "damage": {
@@ -656,7 +656,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Lug.png"
+                  "link": "/data/model/minions/solos/Lug.png"
                 }
               ],
               "damage": {
@@ -678,7 +678,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/CroakHunter.png"
+            "link": "/data/model/minions/solos/CroakHunter.png"
           }
         ],
         "damage": {
@@ -696,7 +696,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Dahlia.png"
+                  "link": "/data/model/minions/solos/Dahlia.png"
                 }
               ],
               "damage": {
@@ -712,7 +712,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Skarath.png"
+                  "link": "/data/model/minions/solos/Skarath.png"
                 }
               ],
               "damage": {
@@ -743,7 +743,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Feralgeist.png"
+            "link": "/data/model/minions/solos/Feralgeist.png"
           }
         ]
       },
@@ -753,7 +753,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/solos/Tinker.png"
+            "link": "/data/model/minions/solos/Tinker.png"
           }
         ],
         "damage": {
@@ -774,7 +774,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/solos/Gudrun.png"
+            "link": "/data/model/minions/solos/Gudrun.png"
           }
         ],
         "damage": {
@@ -795,7 +795,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Lanyssa.png"
+            "link": "/data/model/minions/solos/Lanyssa.png"
           }
         ],
         "damage": {
@@ -817,7 +817,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Pendrake.png"
+            "link": "/data/model/minions/solos/Pendrake.png"
           }
         ],
         "damage": {
@@ -835,7 +835,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Rorsh.png"
+                  "link": "/data/model/minions/solos/Rorsh.png"
                 }
               ],
               "damage": {
@@ -851,7 +851,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Brine.png"
+                  "link": "/data/model/minions/solos/Brine.png"
                 }
               ],
               "damage": {
@@ -873,7 +873,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Saxon.png"
+            "link": "/data/model/minions/solos/Saxon.png"
           }
         ],
         "damage": {
@@ -886,7 +886,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/minions/solos/Targ.png"
+            "link": "/data/model/minions/solos/Targ.png"
           }
         ],
         "damage": {
@@ -899,7 +899,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/solos/Thrullg.png"
+            "link": "/data/model/minions/solos/Thrullg.png"
           }
         ],
         "damage": {
@@ -912,7 +912,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/solos/Totem_Hunter.png"
+            "link": "/data/model/minions/solos/Totem_Hunter.png"
           }
         ],
         "damage": {
@@ -930,7 +930,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Wrong_Eye.png"
+                  "link": "/data/model/minions/solos/Wrong_Eye.png"
                 }
               ],
               "damage": {
@@ -946,7 +946,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/minions/solos/Snapjaw.png"
+                  "link": "/data/model/minions/solos/Snapjaw.png"
                 }
               ],
               "damage": {
@@ -968,7 +968,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/minions/solos/WitchDoctor.png"
+            "link": "/data/model/minions/solos/WitchDoctor.png"
           }
         ],
         "damage": {

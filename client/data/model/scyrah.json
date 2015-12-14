@@ -1,13 +1,13 @@
 {
   "name": "Retribution of Scyrah",
   "color": "#85d1bd",
-  "icon": "data/icons/scyrah_50.png",
+  "icon": "/data/icons/scyrah_50.png",
   "wreck": {
-    "medium": { "link": "data/model/scyrah/jacks/LightWreck.png" },
-    "large": { "link": "data/model/scyrah/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/model/scyrah/jacks/LightWreck.png" },
+    "large": { "link": "/data/model/scyrah/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/model/scyrah/jacks/ColossalWreck.png" }
+              "link": "/data/model/scyrah/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {
@@ -19,7 +19,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Garryth1.png"
+            "link": "/data/model/scyrah/casters/Garryth1.png"
           }
         ],
         "damage": {
@@ -34,7 +34,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Issyria1.png"
+            "link": "/data/model/scyrah/casters/Issyria1.png"
           }
         ],
         "damage": {
@@ -49,7 +49,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Kaelyssa1.png"
+            "link": "/data/model/scyrah/casters/Kaelyssa1.png"
           }
         ],
         "damage": {
@@ -64,7 +64,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Ossyan1.png"
+            "link": "/data/model/scyrah/casters/Ossyan1.png"
           }
         ],
         "damage": {
@@ -79,7 +79,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Rahn1.png"
+            "link": "/data/model/scyrah/casters/Rahn1.png"
           }
         ],
         "damage": {
@@ -94,7 +94,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Ravyn1.png"
+            "link": "/data/model/scyrah/casters/Ravyn1.png"
           }
         ],
         "damage": {
@@ -119,7 +119,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/casters/Vyros1.png"
+            "link": "/data/model/scyrah/casters/Vyros1.png"
           }
         ],
         "damage": {
@@ -137,7 +137,7 @@
         "img": {
           "x": 0,
           "y": 0,
-          "link": "data/model/scyrah/casters/Vyros2.png"
+          "link": "/data/model/scyrah/casters/Vyros2.png"
         },
         "damage": {
           "type": "warrior",
@@ -152,7 +152,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Aspis.png"
+            "link": "/data/model/scyrah/jacks/Aspis.png"
           }
         ],
         "damage": {
@@ -172,7 +172,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Banshee.png"
+            "link": "/data/model/scyrah/jacks/Banshee.png"
           }
         ],
         "damage": {
@@ -191,7 +191,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Chimera.png"
+            "link": "/data/model/scyrah/jacks/Chimera.png"
           }
         ],
         "damage": {
@@ -211,7 +211,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Daemon.png"
+            "link": "/data/model/scyrah/jacks/Daemon.png"
           }
         ],
         "damage": {
@@ -230,7 +230,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Discordia.png"
+            "link": "/data/model/scyrah/jacks/Discordia.png"
           }
         ],
         "damage": {
@@ -250,7 +250,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Gorgon.png"
+            "link": "/data/model/scyrah/jacks/Gorgon.png"
           }
         ],
         "damage": {
@@ -270,7 +270,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Griffon.png"
+            "link": "/data/model/scyrah/jacks/Griffon.png"
           }
         ],
         "damage": {
@@ -313,7 +313,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/scyrah/jacks/Hyperion.png"
+            "link": "/data/model/scyrah/jacks/Hyperion.png"
           }
         ],
         "damage": {
@@ -339,7 +339,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Hypnos.png"
+            "link": "/data/model/scyrah/jacks/Hypnos.png"
           }
         ],
         "damage": {
@@ -358,7 +358,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Imperatus.png"
+            "link": "/data/model/scyrah/jacks/Imperatus.png"
           }
         ],
         "damage": {
@@ -378,7 +378,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Manticore.png"
+            "link": "/data/model/scyrah/jacks/Manticore.png"
           }
         ],
         "damage": {
@@ -413,7 +413,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Phoenix.png"
+            "link": "/data/model/scyrah/jacks/Phoenix.png"
           }
         ],
         "damage": {
@@ -433,7 +433,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/jacks/Sphinx.png"
+            "link": "/data/model/scyrah/jacks/Sphinx.png"
           }
         ],
         "damage": {
@@ -459,7 +459,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Battlemage.png"
+                  "link": "/data/model/scyrah/units/Battlemage.png"
                 }
               ]
             }
@@ -477,7 +477,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Destor.png"
+                  "link": "/data/model/scyrah/units/Destor.png"
                 }
               ],
               "damage": {
@@ -511,7 +511,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Halberdier.png"
+                  "link": "/data/model/scyrah/units/Halberdier.png"
                 }
               ]
             }
@@ -524,7 +524,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/HalberdierOfficer.png"
+                  "link": "/data/model/scyrah/units/HalberdierOfficer.png"
                 }
               ],
               "damage": {
@@ -538,7 +538,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/HalberdierStandard.png"
+                  "link": "/data/model/scyrah/units/HalberdierStandard.png"
                 }
               ]
             }
@@ -556,7 +556,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/MagehunterInfiltrators.png"
+                  "link": "/data/model/scyrah/units/MagehunterInfiltrators.png"
                 }
               ]
             }
@@ -574,7 +574,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Invictor.png"
+                  "link": "/data/model/scyrah/units/Invictor.png"
                 }
               ]
             }
@@ -587,7 +587,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/InvictorOfficer.png"
+                  "link": "/data/model/scyrah/units/InvictorOfficer.png"
                 }
               ],
               "damage": {
@@ -601,7 +601,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/InvictorStandard.png"
+                  "link": "/data/model/scyrah/units/InvictorStandard.png"
                 }
               ]
             }
@@ -619,7 +619,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Riflemen.png"
+                  "link": "/data/model/scyrah/units/Riflemen.png"
                 }
               ]
             }
@@ -632,7 +632,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/RiflemenOfficer.png"
+                  "link": "/data/model/scyrah/units/RiflemenOfficer.png"
                 }
               ],
               "damage": {
@@ -646,7 +646,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/RiflemenStandard.png"
+                  "link": "/data/model/scyrah/units/RiflemenStandard.png"
                 }
               ]
             }
@@ -663,7 +663,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/HeavyRifleCrew.png"
+                  "link": "/data/model/scyrah/units/HeavyRifleCrew.png"
                 }
               ]
             },
@@ -673,7 +673,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/HeavyRifle.png"
+                  "link": "/data/model/scyrah/units/HeavyRifle.png"
                 }
               ]
             }
@@ -691,7 +691,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/Sentinal.png"
+                  "link": "/data/model/scyrah/units/Sentinal.png"
                 }
               ]
             }
@@ -704,7 +704,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/SentinalOfficer.png"
+                  "link": "/data/model/scyrah/units/SentinalOfficer.png"
                 }
               ],
               "damage": {
@@ -718,7 +718,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/SentinalStandard.png"
+                  "link": "/data/model/scyrah/units/SentinalStandard.png"
                 }
               ]
             }
@@ -736,7 +736,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/StarfallArcher.png"
+                  "link": "/data/model/scyrah/units/StarfallArcher.png"
                 }
               ]
             }
@@ -754,10 +754,10 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/MageHunter.png"
+                  "link": "/data/model/scyrah/units/MageHunter.png"
                 },
                 {
-                  "link": "data/model/scyrah/units/MageHunterGirl.png"
+                  "link": "/data/model/scyrah/units/MageHunterGirl.png"
                 }
               ]
             }
@@ -770,7 +770,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/scyrah/units/MageHunterCommander.png"
+                  "link": "/data/model/scyrah/units/MageHunterCommander.png"
                 }
               ],
               "damage": {
@@ -788,7 +788,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/units/SoullessEscort.png"
+            "link": "/data/model/scyrah/units/SoullessEscort.png"
           }
         ]
       },
@@ -798,7 +798,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Arcanist.png"
+            "link": "/data/model/scyrah/solos/Arcanist.png"
           }
         ]
       },
@@ -808,7 +808,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Artificer.png"
+            "link": "/data/model/scyrah/solos/Artificer.png"
           }
         ],
         "damage": {
@@ -821,7 +821,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Scyir.png"
+            "link": "/data/model/scyrah/solos/Scyir.png"
           }
         ],
         "damage": {
@@ -834,7 +834,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/solos/DestorThane.png"
+            "link": "/data/model/scyrah/solos/DestorThane.png"
           }
         ],
         "damage": {
@@ -847,7 +847,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Eiryss1.png"
+            "link": "/data/model/scyrah/solos/Eiryss1.png"
           }
         ],
         "damage": {
@@ -860,7 +860,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Eiryss2.png"
+            "link": "/data/model/scyrah/solos/Eiryss2.png"
           }
         ],
         "damage": {
@@ -890,7 +890,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/GhostSniper.png"
+            "link": "/data/model/scyrah/solos/GhostSniper.png"
           }
         ],
         "damage": {
@@ -903,7 +903,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/MageHunterAssassin.png"
+            "link": "/data/model/scyrah/solos/MageHunterAssassin.png"
           }
         ],
         "damage": {
@@ -916,7 +916,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Magister.png"
+            "link": "/data/model/scyrah/solos/Magister.png"
           }
         ],
         "damage": {
@@ -929,7 +929,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Narn.png"
+            "link": "/data/model/scyrah/solos/Narn.png"
           }
         ],
         "damage": {
@@ -942,7 +942,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/Nayl.png"
+            "link": "/data/model/scyrah/solos/Nayl.png"
           }
         ],
         "damage": {
@@ -955,7 +955,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/scyrah/solos/FaneKnight.png"
+            "link": "/data/model/scyrah/solos/FaneKnight.png"
           }
         ],
         "damage": {
@@ -969,7 +969,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/FaneKnightDismount.png"
+            "link": "/data/model/scyrah/solos/FaneKnightDismount.png"
           }
         ],
         "damage": {
@@ -982,7 +982,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/scyrah/solos/SylysWyshnaylrr.png"
+            "link": "/data/model/scyrah/solos/SylysWyshnaylrr.png"
           }
         ],
         "damage": {
@@ -1014,7 +1014,7 @@
         "img": {
           "x": 0,
           "y": 0,
-          "link": "data/model/scyrah/bes/ArcantrikForceGenerator.png"
+          "link": "/data/model/scyrah/bes/ArcantrikForceGenerator.png"
         },
         "damage": {
           "type": "warrior",

@@ -1,7 +1,7 @@
 {
   "name": "Trollblood",
   "color": "#81beaa",
-  "icon": "data/icons/troll_50.png",
+  "icon": "/data/icons/troll_50.png",
   "models": {
     "locks": {
       "borka1": {
@@ -15,7 +15,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/locks/Borka1.png"
+                  "link": "/data/model/trollblood/locks/Borka1.png"
                 }
               ],
               "damage": {
@@ -30,7 +30,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/trollblood/solos/Pig_Keg_Carrier.png"
+                  "link": "/data/model/trollblood/solos/Pig_Keg_Carrier.png"
                 }
               ],
               "damage": {
@@ -48,7 +48,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Borka2.png"
+            "link": "/data/model/trollblood/locks/Borka2.png"
           }
         ],
         "damage": {
@@ -63,7 +63,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Calandra1.png"
+            "link": "/data/model/trollblood/locks/Calandra1.png"
           }
         ],
         "damage": {
@@ -78,7 +78,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Grim1.png"
+            "link": "/data/model/trollblood/locks/Grim1.png"
           }
         ],
         "damage": {
@@ -97,7 +97,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/locks/Grim2.png"
+                  "link": "/data/model/trollblood/locks/Grim2.png"
                 }
               ],
               "damage": {
@@ -113,7 +113,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/trollblood/solos/Muggs.png"
+                  "link": "/data/model/trollblood/solos/Muggs.png"
                 }
               ],
               "damage": {
@@ -127,7 +127,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/trollblood/solos/Krump.png"
+                  "link": "/data/model/trollblood/solos/Krump.png"
                 }
               ],
               "damage": {
@@ -145,7 +145,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Grissel1.png"
+            "link": "/data/model/trollblood/locks/Grissel1.png"
           }
         ],
         "damage": {
@@ -160,7 +160,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Grissel2.png"
+            "link": "/data/model/trollblood/locks/Grissel2.png"
           }
         ],
         "damage": {
@@ -175,7 +175,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Gunnbjorn1.png"
+            "link": "/data/model/trollblood/locks/Gunnbjorn1.png"
           }
         ],
         "damage": {
@@ -190,7 +190,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Hoarluk1.png"
+            "link": "/data/model/trollblood/locks/Hoarluk1.png"
           }
         ],
         "damage": {
@@ -205,7 +205,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Hoarluk2.png"
+            "link": "/data/model/trollblood/locks/Hoarluk2.png"
           }
         ],
         "damage": {
@@ -248,7 +248,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Skuld1.png"
+            "link": "/data/model/trollblood/locks/Skuld1.png"
           }
         ],
         "damage": {
@@ -263,7 +263,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Madrak1.png"
+            "link": "/data/model/trollblood/locks/Madrak1.png"
           }
         ],
         "damage": {
@@ -278,7 +278,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/locks/Madrak2.png"
+            "link": "/data/model/trollblood/locks/Madrak2.png"
           }
         ],
         "damage": {
@@ -294,7 +294,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Blitzer.png"
+            "link": "/data/model/trollblood/beasts/Blitzer.png"
           }
         ],
         "damage": {
@@ -314,7 +314,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Bomber.png"
+            "link": "/data/model/trollblood/beasts/Bomber.png"
           }
         ],
         "damage": {
@@ -334,7 +334,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Mauler.png"
+            "link": "/data/model/trollblood/beasts/Mauler.png"
           }
         ],
         "damage": {
@@ -369,7 +369,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Earthborn.png"
+            "link": "/data/model/trollblood/beasts/Earthborn.png"
           }
         ],
         "damage": {
@@ -406,7 +406,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/trollblood/beasts/Mountain_King.png"
+            "link": "/data/model/trollblood/beasts/Mountain_King.png"
           }
         ],
         "damage": {
@@ -426,7 +426,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Mulg.png"
+            "link": "/data/model/trollblood/beasts/Mulg.png"
           }
         ],
         "damage": {
@@ -446,7 +446,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Night_Troll.png"
+            "link": "/data/model/trollblood/beasts/Night_Troll.png"
           }
         ],
         "damage": {
@@ -466,7 +466,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Pyre.png"
+            "link": "/data/model/trollblood/beasts/Pyre.png"
           }
         ],
         "damage": {
@@ -487,7 +487,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Rok.png"
+            "link": "/data/model/trollblood/beasts/Rok.png"
           }
         ],
         "damage": {
@@ -507,7 +507,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Slag.png"
+            "link": "/data/model/trollblood/beasts/Slag.png"
           }
         ],
         "damage": {
@@ -527,7 +527,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Stormtroll.png"
+            "link": "/data/model/trollblood/beasts/Stormtroll.png"
           }
         ],
         "damage": {
@@ -547,7 +547,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Swamp_Troll.png"
+            "link": "/data/model/trollblood/beasts/Swamp_Troll.png"
           }
         ],
         "damage": {
@@ -567,7 +567,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Axer.png"
+            "link": "/data/model/trollblood/beasts/Axer.png"
           }
         ],
         "damage": {
@@ -587,7 +587,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Bouncer.png"
+            "link": "/data/model/trollblood/beasts/Bouncer.png"
           }
         ],
         "damage": {
@@ -607,7 +607,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Impaler.png"
+            "link": "/data/model/trollblood/beasts/Impaler.png"
           }
         ],
         "damage": {
@@ -627,7 +627,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/beasts/Winter.png"
+            "link": "/data/model/trollblood/beasts/Winter.png"
           }
         ],
         "damage": {
@@ -666,7 +666,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Kriel_warrior.png"
+                  "link": "/data/model/trollblood/units/Kriel_warrior.png"
                 }
               ]
             }
@@ -680,7 +680,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Caber_Thrower.png"
+                  "link": "/data/model/trollblood/units/Caber_Thrower.png"
                 }
               ]
             }
@@ -693,7 +693,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Kriel_Piper.png"
+                  "link": "/data/model/trollblood/units/Kriel_Piper.png"
                 }
               ],
               "damage": {
@@ -707,7 +707,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Kriel_Standard_Bearer.png"
+                  "link": "/data/model/trollblood/units/Kriel_Standard_Bearer.png"
                 }
               ]
             }
@@ -729,7 +729,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Stone_Scribe.png"
+                  "link": "/data/model/trollblood/units/Stone_Scribe.png"
                 }
               ]
             },
@@ -743,7 +743,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Krielstone_Bearer.png"
+                  "link": "/data/model/trollblood/units/Krielstone_Bearer.png"
                 }
               ]
             }
@@ -756,7 +756,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Krielstone_Stone_Scribe_Elder.png"
+                  "link": "/data/model/trollblood/units/Krielstone_Stone_Scribe_Elder.png"
                 }
               ]
             }
@@ -774,7 +774,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Pyg_Burrowers.png"
+                  "link": "/data/model/trollblood/units/Pyg_Burrowers.png"
                 }
               ]
             }
@@ -829,7 +829,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Long_Rider.png"
+                  "link": "/data/model/trollblood/units/Long_Rider.png"
                 }
               ],
               "damage": {
@@ -850,7 +850,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Pyg_Bushwacker.png"
+                  "link": "/data/model/trollblood/units/Pyg_Bushwacker.png"
                 }
               ]
             }
@@ -885,7 +885,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Scattergunner.png"
+                  "link": "/data/model/trollblood/units/Scattergunner.png"
                 }
               ]
             }
@@ -898,7 +898,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Scattergunner_Officer.png"
+                  "link": "/data/model/trollblood/units/Scattergunner_Officer.png"
                 }
               ],
               "damage": {
@@ -912,7 +912,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Scattergunner_Standard.png"
+                  "link": "/data/model/trollblood/units/Scattergunner_Standard.png"
                 }
               ]
             }
@@ -929,7 +929,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Wrathar.png"
+                  "link": "/data/model/trollblood/units/Wrathar.png"
                 }
               ],
               "damage": {
@@ -942,7 +942,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Tor.png"
+                  "link": "/data/model/trollblood/units/Tor.png"
                 }
               ],
               "damage": {
@@ -955,7 +955,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Rhudd.png"
+                  "link": "/data/model/trollblood/units/Rhudd.png"
                 }
               ],
               "damage": {
@@ -975,7 +975,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Thumpercrew_thumper.png"
+                  "link": "/data/model/trollblood/units/Thumpercrew_thumper.png"
                 }
               ]
             },
@@ -985,7 +985,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Thumpercrew_Grunt.png"
+                  "link": "/data/model/trollblood/units/Thumpercrew_Grunt.png"
                 }
               ]
             },
@@ -995,7 +995,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Thumpercrew_Grunt.png"
+                  "link": "/data/model/trollblood/units/Thumpercrew_Grunt.png"
                 }
               ]
             }
@@ -1013,7 +1013,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Champion.png"
+                  "link": "/data/model/trollblood/units/Champion.png"
                 }
               ],
               "damage": {
@@ -1029,7 +1029,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Skaldi_Bonehammer.png"
+                  "link": "/data/model/trollblood/units/Skaldi_Bonehammer.png"
                 }
               ],
               "damage": {
@@ -1050,7 +1050,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Fennblade.png"
+                  "link": "/data/model/trollblood/units/Fennblade.png"
                 }
               ]
             }
@@ -1063,7 +1063,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Fennblade_Officer.png"
+                  "link": "/data/model/trollblood/units/Fennblade_Officer.png"
                 }
               ],
               "damage": {
@@ -1077,7 +1077,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Fennblade_Drummer.png"
+                  "link": "/data/model/trollblood/units/Fennblade_Drummer.png"
                 }
               ]
             }
@@ -1095,7 +1095,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Runeshaper.png"
+                  "link": "/data/model/trollblood/units/Runeshaper.png"
                 }
               ],
               "damage": {
@@ -1116,7 +1116,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Scout.png"
+                  "link": "/data/model/trollblood/units/Scout.png"
                 }
               ]
             }
@@ -1134,7 +1134,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Slugger.png"
+                  "link": "/data/model/trollblood/units/Slugger.png"
                 }
               ],
               "damage": {
@@ -1155,7 +1155,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/trollblood/units/Warder.png"
+                  "link": "/data/model/trollblood/units/Warder.png"
                 }
               ],
               "damage": {
@@ -1181,7 +1181,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Fellcaller.png"
+            "link": "/data/model/trollblood/solos/Fellcaller.png"
           }
         ],
         "damage": {
@@ -1194,7 +1194,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Fennblade_Kithkar.png"
+            "link": "/data/model/trollblood/solos/Fennblade_Kithkar.png"
           }
         ],
         "damage": {
@@ -1216,7 +1216,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Horthol.png"
+            "link": "/data/model/trollblood/solos/Horthol.png"
           }
         ],
         "damage": {
@@ -1230,7 +1230,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Horthol_Dismount.png"
+            "link": "/data/model/trollblood/solos/Horthol_Dismount.png"
           }
         ],
         "damage": {
@@ -1243,7 +1243,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Janissa_Stonetide.png"
+            "link": "/data/model/trollblood/solos/Janissa_Stonetide.png"
           }
         ],
         "damage": {
@@ -1256,7 +1256,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Stone_Scribe_Chronicler.png"
+            "link": "/data/model/trollblood/solos/Stone_Scribe_Chronicler.png"
           }
         ],
         "damage": {
@@ -1271,7 +1271,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Whelp.png"
+            "link": "/data/model/trollblood/solos/Whelp.png"
           }
         ]
       },
@@ -1281,7 +1281,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Skinner.png"
+            "link": "/data/model/trollblood/solos/Skinner.png"
           }
         ],
         "damage": {
@@ -1294,7 +1294,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Champion_Hero.png"
+            "link": "/data/model/trollblood/solos/Champion_Hero.png"
           }
         ],
         "damage": {
@@ -1307,7 +1307,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Trollkin_Sorcerer.png"
+            "link": "/data/model/trollblood/solos/Trollkin_Sorcerer.png"
           }
         ]
       },
@@ -1317,7 +1317,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/trollblood/solos/Trollkin_Runebearer.png"
+            "link": "/data/model/trollblood/solos/Trollkin_Runebearer.png"
           }
         ],
         "damage": {
@@ -1334,7 +1334,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/trollblood/bes/War_Wagon.png"
+            "link": "/data/model/trollblood/bes/War_Wagon.png"
           }
         ],
         "damage": {

@@ -1,4 +1,4 @@
 {
-  "directory": "client/lib/",
+  "directory": "client/dev/lib/",
   "strict-ssl": false
 }

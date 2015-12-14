@@ -1,13 +1,13 @@
 {
   "name": "Khador",
   "color": "#a94a4a",
-  "icon": "data/icons/khador_50.png",
+  "icon": "/data/icons/khador_50.png",
   "wreck": {
-    "medium": { "link": "data/model/khador/jacks/LightWreck.png" },
-    "large": { "link": "data/model/khador/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/model/khador/jacks/LightWreck.png" },
+    "large": { "link": "/data/model/khador/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/model/khador/jacks/ColossalWreck.png" }
+              "link": "/data/model/khador/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {
@@ -19,7 +19,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/khador/casters/Butcher1.png"
+            "link": "/data/model/khador/casters/Butcher1.png"
           }
         ],
         "damage": {
@@ -34,7 +34,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/khador/casters/Butcher2.png"
+            "link": "/data/model/khador/casters/Butcher2.png"
           }
         ],
         "damage": {
@@ -86,7 +86,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Harkevich1.png"
+            "link": "/data/model/khador/casters/Harkevich1.png"
           }
         ],
         "damage": {
@@ -101,7 +101,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Irusk1.png"
+            "link": "/data/model/khador/casters/Irusk1.png"
           }
         ],
         "damage": {
@@ -116,7 +116,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Irusk2.png"
+            "link": "/data/model/khador/casters/Irusk2.png"
           }
         ],
         "damage": {
@@ -131,7 +131,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/casters/Karchev1.png"
+            "link": "/data/model/khador/casters/Karchev1.png"
           }
         ],
         "damage": {
@@ -156,7 +156,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/casters/OldWitch1.png"
+                  "link": "/data/model/khador/casters/OldWitch1.png"
                 }
               ],
               "damage": {
@@ -172,7 +172,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/khador/jacks/Scrapjack.png"
+                  "link": "/data/model/khador/jacks/Scrapjack.png"
                 }
               ],
               "damage": {
@@ -196,7 +196,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Sorscha1.png"
+            "link": "/data/model/khador/casters/Sorscha1.png"
           }
         ],
         "damage": {
@@ -211,7 +211,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Sorscha2.png"
+            "link": "/data/model/khador/casters/Sorscha2.png"
           }
         ],
         "damage": {
@@ -226,7 +226,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Strakhov1.png"
+            "link": "/data/model/khador/casters/Strakhov1.png"
           }
         ],
         "damage": {
@@ -241,7 +241,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Vlad1.png"
+            "link": "/data/model/khador/casters/Vlad1.png"
           }
         ],
         "damage": {
@@ -256,7 +256,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Vlad2.png"
+            "link": "/data/model/khador/casters/Vlad2.png"
           }
         ],
         "damage": {
@@ -271,7 +271,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/casters/Vlad3.png"
+            "link": "/data/model/khador/casters/Vlad3.png"
           }
         ],
         "damage": {
@@ -286,7 +286,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/casters/Zerkova1.png"
+            "link": "/data/model/khador/casters/Zerkova1.png"
           }
         ],
         "damage": {
@@ -338,7 +338,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Beast.png"
+            "link": "/data/model/khador/jacks/Beast.png"
           }
         ],
         "damage": {
@@ -357,7 +357,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Behemoth.png"
+            "link": "/data/model/khador/jacks/Behemoth.png"
           }
         ],
         "damage": {
@@ -376,7 +376,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Berserker.png"
+            "link": "/data/model/khador/jacks/Berserker.png"
           }
         ],
         "damage": {
@@ -395,7 +395,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/BlackIvan.png"
+            "link": "/data/model/khador/jacks/BlackIvan.png"
           }
         ],
         "damage": {
@@ -416,7 +416,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/khador/jacks/Conquest.png"
+            "link": "/data/model/khador/jacks/Conquest.png"
           }
         ],
         "damage": {
@@ -441,7 +441,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Decimator.png"
+            "link": "/data/model/khador/jacks/Decimator.png"
           }
         ],
         "damage": {
@@ -460,7 +460,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Demolisher.png"
+            "link": "/data/model/khador/jacks/Demolisher.png"
           }
         ],
         "damage": {
@@ -479,7 +479,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Destroyer.png"
+            "link": "/data/model/khador/jacks/Destroyer.png"
           }
         ],
         "damage": {
@@ -498,7 +498,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Devastator.png"
+            "link": "/data/model/khador/jacks/Devastator.png"
           }
         ],
         "damage": {
@@ -517,7 +517,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Drago.png"
+            "link": "/data/model/khador/jacks/Drago.png"
           }
         ],
         "damage": {
@@ -536,7 +536,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Juggernaut.png"
+            "link": "/data/model/khador/jacks/Juggernaut.png"
           }
         ],
         "damage": {
@@ -555,7 +555,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Kodiak.png"
+            "link": "/data/model/khador/jacks/Kodiak.png"
           }
         ],
         "damage": {
@@ -588,7 +588,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Marauder.png"
+            "link": "/data/model/khador/jacks/Marauder.png"
           }
         ],
         "damage": {
@@ -635,7 +635,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Spriggan.png"
+            "link": "/data/model/khador/jacks/Spriggan.png"
           }
         ],
         "damage": {
@@ -654,7 +654,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/jacks/Torch.png"
+            "link": "/data/model/khador/jacks/Torch.png"
           }
         ],
         "damage": {
@@ -700,7 +700,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/AssaultKommando.png"
+                  "link": "/data/model/khador/units/AssaultKommando.png"
                 }
               ]
             }
@@ -717,7 +717,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/AssaultKommandoFlamer.png"
+                  "link": "/data/model/khador/units/AssaultKommandoFlamer.png"
                 }
               ]
             }
@@ -735,11 +735,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/BattleMechanik.png"
+                  "link": "/data/model/khador/units/BattleMechanik.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/khador/units/BattleMechanikChief.png"
+                  "link": "/data/model/khador/units/BattleMechanikChief.png"
                 }
               ]
             }
@@ -752,7 +752,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/khador/units/BattleMechanikOfficer.png"
+                  "link": "/data/model/khador/units/BattleMechanikOfficer.png"
                 }
               ],
               "damage": {
@@ -773,7 +773,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/BlackDragon.png"
+                  "link": "/data/model/khador/units/BlackDragon.png"
                 }
               ]
             }
@@ -786,7 +786,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/BlackDragonOfficer.png"
+                  "link": "/data/model/khador/units/BlackDragonOfficer.png"
                 }
               ],
               "damage": {
@@ -800,7 +800,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/BlackDragonStandard.png"
+                  "link": "/data/model/khador/units/BlackDragonStandard.png"
                 }
               ]
             }
@@ -818,7 +818,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/DoomReaver.png"
+                  "link": "/data/model/khador/units/DoomReaver.png"
                 }
               ]
             }
@@ -831,7 +831,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/GreylordEscort.png"
+                  "link": "/data/model/khador/units/GreylordEscort.png"
                 }
               ],
               "damage": {
@@ -851,7 +851,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/GreatBearKolsk.png"
+                  "link": "/data/model/khador/units/GreatBearKolsk.png"
                 }
               ],
               "damage": {
@@ -864,7 +864,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/GreatBearVolkov.png"
+                  "link": "/data/model/khador/units/GreatBearVolkov.png"
                 }
               ],
               "damage": {
@@ -877,7 +877,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/GreatBearYarovich.png"
+                  "link": "/data/model/khador/units/GreatBearYarovich.png"
                 }
               ],
               "damage": {
@@ -898,7 +898,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/khador/units/GreylordOutriders.png"
+                  "link": "/data/model/khador/units/GreylordOutriders.png"
                 }
               ],
               "damage": {
@@ -919,7 +919,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/Greylord.png"
+                  "link": "/data/model/khador/units/Greylord.png"
                 }
               ]
             }
@@ -937,7 +937,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/IronFangPikeman.png"
+                  "link": "/data/model/khador/units/IronFangPikeman.png"
                 }
               ]
             }
@@ -950,7 +950,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/IronFangOfficer.png"
+                  "link": "/data/model/khador/units/IronFangOfficer.png"
                 }
               ],
               "damage": {
@@ -964,7 +964,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/IronFangStandardBearer.png"
+                  "link": "/data/model/khador/units/IronFangStandardBearer.png"
                 }
               ]
             }
@@ -982,7 +982,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/khador/units/Uhlan.png"
+                  "link": "/data/model/khador/units/Uhlan.png"
                 }
               ],
               "damage": {
@@ -1003,7 +1003,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/KayazyAssasin.png"
+                  "link": "/data/model/khador/units/KayazyAssasin.png"
                 }
               ]
             }
@@ -1016,7 +1016,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/KayazyUnderboss.png"
+                  "link": "/data/model/khador/units/KayazyUnderboss.png"
                 }
               ],
               "damage": {
@@ -1036,7 +1036,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/EliminatorBlonde1.png"
+                  "link": "/data/model/khador/units/EliminatorBlonde1.png"
                 }
               ],
               "damage": {
@@ -1049,7 +1049,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/EliminatorRed2.png"
+                  "link": "/data/model/khador/units/EliminatorRed2.png"
                 }
               ],
               "damage": {
@@ -1070,7 +1070,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/KossiteWoodsman.png"
+                  "link": "/data/model/khador/units/KossiteWoodsman.png"
                 }
               ]
             }
@@ -1088,7 +1088,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/khador/units/Bombardier.png"
+                  "link": "/data/model/khador/units/Bombardier.png"
                 }
               ],
               "damage": {
@@ -1109,7 +1109,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/khador/units/DemoCorp.png"
+                  "link": "/data/model/khador/units/DemoCorp.png"
                 }
               ],
               "damage": {
@@ -1130,7 +1130,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/khador/units/ShockTrooper.png"
+                  "link": "/data/model/khador/units/ShockTrooper.png"
                 }
               ],
               "damage": {
@@ -1151,11 +1151,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/Widowmaker.png"
+                  "link": "/data/model/khador/units/Widowmaker.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/khador/units/WidowmakerKapitan.png"
+                  "link": "/data/model/khador/units/WidowmakerKapitan.png"
                 }
               ]
             }
@@ -1173,7 +1173,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/Winterguard.png"
+                  "link": "/data/model/khador/units/Winterguard.png"
                 }
               ]
             }
@@ -1188,7 +1188,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/WinterguardRocketeer.png"
+                  "link": "/data/model/khador/units/WinterguardRocketeer.png"
                 }
               ]
             }
@@ -1201,7 +1201,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/WinterguardOfficer.png"
+                  "link": "/data/model/khador/units/WinterguardOfficer.png"
                 }
               ],
               "damage": {
@@ -1215,7 +1215,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/WinterguardStandardBearer.png"
+                  "link": "/data/model/khador/units/WinterguardStandardBearer.png"
                 }
               ]
             }
@@ -1233,7 +1233,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/FieldGunCrew.png"
+                  "link": "/data/model/khador/units/FieldGunCrew.png"
                 }
               ]
             },
@@ -1243,7 +1243,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/khador/units/FieldGun.png"
+                  "link": "/data/model/khador/units/FieldGun.png"
                 }
               ]
             }
@@ -1260,7 +1260,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/MortarCrew.png"
+                  "link": "/data/model/khador/units/MortarCrew.png"
                 }
               ]
             },
@@ -1270,7 +1270,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/khador/units/Mortar.png"
+                  "link": "/data/model/khador/units/Mortar.png"
                 }
               ]
             }
@@ -1288,7 +1288,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/khador/units/WinterguardRifle.png"
+                  "link": "/data/model/khador/units/WinterguardRifle.png"
                 }
               ]
             }
@@ -1303,7 +1303,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/solos/Fenris.png"
+            "link": "/data/model/khador/solos/Fenris.png"
           }
         ],
         "damage": {
@@ -1317,7 +1317,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Fenris_Dismount.png"
+            "link": "/data/model/khador/solos/Fenris_Dismount.png"
           }
         ],
         "damage": {
@@ -1330,7 +1330,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/IronFangKovnik.png"
+            "link": "/data/model/khador/solos/IronFangKovnik.png"
           }
         ],
         "damage": {
@@ -1343,7 +1343,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/KoldunLord.png"
+            "link": "/data/model/khador/solos/KoldunLord.png"
           }
         ],
         "damage": {
@@ -1365,7 +1365,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Grigorovich.png"
+            "link": "/data/model/khador/solos/Grigorovich.png"
           }
         ],
         "damage": {
@@ -1378,7 +1378,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/solos/Markov.png"
+            "link": "/data/model/khador/solos/Markov.png"
           }
         ],
         "damage": {
@@ -1391,7 +1391,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/khador/solos/Drakhun.png"
+            "link": "/data/model/khador/solos/Drakhun.png"
           }
         ],
         "damage": {
@@ -1405,7 +1405,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/khador/solos/Drakhun_Dismount.png"
+            "link": "/data/model/khador/solos/Drakhun_Dismount.png"
           }
         ],
         "damage": {
@@ -1418,7 +1418,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/khador/solos/Kovnik.png"
+            "link": "/data/model/khador/solos/Kovnik.png"
           }
         ],
         "damage": {
@@ -1431,7 +1431,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Manhunter.png"
+            "link": "/data/model/khador/solos/Manhunter.png"
           }
         ],
         "damage": {
@@ -1444,7 +1444,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Marksman.png"
+            "link": "/data/model/khador/solos/Marksman.png"
           }
         ],
         "damage": {
@@ -1457,7 +1457,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Valachev.png"
+            "link": "/data/model/khador/solos/Valachev.png"
           }
         ],
         "damage": {
@@ -1470,7 +1470,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Wardog.png"
+            "link": "/data/model/khador/solos/Wardog.png"
           }
         ],
         "damage": {
@@ -1483,7 +1483,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/khador/solos/Yuri.png"
+            "link": "/data/model/khador/solos/Yuri.png"
           }
         ],
         "damage": {
@@ -1500,7 +1500,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/khador/bes/GunCarriage.png"
+            "link": "/data/model/khador/bes/GunCarriage.png"
           }
         ],
         "damage": {

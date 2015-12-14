@@ -3,11 +3,11 @@
   "color": "#00b8c2",
   "icon": "",
   "wreck": {
-    "medium": { "link": "data/cyriss/jacks/LightWreck.png" },
-    "large": { "link": "data/cyriss/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/cyriss/jacks/LightWreck.png" },
+    "large": { "link": "/data/cyriss/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/cyriss/jacks/ColossalWreck.png" }
+              "link": "/data/cyriss/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {

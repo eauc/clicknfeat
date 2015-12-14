@@ -1,13 +1,13 @@
 {
   "name": "Mercenaries",
   "color": "#959571",
-  "icon": "data/icons/mercenaire_50.png",
+  "icon": "/data/icons/mercenaire_50.png",
   "wreck": {
-    "medium": { "link": "data/model/mercenaries/jacks/LightWreck.png" },
-    "large": { "link": "data/model/mercenaries/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/model/mercenaries/jacks/LightWreck.png" },
+    "large": { "link": "/data/model/mercenaries/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/model/mercenaries/jacks/ColossalWreck.png" }
+              "link": "/data/model/mercenaries/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {
@@ -19,10 +19,10 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Ashlynn1.png"
+            "link": "/data/model/mercenaries/casters/Ashlynn1.png"
           },
           {
-            "link": "data/model/mercenaries/casters/AshlynnExlusive.png"
+            "link": "/data/model/mercenaries/casters/AshlynnExlusive.png"
           }
         ],
         "damage": {
@@ -37,7 +37,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Bartolo1.png"
+            "link": "/data/model/mercenaries/casters/Bartolo1.png"
           }
         ],
         "damage": {
@@ -52,7 +52,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Constance1.png"
+            "link": "/data/model/mercenaries/casters/Constance1.png"
           }
         ],
         "damage": {
@@ -67,7 +67,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Damiano1.png"
+            "link": "/data/model/mercenaries/casters/Damiano1.png"
           }
         ],
         "damage": {
@@ -82,7 +82,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Drake1.png"
+            "link": "/data/model/mercenaries/casters/Drake1.png"
           }
         ],
         "damage": {
@@ -97,7 +97,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Fiona1.png"
+            "link": "/data/model/mercenaries/casters/Fiona1.png"
           }
         ],
         "damage": {
@@ -112,7 +112,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Gorten1.png"
+            "link": "/data/model/mercenaries/casters/Gorten1.png"
           }
         ],
         "damage": {
@@ -127,7 +127,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Madhammer1.png"
+            "link": "/data/model/mercenaries/casters/Madhammer1.png"
           }
         ],
         "damage": {
@@ -142,7 +142,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Magnus1.png"
+            "link": "/data/model/mercenaries/casters/Magnus1.png"
           }
         ],
         "damage": {
@@ -157,7 +157,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Magnus2.png"
+            "link": "/data/model/mercenaries/casters/Magnus2.png"
           }
         ],
         "damage": {
@@ -172,7 +172,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Ossrum1.png"
+            "link": "/data/model/mercenaries/casters/Ossrum1.png"
           }
         ],
         "damage": {
@@ -187,7 +187,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/casters/Shae1.png"
+            "link": "/data/model/mercenaries/casters/Shae1.png"
           }
         ],
         "damage": {
@@ -202,7 +202,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Buccaneer.png"
+            "link": "/data/model/mercenaries/jacks/Buccaneer.png"
           }
         ],
         "damage": {
@@ -223,7 +223,7 @@
           {
             "width": 216.666666667,
             "height": 216.666666667,
-            "link": "data/model/mercenaries/jacks/Earthbreaker.png"
+            "link": "/data/model/mercenaries/jacks/Earthbreaker.png"
           }
         ],
         "damage": {
@@ -248,7 +248,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Freebooter.png"
+            "link": "/data/model/mercenaries/jacks/Freebooter.png"
           }
         ],
         "damage": {
@@ -267,7 +267,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Gallant.png"
+            "link": "/data/model/mercenaries/jacks/Gallant.png"
           }
         ],
         "damage": {
@@ -288,7 +288,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/mercenaries/jacks/Galleon.png"
+            "link": "/data/model/mercenaries/jacks/Galleon.png"
           }
         ],
         "damage": {
@@ -313,7 +313,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Avalancher.png"
+            "link": "/data/model/mercenaries/jacks/Avalancher.png"
           }
         ],
         "damage": {
@@ -332,7 +332,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Basher.png"
+            "link": "/data/model/mercenaries/jacks/Basher.png"
           }
         ],
         "damage": {
@@ -351,7 +351,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Driller.png"
+            "link": "/data/model/mercenaries/jacks/Driller.png"
           }
         ],
         "damage": {
@@ -370,7 +370,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Blaster.png"
+            "link": "/data/model/mercenaries/jacks/Blaster.png"
           }
         ],
         "damage": {
@@ -389,7 +389,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Gunner.png"
+            "link": "/data/model/mercenaries/jacks/Gunner.png"
           }
         ],
         "damage": {
@@ -408,7 +408,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Mangler.png"
+            "link": "/data/model/mercenaries/jacks/Mangler.png"
           }
         ],
         "damage": {
@@ -427,7 +427,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Mariner.png"
+            "link": "/data/model/mercenaries/jacks/Mariner.png"
           }
         ],
         "damage": {
@@ -446,7 +446,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Mule.png"
+            "link": "/data/model/mercenaries/jacks/Mule.png"
           }
         ],
         "damage": {
@@ -465,7 +465,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Nomad.png"
+            "link": "/data/model/mercenaries/jacks/Nomad.png"
           }
         ],
         "damage": {
@@ -484,7 +484,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Renegade.png"
+            "link": "/data/model/mercenaries/jacks/Renegade.png"
           }
         ],
         "damage": {
@@ -503,7 +503,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Rocinante.png"
+            "link": "/data/model/mercenaries/jacks/Rocinante.png"
           }
         ],
         "damage": {
@@ -522,7 +522,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Rover.png"
+            "link": "/data/model/mercenaries/jacks/Rover.png"
           }
         ],
         "damage": {
@@ -555,7 +555,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Talon.png"
+            "link": "/data/model/mercenaries/jacks/Talon.png"
           }
         ],
         "damage": {
@@ -574,7 +574,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Vanguard.png"
+            "link": "/data/model/mercenaries/jacks/Vanguard.png"
           }
         ],
         "damage": {
@@ -621,7 +621,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/jacks/Rockram.png"
+            "link": "/data/model/mercenaries/jacks/Rockram.png"
           }
         ],
         "damage": {
@@ -646,7 +646,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Alexia.png"
+                  "link": "/data/model/mercenaries/units/Alexia.png"
                 }
               ],
               "damage": {
@@ -660,7 +660,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Risen.png"
+                  "link": "/data/model/mercenaries/units/Risen.png"
                 }
               ]
             },
@@ -672,7 +672,7 @@
               "height": 60,
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/ThrallWarrior.png"
+                  "link": "/data/model/mercenaries/units/ThrallWarrior.png"
                 }
               ]
             }
@@ -690,7 +690,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Gunmage.png"
+                  "link": "/data/model/mercenaries/units/Gunmage.png"
                 }
               ]
             }
@@ -703,7 +703,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/GunmageOfficer.png"
+                  "link": "/data/model/mercenaries/units/GunmageOfficer.png"
                 }
               ],
               "damage": {
@@ -723,7 +723,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Sam.png"
+                  "link": "/data/model/mercenaries/units/Sam.png"
                 }
               ],
               "damage": {
@@ -737,7 +737,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/DevilDog.png"
+                  "link": "/data/model/mercenaries/units/DevilDog.png"
                 }
               ]
             }
@@ -755,7 +755,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cryx/units/CephalyxSlaver.png"
+                  "link": "/data/model/cryx/units/CephalyxSlaver.png"
                 }
               ],
               "damage": {
@@ -770,7 +770,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cryx/units/DrudgeMindSlave.png"
+                  "link": "/data/model/cryx/units/DrudgeMindSlave.png"
                 }
               ]
             }
@@ -787,7 +787,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/CephalyxSlaver.png"
+                  "link": "/data/model/mercenaries/units/CephalyxSlaver.png"
                 }
               ],
               "damage": {
@@ -801,7 +801,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/DrudgeMindSlave.png"
+                  "link": "/data/model/mercenaries/units/DrudgeMindSlave.png"
                 }
               ]
             }
@@ -819,7 +819,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/CephalyxOverlord.png"
+                  "link": "/data/model/mercenaries/units/CephalyxOverlord.png"
                 }
               ],
               "damage": {
@@ -839,7 +839,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/CommodoreCrew1.png"
+                  "link": "/data/model/mercenaries/units/CommodoreCrew1.png"
                 }
               ]
             },
@@ -849,7 +849,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/CommodoreCrew2.png"
+                  "link": "/data/model/mercenaries/units/CommodoreCrew2.png"
                 }
               ]
             },
@@ -859,7 +859,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/CommodoreCrew3.png"
+                  "link": "/data/model/mercenaries/units/CommodoreCrew3.png"
                 }
               ]
             },
@@ -869,7 +869,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Commodore.png"
+                  "link": "/data/model/mercenaries/units/Commodore.png"
                 }
               ],
               "damage": {
@@ -889,7 +889,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Croe.png"
+                  "link": "/data/model/mercenaries/units/Croe.png"
                 }
               ]
             },
@@ -900,7 +900,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Cutthroat.png"
+                  "link": "/data/model/mercenaries/units/Cutthroat.png"
                 }
               ]
             }
@@ -917,7 +917,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Cylena.png"
+                  "link": "/data/model/mercenaries/units/Cylena.png"
                 }
               ],
               "damage": {
@@ -931,7 +931,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/NyssHunter.png"
+                  "link": "/data/model/mercenaries/units/NyssHunter.png"
                 }
               ]
             }
@@ -948,7 +948,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Dannon.png"
+                  "link": "/data/model/mercenaries/units/Dannon.png"
                 }
               ],
               "damage": {
@@ -961,7 +961,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Bull.png"
+                  "link": "/data/model/mercenaries/units/Bull.png"
                 }
               ],
               "damage": {
@@ -981,7 +981,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/GreygoreBoomhowler.png"
+                  "link": "/data/model/mercenaries/units/GreygoreBoomhowler.png"
                 }
               ],
               "damage": {
@@ -995,7 +995,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Boomhowler.png"
+                  "link": "/data/model/mercenaries/units/Boomhowler.png"
                 }
               ]
             }
@@ -1013,7 +1013,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/GunCorp.png"
+                  "link": "/data/model/mercenaries/units/GunCorp.png"
                 }
               ]
             }
@@ -1026,7 +1026,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/GunCorpOfficer.png"
+                  "link": "/data/model/mercenaries/units/GunCorpOfficer.png"
                 }
               ],
               "damage": {
@@ -1040,7 +1040,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/GunCorpStandardBearer.png"
+                  "link": "/data/model/mercenaries/units/GunCorpStandardBearer.png"
                 }
               ]
             }
@@ -1057,7 +1057,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Herne.png"
+                  "link": "/data/model/mercenaries/units/Herne.png"
                 }
               ],
               "damage": {
@@ -1070,7 +1070,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Jonne.png"
+                  "link": "/data/model/mercenaries/units/Jonne.png"
                 }
               ],
               "damage": {
@@ -1090,7 +1090,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SiegeCannon.png"
+                  "link": "/data/model/mercenaries/units/SiegeCannon.png"
                 }
               ]
             },
@@ -1100,7 +1100,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/ArtillaryCorpCrew.png"
+                  "link": "/data/model/mercenaries/units/ArtillaryCorpCrew.png"
                 }
               ]
             },
@@ -1110,7 +1110,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/ArtillaryCorpShell.png"
+                  "link": "/data/model/mercenaries/units/ArtillaryCorpShell.png"
                 }
               ]
             }
@@ -1128,7 +1128,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/ForgeGuard.png"
+                  "link": "/data/model/mercenaries/units/ForgeGuard.png"
                 }
               ]
             }
@@ -1146,7 +1146,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Idrian.png"
+                  "link": "/data/model/mercenaries/units/Idrian.png"
                 }
               ]
             }
@@ -1159,7 +1159,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/IdrianChieftain.png"
+                  "link": "/data/model/mercenaries/units/IdrianChieftain.png"
                 }
               ],
               "damage": {
@@ -1173,7 +1173,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/IdrianGuide.png"
+                  "link": "/data/model/mercenaries/units/IdrianGuide.png"
                 }
               ],
               "damage": {
@@ -1194,7 +1194,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/KayazyAssasins.png"
+                  "link": "/data/model/mercenaries/units/KayazyAssasins.png"
                 }
               ]
             }
@@ -1207,7 +1207,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/KayazyUnderboss.png"
+                  "link": "/data/model/mercenaries/units/KayazyUnderboss.png"
                 }
               ],
               "damage": {
@@ -1227,7 +1227,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/EliminatorBlonde1.png"
+                  "link": "/data/model/mercenaries/units/EliminatorBlonde1.png"
                 }
               ],
               "damage": {
@@ -1240,7 +1240,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/EliminatorRed2.png"
+                  "link": "/data/model/mercenaries/units/EliminatorRed2.png"
                 }
               ],
               "damage": {
@@ -1260,7 +1260,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Aiyana.png"
+                  "link": "/data/model/mercenaries/units/Aiyana.png"
                 }
               ],
               "damage": {
@@ -1273,7 +1273,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Holt.png"
+                  "link": "/data/model/mercenaries/units/Holt.png"
                 }
               ],
               "damage": {
@@ -1294,7 +1294,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/LongGunner.png"
+                  "link": "/data/model/mercenaries/units/LongGunner.png"
                 }
               ]
             }
@@ -1307,7 +1307,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/LongGunnerOfficer.png"
+                  "link": "/data/model/mercenaries/units/LongGunnerOfficer.png"
                 }
               ],
               "damage": {
@@ -1321,7 +1321,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/LongGunnerStandardBearer.png"
+                  "link": "/data/model/mercenaries/units/LongGunnerStandardBearer.png"
                 }
               ]
             }
@@ -1339,7 +1339,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/OgrunAssault.png"
+                  "link": "/data/model/mercenaries/units/OgrunAssault.png"
                 }
               ],
               "damage": {
@@ -1360,7 +1360,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/PrecursorKnight.png"
+                  "link": "/data/model/mercenaries/units/PrecursorKnight.png"
                 }
               ]
             }
@@ -1373,7 +1373,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/PrecursorKnightOfficer.png"
+                  "link": "/data/model/mercenaries/units/PrecursorKnightOfficer.png"
                 }
               ],
               "damage": {
@@ -1387,7 +1387,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/PrecursorKnightStandardBearer.png"
+                  "link": "/data/model/mercenaries/units/PrecursorKnightStandardBearer.png"
                 }
               ]
             }
@@ -1404,7 +1404,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Lass.png"
+                  "link": "/data/model/mercenaries/units/Lass.png"
                 }
               ]
             },
@@ -1415,7 +1415,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/PressGanger.png"
+                  "link": "/data/model/mercenaries/units/PressGanger.png"
                 }
               ]
             }
@@ -1433,7 +1433,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/Ranger.png"
+                  "link": "/data/cygnar/units/Ranger.png"
                 }
               ]
             }
@@ -1451,11 +1451,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SeaDog.png"
+                  "link": "/data/model/mercenaries/units/SeaDog.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/mercenaries/units/SeaDogMate.png"
+                  "link": "/data/model/mercenaries/units/SeaDogMate.png"
                 }
               ]
             }
@@ -1472,7 +1472,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SeaDogRifleman.png"
+                  "link": "/data/model/mercenaries/units/SeaDogRifleman.png"
                 }
               ]
             }
@@ -1485,7 +1485,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/MrWalls.png"
+                  "link": "/data/model/mercenaries/units/MrWalls.png"
                 }
               ],
               "damage": {
@@ -1505,7 +1505,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/DeckGunCrew.png"
+                  "link": "/data/model/mercenaries/units/DeckGunCrew.png"
                 }
               ]
             },
@@ -1515,7 +1515,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/DeckGun.png"
+                  "link": "/data/model/mercenaries/units/DeckGun.png"
                 }
               ]
             }
@@ -1533,7 +1533,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SteelheadHalberdiers.png"
+                  "link": "/data/model/mercenaries/units/SteelheadHalberdiers.png"
                 }
               ]
             }
@@ -1551,7 +1551,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SteelheadCavalry.png"
+                  "link": "/data/model/mercenaries/units/SteelheadCavalry.png"
                 }
               ],
               "damage": {
@@ -1572,7 +1572,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/SteelheadRifleman.png"
+                  "link": "/data/model/mercenaries/units/SteelheadRifleman.png"
                 }
               ]
             }
@@ -1590,7 +1590,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/SwordKnight.png"
+                  "link": "/data/cygnar/units/SwordKnight.png"
                 }
               ]
             }
@@ -1603,7 +1603,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/SwordKnightOfficer.png"
+                  "link": "/data/cygnar/units/SwordKnightOfficer.png"
                 }
               ],
               "damage": {
@@ -1617,7 +1617,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/SwordKnightStandardBearer.png"
+                  "link": "/data/cygnar/units/SwordKnightStandardBearer.png"
                 }
               ]
             }
@@ -1635,7 +1635,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/TacticalArcanistCorps.png"
+                  "link": "/data/model/mercenaries/units/TacticalArcanistCorps.png"
                 }
               ],
               "damage": {
@@ -1686,7 +1686,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherCannonCrew1.png"
+                  "link": "/data/cygnar/units/TrencherCannonCrew1.png"
                 }
               ]
             },
@@ -1696,7 +1696,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherCannonCrew2.png"
+                  "link": "/data/cygnar/units/TrencherCannonCrew2.png"
                 }
               ]
             },
@@ -1706,7 +1706,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherCannon.png"
+                  "link": "/data/cygnar/units/TrencherCannon.png"
                 }
               ]
             }
@@ -1723,7 +1723,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherChainGunCrew.png"
+                  "link": "/data/cygnar/units/TrencherChainGunCrew.png"
                 }
               ]
             },
@@ -1733,7 +1733,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherChainGun.png"
+                  "link": "/data/cygnar/units/TrencherChainGun.png"
                 }
               ]
             }
@@ -1751,7 +1751,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/TrencherCommando.png"
+                  "link": "/data/cygnar/units/TrencherCommando.png"
                 }
               ]
             }
@@ -1765,7 +1765,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/cygnar/units/Trencher_Commando_Scatter.png"
+                  "link": "/data/cygnar/units/Trencher_Commando_Scatter.png"
                 }
               ]
             }
@@ -1783,7 +1783,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Trencher.png"
+                  "link": "/data/model/mercenaries/units/Trencher.png"
                 }
               ]
             }
@@ -1797,7 +1797,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Trencher_GrenadePorter.png"
+                  "link": "/data/model/mercenaries/units/Trencher_GrenadePorter.png"
                 }
               ]
             }
@@ -1810,7 +1810,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Trencher_Officer.png"
+                  "link": "/data/model/mercenaries/units/Trencher_Officer.png"
                 }
               ],
               "damage": {
@@ -1824,7 +1824,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/mercenaries/units/Trencher_Sharpshooter.png"
+                  "link": "/data/model/mercenaries/units/Trencher_Sharpshooter.png"
                 }
               ]
             }
@@ -1839,7 +1839,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Alexia2.png"
+            "link": "/data/model/mercenaries/solos/Alexia2.png"
           }
         ],
         "damage": {
@@ -1852,7 +1852,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/AltenAshley.png"
+            "link": "/data/model/mercenaries/solos/AltenAshley.png"
           }
         ],
         "damage": {
@@ -1865,10 +1865,10 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Anastasia.png"
+            "link": "/data/model/mercenaries/solos/Anastasia.png"
           },
           {
-	    "link":"data/model/mercenaries/solos/Anastasia_Invisible.png"
+	    "link":"/data/model/mercenaries/solos/Anastasia_Invisible.png"
           }
         ],
         "damage": {
@@ -1881,7 +1881,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Bradigan.png"
+            "link": "/data/model/mercenaries/solos/Bradigan.png"
           }
         ],
         "damage": {
@@ -1894,7 +1894,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Grogspar.png"
+            "link": "/data/model/mercenaries/solos/Grogspar.png"
           }
         ],
         "damage": {
@@ -1907,7 +1907,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/DirtyMeg.png"
+            "link": "/data/model/mercenaries/solos/DirtyMeg.png"
           }
         ],
         "damage": {
@@ -1920,7 +1920,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Doc.png"
+            "link": "/data/model/mercenaries/solos/Doc.png"
           }
         ],
         "damage": {
@@ -1933,7 +1933,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/MacNaile.png"
+            "link": "/data/model/mercenaries/solos/MacNaile.png"
           }
         ],
         "damage": {
@@ -1963,10 +1963,10 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Gorman.png"
+            "link": "/data/model/mercenaries/solos/Gorman.png"
           },
           {
-	    "link": "data/model/mercenaries/solos/Gorman_invisible.png"
+	    "link": "/data/model/mercenaries/solos/Gorman_invisible.png"
           }
         ],
         "damage": {
@@ -1979,7 +1979,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Harlan.png"
+            "link": "/data/model/mercenaries/solos/Harlan.png"
           }
         ],
         "damage": {
@@ -1992,7 +1992,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Hawk.png"
+            "link": "/data/model/mercenaries/solos/Hawk.png"
           }
         ],
         "damage": {
@@ -2005,7 +2005,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Kell.png"
+            "link": "/data/model/mercenaries/solos/Kell.png"
           }
         ],
         "damage": {
@@ -2018,7 +2018,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Madelyn.png"
+            "link": "/data/model/mercenaries/solos/Madelyn.png"
           }
         ],
         "damage": {
@@ -2031,7 +2031,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Bokur.png"
+            "link": "/data/model/mercenaries/solos/Bokur.png"
           }
         ],
         "damage": {
@@ -2044,7 +2044,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Orin.png"
+            "link": "/data/model/mercenaries/solos/Orin.png"
           }
         ],
         "damage": {
@@ -2057,7 +2057,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Ragman.png"
+            "link": "/data/model/mercenaries/solos/Ragman.png"
           }
         ],
         "damage": {
@@ -2070,7 +2070,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Reinholdt.png"
+            "link": "/data/model/mercenaries/solos/Reinholdt.png"
           }
         ]
       },  
@@ -2080,7 +2080,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Rupert.png"
+            "link": "/data/model/mercenaries/solos/Rupert.png"
           }
         ],
         "damage": {
@@ -2093,7 +2093,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Rockbottom.png"
+            "link": "/data/model/mercenaries/solos/Rockbottom.png"
           }
         ],
         "damage": {
@@ -2106,7 +2106,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Rutger_Shaw.png"
+            "link": "/data/model/mercenaries/solos/Rutger_Shaw.png"
           }
         ],
         "damage": {
@@ -2119,7 +2119,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Stannis.png"
+            "link": "/data/model/mercenaries/solos/Stannis.png"
           }
         ],
         "damage": {
@@ -2133,7 +2133,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Taryn.png"
+            "link": "/data/model/mercenaries/solos/Taryn.png"
           }
         ],
         "damage": {
@@ -2146,7 +2146,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/mercenaries/solos/Thor.png"
+            "link": "/data/model/mercenaries/solos/Thor.png"
           }
         ],
         "damage": {

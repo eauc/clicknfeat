@@ -1,13 +1,13 @@
 {
   "name": "Cygnar",
   "color": "#5963a2",
-  "icon": "data/icons/cygnar_50.png",
+  "icon": "/data/icons/cygnar_50.png",
   "wreck": {
-    "medium": { "link": "data/model/cygnar/jacks/LightWreck.png" },
-    "large": { "link": "data/model/cygnar/jacks/HeavyWreck.png" },
+    "medium": { "link": "/data/model/cygnar/jacks/LightWreck.png" },
+    "large": { "link": "/data/model/cygnar/jacks/HeavyWreck.png" },
     "huge": { "width": 116.667,
               "height": 116.667,
-              "link": "data/model/cygnar/jacks/ColossalWreck.png" }
+              "link": "/data/model/cygnar/jacks/ColossalWreck.png" }
   },
   "models": {
     "casters": {
@@ -19,7 +19,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Brisbane1.png"
+            "link": "/data/model/cygnar/casters/Brisbane1.png"
           }
         ],
         "damage": {
@@ -34,7 +34,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Caine1.png"
+            "link": "/data/model/cygnar/casters/Caine1.png"
           }
         ],
         "damage": {
@@ -49,7 +49,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Caine2.png"
+            "link": "/data/model/cygnar/casters/Caine2.png"
           }
         ],
         "damage": {
@@ -64,7 +64,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Constance1.png"
+            "link": "/data/model/cygnar/casters/Constance1.png"
           }
         ],
         "damage": {
@@ -83,7 +83,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/casters/Darius1.png"
+                  "link": "/data/model/cygnar/casters/Darius1.png"
                 }
               ],
               "damage": {
@@ -99,7 +99,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/solos/Halfjack.png"
+                  "link": "/data/model/cygnar/solos/Halfjack.png"
                 }
               ]
             }
@@ -114,7 +114,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Haley1.png"
+            "link": "/data/model/cygnar/casters/Haley1.png"
           }
         ],
         "damage": {
@@ -129,7 +129,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Haley2.png"
+            "link": "/data/model/cygnar/casters/Haley2.png"
           }
         ],
         "damage": {
@@ -181,7 +181,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Sloan1.png"
+            "link": "/data/model/cygnar/casters/Sloan1.png"
           }
         ],
         "damage": {
@@ -196,7 +196,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Kraye1.png"
+            "link": "/data/model/cygnar/casters/Kraye1.png"
           }
         ],
         "damage": {
@@ -211,7 +211,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Nemo1.png"
+            "link": "/data/model/cygnar/casters/Nemo1.png"
           }
         ],
         "damage": {
@@ -226,7 +226,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Nemo2.png"
+            "link": "/data/model/cygnar/casters/Nemo2.png"
           }
         ],
         "damage": {
@@ -245,7 +245,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/casters/Nemo3.png"
+                  "link": "/data/model/cygnar/casters/Nemo3.png"
                 }
               ],
               "damage": {
@@ -261,7 +261,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/solos/StormChaserAdeptFinch.png"
+                  "link": "/data/model/cygnar/solos/StormChaserAdeptFinch.png"
                 }
               ],
               "damage": {
@@ -279,7 +279,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Stryker1.png"
+            "link": "/data/model/cygnar/casters/Stryker1.png"
           }
         ],
         "damage": {
@@ -294,7 +294,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/casters/Stryker2.png"
+            "link": "/data/model/cygnar/casters/Stryker2.png"
           }
         ],
         "damage": {
@@ -343,7 +343,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Avenger.png"
+            "link": "/data/model/cygnar/jacks/Avenger.png"
           }
         ],
         "damage": {
@@ -362,7 +362,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Centurion.png"
+            "link": "/data/model/cygnar/jacks/Centurion.png"
           }
         ],
         "damage": {
@@ -381,7 +381,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Charger.png"
+            "link": "/data/model/cygnar/jacks/Charger.png"
           }
         ],
         "damage": {
@@ -400,7 +400,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Cyclone.png"
+            "link": "/data/model/cygnar/jacks/Cyclone.png"
           }
         ],
         "damage": {
@@ -419,7 +419,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Defender.png"
+            "link": "/data/model/cygnar/jacks/Defender.png"
           }
         ],
         "damage": {
@@ -452,7 +452,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Firefly.png"
+            "link": "/data/model/cygnar/jacks/Firefly.png"
           }
         ],
         "damage": {
@@ -471,7 +471,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Gallant.png"
+            "link": "/data/model/cygnar/jacks/Gallant.png"
           }
         ],
         "damage": {
@@ -490,7 +490,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Grenadier.png"
+            "link": "/data/model/cygnar/jacks/Grenadier.png"
           }
         ],
         "damage": {
@@ -509,7 +509,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Hammersmith.png"
+            "link": "/data/model/cygnar/jacks/Hammersmith.png"
           }
         ],
         "damage": {
@@ -528,7 +528,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Hunter.png"
+            "link": "/data/model/cygnar/jacks/Hunter.png"
           }
         ],
         "damage": {
@@ -567,7 +567,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Ironclad.png"
+            "link": "/data/model/cygnar/jacks/Ironclad.png"
           }
         ],
         "damage": {
@@ -586,7 +586,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Lancer.png"
+            "link": "/data/model/cygnar/jacks/Lancer.png"
           }
         ],
         "damage": {
@@ -605,7 +605,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Minuteman.png"
+            "link": "/data/model/cygnar/jacks/Minuteman.png"
           }
         ],
         "damage": {
@@ -624,7 +624,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/OlRowdy.png"
+            "link": "/data/model/cygnar/jacks/OlRowdy.png"
           }
         ],
         "damage": {
@@ -657,7 +657,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Sentinel.png"
+            "link": "/data/model/cygnar/jacks/Sentinel.png"
           }
         ],
         "damage": {
@@ -676,7 +676,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Stormclad.png"
+            "link": "/data/model/cygnar/jacks/Stormclad.png"
           }
         ],
         "damage": {
@@ -697,7 +697,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/cygnar/jacks/Stormwall.png"
+            "link": "/data/model/cygnar/jacks/Stormwall.png"
           }
         ],
         "damage": {
@@ -722,7 +722,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Thorn.png"
+            "link": "/data/model/cygnar/jacks/Thorn.png"
           }
         ],
         "damage": {
@@ -741,7 +741,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Thunderhead.png"
+            "link": "/data/model/cygnar/jacks/Thunderhead.png"
           }
         ],
         "damage": {
@@ -760,7 +760,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/jacks/Triumph.png"
+            "link": "/data/model/cygnar/jacks/Triumph.png"
           }
         ],
         "damage": {
@@ -786,7 +786,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Gunmage.png"
+                  "link": "/data/model/cygnar/units/Gunmage.png"
                 }
               ]
             }
@@ -799,7 +799,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/GunmageOfficer.png"
+                  "link": "/data/model/cygnar/units/GunmageOfficer.png"
                 }
               ],
               "damage": {
@@ -819,7 +819,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/B13Ryan.png"
+                  "link": "/data/model/cygnar/units/B13Ryan.png"
                 }
               ],
               "damage": {
@@ -832,7 +832,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/B13Lynch.png"
+                  "link": "/data/model/cygnar/units/B13Lynch.png"
                 }
               ],
               "damage": {
@@ -845,7 +845,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/B13Watts.png"
+                  "link": "/data/model/cygnar/units/B13Watts.png"
                 }
               ],
               "damage": {
@@ -866,7 +866,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/FieldMechanic_Gobber.png"
+                  "link": "/data/model/cygnar/units/FieldMechanic_Gobber.png"
                 }
               ]
             },
@@ -876,7 +876,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/FieldMechanic_Chief.png"
+                  "link": "/data/model/cygnar/units/FieldMechanic_Chief.png"
                 }
               ]
             }
@@ -894,7 +894,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/LongGunner.png"
+                  "link": "/data/model/cygnar/units/LongGunner.png"
                 }
               ]
             }
@@ -907,7 +907,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/LongGunnerOfficer.png"
+                  "link": "/data/model/cygnar/units/LongGunnerOfficer.png"
                 }
               ],
               "damage": {
@@ -921,7 +921,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/LongGunnerStandardBearer.png"
+                  "link": "/data/model/cygnar/units/LongGunnerStandardBearer.png"
                 }
               ]
             }
@@ -939,7 +939,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/PrecursorKnight.png"
+                  "link": "/data/model/cygnar/units/PrecursorKnight.png"
                 }
               ]
             }
@@ -952,7 +952,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/PrecursorKnightOfficer.png"
+                  "link": "/data/model/cygnar/units/PrecursorKnightOfficer.png"
                 }
               ],
               "damage": {
@@ -966,7 +966,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/PrecursorKnightStandardBearer.png"
+                  "link": "/data/model/cygnar/units/PrecursorKnightStandardBearer.png"
                 }
               ]
             }
@@ -985,7 +985,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Ranger.png"
+                  "link": "/data/model/cygnar/units/Ranger.png"
                 }
               ]
             }
@@ -1016,7 +1016,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Stormlance.png"
+                  "link": "/data/model/cygnar/units/Stormlance.png"
                 }
               ],
               "damage": {
@@ -1037,7 +1037,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormtowerGirl.png"
+                  "link": "/data/model/cygnar/units/StormtowerGirl.png"
                 }
               ]
             },
@@ -1048,7 +1048,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Stormtower.png"
+                  "link": "/data/model/cygnar/units/Stormtower.png"
                 }
               ]
             }
@@ -1066,11 +1066,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormbladeKnight.png"
+                  "link": "/data/model/cygnar/units/StormbladeKnight.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/cygnar/units/StormbladeSergeant.png"
+                  "link": "/data/model/cygnar/units/StormbladeSergeant.png"
                 }
               ]
             }
@@ -1084,7 +1084,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormbladeGunner.png"
+                  "link": "/data/model/cygnar/units/StormbladeGunner.png"
                 }
               ]
             }
@@ -1097,7 +1097,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormbladeOfficer.png"
+                  "link": "/data/model/cygnar/units/StormbladeOfficer.png"
                 }
               ],
               "damage": {
@@ -1111,7 +1111,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormbladeStandardBearer.png"
+                  "link": "/data/model/cygnar/units/StormbladeStandardBearer.png"
                 }
               ]
             }
@@ -1129,11 +1129,11 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/StormguardKnight.png"
+                  "link": "/data/model/cygnar/units/StormguardKnight.png"
                 },
                 {
                   "type": "leader",
-                  "link": "data/model/cygnar/units/StormguardSergeant.png"
+                  "link": "/data/model/cygnar/units/StormguardSergeant.png"
                 }
               ]
             }
@@ -1151,7 +1151,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/SwordKnight.png"
+                  "link": "/data/model/cygnar/units/SwordKnight.png"
                 }
               ]
             }
@@ -1164,7 +1164,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/SwordKnightOfficer.png"
+                  "link": "/data/model/cygnar/units/SwordKnightOfficer.png"
                 }
               ],
               "damage": {
@@ -1178,7 +1178,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/SwordKnightStandardBearer.png"
+                  "link": "/data/model/cygnar/units/SwordKnightStandardBearer.png"
                 }
               ]
             }
@@ -1196,7 +1196,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TempestBlazer.png"
+                  "link": "/data/model/cygnar/units/TempestBlazer.png"
                 }
               ],
               "damage": {
@@ -1216,7 +1216,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherCannonCrew1.png"
+                  "link": "/data/model/cygnar/units/TrencherCannonCrew1.png"
                 }
               ]
             },
@@ -1226,7 +1226,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherCannonCrew2.png"
+                  "link": "/data/model/cygnar/units/TrencherCannonCrew2.png"
                 }
               ]
             },
@@ -1236,7 +1236,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherCannon.png"
+                  "link": "/data/model/cygnar/units/TrencherCannon.png"
                 }
               ]
             }
@@ -1253,7 +1253,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherChainGunCrew.png"
+                  "link": "/data/model/cygnar/units/TrencherChainGunCrew.png"
                 }
               ]
             },
@@ -1263,7 +1263,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherChainGun.png"
+                  "link": "/data/model/cygnar/units/TrencherChainGun.png"
                 }
               ]
             }
@@ -1281,7 +1281,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/TrencherCommando.png"
+                  "link": "/data/model/cygnar/units/TrencherCommando.png"
                 }
               ]
             }
@@ -1295,7 +1295,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Trencher_Commando_Scatter.png"
+                  "link": "/data/model/cygnar/units/Trencher_Commando_Scatter.png"
                 }
               ]
             }
@@ -1313,7 +1313,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Trencher_Grunt.png"
+                  "link": "/data/model/cygnar/units/Trencher_Grunt.png"
                 }
               ]
             }
@@ -1327,7 +1327,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Trencher_Grenade_Porter.png"
+                  "link": "/data/model/cygnar/units/Trencher_Grenade_Porter.png"
                 }
               ]
             }
@@ -1340,7 +1340,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Trencher_Officer.png"
+                  "link": "/data/model/cygnar/units/Trencher_Officer.png"
                 }
               ],
               "damage": {
@@ -1354,7 +1354,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/cygnar/units/Trencher_Sharpshooter.png"
+                  "link": "/data/model/cygnar/units/Trencher_Sharpshooter.png"
                 }
               ]
             }
@@ -1371,7 +1371,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/JourneymanWarcaster_Girl.png"
+            "link": "/data/model/cygnar/solos/JourneymanWarcaster_Girl.png"
           }
         ],
         "damage": {
@@ -1384,7 +1384,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Arlan.png"
+            "link": "/data/model/cygnar/solos/Arlan.png"
           }
         ],
         "damage": {
@@ -1397,7 +1397,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Finn.png"
+            "link": "/data/model/cygnar/solos/Finn.png"
           }
         ],
         "damage": {
@@ -1410,7 +1410,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/GunMageAdept.png"
+            "link": "/data/model/cygnar/solos/GunMageAdept.png"
           }
         ],
         "damage": {
@@ -1424,10 +1424,10 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/JourneymanWarcaster.png"
+            "link": "/data/model/cygnar/solos/JourneymanWarcaster.png"
           },
           {
-            "link": "data/model/cygnar/solos/JourneymanWarcaster_Girl.png"
+            "link": "/data/model/cygnar/solos/JourneymanWarcaster_Girl.png"
           }
         ],
         "damage": {
@@ -1440,7 +1440,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Laddermore.png"
+            "link": "/data/model/cygnar/solos/Laddermore.png"
           }
         ],
         "damage": {
@@ -1454,7 +1454,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Laddermore_Dismount.png"
+            "link": "/data/model/cygnar/solos/Laddermore_Dismount.png"
           }
         ],
         "damage": {
@@ -1467,7 +1467,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Jonas.png"
+            "link": "/data/model/cygnar/solos/Jonas.png"
           }
         ],
         "damage": {
@@ -1481,7 +1481,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Runewood.png"
+            "link": "/data/model/cygnar/solos/Runewood.png"
           }
         ],
         "damage": {
@@ -1494,7 +1494,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Squire.png"
+            "link": "/data/model/cygnar/solos/Squire.png"
           }
         ],
         "damage": {
@@ -1507,7 +1507,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/StormbladeCaptain.png"
+            "link": "/data/model/cygnar/solos/StormbladeCaptain.png"
           }
         ],
         "damage": {
@@ -1520,7 +1520,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/StormsmithStormcaller.png"
+            "link": "/data/model/cygnar/solos/StormsmithStormcaller.png"
           }
         ]
       },
@@ -1531,7 +1531,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/Stormwall_Pod.png"
+            "link": "/data/model/cygnar/solos/Stormwall_Pod.png"
           }
         ]
       },          
@@ -1550,7 +1550,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/cygnar/solos/TrencherMasterGunner.png"
+            "link": "/data/model/cygnar/solos/TrencherMasterGunner.png"
           }
         ],
         "damage": {
@@ -1567,7 +1567,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/cygnar/bes/Stormstrider.png"
+            "link": "/data/model/cygnar/bes/Stormstrider.png"
           }
         ],
         "damage": {

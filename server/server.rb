@@ -18,7 +18,7 @@ class Server < Sinatra::Base
   set :views, File.join(File.dirname(__FILE__), '..', 'client')
 
   get '/' do
-    redirect '/index.html'
+    redirect '/dist/index.html'
   end
 
   get '/api/users' do

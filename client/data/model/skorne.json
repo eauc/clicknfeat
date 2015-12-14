@@ -1,7 +1,7 @@
 {
   "name": "Skorne",
   "color": "#5963a2",
-  "icon": "data/icons/skorne_50.png",
+  "icon": "/data/icons/skorne_50.png",
   "models": {
     "locks": {
       "Hexeris1": {
@@ -12,7 +12,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Hexeris1.png"
+            "link": "/data/model/skorne/locks/Hexeris1.png"
           }
         ],
         "damage": {
@@ -27,7 +27,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Hexeris2.png"
+            "link": "/data/model/skorne/locks/Hexeris2.png"
           }
         ],
         "damage": {
@@ -42,7 +42,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Makeda1.png"
+            "link": "/data/model/skorne/locks/Makeda1.png"
           }
         ],
         "damage": {
@@ -57,7 +57,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Makeda2.png"
+            "link": "/data/model/skorne/locks/Makeda2.png"
           }
         ],
         "damage": {
@@ -76,7 +76,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/locks/Makeda3.png"
+                  "link": "/data/model/skorne/locks/Makeda3.png"
                 }
               ],
               "damage": {
@@ -92,7 +92,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/locks/ExaltedCourt1.png"
+                  "link": "/data/model/skorne/locks/ExaltedCourt1.png"
                 }
               ],
               "damage": {
@@ -106,7 +106,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/locks/ExaltedCourt2.png"
+                  "link": "/data/model/skorne/locks/ExaltedCourt2.png"
                 }
               ],
               "damage": {
@@ -124,7 +124,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Mordikaar1.png"
+            "link": "/data/model/skorne/locks/Mordikaar1.png"
           }
         ],
         "damage": {
@@ -139,7 +139,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Morghoul1.png"
+            "link": "/data/model/skorne/locks/Morghoul1.png"
           }
         ],
         "damage": {
@@ -154,7 +154,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Morghoul2.png"
+            "link": "/data/model/skorne/locks/Morghoul2.png"
           }
         ],
         "damage": {
@@ -169,7 +169,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/locks/Naaresh1.png"
+            "link": "/data/model/skorne/locks/Naaresh1.png"
           }
         ],
         "damage": {
@@ -184,7 +184,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/locks/Rasheth1.png"
+            "link": "/data/model/skorne/locks/Rasheth1.png"
           }
         ],
         "damage": {
@@ -199,7 +199,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/locks/Xerxis1.png"
+            "link": "/data/model/skorne/locks/Xerxis1.png"
           }
         ],
         "damage": {
@@ -228,7 +228,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/locks/Zaal1.png"
+                  "link": "/data/model/skorne/locks/Zaal1.png"
                 }
               ],
               "damage": {
@@ -244,11 +244,11 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/locks/Kovaas.png"
+                  "link": "/data/model/skorne/locks/Kovaas.png"
                 },
                 {
                   "type": "incorporeal",
-                  "link": "data/model/skorne/locks/Kovaas_Incorporeal.png"
+                  "link": "/data/model/skorne/locks/Kovaas_Incorporeal.png"
                 }
               ],
               "damage": {
@@ -277,7 +277,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Archidon.png"
+            "link": "/data/model/skorne/beasts/Archidon.png"
           }
         ],
         "damage": {
@@ -327,7 +327,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Basilisk_Drake.png"
+            "link": "/data/model/skorne/beasts/Basilisk_Drake.png"
           }
         ],
         "damage": {
@@ -347,7 +347,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Basilisk_Krea.png"
+            "link": "/data/model/skorne/beasts/Basilisk_Krea.png"
           }
         ],
         "damage": {
@@ -367,7 +367,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Bronzeback_Titan.png"
+            "link": "/data/model/skorne/beasts/Bronzeback_Titan.png"
           }
         ],
         "damage": {
@@ -387,7 +387,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Cyclops_Brute.png"
+            "link": "/data/model/skorne/beasts/Cyclops_Brute.png"
           }
         ],
         "damage": {
@@ -407,7 +407,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Cyclops_Raider.png"
+            "link": "/data/model/skorne/beasts/Cyclops_Raider.png"
           }
         ],
         "damage": {
@@ -427,7 +427,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Cyclops_Savage.png"
+            "link": "/data/model/skorne/beasts/Cyclops_Savage.png"
           }
         ],
         "damage": {
@@ -447,7 +447,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Cyclops_Shaman.png"
+            "link": "/data/model/skorne/beasts/Cyclops_Shaman.png"
           }
         ],
         "damage": {
@@ -467,7 +467,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Despoiler.png"
+            "link": "/data/model/skorne/beasts/Despoiler.png"
           }
         ],
         "damage": {
@@ -504,7 +504,7 @@
           {
             "width": 116.667,
             "height": 116.667,
-            "link": "data/model/skorne/beasts/Mammoth.png"
+            "link": "/data/model/skorne/beasts/Mammoth.png"
           }
         ],
         "damage": {
@@ -524,7 +524,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Molik_Karn.png"
+            "link": "/data/model/skorne/beasts/Molik_Karn.png"
           }
         ],
         "damage": {
@@ -544,7 +544,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Razor_Worm.png"
+            "link": "/data/model/skorne/beasts/Razor_Worm.png"
           }
         ],
         "damage": {
@@ -564,7 +564,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Reptile_Hound.png"
+            "link": "/data/model/skorne/beasts/Reptile_Hound.png"
           }
         ],
         "damage": {
@@ -584,7 +584,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Rhinodon.png"
+            "link": "/data/model/skorne/beasts/Rhinodon.png"
           }
         ],
         "damage": {
@@ -620,7 +620,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Tiberion.png"
+            "link": "/data/model/skorne/beasts/Tiberion.png"
           }
         ],
         "damage": {
@@ -640,7 +640,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Titan_Cannoneer.png"
+            "link": "/data/model/skorne/beasts/Titan_Cannoneer.png"
           }
         ],
         "damage": {
@@ -660,7 +660,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Titan_Gladiator.png"
+            "link": "/data/model/skorne/beasts/Titan_Gladiator.png"
           }
         ],
         "damage": {
@@ -680,7 +680,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/beasts/Titan_Sentry.png"
+            "link": "/data/model/skorne/beasts/Titan_Sentry.png"
           }
         ],
         "damage": {
@@ -706,7 +706,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Arcuarii.png"
+                  "link": "/data/model/skorne/units/Arcuarii.png"
                 }
               ],
               "damage": {
@@ -727,7 +727,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Cetrati.png"
+                  "link": "/data/model/skorne/units/Cetrati.png"
                 }
               ],
               "damage": {
@@ -742,7 +742,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Vorkesh.png"
+                  "link": "/data/model/skorne/units/Vorkesh.png"
                 }
               ],
               "damage": {
@@ -763,7 +763,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Incindiarii.png"
+                  "link": "/data/model/skorne/units/Incindiarii.png"
                 }
               ],
               "damage": {
@@ -784,7 +784,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Immortals.png"
+                  "link": "/data/model/skorne/units/Immortals.png"
                 }
               ]
             }
@@ -844,7 +844,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Beast_Handler.png"
+                  "link": "/data/model/skorne/units/Beast_Handler.png"
                 }
               ]
             }
@@ -862,7 +862,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Bloodrunner.png"
+                  "link": "/data/model/skorne/units/Bloodrunner.png"
                 }
               ]
             }
@@ -880,7 +880,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Ferox.png"
+                  "link": "/data/model/skorne/units/Ferox.png"
                 }
               ],
               "damage": {
@@ -901,7 +901,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Karax.png"
+                  "link": "/data/model/skorne/units/Karax.png"
                 }
               ]
             }
@@ -932,7 +932,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Swordsmen.png"
+                  "link": "/data/model/skorne/units/Swordsmen.png"
                 }
               ]
             }
@@ -945,7 +945,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Swordsmen_Officer.png"
+                  "link": "/data/model/skorne/units/Swordsmen_Officer.png"
                 }
               ],
               "damage": {
@@ -959,7 +959,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Swordsmen_Standard.png"
+                  "link": "/data/model/skorne/units/Swordsmen_Standard.png"
                 }
               ]
             }
@@ -977,7 +977,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Nihilator.png"
+                  "link": "/data/model/skorne/units/Nihilator.png"
                 }
               ]
             }
@@ -994,7 +994,7 @@
               "base": "medium",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Tyrant.png"
+                  "link": "/data/model/skorne/units/Tyrant.png"
                 }
               ],
               "damage": {
@@ -1007,7 +1007,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Standard_Bearer.png"
+                  "link": "/data/model/skorne/units/Standard_Bearer.png"
                 }
               ],
               "damage": {
@@ -1027,7 +1027,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/FlayerCrew.png"
+                  "link": "/data/model/skorne/units/FlayerCrew.png"
                 }
               ]
             },
@@ -1037,7 +1037,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/skorne/units/FlayerCannon.png"
+                  "link": "/data/model/skorne/units/FlayerCannon.png"
                 }
               ]
             }
@@ -1054,7 +1054,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Venator_CatapultCrew1.png"
+                  "link": "/data/model/skorne/units/Venator_CatapultCrew1.png"
                 }
               ]
             },
@@ -1064,7 +1064,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Venator_CatapultCrew2.png"
+                  "link": "/data/model/skorne/units/Venator_CatapultCrew2.png"
                 }
               ]
             },
@@ -1074,7 +1074,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Venator_Catapult.png"
+                  "link": "/data/model/skorne/units/Venator_Catapult.png"
                 }
               ]
             }
@@ -1092,7 +1092,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/Venator.png"
+                  "link": "/data/model/skorne/units/Venator.png"
                 }
               ]
             }
@@ -1105,7 +1105,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/VenatorOfficer.png"
+                  "link": "/data/model/skorne/units/VenatorOfficer.png"
                 }
               ],
               "damage": {
@@ -1119,7 +1119,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/VenatorStandard.png"
+                  "link": "/data/model/skorne/units/VenatorStandard.png"
                 }
               ]
             }
@@ -1137,7 +1137,7 @@
               "base": "small",
               "img": [
                 {
-                  "link": "data/model/skorne/units/VenatorSlingers.png"
+                  "link": "/data/model/skorne/units/VenatorSlingers.png"
                 }
               ]
             }
@@ -1152,7 +1152,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Agonizer.png"
+            "link": "/data/model/skorne/solos/Agonizer.png"
           }
         ],
         "damage": {
@@ -1165,7 +1165,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/solos/Ancestral_Guardian.png"
+            "link": "/data/model/skorne/solos/Ancestral_Guardian.png"
           }
         ],
         "damage": {
@@ -1178,7 +1178,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Marketh.png"
+            "link": "/data/model/skorne/solos/Marketh.png"
           }
         ],
         "damage": {
@@ -1191,7 +1191,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Soulward.png"
+            "link": "/data/model/skorne/solos/Soulward.png"
           }
         ],
         "damage": {
@@ -1204,7 +1204,7 @@
         "base": "medium",
         "img": [
           {
-            "link": "data/model/skorne/solos/Hakaar.png"
+            "link": "/data/model/skorne/solos/Hakaar.png"
           }
         ],
         "damage": {
@@ -1217,7 +1217,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Willbreaker.png"
+            "link": "/data/model/skorne/solos/Willbreaker.png"
           }
         ],
         "damage": {
@@ -1230,7 +1230,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Master_Tormentor.png"
+            "link": "/data/model/skorne/solos/Master_Tormentor.png"
           }
         ],
         "damage": {
@@ -1243,7 +1243,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Task_Master.png"
+            "link": "/data/model/skorne/solos/Task_Master.png"
           }
         ],
         "damage": {
@@ -1256,7 +1256,7 @@
         "base": "large",
         "img": [
           {
-            "link": "data/model/skorne/solos/Tyrant_Rhadheim.png"
+            "link": "/data/model/skorne/solos/Tyrant_Rhadheim.png"
           }
         ],
         "damage": {
@@ -1270,7 +1270,7 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/Tyrant_Rhadheim_Dismount.png"
+            "link": "/data/model/skorne/solos/Tyrant_Rhadheim_Dismount.png"
           }
         ],
         "damage": {
@@ -1292,11 +1292,11 @@
         "base": "small",
         "img": [
           {
-            "link": "data/model/skorne/solos/VoidSpirit.png"
+            "link": "/data/model/skorne/solos/VoidSpirit.png"
           },
           {
             "type": "incorporeal",
-            "link": "data/model/skorne/solos/VoidSpirit_Incorporeal.png"
+            "link": "/data/model/skorne/solos/VoidSpirit_Incorporeal.png"
           }
         ],
         "damage": {
@@ -1313,7 +1313,7 @@
           {
             "width": 90,
             "height": 90,
-            "link": "data/model/skorne/bes/SiegeAnimantarax.png"
+            "link": "/data/model/skorne/bes/SiegeAnimantarax.png"
           }
         ],
         "damage": {
