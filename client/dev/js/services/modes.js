@@ -14,36 +14,41 @@ angular.module('clickApp.services').factory('modes', [function modesServiceFacto
       // TODO : import customized bindings
       return enterMode('Default', scope, modes);
     },
-    currentModeName: function (modes) {
+    currentModeName: function currentModeName(modes) {
       return currentMode(modes).name;
     },
-    currentModeBindings: function (modes) {
+    currentModeBindings: function currentModeBindings(modes) {
       return currentMode(modes).bindings;
     },
-    currentModeBindingsPairs: function (modes) {
+    currentModeBindingsPairs: function currentModeBindingsPairs(modes) {
       return R.pipe(R.toPairsIn, R.sortBy(R.head))(currentMode(modes).bindings);
     },
-    currentModeAction: function (action /* ...args..., modes */) {
-      var args = Array.prototype.slice.call(arguments);
+    currentModeAction: function currentModeAction(action) /*, modes*/{
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
       var modes = R.last(args);
       var mode = currentMode(modes);
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+      return R.pipePromise(function () {
         if (R.isNil(mode.actions[action])) {
           console.log('modes: unknown mode ' + mode.name + ' action ' + action);
           return self.Promise.reject('Unknown action ' + action);
         }
+        return null;
       }, function () {
-        return mode.actions[action].apply(null, R.init(R.tail(args)));
+        return mode.actions[action].apply(null, R.init(args));
       })();
     },
-    switchToMode: function (name, scope, modes) {
+    switchToMode: function switchToMode(name, scope, modes) {
       var previous_mode = currentMode(modes);
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise),
-      // function() {
+      return R.pipePromise(
+      // () => {
       //   if(next === mode) {
       //     console.log('modes: already in '+name+' mode');
       //     return self.Promise.reject('already in '+name+' mode');
       //   }
+      // return null;
       // },
       function () {
         if (R.isNil(R.prop(name, modes.register))) {
@@ -63,7 +68,7 @@ angular.module('clickApp.services').factory('modes', [function modesServiceFacto
     return modes.register[modes.current];
   }
   var enterMode = R.curry(function _enterMode(name, scope, modes) {
-    return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+    return R.pipePromise(function () {
       var next_mode = modes.register[name];
       return R.exists(next_mode.onEnter) ? next_mode.onEnter(scope) : null;
     }, function () {

@@ -38,9 +38,9 @@ angular.module('clickApp.services').factory('deleteModelCommand', ['commands', '
       })(ctxt.models);
     },
     undo: function deleteModelUndo(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(function (model) {
+      return R.pipePromise(R.map(function (model) {
         return modelService.create(scope.factions, model).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (models) {
+      }), R.promiseAll, R.reject(R.isNil), function (models) {
         if (R.isEmpty(models)) {
           return self.Promise.reject('No valid model definition');
         }

@@ -35,7 +35,7 @@ angular.module('clickApp.directives').factory('clickGameModelCounter', ['labelEl
 
       return [counter, souls_image, souls_label];
     },
-    cleanup: function (under_models_container, over_models_container, element) {
+    cleanup: function cleanup(under_models_container, over_models_container, element) {
       over_models_container.removeChild(element[0].label);
     },
     update: function clickGameModelCounterUpdate(map_flipped, zoom_factor, info, model, img, el) {

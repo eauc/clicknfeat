@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameModels', [
     'point',
@@ -27,14 +25,13 @@ angular.module('clickApp.services')
           });
         },
         findAnyStamps: function modelsFindAnyStamps(stamps, models) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            R.map(function(stamp) {
+          return R.pipePromise(
+            R.map((stamp) => {
               return gameModelsService.findStamp(stamp, models)
                 .catch(R.always(null));
             }),
-            R.bind(self.Promise.all, self.Promise),
-            function(models) {
+            R.promiseAll,
+            (models) => {
               if(R.isEmpty(R.reject(R.isNil, models))) {
                 return self.Promise.reject('No model found');
               }
@@ -53,36 +50,35 @@ angular.module('clickApp.services')
             else resolve(stamps);
           });
         },
-        onStamps: function modelsOnStamps(method /*, ...args..., stamps, models*/) {
+        onStamps: function modelsOnStamps(method, ...args /*, stamps, models*/) {
           if('Function' !== R.type(modelService[method])) {
             return self.Promise.reject('Unknown method '+method+' on models');
           }
           
-          var args = Array.prototype.slice.call(arguments);
           var models = R.last(args);
           var stamps = R.nth(-2, args);
 
-          args = R.slice(1, -2, args);
+          args = R.slice(0, -2, args);
           var reason;
           return R.pipeP(
             gameModelsService.findAnyStamps$(stamps),
             R.reject(R.isNil),
-            R.map(function(model) {
+            R.map((model) => {
               return self.Promise.resolve(modelService[method]
                                           .apply(null, R.append(model, args)))
-                .catch(function(_reason) {
+                .catch((_reason) => {
                   console.error(_reason);
                   reason = _reason;
                   return '##failed##';
                 });
             }),
-            R.bind(self.Promise.all, self.Promise),
-            function(results) {
+            R.promiseAll,
+            (results) => {
               if(R.isEmpty(R.reject(R.equals('##failed##'), results))) {
                 console.error('Models: onStamps all failed', args);
                 return self.Promise.reject(reason);
               }
-              return R.map(function(res) {
+              return R.map((res) => {
                 return ( res === '##failed##' ?
                          null : res
                        );
@@ -92,12 +88,12 @@ angular.module('clickApp.services')
         },
         lockStamps: function modelsLockStamps(lock, stamps, models) {
           return R.pipeP(
-            function() {
+            () => {
               return gameModelsService.findAnyStamps(stamps, models);
             },
             R.reject(R.isNil),
             R.forEach(modelService.setLock$(lock)),
-            function() {
+            () => {
               var partition = R.pipe(
                 gameModelsService.all,
                 R.partition(modelService.isLocked)
@@ -112,7 +108,7 @@ angular.module('clickApp.services')
         add: function modelsAdd(mods, models) {
           return R.pipe(
             gameModelsService.removeStamps$(R.map(R.path(['state','stamp']), mods)),
-            function(models) {
+            (models) => {
               return R.assoc('active', R.concat(models.active, mods), models);
             }
           )(models);
@@ -128,7 +124,7 @@ angular.module('clickApp.services')
         },
         modeForStamp: function modelsModeForStamp(stamp, models) {
           return R.pipeP(
-            function() {
+            () => {
               return gameModelsService.findStamp(stamp, models);
             },
             modelService.modeFor$
@@ -138,7 +134,7 @@ angular.module('clickApp.services')
           return R.pipeP(
             gameModelsService.findAnyStamps$(stamps),
             R.reject(R.isNil),
-            function(selection) {
+            (selection) => {
               var base = R.pick(['x','y','r'], selection[0].state);
 
               return {

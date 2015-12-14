@@ -7,7 +7,7 @@ angular.module('clickApp.directives').directive('eaFile', function () {
       eaFile: '&'
     },
     controller: ['$scope', function () {}],
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       element[0].onclick = function () {
         this.value = null;
       };

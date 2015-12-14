@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('game', [
     'jsonStringifier',
@@ -80,23 +78,22 @@ angular.module('clickApp.services')
                    s.capitalize(gameService.playerName('p2', game))
                  );
         },
-        executeCommand: function gameExecuteCommand(/* ...args..., scope, game */) {
-          var args = Array.prototype.slice.apply(arguments);
+        executeCommand: function gameExecuteCommand(...args /*, scope, game */) {
           var game = R.last(args);
           var scope = R.nth(-2, args);
           return R.pipeP(
-            function() {
+            () => {
               return commandsService.execute.apply(null, args);
             },
-            function(command) {
+            (command) => {
               command.user = R.pathOr('Unknown', ['user','state','name'], scope);
               command.stamp = R.guid();
 
               return command;
             },
-            function(command) {
+            (command) => {
               return R.pipeP(
-                function() {
+                () => {
                   if(gameConnectionService.active(game)) {
                     game.commands_log = R.append(command, game.commands_log);
                     return gameConnectionService.sendEvent({
@@ -111,7 +108,7 @@ angular.module('clickApp.services')
                   scope.gameEvent('command', 'execute');
                   return scope.saveGame(game);
                 },
-                function() {
+                () => {
                   return R.clone(command);
                 }
               )();
@@ -125,10 +122,10 @@ angular.module('clickApp.services')
           
           var command = R.last(game.commands);
           return R.pipeP(
-            function() {
+            () => {
               return commandsService.undo(command, scope, game);
             },
-            function() {
+            () => {
               game.commands = R.init(game.commands);
 
               if(gameConnectionService.active(game)) {
@@ -141,9 +138,9 @@ angular.module('clickApp.services')
           
               game.undo = R.append(command, game.undo);
               scope.gameEvent('command', 'undo');
-              return;
+              return null;
             },
-            function() {
+            () => {
               return scope.saveGame(game);
             }
           )();
@@ -155,10 +152,10 @@ angular.module('clickApp.services')
           
           var command = R.last(game.undo);
           return R.pipeP(
-            function() {
+            () => {
               return commandsService.replay(command, scope, game);
             },
-            function() {
+            () => {
               game.undo = R.init(game.undo);
 
               if(gameConnectionService.active(game)) {
@@ -171,9 +168,9 @@ angular.module('clickApp.services')
           
               game.commands = R.append(command, game.commands);
               scope.gameEvent('command', 'replay');
-              return;
+              return null;
             },
-            function() {
+            () => {
               return scope.saveGame(game);
             }
           )();
@@ -190,12 +187,12 @@ angular.module('clickApp.services')
         },
       };
       function gameReplayBatchs(batchs, scope, game) {
-        if(R.isEmpty(batchs)) return;
+        if(R.isEmpty(batchs)) return null;
         
         console.log('Game: ReplayBatchs:', batchs);
         return commandsService.replayBatch(batchs[0], scope, game)
-          .then(function() {
-            return new self.Promise(function(resolve/*, reject*/) {
+          .then(() => {
+            return new self.Promise((resolve/*, reject*/) => {
               self.requestAnimationFrame(function _gameReplayBatch() {
                 resolve(gameReplayBatchs(R.tail(batchs), scope, game));
               });
@@ -203,7 +200,7 @@ angular.module('clickApp.services')
           });
       }
       function gameReplayAll(scope, game) {
-        return new self.Promise(function(resolve/*, reject*/) {
+        return new self.Promise((resolve/*, reject*/) => {
           if(R.isEmpty(game.commands)) {
             resolve();
           }
@@ -213,7 +210,7 @@ angular.module('clickApp.services')
             scope.gameEvent('gameLoading');
             resolve(gameReplayBatchs(batchs, scope, game));
           });
-        }).then(function() {
+        }).then(() => {
           console.error('Game: ReplayAll: end');
           scope.gameEvent('gameLoaded');
           return scope.saveGame(game);

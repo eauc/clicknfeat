@@ -1,7 +1,7 @@
 'use strict';
 
 R.random = (function () {
-  var random = function (min, max) {
+  var random = function random(min, max) {
     var rval = 0;
     var range = max - min;
 

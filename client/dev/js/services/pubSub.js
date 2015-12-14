@@ -15,13 +15,18 @@ angular.module('clickApp.services').factory('pubSub', [function pubSubServiceFac
         })(cache);
       })(pubSub);
     },
-    publish: function pubSubPublish(event /*, ...args..., pubSub */) {
-      var args = Array.prototype.slice.call(arguments);
+    publish: function pubSubPublish() /*, pubSub */{
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var event = args[0];
+
       R.pipe(R.last, R.prop('_pubSubCache'), signalListeners(event, R.init(args)), signalListeners(WATCH_EVENT, R.init(args)))(args);
     }
   };
   function unsubscribe(event, listener, cache) {
-    return function pubSubUnsubscribe() {
+    return function () {
       cache[event] = R.reject(R.equals(listener), cache[event]);
     };
   }

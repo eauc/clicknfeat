@@ -2,21 +2,24 @@
 
 angular.module('clickApp.services').factory('setRulerCommand', ['commands', 'gameRuler', function setRulerCommandServiceFactory(commandsService, gameRulerService) {
   var setRulerCommandService = {
-    execute: function setRulerExecute(method /* ...args..., scope, game */) {
+    execute: function setRulerExecute(method) /*, scope, game */{
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
       if ('Function' !== R.type(gameRulerService[method])) {
         return self.Promise.reject('Ruler unknown method ' + method);
       }
 
-      var args = Array.prototype.slice.call(arguments);
       var game = R.last(args);
       var ctxt = {
         before: [],
         after: [],
         desc: method
       };
-      args = R.append(game.ruler, R.slice(1, -1, args));
+      args = R.append(game.ruler, R.slice(0, -1, args));
 
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+      return R.pipePromise(function () {
         return gameRulerService.saveRemoteState(game.ruler);
       }, function (before) {
         ctxt.before = before;

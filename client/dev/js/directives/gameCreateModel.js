@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGameCreateModel', ['$window', 'gameFactions', 'gameMap', function ($window, gameFactionsService, gameMapService) {
   return {
     restrict: 'A',
-    link: function (scope, el /*, attrs*/) {
+    link: function link(scope, el /*, attrs*/) {
       var map = document.getElementById('map');
       var svgNS = map.namespaceURI;
 

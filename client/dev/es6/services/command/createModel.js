@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('createModelCommand', [
     'commands',
@@ -15,22 +13,21 @@ angular.module('clickApp.services')
       var createModelCommandService = {
         execute: function createModelExecute(create, is_flipped, scope, game) {
           var add$ = pointService.addToWithFlip$(is_flipped);
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
+          return R.pipePromise(
             R.prop('models'),
-            R.map(function(model) {
+            R.map((model) => {
               return R.pipe(
                 add$(create.base),
                 R.omit(['stamp']),
-                function(model) {
+                (model) => {
                   return modelService.create(scope.factions, model)
                     .catch(R.always(null));
                 }
               )(model);
             }),
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.reject(R.isNil),
-            function(models) {
+            (models) => {
               if(R.isEmpty(models)) {
                 return self.Promise.reject('No valid model definition');
               }
@@ -41,14 +38,14 @@ angular.module('clickApp.services')
               };
               return R.pipe(
                 gameModelsService.add$(models),
-                function(game_models) {
+                (game_models) => {
                   game.models = game_models;
               
                   return gameModelSelectionService.set('local',
                                                        R.map(R.path(['state','stamp']), models),
                                                        scope, game.model_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.model_selection = selection;
 
                   scope.gameEvent('createModel');
@@ -59,30 +56,29 @@ angular.module('clickApp.services')
           )(create);
         },
         replay: function createModelReplay(ctxt, scope, game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
+          return R.pipePromise(
             R.prop('models'),
-            R.map(function(model) {
+            R.map((model) => {
               return modelService.create(scope.factions, model)
                 .catch(R.always(null));
             }),
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.reject(R.isNil),
-            function(models) {
+            (models) => {
               if(R.isEmpty(models)) {
                 return self.Promise.reject('No valid model definition');
               }
               
               return R.pipe(
                 gameModelsService.add$(models),
-                function(game_models) {
+                (game_models) => {
                   game.models = game_models;
                   
                   return gameModelSelectionService.set('remote',
                                                        R.map(R.path(['state','stamp']), models),
                                                        scope, game.model_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.model_selection = selection;
                   
                   scope.gameEvent('createModel');

@@ -20,7 +20,7 @@ angular.module('clickApp.services').factory('gameTemplateSelection', ['modes', '
       return R.defaultTo([], R.prop(where, selection));
     },
     checkMode: function templateSelectionCheckMode(scope, selection) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), gameTemplateSelectionService.get$('local'), R.head, function (stamp) {
+      return R.pipePromise(gameTemplateSelectionService.get$('local'), R.head, function (stamp) {
         if (R.isNil(stamp)) {
           return self.Promise.reject('No template selection');
         }

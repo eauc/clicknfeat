@@ -4,11 +4,11 @@ angular.module('clickApp.services').factory('createModelCommand', ['commands', '
   var createModelCommandService = {
     execute: function createModelExecute(create, is_flipped, scope, game) {
       var add$ = pointService.addToWithFlip$(is_flipped);
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.prop('models'), R.map(function (model) {
+      return R.pipePromise(R.prop('models'), R.map(function (model) {
         return R.pipe(add$(create.base), R.omit(['stamp']), function (model) {
           return modelService.create(scope.factions, model).catch(R.always(null));
         })(model);
-      }), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (models) {
+      }), R.promiseAll, R.reject(R.isNil), function (models) {
         if (R.isEmpty(models)) {
           return self.Promise.reject('No valid model definition');
         }
@@ -30,9 +30,9 @@ angular.module('clickApp.services').factory('createModelCommand', ['commands', '
       })(create);
     },
     replay: function createModelReplay(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.prop('models'), R.map(function (model) {
+      return R.pipePromise(R.prop('models'), R.map(function (model) {
         return modelService.create(scope.factions, model).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (models) {
+      }), R.promiseAll, R.reject(R.isNil), function (models) {
         if (R.isEmpty(models)) {
           return self.Promise.reject('No valid model definition');
         }

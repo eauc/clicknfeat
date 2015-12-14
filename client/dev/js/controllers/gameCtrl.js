@@ -1,6 +1,10 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gamesService, modesService, pubSubService) {
+  var _arguments = arguments;
+
   console.log('init gameCtrl', $stateParams, $state.current.name);
   var is_online = $stateParams.online === 'online';
   $scope.is_private = $stateParams['private'] === 'private';
@@ -19,15 +23,18 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   };
 
   var game_event_channel = pubSubService.init();
-  pubSubService.subscribe('#watch#', function () {
-    console.log('gameEvent', arguments);
-  }, game_event_channel);
+  pubSubService.subscribe('#watch#', R.spy('gameEvent'), game_event_channel);
   var game_is_loading = false;
   var event_loading_queue = [];
-  $scope.gameEvent = function gameEvent(event) {
+  $scope.gameEvent = function gameEvent() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var event = args[0];
+
     if (event === 'gameLoading') game_is_loading = true;
 
-    var args = Array.prototype.slice.apply(arguments);
     if (event === 'gameLoaded') {
       R.pipe(R.reverse, R.uniqBy(R.head), R.reverse, R.forEach(function (args) {
         pubSubService.publish.apply(null, R.append(game_event_channel, args));
@@ -44,18 +51,18 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   $scope.onGameEvent = function onGameEvent(event, listener, scope) {
     // console.log('subscribe onGameEvent', arguments);
     var unsubscribe = pubSubService.subscribe(event, listener, game_event_channel);
-    scope.$on('$destroy', function unsubscribeOnGameEvent() {
+    scope.$on('$destroy', function () {
       // console.log('unsubscribe onGameEvent', event, game_event_channel);
       unsubscribe();
     });
   };
   $scope.digestOnGameEvent = function digestOnGameEvent(event, scope) {
     // console.log('subscribe digestOnGameEvent', arguments);
-    var unsubscribe = pubSubService.subscribe(event, function _digestOnGameEvent() {
+    var unsubscribe = pubSubService.subscribe(event, function () {
       console.log('digestOnGameEvent', event);
       $scope.$digest(scope);
     }, game_event_channel);
-    scope.$on('$destroy', function unsubscribeDigestOnGameEvent() {
+    scope.$on('$destroy', function () {
       // console.log('unsubscribe digestOnGameEvent', event, game_event_channel);
       unsubscribe();
     });
@@ -69,7 +76,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   $scope.digestOnGameEvent('switchMode', $scope);
   $scope.digestOnGameEvent('gameLoaded', $scope);
 
-  $scope.saveGame = function saveGame(game) {
+  $scope.saveGame = function (game) {
     return R.pipeP(function (game) {
       if (is_online) return self.Promise.resolve(game);
 
@@ -78,7 +85,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
         return game;
       })($scope.local_games);
     }, function (game) {
-      if (R.isNil(game)) return;
+      if (R.isNil(game)) return game;
 
       $scope.game = game;
       $scope.gameEvent('saveGame', game);
@@ -87,28 +94,31 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     })(game);
   };
 
-  $scope.currentModeName = function currentModeName() {
+  $scope.currentModeName = function () {
     if (!R.exists($scope.modes)) return '';
     return modesService.currentModeName($scope.modes);
   };
-  $scope.currentModeIs = function currentModeIs(mode) {
+  $scope.currentModeIs = function (mode) {
     if (!R.exists($scope.modes)) return false;
     return modesService.currentModeName($scope.modes) === mode;
   };
-  $scope.doSwitchToMode = function doSwitchToMode(mode) {
+  $scope.doSwitchToMode = function (mode) {
     return modesService.switchToMode(mode, $scope, $scope.modes).catch(function (reason) {
       $scope.gameEvent('modeActionError', reason);
       return self.Promise.reject(reason);
     });
   };
-  $scope.doModeAction = function doModeAction(action) {
+  $scope.doModeAction = function (action) {
     return modesService.currentModeAction(action, $scope, $scope.modes).catch(function (reason) {
       $scope.gameEvent('modeActionError', reason);
       return self.Promise.reject(reason);
     });
   };
   $scope.doExecuteCommand = function doExecuteCommand() {
-    var args = Array.prototype.slice.apply(arguments);
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
     args = R.concat(args, [$scope, $scope.game]);
     return gameService.executeCommand.apply(gameService, args).catch(function (reason) {
       $scope.gameEvent('modeActionError', reason);
@@ -116,12 +126,19 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     });
   };
   $scope.show_action_group = null;
-  $scope.doActionButton = function doActionButton(action) {
-    if (action[1] === 'toggle') {
-      $scope.show_action_group = $scope.show_action_group === action[2] ? null : action[2];
+  $scope.doActionButton = function doActionButton(_ref) {
+    var _ref2 = _slicedToArray(_ref, 3);
+
+    var label = _ref2[0];
+    var action = _ref2[1];
+    var group = _ref2[2];
+
+    label = label;
+    if (action === 'toggle') {
+      $scope.show_action_group = $scope.show_action_group === group ? null : group;
       return;
     }
-    $scope.doModeAction(action[1]);
+    $scope.doModeAction(action);
   };
 
   var forward_events = [
@@ -135,15 +152,15 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   // 'rightClickMap',
   'moveMap', 'dragStartMap', 'dragMap', 'dragEndMap'];
   R.forEach(function (fwd) {
-    $scope.$on(fwd, function onForwardEvent(e, target, event) {
-      console.log('$on ' + fwd, arguments);
+    $scope.$on(fwd, function (e, target, event) {
+      console.log('$on ' + fwd, _arguments);
       $scope.gameEvent('closeSelectionDetail');
       modesService.currentModeAction(fwd, $scope, target, event, $scope.modes).catch(function (reason) {
         $scope.gameEvent('modeActionError', reason);
       });
     });
   }, forward_events);
-  $scope.$on('$destroy', function onGameCtrlDestroy() {
+  $scope.$on('$destroy', function () {
     console.log('on gameCtrl $destroy');
     Mousetrap.reset();
   });

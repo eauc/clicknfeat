@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('pubSub', [
     function pubSubServiceFactory() {
@@ -15,11 +13,11 @@ angular.module('clickApp.services')
         subscribe: function pubSubSubscribe(event, listener, pubSub) {
           return R.pipe(
             R.prop('_pubSubCache'),
-            function(cache) {
+            (cache) => {
               return R.pipe(
                 R.propOr([], event),
                 R.append(listener),
-                function(listeners) {
+                (listeners) => {
                   cache[event] = listeners;
                   return unsubscribe(event, listener, cache);
                 }
@@ -27,8 +25,8 @@ angular.module('clickApp.services')
             }
           )(pubSub);
         },
-        publish: function pubSubPublish(event /*, ...args..., pubSub */) {
-          var args = Array.prototype.slice.call(arguments);
+        publish: function pubSubPublish(...args /*, pubSub */) {
+          var [event] = args;
           R.pipe(
             R.last,
             R.prop('_pubSubCache'),
@@ -38,7 +36,7 @@ angular.module('clickApp.services')
         }
       };
       function unsubscribe(event, listener, cache) {
-        return function pubSubUnsubscribe() {
+        return () => {
           cache[event] = R.reject(R.equals(listener), cache[event]);
         };
       }

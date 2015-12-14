@@ -27,7 +27,7 @@ angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', fun
       games: '=',
       selection: '='
     },
-    link: function () /*scope, element, attrs*/{}
+    link: function link() /*scope, element, attrs*/{}
   };
 }]);
 //# sourceMappingURL=gamesList.js.map

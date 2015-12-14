@@ -1,17 +1,15 @@
-R.spy = (function() {
-  return function() {
-    var args = R.slice(0, arguments.length, arguments);
-    return function(obj) {
+R.spy = (() => {
+  return (...args) => {
+    return (obj) => {
       console.log.apply(console, R.append(obj, args));
       return obj;
     };
   };
 })();
 
-R.spyError = (function() {
-  return function() {
-    var args = R.slice(0, arguments.length, arguments);
-    return function(obj) {
+R.spyError = (() => {
+  return (...args) => {
+    return (obj) => {
       console.error.apply(console, R.append(obj, args));
       return obj;
     };

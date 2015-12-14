@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameFactions', [
     'localStorage',
@@ -17,10 +15,10 @@ angular.module('clickApp.services')
         init: function gameFactionsInit() {
           return R.pipeP(
             httpService.get,
-            function(data) {
-              return R.map(function(faction) {
+            (data) => {
+              return R.map((faction) => {
                 return httpService.get(data[faction])
-                  .then(function(fdata) {
+                  .then((fdata) => {
                     if(R.isNil(fdata)) {
                       console.log('factions: Error getting '+faction+' info', data[faction]);
                     }
@@ -28,34 +26,33 @@ angular.module('clickApp.services')
                   });
               }, R.keys(data));
             },
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.sortBy(R.compose(R.prop('name'), R.nth(1))),
-            R.reduce(function(mem, pair) {
-              return R.assoc(pair[0], updateFaction(pair[1]), mem);
+            R.reduce(function(mem, [name, faction]) {
+              return R.assoc(name, updateFaction(faction), mem);
             }, {}),
-            function(factions) {
+            (factions) => {
               return gameFactionsService.loadDesc()
                 .then(gameFactionsService.applyDesc$(factions));
             }
-          )('/data/model/factions.json').catch(function(reason) {
-            console.log('factions: error getting description', reason);
-          });
+          )('/data/model/factions.json')
+            .catch(R.spyError('factions: error getting description'));
         },
-        loadDesc: function() {
+        loadDesc: function gameFactionsLoadDesc() {
           return localStorageService.load(STORAGE_KEY)
-            .catch(function() {
+            .catch(() => {
               console.log('factions: no stored desc');
             })
             .then(R.defaultTo({}));
         },
-        applyDesc: function(factions, desc) {
+        applyDesc: function gameFactionsApplyDesc(factions, desc) {
           return R.deepExtend(factions, desc);
         },
-        storeDesc: function(desc) {
+        storeDesc: function gameFactionsStoreDesc(desc) {
           return localStorageService.save(STORAGE_KEY, desc);
         },
-        getModelInfo: function factionsGetModelInfo(path, factions) {
-          return new self.Promise(function(resolve, reject) {
+        getModelInfo: function gameFactionsGetModelInfo(path, factions) {
+          return new self.Promise((resolve, reject) => {
             var info = R.path(path, factions);
             if(R.isNil(info)) reject('Model info '+path.join('.')+' not found');
             else resolve(info);
@@ -66,7 +63,7 @@ angular.module('clickApp.services')
         // console.log(faction);
         return R.pipe(
           R.assoc('wreck', updateWreck(faction.wreck)),
-          function(faction) {
+          (faction) => {
             return R.assoc('models',
                            updateFactionModels(faction, faction.models),
                            faction);
@@ -75,7 +72,7 @@ angular.module('clickApp.services')
       }
       function updateFactionModels(faction, models) {
         // console.log(models);
-        return R.reduce(function(mem, section) {
+        return R.reduce((mem, section) => {
           // console.log(section);
           return R.assoc(section, updateSection(faction, models[section]), mem);
         }, {}, R.keys(models));
@@ -84,8 +81,8 @@ angular.module('clickApp.services')
         // console.log(section);
         return R.pipe(
           R.keys,
-          R.sortBy(function(entry) { return section[entry].name; }),
-          R.reduce(function(mem, entry) {
+          R.sortBy((entry) => { return section[entry].name; }),
+          R.reduce((mem, entry) => {
             // console.log(entry);
             return R.assoc(entry, updateEntry(faction, section[entry]), mem);
           }, {})
@@ -106,13 +103,13 @@ angular.module('clickApp.services')
       }
       function updateUnitEntries(faction, unit, entries) {
         // console.log(unit, entries);
-        return R.reduce(function(mem, category) {
+        return R.reduce((mem, category) => {
           // console.log(category);
           return R.assoc(category, updateUnitCategory(faction, unit, entries[category]), mem);
         }, {}, R.keys(entries));    
       }
       function updateUnitCategory(faction, unit, category) {
-        return R.reduce(function(mem, entry) {
+        return R.reduce((mem, entry) => {
           // console.log(entry);
           return R.assoc(entry, updateModel(faction, unit, category[entry]), mem);
         }, {}, R.keys(category));
@@ -128,7 +125,7 @@ angular.module('clickApp.services')
           R.assoc('damage', updateDamage(model.damage)),
           R.assoc('base_color', faction.color),
           R.assoc('base_radius', BASE_RADIUS[model.base]),
-          function(model) {
+          (model) => {
             if(model.type === 'jack' &&
                R.exists(faction.wreck) &&
                R.exists(faction.wreck[model.base])) {
@@ -142,7 +139,7 @@ angular.module('clickApp.services')
         // console.log(imgs);
         return R.pipe(
           R.defaultTo([]),
-          function(imgs) {
+          (imgs) => {
             if(R.isEmpty(imgs)) {
               return R.append({}, imgs);
             }
@@ -154,10 +151,10 @@ angular.module('clickApp.services')
       function updateWreck(wreck) {
         return R.pipe(
           R.defaultTo({}),
-          function(wreck) {
+          (wreck) => {
             return R.pipe(
               R.keys,
-              R.reduce(function(mem, key) {
+              R.reduce((mem, key) => {
                 return R.assoc(key, updateImage(R.assoc('type','wreck',wreck[key])), mem);
               }, {})
             )(wreck);
@@ -175,13 +172,13 @@ angular.module('clickApp.services')
         // console.log(damage);
         return R.pipe(
           R.defaultTo({ type: 'warrior', n: 1 }),
-          function(damage) {
+          (damage) => {
             return R.assoc('type', R.defaultTo('warrior', damage.type), damage);
           },
-          function(damage) {
+          (damage) => {
             return R.assoc('total', computeDamageTotal(damage), damage);
           },
-          function(damage) {
+          (damage) => {
             return R.assoc('depth', computeDamageDepth(damage), damage);
           }
         )(damage);
@@ -193,7 +190,7 @@ angular.module('clickApp.services')
           R.reject(R.equals('type')),
           R.reject(R.equals('total')),
           R.reject(R.equals('field')),
-          R.reduce(function(mem, key) {
+          R.reduce((mem, key) => {
             return mem + R.pipe(
               R.reject(R.isNil),
               R.length
@@ -208,7 +205,7 @@ angular.module('clickApp.services')
           R.reject(R.equals('type')),
           R.reject(R.equals('total')),
           R.reject(R.equals('field')),
-          R.map(function(key) {
+          R.map((key) => {
             return R.length(damage[key]);
           }),
           R.reduce(R.max, 0)

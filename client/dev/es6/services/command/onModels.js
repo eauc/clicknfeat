@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('onModelsCommand', [
     'commands',
@@ -11,12 +9,11 @@ angular.module('clickApp.services')
                                            gameModelsService,
                                            gameModelSelectionService) {
       var onModelsCommandService = {
-        execute: function onModelsExecute(method /* ...args..., stamps, scope, game */) {
+        execute: function onModelsExecute(method, ...args /*, stamps, scope, game */) {
           if('Function' !== R.type(modelService[method])) {
             return self.Promise.reject('Unknown method '+method+' on model');
           }
           
-          var args = Array.prototype.slice.call(arguments);
           var game = R.last(args);
           var scope = R.nth(-2, args);
           var stamps = R.nth(-3, args);
@@ -26,24 +23,28 @@ angular.module('clickApp.services')
             desc: method,
           };
 
-          args = R.append(game.models, R.slice(0, -2, args));
+          args = R.pipe(
+            R.slice(0, -2),
+            R.prepend(method),
+            R.append(game.models)
+          )(args);
 
           return R.pipeP(
-            function() {
+            () => {
               return gameModelsService.onStamps$('saveState', stamps, game.models);
             },
-            function(before) {
+            (before) => {
               ctxt.before = before;
               
               return gameModelsService.onStamps.apply(null, args);
             },
-            function() {
+            () => {
               return gameModelsService.onStamps('saveState', stamps, game.models);
             },
-            function(after) {
+            (after) => {
               ctxt.after = after;
 
-              R.forEach(function(stamp) {
+              R.forEach((stamp) => {
                 scope.gameEvent('changeModel-'+stamp);
               }, stamps);
               
@@ -55,13 +56,13 @@ angular.module('clickApp.services')
           var stamps = R.pluck('stamp', ctxt.after);
           return R.pipeP(
             gameModelsService.findAnyStamps$(stamps),
-            R.addIndex(R.forEach)(function(model, index) {
+            R.addIndex(R.forEach)((model, index) => {
               if(R.isNil(model)) return;
 
               modelService.setState(ctxt.after[index], model);
               scope.gameEvent('changeModel-'+modelService.eventName(model));
             }),
-            function() {
+            () => {
               game.model_selection =
                 gameModelSelectionService.set('remote', stamps,
                                               scope, game.model_selection);
@@ -72,13 +73,13 @@ angular.module('clickApp.services')
           var stamps = R.pluck('stamp', ctxt.before);
           return R.pipeP(
             gameModelsService.findAnyStamps$(stamps),
-            R.addIndex(R.forEach)(function(model, index) {
+            R.addIndex(R.forEach)((model, index) => {
               if(R.isNil(model)) return;
 
               modelService.setState(ctxt.before[index], model);
               scope.gameEvent('changeModel-'+modelService.eventName(model));
             }),
-            function() {
+            () => {
               game.model_selection =
                 gameModelSelectionService.set('remote', stamps,
                                               scope, game.model_selection);

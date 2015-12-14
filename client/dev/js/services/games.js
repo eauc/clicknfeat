@@ -4,9 +4,7 @@ angular.module('clickApp.services').factory('games', ['localStorage', 'http', 'g
   var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
   var gamesService = {
     loadLocalGames: function gamesLoadLocalGames() {
-      return localStorageService.load(LOCAL_GAMES_STORAGE_KEY).catch(function () {
-        console.log('games: Failed to load local games');
-      }).then(R.defaultTo([]));
+      return localStorageService.load(LOCAL_GAMES_STORAGE_KEY).catch(R.spy('games: Failed to load local games')).then(R.defaultTo([]));
     },
     storeLocalGames: function gamesStoreLocalGames(games) {
       return localStorageService.save(LOCAL_GAMES_STORAGE_KEY, games);
@@ -24,7 +22,7 @@ angular.module('clickApp.services').factory('games', ['localStorage', 'http', 'g
       return gamesService.storeLocalGames(ret);
     },
     newOnlineGame: function gamesNewOnlineGame(game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), gameService.pickForJson, R.spyError('upload game'), httpService.post$('/api/games'), R.spyError('upload game response'))(game);
+      return R.pipePromise(gameService.pickForJson, R.spyError('upload game'), httpService.post$('/api/games'), R.spyError('upload game response'))(game);
     },
     loadOnlineGame: function gamesLoadOnlineGame(is_private, id) {
       var url = ['/api/games', is_private ? 'private' : 'public', id].join('/');

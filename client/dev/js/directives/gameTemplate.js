@@ -8,7 +8,7 @@ angular.module('clickApp.directives').directive('clickGameTemplate', ['labelElem
   };
   return {
     restrict: 'A',
-    link: function (scope, el /*, attrs*/) {
+    link: function link(scope, el /*, attrs*/) {
       var map = document.getElementById('map');
       var svgNS = map.namespaceURI;
 
@@ -36,7 +36,7 @@ angular.module('clickApp.directives').directive('clickGameTemplatesList', [funct
     restrict: 'A',
     templateUrl: 'partials/game/templates_list.html',
     scope: true,
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       scope.type = element[0].getAttribute('click-game-templates-list');
       console.log('clickGameTemplatesList', scope.type);
     }

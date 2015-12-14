@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('createTemplateCommand', [
     'commands',
@@ -12,22 +10,21 @@ angular.module('clickApp.services')
                                                  gameTemplateSelectionService) {
       var createTemplateCommandService = {
         execute: function createTemplateExecute(temps, scope, game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            R.map(function(temp) {
+          return R.pipePromise(
+            R.map((temp) => {
               return templateService.create(temp)
                 .catch(R.always(null));
             }),
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.reject(R.isNil),
-            function(templates) {
+            (templates)  => {
               if(R.isEmpty(templates)) {
                 console.log('Command CreateTemplate : no valid template definition');
                 return self.Promise.reject('No valid template definition');
               }
               return templates;
             },
-            function(templates) {
+            (templates) => {
               var ctxt = {
                 templates: R.map(templateService.saveState, templates),
                 desc: templates[0].type,
@@ -35,14 +32,14 @@ angular.module('clickApp.services')
 
               return R.pipe(
                 gameTemplatesService.add$(templates),
-                function(game_templates) {
+                (game_templates) => {
                   game.templates = game_templates;
 
                   return gameTemplateSelectionService
                     .set('local', R.map(R.path(['state','stamp']), templates),
                          scope, game.template_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.template_selection = selection;
 
                   scope.gameEvent('createTemplate');
@@ -53,32 +50,31 @@ angular.module('clickApp.services')
           )(temps);
         },
         replay: function createTemplateReplay(ctxt, scope, game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            R.map(function(temp) {
+          return R.pipePromise(
+            R.map((temp) => {
               return templateService.create(temp)
                 .catch(R.always(null));
             }),
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.reject(R.isNil),
-            function(templates) {
+            (templates) => {
               if(R.isEmpty(templates)) {
                 console.log('Command CreateTemplate : no valid template definition');
                 return self.Promise.reject('No valid template definition');
               }
               return templates;
             },
-            function(templates) {
+            (templates) => {
               return R.pipe(
                 gameTemplatesService.add$(templates),
-                function(game_templates) {
+                (game_templates) => {
                   game.templates = game_templates;
             
                   return gameTemplateSelectionService
                     .set('remote', R.map(R.path(['state','stamp']), templates),
                          scope, game.template_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.template_selection = selection;
 
                   scope.gameEvent('createTemplate');
@@ -90,22 +86,22 @@ angular.module('clickApp.services')
         undo: function createTemplateUndo(ctxt, scope, game) {
           return R.pipe(
             R.map(R.prop('stamp')),
-            function(stamps) {
+            (stamps) => {
               return R.pipe(
                 gameTemplatesService.removeStamps$(stamps),
-                function(game_templates) {
+                (game_templates) => {
                   game.templates = game_templates;
 
                   return gameTemplateSelectionService
                     .removeFrom('local', stamps, scope, game.template_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.template_selection = selection;
               
                   return gameTemplateSelectionService
                     .removeFrom('remote', stamps, scope, game.template_selection);
                 },
-                function(selection) {
+                (selection) => {
                   game.template_selection = selection;
           
                   scope.gameEvent('createTemplate');

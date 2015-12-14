@@ -24,7 +24,7 @@ angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gam
   }
   return {
     restrict: 'A',
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       var log = true ? R.bind(console.log, console) : function () {}; // eslint-disable-line
 
       var viewport = document.querySelector('#viewport');

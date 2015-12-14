@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modes', [
     function modesServiceFactory() {
@@ -28,34 +26,33 @@ angular.module('clickApp.services')
             R.sortBy(R.head)
           )(currentMode(modes).bindings);
         },
-        currentModeAction: function(action /* ...args..., modes */) {
-          var args = Array.prototype.slice.call(arguments);
+        currentModeAction: function(action, ...args /*, modes*/) {
           var modes = R.last(args);
           var mode = currentMode(modes);
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function() {
+          return R.pipePromise(
+            () => {
               if(R.isNil(mode.actions[action])) {
                 console.log('modes: unknown mode '+mode.name+' action '+action);
                 return self.Promise.reject('Unknown action '+action);
               }
+              return null;
             },
-            function() {
-              return mode.actions[action].apply(null, R.init(R.tail(args)));
+            () => {
+              return mode.actions[action].apply(null, R.init(args));
             }
           )();
         },
         switchToMode: function(name, scope, modes) {
           var previous_mode = currentMode(modes);
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            // function() {
+          return R.pipePromise(
+            // () => {
             //   if(next === mode) {
             //     console.log('modes: already in '+name+' mode');
             //     return self.Promise.reject('already in '+name+' mode');
             //   }
+            // return null;
             // },
-            function() {
+            () => {
               if(R.isNil(R.prop(name, modes.register))) {
                 console.log('modes: error switching to mode '+name+' : does not exists');
                 return self.Promise.reject('mode '+name+' does not exists');
@@ -64,7 +61,7 @@ angular.module('clickApp.services')
             },
             leaveMode(scope),
             enterMode(name, scope),
-            function(modes) {
+            (modes) => {
               console.log('modes: switch mode from '+ previous_mode.name +
                           ' to '+ name);
               scope.gameEvent('switchMode');
@@ -78,16 +75,15 @@ angular.module('clickApp.services')
         return modes.register[modes.current];
       }
       var enterMode = R.curry(function _enterMode(name, scope, modes) {
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
-          function() {
+        return R.pipePromise(
+          () => {
             var next_mode = modes.register[name];
             return ( R.exists(next_mode.onEnter) ?
                      next_mode.onEnter(scope) :
                      null
                    );
           },
-          function() {
+          () => {
             modes.current = name;
             return modes;
           },
@@ -118,13 +114,13 @@ angular.module('clickApp.services')
         var all_bindings = R.keysIn(mode.bindings);
         var inherited_bindings = R.difference(all_bindings,
                                               own_bindings);
-        R.forEach(function(action) {
+        R.forEach((action) => {
           Mousetrap.bind(mode.bindings[action],
                          actionBinding(mode.actions, action,
                                        scope)
                         );
         }, inherited_bindings);
-        R.forEach(function(action) {
+        R.forEach((action) => {
           Mousetrap.bind(mode.bindings[action],
                          actionBinding(mode.actions, action,
                                        scope)
@@ -137,7 +133,7 @@ angular.module('clickApp.services')
           var res = actions[name](scope, event);
           event.preventDefault();
           return self.Promise.resolve(res)
-            .catch(function(reason) {
+            .catch((reason) => {
               scope.gameEvent('modeActionError', reason);
             });
         };
@@ -159,5 +155,5 @@ angular.module('clickApp.services')
     'aoeTemplateMode',
     'sprayTemplateMode',
     'wallTemplateMode',
-    function() { return {}; }
+    () => ({})
   ]);

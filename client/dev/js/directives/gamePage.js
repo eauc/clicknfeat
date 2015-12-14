@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGamePage', ['$window', function ($window) {
   return {
     restrict: 'A',
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       var gameview = element[0].querySelector('#gameview');
       var menu = element[0].querySelector('#menu');
 

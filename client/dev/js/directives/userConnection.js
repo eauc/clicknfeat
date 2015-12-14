@@ -52,7 +52,7 @@ angular.module('clickApp.directives').controller('userConnectionCtrl', ['$scope'
     controller: 'userConnectionCtrl',
     templateUrl: 'partials/directives/user_connection.html',
     scope: true,
-    link: function () /*scope, element, attrs*/{}
+    link: function link() /*scope, element, attrs*/{}
   };
 }]);
 //# sourceMappingURL=userConnection.js.map

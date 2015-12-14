@@ -1,8 +1,10 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.services').factory('gameTemplates', ['template', function gameTemplatesServiceFactory(templateService) {
   var gameTemplatesService = {
-    create: function () {
+    create: function create() {
       return {
         active: [],
         locked: []
@@ -23,9 +25,9 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
       });
     },
     findAnyStamps: function templatesFindAnyStamps(stamps, templates) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(function (stamp) {
+      return R.pipePromise(R.map(function (stamp) {
         return gameTemplatesService.findStamp(stamp, templates).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), function (stamps) {
+      }), R.promiseAll, function (stamps) {
         if (R.isEmpty(R.reject(R.isNil, stamps))) {
           console.log('DeleteTemplate : no templates found');
           return self.Promise.reject('No template found');
@@ -33,15 +35,18 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
         return stamps;
       })(stamps);
     },
-    onStamps: function templatesOnStamps() /* method, ...args..., stamps, templates*/{
-      var args = Array.prototype.slice.call(arguments);
+    onStamps: function templatesOnStamps() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
       var templates = R.last(args);
       var stamps = R.nth(-2, args);
 
       args = R.slice(0, -2, args);
       return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.map(function (template) {
         return templateService.call.apply(null, R.append(template, args));
-      }), R.bind(self.Promise.all, self.Promise))(templates);
+      }), R.promiseAll)(templates);
     },
     add: function templatesAdd(temps, templates) {
       return R.pipe(gameTemplatesService.removeStamps$(R.map(R.path(['state', 'stamp']), temps)), function (templates) {
@@ -62,10 +67,16 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
     },
     lockStamps: function templatesLockStamps(lock, stamps, templates) {
       return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.forEach(templateService.setLock$(lock)), function () {
-        var partition = R.pipe(gameTemplatesService.all, R.partition(templateService.isLocked))(templates);
+        var _R$pipe = R.pipe(gameTemplatesService.all, R.partition(templateService.isLocked))(templates);
+
+        var _R$pipe2 = _slicedToArray(_R$pipe, 2);
+
+        var locked = _R$pipe2[0];
+        var active = _R$pipe2[1];
+
         return {
-          active: partition[1],
-          locked: partition[0]
+          active: active,
+          locked: locked
         };
       })(templates);
     },

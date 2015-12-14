@@ -4,7 +4,7 @@ angular.module('clickApp.directives').directive('clickGameCreateTemplate', [func
   var templates = {};
   return {
     restrict: 'A',
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       var map = document.getElementById('map');
       var svgNS = map.namespaceURI;
 

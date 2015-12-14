@@ -89,7 +89,7 @@ angular.module('clickApp.services').factory('gameRuler', ['point', 'model', 'gam
       var max = ruler.remote.length / 2;
       var end = ruler.remote.end;
       var target = gameRulerService.target(ruler);
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function (end) {
+      return R.pipePromise(function (end) {
         if (R.exists(target) && gameRulerService.targetReached(ruler)) {
           return R.pipeP(gameModelsService.findStamp$(target), R.prop('state'))(models);
         }
@@ -146,9 +146,12 @@ angular.module('clickApp.services').factory('gameRuler', ['point', 'model', 'gam
           };
         }
         return R.pick(['start', 'end'], R.prop('remote', ruler));
-      }, function (line) {
-        var models_dist = pointService.distanceTo(line.end, line.start);
-        ruler = R.assoc('remote', R.pipe(R.assoc('start', line.start), enforceEndToMaxLength(line.end), function (remote) {
+      }, function (_ref) {
+        var start = _ref.start;
+        var end = _ref.end;
+
+        var models_dist = pointService.distanceTo(end, start);
+        ruler = R.assoc('remote', R.pipe(R.assoc('start', start), enforceEndToMaxLength(end), function (remote) {
           var ruler_length = pointService.distanceTo(remote.end, remote.start);
           return R.pipe(R.assoc('reached', ruler_length >= models_dist - 0.1), R.assoc('length', Math.round(ruler_length * 10) / 100))(remote);
         })(ruler.remote), ruler);

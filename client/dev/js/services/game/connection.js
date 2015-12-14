@@ -70,11 +70,11 @@ angular.module('clickApp.services').factory('gameConnection', ['pubSub', 'websoc
   }
   var replayCmdHandler$ = R.curry(function replayCmdHandler(scope, game, msg) {
     console.log('Game connection: replayCmd event', msg);
-    return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function (command) {
+    return R.pipePromise(function (command) {
       if (R.find(R.propEq('stamp', command.stamp), game.commands_log)) {
         game.commands_log = R.reject(R.propEq('stamp', command.stamp), game.commands_log);
         console.log('Game connection: replayCmd log', msg);
-        return;
+        return null;
       }
       return commandsService.replay(command, scope, game);
     }, function () {
@@ -89,11 +89,11 @@ angular.module('clickApp.services').factory('gameConnection', ['pubSub', 'websoc
   });
   var undoCmdHandler$ = R.curry(function undoCmdHandler(scope, game, msg) {
     console.log('Game connection: undoCmd event', msg);
-    return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function (command) {
+    return R.pipePromise(function (command) {
       if (R.find(R.propEq('stamp', command.stamp), game.undo_log)) {
         game.undo_log = R.reject(R.propEq('stamp', command.stamp), game.undo_log);
         console.log('Game connection: undoCmd log', msg);
-        return;
+        return null;
       }
       return commandsService.undo(command, scope, game);
     }, function () {

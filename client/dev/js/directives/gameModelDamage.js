@@ -73,7 +73,7 @@ angular.module('clickApp.directives').directive('clickGameModelDamage', [functio
     },
     controller: 'clickGameModelDamageCtrl',
     templateUrl: 'partials/game/model_damage.html',
-    link: function (scope /*, element, attrs*/) {
+    link: function link(scope /*, element, attrs*/) {
       console.log('gameModelDamage', scope);
     }
   };

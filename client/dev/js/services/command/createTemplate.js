@@ -3,9 +3,9 @@
 angular.module('clickApp.services').factory('createTemplateCommand', ['commands', 'template', 'gameTemplates', 'gameTemplateSelection', function createTemplateCommandServiceFactory(commandsService, templateService, gameTemplatesService, gameTemplateSelectionService) {
   var createTemplateCommandService = {
     execute: function createTemplateExecute(temps, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(function (temp) {
+      return R.pipePromise(R.map(function (temp) {
         return templateService.create(temp).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (templates) {
+      }), R.promiseAll, R.reject(R.isNil), function (templates) {
         if (R.isEmpty(templates)) {
           console.log('Command CreateTemplate : no valid template definition');
           return self.Promise.reject('No valid template definition');
@@ -30,9 +30,9 @@ angular.module('clickApp.services').factory('createTemplateCommand', ['commands'
       })(temps);
     },
     replay: function createTemplateReplay(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(function (temp) {
+      return R.pipePromise(R.map(function (temp) {
         return templateService.create(temp).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (templates) {
+      }), R.promiseAll, R.reject(R.isNil), function (templates) {
         if (R.isEmpty(templates)) {
           console.log('Command CreateTemplate : no valid template definition');
           return self.Promise.reject('No valid template definition');

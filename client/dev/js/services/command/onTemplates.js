@@ -2,8 +2,11 @@
 
 angular.module('clickApp.services').factory('onTemplatesCommand', ['commands', 'template', 'gameTemplates', 'gameTemplateSelection', function onTemplatesCommandServiceFactory(commandsService, templateService, gameTemplatesService, gameTemplateSelectionService) {
   var onTemplatesCommandService = {
-    execute: function onTemplatesExecute(method /* ...args..., stamps, scope, game */) {
-      var args = Array.prototype.slice.call(arguments);
+    execute: function onTemplatesExecute(method) /*, stamps, scope, game */{
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
       var game = R.last(args);
       var scope = R.nth(-2, args);
       var stamps = R.nth(-3, args);
@@ -13,7 +16,7 @@ angular.module('clickApp.services').factory('onTemplatesCommand', ['commands', '
         desc: method
       };
 
-      args = R.append(game.templates, R.slice(0, -2, args));
+      args = R.pipe(R.slice(0, -2), R.append(game.templates), R.prepend(method))(args);
 
       return R.pipeP(function () {
         return gameTemplatesService.onStamps('saveState', stamps, game.templates);

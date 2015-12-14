@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameRuler', [
     'point',
@@ -78,7 +76,7 @@ angular.module('clickApp.services')
             enforceEndToMaxLength(end),
             R.assoc('length', null),
             R.assoc('display', true),
-            function(local) {
+            (local) => {
               scope.gameEvent('changeLocalRuler');
 
               return R.assoc('local', local, ruler);
@@ -116,9 +114,8 @@ angular.module('clickApp.services')
           var max = ruler.remote.length / 2;
           var end = ruler.remote.end;
           var target = gameRulerService.target(ruler);
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function(end) {
+          return R.pipePromise(
+            (end) => {
               if( R.exists(target) &&
                   gameRulerService.targetReached(ruler) ) {
                 return R.pipeP(
@@ -148,7 +145,7 @@ angular.module('clickApp.services')
           R.assoc('origin', origin),
           R.assoc('target', target),
           R.assoc('display', display),
-          function(remote) {
+          (remote) => {
             if(R.exists(max_length)) {
               return R.assoc('max', max_length, remote);
             }
@@ -159,7 +156,7 @@ angular.module('clickApp.services')
       }
       function setupRemoteRuler(scope, ruler) {
         return R.pipeP(
-          function() {
+          () => {
             var origin = R.path(['remote','origin'], ruler);
             if(R.exists(origin)) {
               return gameModelsService.findStamp(origin, scope.game.models)
@@ -167,9 +164,9 @@ angular.module('clickApp.services')
             }
             return self.Promise.resolve(null);
           },
-          function(origin_model) {
+          (origin_model) => {
             return R.pipeP(
-              function() {
+              () => {
                 var target = R.path(['remote','target'], ruler);
                 if(R.exists(target)) {
                   return gameModelsService.findStamp(target, scope.game.models)
@@ -177,7 +174,7 @@ angular.module('clickApp.services')
                 }
                 return self.Promise.resolve(null);
               },
-              function(target_model) {
+              (target_model) => {
                 if(R.exists(origin_model) &&
                    R.exists(target_model)) {
                   return modelService.shortestLineTo(scope.factions,
@@ -198,12 +195,12 @@ angular.module('clickApp.services')
                 }
                 return R.pick(['start', 'end'], R.prop('remote', ruler));
               },
-              function(line) {
-                var models_dist = pointService.distanceTo(line.end, line.start);
+              ({ start, end }) => {
+                var models_dist = pointService.distanceTo(end, start);
                 ruler = R.assoc('remote', R.pipe(
-                  R.assoc('start', line.start),
-                  enforceEndToMaxLength(line.end),
-                  function(remote) {
+                  R.assoc('start', start),
+                  enforceEndToMaxLength(end),
+                  (remote) => {
                     var ruler_length = pointService.distanceTo(remote.end, remote.start);
                     return R.pipe(
                       R.assoc('reached', ruler_length >= models_dist - 0.1),

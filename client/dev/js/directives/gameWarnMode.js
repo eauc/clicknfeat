@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGameWarnMode', ['$window', '$timeout', function ($window, $timeout) {
   return {
     restrict: 'A',
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       console.log('gameWarnMode');
       element[0].style.display = 'none';
       var mode_span = element[0].querySelector('.warn-mode-name');

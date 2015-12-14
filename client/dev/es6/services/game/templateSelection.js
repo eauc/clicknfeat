@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameTemplateSelection', [
     'modes',
@@ -27,18 +25,17 @@ angular.module('clickApp.services')
           return R.defaultTo([], R.prop(where, selection));
         },
         checkMode: function templateSelectionCheckMode(scope, selection) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
+          return R.pipePromise(
             gameTemplateSelectionService.get$('local'),
             R.head,
-            function(stamp) {
+            (stamp) => {
               if(R.isNil(stamp)) {
                 return self.Promise.reject('No template selection');
               }
 
               return R.pipeP(
                 gameTemplatesService.modeForStamp$(stamp),
-                function(mode) {
+                (mode) => {
                   return scope.doSwitchToMode(mode);
                 }
               )(scope.game.templates);
@@ -54,10 +51,10 @@ angular.module('clickApp.services')
             checkSingleSelection(scope, ret);
           }
           
-          R.forEach(function(stamp) {
+          R.forEach((stamp) => {
             scope.gameEvent('changeTemplate-'+stamp);
           }, stamps);
-          R.forEach(function(stamp) {
+          R.forEach((stamp) => {
             scope.gameEvent('changeTemplate-'+stamp);
           }, previous);
 
@@ -73,7 +70,7 @@ angular.module('clickApp.services')
             checkSingleSelection(scope, ret);
           }
 
-          R.forEach(function(stamp) {
+          R.forEach((stamp) => {
             scope.gameEvent('changeTemplate-'+stamp);
           }, R.uniq(R.concat(previous, stamps)));
 

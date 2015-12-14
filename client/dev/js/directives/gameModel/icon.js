@@ -33,7 +33,7 @@ angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', fu
       lock.setAttribute('y', '0');
       lock.setAttribute('width', '10');
       lock.setAttribute('height', '10');
-      lock.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'data/icons/Lock.png');
+      lock.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/data/icons/Lock.png');
       lock.style.visibility = 'visible';
       parent.appendChild(lock);
 

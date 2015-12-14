@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('user', [
     'http',
@@ -19,10 +17,9 @@ angular.module('clickApp.services')
           )(user);
         },
         save: function userSave(user) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
+          return R.pipePromise(
             R.prop('state'),
-            function(state) {
+            (state) => {
               return localStorageService
                 .save(STORAGE_KEY, state);
             },
@@ -31,11 +28,11 @@ angular.module('clickApp.services')
         },
         load: function userLoad() {
           return R.pipeP(
-            function() {
+            () => {
               return localStorageService
                 .load(STORAGE_KEY);
             },
-            function(state) {
+            (state) => {
               return { state: state };
             },
             userConnectionService.create
@@ -52,31 +49,37 @@ angular.module('clickApp.services')
 
           return userService.stateDescription(user.state);
         },
-        stateDescription: function userStateDescription(state) {
+        stateDescription: function userStateDescription({ name,
+                                                          language,
+                                                          chat,
+                                                          faction,
+                                                          game_size,
+                                                          ck_position
+                                                        } = {}) {
           var ret = '';
-          if(R.exists(state.name)) {
-            ret += s(state.name).trim().capitalize().value();
+          if(R.exists(name)) {
+            ret += s(name).trim().capitalize().value();
           }
           var lang_chat = [];
-          if(R.exists(state.language)) {
-            lang_chat.push(s(state.language).trim().value());
+          if(R.exists(language)) {
+            lang_chat.push(s(language).trim().value());
           }
-          if(R.exists(state.chat)) {
-            lang_chat.push(s(state.chat).trim().value());
+          if(R.exists(chat)) {
+            lang_chat.push(s(chat).trim().value());
           }
           if(!R.isEmpty(lang_chat)) {
             ret += '['+lang_chat.join(' ')+']';
           }
-          if(R.exists(state.faction) &&
-             !R.isEmpty(state.faction)) {
-            ret += ' - '+R.map(s.capitalize, state.faction).join(',');
+          if(R.exists(faction) &&
+             !R.isEmpty(faction)) {
+            ret += ' - '+R.map(s.capitalize, faction).join(',');
           }
-          if(R.exists(state.game_size)) {
-            ret += '['+s.trim(state.game_size)+'pts]';
+          if(R.exists(game_size)) {
+            ret += '['+s.trim(game_size)+'pts]';
           }
-          if(R.exists(state.ck_position) &&
-             !R.isEmpty(state.ck_position)) {
-            ret += ' - likes '+state.ck_position.join(',');
+          if(R.exists(ck_position) &&
+             !R.isEmpty(ck_position)) {
+            ret += ' - likes '+ck_position.join(',');
           }
           return ret;
         },
@@ -91,21 +94,21 @@ angular.module('clickApp.services')
         },
         checkOnline: function userCheckOnline(user) {
           return R.pipeP(
-            function(user) {
+            (user) => {
               if(!userService.online(user)) {
                 return self.Promise.reject('No online flag');
               }
               return self.Promise.resolve(user);
             },
-            function(user) {
+            (user) => {
               return userUpdateOnline(user)
-                .catch(function() {
+                .catch(() => {
                   return userCreateOnline(user);
                 });
             },
             userOnlineStart
           )(user)
-            .catch(function(reason) {
+            .catch((reason) => {
               console.error('User: checkOnline error', reason);
               return userOnlineStop(user);
             });
@@ -115,9 +118,8 @@ angular.module('clickApp.services')
         return userService.checkOnline(R.assocPath(['state','online'], true, user));
       }
       function userGoOffline(user) {
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
-          function(user) {
+        return R.pipePromise(
+          (user) => {
             return httpService.delete('/api/users/'+user.state.stamp)
               .catch(R.always(null));
           },
@@ -126,11 +128,10 @@ angular.module('clickApp.services')
         )(user);
       }
       function userCreateOnline(user) {
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
+        return R.pipePromise(
           R.prop('state'),
           httpService.post$('/api/users'),
-          function(state) {
+          (state) => {
             return R.assoc('state', state, user);
           }
         )(user);
@@ -140,18 +141,16 @@ angular.module('clickApp.services')
           return self.Promise.reject('No valid stamp');
         }
 
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
+        return R.pipePromise(
           R.prop('state'),
           httpService.put$('/api/users/'+user.state.stamp),
-          function(state) {
+          (state) => {
             return R.assoc('state', state, user);
           }
         )(user);
       }
       function userOnlineStart(user) {
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
+        return R.pipePromise(
           userConnectionService.open,
           R.assocPath(['state','online'], true),
           R.spy('User online start'),

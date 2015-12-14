@@ -13,7 +13,7 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
     },
     load: function gameLoad(scope, data) {
       var game = Object.create({
-        toJSON: function () {
+        toJSON: function toJSON() {
           return gameService.pickForJson(this);
         }
       });
@@ -55,8 +55,11 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
       if (R.exists(game.description)) return game.description;
       return s.capitalize(gameService.playerName('p1', game)) + ' vs ' + s.capitalize(gameService.playerName('p2', game));
     },
-    executeCommand: function gameExecuteCommand() /* ...args..., scope, game */{
-      var args = Array.prototype.slice.apply(arguments);
+    executeCommand: function gameExecuteCommand() /*, scope, game */{
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
       var game = R.last(args);
       var scope = R.nth(-2, args);
       return R.pipeP(function () {
@@ -107,7 +110,7 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
 
         game.undo = R.append(command, game.undo);
         scope.gameEvent('command', 'undo');
-        return;
+        return null;
       }, function () {
         return scope.saveGame(game);
       })();
@@ -133,7 +136,7 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
 
         game.commands = R.append(command, game.commands);
         scope.gameEvent('command', 'replay');
-        return;
+        return null;
       }, function () {
         return scope.saveGame(game);
       })();
@@ -149,7 +152,7 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
     }
   };
   function gameReplayBatchs(batchs, scope, game) {
-    if (R.isEmpty(batchs)) return;
+    if (R.isEmpty(batchs)) return null;
 
     console.log('Game: ReplayBatchs:', batchs);
     return commandsService.replayBatch(batchs[0], scope, game).then(function () {

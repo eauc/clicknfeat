@@ -265,20 +265,20 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     };
     defaultModeService.actions.dragStartModel = models_actions.dragStartModel;
     models_actions.dragModel = function modelsDragModel(scope, event) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.addIndex(R.map)(function (model, index) {
+      return R.pipePromise(R.addIndex(R.map)(function (model, index) {
         var pos = {
           x: drag_models_start_states[index].x + event.now.x - event.start.x,
           y: drag_models_start_states[index].y + event.now.y - event.start.y
         };
         return modelService.setPosition(scope.factions, drag_charge_target, pos, model);
-      }), R.bind(self.Promise.all, self.Promise), R.forEach(function (model) {
+      }), R.promiseAll, R.forEach(function (model) {
         scope.gameEvent('changeModel-' + modelService.eventName(model));
       }))(drag_models_start_selection);
     };
     models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.addIndex(R.map)(function (model, index) {
+      return R.pipePromise(R.addIndex(R.map)(function (model, index) {
         return modelService.setPosition(scope.factions, drag_charge_target, drag_models_start_states[index], model);
-      }), R.bind(self.Promise.all, self.Promise), R.map(R.path(['state', 'stamp'])), function (stamps) {
+      }), R.promiseAll, R.map(R.path(['state', 'stamp'])), function (stamps) {
         var shift = {
           x: event.now.x - event.start.x,
           y: event.now.y - event.start.y
@@ -367,10 +367,17 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     R.extend(models_mode.bindings, bs);
   });
 
-  function buildModelsModesButtons(options) {
-    options = R.defaultTo({}, options);
+  function buildModelsModesButtons() {
+    var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    var single = _ref.single;
+    var start_charge = _ref.start_charge;
+    var end_charge = _ref.end_charge;
+    var start_place = _ref.start_place;
+    var end_place = _ref.end_place;
+
     var ret = [['Delete', 'deleteSelection'], ['Copy', 'copySelection'], ['Lock', 'toggleLock'], ['Ruler Max Len.', 'setRulerMaxLength'], ['Image', 'toggle', 'image'], ['Show/Hide', 'toggleImageDisplay', 'image'], ['Next', 'setNextImage', 'image'], ['Wreck', 'toggleWreckDisplay', 'image'], ['Orient.', 'toggle', 'orientation'], ['Face Up', 'setOrientationUp', 'orientation'], ['Face Down', 'setOrientationDown', 'orientation'], ['Counter', 'toggle', 'counter'], ['Show/Hide', 'toggleCounterDisplay', 'counter'], ['Inc.', 'incrementCounter', 'counter'], ['Dec.', 'decrementCounter', 'counter'], ['Souls', 'toggle', 'souls'], ['Show/Hide', 'toggleSoulsDisplay', 'souls'], ['Inc.', 'incrementSouls', 'souls'], ['Dec.', 'decrementSouls', 'souls'], ['Melee', 'toggle', 'melee'], ['0.5"', 'toggleMeleeDisplay', 'melee'], ['Reach', 'toggleReachDisplay', 'melee'], ['Strike', 'toggleStrikeDisplay', 'melee']];
-    if (R.prop('single', options)) {
+    if (single) {
       ret = R.concat(ret, [['Templates', 'toggle', 'templates'], ['AoE', 'createAoEOnModel', 'templates'], ['Spray', 'createSprayOnModel', 'templates']]);
     }
     ret = R.append(['Areas', 'toggle', 'areas'], ret);
@@ -393,24 +400,24 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     }, effects));
     ret = R.append(['Incorp.', 'toggleIncorporealDisplay', 'effects'], ret);
     ret = R.append(['Charge', 'toggle', 'charge'], ret);
-    if (R.prop('start_charge', options)) {
+    if (start_charge) {
       ret = R.append(['Start', 'startCharge', 'charge'], ret);
     }
-    if (R.prop('end_charge', options)) {
+    if (end_charge) {
       ret = R.append(['End', 'endCharge', 'charge'], ret);
     }
     ret = R.append(['Max Len.', 'setChargeMaxLength', 'charge'], ret);
     ret = R.append(['Place', 'toggle', 'place'], ret);
-    if (R.prop('start_place', options)) {
+    if (start_place) {
       ret = R.append(['Start', 'startPlace', 'place'], ret);
     }
-    if (R.prop('end_place', options)) {
+    if (end_place) {
       ret = R.append(['End', 'endPlace', 'place'], ret);
     }
     ret = R.append(['Max Len.', 'setPlaceMaxLength', 'place'], ret);
     ret = R.append(['Within', 'togglePlaceWithin', 'place'], ret);
     ret = R.concat(ret, [['Unit', 'toggle', 'unit'], ['Show/Hide', 'toggleUnitDisplay', 'unit'], ['Set #', 'setUnit', 'unit'], ['Leader', 'toggleLeaderDisplay', 'unit']]);
-    if (R.prop('single', options)) {
+    if (single) {
       ret = R.append(['Select All', 'selectAllUnit', 'unit'], ret);
       ret = R.append(['Select Friends', 'selectAllFriendly'], ret);
     }

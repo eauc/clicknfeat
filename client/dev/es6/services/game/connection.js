@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameConnection', [
     'pubSub',
@@ -49,11 +47,11 @@ angular.module('clickApp.services')
           url += '?name='+user_name;
           
           return R.pipeP(
-            function() {
+            () => {
               return websocketService
                 .create(url, 'game', handlers);
             },
-            function(socket) {
+            (socket) => {
               game.connection.state = R.assoc('socket', socket,
                                               game.connection.state);
               return game;
@@ -62,14 +60,14 @@ angular.module('clickApp.services')
         },
         close: function gameConnectionClose(game) {
           return R.pipeP(
-            function() {
+            () => {
               if(R.isNil(game.connection.state.socket)) {
                 return self.Promise.resolve();
               }
               return websocketService
                 .close(game.connection.state.socket);
             },
-            function() {
+            () => {
               cleanupConnection(game.connection);
               return game;
             }
@@ -102,18 +100,17 @@ angular.module('clickApp.services')
       }
       var replayCmdHandler$ = R.curry(function replayCmdHandler(scope, game, msg) {
         console.log('Game connection: replayCmd event', msg);
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
-          function(command) {
+        return R.pipePromise(
+          (command) => {
             if(R.find(R.propEq('stamp', command.stamp), game.commands_log)) {
               game.commands_log = R.reject(R.propEq('stamp', command.stamp),
                                            game.commands_log);
               console.log('Game connection: replayCmd log', msg);
-              return;
+              return null;
             }
             return commandsService.replay(command, scope, game);
           },  
-          function() {
+          () => {
             game.undo = R.reject(R.propEq('stamp', msg.cmd.stamp),
                                  game.undo);
             if(!msg.cmd.do_not_log) {
@@ -127,18 +124,17 @@ angular.module('clickApp.services')
       });
       var undoCmdHandler$ = R.curry(function undoCmdHandler(scope, game, msg) {
         console.log('Game connection: undoCmd event', msg);
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
-          function(command) {
+        return R.pipePromise(
+          (command) => {
             if(R.find(R.propEq('stamp', command.stamp), game.undo_log)) {
               game.undo_log = R.reject(R.propEq('stamp', command.stamp),
                                        game.undo_log);
               console.log('Game connection: undoCmd log', msg);
-              return;
+              return null;
             }
             return commandsService.undo(command, scope, game);
           },
-          function() {
+          () => {
             game.commands = R.reject(R.propEq('stamp', msg.cmd.stamp),
                                      game.commands);
             game.undo = R.append(msg.cmd, game.undo);
@@ -153,11 +149,11 @@ angular.module('clickApp.services')
         console.log('Game connection: cmdBatch event', msg);
         scope.gameEvent('gameLoading');
         return R.pipeP(
-          function() {
+          () => {
             return commandsService
               .replayBatch(msg.cmds, scope, game);
           },
-          function() {
+          () => {
             game.commands = R.concat(game.commands, msg.cmds);
             if(msg.end) scope.gameEvent('gameLoaded');
 

@@ -7,8 +7,12 @@ angular.module('clickApp.services').factory('commands', [function commandsServic
       console.log('register command', name, command);
       CMD_REGS[name] = command;
     },
-    execute: function commandsExecute(name /*, ...args... */) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function (args) {
+    execute: function commandsExecute(name) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      return R.pipePromise(function () {
         if (R.isNil(CMD_REGS[name])) {
           console.log('execute unknown command ' + name);
           return self.Promise.reject('execute unknown command ' + name);
@@ -17,10 +21,10 @@ angular.module('clickApp.services').factory('commands', [function commandsServic
       }, function (ctxt) {
         ctxt.type = name;
         return ctxt;
-      })(R.tail(arguments));
+      })();
     },
     undo: function commandsUndo(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+      return R.pipePromise(function () {
         if (R.isNil(CMD_REGS[ctxt.type])) {
           console.log('undo unknown command ' + ctxt.type);
           return self.Promise.reject('undo unknown command ' + ctxt.type);
@@ -29,7 +33,7 @@ angular.module('clickApp.services').factory('commands', [function commandsServic
       })();
     },
     replay: function commandsReplay(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+      return R.pipePromise(function () {
         if (R.isNil(CMD_REGS[ctxt.type])) {
           console.log('replay unknown command ' + ctxt.type);
           return self.Promise.reject('replay unknown command ' + ctxt.type);
@@ -40,6 +44,7 @@ angular.module('clickApp.services').factory('commands', [function commandsServic
     replayBatch: function commandsReplayBatch(commands, scope, game) {
       if (R.isEmpty(commands)) return self.Promise.resolve();
 
+      // console.log('Commands: ReplayBatch:');
       // console.log('Commands: ReplayBatch:', commands);
       return commandsService.replay(commands[0], scope, game).catch(R.always(null)).then(function () {
         return commandsService.replayBatch(R.tail(commands), scope, game);

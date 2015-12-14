@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('mainCtrl', [
     '$scope',
@@ -24,22 +22,22 @@ angular.module('clickApp.controllers')
       console.log('init mainCtrl');
       
       $scope.boards_ready = gameBoardService.init()
-        .then(function(boards) {
+        .then((boards) => {
           $scope.boards = boards;
-          console.log('boards', boards);
+          console.log('board', boards);
         });
       $scope.factions_ready = gameFactionsService.init()
-        .then(function(factions) {
+        .then((factions) => {
           $scope.factions = factions;
           console.log('factions', factions);
         });
       $scope.scenario_ready = gameScenarioService.init()
-        .then(function(scenarios) {
+        .then((scenarios) => {
           $scope.scenarios = scenarios;
           console.log('scenarios', scenarios);
         });
       $scope.settings_ready = settingsService.init()
-        .then(function(settings) {
+        .then((settings) => {
           $scope.settings = settings;
           console.log('settings', settings);
         });
@@ -48,15 +46,14 @@ angular.module('clickApp.controllers')
         $scope.factions_ready,
         $scope.scenario_ready,
         $scope.settings_ready,
-      ]).then(function() {
+      ]).then(() => {
         console.log('data ready');
       });
       $scope.doResetSettings = function doResetSettings(data) {
-        R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
+        R.pipePromise(
           settingsService.bind,
           settingsService.update,
-          function(settings) {
+          (settings) => {
             $scope.settings = settings;
             $scope.$digest();
           }
@@ -64,7 +61,7 @@ angular.module('clickApp.controllers')
       };
       $scope.reloadFactions = function reloadFactions() {
         return gameFactionsService.init()
-          .then(function(factions) {
+          .then((factions) => {
             $scope.factions = factions;
             console.log('factions', factions);
           });
@@ -78,8 +75,8 @@ angular.module('clickApp.controllers')
           console.log('loaded user', $scope.user);
           $scope.checkUser();
           $scope.$digest();
-          pubSubService.subscribe('#watch#', function() {
-            console.log('UserConnection event', arguments);
+          pubSubService.subscribe('#watch#', (...args) => {
+            console.log('UserConnection event', args);
             $scope.$digest();
           }, $scope.user.connection.channel);
         }
@@ -93,9 +90,8 @@ angular.module('clickApp.controllers')
         }
       };
       $scope.setUser = function(new_user) {
-        return R.pipeP(
-          R.bind(self.Promise.resolve, self.Promise),
-          function(new_user) {
+        return R.pipePromise(
+          (new_user) => {
             console.log('set user', new_user);
             $scope.user = new_user;
             $scope.$digest();
@@ -103,8 +99,7 @@ angular.module('clickApp.controllers')
         )(new_user);
       };
 
-      $scope.goToState = function() {
-        var args = Array.prototype.slice.call(arguments);
+      $scope.goToState = function(...args) {
         self.setTimeout(function() {
           $state.go.apply($state, args);
         }, 100);

@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGameDragbox', [function () {
   return {
     restrict: 'A',
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       console.log('gameDragbox');
 
       var box = element[0];

@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('losMode', [
     'modes',
@@ -43,13 +41,13 @@ angular.module('clickApp.services')
       los_actions.dragEndModel = los_actions.dragEndMap;
       // los_actions.setOriginModel = function losSetOriginModel(scope, event) {
       //   return R.pipeP(
-      //     function() {
+      //     () => {
       //       return gameService
       //         .executeCommand('setLos',
       //                         'setOrigin', event['click#'].target,
       //                         scope,  scope.game);
       //     },
-      //     function(result) {
+      //     (result) => {
       //       updateMaxLengthButton(scope);
       //       return result;
       //     }
@@ -70,20 +68,19 @@ angular.module('clickApp.services')
       ];
       var los_mode = {
         onEnter: function losOnEnter(/*scope*/) {
-          // return R.pipeP(
-          //   R.bind(self.Promise.resolve, self.Promise),
-          //   function() {
+          // return R.pipePromise(
+          //   () => {
           //     return gameModelSelectionService
           //       .get('local', scope.game.model_selection);
           //   },
-          //   function(stamps) {
+          //   (stamps) => {
           //     if(R.length(stamps) !== 1) return;
 
           //     return gameModelsService
           //       .findStamp(stamps[0], scope.game.models)
           //       .catch(R.always(null));
           //   },
-          //   function(model) {
+          //   (model) => {
           //     if(R.exists(model)) {
           //       return gameService
           //         .executeCommand('setLos',
@@ -105,7 +102,7 @@ angular.module('clickApp.services')
       settingsService.register('Bindings',
                                los_mode.name,
                                los_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(los_mode.bindings, bs);
                                });
       return los_mode;

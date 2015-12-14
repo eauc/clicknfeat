@@ -5,7 +5,7 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
 ) {
   var clickGameModeDirective = {
     restrict: 'A',
-    link: function (scope, el /*, attrs*/) {
+    link: function link(scope, el /*, attrs*/) {
       gameFactionsService.getModelInfo(scope.model.state.info, scope.factions).catch(function (reason) {
         console.error('clickGameModel', reason);
         return self.Promise.reject(reason);
@@ -248,7 +248,7 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
     restrict: 'A',
     templateUrl: 'partials/game/models_list.html',
     scope: true,
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       scope.type = element[0].getAttribute('click-game-models-list');
       console.log('clickGameModelsList', scope.type);
     }

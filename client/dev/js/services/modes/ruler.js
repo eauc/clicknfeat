@@ -66,16 +66,16 @@ angular.module('clickApp.services').factory('rulerMode', ['modes', 'settings', '
   var ruler_buttons = [['Set Max Len.', 'setMaxLength'], ['AoE on Target', 'createAoEOnTarget']];
   var ruler_mode = {
     onEnter: function rulerOnEnter(scope) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function () {
+      return R.pipePromise(function () {
         return gameModelSelectionService.get('local', scope.game.model_selection);
       }, function (stamps) {
-        if (R.length(stamps) !== 1) return;
+        if (R.length(stamps) !== 1) return null;
 
         return gameModelsService.findStamp(stamps[0], scope.game.models).catch(R.always(null));
       }, function (model) {
-        if (R.exists(model)) {
-          return gameService.executeCommand('setRuler', 'setOriginResetTarget', model, scope, scope.game).catch(R.always(null));
-        }
+        if (R.isNil(model)) return null;
+
+        return gameService.executeCommand('setRuler', 'setOriginResetTarget', model, scope, scope.game).catch(R.always(null));
       }, function () {
         updateMaxLengthButton(scope);
       })();

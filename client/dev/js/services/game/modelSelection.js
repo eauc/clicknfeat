@@ -19,7 +19,7 @@ angular.module('clickApp.services').factory('gameModelSelection', ['modes', 'gam
     get: function modelSelectionGet(where, selection) {
       return R.pipe(R.defaultTo({}), R.propOr([], where))(selection);
     },
-    modeFor: function (models, selection) {
+    modeFor: function modeFor(models, selection) {
       var local = gameModelSelectionService.get('local', selection);
       if (R.isEmpty(local)) {
         return self.Promise.reject('No model selection');

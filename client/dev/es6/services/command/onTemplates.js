@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('onTemplatesCommand', [
     'commands',
@@ -11,8 +9,7 @@ angular.module('clickApp.services')
                                               gameTemplatesService,
                                               gameTemplateSelectionService) {
       var onTemplatesCommandService = {
-        execute: function onTemplatesExecute(method /* ...args..., stamps, scope, game */) {
-          var args = Array.prototype.slice.call(arguments);
+        execute: function onTemplatesExecute(method, ...args /*, stamps, scope, game */) {
           var game = R.last(args);
           var scope = R.nth(-2, args);
           var stamps = R.nth(-3, args);
@@ -22,24 +19,28 @@ angular.module('clickApp.services')
             desc: method,
           };
 
-          args = R.append(game.templates, R.slice(0, -2, args));
+          args = R.pipe(
+            R.slice(0, -2),
+            R.append(game.templates),
+            R.prepend(method)
+          )(args);
 
           return R.pipeP(
-            function() {
+            () => {
               return gameTemplatesService.onStamps('saveState', stamps, game.templates);
             },
-            function(before) {
+            (before) => {
               ctxt.before = before;
 
               return gameTemplatesService.onStamps.apply(null, args);
             },
-            function() {
+            () => {
               return gameTemplatesService.onStamps('saveState', stamps, game.templates);
             },
-            function(after) {
+            (after) => {
               ctxt.after = after;
 
-              R.forEach(function(stamp) {
+              R.forEach((stamp) => {
                 scope.gameEvent('changeTemplate-'+stamp);
               }, stamps);
               
@@ -50,16 +51,16 @@ angular.module('clickApp.services')
         replay: function onTemplatesRedo(ctxt, scope, game) {
           return R.pipe(
             R.map(R.prop('stamp')),
-            function(stamps) {
+            (stamps) => {
               return R.pipeP(
                 gameTemplatesService.findAnyStamps$(stamps),
-                R.addIndex(R.forEach)(function(template, index) {
+                R.addIndex(R.forEach)((template, index) => {
                   if(R.isNil(template)) return;
                   
                   templateService.setState(ctxt.after[index], template);
                   scope.gameEvent('changeTemplate-'+templateService.eventName(template));
                 }),
-                function() {
+                () => {
                   game.template_selection =
                     gameTemplateSelectionService.set('remote', stamps,
                                                      scope, game.template_selection);
@@ -71,14 +72,14 @@ angular.module('clickApp.services')
         undo: function onTemplatesUndo(ctxt, scope, game) {
           return R.pipe(
             R.map(R.prop('stamp')),
-            function(stamps) {
+            (stamps) => {
               return R.pipeP(
                 gameTemplatesService.findAnyStamps$(stamps),
-                R.addIndex(R.forEach)(function(template, index) {
+                R.addIndex(R.forEach)((template, index) => {
                   templateService.setState(ctxt.before[index],template);
                   scope.gameEvent('changeTemplate-'+templateService.eventName(template));
                 }),
-                function() {
+                () => {
                   game.template_selection =
                     gameTemplateSelectionService.set('remote', stamps,
                                                      scope, game.template_selection);

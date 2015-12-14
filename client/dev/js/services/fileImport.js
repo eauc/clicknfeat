@@ -5,7 +5,7 @@ angular.module('clickApp.services').factory('fileImport', ['jsonParser', functio
     'json': jsonParserService
   };
   var fileImportService = {
-    read: function (type, file) {
+    read: function read(type, file) {
       return new self.Promise(function (resolve, reject) {
         var reader = new self.FileReader();
         reader.onload = function (e) {

@@ -5,7 +5,7 @@ R.countWatchers = function () {
 
   var watchers = [];
 
-  var f = function (element) {
+  var f = function f(element) {
     angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) {
       if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
 

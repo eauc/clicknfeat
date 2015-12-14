@@ -1,5 +1,3 @@
-'use strict';
-
 R.countWatchers = (function () {
   var root = angular.element(document.getElementsByTagName('body'));
 

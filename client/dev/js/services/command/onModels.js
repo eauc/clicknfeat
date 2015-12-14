@@ -2,12 +2,15 @@
 
 angular.module('clickApp.services').factory('onModelsCommand', ['commands', 'model', 'gameModels', 'gameModelSelection', function onModelsCommandServiceFactory(commandsService, modelService, gameModelsService, gameModelSelectionService) {
   var onModelsCommandService = {
-    execute: function onModelsExecute(method /* ...args..., stamps, scope, game */) {
+    execute: function onModelsExecute(method) /*, stamps, scope, game */{
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
       if ('Function' !== R.type(modelService[method])) {
         return self.Promise.reject('Unknown method ' + method + ' on model');
       }
 
-      var args = Array.prototype.slice.call(arguments);
       var game = R.last(args);
       var scope = R.nth(-2, args);
       var stamps = R.nth(-3, args);
@@ -17,7 +20,7 @@ angular.module('clickApp.services').factory('onModelsCommand', ['commands', 'mod
         desc: method
       };
 
-      args = R.append(game.models, R.slice(0, -2, args));
+      args = R.pipe(R.slice(0, -2), R.prepend(method), R.append(game.models))(args);
 
       return R.pipeP(function () {
         return gameModelsService.onStamps$('saveState', stamps, game.models);

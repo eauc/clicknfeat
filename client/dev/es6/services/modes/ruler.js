@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('rulerMode', [
     'modes',
@@ -44,13 +42,13 @@ angular.module('clickApp.services')
       ruler_actions.dragEndModel = ruler_actions.dragEndMap;
       ruler_actions.setOriginModel = function rulerSetOriginModel(scope, event) {
         return R.pipeP(
-          function() {
+          () => {
             return gameService
               .executeCommand('setRuler',
                               'setOrigin', event['click#'].target,
                               scope,  scope.game);
           },
-          function(result) {
+          (result) => {
             updateMaxLengthButton(scope);
             return result;
           }
@@ -64,21 +62,21 @@ angular.module('clickApp.services')
       };
       ruler_actions.setMaxLength = function rulerSetMaxLength(scope) {
         return R.pipeP(
-          function() {
+          () => {
             return promptService.prompt('prompt', 'Set ruler max length :',
                                         gameRulerService.maxLength(scope.game.ruler))
               .catch(R.always(null));
           },
-          function(value) {
+          (value) => {
             value = (value === 0) ? null : value;
             return R.pipeP(
-              function() {
+              () => {
                 return gameService
                   .executeCommand('setRuler',
                                   'setMaxLength', value,
                                   scope,  scope.game);
               },
-              function(result) {
+              (result) => {
                 var origin = gameRulerService.origin(scope.game.ruler);
                 if(R.isNil(origin)) return result;
 
@@ -89,7 +87,7 @@ angular.module('clickApp.services')
               }
             )();
           },
-          function(result) {
+          (result) => {
             updateMaxLengthButton(scope);
             return result;
           }
@@ -97,11 +95,11 @@ angular.module('clickApp.services')
       };
       ruler_actions.createAoEOnTarget = function rulerCreateAoEOnTarget(scope) {
         return R.pipeP(
-          function() {
+          () => {
             return gameRulerService.targetAoEPosition(scope.game.models,
                                                       scope.game.ruler);
           },
-          function(position) {
+          (position) => {
             position.type = 'aoe';
             return gameService.executeCommand('createTemplate', [position],
                                               scope, scope.game);
@@ -123,29 +121,28 @@ angular.module('clickApp.services')
       ];
       var ruler_mode = {
         onEnter: function rulerOnEnter(scope) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function() {
+          return R.pipePromise(
+            () => {
               return gameModelSelectionService
                 .get('local', scope.game.model_selection);
             },
-            function(stamps) {
-              if(R.length(stamps) !== 1) return;
+            (stamps) => {
+              if(R.length(stamps) !== 1) return null;
 
               return gameModelsService
                 .findStamp(stamps[0], scope.game.models)
                 .catch(R.always(null));
             },
-            function(model) {
-              if(R.exists(model)) {
-                return gameService
-                  .executeCommand('setRuler',
-                                  'setOriginResetTarget', model,
-                                  scope, scope.game)
-                  .catch(R.always(null));
-              }
+            (model) => {
+              if(R.isNil(model)) return null;
+              
+              return gameService
+                .executeCommand('setRuler',
+                                'setOriginResetTarget', model,
+                                scope, scope.game)
+                .catch(R.always(null));
             },
-            function() {
+            () => {
               updateMaxLengthButton(scope);
             }
           )();
@@ -161,7 +158,7 @@ angular.module('clickApp.services')
       settingsService.register('Bindings',
                                ruler_mode.name,
                                ruler_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(ruler_mode.bindings, bs);
                                });
 

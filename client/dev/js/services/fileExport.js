@@ -6,12 +6,12 @@ angular.module('clickApp.services').factory('fileExport', ['jsonStringifier', fu
     json: jsonStringifierService
   };
   var fileExportService = {
-    generate: function (type, data) {
+    generate: function generate(type, data) {
       return R.pipeP(stringifiers[type].stringify, function (string) {
         return new self.Blob([string], { type: 'text/plain' });
       }, self.URL.createObjectURL)(data);
     },
-    cleanup: function (url) {
+    cleanup: function cleanup(url) {
       if (!R.isNil(url)) {
         self.URL.revokeObjectURL(url);
       }

@@ -2,23 +2,27 @@
 
 R.extend = (function () {
   return function (obj) {
-    var // parentRE = /#{\s*?_\s*?}/,
-    slice = Array.prototype.slice;
+    for (var _len = arguments.length, extensions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      extensions[_key - 1] = arguments[_key];
+    }
 
     // obj = R.clone(obj);
     R.forEach(function (source) {
       for (var prop in source) {
         obj[prop] = source[prop];
       }
-    }, slice.call(arguments, 1));
+    }, extensions);
     return obj;
   };
 })();
 
 R.deepExtend = (function () {
   return function (obj) {
-    var parentRE = /#{\s*?_\s*?}/,
-        slice = Array.prototype.slice;
+    for (var _len2 = arguments.length, extensions = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      extensions[_key2 - 1] = arguments[_key2];
+    }
+
+    var parentRE = /#{\s*?_\s*?}/;
 
     // obj = R.clone(obj);
     R.forEach(function (source) {
@@ -47,7 +51,7 @@ R.deepExtend = (function () {
           obj[prop] = source[prop];
         }
       }
-    }, slice.call(arguments, 1));
+    }, extensions);
     return obj;
   };
 })();

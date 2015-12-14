@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('userConnection', [
     'http',
@@ -32,11 +30,11 @@ angular.module('clickApp.services')
                                           user.connection.state);
           
           return R.pipeP(
-            function() {
+            () => {
               return websocketService
                 .create('/api/users/'+user.state.stamp, 'user', handlers);
             },
-            function(socket) {
+            (socket) => {
               user.connection.state = R.assoc('socket', socket,
                                               user.connection.state);
               return user;
@@ -45,14 +43,14 @@ angular.module('clickApp.services')
         },
         close: function userConnectionClose(user) {
           return R.pipeP(
-            function() {
+            () => {
               if(R.isNil(user.connection.state.socket)) {
                 return self.Promise.resolve();
               }
               return websocketService
                 .close(user.connection.state.socket);
             },
-            function() {
+            () => {
               cleanupConnection(user.connection);
               return user;
             }
@@ -64,8 +62,7 @@ angular.module('clickApp.services')
             R.exists
           )(user);
         },
-        sendChat: function userConnectionSendChat(dest, msg) {
-          var args = Array.prototype.slice.apply(arguments);
+        sendChat: function userConnectionSendChat(dest, msg, ...args) {
           var user = R.last(args);
           
           if(!userConnectionService.active(user)) {
@@ -77,8 +74,8 @@ angular.module('clickApp.services')
             from: user.state.stamp,
             to: dest,
             msg: msg,
-            link: ( R.length(args) === 4 ?
-                    R.nth(2, args) :
+            link: ( R.length(args) === 2 ?
+                    R.head(args) :
                     null
                   )
           }, user.connection.state.socket);
@@ -88,7 +85,7 @@ angular.module('clickApp.services')
             userForStamp$(stamp),
             R.defaultTo({ name: 'Unknown' }),
             R.prop('name'),
-            function(n) {
+            (n) => {
               return s(n).trim().capitalize().value();
             }
           )(user.connection);
@@ -99,13 +96,13 @@ angular.module('clickApp.services')
             R.propOr({}, 'connection'),
             usersForStamps$(R.defaultTo([], stamps)),
             R.pluck('name'),
-            function(names) {
+            (names) => {
               return ( R.isEmpty(names) ?
                        [ 'Unknown' ] :
                        names
                      );
             },
-            R.map(function(n) {
+            R.map((n) => {
               return s(n).trim().capitalize().value();
             })
           )(user);

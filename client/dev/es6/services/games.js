@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('games', [
     'localStorage',
@@ -12,9 +10,7 @@ angular.module('clickApp.services')
       var gamesService = {
         loadLocalGames: function gamesLoadLocalGames() {
           return localStorageService.load(LOCAL_GAMES_STORAGE_KEY)
-            .catch(function() {
-              console.log('games: Failed to load local games');
-            })
+            .catch(R.spy('games: Failed to load local games'))
             .then(R.defaultTo([]));
         },
         storeLocalGames: function gamesStoreLocalGames(games) {
@@ -33,8 +29,7 @@ angular.module('clickApp.services')
           return gamesService.storeLocalGames(ret);
         },
         newOnlineGame: function gamesNewOnlineGame(game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
+          return R.pipePromise(
             gameService.pickForJson,
             R.spyError('upload game'),
             httpService.post$('/api/games'),

@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('commands', [
     function commandsServiceFactory() {
@@ -9,26 +7,24 @@ angular.module('clickApp.services')
           console.log('register command', name, command);
           CMD_REGS[name] = command;
         },
-        execute: function commandsExecute(name /*, ...args... */) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function(args) {
+        execute: function commandsExecute(name, ...args) {
+          return R.pipePromise(
+            () => {
               if(R.isNil(CMD_REGS[name])) {
                 console.log('execute unknown command '+name);
                 return self.Promise.reject('execute unknown command '+name);
               }
               return CMD_REGS[name].execute.apply(null, args);
             },
-            function(ctxt) {
+            (ctxt) => {
               ctxt.type = name;
               return ctxt;
             }
-          )(R.tail(arguments));
+          )();
         },
         undo: function commandsUndo(ctxt, scope, game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function() {
+          return R.pipePromise(
+            () => {
               if(R.isNil(CMD_REGS[ctxt.type])) {
                 console.log('undo unknown command '+ctxt.type);
                 return self.Promise.reject('undo unknown command '+ctxt.type);
@@ -38,9 +34,8 @@ angular.module('clickApp.services')
           )();
         },
         replay: function commandsReplay(ctxt, scope, game) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            function() {
+          return R.pipePromise(
+            () => {
               if(R.isNil(CMD_REGS[ctxt.type])) {
                 console.log('replay unknown command '+ctxt.type);
                 return self.Promise.reject('replay unknown command '+ctxt.type);
@@ -52,13 +47,14 @@ angular.module('clickApp.services')
         replayBatch: function commandsReplayBatch(commands, scope, game) {
           if(R.isEmpty(commands)) return self.Promise.resolve();
           
+          // console.log('Commands: ReplayBatch:');
           // console.log('Commands: ReplayBatch:', commands);
           return commandsService.replay(commands[0], scope, game)
             .catch(R.always(null))
-              .then(function() {
-                return commandsService
-                  .replayBatch(R.tail(commands), scope, game);
-              });
+            .then(() => {
+              return commandsService
+                .replayBatch(R.tail(commands), scope, game);
+            });
         },
       };
       R.curryService(commandsService);
@@ -82,5 +78,5 @@ angular.module('clickApp.services')
     'setLosCommand',
     'setRulerCommand',
     'setScenarioCommand',
-    function() { return {}; }
+    () => ({ })
   ]);

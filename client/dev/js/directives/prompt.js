@@ -11,7 +11,7 @@ angular.module('clickApp.directives').factory('prompt', [function () {
   }
   var prompt_resolve;
   return {
-    register: function (st) {
+    register: function register(st) {
       state = st;
       state.doValidate = function promptDoValidate() {
         var value = state.close();
@@ -31,7 +31,7 @@ angular.module('clickApp.directives').factory('prompt', [function () {
 
       return state;
     },
-    prompt: function (prompt_type, msg, input_value) {
+    prompt: function prompt(prompt_type, msg, input_value) {
       return self.Promise.resolve(getState()).then(function (state) {
         state.open({
           prompt_type: prompt_type,
@@ -53,7 +53,7 @@ angular.module('clickApp.directives').factory('prompt', [function () {
     restrict: 'E',
     templateUrl: 'partials/directives/prompt.html',
     scope: true,
-    link: function (scope, element /*, attrs*/) {
+    link: function link(scope, element /*, attrs*/) {
       var form = element[0].querySelector('form');
       var msg_container = element[0].querySelector('p');
       var input = element[0].querySelector('input');

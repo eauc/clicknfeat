@@ -1,6 +1,4 @@
-'use strict';
-
-R.random = (function() {
+R.random = (() => {
   var random = function(min, max) {
     var rval = 0;
     var range = max - min;
@@ -33,7 +31,7 @@ R.random = (function() {
     // Return an integer that falls within the range
     return min + rval;
   };
-  return function() {
+  return () => {
     return random(0, 1000000000) / 1000000000;
   };
 })();

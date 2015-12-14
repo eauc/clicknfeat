@@ -34,7 +34,7 @@ angular.module('clickApp.services').factory('deleteTemplatesCommand', ['commands
       })(ctxt.templates);
     },
     undo: function deleteTemplatesUndo(ctxt, scope, game) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(templateService.create), R.bind(self.Promise.all, self.Promise), R.reject(R.isNil), function (templates) {
+      return R.pipePromise(R.map(templateService.create), R.promiseAll, R.reject(R.isNil), function (templates) {
         if (R.isEmpty(templates)) {
           console.log('DeleteTemplates: No valid template definition');
           return self.Promise.reject('No valid template definition');

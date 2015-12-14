@@ -5,7 +5,7 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
 
   $scope.boards_ready = gameBoardService.init().then(function (boards) {
     $scope.boards = boards;
-    console.log('boards', boards);
+    console.log('board', boards);
   });
   $scope.factions_ready = gameFactionsService.init().then(function (factions) {
     $scope.factions = factions;
@@ -23,7 +23,7 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
     console.log('data ready');
   });
   $scope.doResetSettings = function doResetSettings(data) {
-    R.pipeP(R.bind(self.Promise.resolve, self.Promise), settingsService.bind, settingsService.update, function (settings) {
+    R.pipePromise(settingsService.bind, settingsService.update, function (settings) {
       $scope.settings = settings;
       $scope.$digest();
     })(data);
@@ -42,7 +42,11 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
     $scope.checkUser();
     $scope.$digest();
     pubSubService.subscribe('#watch#', function () {
-      console.log('UserConnection event', arguments);
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      console.log('UserConnection event', args);
       $scope.$digest();
     }, $scope.user.connection.channel);
   })();
@@ -55,7 +59,7 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
     }
   };
   $scope.setUser = function (new_user) {
-    return R.pipeP(R.bind(self.Promise.resolve, self.Promise), function (new_user) {
+    return R.pipePromise(function (new_user) {
       console.log('set user', new_user);
       $scope.user = new_user;
       $scope.$digest();
@@ -63,7 +67,10 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
   };
 
   $scope.goToState = function () {
-    var args = Array.prototype.slice.call(arguments);
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
     self.setTimeout(function () {
       $state.go.apply($state, args);
     }, 100);

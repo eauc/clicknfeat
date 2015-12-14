@@ -45,7 +45,10 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
       return R.pipe(R.path(['connection', 'state', 'socket']), R.exists)(user);
     },
     sendChat: function userConnectionSendChat(dest, msg) {
-      var args = Array.prototype.slice.apply(arguments);
+      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
+      }
+
       var user = R.last(args);
 
       if (!userConnectionService.active(user)) {
@@ -57,7 +60,7 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
         from: user.state.stamp,
         to: dest,
         msg: msg,
-        link: R.length(args) === 4 ? R.nth(2, args) : null
+        link: R.length(args) === 2 ? R.head(args) : null
       }, user.connection.state.socket);
     },
     userNameForStamp: function userNameForStamp(stamp, user) {

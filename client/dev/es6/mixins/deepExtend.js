@@ -1,27 +1,21 @@
-'use strict';
-
-R.extend =(function() {
-  return function(obj) {
-    var // parentRE = /#{\s*?_\s*?}/,
-        slice = Array.prototype.slice;
-
+R.extend =(() => {
+  return (obj, ...extensions) => {
     // obj = R.clone(obj);
-    R.forEach(function(source) {
+    R.forEach((source) => {
       for(var prop in source) {
         obj[prop] = source[prop];
       }
-    }, slice.call(arguments, 1));
+    }, extensions);
     return obj;
   };
 })();
 
-R.deepExtend =(function() {
-  return function(obj) {
-    var parentRE = /#{\s*?_\s*?}/,
-        slice = Array.prototype.slice;
+R.deepExtend =(() => {
+  return (obj, ...extensions) => {
+    var parentRE = /#{\s*?_\s*?}/;
 
     // obj = R.clone(obj);
-    R.forEach(function(source) {
+    R.forEach((source) => {
       for(var prop in source) {
         if( R.isNil(obj[prop]) ||
             R.type(obj[prop]) === 'Function' ||
@@ -66,7 +60,7 @@ R.deepExtend =(function() {
           obj[prop] = source[prop];
         }
       }
-    }, slice.call(arguments, 1));
+    }, extensions);
     return obj;
   };
 })();

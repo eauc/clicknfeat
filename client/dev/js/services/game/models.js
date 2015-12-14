@@ -2,7 +2,7 @@
 
 angular.module('clickApp.services').factory('gameModels', ['point', 'model', function gameModelsServiceFactory(pointService, modelService) {
   var gameModelsService = {
-    create: function () {
+    create: function create() {
       return {
         active: [],
         locked: []
@@ -18,9 +18,9 @@ angular.module('clickApp.services').factory('gameModels', ['point', 'model', fun
       });
     },
     findAnyStamps: function modelsFindAnyStamps(stamps, models) {
-      return R.pipeP(R.bind(self.Promise.resolve, self.Promise), R.map(function (stamp) {
+      return R.pipePromise(R.map(function (stamp) {
         return gameModelsService.findStamp(stamp, models).catch(R.always(null));
-      }), R.bind(self.Promise.all, self.Promise), function (models) {
+      }), R.promiseAll, function (models) {
         if (R.isEmpty(R.reject(R.isNil, models))) {
           return self.Promise.reject('No model found');
         }
@@ -34,16 +34,19 @@ angular.module('clickApp.services').factory('gameModels', ['point', 'model', fun
         if (R.isEmpty(stamps)) reject('No model found between points');else resolve(stamps);
       });
     },
-    onStamps: function modelsOnStamps(method /*, ...args..., stamps, models*/) {
+    onStamps: function modelsOnStamps(method) /*, stamps, models*/{
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
       if ('Function' !== R.type(modelService[method])) {
         return self.Promise.reject('Unknown method ' + method + ' on models');
       }
 
-      var args = Array.prototype.slice.call(arguments);
       var models = R.last(args);
       var stamps = R.nth(-2, args);
 
-      args = R.slice(1, -2, args);
+      args = R.slice(0, -2, args);
       var reason;
       return R.pipeP(gameModelsService.findAnyStamps$(stamps), R.reject(R.isNil), R.map(function (model) {
         return self.Promise.resolve(modelService[method].apply(null, R.append(model, args))).catch(function (_reason) {
@@ -51,7 +54,7 @@ angular.module('clickApp.services').factory('gameModels', ['point', 'model', fun
           reason = _reason;
           return '##failed##';
         });
-      }), R.bind(self.Promise.all, self.Promise), function (results) {
+      }), R.promiseAll, function (results) {
         if (R.isEmpty(R.reject(R.equals('##failed##'), results))) {
           console.error('Models: onStamps all failed', args);
           return self.Promise.reject(reason);

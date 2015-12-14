@@ -149,6 +149,13 @@ module.exports = function(grunt) {
           spawn: true
         }
       },
+      babel: {
+        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
+        tasks: [ 'babel' ],
+        options: {
+          spawn: true
+        }
+      },
       eslint: {
         files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
         tasks: [ 'eslint' ],

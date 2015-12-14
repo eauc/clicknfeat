@@ -1,5 +1,7 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'http', function gameFactionsServiceFactory(localStorageService, httpService) {
   var BASE_RADIUS = {
     huge: 24.605,
@@ -19,26 +21,29 @@ angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'ht
             return [faction, fdata];
           });
         }, R.keys(data));
-      }, R.bind(self.Promise.all, self.Promise), R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, pair) {
-        return R.assoc(pair[0], updateFaction(pair[1]), mem);
+      }, R.promiseAll, R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, _ref) {
+        var _ref2 = _slicedToArray(_ref, 2);
+
+        var name = _ref2[0];
+        var faction = _ref2[1];
+
+        return R.assoc(name, updateFaction(faction), mem);
       }, {}), function (factions) {
         return gameFactionsService.loadDesc().then(gameFactionsService.applyDesc$(factions));
-      })('/data/model/factions.json').catch(function (reason) {
-        console.log('factions: error getting description', reason);
-      });
+      })('/data/model/factions.json').catch(R.spyError('factions: error getting description'));
     },
-    loadDesc: function () {
+    loadDesc: function gameFactionsLoadDesc() {
       return localStorageService.load(STORAGE_KEY).catch(function () {
         console.log('factions: no stored desc');
       }).then(R.defaultTo({}));
     },
-    applyDesc: function (factions, desc) {
+    applyDesc: function gameFactionsApplyDesc(factions, desc) {
       return R.deepExtend(factions, desc);
     },
-    storeDesc: function (desc) {
+    storeDesc: function gameFactionsStoreDesc(desc) {
       return localStorageService.save(STORAGE_KEY, desc);
     },
-    getModelInfo: function factionsGetModelInfo(path, factions) {
+    getModelInfo: function gameFactionsGetModelInfo(path, factions) {
       return new self.Promise(function (resolve, reject) {
         var info = R.path(path, factions);
         if (R.isNil(info)) reject('Model info ' + path.join('.') + ' not found');else resolve(info);

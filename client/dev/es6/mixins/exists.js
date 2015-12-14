@@ -1,3 +1,1 @@
-'use strict';
-
-R.exists = function(a) { return !R.isNil(a); };
+R.exists = (a) => { return !R.isNil(a); };

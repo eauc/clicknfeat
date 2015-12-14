@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelsMode', [
     'modes',
@@ -37,7 +35,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isLocked,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('lockModels', !present,
                                               stamps, scope, scope.game);
           }
@@ -48,7 +46,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isImageDisplayed,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setImageDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -64,7 +62,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isWreckDisplayed,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setWreckDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -75,7 +73,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isUnitDisplayed,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setUnitDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -85,7 +83,7 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
+          (model) => {
             var value = R.defaultTo(0, modelService.unit(model));
 
             return promptService.prompt('prompt',
@@ -93,7 +91,7 @@ angular.module('clickApp.services')
                                         value)
               .catch(R.always(null));
           },
-          function(value) {
+          (value) => {
             return gameService.executeCommand('onModels', 'setUnit', value,
                                               stamps, scope, scope.game);
           }
@@ -104,7 +102,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('mm'),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
                                               stamps, scope, scope.game);
           }
@@ -115,7 +113,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('mr'),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
                                               stamps, scope, scope.game);
           }
@@ -126,7 +124,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('ms'),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
                                               stamps, scope, scope.game);
           }
@@ -137,7 +135,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isCounterDisplayed$('c'),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setCounterDisplay', 'c', !present,
                                               stamps, scope, scope.game);
           }
@@ -158,7 +156,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isCounterDisplayed$('s'),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setCounterDisplay', 's', !present,
                                               stamps, scope, scope.game);
           }
@@ -180,13 +178,13 @@ angular.module('clickApp.services')
           gameModelsService.findStamp$(stamps[0]),
           modelService.rulerMaxLength,
           R.defaultTo(0),
-          function(value) {
+          (value) => {
             return promptService.prompt('prompt',
                                         'Set ruler max length :',
                                         value)
               .catch(R.always(null));
           },
-          function(value) {
+          (value) => {
             value = (value === 0) ? null : value;
 
             return gameService.executeCommand('onModels', 'setRulerMaxLength', value,
@@ -199,11 +197,11 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.chargeMaxLength,
-          function(value) {
+          (value) => {
             return promptService.prompt('prompt', 'Set charge max length :', value)
               .catch(R.always(null));
           },
-          function(value) {
+          (value) => {
             value = (value === 0) ? null : value;
 
             return gameService.executeCommand('onModels',
@@ -218,11 +216,11 @@ angular.module('clickApp.services')
           gameModelsService.findStamp$(stamps[0]),
           modelService.placeMaxLength,
           R.defaultTo(0),
-          function(value) {
+          (value) => {
             return promptService.prompt('prompt','Set place max length :', value)
               .catch(R.always(null));
           },
-          function(value) {
+          (value) => {
             value = (value === 0) ? null : value;
 
             return gameService.executeCommand('onModels',
@@ -236,7 +234,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.placeWithin,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels',
                                               'setPlaceWithin', scope.factions, !present,
                                               stamps, scope, scope.game);
@@ -248,7 +246,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isLeaderDisplayed,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -259,7 +257,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isIncorporealDisplayed,
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -280,7 +278,7 @@ angular.module('clickApp.services')
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
             modelService.isEffectDisplayed$(effect[1]),
-            function(present) {
+            (present) => {
               return gameService.executeCommand('onModels', 'setEffectDisplay', effect[1], !present,
                                                 stamps, scope, scope.game);
             }
@@ -301,7 +299,7 @@ angular.module('clickApp.services')
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
             modelService.auraDisplay,
-            function(present) {
+            (present) => {
               return gameService.executeCommand('onModels', 'setAuraDisplay',
                                                 (present === aura[1]) ? null : aura[1],
                                                 stamps, scope, scope.game);
@@ -314,7 +312,7 @@ angular.module('clickApp.services')
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isCtrlAreaDisplayed$(scope.factions),
-          function(present) {
+          (present) => {
             return gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
                                               stamps, scope, scope.game);
           }
@@ -327,7 +325,7 @@ angular.module('clickApp.services')
           var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
-            function(model) {
+            (model) => {
               var present = modelService.areaDisplay(model);
 
               return gameService.executeCommand('onModels', 'setAreaDisplay',
@@ -342,7 +340,7 @@ angular.module('clickApp.services')
             var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
             return R.pipeP(
               gameModelsService.findStamp$(stamps[0]),
-              function(model) {
+              (model) => {
                 var present = modelService.areaDisplay(model);
 
                 return gameService.executeCommand('onModels', 'setAreaDisplay',
@@ -416,41 +414,41 @@ angular.module('clickApp.services')
         models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
           var stamp = event.target.state.stamp;
           return R.pipeP(
-            function() {
+            () => {
               if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
                 return self.Promise.resolve();
               }
               return gameService.executeCommand('setModelSelection', 'set', [stamp],
                                                 scope, scope.game);
             },
-            function() {
+            () => {
               return gameModelSelectionService.get('local', scope.game.model_selection);
             },
-            function(stamps) {
+            (stamps) => {
               return gameModelsService.findAnyStamps(stamps, scope.game.models);
             },
             R.reject(R.isNil),
-            function(models) {
+            (models) => {
               drag_charge_target = null;
               if(R.length(models) === 1) {
                 R.pipeP(
                   modelService.chargeTarget,
-                  function(target_stamp) {
+                  (target_stamp) => {
                     return gameModelsService.findStamp(target_stamp, scope.game.models);
                   },
-                  function(target_model) {
+                  (target_model) => {
                     drag_charge_target = target_model;
                   }
                 )(models[0]);
               }
               return models;
             },
-            function(models) {
+            (models) => {
               drag_models_start_selection = models;
 
               return R.map(modelService.saveState, models);
             },
-            function(states) {
+            (states) => {
               drag_models_start_states = states;
 
               return models_actions.dragModel(scope, event);
@@ -459,35 +457,33 @@ angular.module('clickApp.services')
         };
         defaultModeService.actions.dragStartModel = models_actions.dragStartModel;
         models_actions.dragModel = function modelsDragModel(scope, event) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            R.addIndex(R.map)(function(model, index) {
+          return R.pipePromise(
+            R.addIndex(R.map)((model, index) => {
               var pos = {
                 x: drag_models_start_states[index].x + event.now.x - event.start.x,
-                y: drag_models_start_states[index].y + event.now.y - event.start.y,
+                y: drag_models_start_states[index].y + event.now.y - event.start.y
               };
               return modelService.setPosition(scope.factions, drag_charge_target,
                                               pos, model);
             }),
-            R.bind(self.Promise.all, self.Promise),
-            R.forEach(function(model) {
+            R.promiseAll,
+            R.forEach((model) => {
               scope.gameEvent('changeModel-'+modelService.eventName(model));
             })
           )(drag_models_start_selection);
         };
         models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
-          return R.pipeP(
-            R.bind(self.Promise.resolve, self.Promise),
-            R.addIndex(R.map)(function(model, index) {
+          return R.pipePromise(
+            R.addIndex(R.map)((model, index) => {
               return modelService.setPosition(scope.factions, drag_charge_target,
                                               drag_models_start_states[index], model);
             }),
-            R.bind(self.Promise.all, self.Promise),
+            R.promiseAll,
             R.map(R.path(['state','stamp'])),
-            function(stamps) {
+            (stamps) => {
               var shift = {
                 x: event.now.x - event.start.x,
-                y: event.now.y - event.start.y,
+                y: event.now.y - event.start.y
               };
               return gameService.executeCommand('onModels',
                                                 'shiftPosition',
@@ -502,7 +498,7 @@ angular.module('clickApp.services')
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.copyStamps$(stamps),
-          function(copy) {
+          (copy) => {
             scope.create.model = copy;
             return scope.doSwitchToMode('CreateModel');
           }
@@ -576,18 +572,20 @@ angular.module('clickApp.services')
         bindings: models_bindings,
         areas: areas,
         // auras: auras,
-        effects: effects,
+        effects: effects
       };
       modesService.registerMode(models_mode);
       settingsService.register('Bindings',
                                models_mode.name,
                                models_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(models_mode.bindings, bs);
                                });
 
-      function buildModelsModesButtons(options) {
-        options = R.defaultTo({}, options);
+      function buildModelsModesButtons({ single,
+                                         start_charge, end_charge,
+                                         start_place, end_place
+                                       } = {}) {
         var ret = [
           [ 'Delete', 'deleteSelection' ],
           [ 'Copy', 'copySelection' ],
@@ -613,7 +611,7 @@ angular.module('clickApp.services')
           [ 'Reach', 'toggleReachDisplay', 'melee' ],
           [ 'Strike', 'toggleStrikeDisplay', 'melee' ],
         ];
-        if(R.prop('single', options)) {
+        if(single) {
           ret = R.concat(ret, [ [ 'Templates', 'toggle', 'templates' ],
                                 [ 'AoE', 'createAoEOnModel', 'templates' ],
                                 [ 'Spray', 'createSprayOnModel', 'templates' ],
@@ -621,36 +619,36 @@ angular.module('clickApp.services')
         }
         ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
         ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
-        ret = R.concat(ret, R.map(function(area) {
+        ret = R.concat(ret, R.map((area) => {
           var size = area + 1;
           return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
         }, areas));
-        ret = R.concat(ret, R.map(function(area) {
+        ret = R.concat(ret, R.map((area) => {
           var size = area + 11;
           return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
         }, areas));
         ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
-        ret = R.concat(ret, R.map(function(aura) {
+        ret = R.concat(ret, R.map((aura) => {
           return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
         }, auras));
         ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
-        ret = R.concat(ret, R.map(function(effect) {
+        ret = R.concat(ret, R.map((effect) => {
           return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
         }, effects));
         ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
         ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
-        if(R.prop('start_charge', options)) {
+        if(start_charge) {
           ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
         }
-        if(R.prop('end_charge', options)) {
+        if(end_charge) {
           ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
         }
         ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
         ret = R.append([ 'Place', 'toggle', 'place' ], ret);
-        if(R.prop('start_place', options)) {
+        if(start_place) {
           ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
         }
-        if(R.prop('end_place', options)) {
+        if(end_place) {
           ret = R.append([ 'End', 'endPlace', 'place' ], ret);
         }
         ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
@@ -660,7 +658,7 @@ angular.module('clickApp.services')
                               [ 'Set #', 'setUnit', 'unit' ],
                               [ 'Leader', 'toggleLeaderDisplay', 'unit' ],
                             ]);
-        if(R.prop('single', options)) {
+        if(single) {
           ret = R.append([ 'Select All', 'selectAllUnit', 'unit' ], ret);
           ret = R.append([ 'Select Friends', 'selectAllFriendly' ], ret);
         }
