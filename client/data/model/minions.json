@@ -639,6 +639,7 @@
       },
       "Brun&Lug": {
         "name": "Brun Cragback & Lug",
+        "fk_name": "Brun Cragback & Lug",
         "entries": {
           "lock": {
             "Brun Cragback": {

@@ -43,11 +43,11 @@
       },
       "Asphyxious3": {
         "name": "Asphyxious3 (Asphyxious the Hellbringer)",
+        "fk_name": "Asphyxious the Hellbringer",
         "entries": {
           "caster": {
             "Asphyxious3": {
               "name": "Asphyxious3 (Asphyxious the Hellbringer)",
-              "fk_name": "Asphyxious the Hellbringer",
               "type": "wardude",
               "focus": 7,
               "base": "medium",
@@ -64,7 +64,6 @@
           "attachement": {
             "Vociferon": {
               "name": "Vociferon",
-              "fk_name": "Asphyxious the Hellbringer",
               "type": "solo",
               "base": "small",
               "img": [
@@ -115,7 +114,7 @@
       },                
       "Deneghra3": {
         "name": "Deneghra3 (Deneghra, The Soul Weaver)",
-        "fk_name": "Deneghra, The Soul Weaver",
+        "fk_name": "Dene?ghra, The Soul Weaver",
         "type": "wardude",
         "focus": 7,
         "base": "huge",
@@ -125,11 +124,11 @@
       },        
       "Goreshade1": {
         "name": "Goreshade1 (Goreshade the Bastard & Deathwalker)",
+        "fk_name": "Goreshade the Bastard",
         "entries": {
           "caster": {
             "Goreshade1": {
               "name": "Goreshade1 (Goreshade the Bastard)",
-              "fk_name": "Goreshade the Bastard",
               "type": "wardude",
               "focus": 7,
               "base": "medium",
@@ -146,7 +145,6 @@
           "solo": {
             "Deathwalker": {
               "name": "Deathwalker",
-              "fk_name": "Goreshade the Bastard",
               "type": "solo",
               "base": "small",
               "img": [
@@ -188,11 +186,11 @@
       },                
       "Mortenebra1": {
         "name": "Mortenebra1 (Master Necrotech Mortenebra & Deryliss)",
+        "fk_name": "Master Necrotech Mortenebra",
         "entries": {
           "caster": {
             "Mortenebra1": {
               "name": "Mortenebra1 (Master Necrotech Mortenebra)",
-              "fk_name": "Master Necrotech Mortenebra",
               "type": "wardude",
               "focus": 7,
               "base": "medium",
@@ -209,7 +207,6 @@
           "attachement": {
             "Deryliss": {
               "name": "Deryliss",
-              "fk_name": "Master Necrotech Mortenebra",
               "type": "solo",
               "base": "small",
               "img": [
@@ -311,11 +308,11 @@
       },
       "Coven1": {
         "name": "Coven1 (The Witch Coven of Garlghast)",
+        "fk_name": "The Witch Coven of Garlghast",
         "entries": {
           "caster": {
             "Egregore": {
               "name": "Egregore",
-              "fk_name": "The Witch Coven of Garlghast",
               "type": "wardude",
               "focus": 9,
               "base": "medium",
@@ -332,7 +329,6 @@
           "solo": {
             "Helena": {
               "name": "Heleana",
-              "fk_name": "The Witch Coven of Garlghast",
               "type": "solo",
               "base": "small",
               "img": [
@@ -346,7 +342,6 @@
             },
             "Morgaen": {
               "name": "Morgaen",
-              "fk_name": "The Witch Coven of Garlghast",
               "type": "solo",
               "base": "small",
               "img": [
@@ -360,7 +355,6 @@
             },
             "Selene": {
               "name": "Selene",
-              "fk_name": "The Witch Coven of Garlghast",
               "type": "solo",
               "base": "small",
               "img": [
@@ -1024,66 +1018,6 @@
           }
         }
       },
-      "Cephalyx Mind Slaver & Drudges": {
-        "name": "Cephalyx Mind Slaver & Drudges",
-        "entries": {
-          "grunt": {
-            "leader": {
-              "name": "Cephalyx Mind Slaver ",
-              "fk_name": [
-                "Cephalyx Mind Slaver & 5 Drudges",
-                "Cephalyx Mind Slaver & 9 Drudges"
-              ],
-              "type": "warrior",
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cryx/units/CephalyxSlaver.png"
-                }
-              ],
-              "damage": {
-                "n": 5
-              }
-            },
-            "grunt": {
-              "name": "Drudges",
-              "fk_name": [
-                "Cephalyx Mind Slaver & 5 Drudges",
-                "Cephalyx Mind Slaver & 9 Drudges"
-              ],
-              "ranges": [1, 5, 9],
-              "type": "warrior",
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cryx/units/DrudgeMindSlave.png"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "Cephalyx Overlords": {
-        "name": "Cephalyx Overlords",
-        "entries": {
-          "grunt": {
-            "grunt": {
-              "name": "Cephalyx Overlords",
-              "ranges": [1, 3],
-              "type": "warrior",
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cryx/units/CephalyxOverlord.png"
-                }
-              ],
-              "damage": {
-                "n": 5
-              }
-            }
-          }
-        }
-      },
       "Mechanithralls": {
         "name": "Mechanithralls",
         "entries": {
@@ -1118,7 +1052,7 @@
           "wa": {
             "Brute Thrall": {
               "name": "Brute Thrall",
-              "fk_name": "Brute Thrall",
+              "fk_name": "(?<nb_repeat>\\d+)\\s+Brute Thrall",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "medium",
@@ -1136,11 +1070,11 @@
       },
       "Necrosurgeon & Stitch Thralls": {
         "name": "Necrosurgeon & Stitch Thralls",
+        "fk_name": "Necrosurgeon.*(?<nb_grunts>\\d+)\\s+Stitch Thralls",
         "entries": {
           "grunt": {
             "leader": {
               "name": "Necrosurgeon",
-              "fk_name": "Necrosurgeon & 3 Stitch Thralls",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1154,7 +1088,6 @@
             },
             "grunt": {
               "name": "Stitch Thralls",
-              "fk_name": "Necrosurgeon & 3 Stitch Thralls",
               "ranges": [1, 3],
               "type": "warrior",
               "base": "small",
@@ -1169,11 +1102,11 @@
       },
       "Revenant Crew of the Atramentous": {
         "name": "Revenant Crew of the Atramentous",
+        "fk_name": "Revenant Crew.*(?<nb_grunts>\\d+)\\s+grunts",
         "entries": {
           "grunt": {
             "grunt": {
               "name": "Leader and Grunts",
-              "fk_name": "Revenant Crew",
               "ranges": [1, 6, 10],
               "type": "warrior",
               "base": "small",
@@ -1191,8 +1124,7 @@
           "wa": {
             "Rifleman": {
               "name": "Rifleman",
-              "fk_name": ["Revenant Crew Crew Rifleman",
-                          "Revenant Crew Crew Riflemen"],
+              "fk_name": "(?<nb_repeat>\\d+)\\s+Revenant Crew( Crew)? Riflem(a|e)n",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "small",
@@ -1207,10 +1139,12 @@
       },
       "Revenant Cannon Crew": {
         "name": "Revenant Cannon Crew",
+        "fk_name": "Revenant Cannon Crew",
         "entries": {
           "unit": {
-            "crew1": {
-              "name": "Crew1",
+            "grunt": {
+              "name": "Crew",
+              "fk_grunts": 3,
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1219,17 +1153,7 @@
                 }
               ]
             },
-            "crew2": {
-              "name": "Crew2",
-              "type": "warrior",
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cryx/units/RevenantCannonGunner.png"
-                }
-              ]
-            },
-            "Cannon": {
+            "leader": {
               "name": "Cannon",
               "type": "warrior",
               "base": "large",
@@ -1341,6 +1265,7 @@
       },
       "The Withershadow Combine": {
         "name": "The Withershadow Combine",
+        "fk_name": "The Withershadow Combine",
         "entries": {
           "grunt": {
             "Admonia": {
@@ -1388,7 +1313,7 @@
     },
     "solos": {
       "aiakos": {
-        "name": "Aiakos, Scourge of mederius",
+        "name": "Aiakos, Scourge of Meredius",
         "type": "wardude",
         "base": "small",
         "focus": 4,
@@ -1516,10 +1441,20 @@
           "n": 5
         }
       },
+      "necrotech_scrapthrall": {
+        "name": "Necrotech Scrap Thrall",
+        "fk_name": "Necrotech & 1 Scrap Thrall",
+        "type": "solos",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/cryx/solos/ScrapThrall.png"
+          }
+        ]
+      },
       "scrapthrall": {
         "name": "Scrap Thrall",
-        "fk_name": ["Necrotech & 1 Scrap Thrall",
-                    "Scrap Thrall"],
+        "fk_name": "(?<nb_repeat>\\d+)\\s+Scrap Thrall",
         "type": "solos",
         "range": [1, 3],
         "base": "small",
@@ -1574,7 +1509,7 @@
       },
       "soultrapper": {
         "name": "Soul Trapper",
-        "fk_repeat": 2,
+        "fk_name": "(?<nb_repeat>\\d+)\\s+Soul Trapper",
         "ranges": [ 1, 2 ],
         "type": "solo",
         "base": "small"

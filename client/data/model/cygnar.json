@@ -73,14 +73,14 @@
       },
       "darius1": {
         "name": "Darius1 (Captain E. Dominic Darius)",
+        "fk_name": "Captain E. Dominic Darius",
         "entries": {
           "caster": {
             "darius1": {
-              "name": "Darius1 (Captain E. Dominic Darius)",
-              "fk_name": "Captain E. Dominic Darius",
+              "name": "Captain E. Dominic Darius",
               "type": "wardude",
               "focus": 6,
-              "base": "small",
+              "base": "medium",
               "img": [
                 {
                   "link": "/data/model/cygnar/casters/Darius1.png"
@@ -94,7 +94,6 @@
           "solo": {
             "halfjack": {
               "name": "Halfjack",
-              "fk_name": "Captain E. Dominic Darius",
               "type": "solo",
               "base": "small",
               "img": [
@@ -138,11 +137,11 @@
       },
       "haley3": {
         "name": "Haley3 (Major Prime Victoria Haley)",
+        "fk_name": "Major Prime Victoria Haley",
         "entries": {
           "lock": {
             "haley3": {
               "name": "Haley Present",
-              "fk_name": "Major Prime Victoria Haley",
               "type": "wardude",
               "focus": 8,
               "base": "small",
@@ -152,7 +151,6 @@
             },
             "haley3past": {
               "name": "Haley Past",
-              "fk_name": "Major Prime Victoria Haley",
               "type": "wardude",
               "focus": 4,
               "base": "small",
@@ -162,7 +160,6 @@
             },
             "haley3future": {
               "name": "Haley Future",
-              "fk_name": "Major Prime Victoria Haley",
               "type": "wardude",
               "focus": 4,
               "base": "small",
@@ -173,27 +170,12 @@
           }
         }
       },
-      "sloan1": {
-        "name": "Sloan1 (Captain Kara Sloan)",
-        "fk_name": "Captain Kara Sloan",
-        "type": "wardude",
-        "focus": 6,
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/cygnar/casters/Sloan1.png"
-          }
-        ],
-        "damage": {
-          "n": 16
-        }
-      },
       "kraye1": {
         "name": "Kraye1 (Captain Jeremiah Kraye)",
         "fk_name": "Captain Jeremiah Kraye",
         "type": "wardude",
         "focus": 6,
-        "base": "medium",
+        "base": "large",
         "img": [
           {
             "link": "/data/model/cygnar/casters/Kraye1.png"
@@ -235,11 +217,11 @@
       },
       "nemo3": {
         "name": "Nemo3 (Artificer General Nemo)",
+        "fk_name": "Artificier General Nemo",
         "entries": {
           "caster": {
             "nemo3": {
-              "name": "Nemo3 (Artificer General Nemo)",
-              "fk_name": "Artificier General Nemo",
+              "name": "Artificer General Nemo",
               "type": "wardude",
               "focus": 7,
               "base": "small",
@@ -256,7 +238,6 @@
           "attachement": {
             "finch": {     
               "name": "Storm Chaser Adept Caitlin Finch",
-              "fk_name": "Artificer General Nemo",
               "type": "solo",
               "base": "small",
               "img": [
@@ -271,6 +252,21 @@
           }
         }
       },                 
+      "sloan1": {
+        "name": "Sloan1 (Captain Kara Sloan)",
+        "fk_name": "Captain Kara Sloan",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/cygnar/casters/Sloan1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
       "stryker1": {
         "name": "Stryker1 (Commander Coleman Stryker)",
         "fk_name": "Commander Coleman Stryker",
@@ -620,7 +616,7 @@
         }
       },
       "olrowdy": {
-        "name": "Ol'Rowdy",
+        "name": "Ol' Rowdy",
         "type": "jack",
         "base": "large",
         "img": [
@@ -1029,11 +1025,12 @@
       },          
       "storm_tower": {
         "name": "Stormsmith Storm Tower",
+        "fk_name": "Storm Tower",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Crew",
-              "fk_name": "Storm Tower",
+              "fk_grunts": 2,
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1044,7 +1041,6 @@
             },
             "leader": {
               "name": "Gunner",
-              "fk_name": "Storm Tower",
               "type": "warrior",
               "base": "large",
               "img": [
@@ -1209,23 +1205,18 @@
       },
       "trencher_cannon": {
         "name": "Trencher Cannon",
+        "name": "Trencher Cannon",
         "entries": {
           "unit": {
-            "crew1": {
-              "name": "Crew1",
+            "grunt": {
+              "name": "Crew",
+              "fk_grunts": 3,
               "type": "warrior",
               "base": "small",
               "img": [
                 {
                   "link": "/data/model/cygnar/units/TrencherCannonCrew1.png"
-                }
-              ]
-            },
-            "crew2": {
-              "name": "Crew2",
-              "type": "warrior",
-              "base": "small",
-              "img": [
+                },
                 {
                   "link": "/data/model/cygnar/units/TrencherCannonCrew2.png"
                 }
@@ -1246,10 +1237,12 @@
       },
       "trencher_chaingun_crew": {
         "name": "Trencher Chaingun Crew",
+        "name": "Trencher Chaingun Crew",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Crew",
+              "fk_grunts": 2,
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1290,7 +1283,7 @@
           "wa": {
             "scatter": {
               "name": "Scattergunner",
-              "fk_name": "Trencher Commandos Scattergunner",
+              "fk_name": "(?<nb_repeat>\\d+) Trencher Commandos Scattergunner",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "small",
@@ -1322,7 +1315,7 @@
           "wa": {
             "grenadier": {
               "name": "Grenadier",
-              "fk_name": "Trencher Infantry Grenadier",
+              "fk_name": "(?<nb_repeat>\\d+) Trencher Infantry Grenadier",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "small",
@@ -1536,8 +1529,8 @@
           }
         ]
       },          
-      "trenchbuster": {
-        "name": "Trench Buster",
+      "trencherbuster": {
+        "name": "Trencher Buster",
         "type": "solo",
         "base": "medium",
         "img": [],

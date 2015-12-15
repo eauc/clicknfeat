@@ -94,26 +94,6 @@
           "6": [ null, null, "b", "b", "m", null ]
         }
       },
-      "Axiom": {
-        "name": "Axiom",
-        "type": "jack",
-        "base": "huge",
-        "damage": {
-          "type": "colossal",
-          "L1": [ null, null, null, null, "l", "m" ],
-          "L2": [ null, null, null,  "b", "l", "m" ],
-          "L3": [  "b",  "b",  "b",  "l", "i", "m" ],
-          "L4": [  "b",  "b",  "b",  "l", "i", "m" ],
-          "L5": [  "b",  "b",  "s",  "s", "i", "m" ],
-          "L6": [  "b",  "b",  "s",  "i", "i", "i" ],
-          "R1": [  "b",  "b",  "s",  "i", "i", "i" ],
-          "R2": [  "b",  "b",  "s",  "s", "i", "m" ],
-          "R3": [  "b",  "b",  "b",  "r", "i", "m" ],
-          "R4": [  "b",  "b",  "b",  "r", "i", "m" ],
-          "R5": [ null, null, null,  "b", "r", "m" ],
-          "R6": [ null, null, null, null, "r", "m" ]
-        }
-      },
       "Cipher": {
         "name": "Cipher",
         "type": "jack",
@@ -239,8 +219,27 @@
           "5": [  "b",  "b", "b", "b", "r", "m" ],
           "6": [ null, null, "b", "b", "b", "m" ]
         }
+      },
+      "PrimeAxiom": {
+        "name": "Prime Axiom",
+        "type": "jack",
+        "base": "huge",
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null, null, null, "l", "m" ],
+          "L2": [ null, null, null,  "b", "l", "m" ],
+          "L3": [  "b",  "b",  "b",  "l", "i", "m" ],
+          "L4": [  "b",  "b",  "b",  "l", "i", "m" ],
+          "L5": [  "b",  "b",  "s",  "s", "i", "m" ],
+          "L6": [  "b",  "b",  "s",  "i", "i", "i" ],
+          "R1": [  "b",  "b",  "s",  "i", "i", "i" ],
+          "R2": [  "b",  "b",  "s",  "s", "i", "m" ],
+          "R3": [  "b",  "b",  "b",  "r", "i", "m" ],
+          "R4": [  "b",  "b",  "b",  "r", "i", "m" ],
+          "R5": [ null, null, null,  "b", "r", "m" ],
+          "R6": [ null, null, null, null, "r", "m" ]
+        }
       }
-
     },
     "units": {
       "ClockWork": {
@@ -410,10 +409,11 @@
     "battle_engines": {
       "TransinfiniteEmergenceProjector": {
         "name": "Transinfinite Emergence Projector",
+        "fk_name": "Transinfinite Emergence Projector",
         "entries": {
           "engine": {
             "TransinfiniteEmergenceProjector": {
-              "name": "Transinfinite Emergence Projector",
+              "name": "Projector",
               "type": "be",
               "base": "huge",
               "damage": {

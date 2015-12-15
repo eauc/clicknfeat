@@ -43,11 +43,11 @@
       },
       "butcher3": {
         "name": "Butcher3 (Kommander Zoktavir, The Butcher Unleashed)",
+        "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
         "entries": {
           "caster": {
             "butcher3": {
               "name": "Butcher3",
-              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
               "type": "wardude",
               "focus": 6,
               "base": "medium",
@@ -59,7 +59,6 @@
           "attachement": {
             "argus1": {     
               "name": "War Argus 1",
-              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
               "type": "solo",
               "base": "medium",
               "damage": {
@@ -68,7 +67,6 @@
             },
             "argus2": {     
               "name": "War Argus 2",
-              "fk_name": "Kommander Zoktavir, The Butcher Unleashed",
               "type": "solo",
               "base": "medium",
               "damage": {
@@ -146,11 +144,11 @@
       },
       "oldwitch1": {
         "name": "OldWitch1 (Zevanna Agha, the Old Witch of Khador)",
+        "fk_name": "Zevanna Agha, the Old Witch of Khador",
         "entries": {
           "caster": {
             "olwitch1": {
               "name": "OldWitch1",
-              "fk_name": "Zevanna Agha, the Old Witch of Khador",
               "type": "wardude",
               "focus": 7,
               "base": "small",
@@ -167,7 +165,6 @@
           "attachement": {
             "scrapjack": {
               "name": "Scrapjack",
-              "fk_name": "Zevanna Agha, the Old Witch of Khador",
               "type": "jack",
               "base": "medium",
               "img": [
@@ -295,11 +292,11 @@
       },
       "zerkova2": {
         "name": "Zerkova2 (Obavnik Kommander Zerkova & Reaver Guard)",
+        "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
         "entries": {
           "lock": {
             "Zerkova2": {
               "name": "Zerkova2",
-              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
               "type": "wardude",
               "fury": 7,
               "base": "small",
@@ -311,7 +308,6 @@
           "unit": {
             "Reaver1": {
               "name": "Reaver 1",
-              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
               "type": "warrior",
               "base": "small",
               "damage": {
@@ -320,7 +316,6 @@
             },
             "Reaver2": {
               "name": "Reaver 2",
-              "fk_name": "Obavnik Kommander Zerkova & Reaver Guard",
               "type": "warrior",
               "base": "small",
               "damage": {
@@ -333,7 +328,7 @@
     },
     "jacks": {
       "beast": {
-        "name": "Beast 09",
+        "name": "Beast-09",
         "type": "jack",
         "base": "large",
         "img": [
@@ -530,6 +525,20 @@
           "6": [ null,  "b",  "b",  "b",  "r", null ]
         }
       },
+      "grolar": {
+        "name": "Grolar",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ "b",  "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ "b",  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
       "juggernaut": {
         "name": "Juggernaut",
         "type": "jack",
@@ -708,10 +717,7 @@
           "wa": {
             "flamer": {
               "name": "Flame Throwers",
-              "fk_name": [
-                "Assault Kommando Flame Thrower",
-                "Assault Kommando Flame Throwers"
-              ],
+              "fk_name": "(?<nb_repeat>\\d+)\\s+Assault Kommando Flame Throwers?",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "small",
@@ -843,9 +849,10 @@
       },
       "gbog": {
         "name": "Great Bears of Gallowswood",
+        "fk_name": "Great Bears of Gallowswood",
         "entries": {
           "unit": {
-            "Ryan": {
+            "kolsk": {
               "name": "Kolsk",
               "type": "warrior",
               "base": "small",
@@ -858,7 +865,7 @@
                 "n": 5
               }
             },
-            "Lynch": {
+            "volkov": {
               "name": "Volkov",
               "type": "warrior",
               "base": "small",
@@ -871,7 +878,7 @@
                 "n": 5
               }
             },
-            "Watts": {
+            "yarovitch": {
               "name": "Yarovich",
               "type": "warrior",
               "base": "small",
@@ -1028,27 +1035,20 @@
       },
       "ke": {
         "name": "Kayazy Eliminators",
+        "fk_name": "Kayazy Eliminators",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Grunt",
+              "fk_grunts": 2,
               "type": "warrior",
               "base": "small",
               "img": [
                 {
                   "link": "/data/model/khador/units/EliminatorBlonde1.png"
-                }
-              ],
-              "damage": {
-                "n": 5
-              }
-            },
-            "leader": {
-              "name": "Leader",
-              "type": "warrior",
-              "base": "small",
-              "img": [
+                },
                 {
+                  "type": "leader",
                   "link": "/data/model/khador/units/EliminatorRed2.png"
                 }
               ],
@@ -1181,8 +1181,7 @@
           "wa": {
             "roketeer": {
               "name": "Roketeer",
-              "fk_name": ["Winter Guard Infantry Rocketeer",
-                          "Winter Guard Infantry Rocketeers"],
+              "fk_name": "(?<nb_repeat>\\d+)\\s+Winter Guard Infantry Rocketeers?",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "small",
@@ -1252,10 +1251,12 @@
       },
       "wgm": {
         "name": "Winter Guard Mortar Crew",
+        "fk_name": "Winter Guard Mortar Crew",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Crew",
+              "fk_grunts": 2,
               "type": "warrior",
               "base": "small",
               "img": [

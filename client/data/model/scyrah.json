@@ -132,15 +132,12 @@
         "type": "wardude",
         "focus": 6,
         "base": "large",
-        "width": 60,
-        "height": 60,
-        "img": {
-          "x": 0,
-          "y": 0,
-          "link": "/data/model/scyrah/casters/Vyros2.png"
-        },
+        "img": [
+          {
+            "link": "/data/model/scyrah/casters/Vyros2.png"
+          }
+        ],
         "damage": {
-          "type": "warrior",
           "n": 18
         }
       }
@@ -303,6 +300,26 @@
           "R5": [ null, null,  "b", "r", "r", "c" ],
           "R6": [ null, null, null, "b", "r", "r" ],
           "field": 12
+        }
+      },
+      "hydra": {
+        "name": "Hydra",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/scyrah/jacks/Hydra.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  null,  "b",  "l", null ],
+          "2": [ null,  "b",  "b",   "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",   "g",  "m",  "m" ],
+          "4": [ null,  "b",  "b",   "g",  "c",  "c" ],
+          "5": [ null,  "b",  "b",   "r",  "r",  "c" ],
+          "6": [ null, null,  null,  "b",  "r", null ],
+          "field": 10
         }
       },
       "hyperion": {
@@ -655,10 +672,12 @@
       },
       "rifleteam": {
         "name": "Heavy Rifle Team",
+        "fk_name": "Heavy Rifle Team",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Crew",
+              "fk_grunts": 2,
               "type": "warrior",
               "base": "small",
               "img": [
@@ -784,6 +803,7 @@
     "solos": {
       "soulless": {
         "name": "Soulless Escort",
+        "fk_name": "(?<nb_repeat>\\d+)\\s+Soulless Escort",
         "type": "solo",
         "base": "small",
         "img": [
@@ -1006,18 +1026,16 @@
     "battle_engines": {
       "arcantrikForceGenerator": {
         "name": "Arcantrik Force Generator",
-        "fk_name": "Arcantrik Force Generator",
         "type": "be",
         "base": "huge",
-        "width": 90,
-        "height": 90,
-        "img": {
-          "x": 0,
-          "y": 0,
-          "link": "/data/model/scyrah/bes/ArcantrikForceGenerator.png"
-        },
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/scyrah/bes/ArcantrikForceGenerator.png"
+          }
+        ],
         "damage": {
-          "type": "warrior",
           "n": 20
         }
       }

@@ -70,10 +70,12 @@
     "units": {
       "Cephalyx Overlords": {
 	"name": "Cephalyx Overlords",
+	"fk_name": "Cephalyx Overlords",
 	"entries": {
 	  "grunt": {
 	    "grunt": {
 	      "name": "Leader and Grunts",
+              "fk_grunts": 3,
 	      "ranges": [1, 3],
 	      "type": "warrior",
 	      "base": "small",
@@ -91,6 +93,7 @@
       },
       "Cephalyx Mind Slaver & Drudges": {
         "name": "Cephalyx Mind Slaver & Drudges",
+        "fk_name": "Cephalyx Mind Slaver.*(?<nb_grunts>\\d+)\\s+Drudges",
         "entries": {
           "unit": {
 	    "leader": {
@@ -122,11 +125,11 @@
       },
       "Cephalyx Mind Bender & Drudges": {
         "name": "Cephalyx Mind Bender & Drudges",
+        "fk_name": "Cephalyx Mind Bender.*(?<nb_grunts>\\d+)\\s+Drudges",
         "entries": {
           "unit": {
 	    "leader": {
               "name": "Mind Bender",
-              "fk_name": "Cephalyx Mind Bender & Drudges",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -140,7 +143,6 @@
             },
             "grunt": {
               "name": "Grunts",
-              "fk_name": "Cephalyx Mind Bender & Drudges",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
               "base": "small",
@@ -157,6 +159,14 @@
     "solos": {
       "Cephalyx Agitator": {
         "name": "Cephalyx Agitator",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "Cephalyx Dominator": {
+        "name": "Cephalyx Dominator",
         "type": "solo",
         "base": "small",
         "damage": {
