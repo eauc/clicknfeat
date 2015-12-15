@@ -177,7 +177,7 @@
       <ul class="nav nav-tabs">
         <li class="{{stateIs('game.main') ? 'active' : ''}}"
             ng-click="goToState('^.main')">
-          <a>Main</a>
+          <a class="{{ hints.go_to_main ? 'go-to-hint' : ''}}">Main</a>
         </li>
         <li class="{{stateIs('game.model') ? 'active' : ''}}"
             ng-click="goToState('^.model')">
@@ -199,6 +199,11 @@
             ng-click="goToState('^.help')">
           <a>Help</a>
         </li>
+        <li ng-show="user | user:'online'"
+            class="{{stateIs('game.online') ? 'active' : ''}}"
+            ng-click="goToState('^.online')">
+          <a class="{{ hints.go_to_online ? 'go-to-hint' : ''}}">Online</a>
+        </li>
         <li ng-click="goToState('lounge')">
           <a>Lounge</a>
         </li>
@@ -209,4 +214,6 @@
       </div>
     </div>
   </div>
+  <click-game-mail-notification>
+  </click-game-mail-notification>
 </div>

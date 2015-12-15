@@ -8,6 +8,8 @@ angular.module('clickApp.controllers')
              gameService) {
       console.log('init gameMainCtrl');
 
+      $scope.hints.go_to_main = false;
+      
       $scope.doUseRuler = function doUseRuler() {
         if($scope.currentModeIs('Ruler')) {
           $scope.doModeAction('modeBackToDefault');

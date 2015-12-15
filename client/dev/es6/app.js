@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.controllers', []);
 angular.module('clickApp.directives', []);
 angular.module('clickApp.filters', []);
@@ -94,6 +92,12 @@ angular.module('clickApp', [
         url: '/log',
         templateUrl: 'partials/game/log.html',
         controller: 'gameLogCtrl',
+        data: { hide_nav: true }
+      })
+      .state('game.online', {
+        url: '/online',
+        templateUrl: 'partials/game/online.html',
+        controller: 'gameOnlineCtrl',
         data: { hide_nav: true }
       })
       .state('debug', {

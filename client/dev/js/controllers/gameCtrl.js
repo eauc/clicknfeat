@@ -10,6 +10,8 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   $scope.is_private = $stateParams['private'] === 'private';
   $scope.ui_state = {};
 
+  $scope.hints = {};
+
   $scope.invite = { player: null };
   $scope.doInvitePlayer = function () {
     var to = [$scope.invite.player];
@@ -67,6 +69,13 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       unsubscribe();
     });
   };
+  $scope.onGameEvent('chat', function () {
+    var msg = R.last($scope.game.chat);
+    if (msg.from === $scope.user.state.name) return;
+
+    $scope.hints.go_to_main = !$scope.stateIs('game.main');
+    $scope.$digest();
+  }, $scope);
   $scope.digestOnGameEvent('diceRoll', $scope);
   $scope.digestOnGameEvent('changeBoard', $scope);
   $scope.digestOnGameEvent('changeLayers', $scope);
@@ -172,6 +181,18 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   //   });
   // },
   function () {
+    var unsub = pubSubService.subscribe('chat', function (event, chats) {
+      var msg = R.last(chats);
+      console.log('gameCtrl: userMailHint', event, chats, msg);
+      if (msg.from === $scope.user.state.stamp) return;
+
+      $scope.hints.go_to_online = !$scope.stateIs('game.online');
+      $scope.$digest();
+    }, $scope.user.connection.channel);
+    $scope.$on('$destroy', function () {
+      unsub();
+    });
+  }, function () {
     if (is_online) {
       return gamesService.loadOnlineGame$($scope.is_private, $stateParams.id).catch(R.pipe(R.spyError('Load online game: error'), R.always(null)));
     } else {

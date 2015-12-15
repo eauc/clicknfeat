@@ -11,6 +11,8 @@ angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', fun
     return R.isEmpty($scope.selection.list);
   };
   $scope.setSelection = function (index) {
+    if (R.exists($scope.current) && $scope.games[index].public_stamp === $scope.current) return;
+
     if (R.isEmpty($scope.games)) {
       $scope.selection.list = [];
     } else {
@@ -25,7 +27,8 @@ angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', fun
     templateUrl: 'partials/directives/games_list.html',
     scope: {
       games: '=',
-      selection: '='
+      selection: '=',
+      current: '='
     },
     link: function link() /*scope, element, attrs*/{}
   };

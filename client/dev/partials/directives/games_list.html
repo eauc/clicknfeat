@@ -1,5 +1,6 @@
 <div ng-repeat="(i,g) in games"
      class="clickable
+            {{current && g.public_stamp === current ? 'bg-primary':''}}
             {{isInSelection(i) ? 'bg-info':''}}
             "
      ng-click="setSelection(i)">

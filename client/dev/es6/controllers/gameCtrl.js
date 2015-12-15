@@ -28,6 +28,8 @@ angular.module('clickApp.controllers')
       $scope.is_private = ($stateParams['private'] === 'private');
       $scope.ui_state = {};
 
+      $scope.hints = {};
+      
       $scope.invite = { player: null };
       $scope.doInvitePlayer = () => {
         var to = [$scope.invite.player];
@@ -91,6 +93,13 @@ angular.module('clickApp.controllers')
           unsubscribe();
         });
       };
+      $scope.onGameEvent('chat', () => {
+        let msg = R.last($scope.game.chat);
+        if(msg.from === $scope.user.state.name) return;
+              
+        $scope.hints.go_to_main = !$scope.stateIs('game.main');
+        $scope.$digest();
+      }, $scope);
       $scope.digestOnGameEvent('diceRoll', $scope);
       $scope.digestOnGameEvent('changeBoard', $scope);
       $scope.digestOnGameEvent('changeLayers', $scope);
@@ -207,6 +216,17 @@ angular.module('clickApp.controllers')
         //     self.setTimeout(resolve, 1000);
         //   });
         // },
+        () => {
+          let unsub = pubSubService.subscribe('chat', (event, chats) => {
+            let msg = R.last(chats);
+            console.log('gameCtrl: userMailHint', event, chats, msg);
+            if(msg.from === $scope.user.state.stamp) return;
+
+            $scope.hints.go_to_online = !$scope.stateIs('game.online');
+            $scope.$digest();
+          }, $scope.user.connection.channel);
+          $scope.$on('$destroy', () => { unsub(); });
+        },
         () => {
           if(is_online) {
             return gamesService

@@ -18,7 +18,7 @@ angular.module('clickApp.directives').controller('userConnectionCtrl', ['$scope'
     }
     $scope.chat.to = R.reject(R.equals($scope.user.state.stamp), $scope.chat.to);
   };
-  $scope.doSetAllUsersTo = function () /*stamp*/{
+  $scope.doSetAllUsersTo = function () {
     $scope.chat.to = R.pipe(R.pluck('stamp'), R.reject(R.equals($scope.user.state.stamp)))($scope.user.connection.users);
   };
   $scope.doSetToChat = function (chat) {
@@ -29,7 +29,7 @@ angular.module('clickApp.directives').controller('userConnectionCtrl', ['$scope'
     return !R.isEmpty($scope.chat.to) && R.length(s.strip($scope.chat.msg)) > 0;
   };
   $scope.doSendChatMessage = function () {
-    if (!$scope.canSendChatMsg()) return;
+    if (!$scope.canSendChatMsg()) return null;
 
     return userConnectionService.sendChat($scope.chat.to, $scope.chat.msg, $scope.user).then(function () {
       $scope.chat.msg = '';
@@ -37,7 +37,7 @@ angular.module('clickApp.directives').controller('userConnectionCtrl', ['$scope'
     });
   };
   $scope.doSendChatMessageToAll = function () {
-    if (R.length(s.strip($scope.chat.msg)) <= 0) return;
+    if (R.length(s.strip($scope.chat.msg)) <= 0) return null;
 
     var to = R.pipe(R.pluck('stamp'), R.reject(R.equals($scope.user.state.stamp)))($scope.user.connection.users);
 

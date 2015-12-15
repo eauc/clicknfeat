@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .controller('userConnectionCtrl', [
     '$scope',
@@ -14,10 +12,10 @@ angular.module('clickApp.directives')
         msg: '',
         to: [],
       };
-      $scope.userIsInTo = function(stamp) {
+      $scope.userIsInTo = (stamp) => {
         return R.find(R.equals(stamp), $scope.chat.to);
       };
-      $scope.doToggleUserTo = function(stamp) {
+      $scope.doToggleUserTo = (stamp) => {
         if($scope.userIsInTo(stamp)) {
           $scope.chat.to = R.reject(R.equals(stamp), $scope.chat.to);
         }
@@ -27,13 +25,13 @@ angular.module('clickApp.directives')
         $scope.chat.to = R.reject(R.equals($scope.user.state.stamp),
                                   $scope.chat.to);
       };
-      $scope.doSetAllUsersTo = function(/*stamp*/) {
+      $scope.doSetAllUsersTo = () => {
         $scope.chat.to = R.pipe(
           R.pluck('stamp'),
           R.reject(R.equals($scope.user.state.stamp))
         )($scope.user.connection.users);
       };
-      $scope.doSetToChat = function(chat) {
+      $scope.doSetToChat = (chat) => {
         $scope.chat.to = R.pipe(
           R.prop('to'),
           R.append(R.prop('from', chat)),
@@ -42,24 +40,24 @@ angular.module('clickApp.directives')
         )(chat);
       };
       
-      $scope.canSendChatMsg = function() {
+      $scope.canSendChatMsg = () => {
         return ( !R.isEmpty($scope.chat.to) &&
                  R.length(s.strip($scope.chat.msg)) > 0
                );
       };
-      $scope.doSendChatMessage = function() {
-        if(!$scope.canSendChatMsg()) return;
+      $scope.doSendChatMessage = () => {
+        if(!$scope.canSendChatMsg()) return null;
         
         return userConnectionService
           .sendChat($scope.chat.to, $scope.chat.msg,
                     $scope.user)
-          .then(function() {
+          .then(() => {
             $scope.chat.msg = '';
             $scope.$digest();
           });
       };
       $scope.doSendChatMessageToAll = function() {
-        if(R.length(s.strip($scope.chat.msg)) <= 0) return;
+        if(R.length(s.strip($scope.chat.msg)) <= 0) return null;
 
         var to = R.pipe(
           R.pluck('stamp'),
@@ -69,7 +67,7 @@ angular.module('clickApp.directives')
         return userConnectionService
           .sendChat(to, $scope.chat.msg,
                     $scope.user)
-          .then(function() {
+          .then(() => {
             $scope.chat.msg = '';
             $scope.$digest();
           });

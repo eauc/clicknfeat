@@ -30,10 +30,21 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: function(scope, element/*, attrs*/) {
+          var log = true ? R.bind(console.log, console) : function() {}; // eslint-disable-line
 
           var viewport = document.querySelector('#viewport');
           var map = element[0];
 
+          // function test() {
+          //   var map_rect = map.getBoundingClientRect();
+          //   if(map_rect.width > 0) {
+          //     console.error('map rect', map_rect.width);
+          //     return;
+          //   }
+          //   self.requestAnimationFrame(test);
+          // }
+          // test();
+          
           var mouseEvents = (function() {
             var drag = {
               active: false,

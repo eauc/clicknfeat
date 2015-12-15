@@ -25,6 +25,10 @@
         }
         #menu-content {
             min-width:400px;
+
+            .nav .go-to-hint {
+                background-color: #c9f;
+            }
         }
         #menu-view {
             padding:3px;
