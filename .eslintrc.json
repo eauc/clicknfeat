@@ -4,6 +4,7 @@
     "angular": false,
     "R": false,
     "s": false,
+    "XRegExp": false,
     "Mousetrap": false,
     "jasmine": false,
     "inject": false,

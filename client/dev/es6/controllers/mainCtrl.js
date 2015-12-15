@@ -29,7 +29,8 @@ angular.module('clickApp.controllers')
       $scope.factions_ready = gameFactionsService.init()
         .then((factions) => {
           $scope.factions = factions;
-          console.log('factions', factions);
+          $scope.factions_references = gameFactionsService.buildReferences(factions);
+          console.log('factions', factions, $scope.factions_references);
         });
       $scope.scenario_ready = gameScenarioService.init()
         .then((scenarios) => {

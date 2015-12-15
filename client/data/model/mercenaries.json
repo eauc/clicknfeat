@@ -639,7 +639,7 @@
       "alexiaciannor_risen": {
         "name": "Alexia Ciannor & the Risen",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Alexia",
               "type": "warrior",
@@ -682,7 +682,7 @@
       "arcane_tempest_gun_mages": {
         "name": "Arcane Tempest Gun Mages",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6],
@@ -716,7 +716,7 @@
       "captainsammachornethedevildogs": {
         "name": "Captain Sam MacHorne & the Devil Dogs",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Captain Sam MacHorne",
               "type": "warrior",
@@ -780,7 +780,7 @@
       "cephalyxmindslaver_drudges": {
         "name": "Cephalyx Mind Slaver & Drudges",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Mind Slaver",
               "type": "warrior",
@@ -811,7 +811,7 @@
       "cephalyxoverlords": {
         "name": "Cephalyx Overlords",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Cephalyx Overlords",
               "ranges": [1, 3],
@@ -882,7 +882,7 @@
       "croescutthroats": {
         "name": "Croe's Cutthroats",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Croe",
               "type": "warrior",
@@ -910,7 +910,7 @@
       "cylenaraefyll_nysshunters": {
         "name": "Cylena Raefyll & Nyss Hunters",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Cylena Raefyll",
               "type": "warrior",
@@ -941,7 +941,7 @@
       "dannonblythebull": {
         "name": "Dannon Blythe & Bull",
         "entries": {
-          "grunt": {
+          "unit": {
             "dannon": {
               "name": "Dannon Blythe",
               "type": "warrior",
@@ -974,7 +974,7 @@
       "greygoreboomhowlerco": {
         "name": "Greygore Boomhowler & Co.",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Greygore Boomhowler",
               "type": "warrior",
@@ -1005,7 +1005,7 @@
       "hammerfall_high_shield_gun_corps": {
         "name": "Hammerfall High Shield Gun Corps",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1050,7 +1050,7 @@
       "hernejonne": {
         "name": "Herne & Jonne",
         "entries": {
-          "grunt": {
+          "unit": {
             "herne": {
               "name": "Herne",
               "type": "warrior",
@@ -1083,7 +1083,7 @@
       "horgenholdartillerycorps ": {
         "name": "Horgenhold Artillery Corps ",
         "entries": {
-          "grunt": {
+          "unit": {
             "siegecannon": {
               "name": "Siege Cannon",
               "type": "warrior",
@@ -1120,7 +1120,7 @@
       "horgenholdforgeguard": {
         "name": "Horgenhold Forge Guard",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1138,7 +1138,7 @@
       "idrianskirmishers": {
         "name": "Idrian Skirmishers",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1186,7 +1186,7 @@
       "kayazyassassins": {
         "name": "Kayazy Assassins",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1220,7 +1220,7 @@
       "kayazyeliminators": {
         "name": "Kayazy Eliminators",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Grunt",
               "type": "warrior",
@@ -1253,7 +1253,7 @@
       "lady_aiyana_master_holt": {
         "name": "Lady Aiyana & Master Holt",
         "entries": {
-          "grunt": {
+          "unit": {
             "aiyana": {
               "name": "Lady Aiyana",
               "type": "warrior",
@@ -1286,7 +1286,7 @@
       "long_gunner_infantry": {
         "name": "Long Gunner Infantry",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1331,7 +1331,7 @@
       "ogrunassaultcorps": {
         "name": "Ogrun Assault Corps",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 3, 5],
@@ -1352,7 +1352,7 @@
       "precursor_knights": {
         "name": "Precursor Knights",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1397,7 +1397,7 @@
       "pressgangers": {
         "name": "Press Gangers",
         "entries": {
-          "grunt": {
+          "unit": {
             "leader": {
               "name": "Lass",
               "type": "warrior",
@@ -1525,7 +1525,7 @@
       "steelheadhalberdiers": {
         "name": "Steelhead Halberdiers",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1543,7 +1543,7 @@
       "steelheadheavycavalry": {
         "name": "Steelhead Heavy Cavalry",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 3, 5],
@@ -1564,7 +1564,7 @@
       "steelheadriflemen": {
         "name": "Steelhead Riflemen",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 6, 10],
@@ -1627,7 +1627,7 @@
       "tacticalarcanistcorps": {
         "name": "Tactical Arcanist Corps",
         "entries": {
-          "grunt": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
               "ranges": [1, 3],

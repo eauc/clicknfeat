@@ -6,6 +6,7 @@
     "locks": {
       "borka1": {
         "name": "Borka1 (Borka Kegslayer)",
+        "fk_name": "Borka Kegslayer",
         "entries": {
           "lock": {
             "borka1": {
@@ -42,7 +43,7 @@
       },        
       "borka2": {
         "name": "Borka2 (Borka, Vengeance of the Rimeshaws)",
-        "fk_name": "Borka, Vengeance of the Rimeshaws",
+        "fk_name": "Borka, Vengeance of the Rime?shaws",
         "type": "wardude",
         "fury": 5,
         "base": "large",
@@ -87,11 +88,11 @@
       }, 
       "grim2": {
         "name": "Grim2 (Hunters Grim)",
+        "fk_name": "Hunters Grim",
         "entries": {
           "lock": {
             "grim2": {
               "name": "Grim Angus",
-              "fk_name": "Hunters Grim",
               "type": "wardude",
               "fury": 6,
               "base": "medium",
@@ -108,7 +109,6 @@
           "unit": {
             "muggs": {
               "name": "Muggs",
-              "fk_name": "Hunters Grim",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -122,7 +122,6 @@
             },        
             "krump": {
               "name": "Krump",
-              "fk_name": "Hunters Grim",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -139,7 +138,7 @@
       },
       "grissel1": {
         "name": "Grissel1 (Grissel Bloodsong, Fell Caller)",
-        "fk_name": "Grissel Bloodsong",
+        "fk_name": "Grissel Bloodsong ",
         "type": "wardude",
         "fury": 6,
         "base": "medium",
@@ -184,7 +183,7 @@
       },  
       "hoarluk1": {
         "name": "Hoarluk1 (Hoarluk Doomshaper, shaman of the Gnarls)",
-        "fk_name": "Hoarluk Doomshaper",
+        "fk_name": "Hoarluk Doomshaper ",
         "type": "wardude",
         "fury": 7,
         "base": "medium",
@@ -214,11 +213,11 @@
       },
       "hoarluk3": {
         "name": "Hoarluk3 (Hoarluk Doomshaper, Dire Prophet)",
+        "fk_name": "Hoarluk Doomshaper, Dire Prophet",
         "entries": {
           "lock": {
             "grim2": {
               "name": "Hoarluk",
-              "fk_name": "Hoarluk Doomshaper, Dire Prophet",
               "type": "wardude",
               "fury": 7,
               "base": "medium",
@@ -230,7 +229,6 @@
           "unit": {
             "scrollbearer": {
               "name": "Scroll Bearer",
-              "fk_name": "Hoarluk Doomshaper, Dire Prophet",
               "type": "warrior",
               "base": "medium",
               "damage": {
@@ -674,7 +672,7 @@
           "wa": {
             "cabberthrower": {
               "name": "Caber Thrower",
-              "fk_name": "Kriel Warrior Caber Thrower",
+              "fk_name": "(?<nb_repeat>\\d+) Kriel Warrior Caber Thrower",
               "ranges": [1, 2, 3],
               "type": "warrior",
               "base": "medium",
@@ -716,14 +714,11 @@
       },
       "krielstone_bearer": {
         "name": "Krielstone Bearer and Stone Scribes",
+        "fk_name": "Krielstone Bearer and (?<nb_grunts>\\d+) Stone Scribes",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Stone Scribe",
-              "fk_name": [
-                "Krielstone Bearer and 3 Stone Scribes",
-                "Krielstone Bearer and 5 Stone Scribes"
-              ],
               "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "medium",
@@ -735,10 +730,6 @@
             },
             "leader": {
               "name": "Krielstone Bearer",
-              "fk_name": [
-                "Krielstone Bearer and 3 Stone Scribes",
-                "Krielstone Bearer and 5 Stone Scribes"
-              ],
               "type": "warrior",
               "base": "medium",
               "img": [
@@ -796,10 +787,12 @@
       },
       "northkinfireeaters": {
         "name": "Northkin Fire Eaters",
+        "fk_name": "Northkin Fire Eaters",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader & Grunt",
+              "fk_grunts": 2,
               "ranges": [1, 2],
               "type": "warrior",
               "base": "medium",
@@ -907,7 +900,7 @@
             },
             "standard": {
               "name": "Drummer",
-              "fk_name": "Trollkin Scattergunner Officer & Standard",
+              "fk_name": "Trollkin Scattergunner Officer & Drummer",
               "type": "warrior",
               "base": "medium",
               "img": [
@@ -921,6 +914,7 @@
       },                
       "sons_of_bragg": {
         "name": "Sons of Bragg",
+        "fk_name": "Sons of Bragg",
         "entries": {
           "unit": {
             "wrathar": {
@@ -966,10 +960,11 @@
         } 
       },
       "Thumpercrew ": {
-        "name": "Thumpercrew ",
+        "name": "Thumpercrew",
+        "fk_name": "Thumpercrew.*(?<nb_grunts>\\d+) crew",
         "entries": {
           "unit": {
-            "thumper": {
+            "leader": {
               "name": "Thumper",
               "type": "warrior",
               "base": "large",
@@ -979,18 +974,8 @@
                 }
               ]
             },
-            "crew1": {
-              "name": "Crew1",
-              "type": "warrior",
-              "base": "medium",
-              "img": [
-                {
-                  "link": "/data/model/trollblood/units/Thumpercrew_Grunt.png"
-                }
-              ]
-            },
-            "crew2": {
-              "name": "Crew2",
+            "grunt": {
+              "name": "Crew",
               "type": "warrior",
               "base": "medium",
               "img": [

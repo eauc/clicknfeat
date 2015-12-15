@@ -138,11 +138,11 @@
       },
       "saeryn2": {
         "name": "Saeryn2 & Rhyas2 (Saeryn & Rhyas, Talons of Everblight)",
+        "fk_name": "Saeryn & Rhyas, Talons of Everblight",
         "entries": {
           "lock": {
             "saeryn2": {
               "name": "Saeryn",
-              "fk_name": "Saeryn & Rhyas, Talons of Everblight",
               "type": "wardude",
               "fury": 7,
               "base": "small",
@@ -157,7 +157,6 @@
             },
             "rhyas": {
               "name": "Rhyas",
-              "fk_name": "Saeryn & Rhyas, Talons of Everblight",
               "type": "wardude",
               "fury": 5,
               "base": "small",
@@ -328,7 +327,6 @@
       },
       "blightbringer": {
         "name": "Blightbringer",
-        "fk_name": "Blightbringer",
         "type": "beast",
         "fury": 5,
         "base": "huge",
@@ -706,6 +704,7 @@
     "units": {
       "blackfrost_shard": {
         "name": "Blackfrost Shard",
+        "fk_name": "Blackfrost Shard",
         "entries": {
           "unit": {
             "sevryn": {
@@ -797,10 +796,12 @@
       },
       "blight_wasp": {
         "name": "Blight Wasps",
+        "fk_name": "Blight Wasps",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
+              "fk_grunts": 4,
               "ranges": [ 1, 4 ],
               "type": "warrior",
               "base": "small",
@@ -826,11 +827,11 @@
       },
       "grotesques_raiders": {
         "name": "Blighted Nyss Grotesques Raiders",
+        "fk_name": "Blighted Nyss Grotesques.*(?<nb_grunts>\\d)+\\s+grunts",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "fk_name": "Blighted Nyss Grotesques",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
               "base": "small",
@@ -1109,12 +1110,11 @@
         }
       },
       "strider_rangers": {
-        "name": "Blighted Nyss Strider Rangers",
+        "name": "Strider Rangers",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "fk_name": "Blighted Nyss Striders",
               "ranges": [ 1, 6 ],
               "type": "warrior",
               "base": "small",
@@ -1128,7 +1128,7 @@
           "ua": {
             "officer": {
               "name": "Officer",
-              "fk_name": "Blighted Nyss Striders Officer & Musician",
+              "fk_name": "Strider Rangers Officer & Musician",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1142,7 +1142,7 @@
             },
             "musician": {
               "name": "Musician",
-              "fk_name": "Blighted Nyss Striders Officer & Musician",
+              "fk_name": "Strider Rangers Officer & Musician",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1155,7 +1155,7 @@
         }
       },
       "strider_blightblades": {
-        "name": "Blighted Nyss Strider Blightblades",
+        "name": "Strider Blightblades",
         "entries": {
           "unit": {
             "grunt": {
@@ -1261,7 +1261,7 @@
       },
       "martyr": {
         "name": "Spell Martyr",
-        "fk_name": "Spell Martyrs?",
+        "fk_name": "(?<nb_repeat>\\d) Spell Martyrs?",
         "type": "solo",
         "base": "small",
         "img": [
@@ -1314,6 +1314,8 @@
         "base": "huge",
         "img": [
           {
+            "width": 90,
+            "height": 90,
             "link": "/data/model/legion/bes/Throne.png"
           }
         ],

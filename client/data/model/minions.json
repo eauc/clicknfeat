@@ -574,7 +574,7 @@
                 }
               ]
             },
-            "gunner": {
+            "leader": {
               "name": "Gunner",
               "type": "warrior",
               "base": "large",
@@ -587,29 +587,37 @@
           }
         }
       },
-      "Swamp Gobbers": {
+      "Swamp Gobbers Bellows Crew": {
         "name": "Swamp Gobber Bellows Crew",
         "entries": {
           "unit": {
             "grunt": {
-              "name": "Grunt",
+              "name": "Leader and Grunt",
               "type": "warrior",
               "base": "small",
               "img": [
                 {
                   "link": "/data/model/minions/units/SwampGobber_grunt.png"
-                }
-              ]
-            },
-            "leader": {
-              "name": "Gunner",
-              "type": "warrior",
-              "base": "small",
-              "img": [
+                },
                 {
+                  "type": "leader",
                   "link": "/data/model/minions/units/SwampGobber_Gunner.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Swamp Gobbers River Raiders": {
+        "name": "Swamp Gobber River Raiders",
+        "fk_name": "Swamp Gobber River Raiders",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunt",
+              "fk_grunts": 3,
+              "type": "warrior",
+              "base": "small"
             }
           }
         }
@@ -824,8 +832,17 @@
           "n": 5
         }
       },
+      "RalukMoorclaw": {
+        "name": "Raluk Moorclaw",
+        "type": "solo",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
+      },
       "Rorsh&Brine": {
         "name": "Rorsh & Brine",
+        "fk_name": "Rorsh & Brine",
         "entries": {
           "lock": {
             "Rorsh": {
@@ -921,6 +938,7 @@
       },
       "WrongEye&Snapjaw": {
         "name": "Wrong Eye & Snapjaw",
+        "fk_name": "Wrong Eye & Snapjaw",
         "entries": {
           "lock": {
             "Wrong Eye": {
@@ -979,6 +997,7 @@
     "bes": {
       "meat tresher": {
         "name": "Meat Tresher",
+        "fk_name": "Meat Th?resher",
         "type": "be",
         "base": "huge",
         "damage": {

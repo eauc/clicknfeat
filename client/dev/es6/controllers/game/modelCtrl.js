@@ -1,24 +1,24 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('gameModelCtrl', [
     '$scope',
     'modes',
     'fileImport',
+    'gameFactions',
     function($scope,
              modesService,
-             fileImportService) {
+             fileImportService,
+             gameFactionsService) {
       console.log('init gameModelCtrl');
 
-      $scope.onFactionChange = function onFactionChange() {
+      $scope.onFactionChange = () => {
         $scope.section = R.head(R.keys($scope.factions[$scope.faction].models));
         $scope.onSectionChange();
       };
-      $scope.onSectionChange = function onSectionChange() {
+      $scope.onSectionChange = () => {
         $scope.entry = R.head(R.keys($scope.factions[$scope.faction].models[$scope.section]));
         $scope.onEntryChange();
       };
-      $scope.onEntryChange = function onEntryChange() {
+      $scope.onEntryChange = () => {
         var entries = $scope.getEntries();
         if(R.isNil(entries)) {
           $scope.model = $scope.entry;
@@ -28,7 +28,7 @@ angular.module('clickApp.controllers')
         $scope.type = R.head(R.keys(entries));
         $scope.onTypeChange();
       };
-      $scope.onTypeChange = function onTypeChange() {
+      $scope.onTypeChange = () => {
         var entries = $scope.getEntries();
         $scope.model = R.pipe(
           R.defaultTo({}),
@@ -39,15 +39,15 @@ angular.module('clickApp.controllers')
         )(entries);
         $scope.onModelChange();
       };
-      $scope.onModelChange = function onModelChange() {
+      $scope.onModelChange = () => {
         $scope.repeat = 1;
       };
-      $scope.data_ready.then(function() {
+      $scope.data_ready.then(() => {
         $scope.faction = R.head(R.keys($scope.factions));
         $scope.onFactionChange();
       });
 
-      $scope.getEntries = function getEntries() {
+      $scope.getEntries = () => {
         return R.path([ $scope.faction,
                         'models',
                         $scope.section,
@@ -55,7 +55,7 @@ angular.module('clickApp.controllers')
                         'entries'
                       ], $scope.factions);
       };
-      $scope.getModel = function getModel() {
+      $scope.getModel = () => {
         var entries = $scope.getEntries();
         if(R.isNil(entries)) {
           return R.path([ $scope.faction,
@@ -91,11 +91,11 @@ angular.module('clickApp.controllers')
                  ];
         }
       }
-      $scope.doCreateModel = function doCreateModel() {
+      $scope.doCreateModel = () => {
         var model_path = getModelPath();
         $scope.create.model = {
           base: { x: 240, y: 240, r: 0 },
-          models: R.times(function(i) {
+          models: R.times((i) => {
             return {
               info: model_path,
               user: R.pathOr('Unknown', ['user','state','name'], $scope),
@@ -106,16 +106,31 @@ angular.module('clickApp.controllers')
         $scope.doSwitchToMode('CreateModel');
       };
 
-      $scope.doImportModelsFile = function doImportModelsFile(files) {
+      $scope.import = {
+        list: null
+      };
+      $scope.doImportList = () => {
+        // TODO : find min unit number for user
+        let user = R.pathOr('Unknown', ['user','state','name'], $scope);
+        $scope.create.model = gameFactionsService
+          .buildModelsList($scope.import.list, user,
+                           $scope.factions_references);
+        console.log('doImportList',
+                    $scope.import.list,
+                    $scope.create.model);
+        $scope.doSwitchToMode('CreateModel');
+      };
+      
+      $scope.doImportModelsFile = (files) => {
         console.log('doImportModelsFile', files);
         R.pipeP(
           fileImportService.read$('json'),
-          function(create) {
+          (create) => {
             $scope.create.model = create;
             $scope.doSwitchToMode('CreateModel');
           }
         )(files[0])
-          .catch(function(reason) {
+          .catch((reason) => {
             $scope.gameEvent('modeActionError', reason);
             return self.Promise.reject(reason);
           });

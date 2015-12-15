@@ -524,6 +524,7 @@
       },
       "hunter": {
         "name": "Hunter",
+        "fk_name": "Hunter ",
         "type": "jack",
         "base": "medium",
         "img": [

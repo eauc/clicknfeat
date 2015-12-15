@@ -1,17 +1,17 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'modes', 'fileImport', function ($scope, modesService, fileImportService) {
+angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'modes', 'fileImport', 'gameFactions', function ($scope, modesService, fileImportService, gameFactionsService) {
   console.log('init gameModelCtrl');
 
-  $scope.onFactionChange = function onFactionChange() {
+  $scope.onFactionChange = function () {
     $scope.section = R.head(R.keys($scope.factions[$scope.faction].models));
     $scope.onSectionChange();
   };
-  $scope.onSectionChange = function onSectionChange() {
+  $scope.onSectionChange = function () {
     $scope.entry = R.head(R.keys($scope.factions[$scope.faction].models[$scope.section]));
     $scope.onEntryChange();
   };
-  $scope.onEntryChange = function onEntryChange() {
+  $scope.onEntryChange = function () {
     var entries = $scope.getEntries();
     if (R.isNil(entries)) {
       $scope.model = $scope.entry;
@@ -21,12 +21,12 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
     $scope.type = R.head(R.keys(entries));
     $scope.onTypeChange();
   };
-  $scope.onTypeChange = function onTypeChange() {
+  $scope.onTypeChange = function () {
     var entries = $scope.getEntries();
     $scope.model = R.pipe(R.defaultTo({}), R.prop($scope.type), R.defaultTo({}), R.keys(), R.head())(entries);
     $scope.onModelChange();
   };
-  $scope.onModelChange = function onModelChange() {
+  $scope.onModelChange = function () {
     $scope.repeat = 1;
   };
   $scope.data_ready.then(function () {
@@ -34,10 +34,10 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
     $scope.onFactionChange();
   });
 
-  $scope.getEntries = function getEntries() {
+  $scope.getEntries = function () {
     return R.path([$scope.faction, 'models', $scope.section, $scope.entry, 'entries'], $scope.factions);
   };
-  $scope.getModel = function getModel() {
+  $scope.getModel = function () {
     var entries = $scope.getEntries();
     if (R.isNil(entries)) {
       return R.path([$scope.faction, 'models', $scope.section, $scope.entry], $scope.factions);
@@ -54,7 +54,7 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
       return [$scope.faction, 'models', $scope.section, $scope.entry, 'entries', $scope.type, $scope.model];
     }
   }
-  $scope.doCreateModel = function doCreateModel() {
+  $scope.doCreateModel = function () {
     var model_path = getModelPath();
     $scope.create.model = {
       base: { x: 240, y: 240, r: 0 },
@@ -69,7 +69,18 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
     $scope.doSwitchToMode('CreateModel');
   };
 
-  $scope.doImportModelsFile = function doImportModelsFile(files) {
+  $scope.import = {
+    list: null
+  };
+  $scope.doImportList = function () {
+    // TODO : find min unit number for user
+    var user = R.pathOr('Unknown', ['user', 'state', 'name'], $scope);
+    $scope.create.model = gameFactionsService.buildModelsList($scope.import.list, user, $scope.factions_references);
+    console.log('doImportList', $scope.import.list, $scope.create.model);
+    $scope.doSwitchToMode('CreateModel');
+  };
+
+  $scope.doImportModelsFile = function (files) {
     console.log('doImportModelsFile', files);
     R.pipeP(fileImportService.read$('json'), function (create) {
       $scope.create.model = create;

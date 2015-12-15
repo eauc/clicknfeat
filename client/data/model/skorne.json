@@ -1,6 +1,6 @@
 {
   "name": "Skorne",
-  "color": "#5963a2",
+  "color": "#fb7c12",
   "icon": "/data/icons/skorne_50.png",
   "models": {
     "locks": {
@@ -66,11 +66,11 @@
       },
       "Makeda3": {
         "name": "Makeda3 (Makeda and the Exalted Court)",
+        "fk_name": "Makeda and the Exalted Court",
         "entries": {
           "lock": {
             "Makeda3": {
               "name": "Makeda3",
-              "fk_name": "Makeda and the Exalted Court",
               "type": "wardude",
               "fury": 6,
               "base": "small",
@@ -87,7 +87,6 @@
           "unit": {
             "Exalted1": {
               "name": "Exalted Guardian 1",
-              "fk_name": "Makeda and the Exalted Court",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -101,7 +100,6 @@
             },
             "Exalted2": {
               "name": "Exalted Guardian 2",
-              "fk_name": "Makeda and the Exalted Court",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -218,11 +216,11 @@
       },        
       "Zaal1": {
         "name": "Zaal1 (Supreme Aptimus Zaal & Kovaas)",
+        "fk_name": "Supreme Aptimus Zaal & Kovaas",
         "entries": {
           "lock": {
             "Zaal1": {
               "name": "Supreme Aptimus Zaal",
-              "fk_name": "Supreme Aptimus Zaal & Kovaas",
               "type": "wardude",
               "fury": 7,
               "base": "small",
@@ -239,7 +237,6 @@
           "attachement": {
             "Kovaas1": {
               "name": "Kovaas",
-              "fk_name": "Supreme Aptimus Zaal & Kovaas",
               "type": "warrior",
               "base": "medium",
               "img": [
@@ -537,8 +534,8 @@
           "6": [  "b",  "b",  "b",  "b",  "b", null ]
         }
       }, 
-      "Razor Worm": {
-        "name": "Razor Worm",
+      "Razorworm": {
+        "name": "Razorworm",
         "type": "beast",
         "fury": 3,
         "base": "medium",
@@ -597,12 +594,14 @@
           "6": [  "b",  "b",  "b",  "b",  "b", null ]
         }
       },
-      "Scarabs Pack": {
-        "name": "Scarabs Pack",
+      "Scarab Pack": {
+        "name": "Scarab Pack",
+        "fk_name": "Scarab Pack",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
+              "fk_grunts": 4,
               "ranges": [1, 4],
               "type": "warrior",
               "base": "small",
@@ -833,6 +832,24 @@
           }
         }
       },
+      "Nihilators": {
+        "name": "Nihilators",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/skorne/units/Nihilator.png"
+                }
+              ]
+            }
+          }
+        }
+      },
       "Paingiver Beast Handlers": {
         "name": "Paingiver Beast Handlers",
         "entries": {
@@ -853,6 +870,7 @@
       },
       "Paingiver Bloodrunners": {
         "name": "Paingiver Bloodrunners",
+        "fk_name": "Bloodrunners.*(?<nb_grunts>\\d+)\\s+grunts",
         "entries": {
           "unit": {
             "grunt": {
@@ -966,26 +984,9 @@
           }
         }
       },
-      "Nihilators": {
-        "name": "Nihilators",
-        "entries": {
-          "unit": {
-            "grunt": {
-              "name": "Leader and Grunts",
-              "ranges": [1, 6, 10],
-              "type": "warrior",
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/skorne/units/Nihilator.png"
-                }
-              ]
-            }
-          }
-        }
-      },
       "Tyrant Commander & Standard": {
         "name": "Tyrant Commander & Standard Bearer",
+        "fk_name": "Tyrant Commander & Standard Bearer",
         "entries": {
           "unit": {
             "Tyrant Commander": {
@@ -1048,21 +1049,14 @@
         "name": "Venator Flayer Cannon Crew",
         "entries": {
           "unit": {
-            "grunt1": {
-              "name": "Crew 1",
+            "grunt": {
+              "name": "Crew",
               "type": "warrior",
               "base": "small",
               "img": [
                 {
                   "link": "/data/model/skorne/units/Venator_CatapultCrew1.png"
-                }
-              ]
-            },
-            "grunt2": {
-              "name": "Crew 2",
-              "type": "warrior",
-              "base": "small",
-              "img": [
+                },
                 {
                   "link": "/data/model/skorne/units/Venator_CatapultCrew2.png"
                 }
@@ -1081,8 +1075,8 @@
           }
         }
       },
-      "Venator Reivers": {
-        "name": "Venator Reivers",
+      "Venators Reivers": {
+        "name": "Venators Reivers",
         "entries": {
           "unit": {
             "grunt": {
@@ -1126,8 +1120,8 @@
           }
         }
       },
-      "Venator Slingers": {
-        "name": "Venator Slingers",
+      "Venators Slingers": {
+        "name": "Venators Slingers",
         "entries": {
           "unit": {
             "grunt": {
@@ -1185,8 +1179,8 @@
           "n": 5
         }
       },
-      "Extoller Soulward": {
-        "name": "Extoller Soulward",
+      "Extoler Soulward": {
+        "name": "Extoler Soulward",
         "type": "solo",
         "base": "small",
         "img": [
@@ -1226,6 +1220,7 @@
       },
       "Paingiver Bloodrunner Master Tormentor": {
         "name": "Paingiver Bloodrunner Master Tormentor",
+        "fk_name": "Bloodrunner Master Tormentor",
         "type": "solo",
         "base": "small",
         "img": [

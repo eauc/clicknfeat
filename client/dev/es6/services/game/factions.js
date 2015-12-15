@@ -51,12 +51,166 @@ angular.module('clickApp.services')
         storeDesc: function gameFactionsStoreDesc(desc) {
           return localStorageService.save(STORAGE_KEY, desc);
         },
+        buildReferences: function gameFactionsBuildReferences(factions) {
+          return R.reduce(buildFactionRefs(factions), {}, R.keys(factions));
+        },
         getModelInfo: function gameFactionsGetModelInfo(path, factions) {
           return new self.Promise((resolve, reject) => {
             var info = R.path(path, factions);
             if(R.isNil(info)) reject('Model info '+path.join('.')+' not found');
             else resolve(info);
           });
+        },
+        getListInfo: function gameFactionsGetListInfo(list, references) {
+          function parseLine(line) {
+            return R.pipe(
+              R.values,
+              R.find(lineMatchesReference(line)),
+              buildEntry(line)
+            )(references);
+          }
+          let lineMatchesReference = R.curry((line, reference) => {
+            return XRegExp.exec(line, reference.regexp);
+          });
+          let buildEntry = R.curry((line, reference) => {
+            if(R.isNil(reference)) return reference;
+            
+            let match = XRegExp.exec(line, reference.regexp);
+            return [
+              R.prop('entries', reference),
+              parseNbGrunts(match.nb_grunts),
+              parseNbRepeat(match.nb_repeat)
+            ];
+          });
+          let parseNbGrunts = (nb_grunts) => {
+            return R.pipe(
+              R.defaultTo('0'),
+              (s) => { return parseFloat(s)+1; }
+            )(nb_grunts);
+          };
+          let parseNbRepeat = (nb_repeat) => {
+            return R.pipe(
+              R.defaultTo('0'),
+              (s) => { return parseFloat(s); }
+            )(nb_repeat);
+          };
+
+          return R.pipe(
+            s.lines,
+            R.map(parseLine),
+            R.reject(R.isNil)
+          )(list);
+        },
+        buildModelsList: function gameFactionsBuildModelsList(list, user, references) {
+          console.log('buildModelsList', list, user, references);
+          let info = gameFactionsService.getListInfo(list, references);
+          console.log('buildModelsList: info', info);
+          
+          function buildUnit([entries, nb_grunts, nb_repeat]) {
+            let grunts = buildGrunts(entries, nb_grunts);
+            let others = buildOthers(entries, nb_repeat);
+            let models = [...grunts, ...others];
+            updateUnit(entries, models);
+            return models;
+          }
+          function buildGrunts(entries, nb_grunts) {
+            let grunts = [];
+            let [grunt] = R.propOr([], 'grunt', entries);
+            if(R.exists(grunt) &&
+               R.exists(grunt.fk_grunts)) {
+              nb_grunts = grunt.fk_grunts;
+            }
+            if(nb_grunts > 0) {
+              let [leader] = R.propOr([], 'leader', entries);
+              if(R.exists(leader)) {
+                grunts = R.concat(grunts, addModel(1, leader));
+                nb_grunts--;
+              }
+              if(R.exists(grunt)) {
+                R.times(() => { grunts = R.concat(grunts, addModel(1, grunt)); }, nb_grunts);
+              }
+              if(!R.isEmpty(grunts)) {
+                grunts[0].dsp = ['l', 'i'];
+              }
+            }
+            return grunts;
+          }
+          function buildOthers(entries, nb_repeat) {
+            return R.pipe(
+              R.omit(['grunt','leader']),
+              R.values,
+              R.flatten,
+              R.chain((model) => {
+                return addModel(nb_repeat, model);
+              })
+            )(entries);
+          }
+
+          let last_unit = {
+            name: null,
+            number: 0
+          };
+          function updateUnit(entries, models) {
+            let unit_name = findUnitName(entries);
+            if( R.isNil(unit_name) ||
+                unit_name !== last_unit.name ) {
+              last_unit.number++;
+            }
+            last_unit.name = unit_name;
+            
+            R.forEach((model) => {
+              model.u = last_unit.number;
+            }, models);
+          }
+          function findUnitName(entries) {
+            return R.pipe(
+              R.values,
+              R.find((entry) => {
+                return R.find((model) => {
+                  return R.exists(model.unit_name);
+                }, entry);
+              }),
+              R.defaultTo([{}]),
+              R.head,
+              R.prop('unit_name')
+            )(entries);
+          }
+
+          const MAX_X = 240;
+          let x = 0, y = 0, y_offset = 0;
+          function addModel(nb_repeat, model) {
+            let ret = [];
+            R.pipe(
+              R.propOr(1, 'fk_repeat'),
+              R.max(nb_repeat),
+              R.times(() => {
+                ret.push({
+                  user: user,
+                  info: model.path,
+                  x: x + model.base_radius,
+                  y: y + model.base_radius,
+                  r: 0
+                });
+                x += model.base_radius*2;
+                y_offset = Math.max(y_offset, model.base_radius*2);
+                if(x > MAX_X) {
+                  x = 0;
+                  y += y_offset;
+                  y_offset = 0;
+                }
+              })
+            )(model);
+            return ret;
+          }
+
+          return {
+            base: { x: 240, y: 240, r: 0 },
+            models: R.chain(buildUnit, info)
+          };
+        },
+        buildReferenceRegexp: function gameFactionsBuildReferenceRegexp(name) {
+          let regexp = '^\\**\\s*'+name;
+          return XRegExp(regexp, 'i');
         },
       };
       function updateFaction(faction) {
@@ -116,8 +270,16 @@ angular.module('clickApp.services')
       }
       function updateModel(faction, unit, model) {
         // console.log(model);
+        var default_fk_name = model.name;
+        if(R.exists(unit)) {
+          if(R.exists(unit.fk_name)) {
+            default_fk_name = unit.fk_name;
+          }
+          else {
+            default_fk_name = unit.name + '.*(?<nb_grunts>\\d+)\\s+grunt';
+          }
+        }
         unit = R.defaultTo({}, unit);
-        var default_fk_name = R.defaultTo(model.name, unit.name);
         return R.pipe(
           R.assoc('fk_name', R.defaultTo(default_fk_name, model.fk_name)),
           R.assoc('unit_name', unit.name),
@@ -211,6 +373,65 @@ angular.module('clickApp.services')
           R.reduce(R.max, 0)
         )(damage);
       }
+
+      var buildFactionRefs = R.curry((factions, mem, faction) => {
+        let models = factions[faction].models;
+        return R.reduce(buildTypeRefs(faction, models),
+                        mem, R.keys(models));
+      });
+      var buildTypeRefs = R.curry((faction, models, mem, type) => {
+        let units = models[type];
+        return R.reduce(buildUnitRefs(faction, type, units),
+                        mem, R.keys(units));
+      });
+      var buildUnitRefs = R.curry((faction, type, units, mem, unit) => {
+        let entries = units[unit].entries;
+        if(R.isNil(entries)) {
+          return buildSingleRef(faction, type, units, unit, mem);
+        }
+        else {
+          return R.reduce(buildEntryTypeRefs(faction, type, unit, entries),
+                          mem, R.keys(entries));
+        }
+      });
+      var buildSingleRef = R.curry((faction, type, units, unit, mem) => {
+        unit = R.assoc('path', [
+          faction, 'models', type, unit
+        ], units[unit]);
+        updateReference('default', unit, mem);
+        return mem;
+      });
+      var buildEntryTypeRefs = R.curry((faction, type, unit,
+                                        entries, mem, entry_type) => {
+        let category = entries[entry_type];
+        return R.reduce(buildEntryRef(faction, type, unit, entry_type, category),
+                        mem, R.keys(category));
+      });
+      var buildEntryRef = R.curry((faction, type, unit, entry_type,
+                                   category, mem, entry_key) => {
+        let entry = R.assoc('path', [
+          faction, 'models', type, unit, 'entries', entry_type, entry_key
+        ], category[entry_key]);
+        updateReference(entry_key, entry, mem);
+        return mem;
+      });
+      function updateReference(type, entry, mem) {
+        let reference = getReferenceForFkName(entry.fk_name, mem);
+        let entries_type = R.defaultTo([], reference.entries[type]);
+        
+        entries_type.push(entry);
+
+        reference.entries[type] = entries_type;
+        mem[entry.fk_name] = reference;
+      }
+      function getReferenceForFkName(name, mem) {
+        let regexp = gameFactionsService.buildReferenceRegexp(name);
+        return R.defaultTo({
+          regexp: regexp,
+          entries: {}
+        }, mem[name]);
+      }
+
       R.curryService(gameFactionsService);
       return gameFactionsService;
     }

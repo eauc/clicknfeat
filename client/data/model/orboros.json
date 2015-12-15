@@ -46,11 +46,11 @@
       },
       "Cassius": {
         "name": "Cassius1 (Cassius the Oathkeeper)",
+        "fk_name": "Cassius the Oathkeeper",
         "entries": {
           "caster": {
             "Cassius": {
               "name": "Cassius1 (Cassius the Oathkeeper)",
-              "fk_name": "Cassius the Oathkeeper",
               "type": "wardude",
               "fury": 6,
               "base": "small",
@@ -67,7 +67,6 @@
           "solo": {
             "WurmWood": {
               "name": "Wurmwood, Tree of Fate",
-              "fk_name": "Cassius the Oathkeeper",
               "type": "solo",
               "base": "large",
               "img": [
@@ -96,11 +95,11 @@
       },
       "Kaya2": {
         "name": "Kaya2 (Kaya the Moonhunter & Laris)",
+        "fk_name": "Kaya the Moonhunter & Laris",
         "entries" : {
           "caster": {
             "Kaya2" : {
               "name": "Kaya the Moonhunter",
-              "fk_name": "Kaya the Moonhunter & Laris",
               "type": "wardude",
               "fury": 6,
               "base": "small",
@@ -117,7 +116,6 @@
           "beast": {
             "Laris": {
               "name": "Laris",
-              "fk_name": "Kaya the Moonhunter & Laris",
               "type": "beast",
               "base": "medium",
               "fury": 3,
@@ -281,6 +279,7 @@
       },
       "Argus": {
         "name": "Argus",
+        "fk_name": "Argus(?!\\s+Moon)",
         "type": "beast",
         "fury": 3,
         "base": "medium",
@@ -580,8 +579,8 @@
           "6": [ "b", "b", null, null, null ]
         }
       },
-      "Wold Guardian": {
-        "name": "Wold Guardian",
+      "Woldguardian": {
+        "name": "Woldguardian",
         "type": "beast",
         "fury": 4,
         "base": "large",
@@ -737,11 +736,11 @@
       },
       "Stoneward and Woldstalkers": {
         "name": "Stoneward and Woldstalkers",
+        "fk_name": "Stoneward.*(?<nb_grunts>\\d+)\\s+Woldstalkers",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Woldstalker",
-              "fk_name": "Stoneward and 5 Woldstalkers",
               "ranges": [ 1, 5 ],
               "type": "warrior",
               "base": "small",
@@ -753,7 +752,6 @@
             },
             "leader": {
               "name": "Stoneward",
-              "fk_name": "Stoneward and 5 Woldstalkers",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -850,6 +848,7 @@
       },
       "Sentry Stone & Manikins": {
         "name": "Sentry Stone & Manikins",
+        "fk_name": "Sentry Stone.*(?<nb_grunts>\\d+)\\s+Manikins",
         "entries": {
           "unit": {
             "grunt": {
@@ -881,11 +880,12 @@
       },
       "Shifting Stones": {
         "name": "Shifting Stones",
+        "fk_name": "Shifting Stones",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "fk_size": 3,
+              "fk_grunts": 3,
               "ranges": [1, 3],
               "type": "warrior",
               "base": "small",

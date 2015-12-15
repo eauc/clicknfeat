@@ -122,6 +122,7 @@ module.exports = function(grunt) {
           helpers: spec_js_helpers,
           vendor: [
               'client/dev/lib/babel-polyfill/browser-polyfill.js',
+              'client/dev/lib/xregexp/src/xregexp.js',
               'client/dev/lib/ramda/dist/ramda.js',
               'client/dev/lib/underscore.string/dist/underscore.string.js',
               'client/dev/lib/angular/angular.js',
