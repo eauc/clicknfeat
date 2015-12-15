@@ -45,7 +45,7 @@ angular.module('clickApp.directives')
           lock.setAttribute('width', '10');
           lock.setAttribute('height', '10');
           lock.setAttributeNS('http://www.w3.org/1999/xlink',
-                              'href', 'data/icons/Lock.png');
+                              'href', '/data/icons/Lock.png');
           lock.style.visibility = 'visible';
           parent.appendChild(lock);
 
