@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelBaseMode', [
     'modes',
@@ -23,10 +21,10 @@ angular.module('clickApp.services')
       model_actions.createAoEOnModel = function modelCreateAoEModel(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
-          function() {
+          () => {
             return gameModelsService.findStamp(stamps[0], scope.game.models);
           },
-          function(model) {
+          (model) => {
             var position = R.pick(['x','y'], model.state);
             position.type = 'aoe';
 
@@ -38,19 +36,19 @@ angular.module('clickApp.services')
       model_actions.createSprayOnModel = function modelCreateSprayModel(scope) {
         var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
-          function() {
+          () => {
             return gameModelsService.findStamp(stamps[0], scope.game.models);
           },
-          function(model) {
+          (model) =>{
             var position = R.pick(['x','y'], model.state);
             position.type = 'spray';
 
             return R.pipeP(
-              function() {
+              () => {
                 return gameService.executeCommand('createTemplate', [position],
                                                   scope, scope.game);
               },
-              function() {
+              () => {
                 // simulate set-origin-model in sprayTemplateMode
                 return sprayTemplateModeService
                   .actions.setOriginModel(scope, { 'click#': { target: model } });
@@ -63,7 +61,7 @@ angular.module('clickApp.services')
         var selection = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
-          function(model) {
+          (model) => {
             var stamps = R.pipe(
               gameModelsService.all,
               R.filter(modelService.userIs$(modelService.user(model))),
@@ -79,7 +77,7 @@ angular.module('clickApp.services')
         var selection = gameModelSelectionService.get('local', scope.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
-          function(model) {
+          (model) => {
             var unit = modelService.unit(model);
             if(R.isNil(unit)) {
               return self.Promise.reject('Model not in unit');
@@ -97,25 +95,28 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
-      // model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
-      //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-      //   if(dom_event.ctrlKey &&
-      //      dom_event.shiftKey &&
-      //      model.state.stamp !== event.target.state.stamp) {
-      //     gameService.executeCommand('onModels', 'setB2B',
-      //                                scope.factions, event.target,
-      //                                stamps, scope, scope.game);
-      //     return;
-      //   }
-      //   modelsModeService.actions.clickModel(scope, event, dom_event);
-      // };
+      model_actions.setB2B = function modelSetB2B(scope, event) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          () => {
+            return gameModelsService.findStamp(stamps[0], scope.game.models);
+          },
+          (model) => {
+            if(model.state.stamp === event['click#'].target.state.stamp) return null;
+            
+            return gameService.executeCommand('onModels', 'setB2B',
+                                              scope.factions, event['click#'].target,
+                                              stamps, scope, scope.game);
+          }
+        )();
+      };
 
       var model_default_bindings = {
         'createAoEOnModel': 'ctrl+a',
         'createSprayOnModel': 'ctrl+s',
         'selectAllUnit': 'ctrl+u',
         'selectAllFriendly': 'ctrl+f',
+        'setB2B': 'ctrl+shift+clickModel',
       };
       var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                     model_default_bindings);
@@ -133,7 +134,7 @@ angular.module('clickApp.services')
       settingsService.register('Bindings',
                                model_mode.name,
                                model_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(model_mode.bindings, bs);
                                });
       return model_mode;

@@ -50,25 +50,23 @@ angular.module('clickApp.services').factory('modelBaseMode', ['modes', 'settings
       return gameService.executeCommand('setModelSelection', 'set', stamps, scope, scope.game);
     })(scope.game.models);
   };
-  // model_actions.clickModel = function modelClickModel(scope, event, dom_event) {
-  //   var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-  //   var model = gameModelsService.findStamp(stamps[0], scope.game.models);
-  //   if(dom_event.ctrlKey &&
-  //      dom_event.shiftKey &&
-  //      model.state.stamp !== event.target.state.stamp) {
-  //     gameService.executeCommand('onModels', 'setB2B',
-  //                                scope.factions, event.target,
-  //                                stamps, scope, scope.game);
-  //     return;
-  //   }
-  //   modelsModeService.actions.clickModel(scope, event, dom_event);
-  // };
+  model_actions.setB2B = function modelSetB2B(scope, event) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    return R.pipeP(function () {
+      return gameModelsService.findStamp(stamps[0], scope.game.models);
+    }, function (model) {
+      if (model.state.stamp === event['click#'].target.state.stamp) return null;
+
+      return gameService.executeCommand('onModels', 'setB2B', scope.factions, event['click#'].target, stamps, scope, scope.game);
+    })();
+  };
 
   var model_default_bindings = {
     'createAoEOnModel': 'ctrl+a',
     'createSprayOnModel': 'ctrl+s',
     'selectAllUnit': 'ctrl+u',
-    'selectAllFriendly': 'ctrl+f'
+    'selectAllFriendly': 'ctrl+f',
+    'setB2B': 'ctrl+shift+clickModel'
   };
   var model_bindings = R.extend(Object.create(modelsModeService.bindings), model_default_bindings);
 

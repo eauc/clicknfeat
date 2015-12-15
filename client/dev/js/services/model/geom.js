@@ -47,7 +47,8 @@ angular.module('clickApp.services').factory('modelGeom', ['point', 'gameFactions
           return R.pipeP(gameFactionsService.getModelInfo$(other.state.info), function (other_info) {
             var distance = info.base_radius + other_info.base_radius;
             var position = pointService.translateInDirection(distance, direction, other.state);
-            model.state = R.pipe(R.assoc('x', position.x), R.assoc('y', position.y), modelService.checkState$(factions, null))(model.state);
+            model.state = R.pipe(R.assoc('x', position.x), R.assoc('y', position.y))(model.state);
+            return modelService.checkState(factions, null, model);
           })(factions);
         })(factions);
       }

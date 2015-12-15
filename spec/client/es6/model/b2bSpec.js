@@ -1,16 +1,18 @@
 'use strict';
 
-xdescribe('model b2b', function() {
-  describe('modelMode service', function() {
+describe('model b2b', function() {
+  describe('modelBaseMode service', function() {
     beforeEach(inject([
-      'modelMode',
-      function(modelModeService) {
-        this.modelModeService = modelModeService;
+      'modelBaseMode',
+      function(modelBaseModeService) {
+        this.modelBaseModeService = modelBaseModeService;
+
         this.gameService = spyOnService('game');
+
         this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        
         this.gameModelSelectionService = spyOnService('gameModelSelection');
-        this.modelsModeService = spyOnService('modelsMode');
-        spyOn(this.modelsModeService.actions, 'clickModel');
       
         this.scope = { game: { model_selection: 'selection' },
                        factions: 'factions'
@@ -18,38 +20,44 @@ xdescribe('model b2b', function() {
       }
     ]));
 
-    when('user toggles shift+click on model', function() {
-      this.modelModeService.actions
-        .clickModel(this.scope, this.event, { shiftKey: true, ctrlKey: true });
+    when('user set model B2B', function() {
+      this.ret = this.modelBaseModeService.actions
+        .setB2B(this.scope, this.event);
     }, function() {
       beforeEach(function() {
+        this.target = { state: { stamp: 'target' } };
         this.event = {
-          target: { state: { stamp: 'target' } }
+          'click#': { target: this.target }
         };
+
         this.gameModelSelectionService.get._retVal = ['stamp'];
-        this.gameModelsService.findStamp._retVal = {
+
+        this.gameModelsService.findStamp.resolveWith = {
           state: { stamp: 'stamp' }
         };
       });
 
       when('<target> is the selected model', function() {
-        this.event.target.state.stamp = 'stamp';
+        this.target.state.stamp = 'stamp';
       }, function() {
-        it('should fwd event to modelsMode', function() {
-          expect(this.modelsModeService.actions.clickModel)
-            .toHaveBeenCalledWith(this.scope, this.event,
-                                  { shiftKey: true, ctrlKey: true });
+        it('should do nothing', function() {
+          this.thenExpect(this.ret, () => {
+            expect(this.gameService.executeCommand)
+              .not.toHaveBeenCalled();
+          });
         });
       });
 
       when('<target> is not the selected model', function() {
-        this.event.target.state.stamp = 'target';
+        this.target.state.stamp = 'target';
       }, function() {
-        it('should fwd event to modelsMode', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'setB2B',
-                                  'factions', this.event.target, ['stamp'],
-                                  this.scope, this.scope.game);
+        it('should place selected model B2B with target', function() {
+          this.thenExpect(this.ret, () => {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onModels', 'setB2B',
+                                    'factions', this.target,
+                                    ['stamp'], this.scope, this.scope.game);
+          });
         });
       });
     });
@@ -60,69 +68,89 @@ xdescribe('model b2b', function() {
       'model',
       function(modelService) {
         this.modelService = modelService;
+
         this.gameFactionsService = spyOnService('gameFactions');
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
       }
     ]));
 
-    describe('distanceTo(<factions>, <other>)', function() {
+    when('distanceTo(<factions>, <other>)', function() {
+      this.ret = this.modelService
+        .distanceTo('factions', this.other, this.model);
+    }, function() {
       beforeEach(function() {
+        this.model = {
+          state: { info: 'info'}
+        };
+        this.other = {
+          state: { info: 'other_info',
+                   x: 260, y: 260 }
+        };
         this.fake_info = {
           info: { base_radius: 9.842 },
           other_info: { base_radius: 7.874 },
         };
-        this.gameFactionsService.getModelInfo.and.callFake((i) => {
+
+        this.gameFactionsService.getModelInfo.resolveWith = (i) => {
           return this.fake_info[i];
-        });
+        };
       });
 
       using([
-        ['model_pos', 'distance'],
-        [{ x:240, y:240 }, 10.568271247461904 ],
-        [{ x:245, y:245 }, 3.4972034355964263 ],
-        [{ x:250, y:250 }, -3.573864376269049 ],
+        [ 'model_pos'      , 'distance'],
+        [ { x:240, y:240 } , 10.568271247461904 ],
+        [ { x:245, y:245 } , 3.4972034355964263 ],
+        [ { x:250, y:250 } , -3.573864376269049 ],
       ], function(e, d) {
-        it('should return distance between both models, '+d, function() {
-          expect(this.modelService.distanceTo('factions', {
-            state: { info: 'other_info',
-                     x: 260, y: 260 }
-          }, {
-            state: R.merge({ info: 'info'}, e.model_pos)
-          })).toBe(e.distance);
+        when(d, function() {
+          this.model.state = R.merge(this.model.state, e.model_pos);
+        }, function() {
+          it('should return distance between both models', function() {
+            this.thenExpect(this.ret, (result) => {
+              expect(result).toBe(e.distance);
+            });
+          });
         });
       });
     });
 
     when('setB2B(<factions>, <other>)', function() {
-      this.modelService.setB2B('factions', {
-        state: { info: 'other_info',
-                 x: 260, y: 260 }
-      }, this.model);
+      this.ret = this.modelService
+        .setB2B('factions', this.other, this.model);
     }, function() {
       beforeEach(function() {
-        this.fake_info = {
-          info: { base_radius: 9.842 },
-          other_info: { base_radius: 7.874 },
-        };
-        this.gameFactionsService.getModelInfo.and.callFake((i) => {
-          return this.fake_info[i];
-        });
         this.model = {
           state: { info: 'info',
                    x: 240, y: 240 }
         };
+        this.other = {
+          state: { info: 'other_info',
+                   x: 260, y: 260 }
+        };
+        this.fake_info = {
+          info: { base_radius: 9.842 },
+          other_info: { base_radius: 7.874 },
+        };
+
+        this.gameFactionsService.getModelInfo.resolveWith = (i) => {
+          return this.fake_info[i];
+        };
       });
 
       it('should move model B2B with <other>', function() {
-        expect(R.pick(['x','y'], this.model.state))
-          .toEqual({ x: 247.47289626449913, y: 247.47289626449913 });
+        this.thenExpect(this.ret, () => {
+          expect(R.pick(['x','y'], this.model.state))
+            .toEqual({ x: 247.47289626449913, y: 247.47289626449913 });
+        });
       });
       
       when('model is locked', function() {
         this.modelService.setLock(true, this.model);
       }, function() {
-        it('should not move model', function() {
-          expect(R.pick(['x','y'], this.model.state))
-            .toEqual({ x: 240, y: 240 });
+        it('should reject setB2B', function() {
+          this.thenExpectError(this.ret, (reason) => {
+            expect(reason).toBe('Model is locked');
+          });
         });
       });
     });
