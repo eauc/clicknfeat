@@ -1,168 +1,222 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .directive('clickGameLos', [
-    function() {
+    'modes',
+    'gameLos',
+    'gameModels',
+    'gameFactions',
+    function(modesService,
+             gameLosService,
+             gameModelsService,
+             gameFactionsService) {
       return {
         restrict: 'A',
-        link: function(scope, el/*, attrs*/) {
+        link: (scope, el/*, attrs*/) => {
           var map = document.getElementById('map');
+          var under_models_container = document.getElementById('game-under-models');
           var svgNS = map.namespaceURI;
 
-          var local_element = createLosElement(svgNS, el[0]);
-          var remote_element = createLosElement(svgNS, el[0]);
+          var local_element = createLosElement(svgNS, under_models_container, el[0]);
+          var remote_element = createLosElement(svgNS, under_models_container, el[0]);
           
-          scope.onGameEvent('changeLocalLos', function onChangeLocalLos() {
-            updateLos(map, scope.game.los.local, local_element);
+          scope.onGameEvent('changeLocalLos', () => {
+            updateLine(scope.game.los.local, local_element.line);
           }, scope);
-          scope.onGameEvent('changeRemoteLos', function onChangeRemoteLos(event, los) {
+          scope.onGameEvent('changeRemoteLos', (event, los) => {
             if(R.isNil(los)) return;
             
-            updateLos(map, los.remote, remote_element);
+            updateLine(scope.game.los.remote, remote_element.line);
 
-            // var display = ( gameLosService.isDisplayed(los) ||
-            //                 'LoS' === modesService.currentModeName(scope.modes)
-            //               );
-            // updateOrigin(scope.factions, scope.game.models,
-            //              los, display,
-            //              remote_element.origin);
-            // updateTarget(scope.factions, scope.game.models,
-            //              los, display,
-            //              remote_element.target);
+            var display = ( gameLosService.isDisplayed(los) ||
+                            'LoS' === modesService.currentModeName(scope.modes)
+                          );
+            updateEnvelope(scope.game.los.remote, display, remote_element.envelope);
+            updateOriginTarget(scope.factions, scope.game.models,
+                               gameLosService.origin(los), display,
+                               remote_element.origin);
+            updateOriginTarget(scope.factions, scope.game.models,
+                               gameLosService.target(los), display,
+                               remote_element.target);
           }, scope);
-          // scope.onGameEvent('mapFlipped', function onMapFlippedLos(event) {
-          //   updateLosOnMapFlipped(map, scope.game.los.local, local_element);
-          //   updateLosOnMapFlipped(map, scope.game.los.remote, remote_element);
-          // }, scope);
         }
       };
-      function createLosElement(svgNS, parent) {
-        var group = document.createElementNS(svgNS, 'g');
+      function createLosElement(svgNS, under_models_container, parent) {
+        let group = document.createElementNS(svgNS, 'g');
         parent.appendChild(group);
 
-        var line = document.createElementNS(svgNS, 'line');
+        let line = document.createElementNS(svgNS, 'line');
         line.style['marker-start'] = 'url(#los-start)';
         line.style['marker-end'] = 'url(#los-end)';
         group.appendChild(line);
 
-        // var label = labelElementService.create(svgNS, group);
+        let origin = document.createElementNS(svgNS, 'circle');
+        origin.classList.add('los-origin');
+        origin.setAttribute('cx', '0');
+        origin.setAttribute('cy', '0');
+        origin.setAttribute('r', '0');
+        origin.style.visibility = 'hidden';
+        parent.appendChild(origin);
 
-        // var origin = document.createElementNS(svgNS, 'circle');
-        // origin.classList.add('los-origin');
-        // origin.setAttribute('cx', '0');
-        // origin.setAttribute('cy', '0');
-        // origin.setAttribute('r', '0');
-        // origin.style.visibility = 'hidden';
-        // parent.appendChild(origin);
+        let target = document.createElementNS(svgNS, 'circle');
+        target.classList.add('los-target');
+        target.setAttribute('cx', '0');
+        target.setAttribute('cy', '0');
+        target.setAttribute('r', '0');
+        target.style.visibility = 'hidden';
+        parent.appendChild(target);
 
-        // var target = document.createElementNS(svgNS, 'circle');
-        // target.classList.add('los-target');
-        // target.setAttribute('cx', '0');
-        // target.setAttribute('cy', '0');
-        // target.setAttribute('r', '0');
-        // target.style.visibility = 'hidden';
-        // parent.appendChild(target);
+        let envelope = document.createElementNS(svgNS, 'polygon');
+        envelope.classList.add('los-envelope');
+        envelope.setAttribute('points', '0,0 0,0 0,0');
+        envelope.style.visibility = 'hidden';
+        under_models_container.insertBefore(envelope, under_models_container.firstChild);
 
         return { container: group,
                  line: line,
-                 // label: label,
-                 // origin: origin,
-                 // target: target,
+                 origin: origin,
+                 target: target,
+                 envelope: envelope,
                };
       }
-      function updateLos(map, los, element) {
-        // var map_flipped = gameMapService.isFlipped(map);
-        // var zoom_factor = gameMapService.zoomFactor(map);
-        // var label_flip_center = {
-        //   x: (los.end.x - los.start.x) / 2 + los.start.x,
-        //   y: (los.end.y - los.start.y) / 2 + los.start.y,
-        // };
-        // var label_text = los.display ? los.length : '';
-        self.requestAnimationFrame(function _updateLos() {
-          updateLine(los.display, los, element.line);
-          // labelElementService.update(map_flipped,
-          //                            zoom_factor,
-          //                            label_flip_center,
-          //                            label_flip_center,
-          //                            label_text,
-          //                            element.label);
-        });
-      }
-      // function updateLosOnMapFlipped(map, los, element) {
-      //   var label_flip_center = {
-      //     x: (los.end.x - los.start.x) / 2 + los.start.x,
-      //     y: (los.end.y - los.start.y) / 2 + los.start.y,
-      //   };
-      //   labelElementService.updateOnFlipMap(map, label_flip_center, element.label);
-      // }
-      function updateLine(visible, los, line) {
-        line.style['visibility'] = visible ? 'visible' : 'hidden';
+      function updateLine(los, line) {
+        line.style['visibility'] = los.display ? 'visible' : 'hidden';
         line.setAttribute('x1', los.start.x+'');
         line.setAttribute('y1', los.start.y+'');
         line.setAttribute('x2', los.end.x+'');
         line.setAttribute('y2', los.end.y+'');
       }
-      // function updateOrigin(factions, models, los, display, element) {
-      //   var origin = gameLosService.origin(los);
-      //   R.pipeP(
-      //     function(origin) {
-      //       if(R.exists(origin)) {
-      //         return gameModelsService.findStamp(origin, models);
-      //       }
-      //       return self.Promise.resolve(null);
-      //     },
-      //     function(origin_model) {
-      //       if(!display ||
-      //          R.isNil(origin_model)) {
-      //         element.style.visibility = 'hidden';
-      //         return;
-      //       }
-      //       R.pipeP(
-      //         gameFactionsService.getModelInfo$(origin_model.state.info),
-      //         function(info) {
-      //           element.setAttribute('cx', origin_model.state.x+'');
-      //           element.setAttribute('cy', origin_model.state.y+'');
-      //           element.setAttribute('r', info.base_radius+'');
-      //           element.style.visibility = 'visible';
-      //         }
-      //       )(factions);
-      //     }
-      //   )(origin);
-      // }
-      // function updateTarget(factions, models, los, display, element) {
-      //   var target = gameLosService.target(los);
-      //   R.pipeP(
-      //     function(target) {
-      //       if(R.exists(target)) {
-      //         return gameModelsService.findStamp(target, models);
-      //       }
-      //       return self.Promise.resolve(null);
-      //     },
-      //     function(target_model) {
-      //       if(!display ||
-      //          R.isNil(target_model)) {
-      //         element.style.visibility = 'hidden';
-      //         return;
-      //       }
-            
-      //       if(gameLosService.targetReached(los)) {
-      //         element.classList.add('reached');
-      //       }
-      //       else {
-      //         element.classList.remove('reached');
-      //       }
-            
-      //       R.pipeP(
-      //         gameFactionsService.getModelInfo$(target_model.state.info),
-      //         function(info) {
-      //           element.setAttribute('cx', target_model.state.x+'');
-      //           element.setAttribute('cy', target_model.state.y+'');
-      //           element.setAttribute('r', info.base_radius+'');
-      //           element.style.visibility = 'visible';
-      //         }
-      //       )(factions);
-      //     }
-      //   )(target);
-      // }
+      function updateEnvelope(los, display, envelope) {
+        let {
+          left:  { start: { x: x1 = 0, y: y1 = 0 } = {},
+                   end:   { x: x2 = 0, y: y2 = 0 } = {}
+                 } = {},
+          right: { start: { x: x4 = 0, y: y4 = 0 } = {},
+                   end:   { x: x3 = 0, y: y3 = 0 } = {}
+                 } = {}
+        } = los.envelope || {};
+        let points = [
+          [ x1, y1 ].join(','),
+          [ x2, y2 ].join(','),
+          [ x3, y3 ].join(','),
+          [ x4, y4 ].join(','),
+        ].join(' ');
+        console.log('gameLos envelope points', points);
+        envelope.setAttribute('points', points);
+        envelope.style['visibility'] = display ? 'visible' : 'hidden';
+      }
+      function updateOriginTarget(factions, models, stamp, display, element) {
+        R.pipeP(
+          (stamp) => {
+            if(R.exists(stamp)) {
+              return gameModelsService.findStamp(stamp, models);
+            }
+            return self.Promise.resolve(null);
+          },
+          (model) => {
+            if( !display ||
+                R.isNil(model) ) {
+              element.style.visibility = 'hidden';
+              return;
+            }
+            R.pipeP(
+              gameFactionsService.getModelInfo$(model.state.info),
+              (info) => {
+                element.setAttribute('cx', model.state.x+'');
+                element.setAttribute('cy', model.state.y+'');
+                element.setAttribute('r', info.base_radius+'');
+                element.style.visibility = 'visible';
+              }
+            )(factions);
+          }
+        )(stamp);
+      }
+    }
+  ])
+  .directive('clickGameLosClip', [
+    function() {
+      return {
+        restrict: 'A',
+        link: (scope, el/*, attrs*/) => {
+          scope.onGameLoad
+            .then(() => {
+              updateEnvelope(scope.game.los, el[0]);
+            });
+          
+          scope.onGameEvent('changeRemoteLos', (event, los) => {
+            updateEnvelope(los.remote, el[0]);
+          }, scope);
+        }
+      };
+      function updateEnvelope(los, envelope) {
+        let {
+          left:  { start: { x: x1 = 0, y: y1 = 0 } = {},
+                   end:   { x: x2 = 0, y: y2 = 0 } = {}
+                 } = {},
+          right: { start: { x: x4 = 0, y: y4 = 0 } = {},
+                   end:   { x: x3 = 0, y: y3 = 0 } = {}
+                 } = {}
+        } = los.envelope || {};
+        let points = [
+          [ x1, y1 ].join(','),
+          [ x2, y2 ].join(','),
+          [ x3, y3 ].join(','),
+          [ x4, y4 ].join(','),
+        ].join(' ');
+        console.log('gameLos clip points', points, los);
+        envelope.setAttribute('points', points);
+      }
+    }
+  ])
+  .directive('clickGameLosDarkness', [
+    'gameLos',
+    'modes',
+    function(gameLosService,
+             modesService) {
+      return {
+        restrict: 'A',
+        link: (scope, el) => {
+          console.log('gameLosDarkness', scope, el);
+
+          updatePolygon(scope, scope.game.los, el[0]);
+          scope.onGameEvent('changeRemoteLos', (event, los) => {
+            updatePolygon(scope, los, el[0]);
+          }, scope);
+        }
+      };
+      function updatePolygon(scope, los, polygon) {
+        let {
+          left:  { start: { x: x1 = 0, y: y1 = 0 } = {},
+                   end:   { x: x2 = 0, y: y2 = 0 } = {}
+                 } = {},
+          right: { start: { x: x4 = 0, y: y4 = 0 } = {},
+                   end:   { x: x3 = 0, y: y3 = 0 } = {}
+                 } = {}
+        } = scope.envelope || {};
+        let points = [
+          [ x1, y1 ].join(','),
+          [ x2, y2 ].join(','),
+          [ x3, y3 ].join(','),
+          [ x4, y4 ].join(','),
+        ].join(' ');
+        console.log('gameLosDarkness envelope points', points);
+        polygon.setAttribute('points', points);
+
+        let display = ( gameLosService.isDisplayed(los) ||
+                        'LoS' === modesService.currentModeName(scope.modes)
+                      );
+        polygon.style['visibility'] = display ? 'visible' : 'hidden';
+      }
+    }
+  ])
+  .directive('clickGameLosRefresh', [
+    function() {
+      return {
+        restrict: 'A',
+        scope: true,
+        link: (scope) => {
+          console.log('gameLosRefresh', scope);
+
+          scope.digestOnGameEvent('changeRemoteLos', scope);
+        }
+      };
     }
   ]);

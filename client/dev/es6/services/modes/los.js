@@ -5,18 +5,15 @@ angular.module('clickApp.services')
     'commonMode',
     'game',
     'gameLos',
-    // 'model',
-    // 'gameModels',
-    // 'gameModelSelection',
+    'gameModels',
+    'gameModelSelection',
     function losModeServiceFactory(modesService,
                                    settingsService,
                                    commonModeService,
                                    gameService,
-                                   gameLosService
-                                   // modelService,
-                                   // gameModelsService,
-                                   // gameModelSelectionService
-                                  ) {
+                                   gameLosService,
+                                   gameModelsService,
+                                   gameModelSelectionService) {
       var los_actions = Object.create(commonModeService.actions);
       los_actions.exitLosMode = commonModeService.actions.modeBackToDefault;
       los_actions.dragStartMap = function losDragStartMap(scope, drag) {
@@ -39,57 +36,58 @@ angular.module('clickApp.services')
       los_actions.dragStartModel = los_actions.dragStartMap;
       los_actions.dragModel = los_actions.dragMap;
       los_actions.dragEndModel = los_actions.dragEndMap;
-      // los_actions.setOriginModel = function losSetOriginModel(scope, event) {
-      //   return R.pipeP(
-      //     () => {
-      //       return gameService
-      //         .executeCommand('setLos',
-      //                         'setOrigin', event['click#'].target,
-      //                         scope,  scope.game);
-      //     },
-      //     (result) => {
-      //       updateMaxLengthButton(scope);
-      //       return result;
-      //     }
-      //   )();
-      // };
-      // los_actions.setTargetModel = function losSetTargetModel(scope, event) {
-      //   return gameService
-      //     .executeCommand('setLos',
-      //                     'setTarget', event['click#'].target,
-      //                     scope,  scope.game);
-      // };
+      los_actions.setOriginModel = function losSetOriginModel(scope, event) {
+        return gameService
+          .executeCommand('setLos',
+                          'setOrigin', event['click#'].target,
+                          scope,  scope.game);
+      };
+      los_actions.setTargetModel = function losSetTargetModel(scope, event) {
+        return gameService
+          .executeCommand('setLos',
+                          'setTarget', event['click#'].target,
+                          scope,  scope.game);
+      };
+      los_actions.toggleIgnoreModel = function losToggleIgnoreModel(scope, event) {
+        return gameService
+          .executeCommand('setLos',
+                          'toggleIgnoreModel', event['click#'].target,
+                          scope,  scope.game);
+      };
       var los_default_bindings = {
         exitLosMode: 'shift+r',
+        toggleIgnoreModel: 'clickModel',
+        setOriginModel: 'ctrl+clickModel',
+        setTargetModel: 'shift+clickModel'
       };
       var los_bindings = R.extend(Object.create(commonModeService.bindings),
                                   los_default_bindings);
       var los_buttons = [
       ];
       var los_mode = {
-        onEnter: function losOnEnter(/*scope*/) {
-          // return R.pipePromise(
-          //   () => {
-          //     return gameModelSelectionService
-          //       .get('local', scope.game.model_selection);
-          //   },
-          //   (stamps) => {
-          //     if(R.length(stamps) !== 1) return;
+        onEnter: function losOnEnter(scope) {
+          return R.pipePromise(
+            () => {
+              return gameModelSelectionService
+                .get('local', scope.game.model_selection);
+            },
+            (stamps) => {
+              if(R.length(stamps) !== 1) return null;
 
-          //     return gameModelsService
-          //       .findStamp(stamps[0], scope.game.models)
-          //       .catch(R.always(null));
-          //   },
-          //   (model) => {
-          //     if(R.exists(model)) {
-          //       return gameService
-          //         .executeCommand('setLos',
-          //                         'setOriginResetTarget', model,
-          //                         scope, scope.game)
-          //         .catch(R.always(null));
-          //     }
-          //   }
-          // )();
+              return gameModelsService
+                .findStamp(stamps[0], scope.game.models)
+                .catch(R.always(null));
+            },
+            (model) => {
+              if(R.isNil(model)) return null;
+
+              return gameService
+                .executeCommand('setLos',
+                                'setOriginResetTarget', model,
+                                scope, scope.game)
+                .catch(R.always(null));
+            }
+          )();
         },
         onLeave: function losOnLeave(/*scope*/) {
         },

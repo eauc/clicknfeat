@@ -36,44 +36,44 @@ describe('user los', function() {
 
       // this.modelService = spyOnService('model');
 
-      // this.gameModelsService = spyOnService('gameModels');
-      // mockReturnPromise(this.gameModelsService.findStamp);
-      // this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+      this.gameModelsService = spyOnService('gameModels');
+      mockReturnPromise(this.gameModelsService.findStamp);
+      this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
 
-      // this.gameModelSelectionService = spyOnService('gameModelSelection');
+      this.gameModelSelectionService = spyOnService('gameModelSelection');
 
       this.scope = { // modes: 'modes',
                      game: { los: 'los',
-                             // models: 'models',
-                             // model_selection: 'selection'
+                             models: 'models',
+                             model_selection: 'selection'
                            },
                      // gameEvent: jasmine.createSpy('gameEvent'),
                      // $digest: jasmine.createSpy('$digest'),
                    };
     }]));
 
-    // when('user starts using los', function() {
-    //   this.ret = this.losModeService
-    //     .onEnter(this.scope);
-    // }, function() {
-    //   when('there is exactly one model selected', function() {
-    //     this.gameModelSelectionService.get._retVal = ['stamp'];
-    //   }, function() {
-    //     it('should set selected model as origin', function() {
-    //       this.thenExpect(this.ret, function() {
-    //         expect(this.gameModelSelectionService.get)
-    //           .toHaveBeenCalledWith('local', 'selection');
-    //         expect(this.gameModelsService.findStamp)
-    //           .toHaveBeenCalledWith('stamp', 'models');
+    when('user starts using los', function() {
+      this.ret = this.losModeService
+        .onEnter(this.scope);
+    }, function() {
+      when('there is exactly one model selected', function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      }, function() {
+        it('should set selected model as origin', function() {
+          this.thenExpect(this.ret, function() {
+            expect(this.gameModelSelectionService.get)
+              .toHaveBeenCalledWith('local', 'selection');
+            expect(this.gameModelsService.findStamp)
+              .toHaveBeenCalledWith('stamp', 'models');
 
-    //         expect(this.gameService.executeCommand)
-    //           .toHaveBeenCalledWith('setLos', 'setOriginResetTarget',
-    //                                 'gameModels.findStamp.returnValue',
-    //                                 this.scope, this.scope.game);
-    //       });
-    //     });
-    //   });
-    // });
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('setLos', 'setOriginResetTarget',
+                                    'gameModels.findStamp.returnValue',
+                                    this.scope, this.scope.game);
+          });
+        });
+      });
+    });
 
     using([
       ['action'],
@@ -107,47 +107,68 @@ describe('user los', function() {
       });
     });
 
-    // when('user set los origin', function() {
-    //   this.ret = this.losModeService.actions
-    //     .setOriginModel(this.scope, this.event);
-    // }, function() {
-    //   beforeEach(function() {
-    //     this.target = { state: { stamp: 'stamp' } };
-    //     this.event = { 'click#': { target: this.target } };
-    //   });
+    when('user set los origin', function() {
+      this.ret = this.losModeService.actions
+        .setOriginModel(this.scope, this.event);
+    }, function() {
+      beforeEach(function() {
+        this.target = { state: { stamp: 'stamp' } };
+        this.event = { 'click#': { target: this.target } };
+      });
       
-    //   it('should set los origin model', function() {
-    //     expect(this.gameService.executeCommand)
-    //       .toHaveBeenCalledWith('setLos',
-    //                             'setOrigin', this.target,
-    //                             this.scope, this.scope.game);
-    //     this.thenExpect(this.ret, function(result) {
-    //       expect(result)
-    //         .toBe('game.executeCommand.returnValue');
-    //     });
-    //   });
-    // });
+      it('should set los origin model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setLos',
+                                'setOrigin', this.target,
+                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(result)
+            .toBe('game.executeCommand.returnValue');
+        });
+      });
+    });
 
-    // when('user set los target', function() {
-    //   this.ret = this.losModeService.actions
-    //     .setTargetModel(this.scope, this.event);
-    // }, function() {
-    //   beforeEach(function() {
-    //     this.target = { state: { stamp: 'stamp' } };
-    //     this.event = { 'click#': { target: this.target } };
-    //   });
+    when('user set los target', function() {
+      this.ret = this.losModeService.actions
+        .setTargetModel(this.scope, this.event);
+    }, function() {
+      beforeEach(function() {
+        this.target = { state: { stamp: 'stamp' } };
+        this.event = { 'click#': { target: this.target } };
+      });
       
-    //   it('should set los target model', function() {
-    //     expect(this.gameService.executeCommand)
-    //       .toHaveBeenCalledWith('setLos',
-    //                             'setTarget', this.target,
-    //                             this.scope, this.scope.game);
-    //     this.thenExpect(this.ret, function(result) {
-    //       expect(result)
-    //         .toBe('game.executeCommand.returnValue');
-    //     });
-    //   });
-    // });
+      it('should set los target model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setLos',
+                                'setTarget', this.target,
+                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(result)
+            .toBe('game.executeCommand.returnValue');
+        });
+      });
+    });
+
+    when('user toggle ignore model', function() {
+      this.ret = this.losModeService.actions
+        .toggleIgnoreModel(this.scope, this.event);
+    }, function() {
+      beforeEach(function() {
+        this.target = { state: { stamp: 'stamp' } };
+        this.event = { 'click#': { target: this.target } };
+      });
+      
+      it('should toggle ignore model', function() {
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('setLos',
+                                'toggleIgnoreModel', this.target,
+                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function(result) {
+          expect(result)
+            .toBe('game.executeCommand.returnValue');
+        });
+      });
+    });
   });
 
   describe('setLosCommand service', function() {
@@ -362,6 +383,34 @@ describe('user los', function() {
           .toEqual(this.los.remote);
         expect(this.ret)
           .not.toBe(this.los.remote);
+      });
+    });
+
+    when('setOriginResetTarget(<origin>, <scope>)', function() {
+      this.ret = this.gameLosService
+        .setOriginResetTarget(this.origin, this.scope, this.los);
+    }, function() {
+      beforeEach(function() {
+        this.los = this.gameLosService.create();
+        this.origin = { state: { stamp: 'origin' } };
+      });
+
+      it('should set origin & reset target', function() {
+        expect(this.gameLosService.origin(this.ret))
+          .toBe('origin');
+        expect(this.gameLosService.target(this.ret))
+          .toBe(null);
+      });
+
+      it('should reset envelopes', function() {
+        expect(this.ret.remote.envelope)
+          .toBe(null);
+        expect(this.ret.remote.darkness)
+          .toEqual([]);
+        expect(this.ret.remote.shadow)
+          .toEqual([]);
+        expect(this.ret.remote.ignore)
+          .toEqual([]);
       });
     });
   });
