@@ -112,11 +112,11 @@
            ng-show="game.layers | gameLayers:'isDisplayed':'m'">
           <g click-game-los-refresh
              style="clip-path: url(#los-clip);">
-            <polygon ng-repeat="envelope in game.los.remote.shadow"
+            <polygon ng-repeat="envelope in game.los.computed.shadow"
                      click-game-los-darkness
                      class="los-shadow">
             </polygon>
-            <polygon ng-repeat="envelope in game.los.remote.darkness"
+            <polygon ng-repeat="envelope in game.los.computed.darkness"
                      click-game-los-darkness
                      class="los-darkness">
             </polygon>

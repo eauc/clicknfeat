@@ -50,6 +50,9 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     }
     pubSubService.publish.apply(null, R.append(game_event_channel, args));
   };
+  $scope.registerGameEventListener = function (event, listener) {
+    return pubSubService.subscribe(event, listener, game_event_channel);
+  };
   $scope.onGameEvent = function onGameEvent(event, listener, scope) {
     // console.log('subscribe onGameEvent', arguments);
     var unsubscribe = pubSubService.subscribe(event, listener, game_event_channel);

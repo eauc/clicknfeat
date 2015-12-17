@@ -29,7 +29,7 @@ angular.module('clickApp.directives')
             var display = ( gameLosService.isDisplayed(los) ||
                             'LoS' === modesService.currentModeName(scope.modes)
                           );
-            updateEnvelope(scope.game.los.remote, display, remote_element.envelope);
+            updateEnvelope(scope.game.los, display, remote_element.envelope);
             updateOriginTarget(scope.factions, scope.game.models,
                                gameLosService.origin(los), display,
                                remote_element.origin);
@@ -92,7 +92,7 @@ angular.module('clickApp.directives')
           right: { start: { x: x4 = 0, y: y4 = 0 } = {},
                    end:   { x: x3 = 0, y: y3 = 0 } = {}
                  } = {}
-        } = los.envelope || {};
+        } = R.pathOr({}, ['computed', 'envelope'], los);
         let points = [
           [ x1, y1 ].join(','),
           [ x2, y2 ].join(','),
@@ -142,7 +142,7 @@ angular.module('clickApp.directives')
             });
           
           scope.onGameEvent('changeRemoteLos', (event, los) => {
-            updateEnvelope(los.remote, el[0]);
+            updateEnvelope(los, el[0]);
           }, scope);
         }
       };
@@ -154,7 +154,7 @@ angular.module('clickApp.directives')
           right: { start: { x: x4 = 0, y: y4 = 0 } = {},
                    end:   { x: x3 = 0, y: y3 = 0 } = {}
                  } = {}
-        } = los.envelope || {};
+        } = R.pathOr({}, ['computed', 'envelope'], los);
         let points = [
           [ x1, y1 ].join(','),
           [ x2, y2 ].join(','),
@@ -190,7 +190,7 @@ angular.module('clickApp.directives')
           right: { start: { x: x4 = 0, y: y4 = 0 } = {},
                    end:   { x: x3 = 0, y: y3 = 0 } = {}
                  } = {}
-        } = scope.envelope || {};
+        } = R.propOr({}, 'envelope', scope);
         let points = [
           [ x1, y1 ].join(','),
           [ x2, y2 ].join(','),

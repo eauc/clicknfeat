@@ -61,6 +61,7 @@ describe('load game', function() {
                   start: { x:0, y: 0 },
                   end: { x:0, y: 0 },
                 },
+                computed: {},
               },
               models: { active: [], locked: [] },
               model_selection: { local: [],

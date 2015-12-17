@@ -1,5 +1,7 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 angular.module('clickApp.services').factory('setLosCommand', ['commands', 'gameLos', function setLosCommandServiceFactory(commandsService, gameLosService) {
   var setLosCommandService = {
     execute: function setLosExecute(method) /*, game */{
@@ -17,7 +19,7 @@ angular.module('clickApp.services').factory('setLosCommand', ['commands', 'gameL
         after: [],
         desc: method
       };
-      args = R.append(game.los, R.slice(0, -1, args));
+      args = [].concat(_toConsumableArray(R.slice(0, -1, args)), [game, game.los]);
 
       return R.pipePromise(function () {
         return gameLosService.saveRemoteState(game.los);
@@ -35,10 +37,14 @@ angular.module('clickApp.services').factory('setLosCommand', ['commands', 'gameL
       })();
     },
     replay: function setLosRedo(ctxt, scope, game) {
-      game.los = gameLosService.resetRemote(ctxt.after, scope, game.los);
+      return R.pipeP(gameLosService.resetRemote$(ctxt.after, scope, game), function (los) {
+        game.los = los;
+      })(game.los);
     },
     undo: function setLosUndo(ctxt, scope, game) {
-      game.los = gameLosService.resetRemote(ctxt.before, scope, game.los);
+      return R.pipeP(gameLosService.resetRemote$(ctxt.before, scope, game), function (los) {
+        game.los = los;
+      })(game.los);
     }
   };
   commandsService.registerCommand('setLos', setLosCommandService);

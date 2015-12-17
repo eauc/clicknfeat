@@ -15,7 +15,8 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
           display: false,
           start: { x: 0, y: 0 },
           end: { x: 0, y: 0 }
-        }
+        },
+        computed: {}
       };
     },
     isDisplayed: function gameLosIsDisplayed(los) {
@@ -24,40 +25,40 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
     origin: function gameLosOrigin(los) {
       return R.path(['remote', 'origin'], los);
     },
-    setOrigin: function gameLosSetOrigin(origin_model, scope, los) {
+    setOrigin: function gameLosSetOrigin(origin_model, scope, game, los) {
       var origin = origin_model.state.stamp;
       var target = gameLosService.target(los);
       target = target === origin ? null : target;
-      return setOriginTarget(origin, target, null, scope, los);
+      var display = target && origin;
+      return setOriginTarget(origin, target, null, display, scope, game, los);
     },
-    setOriginResetTarget: function gameLosSetOriginResetTarget(origin_model, scope, los) {
+    setOriginResetTarget: function gameLosSetOriginResetTarget(origin_model, scope, game, los) {
       var origin = origin_model.state.stamp;
-      return setOriginTarget(origin, null, null, scope, los);
+      return setOriginTarget(origin, null, null, false, scope, game, los);
     },
     target: function gameLosTarget(los) {
       return R.path(['remote', 'target'], los);
     },
-    setTarget: function gameLosSetTarget(target_model, scope, los) {
+    setTarget: function gameLosSetTarget(target_model, scope, game, los) {
       var origin = gameLosService.origin(los);
       var target = target_model.state.stamp;
       origin = origin === target ? null : origin;
-      return setOriginTarget(origin, target, null, scope, los);
+      var display = target && origin;
+      return setOriginTarget(origin, target, null, display, scope, game, los);
     },
-    toggleIgnoreModel: function toggleIgnoreModel(model, scope, los) {
+    toggleIgnoreModel: function toggleIgnoreModel(model, scope, game, los) {
       var ignore = R.pathOr([], ['remote', 'ignore'], los);
       var is_ignored = R.find(R.equals(model.state.stamp), ignore);
       ignore = is_ignored ? R.reject(R.equals(model.state.stamp), ignore) : R.append(model.state.stamp, ignore);
       console.log('toggleIgnoreModel', ignore);
 
-      return setOriginTarget(los.remote.origin, los.remote.target, ignore, scope, los);
+      return setOriginTarget(los.remote.origin, los.remote.target, ignore, los.remote.display, scope, game, los);
     },
-    toggleDisplay: function gameLosToggleDisplay(scope, los) {
+    toggleDisplay: function gameLosToggleDisplay(scope, game, los) {
       var path = ['remote', 'display'];
-      var is_displayed = R.path(path, los);
-      los = R.assocPath(path, !is_displayed, los);
+      var display = !R.path(path, los);
 
-      scope.gameEvent('changeRemoteLos', los);
-      return los;
+      return setOriginTarget(los.remote.origin, los.remote.target, los.remote.ignore, display, scope, game, los);
     },
     setLocal: function gameLosSetLocal(start, end, scope, los) {
       return R.pipe(R.prop('local'), R.assoc('start', R.clone(start)), R.assoc('end', R.clone(end)), R.assoc('display', true), function (local) {
@@ -66,34 +67,38 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
         return R.assoc('local', local, los);
       })(los);
     },
-    setRemote: function gameLosSetRemote(start, end, scope, los) {
+    setRemote: function gameLosSetRemote(start, end, scope, game, los) {
       los.local = R.pipe(R.assoc('display', false))(los.local);
       scope.gameEvent('changeLocalLos');
 
-      los.remote = R.pipe(R.assoc('start', R.clone(start)), R.assoc('end', R.clone(end)), R.assoc('display', true))(los.remote);
+      los.remote = R.pipe(R.assoc('start', R.clone(start)), R.assoc('end', R.clone(end)))(los.remote);
 
       scope.gameEvent('changeRemoteLos', los);
-      return los;
+      return setOriginTarget(los.remote.origin, los.remote.target, los.remote.ignore, true, scope, game, los);
     },
     saveRemoteState: function gameLosSaveRemoteState(los) {
       return R.clone(R.prop('remote', los));
     },
-    resetRemote: function gameLosResetRemote(state, scope, los) {
+    resetRemote: function gameLosResetRemote(state, scope, game, los) {
       los = R.assoc('remote', R.clone(state), los);
-      scope.gameEvent('changeRemoteLos', los);
-      return los;
+      return setOriginTarget(los.remote.origin, los.remote.target, los.remote.ignore, los.remote.display, scope, game, los);
     }
   };
-  function setOriginTarget(origin, target, ignore, scope, los) {
-    los = R.assoc('remote', R.pipe(R.assoc('origin', origin), R.assoc('target', target), R.assoc('ignore', []), R.assoc('envelope', null), R.assoc('darkness', []), R.assoc('shadow', []))(los.remote), los);
+  function setOriginTarget(origin, target, ignore, display, scope, game, los) {
+    los.remote = R.pipe(R.assoc('origin', origin), R.assoc('target', target), R.assoc('display', display), R.assoc('ignore', []))(los.remote);
+    los.computed = R.pipe(R.assoc('envelope', null), R.assoc('darkness', []), R.assoc('shadow', []))(los.computed);
+
+    // registerListener('origin', origin, scope, los);
+    // registerListener('target', target, scope, los);
+
     if (!los.remote.origin || !los.remote.target) {
       scope.gameEvent('changeRemoteLos', los);
-      return los;
+      return self.Promise.resolve(los);
     }
-    los.remote = R.assoc('ignore', R.defaultTo([], ignore), los.remote);
+    los.remote = R.pipe(R.assoc('ignore', R.defaultTo([], ignore)))(los.remote);
 
     return R.pipeP(function () {
-      return getOriginTargetInfo(scope, los.remote.origin, los.remote.target);
+      return getOriginTargetInfo(scope, game, los.remote.origin, los.remote.target);
     }, function (_ref) {
       var _ref2 = _slicedToArray(_ref, 4);
 
@@ -113,10 +118,10 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
         radius: target_info.base_radius
       };
       var envelope = circleService.envelopeTo(target_circle, origin_circle);
-      los = R.assoc('remote', R.pipe(R.assoc('envelope', envelope))(los.remote), los);
+      los.computed = R.assoc('envelope', envelope, los.computed);
 
       return R.pipeP(function () {
-        return computeIntervenings(scope, los.remote.ignore, target, target_circle, origin, envelope);
+        return computeIntervenings(scope, game, los.remote.ignore, target, target_circle, origin, envelope);
       }, function (intervenings) {
         return [origin_circle, intervenings];
       })();
@@ -129,18 +134,18 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
       console.log('gameLos intervenings', intervenings);
 
       var darkness = computeDarkness(origin_circle, intervenings);
-      los = R.assoc('remote', R.pipe(R.assoc('darkness', darkness))(los.remote), los);
+      los.computed = R.assoc('darkness', darkness, los.computed);
 
       var shadow = computeShadow(origin_circle, intervenings);
-      los = R.assoc('remote', R.pipe(R.assoc('shadow', shadow))(los.remote), los);
+      los.computed = R.assoc('shadow', shadow, los.computed);
 
       scope.gameEvent('changeRemoteLos', los);
       return los;
     })();
   }
-  function getOriginTargetInfo(scope, origin, target) {
+  function getOriginTargetInfo(scope, game, origin, target) {
     return R.pipePromise(function () {
-      return [gameModelsService.findStamp(origin, scope.game.models), gameModelsService.findStamp(target, scope.game.models)];
+      return [gameModelsService.findStamp(origin, game.models), gameModelsService.findStamp(target, game.models)];
     }, R.promiseAll, function (_ref5) {
       var _ref6 = _slicedToArray(_ref5, 2);
 
@@ -159,7 +164,7 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
       })();
     })();
   }
-  function computeIntervenings(scope, ignore, target, target_circle, origin, envelope) {
+  function computeIntervenings(scope, game, ignore, target, target_circle, origin, envelope) {
     return R.pipePromise(gameModelsService.all, R.map(function (model) {
       return R.pipeP(function () {
         return gameFactionsService.getModelInfo(model.state.info, scope.factions);
@@ -168,7 +173,7 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
       })();
     }), R.promiseAll, R.reject(function (circle) {
       return target === circle.stamp || origin === circle.stamp || target_circle.radius > circle.radius || R.find(R.equals(circle.stamp), ignore);
-    }), R.filter(circleService.isInEnvelope$(envelope)))(scope.game.models);
+    }), R.filter(circleService.isInEnvelope$(envelope)))(game.models);
   }
   function computeDarkness(origin_circle, intervenings) {
     return R.map(function (circle) {

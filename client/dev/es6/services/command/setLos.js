@@ -16,8 +16,8 @@ angular.module('clickApp.services')
             after: [],
             desc: method,
           };
-          args = R.append(game.los, R.slice(0, -1, args));
-
+          args = [ ...R.slice(0, -1, args), game, game.los ];
+          
           return R.pipePromise(
             () => {
               return gameLosService.saveRemoteState(game.los);
@@ -39,10 +39,20 @@ angular.module('clickApp.services')
           )();
         },
         replay: function setLosRedo(ctxt, scope, game) {
-          game.los = gameLosService.resetRemote(ctxt.after, scope, game.los);
+          return R.pipeP(
+            gameLosService.resetRemote$(ctxt.after, scope, game),
+            (los) => {
+              game.los = los;
+            }
+          )(game.los);
         },
         undo: function setLosUndo(ctxt, scope, game) {
-          game.los = gameLosService.resetRemote(ctxt.before, scope, game.los);
+          return R.pipeP(
+            gameLosService.resetRemote$(ctxt.before, scope, game),
+            (los) => {
+              game.los = los;
+            }
+          )(game.los);
         }
       };
       commandsService.registerCommand('setLos', setLosCommandService);
