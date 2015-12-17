@@ -54,6 +54,10 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
 
       return setOriginTarget(los.remote.origin, los.remote.target, ignore, los.remote.display, scope, game, los);
     },
+    updateOriginTarget: function updateOriginTarget(scope, game, los) {
+      return setOriginTarget(los.remote.origin, los.remote.target, los.remote.ignore, los.remote.display, scope, game, los);
+    },
+
     toggleDisplay: function gameLosToggleDisplay(scope, game, los) {
       var path = ['remote', 'display'];
       var display = !R.path(path, los);

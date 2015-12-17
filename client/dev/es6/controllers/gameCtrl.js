@@ -7,6 +7,7 @@ angular.module('clickApp.controllers')
     'userConnection',
     'game',
     'gameConnection',
+    'gameLos',
     'games',
     'modes',
     'pubSub',
@@ -20,6 +21,7 @@ angular.module('clickApp.controllers')
              userConnectionService,
              gameService,
              gameConnectionService,
+             gameLosService,
              gamesService,
              modesService,
              pubSubService) {
@@ -100,6 +102,43 @@ angular.module('clickApp.controllers')
         $scope.hints.go_to_main = !$scope.stateIs('game.main');
         $scope.$digest();
       }, $scope);
+      function updateGameLosOriginTarget(on) {
+        let game_los = {
+          stamp: null,
+          unsubscribe: null
+        };
+        function cleanupLosListener(origin) {
+          if(game_los.stamp === origin ||
+             R.isNil(game_los.unsubscribe)) return;
+          
+          console.info('unsubscribe Los listener', on);
+          game_los.unsubscribe();
+          game_los.unsubscribe = null;
+          game_los.stamp = null;
+        }
+        $scope.onGameEvent('changeRemoteLos', (event, los) => {
+          let stamp = gameLosService[on](los);
+          cleanupLosListener(stamp);
+          
+          let display = gameLosService.isDisplayed(los);
+          if( !display ||
+              R.isNil(stamp) ||
+              game_los.stamp === stamp ) return;
+          
+          let event_name = 'changeModel-'+stamp;
+          console.info('subscribe Los listener', on, event_name);
+          game_los.unsubscribe = pubSubService.subscribe(event_name, () => {
+            console.info('update LoS', on);
+            gameLosService.updateOriginTarget($scope, $scope.game, los);
+          }, game_event_channel);
+        }, $scope);
+        $scope.$on('$destroy', () => {
+          cleanupLosListener();
+        });
+      }
+      updateGameLosOriginTarget('origin');
+      updateGameLosOriginTarget('target');
+      
       $scope.digestOnGameEvent('diceRoll', $scope);
       $scope.digestOnGameEvent('changeBoard', $scope);
       $scope.digestOnGameEvent('changeLayers', $scope);

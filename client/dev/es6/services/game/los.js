@@ -73,6 +73,13 @@ angular.module('clickApp.services')
                                  los.remote.display,
                                  scope, game, los);
         },
+        updateOriginTarget(scope, game, los) {
+          return setOriginTarget(los.remote.origin,
+                                 los.remote.target,
+                                 los.remote.ignore,
+                                 los.remote.display,
+                                 scope, game, los);
+        },
         toggleDisplay: function gameLosToggleDisplay(scope, game, los) {
           let path = ['remote','display'];
           let display = !R.path(path, los);
