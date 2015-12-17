@@ -63,10 +63,13 @@ angular.module('clickApp.services')
           origin = (origin === target) ? null : origin;
           return setOriginTarget(origin, target, null, scope, ruler);
         },
+        updateOriginTarget: function gameRulerUpdateOriginTarget(scope, ruler) {
+          return setupRemoteRuler(scope, ruler);
+        },
         toggleDisplay: function gameRulerToggleDisplay(scope, ruler) {
           var path = ['remote','display'];
           ruler = R.assocPath(path, !R.path(path, ruler), ruler);
-          scope.gameEvent('changeRemoteRuler');
+          scope.gameEvent('changeRemoteRuler', ruler);
           return ruler;
         },
         setLocal: function gameRulerSetLocal(start, end, scope, ruler) {
@@ -106,7 +109,7 @@ angular.module('clickApp.services')
           var ret = R.pipe(
             R.assoc('remote', R.clone(state))
           )(ruler);
-          scope.gameEvent('changeRemoteRuler');
+          scope.gameEvent('changeRemoteRuler', ret);
           return ret;
         },
         targetAoEPosition: function gameRulerTargetAoEPosition(models, ruler) {
@@ -197,7 +200,7 @@ angular.module('clickApp.services')
               },
               ({ start, end }) => {
                 var models_dist = pointService.distanceTo(end, start);
-                ruler = R.assoc('remote', R.pipe(
+                ruler.remote = R.pipe(
                   R.assoc('start', start),
                   enforceEndToMaxLength(end),
                   (remote) => {
@@ -207,9 +210,9 @@ angular.module('clickApp.services')
                       R.assoc('length', Math.round(ruler_length * 10) / 100)
                     )(remote);
                   }
-                )(ruler.remote), ruler);
+                )(ruler.remote);
 
-                scope.gameEvent('changeRemoteRuler');
+                scope.gameEvent('changeRemoteRuler', ruler);
 
                 return ruler;
               }

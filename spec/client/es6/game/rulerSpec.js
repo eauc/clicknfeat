@@ -1,6 +1,6 @@
 'use strict';
 
-describe('user ruler', function() {
+describe('game ruler', function() {
   describe('defaultMode service', function() {
     beforeEach(inject([ 'defaultMode', function(defaultMode) {
       this.defaultModeService = defaultMode;
@@ -345,7 +345,7 @@ describe('user ruler', function() {
 
       it('should emit changeRemoteRuler game event', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
+          .toHaveBeenCalledWith('changeRemoteRuler', this.ret);
       });
     });
 
@@ -554,7 +554,7 @@ describe('user ruler', function() {
                        display: true
                      });
           expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeRemoteRuler');
+            .toHaveBeenCalledWith('changeRemoteRuler', result);
         });
       });
 
@@ -594,7 +594,7 @@ describe('user ruler', function() {
 
       it('should emit changeRemoteRuler game events', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteRuler');
+          .toHaveBeenCalledWith('changeRemoteRuler', this.ret);
       });
     });
 

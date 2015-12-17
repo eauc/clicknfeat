@@ -2,7 +2,7 @@
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
-angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gamesService, modesService, pubSubService) {
+angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'gameRuler', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gameRulerService, gamesService, modesService, pubSubService) {
   var _arguments = arguments;
 
   console.log('init gameCtrl', $stateParams, $state.current.name);
@@ -109,6 +109,40 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   }
   updateGameLosOriginTarget('origin');
   updateGameLosOriginTarget('target');
+
+  function updateGameRulerOriginTarget(on) {
+    var game_ruler = {
+      stamp: null,
+      unsubscribe: null
+    };
+    function cleanupRulerListener(origin) {
+      if (game_ruler.stamp === origin || R.isNil(game_ruler.unsubscribe)) return;
+
+      console.info('unsubscribe Ruler listener', on);
+      game_ruler.unsubscribe();
+      game_ruler.unsubscribe = null;
+      game_ruler.stamp = null;
+    }
+    $scope.onGameEvent('changeRemoteRuler', function (event, ruler) {
+      var stamp = gameRulerService[on](ruler);
+      cleanupRulerListener(stamp);
+
+      var display = gameRulerService.isDisplayed(ruler);
+      if (!display || R.isNil(stamp) || game_ruler.stamp === stamp) return;
+
+      var event_name = 'changeModel-' + stamp;
+      console.info('subscribe Ruler listener', on, event_name);
+      game_ruler.unsubscribe = pubSubService.subscribe(event_name, function () {
+        console.info('update Ruler', on);
+        gameRulerService.updateOriginTarget($scope, ruler);
+      }, game_event_channel);
+    }, $scope);
+    $scope.$on('$destroy', function () {
+      cleanupRulerListener();
+    });
+  }
+  updateGameRulerOriginTarget('origin');
+  updateGameRulerOriginTarget('target');
 
   $scope.digestOnGameEvent('diceRoll', $scope);
   $scope.digestOnGameEvent('changeBoard', $scope);
