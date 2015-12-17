@@ -10,6 +10,8 @@ angular.module('clickApp.controllers')
     'gameLos',
     'gameModelSelection',
     'gameModels',
+    'gameTemplateSelection',
+    'gameTemplates',
     'gameRuler',
     'games',
     'modes',
@@ -27,6 +29,8 @@ angular.module('clickApp.controllers')
              gameLosService,
              gameModelSelectionService,
              gameModelsService,
+             gameTemplateSelectionService,
+             gameTemplatesService,
              gameRulerService,
              gamesService,
              modesService,
@@ -237,6 +241,63 @@ angular.module('clickApp.controllers')
         });
       }
       updateGameModelSelection();
+      
+      function updateGameTemplateSelection() {
+        let game_template = {
+          stamp: null,
+          unsubscribe: null
+        };
+        function cleanupTemplateListener(stamp) {
+          if(game_template.stamp === stamp ||
+             R.isNil(game_template.unsubscribe)) return;
+          
+          console.info('unsubscribe Game Template listener', game_template.stamp);
+          game_template.unsubscribe();
+          game_template.unsubscribe = null;
+          game_template.stamp = null;
+        }
+        function updateSingleTemplateSelection(stamp) {
+          R.pipePromise(
+            (stamp) => {
+              if(R.isNil(stamp)) return null;
+
+              return gameTemplatesService
+                .findStamp(stamp, $scope.game.templates);
+            },
+            (template) => {
+              if(R.exists(template) &&
+                 'aoe' !== template.state.type) {
+                stamp = null;
+                template = null;
+              }
+              
+              $scope.gameEvent('updateSingleTemplateSelection', stamp, template);
+            }
+          )(stamp);
+        }
+        $scope.onGameEvent('changeLocalTemplateSelection', (event, selection) => {
+          let stamps = gameTemplateSelectionService.get('local', selection);
+          let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+          cleanupTemplateListener(stamp);
+          
+          if( R.isNil(stamp) ||
+              game_template.stamp === stamp ) return;
+          
+          let event_name = 'changeTemplate-'+stamp;
+          console.info('subscribe Game Template listener', event_name);
+          game_template.unsubscribe = pubSubService.subscribe(event_name, () => {
+            let stamps = gameTemplateSelectionService.get('local', $scope.game.template_selection);
+            let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+            updateSingleTemplateSelection(stamp);
+          }, game_event_channel);
+          game_template.stamp = stamp;
+          updateSingleTemplateSelection(stamp);
+        }, $scope);
+        $scope.$on('$destroy', () => {
+          cleanupTemplateListener();
+        });
+      }
+      updateGameTemplateSelection();
 
       $scope.digestOnGameEvent('diceRoll', $scope);
       $scope.digestOnGameEvent('changeBoard', $scope);

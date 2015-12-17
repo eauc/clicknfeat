@@ -2,7 +2,7 @@
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
-angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'gameModelSelection', 'gameModels', 'gameRuler', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gameModelSelectionService, gameModelsService, gameRulerService, gamesService, modesService, pubSubService) {
+angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'gameModelSelection', 'gameModels', 'gameTemplateSelection', 'gameTemplates', 'gameRuler', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gameModelSelectionService, gameModelsService, gameTemplateSelectionService, gameTemplatesService, gameRulerService, gamesService, modesService, pubSubService) {
   var _arguments = arguments;
 
   console.log('init gameCtrl', $stateParams, $state.current.name);
@@ -198,6 +198,56 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     });
   }
   updateGameModelSelection();
+
+  function updateGameTemplateSelection() {
+    var game_template = {
+      stamp: null,
+      unsubscribe: null
+    };
+    function cleanupTemplateListener(stamp) {
+      if (game_template.stamp === stamp || R.isNil(game_template.unsubscribe)) return;
+
+      console.info('unsubscribe Game Template listener', game_template.stamp);
+      game_template.unsubscribe();
+      game_template.unsubscribe = null;
+      game_template.stamp = null;
+    }
+    function updateSingleTemplateSelection(stamp) {
+      R.pipePromise(function (stamp) {
+        if (R.isNil(stamp)) return null;
+
+        return gameTemplatesService.findStamp(stamp, $scope.game.templates);
+      }, function (template) {
+        if (R.exists(template) && 'aoe' !== template.state.type) {
+          stamp = null;
+          template = null;
+        }
+
+        $scope.gameEvent('updateSingleTemplateSelection', stamp, template);
+      })(stamp);
+    }
+    $scope.onGameEvent('changeLocalTemplateSelection', function (event, selection) {
+      var stamps = gameTemplateSelectionService.get('local', selection);
+      var stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+      cleanupTemplateListener(stamp);
+
+      if (R.isNil(stamp) || game_template.stamp === stamp) return;
+
+      var event_name = 'changeTemplate-' + stamp;
+      console.info('subscribe Game Template listener', event_name);
+      game_template.unsubscribe = pubSubService.subscribe(event_name, function () {
+        var stamps = gameTemplateSelectionService.get('local', $scope.game.template_selection);
+        var stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+        updateSingleTemplateSelection(stamp);
+      }, game_event_channel);
+      game_template.stamp = stamp;
+      updateSingleTemplateSelection(stamp);
+    }, $scope);
+    $scope.$on('$destroy', function () {
+      cleanupTemplateListener();
+    });
+  }
+  updateGameTemplateSelection();
 
   $scope.digestOnGameEvent('diceRoll', $scope);
   $scope.digestOnGameEvent('changeBoard', $scope);

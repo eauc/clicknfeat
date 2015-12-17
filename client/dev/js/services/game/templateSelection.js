@@ -36,7 +36,7 @@ angular.module('clickApp.services').factory('gameTemplateSelection', ['modes', '
 
       if ('local' === where) {
         scope.doSwitchToMode('Default');
-        scope.gameEvent('changeLocalTemplateSelection');
+        scope.gameEvent('changeLocalTemplateSelection', ret);
       }
 
       R.forEach(function (stamp) {
@@ -55,7 +55,7 @@ angular.module('clickApp.services').factory('gameTemplateSelection', ['modes', '
 
       if ('local' === where) {
         scope.doSwitchToMode('Default');
-        scope.gameEvent('changeLocalTemplateSelection');
+        scope.gameEvent('changeLocalTemplateSelection', ret);
       }
 
       R.forEach(function (stamp) {

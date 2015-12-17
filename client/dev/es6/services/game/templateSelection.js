@@ -48,7 +48,7 @@ angular.module('clickApp.services')
 
           if('local' === where) {
             scope.doSwitchToMode('Default');
-            checkSingleSelection(scope, ret);
+            scope.gameEvent('changeLocalTemplateSelection', ret);
           }
           
           R.forEach((stamp) => {
@@ -67,7 +67,7 @@ angular.module('clickApp.services')
           
           if('local' === where) {
             scope.doSwitchToMode('Default');
-            checkSingleSelection(scope, ret);
+            scope.gameEvent('changeLocalTemplateSelection', ret);
           }
 
           R.forEach((stamp) => {
@@ -81,11 +81,6 @@ angular.module('clickApp.services')
           return gameTemplateSelectionService.removeFrom(where, previous, scope, selection);
         },
       };
-      function checkSingleSelection(scope, selection) {
-        if(R.length(R.prop('local', selection)) !== 1) {
-          scope.gameEvent('disableSingleAoESelection');
-        }
-      }
       R.curryService(gameTemplateSelectionService);
       return gameTemplateSelectionService;
     }

@@ -114,6 +114,11 @@ describe('select template', function() {
             expect(this.scope.doSwitchToMode)
               .toHaveBeenCalledWith('Default');
           });
+
+          it('should emit changeLocalTemplateSelection event', function() {
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
+          });
         }
         
         when('there is a previous selection', function() {
@@ -142,6 +147,11 @@ describe('select template', function() {
             it('should switch to Default mode', function() {
               expect(this.scope.doSwitchToMode)
                 .toHaveBeenCalledWith('Default');
+            });
+
+            it('should emit changeLocalTemplateSelection event', function() {
+              expect(this.scope.gameEvent)
+                .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
             });
           }
 
@@ -178,6 +188,11 @@ describe('select template', function() {
           it('should switch to Default mode', function() {            
             expect(this.scope.doSwitchToMode)
               .toHaveBeenCalledWith('Default');
+          });
+
+          it('should emit changeLocalTemplateSelection event', function() {
+            expect(this.scope.gameEvent)
+              .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
           });
         }
 

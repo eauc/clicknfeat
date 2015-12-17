@@ -27,12 +27,7 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
 
     scope.onGameEvent('updateSingleModelSelection', onUpdateSingleModelSelection(scope.factions, model, element), scope);
 
-    // scope.onGameEvent('changeSingleAoESelection',
-    //                   gameModelOnchangeSingleAoESelection(scope.factions, model, element),
-    //                   scope);
-    // scope.onGameEvent('disableSingleAoESelection',
-    //                   gameModelOnDisableSingleAoESelection(),
-    //                   scope);
+    scope.onGameEvent('updateSingleTemplateSelection', onUpdateSingleTemplateSelection(scope.factions, model, element), scope);
   }
   function createModelElement(info, model, parent) {
     var map = document.getElementById('map');
@@ -114,31 +109,23 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
       }
     };
   }
-  // function gameModelOnChangeSingleAoESelection(factions, model, element) {
-  //   return function _gameModelOnchangeSingleAoESelection(event, selected_aoe) {
-  //     // console.log('changeSingleAoESelection',
-  //     //             selected_aoe.state.stamp,
-  //     //             scope.model.state.stamp);
-  //     if(R.exists(selected_aoe)) {
-  //       var dist = modelService.distanceToAoE(factions,
-  //                                             selected_aoe,
-  //                                             model);
-  //       if(dist <= 0) {
-  //         element.container.classList.add('under-aoe');
-  //         return;
-  //       }
-  //     }
-  //     element.container.classList.remove('under-aoe');
-  //   };
-  // }
-  // function gameModelOnDisableSingleAoESelection(element) {
-  //   return function _gameModelOnDisableSingleAoESelection() {
-  //     // console.log('disableSingleAoESelection',
-  //     //             scope.model.state.stamp);
-  //     element.container.classList.remove('under-aoe');
-  //     element.container.classList.remove('b2b');
-  //   };
-  // }
+  function onUpdateSingleTemplateSelection(factions, model, element) {
+    return function (event, sel_stamp, sel_temp) {
+      // console.log('onUpdateSingleAoTemplateSelection',
+      //             sel_stamp, model.state.stamp);
+      if (R.exists(sel_temp)) {
+        R.pipeP(modelService.distanceToAoE$(factions, sel_temp), function (dist) {
+          if (dist <= 0) {
+            element.container.classList.add('under-aoe');
+          } else {
+            element.container.classList.remove('under-aoe');
+          }
+        })(model);
+      } else {
+        element.container.classList.remove('under-aoe');
+      }
+    };
+  }
   function gameModelOnUpdate(factions, info, model, game, scope, element) {
     return function _gameModelOnUpdate() {
       var map = document.getElementById('map');
