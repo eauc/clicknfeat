@@ -191,7 +191,7 @@ angular.module('clickApp.services')
             )();
           },
           ([ origin_circle, intervenings ]) => {
-            console.log('gameLos intervenings', intervenings);
+            // console.log('gameLos intervenings', intervenings);
 
             let darkness = computeDarkness(origin_circle, intervenings);
             los.computed = R.assoc('darkness', darkness, los.computed);

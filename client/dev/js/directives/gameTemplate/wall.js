@@ -38,11 +38,6 @@ angular.module('clickApp.directives').factory('wallTemplateElement', ['$window',
         updateWall(template, wall.wall);
         updateContainer(selected, local, remote, template, wall.container);
         labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, wall.label);
-        $window.requestAnimationFrame(function _aoeTemplateElementUpdate2() {
-          if (gameTemplateSelectionService.inSingle('local', template.state.stamp, scope.game.template_selection)) {
-            scope.gameEvent('changeSingleAoESelection', null);
-          }
-        });
       });
     }
   };

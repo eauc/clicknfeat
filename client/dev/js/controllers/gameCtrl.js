@@ -2,7 +2,7 @@
 
 var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
-angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'gameRuler', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gameRulerService, gamesService, modesService, pubSubService) {
+angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state', '$stateParams', '$window', 'userConnection', 'game', 'gameConnection', 'gameLos', 'gameModelSelection', 'gameModels', 'gameRuler', 'games', 'modes', 'pubSub', 'allModes', 'allCommands', 'allTemplates', function ($scope, $state, $stateParams, $window, userConnectionService, gameService, gameConnectionService, gameLosService, gameModelSelectionService, gameModelsService, gameRulerService, gamesService, modesService, pubSubService) {
   var _arguments = arguments;
 
   console.log('init gameCtrl', $stateParams, $state.current.name);
@@ -25,12 +25,18 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   };
 
   var game_event_channel = pubSubService.init();
-  pubSubService.subscribe('#watch#', R.spy('gameEvent'), game_event_channel);
+  pubSubService.subscribe('#watch#', function (event) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
+    }
+
+    console.info('gameEvent', event, args);
+  }, game_event_channel);
   var game_is_loading = false;
   var event_loading_queue = [];
   $scope.gameEvent = function gameEvent() {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
     }
 
     var event = args[0];
@@ -69,6 +75,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       unsubscribe();
     });
   };
+
   $scope.onGameEvent('chat', function () {
     var msg = R.last($scope.game.chat);
     if (msg.from === $scope.user.state.name) return;
@@ -76,6 +83,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     $scope.hints.go_to_main = !$scope.stateIs('game.main');
     $scope.$digest();
   }, $scope);
+
   function updateGameLosOriginTarget(on) {
     var game_los = {
       stamp: null,
@@ -84,7 +92,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     function cleanupLosListener(origin) {
       if (game_los.stamp === origin || R.isNil(game_los.unsubscribe)) return;
 
-      console.info('unsubscribe Los listener', on);
+      console.log('unsubscribe Los listener', on, game_los.stamp);
       game_los.unsubscribe();
       game_los.unsubscribe = null;
       game_los.stamp = null;
@@ -97,11 +105,12 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       if (!display || R.isNil(stamp) || game_los.stamp === stamp) return;
 
       var event_name = 'changeModel-' + stamp;
-      console.info('subscribe Los listener', on, event_name);
+      console.log('subscribe Los listener', on, event_name);
       game_los.unsubscribe = pubSubService.subscribe(event_name, function () {
-        console.info('update LoS', on);
+        console.log('update LoS', on);
         gameLosService.updateOriginTarget($scope, $scope.game, los);
       }, game_event_channel);
+      game_los.stamp = stamp;
     }, $scope);
     $scope.$on('$destroy', function () {
       cleanupLosListener();
@@ -118,7 +127,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     function cleanupRulerListener(origin) {
       if (game_ruler.stamp === origin || R.isNil(game_ruler.unsubscribe)) return;
 
-      console.info('unsubscribe Ruler listener', on);
+      console.log('unsubscribe Ruler listener', on, game_ruler.stamp);
       game_ruler.unsubscribe();
       game_ruler.unsubscribe = null;
       game_ruler.stamp = null;
@@ -131,11 +140,12 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       if (!display || R.isNil(stamp) || game_ruler.stamp === stamp) return;
 
       var event_name = 'changeModel-' + stamp;
-      console.info('subscribe Ruler listener', on, event_name);
+      console.log('subscribe Ruler listener', on, event_name);
       game_ruler.unsubscribe = pubSubService.subscribe(event_name, function () {
-        console.info('update Ruler', on);
+        console.log('update Ruler', on);
         gameRulerService.updateOriginTarget($scope, ruler);
       }, game_event_channel);
+      game_ruler.stamp = stamp;
     }, $scope);
     $scope.$on('$destroy', function () {
       cleanupRulerListener();
@@ -143,6 +153,51 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   }
   updateGameRulerOriginTarget('origin');
   updateGameRulerOriginTarget('target');
+
+  function updateGameModelSelection() {
+    var game_model = {
+      stamp: null,
+      unsubscribe: null
+    };
+    function cleanupModelListener(stamp) {
+      if (game_model.stamp === stamp || R.isNil(game_model.unsubscribe)) return;
+
+      console.info('unsubscribe Game Model listener', game_model.stamp);
+      game_model.unsubscribe();
+      game_model.unsubscribe = null;
+      game_model.stamp = null;
+    }
+    function updateSingleModelSelection(stamp) {
+      R.pipePromise(function (stamp) {
+        if (R.isNil(stamp)) return null;
+
+        return gameModelsService.findStamp(stamp, $scope.game.models);
+      }, function (model) {
+        $scope.gameEvent('updateSingleModelSelection', stamp, model);
+      })(stamp);
+    }
+    $scope.onGameEvent('changeLocalModelSelection', function (event, selection) {
+      var stamps = gameModelSelectionService.get('local', selection);
+      var stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+      cleanupModelListener(stamp);
+
+      if (R.isNil(stamp) || game_model.stamp === stamp) return;
+
+      var event_name = 'changeModel-' + stamp;
+      console.info('subscribe Game Model listener', event_name);
+      game_model.unsubscribe = pubSubService.subscribe(event_name, function () {
+        var stamps = gameModelSelectionService.get('local', $scope.game.model_selection);
+        var stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
+        updateSingleModelSelection(stamp);
+      }, game_event_channel);
+      game_model.stamp = stamp;
+      updateSingleModelSelection(stamp);
+    }, $scope);
+    $scope.$on('$destroy', function () {
+      cleanupModelListener();
+    });
+  }
+  updateGameModelSelection();
 
   $scope.digestOnGameEvent('diceRoll', $scope);
   $scope.digestOnGameEvent('changeBoard', $scope);
@@ -192,8 +247,8 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     });
   };
   $scope.doExecuteCommand = function doExecuteCommand() {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
+    for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      args[_key3] = arguments[_key3];
     }
 
     args = R.concat(args, [$scope, $scope.game]);

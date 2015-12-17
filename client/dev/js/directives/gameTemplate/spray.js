@@ -53,11 +53,6 @@ angular.module('clickApp.directives').factory('sprayTemplateElement', ['$window'
         updateContainer(template, spray.container);
         updateSpray(stroke_color, template, spray.spray);
         labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, spray.label);
-        $window.requestAnimationFrame(function _aoeTemplateElementUpdate2() {
-          if (gameTemplateSelectionService.inSingle('local', template.state.stamp, scope.game.template_selection)) {
-            scope.gameEvent('changeSingleAoESelection', null);
-          }
-        });
       });
 
       R.pipeP(function () {

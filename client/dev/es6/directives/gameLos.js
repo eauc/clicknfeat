@@ -99,7 +99,7 @@ angular.module('clickApp.directives')
           [ x3, y3 ].join(','),
           [ x4, y4 ].join(','),
         ].join(' ');
-        console.log('gameLos envelope points', points);
+        // console.log('gameLos envelope points', points);
         envelope.setAttribute('points', points);
         envelope.style['visibility'] = display ? 'visible' : 'hidden';
       }
@@ -161,7 +161,7 @@ angular.module('clickApp.directives')
           [ x3, y3 ].join(','),
           [ x4, y4 ].join(','),
         ].join(' ');
-        console.log('gameLos clip points', points, los);
+        // console.log('gameLos clip points', points, los);
         envelope.setAttribute('points', points);
       }
     }
@@ -174,7 +174,7 @@ angular.module('clickApp.directives')
       return {
         restrict: 'A',
         link: (scope, el) => {
-          console.log('gameLosDarkness', scope, el);
+          // console.log('gameLosDarkness', scope, el);
 
           updatePolygon(scope, scope.game.los, el[0]);
           scope.onGameEvent('changeRemoteLos', (event, los) => {
@@ -197,7 +197,7 @@ angular.module('clickApp.directives')
           [ x3, y3 ].join(','),
           [ x4, y4 ].join(','),
         ].join(' ');
-        console.log('gameLosDarkness envelope points', points);
+        // console.log('gameLosDarkness envelope points', points);
         polygon.setAttribute('points', points);
 
         let display = ( gameLosService.isDisplayed(los) ||
@@ -213,7 +213,7 @@ angular.module('clickApp.directives')
         restrict: 'A',
         scope: true,
         link: (scope) => {
-          console.log('gameLosRefresh', scope);
+          // console.log('gameLosRefresh', scope);
 
           scope.digestOnGameEvent('changeRemoteLos', scope);
         }

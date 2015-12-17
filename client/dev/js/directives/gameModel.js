@@ -25,12 +25,7 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
     scope.onGameEvent('changeModel-' + model.state.stamp, updateModel, scope);
     updateModel();
 
-    // scope.onGameEvent('changeSingleModelSelection',
-    //                   gameModelOnchangeSingleModelSelection(scope.factions, model, element),
-    //                   scope);
-    // scope.onGameEvent('disableSingleModelSelection',
-    //                   gameModelOnDisableSingleModelSelection(element),
-    //                   scope);
+    scope.onGameEvent('updateSingleModelSelection', onUpdateSingleModelSelection(scope.factions, model, element), scope);
 
     // scope.onGameEvent('changeSingleAoESelection',
     //                   gameModelOnchangeSingleAoESelection(scope.factions, model, element),
@@ -94,38 +89,31 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
       }
     };
   }
-  // function gameModelOnChangeSingleModelSelection(factions, model, element) {
-  //   return function _gameModelOnchangeSingleModelSelection(event, selected_model) {
-  //     // console.log('changeSingleModelSelection',
-  //     //             selected_model.state.stamp,
-  //     //             scope.model.state.stamp);
-  //     if(selected_model.state.stamp !== model.state.stamp) {
-  //       var dist = modelService.distanceTo(factions,
-  //                                          selected_model,
-  //                                          model);
-  //       if(dist < -0.1) {
-  //         element.container.classList.add('overlap');
-  //         element.container.classList.remove('b2b');
-  //         return;
-  //       }
-  //       else if(dist < 0.1) {
-  //         element.container.classList.remove('overlap');
-  //         element.container.classList.add('b2b');
-  //         return;
-  //       }
-  //     }
-  //     element.container.classList.remove('overlap');
-  //     element.container.classList.remove('b2b');
-  //   };
-  // }
-  // function gameModelOnDisableSingleModelSelection(element) {
-  //   return function _gameModelOnDisableSingleModelSelection() {
-  //     // console.log('disableSingleModelSelection',
-  //     //             scope.model.state.stamp);
-  //     element.container.classList.remove('overlap');
-  //     element.container.classList.remove('b2b');
-  //   };
-  // }
+  function onUpdateSingleModelSelection(factions, model, element) {
+    return function (event, sel_stamp, sel_model) {
+      // console.log('onUpdateSingleModelSelection',
+      //             sel_stamp, model.state.stamp);
+      if (R.exists(sel_model) && sel_stamp !== model.state.stamp) {
+        R.pipeP(modelService.distanceTo$(factions, sel_model), function (dist) {
+          if (dist < -0.1) {
+            element.container.classList.add('overlap');
+            element.container.classList.remove('b2b');
+            return;
+          } else if (dist < 0.1) {
+            element.container.classList.remove('overlap');
+            element.container.classList.add('b2b');
+            return;
+          } else {
+            element.container.classList.remove('overlap');
+            element.container.classList.remove('b2b');
+          }
+        })(model);
+      } else {
+        element.container.classList.remove('overlap');
+        element.container.classList.remove('b2b');
+      }
+    };
+  }
   // function gameModelOnChangeSingleAoESelection(factions, model, element) {
   //   return function _gameModelOnchangeSingleAoESelection(event, selected_aoe) {
   //     // console.log('changeSingleAoESelection',
@@ -174,12 +162,6 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
         clickGameModelAreaService.update(factions, info, model, img, element.area);
         clickGameModelMeleeService.update(info, model, img, element.melee);
         clickGameModelChargeService.update(map_flipped, zoom_factor, scope.game, scope.factions, info, model, img, element.charge);
-
-        self.requestAnimationFrame(function _updateModel2() {
-          if (gameModelSelectionService.inSingle('local', model.state.stamp, game.model_selection)) {
-            scope.gameEvent('changeSingleModelSelection', model);
-          }
-        });
       });
     };
   }

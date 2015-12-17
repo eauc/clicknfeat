@@ -14,7 +14,7 @@ angular.module('clickApp.directives')
 
           var state_aura = document.createElementNS(svgNS, 'circle');
           state_aura.classList.add('state-aura');
-          state_aura.style.filter = 'url(#aura-filter)';
+          state_aura.style.filter = 'url(#state-aura-filter)';
           parent.appendChild(state_aura);
 
           return [ aura, state_aura ];

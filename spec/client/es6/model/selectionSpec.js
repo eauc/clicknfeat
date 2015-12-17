@@ -289,30 +289,16 @@ describe('select model', function() {
       }
     ]));
 
-    function testChangeLocalSelection(whenMultipleSelection,
-                                      whenSingleSelection) {
+    function testChangeLocalSelection() {
       it('should switch to Default mode', function() {
         expect(this.scope.doSwitchToMode)
           .toHaveBeenCalledWith('Default');
       });
       
-      when('resulting selection contains multiple models',
-           whenMultipleSelection,
-           function() {
-             it('should disable singleModelSelection', function() {
-               expect(this.scope.gameEvent)
-                 .toHaveBeenCalledWith('disableSingleModelSelection');
-             });
-           });
-      
-      when('resulting selection contains single model',
-           whenSingleSelection,
-           function() {
-             it('should not disable singleModelSelection', function() {
-               expect(this.scope.gameEvent)
-                 .not.toHaveBeenCalledWith('disableSingleModelSelection');
-             });
-           });
+      it('should emit changeLocalModelSelection', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeLocalModelSelection', this.ret);
+      });
     }
     
     using([
@@ -354,11 +340,7 @@ describe('select model', function() {
         });
 
         if(e.where === 'local') {
-          testChangeLocalSelection(function() {
-            this.after = [ 'after1', 'after2' ];
-          }, function() {
-            this.after = [ 'after1' ];
-          });
+          testChangeLocalSelection();
         }
       });
 
@@ -393,11 +375,7 @@ describe('select model', function() {
         });
 
         if(e.where === 'local') {
-          testChangeLocalSelection(function() {
-            this.remove = [ 'stamp3' ];
-          }, function() {
-            this.remove = [ 'stamp2' ];
-          });
+          testChangeLocalSelection();
         }
       });
 
@@ -430,12 +408,7 @@ describe('select model', function() {
         });
 
         if(e.where === 'local') {
-          testChangeLocalSelection(function() {
-            this.add = [ 'stamp2' ];
-          }, function() {
-            this.add = [ 'stamp2' ];
-            this.selection.local = [];
-          });
+          testChangeLocalSelection();
         }
       });
 
@@ -469,9 +442,9 @@ describe('select model', function() {
               .toHaveBeenCalledWith('Default');
           });
 
-          it('should disable singleModelSelection', function() {   
+          it('should emite changeLocalModelSelection', function() {   
             expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('disableSingleModelSelection');
+              .toHaveBeenCalledWith('changeLocalModelSelection', this.ret);
           });
         }
       });

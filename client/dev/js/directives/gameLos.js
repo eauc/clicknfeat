@@ -104,7 +104,7 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     var y3 = _R$pathOr$right$end$y === undefined ? 0 : _R$pathOr$right$end$y;
 
     var points = [[x1, y1].join(','), [x2, y2].join(','), [x3, y3].join(','), [x4, y4].join(',')].join(' ');
-    console.log('gameLos envelope points', points);
+    // console.log('gameLos envelope points', points);
     envelope.setAttribute('points', points);
     envelope.style['visibility'] = display ? 'visible' : 'hidden';
   }
@@ -173,14 +173,14 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     var y3 = _R$pathOr2$right$end$2 === undefined ? 0 : _R$pathOr2$right$end$2;
 
     var points = [[x1, y1].join(','), [x2, y2].join(','), [x3, y3].join(','), [x4, y4].join(',')].join(' ');
-    console.log('gameLos clip points', points, los);
+    // console.log('gameLos clip points', points, los);
     envelope.setAttribute('points', points);
   }
 }]).directive('clickGameLosDarkness', ['gameLos', 'modes', function (gameLosService, modesService) {
   return {
     restrict: 'A',
     link: function link(scope, el) {
-      console.log('gameLosDarkness', scope, el);
+      // console.log('gameLosDarkness', scope, el);
 
       updatePolygon(scope, scope.game.los, el[0]);
       scope.onGameEvent('changeRemoteLos', function (event, los) {
@@ -221,7 +221,7 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     var y3 = _R$propOr$right$end$y === undefined ? 0 : _R$propOr$right$end$y;
 
     var points = [[x1, y1].join(','), [x2, y2].join(','), [x3, y3].join(','), [x4, y4].join(',')].join(' ');
-    console.log('gameLosDarkness envelope points', points);
+    // console.log('gameLosDarkness envelope points', points);
     polygon.setAttribute('points', points);
 
     var display = gameLosService.isDisplayed(los) || 'LoS' === modesService.currentModeName(scope.modes);
@@ -232,7 +232,7 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     restrict: 'A',
     scope: true,
     link: function link(scope) {
-      console.log('gameLosRefresh', scope);
+      // console.log('gameLosRefresh', scope);
 
       scope.digestOnGameEvent('changeRemoteLos', scope);
     }

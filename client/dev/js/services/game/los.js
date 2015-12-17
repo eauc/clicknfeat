@@ -135,7 +135,7 @@ angular.module('clickApp.services').factory('gameLos', ['point', 'circle', 'game
       var origin_circle = _ref4[0];
       var intervenings = _ref4[1];
 
-      console.log('gameLos intervenings', intervenings);
+      // console.log('gameLos intervenings', intervenings);
 
       var darkness = computeDarkness(origin_circle, intervenings);
       los.computed = R.assoc('darkness', darkness, los.computed);

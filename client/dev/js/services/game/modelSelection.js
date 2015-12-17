@@ -40,7 +40,7 @@ angular.module('clickApp.services').factory('gameModelSelection', ['modes', 'gam
 
       if ('local' === where) {
         scope.doSwitchToMode('Default');
-        checkSingleSelection(scope, ret);
+        scope.gameEvent('changeLocalModelSelection', ret);
       }
 
       R.forEach(function (stamp) {
@@ -59,7 +59,7 @@ angular.module('clickApp.services').factory('gameModelSelection', ['modes', 'gam
 
       if ('local' === where) {
         scope.doSwitchToMode('Default');
-        checkSingleSelection(scope, ret);
+        scope.gameEvent('changeLocalModelSelection', ret);
       }
 
       R.forEach(function (stamp) {
@@ -75,7 +75,7 @@ angular.module('clickApp.services').factory('gameModelSelection', ['modes', 'gam
 
       if ('local' === where) {
         scope.doSwitchToMode('Default');
-        checkSingleSelection(scope, ret);
+        scope.gameEvent('changeLocalModelSelection', ret);
       }
 
       R.forEach(function (stamp) {
@@ -89,11 +89,6 @@ angular.module('clickApp.services').factory('gameModelSelection', ['modes', 'gam
       return gameModelSelectionService.removeFrom(where, previous, scope, selection);
     }
   };
-  function checkSingleSelection(scope, selection) {
-    if (1 !== R.length(R.prop('local', selection))) {
-      scope.gameEvent('disableSingleModelSelection');
-    }
-  }
   R.curryService(gameModelSelectionService);
   return gameModelSelectionService;
 }]);
