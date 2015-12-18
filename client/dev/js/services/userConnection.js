@@ -11,7 +11,7 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
     },
     open: function userConnectionOpen(user) {
       if (R.exists(user.connection.state.socket)) {
-        return self.Promise.resolve(user.connection);
+        return self.Promise.resolve(user);
       }
 
       var handlers = {
