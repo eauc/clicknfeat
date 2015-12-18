@@ -1,13 +1,13 @@
-#game {
-    #main-dice-list {
-        @extend %scrollbox-y;
-        max-height: 15vh;
-    }
+#menu {
     .chat {
         padding: 0px 10px 4px 10px;
     }
     .chat-list {
         @extend %scrollbox-y;
         max-height: 8em;
+    }
+    .dice-list {
+        @extend %scrollbox-y;
+        max-height: 15vh;
     }
 }

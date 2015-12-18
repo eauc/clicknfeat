@@ -3,30 +3,8 @@
        class="panel panel-info">
     <div class="panel-heading">Chat</div>
     <div class="panel-content">
-      <form ng-submit="doSendChatMessage()">
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-btn">
-              <button type="submit"
-                      class="btn btn-default">
-                Send
-              </button>
-            </span>
-            <input type="text"
-                   class="form-control"
-                   placeholder="Msg..."
-                   ng-model="chat.msg" />
-          </div>
-        </div>
-      </form>
-      <div class="chat-list">
-        <div class="chat"
-             ng-repeat="c in game.chat.slice().reverse().slice(0,20) track by c.stamp">
-          {{ c.from }}
-          ➝
-          {{c.msg}}
-        </div>
-      </div>
+      <click-game-chat-box>
+      </click-game-chat-box>
     </div>
   </div>
   <div class="panel panel-info">
@@ -67,42 +45,8 @@
   <div class="panel panel-info">
     <div class="panel-heading">Dice</div>
     <div class="panel-content">
-      <button class="btn btn-default"
-              title="{{action_bindings['roll1D6'] || ''}}"
-              ng-click="doRollDice(6, 1)">
-        1D6
-      </button>
-      <button class="btn btn-default"
-              title="{{action_bindings['roll2D6'] || ''}}"
-              ng-click="doRollDice(6, 2)">
-        2D6
-      </button>
-      <button class="btn btn-default"
-              title="{{action_bindings['roll3D6'] || ''}}"
-              ng-click="doRollDice(6, 3)">
-        3D6
-      </button>
-      <button class="btn btn-default"
-              title="{{action_bindings['roll4D6'] || ''}}"
-              ng-click="doRollDice(6, 4)">
-        4D6
-      </button>
-      <button class="btn btn-default"
-              title="{{action_bindings['roll5D6'] || ''}}"
-              ng-click="doRollDice(6, 5)">
-        5D6
-      </button>
-      <button class="btn btn-default"
-              title="{{action_bindings['roll1D3'] || ''}}"
-              ng-click="doRollDice(3, 1)">
-        1D3
-      </button>
-      <div id="main-dice-list">
-        <div ng-repeat="(i,dice) in game.dice.slice(-10).reverse() track by dice.stamp">
-          <span class="text-primary">[{{::dice.user}}]</span>
-          {{::dice.desc}}
-        </div>
-      </div>
+      <click-game-dice-box>
+      </click-game-dice-box>
     </div>
   </div>
 </div>

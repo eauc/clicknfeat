@@ -7,6 +7,7 @@
         opacity: 0.75;
     }
 
+    $cmd-button-width: 100px;
     #cmd-osd {
         z-index: $osd-zindex;
         position: absolute;
@@ -18,7 +19,6 @@
         border-top-left-radius: 4px;
         border-bottom-left-radius: 4px;
 
-        $cmd-button-width: 100px;
         .scroll-container {
             @extend %scrollbox-y;
             margin-right: -$scrollbar-width;
@@ -77,5 +77,45 @@
             min-width: 300px;
             padding: 10px;
         }
+    }
+
+    $dice-osd-width: 310px;
+    #dice-osd {
+        z-index: $osd-zindex;
+        display: none;
+        max-width: $dice-osd-width;
+        background-color: rgba(255,255,255,0.6);
+        position: absolute;
+        top: 2px;
+        right: ($cmd-button-width+$scrollbar-width+30);
+        border-radius: 5px;
+        &.show {
+            display: initial
+        }
+        
+        .dice-list {
+            @extend %scrollbox-y;
+            overflow-x: hidden;
+            max-height: 4.2em;
+        }            
+    }
+    #chat-osd {
+        z-index: $osd-zindex;
+        display: none;
+        max-width: 30em;
+        background-color: rgba(255,255,255,0.6);
+        position: absolute;
+        top: 2px;
+        right: ($dice-osd-width+$cmd-button-width+$scrollbar-width+30);
+        border-radius: 5px;
+        &.show {
+            display: initial
+        }
+
+        .chat-list {
+            @extend %scrollbox-y;
+            overflow-x: hidden;
+            max-height: 4.2em;
+        }            
     }
 }
