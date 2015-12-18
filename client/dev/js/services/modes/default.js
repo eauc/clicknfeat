@@ -63,8 +63,8 @@ angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings',
   };
 
   var default_default_bindings = {
-    enterRulerMode: 'shift+r',
-    enterLosMode: 'shift+l',
+    enterRulerMode: 'ctrl+r',
+    enterLosMode: 'ctrl+l',
     setModelSelection: 'clickModel',
     toggleModelSelection: 'ctrl+clickModel',
     modelSelectionDetail: 'rightClickModel',

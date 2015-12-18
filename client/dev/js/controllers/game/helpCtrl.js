@@ -7,7 +7,7 @@ angular.module('clickApp.controllers').controller('gameHelpCtrl', ['$scope', 'ga
     name: 'clicknfeat_debug.json',
     url: null
   };
-  $scope.updateExports = function updateExports() {
+  $scope.updateExports = function () {
     fileExportService.cleanup($scope.debug.url);
     fileExportService.generate('json', {
       settings: $scope.settings.current,
@@ -17,20 +17,22 @@ angular.module('clickApp.controllers').controller('gameHelpCtrl', ['$scope', 'ga
       $scope.$digest();
     });
   };
-  $scope.$on('$destroy', function onDestroy() {
-    fileExportService.cleanup($scope.debug.url);
-  });
-  $scope.onGameEvent('saveGame', function onSaveGame() {
-    $scope.updateExports();
-  }, $scope);
-
-  $scope.onGameEvent('switchMode', function onSwitchMode() {
-    $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
-  }, $scope);
 
   $scope.onGameLoad.then(function () {
     $scope.updateExports();
     $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
+    $scope.$digest();
+  });
+  $scope.onGameEvent('saveGame', function () {
+    $scope.updateExports();
+    $scope.$digest();
+  }, $scope);
+  $scope.onGameEvent('switchMode', function () {
+    $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
+    $scope.$digest();
+  }, $scope);
+  $scope.$on('$destroy', function () {
+    fileExportService.cleanup($scope.debug.url);
   });
 }]);
 //# sourceMappingURL=helpCtrl.js.map

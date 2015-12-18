@@ -66,7 +66,7 @@ angular.module('clickApp.services').factory('commonMode', ['modes', 'settings', 
     viewZoomOut: 'alt+-',
     viewZoomReset: 'alt+z',
     flipMap: 'ctrl+shift+f',
-    toggleMenu: 'ctrl+m'
+    toggleMenu: 'ctrl+shift+m'
   };
   // roll1D6: 'd+1',
   // roll2D6: 'd+2',

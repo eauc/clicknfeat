@@ -28,7 +28,7 @@ angular.module('clickApp.services').factory('losMode', ['modes', 'settings', 'co
     return gameService.executeCommand('setLos', 'toggleIgnoreModel', event['click#'].target, scope, scope.game);
   };
   var los_default_bindings = {
-    exitLosMode: 'shift+r',
+    exitLosMode: 'ctrl+l',
     toggleIgnoreModel: 'clickModel',
     setOriginModel: 'ctrl+clickModel',
     setTargetModel: 'shift+clickModel'

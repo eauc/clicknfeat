@@ -83,7 +83,7 @@ angular.module('clickApp.services')
         viewZoomOut: 'alt+-',
         viewZoomReset: 'alt+z',
         flipMap: 'ctrl+shift+f',
-        toggleMenu: 'ctrl+m',
+        toggleMenu: 'ctrl+shift+m',
         // roll1D6: 'd+1',
         // roll2D6: 'd+2',
         // roll3D6: 'd+3',

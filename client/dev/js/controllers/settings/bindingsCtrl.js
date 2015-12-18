@@ -7,6 +7,9 @@ angular.module('clickApp.controllers').controller('settingsBindingsCtrl', ['$sco
     $scope.modes = R.keys($scope.settings.default['Bindings']).sort();
     $scope.mode = R.head($scope.modes);
   });
+  $scope.getBindingsKeys = function (mode) {
+    return R.keys($scope.settings.default['Bindings'][mode]).sort();
+  };
 
   $scope.doRecordBinding = function doRecordBinding(action) {
     if ($scope.recording) return;

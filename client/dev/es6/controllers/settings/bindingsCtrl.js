@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('settingsBindingsCtrl', [
     '$scope',
@@ -7,11 +5,14 @@ angular.module('clickApp.controllers')
       console.log('init settingsBindingsCtrl');
 
       $scope.data_ready
-        .then(function() {
+        .then(() => {
           $scope.modes = R.keys($scope.settings.default['Bindings']).sort();
           $scope.mode = R.head($scope.modes);
         });
-
+      $scope.getBindingsKeys = (mode) => {
+        return R.keys($scope.settings.default['Bindings'][mode]).sort();
+      };
+      
       $scope.doRecordBinding = function doRecordBinding(action) {
         if($scope.recording) return;
         

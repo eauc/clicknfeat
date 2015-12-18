@@ -55,7 +55,7 @@ angular.module('clickApp.services')
                           scope,  scope.game);
       };
       var los_default_bindings = {
-        exitLosMode: 'shift+r',
+        exitLosMode: 'ctrl+l',
         toggleIgnoreModel: 'clickModel',
         setOriginModel: 'ctrl+clickModel',
         setTargetModel: 'shift+clickModel'

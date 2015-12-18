@@ -97,8 +97,8 @@ angular.module('clickApp.services')
         aoeSize4: '4',
         aoeSize5: '5',
         deviate: 'd',
-        setMaxDeviation: 'm',
-        setToRulerTarget: 'e',
+        setMaxDeviation: 'shift+d',
+        setToRulerTarget: 'shift+r',
       };
       var template_bindings = R.extend(Object.create(templateModeService.bindings),
                                        template_default_bindings);

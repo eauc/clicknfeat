@@ -144,7 +144,7 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
       return gameService.executeCommand('onModels', 'setIncorporealDisplay', !present, stamps, scope, scope.game);
     })(scope.game.models);
   };
-  var effects = [['Blind', 'b'], ['Corrosion', 'c'], ['Disrupt', 'd'], ['Fire', 'f'], ['Fleeing', 'r'], ['KD', 'k'], ['Stationary', 's']];
+  var effects = [['Blind', 'b'], ['Corrosion', 'c'], ['Disrupt', 'd'], ['Fire', 'f'], ['Fleeing', 'e'], ['KD', 'k'], ['Stationary', 't']];
   R.forEach(function (effect) {
     models_actions['toggle' + effect[0] + 'EffectDisplay'] = function modelsToggleEffectDisplay(scope) {
       var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
@@ -301,31 +301,31 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     'rightClickMap': 'rightClickMap',
     'deleteSelection': 'del',
     'copySelection': 'ctrl+c',
-    'toggleLock': 'shift+l',
-    'toggleImageDisplay': 'i',
+    'toggleLock': 'l',
+    'toggleImageDisplay': 'alt+i',
     'setNextImage': 'shift+i',
     'toggleWreckDisplay': 'alt+w',
     'setOrientationUp': 'pageup',
     'setOrientationDown': 'pagedown',
     'setTargetModel': 'shift+clickModel',
-    'toggleCounterDisplay': 'n',
+    'toggleCounterDisplay': 'alt+n',
     'incrementCounter': '+',
     'decrementCounter': '-',
-    'toggleSoulsDisplay': 'shift+s',
-    'incrementSouls': 'shift++',
-    'decrementSouls': 'shift+-',
-    'toggleCtrlAreaDisplay': 'shift+c',
-    'setRulerMaxLength': 'alt+m',
-    'setChargeMaxLength': 'shift+m',
+    'toggleSoulsDisplay': 'alt+o',
+    'incrementSouls': 'ctrl++',
+    'decrementSouls': 'ctrl+-',
+    'toggleCtrlAreaDisplay': 'alt+a',
+    'setRulerMaxLength': 'shift+r',
+    'setChargeMaxLength': 'shift+c',
     'setPlaceMaxLength': 'shift+p',
-    'togglePlaceWithin': 'shift+w',
-    'toggleMeleeDisplay': 'm',
-    'toggleReachDisplay': 'r',
-    'toggleStrikeDisplay': 's',
+    'togglePlaceWithin': 'alt+p',
+    'toggleMeleeDisplay': 'alt+m',
+    'toggleReachDisplay': 'alt+r',
+    'toggleStrikeDisplay': 'alt+s',
     'toggleUnitDisplay': 'alt+u',
     'setUnit': 'shift+u',
     'toggleLeaderDisplay': 'alt+l',
-    'toggleIncorporealDisplay': 'alt+i'
+    'toggleIncorporealDisplay': 'alt+g'
   };
   R.forEach(function (move) {
     models_default_bindings[move[0]] = move[1];

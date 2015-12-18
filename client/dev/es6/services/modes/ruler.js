@@ -107,11 +107,11 @@ angular.module('clickApp.services')
         )();
       };
       var ruler_default_bindings = {
-        exitRulerMode: 'shift+r',
-        setMaxLength: 'shift+m',
+        exitRulerMode: 'ctrl+r',
+        setMaxLength: 'shift+r',
         setOriginModel: 'ctrl+clickModel',
         setTargetModel: 'shift+clickModel',
-        createAoEOnTarget: 'a',
+        createAoEOnTarget: 'ctrl+a',
       };
       var ruler_bindings = R.extend(Object.create(commonModeService.bindings),
                                     ruler_default_bindings);

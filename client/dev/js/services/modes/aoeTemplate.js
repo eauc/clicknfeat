@@ -58,8 +58,8 @@ angular.module('clickApp.services').factory('aoeTemplateMode', ['modes', 'settin
     aoeSize4: '4',
     aoeSize5: '5',
     deviate: 'd',
-    setMaxDeviation: 'm',
-    setToRulerTarget: 'e'
+    setMaxDeviation: 'shift+d',
+    setToRulerTarget: 'shift+r'
   };
   var template_bindings = R.extend(Object.create(templateModeService.bindings), template_default_bindings);
   var template_buttons = R.concat([['Size', 'toggle', 'size'], ['Aoe3', 'aoeSize3', 'size'], ['Aoe4', 'aoeSize4', 'size'], ['Aoe5', 'aoeSize5', 'size'], ['Deviate', 'deviate'], ['Set to Ruler', 'setToRulerTarget']], templateModeService.buttons);

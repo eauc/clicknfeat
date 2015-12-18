@@ -14,15 +14,17 @@
       <th>Default</th>
       <th>Current</th>
     </tr>
-    <tr ng-repeat="(a,b) in settings.default.Bindings[mode]"
-        class="{{settings.current.Bindings[mode][a] !== b ? 'modified' : ''}}">
+    <tr ng-repeat="a in getBindingsKeys(mode)"
+        class="{{ settings.current.Bindings[mode][a] !== settings.default.Bindings[mode][a] ?
+               'modified' : ''
+               }}">
       <td class="vertical-center">{{::a}}</td>
-      <td class="vertical-center">{{::b}}</td>
+      <td class="vertical-center">{{::settings.default.Bindings[mode][a]}}</td>
       <td>
         <div class="input-group">
           <input type="text"
                  class="form-control"
-                 placeholder="{{::b}}"
+                 placeholder="{{::settings.default.Bindings[mode][a]}}"
                  ng-model="settings.current.Bindings[mode][a]"
                  ng-change="doUpdateSettings()"/>
           <span class="input-group-btn">

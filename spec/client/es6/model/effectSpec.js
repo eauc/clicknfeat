@@ -93,9 +93,9 @@ describe('model effects', function() {
       [ 'Corrosion' , 'c' ],
       [ 'Disrupt' , 'd' ],
       [ 'Fire' , 'f' ],
-      [ 'Fleeing' , 'r' ],
+      [ 'Fleeing' , 'e' ],
       [ 'KD' , 'k' ],
-      [ 'Stationary' , 's' ],
+      [ 'Stationary' , 't' ],
     ], function(e) {
       when('user toggles '+e.effect+' display on models', function() {
         this.ret = this.modelsModeService
