@@ -1,44 +1,6 @@
 'use strict';
 
 describe('set scenario', function() {
-    // when('user generate objectives', function() {
-    //   this.scope.doGenerateObjectives();
-    // }, function() {
-    //   beforeEach(function() {
-    //     this.gameModelsService.all._retVal = [
-    //       { state: { stamp: 'm1', info: 'model' } },
-    //       { state: { stamp: 'm2', info: 'objective' } },
-    //       { state: { stamp: 'm3', info: 'flag' } },
-    //     ];
-    //     this.gameFactionsService.getModelInfo.and.callFake(function(i, f) {
-    //       return { type: i };
-    //     });
-    //     this.scope.game.scenario = {
-    //       objectives: [ { path: ['objectives','obj1'], x: 240, y: 120 },
-    //                    { path: ['objectives','obj2'], x: 120, y: 240 } ],
-    //       flags: [ { path: ['flags','flg1'], x: 360, y: 120 },
-    //                { path: ['flags','flg2'], x: 120, y: 360 } ],
-    //     };
-    //   });
-      
-    //   it('should delete previous objectives & flags', function() {
-    //     expect(this.gameService.executeCommand)
-    //       .toHaveBeenCalledWith('deleteModel', ['m2','m3'],
-    //                             this.scope, this.scope.game);
-    //   });
-
-    //   it('should create new objectives & flags', function() {
-    //     expect(this.gameService.executeCommand)
-    //       .toHaveBeenCalledWith('createModel', {
-    //         base: { x: 0, y: 0 },
-    //         models: [ { info: [ 'scenario', 'models', 'objectives', 'obj1' ], x: 240, y: 120 },
-    //                   { info: [ 'scenario', 'models', 'objectives', 'obj2' ], x: 120, y: 240 },
-    //                   { info: [ 'scenario', 'models', 'flags', 'flg1' ], x: 360, y: 120 },
-    //                   { info: [ 'scenario', 'models', 'flags', 'flg2' ], x: 120, y: 360 } ],
-    //       }, this.scope, this.scope.game);
-    //   });
-    // });
-
   describe('setScenarioCommand service', function() {
     beforeEach(inject([ 'setScenarioCommand', function(setScenarioCommand) {
       this.setScenarioCommandService = setScenarioCommand;
@@ -178,6 +140,67 @@ describe('set scenario', function() {
         it('should find group for scenario with <name>, '+d, function() {
           expect(this.gameScenarioService.groupForName(e.name, this.groups))
             .toEqual(this.groups[e.group]);
+        });
+      });
+    });
+
+    when('createObjectives()', function() {
+      this.ret = this.gameScenarioService
+        .createObjectives(this.scenario);
+    }, function() {
+      when('scenario does not have objectives', function() {
+        this.scenario = {};
+      }, function() {
+        it('should reject creation', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No objectives');
+          });
+        });
+      });
+
+      when('scenario has objectives', function() {
+        this.scenario = {
+          flags: [
+            {
+              info: ['flags','sr15flag'],
+              x: 160,
+              y: 250
+            },
+            {
+              info: ['flags','sr15flag'],
+              x: 320,
+              y: 230
+            }
+          ],
+          objectives: [
+            {
+              info: ['sr15_objectives','sr15gen'],
+              x: 160,
+              y: 300
+            },
+            {
+              info: ['sr15_objectives','sr15gen'],
+              x: 320,
+              y: 180
+            }
+          ]
+        };
+      }, function() {
+        it('should create objectives', function() {
+          this.thenExpect(this.ret, function(objectives) {
+            expect(objectives).toEqual({
+              base: { x: 160, y: 300, r: 0 },
+              models: [ { info: [ 'scenario', 'models', 'sr15_objectives', 'sr15gen' ],
+                          x: 0, y: 0, r: 0 },
+                        { info: [ 'scenario', 'models', 'sr15_objectives', 'sr15gen' ],
+                          x: 160, y: -120, r: 0 },
+                        { info: [ 'scenario', 'models', 'flags', 'sr15flag' ],
+                          x: 0, y: -50, r: 0 },
+                        { info: [ 'scenario', 'models', 'flags', 'sr15flag' ],
+                          x: 160, y: -70, r: 0 }
+                      ]
+            });
+          });
         });
       });
     });

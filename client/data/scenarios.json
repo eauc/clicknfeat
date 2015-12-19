@@ -4,12 +4,12 @@
     "killbox": 140,
     "objectives": [
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 300,
         "y": 210
       },
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 180,
         "y": 270
       }
@@ -27,12 +27,12 @@
     "killbox": 140,
     "objectives": [
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 170,
         "y": 260
       },
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 310,
         "y": 220
       }
@@ -56,12 +56,12 @@
     "killbox": 140,
     "flags": [
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 180,
         "y": 210
       },
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 300,
         "y": 270
       }
@@ -71,24 +71,24 @@
     "killbox": 140,
     "flags": [
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 160,
         "y": 250
       },
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 320,
         "y": 230
       }
     ],
     "objectives": [
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 160,
         "y": 300
       },
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 320,
         "y": 180
       }
@@ -97,12 +97,12 @@
     "name": "SR15 Incoming",
     "objectives": [
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 240,
         "y": 160
       },
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 240,
         "y": 320
       }
@@ -125,17 +125,17 @@
     "name": "SR15 Incursion",
     "flags": [
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 120,
         "y": 240
       },
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 240,
         "y": 240
       },
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 360,
         "y": 240
       }
@@ -166,24 +166,24 @@
     ],
     "flags": [
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 120,
         "y": 240
       },
       {
-        "path": ["flags","sr15flag"],
+        "info": ["flags","sr15flag"],
         "x": 360,
         "y": 240
       }
     ],
     "objectives": [
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 240,
         "y": 180
       },
       {
-        "path": ["sr15_objectives","sr15gen"],
+        "info": ["sr15_objectives","sr15gen"],
         "x": 240,
         "y": 300
       }
@@ -194,12 +194,12 @@
     "killbox": 140,
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ca"],
+        "info": ["sr14_objectives","sr14ca"],
         "x": 300,
         "y": 210
       },
       {
-        "path": ["sr14_objectives","sr14ca"],
+        "info": ["sr14_objectives","sr14ca"],
         "x": 180,
         "y": 270
       }
@@ -217,12 +217,12 @@
     "killbox": 140,
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14sc"],
+        "info": ["sr14_objectives","sr14sc"],
         "x": 300,
         "y": 180
       },
       {
-        "path": ["sr14_objectives","sr14sc"],
+        "info": ["sr14_objectives","sr14sc"],
         "x": 180,
         "y": 300
         }
@@ -238,12 +238,12 @@
     "name": "SR14 Balance of Powers",
     "flags": [
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 180,
         "y": 150
       },
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 300,
         "y": 330
       }
@@ -261,12 +261,12 @@
     "killbox": 140,
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ml"],
+        "info": ["sr14_objectives","sr14ml"],
         "x": 170,
         "y": 240
       },
       {
-        "path": ["sr14_objectives","sr14ml"],
+        "info": ["sr14_objectives","sr14ml"],
         "x": 310,
         "y": 240
       }
@@ -290,12 +290,12 @@
     "killbox": 140,
     "flags": [
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 180,
         "y": 210
       },
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 300,
         "y": 270
       }
@@ -304,12 +304,12 @@
     "name": "SR14 Two Fronts",
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14sc"],
+        "info": ["sr14_objectives","sr14sc"],
         "x": 240,
         "y": 180
       },
       {
-        "path": ["sr14_objectives","sr14sc"],
+        "info": ["sr14_objectives","sr14sc"],
         "x": 240,
         "y": 300
       }
@@ -332,12 +332,12 @@
     "name": "SR14 Incoming",
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ac"],
+        "info": ["sr14_objectives","sr14ac"],
         "x": 240,
         "y": 160
       },
       {
-        "path": ["sr14_objectives","sr14ac"],
+        "info": ["sr14_objectives","sr14ac"],
         "x": 240,
         "y": 320
       }
@@ -360,12 +360,12 @@
     "name": "SR14 Rally Point",
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ef"],
+        "info": ["sr14_objectives","sr14ef"],
         "x": 240,
         "y": 160
       },
       {
-        "path": ["sr14_objectives","sr14ef"],
+        "info": ["sr14_objectives","sr14ef"],
         "x": 240,
         "y": 320
       }
@@ -386,17 +386,17 @@
     "name": "SR14 Incursion",
     "flags": [
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 90,
         "y": 240
       },
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 240,
         "y": 240
       },
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 390,
         "y": 240
       }
@@ -419,19 +419,19 @@
     "name": "SR14 Into the Breach",
     "flags": [
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 320,
         "y": 240
       }
     ],
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ef"],
+        "info": ["sr14_objectives","sr14ef"],
         "x": 240,
         "y": 180
       },
       {
-        "path": ["sr14_objectives","sr14ef"],
+        "info": ["sr14_objectives","sr14ef"],
         "x": 240,
         "y": 300
       }
@@ -448,24 +448,24 @@
     "killbox": 140,
     "flags": [
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 160,
         "y": 240
       },
       {
-        "path": ["flags","sr14flag"],
+        "info": ["flags","sr14flag"],
         "x": 320,
         "y": 240
       }
     ],
     "objectives": [
       {
-        "path": ["sr14_objectives","sr14ac"],
+        "info": ["sr14_objectives","sr14ac"],
         "x": 160,
         "y": 290
       },
       {
-        "path": ["sr14_objectives","sr14ac"],
+        "info": ["sr14_objectives","sr14ac"],
         "x": 320,
         "y": 190
       }
