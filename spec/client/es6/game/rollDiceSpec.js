@@ -28,7 +28,7 @@ describe('roll dice', function() {
       
       it('should send diceRoll event', function() {
         expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('diceRoll');
+          .toHaveBeenCalledWith('diceRoll', this.ctxt);
       });
 
       it('should return context', function() {

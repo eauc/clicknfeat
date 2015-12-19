@@ -17,7 +17,7 @@ angular.module('clickApp.services')
             d: dices,
           };
           game.dice = R.append(ctxt, game.dice);
-          scope.gameEvent('diceRoll');
+          scope.gameEvent('diceRoll', ctxt);
           return ctxt;
         },
         replay: function rollDiceRedo(ctxt, scope, game) {
