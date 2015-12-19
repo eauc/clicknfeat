@@ -169,6 +169,46 @@ angular.module('clickApp.services')
                    circleService.isLeftOfLine(envelope.right, circle)
                  );
         },
+        isInBox: function circleIsInBox(box, circle) {
+          var dx, dy;
+          if(circle.x >= box.low.x &&
+             circle.x <= box.high.x &&
+             circle.y >= box.low.y &&
+             circle.y <= box.high.x) return true;
+          if(circle.x >= box.low.x - circle.radius &&
+             circle.x <  box.low.x) {
+            dx = box.low.x - circle.x;
+            dy = Math.sqrt(circle.radius * circle.radius - dx * dx);
+            return ( circle.y + dy >= box.low.y &&
+                     circle.y - dy <= box.high.y
+                   );
+          }
+          if(circle.x <= box.high.x + circle.radius &&
+             circle.x >  box.high.x) {
+            dx = box.high.x - circle.x;
+            dy = Math.sqrt(circle.radius * circle.radius - dx * dx);
+            return ( circle.y + dy >= box.low.y &&
+                     circle.y - dy <= box.high.y
+                   );
+          }
+          if(circle.y >= box.low.y - circle.radius &&
+             circle.y <  box.low.y) {
+            dy = box.low.y - circle.y;
+            dx = Math.sqrt(circle.radius * circle.radius - dy * dy);
+            return ( circle.x + dx >= box.low.x &&
+                     circle.x - dx <= box.high.x
+                   );
+          }
+          if(circle.y <= box.high.y + circle.radius &&
+             circle.y >  box.high.y) {
+            dy = box.high.y - circle.y;
+            dx = Math.sqrt(circle.radius * circle.radius - dy * dy);
+            return ( circle.x + dx >= box.low.x &&
+                     circle.x - dx <= box.high.x
+                   );
+          }
+          return false;
+        },
         intersectLine: function circleIntersectLine(line, circle) {
           let [ vect_prod, scal_prod, line_length ] =
                 circleService.positionToLine(line, circle);

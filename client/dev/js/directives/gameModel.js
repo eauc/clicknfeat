@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'gameFactions', 'gameModelSelection', 'model', 'labelElement', 'clickGameModelArea', 'clickGameModelAura', 'clickGameModelBase', 'clickGameModelCharge', 'clickGameModelCounter', 'clickGameModelDamage', 'clickGameModelIcon', 'clickGameModelLoS', 'clickGameModelMelee', function (gameMapService, gameFactionsService, gameModelSelectionService, modelService, labelElementService, clickGameModelAreaService, clickGameModelAuraService, clickGameModelBaseService, clickGameModelChargeService, clickGameModelCounterService, clickGameModelDamageService, clickGameModelIconService, clickGameModelLoSService, clickGameModelMeleeService
+angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'gameFactions', 'gameModelSelection', 'gameScenario', 'model', 'labelElement', 'clickGameModelArea', 'clickGameModelAura', 'clickGameModelBase', 'clickGameModelCharge', 'clickGameModelCounter', 'clickGameModelDamage', 'clickGameModelIcon', 'clickGameModelLoS', 'clickGameModelMelee', function (gameMapService, gameFactionsService, gameModelSelectionService, gameScenarioService, modelService, labelElementService, clickGameModelAreaService, clickGameModelAuraService, clickGameModelBaseService, clickGameModelChargeService, clickGameModelCounterService, clickGameModelDamageService, clickGameModelIconService, clickGameModelLoSService, clickGameModelMeleeService
 // gameRulerService,
 ) {
   var clickGameModeDirective = {
@@ -28,6 +28,13 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
     scope.onGameEvent('updateSingleModelSelection', onUpdateSingleModelSelection(scope.factions, model, element), scope);
 
     scope.onGameEvent('updateSingleTemplateSelection', onUpdateSingleTemplateSelection(scope.factions, model, element), scope);
+
+    scope.onGameEvent('refreshModelScenarioAura', function () {
+      updateScenarioAura(info, model, scope, element);
+    }, scope);
+    scope.onGameEvent('changeScenario', function () {
+      updateScenarioAura(info, model, scope, element);
+    }, scope);
   }
   function createModelElement(info, model, parent) {
     var map = document.getElementById('map');
@@ -109,6 +116,19 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
       }
     };
   }
+  function updateScenarioAura(info, model, scope, element) {
+    var circle = R.pipe(R.pick(['x', 'y']), R.assoc('radius', info.base_radius))(model.state);
+    if (scope.stateIs('game.setup') && R.exists(scope.game.scenario) && gameScenarioService.isContesting(circle, scope.game.scenario)) {
+      element.container.classList.add('contesting');
+    } else {
+      element.container.classList.remove('contesting');
+    }
+    if (scope.stateIs('game.setup') && R.exists(scope.game.scenario) && 'wardude' === info.type && gameScenarioService.isKillboxing(circle, scope.game.scenario)) {
+      element.container.classList.add('killboxing');
+    } else {
+      element.container.classList.remove('killboxing');
+    }
+  }
   function onUpdateSingleTemplateSelection(factions, model, element) {
     return function (event, sel_stamp, sel_temp) {
       // console.log('onUpdateSingleAoTemplateSelection',
@@ -139,6 +159,7 @@ angular.module('clickApp.directives').directive('clickGameModel', ['gameMap', 'g
 
         updateModelPosition(img, model, element);
         updateModelSelection(game.model_selection, game.ruler, model, element);
+        updateScenarioAura(info, model, scope, element);
         clickGameModelAuraService.update(info, model, img, element.aura);
         clickGameModelBaseService.update(info, model, img, element.base);
         clickGameModelDamageService.update(info, model, img, element.damage);

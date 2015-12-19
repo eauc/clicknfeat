@@ -14,6 +14,13 @@ angular.module('clickApp.controllers')
              gameModelsService) {
       console.log('init gameSetupCtrl');
 
+      $scope.onGameLoad.then(() => {
+        $scope.gameEvent('refreshModelScenarioAura');
+      });
+      $scope.$on('$destroy', () => {
+        $scope.gameEvent('refreshModelScenarioAura');
+      });
+      
       $scope.$watch('game.board.name', function(value) {
         $scope.board_name = value;
       });

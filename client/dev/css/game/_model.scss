@@ -132,4 +132,22 @@
             visibility: visible;
         }
     }
+    .contesting {
+        .color-aura {
+            visibility: hidden !important;
+        }
+        .state-aura {
+            fill: $model-contesting-aura-fill-color;
+            visibility: visible;
+        }
+    }
+    .killboxing {
+        .color-aura {
+            visibility: hidden !important;
+        }
+        .state-aura {
+            fill: $model-killboxing-aura-fill-color;
+            visibility: visible;
+        }
+    }
 }

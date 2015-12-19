@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.services').factory('gameScenario', ['http', 'point', function gameScenarioServiceFactory(httpService, pointService) {
+angular.module('clickApp.services').factory('gameScenario', ['http', 'point', 'line', 'circle', function gameScenarioServiceFactory(httpService, pointService, lineService, circleService) {
   var gameScenarioService = {
     init: function gameScenarioInit() {
       return httpService.get('/data/scenarios.json').catch(function (reason) {
@@ -34,8 +34,55 @@ angular.module('clickApp.services').factory('gameScenario', ['http', 'point', fu
           }, objectives)
         });
       });
+    },
+    isContesting: function gameScenarioIsContesting(circle, scenario) {
+      return R.exists(R.find(function (c) {
+        return isInCircle(circle, c);
+      }, R.propOr([], 'circle', scenario)) || R.find(function (r) {
+        return isInRectangle(circle, r);
+      }, R.propOr([], 'rect', scenario)) || R.find(function (f) {
+        return isWithinFlag(circle, f);
+      }, R.propOr([], 'flags', scenario)));
+    },
+    isKillboxing: function gameScenarioIsKillboxing(circle, scenario) {
+      return R.exists(scenario.killbox) && isInKillbox(circle, scenario.killbox);
     }
   };
+  function isInCircle(circle, c) {
+    var line = {
+      start: circle,
+      end: c
+    };
+    var length = lineService.length(line);
+    return length <= circle.radius + c.r;
+  }
+  function isWithinFlag(circle, f) {
+    var line = {
+      start: circle,
+      end: f
+    };
+    var length = lineService.length(line);
+    return length <= circle.radius + 40 + 7.874;
+  }
+  function isInRectangle(circle, r) {
+    var box = {
+      low: { x: r.x - r.width / 2,
+        y: r.y - r.height / 2 },
+      high: { x: r.x + r.width / 2,
+        y: r.y + r.height / 2 }
+    };
+    return circleService.isInBox(box, circle);
+  }
+  function isInKillbox(circle, kb) {
+    var box = {
+      low: { x: kb,
+        y: kb },
+      high: { x: 480 - kb,
+        y: 480 - kb }
+    };
+    return !circleService.isInBox(box, circle);
+  }
+
   return gameScenarioService;
 }]);
 //# sourceMappingURL=scenario.js.map

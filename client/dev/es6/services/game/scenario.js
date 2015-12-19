@@ -4,8 +4,12 @@ angular.module('clickApp.services')
   .factory('gameScenario', [
     'http',
     'point',
+    'line',
+    'circle',
     function gameScenarioServiceFactory(httpService,
-                                        pointService) {
+                                        pointService,
+                                        lineService,
+                                        circleService) {
       var gameScenarioService = {
         init: function gameScenarioInit() {
           return httpService.get('/data/scenarios.json')
@@ -48,7 +52,56 @@ angular.module('clickApp.services')
             });
           });
         },
+        isContesting: function gameScenarioIsContesting(circle, scenario) {
+          return R.exists( R.find((c) => { return isInCircle(circle, c);    },
+                                  R.propOr([], 'circle', scenario)) ||
+                           R.find((r) => { return isInRectangle(circle, r); },
+                                  R.propOr([], 'rect', scenario)) ||
+                           R.find((f) => { return isWithinFlag(circle, f);  },
+                                  R.propOr([], 'flags', scenario))
+                         );
+        },
+        isKillboxing: function gameScenarioIsKillboxing(circle, scenario) {
+          return ( R.exists(scenario.killbox) &&
+                   isInKillbox(circle, scenario.killbox)
+                 );
+        },
       };
+      function isInCircle(circle, c) {
+        let line = {
+          start: circle,
+          end: c
+        };
+        let length = lineService.length(line);
+        return length <= (circle.radius + c.r);
+      }
+      function isWithinFlag(circle, f) {
+        let line = {
+          start: circle,
+          end: f
+        };
+        let length = lineService.length(line);
+        return length <= (circle.radius + 40 + 7.874);
+      }
+      function isInRectangle(circle, r) {
+        let box = {
+          low: { x: r.x - r.width/2,
+                 y: r.y - r.height/2 },
+          high: { x: r.x + r.width/2,
+                  y: r.y + r.height/2 }
+        };
+        return circleService.isInBox(box, circle);
+      }
+      function isInKillbox(circle, kb) {
+        let box = {
+          low: { x: kb,
+                 y: kb },
+          high: { x: 480 - kb,
+                  y: 480 - kb }
+        };
+        return !circleService.isInBox(box, circle);
+      }
+
       return gameScenarioService;
     }
   ]);

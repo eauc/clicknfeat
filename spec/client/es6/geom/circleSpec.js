@@ -57,7 +57,7 @@ describe('circle', function() {
       });
     });
 
-    describe('isInEnvelope(<line>)', function() {
+    describe('isInEnvelope(<envelope>)', function() {
       using([
         [ 'circle', 'result'],
         [ {  x: 200, y: 240, radius: 10 }, false ],
@@ -82,7 +82,7 @@ describe('circle', function() {
         [ {  x: 260, y: 360, radius: 10 }, true ],
         [ {  x: 270, y: 375, radius: 10 }, false ],
       ], function(e, d) {
-        it('should check if circle overflows to the left of <line>, '+d, function() {
+        it('should check if circle is in <envelope>, '+d, function() {
           expect(this.circleService.isInEnvelope({
             left: { start: { x: 260, y: 120 },
                     end:   { x: 260, y: 360 }
@@ -90,6 +90,37 @@ describe('circle', function() {
             right: { start: { x: 220, y: 120 },
                      end:   { x: 220, y: 360 }
                    }
+          }, e.circle)).toBe(e.result);
+        });
+      });
+    });
+
+
+    describe('isInBox(<line>)', function() {
+      using([
+        [ 'circle', 'result'],
+        [ {  x: 240, y: 240, radius: 10 }, true ],
+        [ {  x: 120, y: 120, radius: 10 }, true ],
+        [ {  x: 120, y: 360, radius: 10 }, true ],
+        [ {  x: 360, y: 120, radius: 10 }, true ],
+        [ {  x: 360, y: 360, radius: 10 }, true ],
+        [ {  x: 110, y: 110, radius: 10 }, false ],
+        [ {  x: 110, y: 370, radius: 10 }, false ],
+        [ {  x: 370, y: 110, radius: 10 }, false ],
+        [ {  x: 370, y: 370, radius: 10 }, false ],
+        [ {  x: 115, y: 115, radius: 10 }, true ],
+        [ {  x: 115, y: 365, radius: 10 }, true ],
+        [ {  x: 365, y: 115, radius: 10 }, true ],
+        [ {  x: 365, y: 365, radius: 10 }, true ],
+        [ {  x: 109, y: 240, radius: 10 }, false ],
+        [ {  x: 371, y: 240, radius: 10 }, false ],
+        [ {  x: 240, y: 109, radius: 10 }, false ],
+        [ {  x: 240, y: 371, radius: 10 }, false ],
+      ], function(e, d) {
+        it('should check if circle is in <box>, '+d, function() {
+          expect(this.circleService.isInBox({
+            low:  { x: 120, y: 120 },
+            high: { x: 360, y: 360 }
           }, e.circle)).toBe(e.result);
         });
       });
