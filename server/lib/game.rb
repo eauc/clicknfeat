@@ -87,7 +87,7 @@ class Game
       self.signalAllListeners({ 'type' => 'players',
                                 'players' => @state['players'],
                               })
-    elsif @state['players']['p2']['name'].nil?
+    elsif @state['players']['p2']['name'].nil? and not name === @state['players']['p1']['name']
       @state['players']['p2']['name'] = name
       self.signalAllListeners({ 'type' => 'players',
                                 'players' => @state['players'],

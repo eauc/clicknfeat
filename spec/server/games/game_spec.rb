@@ -97,6 +97,19 @@ describe Game do
     subject.addPlayer player2, "player2"
   end
 
+  it "should not set players again" do    
+    player1 = double('player1', :send => nil)
+    subject.addPlayer player1, "player1"
+
+    expect(player1).not_to receive(:send).with({ 'type' => 'players',
+                                                 'players' => { 'p1' => { 'name' => 'player1' },
+                                                                'p2' => { 'name' => 'player1' },
+                                                              },
+                                               }.to_json)
+
+    subject.addPlayer player1, "player1"
+  end
+
   describe "on message" do
     before :each do
       @data = {
