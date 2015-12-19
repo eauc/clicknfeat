@@ -158,10 +158,10 @@ angular.module('clickApp.services')
         )(user);
       }
       function userOnlineStop(user) {
-        return R.pipeP(
-          userConnectionService.close,
-          R.assocPath(['state','stamp'], null),
+        return R.pipePromise(
           R.assocPath(['state','online'], false),
+          R.assocPath(['state','stamp'], null),
+          userConnectionService.close,
           R.spy('User online stop'),
           userService.save
         )(user);

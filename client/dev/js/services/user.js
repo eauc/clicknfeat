@@ -109,7 +109,7 @@ angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'us
     return R.pipePromise(userConnectionService.open, R.assocPath(['state', 'online'], true), R.spy('User online start'), userService.save)(user);
   }
   function userOnlineStop(user) {
-    return R.pipeP(userConnectionService.close, R.assocPath(['state', 'stamp'], null), R.assocPath(['state', 'online'], false), R.spy('User online stop'), userService.save)(user);
+    return R.pipePromise(R.assocPath(['state', 'online'], false), R.assocPath(['state', 'stamp'], null), userConnectionService.close, R.spy('User online stop'), userService.save)(user);
   }
   return userService;
 }]);

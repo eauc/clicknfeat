@@ -4,6 +4,7 @@ angular.module('clickApp.controllers')
     '$state',
     '$window',
     'pubSub',
+    'prompt',
     'settings',
     'user',
     'gameBoard',
@@ -14,6 +15,7 @@ angular.module('clickApp.controllers')
              $state,
              $window,
              pubSubService,
+             promptService,
              settingsService,
              userService,
              gameBoardService,
@@ -79,6 +81,20 @@ angular.module('clickApp.controllers')
           pubSubService.subscribe('#watch#', (...args) => {
             console.log('UserConnection event', args);
             $scope.$digest();
+          }, $scope.user.connection.channel);
+          pubSubService.subscribe('close', () => {
+            if(userService.online($scope.user)) {
+              R.pipeP(
+                () => {
+                  return promptService
+                    .prompt('alert','Server connection lost.');
+                },
+                () => {
+                  return userService.toggleOnline($scope.user);
+                },
+                $scope.setUser
+              )();
+            }
           }, $scope.user.connection.channel);
         }
       )();

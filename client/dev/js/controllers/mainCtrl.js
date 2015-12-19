@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', '$window', 'pubSub', 'settings', 'user', 'gameBoard', 'gameFactions', 'gameScenario', 'allModes', function ($scope, $state, $window, pubSubService, settingsService, userService, gameBoardService, gameFactionsService, gameScenarioService) {
+angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', '$window', 'pubSub', 'prompt', 'settings', 'user', 'gameBoard', 'gameFactions', 'gameScenario', 'allModes', function ($scope, $state, $window, pubSubService, promptService, settingsService, userService, gameBoardService, gameFactionsService, gameScenarioService) {
   console.log('init mainCtrl');
 
   $scope.boards_ready = gameBoardService.init().then(function (boards) {
@@ -49,6 +49,15 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
 
       console.log('UserConnection event', args);
       $scope.$digest();
+    }, $scope.user.connection.channel);
+    pubSubService.subscribe('close', function () {
+      if (userService.online($scope.user)) {
+        R.pipeP(function () {
+          return promptService.prompt('alert', 'Server connection lost.');
+        }, function () {
+          return userService.toggleOnline($scope.user);
+        }, $scope.setUser)();
+      }
     }, $scope.user.connection.channel);
   })();
   $scope.userIsValid = function () {

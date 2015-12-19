@@ -1,6 +1,6 @@
 'use strict';
 
-describe('user load', function() {
+describe('user online', function() {
   describe('user service', function() {
     beforeEach(inject([ 'user', function(userService) {
       this.userService = userService;
@@ -158,7 +158,7 @@ function it_should_set_user_offline() {
   it('should set user offline', function() {
     this.thenExpect(this.ret, function(user) {
       expect(this.userConnectionService.close)
-        .toHaveBeenCalledWith(this.user);
+        .toHaveBeenCalledWith(user);
       expect(user.state.stamp)
         .toBe(null);
       expect(this.userService.online(user))
