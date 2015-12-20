@@ -130,6 +130,7 @@ angular.module('clickApp.directives')
                       y: now.y
                     };
                     scope.gameEvent('closeSelectionDetail');
+                    scope.gameEvent('closeEditLabel');
                     Mousetrap.trigger(event_name,
                                       undefined,
                                       event);
@@ -153,6 +154,7 @@ angular.module('clickApp.directives')
                     y: now.y
                   };
                   scope.gameEvent('closeSelectionDetail');
+                  scope.gameEvent('closeEditLabel');
                   Mousetrap.trigger(event_name,
                                     undefined,
                                     event);

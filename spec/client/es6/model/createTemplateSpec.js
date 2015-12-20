@@ -1,7 +1,7 @@
 'use strict';
 
 describe('model create template', function() {
-  describe('modelMode service', function() {
+  describe('modelBaseMode service', function() {
     beforeEach(inject([
       'modelBaseMode',
       function(modelBaseModeService) {

@@ -504,6 +504,11 @@ angular.module('clickApp.services')
           }
         )(scope.game.models);
       };
+      models_actions.clearLabel = function modelsClearLabel(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return gameService.executeCommand('onModels', 'clearLabel',
+                                          stamps, scope, scope.game);
+      };
       
       var models_default_bindings = {
         'clickMap': 'clickMap',
@@ -535,6 +540,7 @@ angular.module('clickApp.services')
         'setUnit': 'shift+u',
         'toggleLeaderDisplay': 'alt+l',
         'toggleIncorporealDisplay': 'alt+g',
+        'clearLabel': 'ctrl+shift+l',
       };
       R.forEach(function(move) {
         models_default_bindings[move[0]] = move[1];
@@ -591,6 +597,7 @@ angular.module('clickApp.services')
           [ 'Copy', 'copySelection' ],
           [ 'Lock', 'toggleLock' ],
           [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+          [ 'Clear Label', 'clearLabel' ],
           [ 'Image', 'toggle', 'image' ],
           [ 'Show/Hide', 'toggleImageDisplay', 'image' ],
           [ 'Next', 'setNextImage', 'image' ],

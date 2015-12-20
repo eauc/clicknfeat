@@ -49,7 +49,9 @@ angular.module('clickApp.services').factory('losMode', ['modes', 'settings', 'co
         return gameService.executeCommand('setLos', 'setOriginResetTarget', model, scope, scope.game).catch(R.always(null));
       })();
     },
-    onLeave: function losOnLeave() /*scope*/{},
+    onLeave: function losOnLeave(scope) {
+      scope.gameEvent('changeRemoteLos', scope.game.los);
+    },
     name: 'LoS',
     actions: los_actions,
     buttons: los_buttons,

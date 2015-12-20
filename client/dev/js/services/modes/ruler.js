@@ -80,7 +80,9 @@ angular.module('clickApp.services').factory('rulerMode', ['modes', 'settings', '
         updateMaxLengthButton(scope);
       })();
     },
-    onLeave: function rulerOnLeave() /*scope*/{},
+    onLeave: function rulerOnLeave(scope) {
+      scope.gameEvent('changeRemoteRuler', scope.game.ruler);
+    },
     name: 'Ruler',
     actions: ruler_actions,
     buttons: ruler_buttons,

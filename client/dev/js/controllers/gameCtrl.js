@@ -108,7 +108,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       console.log('subscribe Los listener', on, event_name);
       game_los.unsubscribe = pubSubService.subscribe(event_name, function () {
         console.log('update LoS', on);
-        gameLosService.updateOriginTarget($scope, $scope.game, los);
+        gameLosService.updateOriginTarget($scope, $scope.game, $scope.game.los);
       }, game_event_channel);
       game_los.stamp = stamp;
     }, $scope);
@@ -143,7 +143,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
       console.log('subscribe Ruler listener', on, event_name);
       game_ruler.unsubscribe = pubSubService.subscribe(event_name, function () {
         console.log('update Ruler', on);
-        gameRulerService.updateOriginTarget($scope, ruler);
+        gameRulerService.updateOriginTarget($scope, $scope.game.ruler);
       }, game_event_channel);
       game_ruler.stamp = stamp;
     }, $scope);
@@ -337,6 +337,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
     $scope.$on(fwd, function (e, target, event) {
       console.log('$on ' + fwd, _arguments);
       $scope.gameEvent('closeSelectionDetail');
+      $scope.gameEvent('closeEditLabel');
       modesService.currentModeAction(fwd, $scope, target, event, $scope.modes).catch(function (reason) {
         $scope.gameEvent('modeActionError', reason);
       });

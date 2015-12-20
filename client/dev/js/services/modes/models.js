@@ -295,6 +295,10 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
       return scope.doSwitchToMode('CreateModel');
     })(scope.game.models);
   };
+  models_actions.clearLabel = function modelsClearLabel(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    return gameService.executeCommand('onModels', 'clearLabel', stamps, scope, scope.game);
+  };
 
   var models_default_bindings = {
     'clickMap': 'clickMap',
@@ -325,7 +329,8 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     'toggleUnitDisplay': 'alt+u',
     'setUnit': 'shift+u',
     'toggleLeaderDisplay': 'alt+l',
-    'toggleIncorporealDisplay': 'alt+g'
+    'toggleIncorporealDisplay': 'alt+g',
+    'clearLabel': 'ctrl+shift+l'
   };
   R.forEach(function (move) {
     models_default_bindings[move[0]] = move[1];
@@ -376,7 +381,7 @@ angular.module('clickApp.services').factory('modelsMode', ['modes', 'settings', 
     var start_place = _ref.start_place;
     var end_place = _ref.end_place;
 
-    var ret = [['Delete', 'deleteSelection'], ['Copy', 'copySelection'], ['Lock', 'toggleLock'], ['Ruler Max Len.', 'setRulerMaxLength'], ['Image', 'toggle', 'image'], ['Show/Hide', 'toggleImageDisplay', 'image'], ['Next', 'setNextImage', 'image'], ['Wreck', 'toggleWreckDisplay', 'image'], ['Orient.', 'toggle', 'orientation'], ['Face Up', 'setOrientationUp', 'orientation'], ['Face Down', 'setOrientationDown', 'orientation'], ['Counter', 'toggle', 'counter'], ['Show/Hide', 'toggleCounterDisplay', 'counter'], ['Inc.', 'incrementCounter', 'counter'], ['Dec.', 'decrementCounter', 'counter'], ['Souls', 'toggle', 'souls'], ['Show/Hide', 'toggleSoulsDisplay', 'souls'], ['Inc.', 'incrementSouls', 'souls'], ['Dec.', 'decrementSouls', 'souls'], ['Melee', 'toggle', 'melee'], ['0.5"', 'toggleMeleeDisplay', 'melee'], ['Reach', 'toggleReachDisplay', 'melee'], ['Strike', 'toggleStrikeDisplay', 'melee']];
+    var ret = [['Delete', 'deleteSelection'], ['Copy', 'copySelection'], ['Lock', 'toggleLock'], ['Ruler Max Len.', 'setRulerMaxLength'], ['Clear Label', 'clearLabel'], ['Image', 'toggle', 'image'], ['Show/Hide', 'toggleImageDisplay', 'image'], ['Next', 'setNextImage', 'image'], ['Wreck', 'toggleWreckDisplay', 'image'], ['Orient.', 'toggle', 'orientation'], ['Face Up', 'setOrientationUp', 'orientation'], ['Face Down', 'setOrientationDown', 'orientation'], ['Counter', 'toggle', 'counter'], ['Show/Hide', 'toggleCounterDisplay', 'counter'], ['Inc.', 'incrementCounter', 'counter'], ['Dec.', 'decrementCounter', 'counter'], ['Souls', 'toggle', 'souls'], ['Show/Hide', 'toggleSoulsDisplay', 'souls'], ['Inc.', 'incrementSouls', 'souls'], ['Dec.', 'decrementSouls', 'souls'], ['Melee', 'toggle', 'melee'], ['0.5"', 'toggleMeleeDisplay', 'melee'], ['Reach', 'toggleReachDisplay', 'melee'], ['Strike', 'toggleStrikeDisplay', 'melee']];
     if (single) {
       ret = R.concat(ret, [['Templates', 'toggle', 'templates'], ['AoE', 'createAoEOnModel', 'templates'], ['Spray', 'createSprayOnModel', 'templates']]);
     }

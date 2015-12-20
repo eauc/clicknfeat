@@ -26,4 +26,19 @@
             font-family: Verdana, sans-serif;
         }
     }
+    .edit-label {
+        position: absolute;
+
+        input {
+            font-size: 12px;
+            line-height: 1em;
+            height: 14px;
+            padding: 0;
+            border: 1px solid grey;
+            border-radius: 3px;
+            background-color: rgba(255,255,255,0.75);
+            min-width: 2em;
+            text-align: center;
+        }
+    }
 }

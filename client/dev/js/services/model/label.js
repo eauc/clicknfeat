@@ -9,6 +9,9 @@ angular.module('clickApp.services').factory('modelLabel', [function modelLabelSe
       removeLabel: function modelRemoveLabel(label, model) {
         model.state.l = R.reject(R.equals(label), model.state.l);
       },
+      clearLabel: function modelClearLabel(model) {
+        model.state.l = [];
+      },
       fullLabel: function modelFullLabel(model) {
         return model.state.l.join(' ');
       }

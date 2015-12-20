@@ -110,13 +110,24 @@ angular.module('clickApp.services')
           }
         )();
       };
-
+      model_actions.openEditLabel = function openEditLabel(scope) {
+        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+        return R.pipeP(
+          () => {
+            return gameModelsService.findStamp(stamps[0], scope.game.models);
+          },
+          (model) => {
+            scope.gameEvent('openEditLabel', model);
+          }
+        )();
+      };
       var model_default_bindings = {
         'createAoEOnModel': 'ctrl+a',
         'createSprayOnModel': 'ctrl+s',
         'selectAllUnit': 'ctrl+u',
         'selectAllFriendly': 'ctrl+f',
         'setB2B': 'ctrl+shift+clickModel',
+        'openEditLabel': 'shift+l',
       };
       var model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                     model_default_bindings);

@@ -11,6 +11,9 @@ angular.module('clickApp.services')
           removeLabel: function modelRemoveLabel(label, model) {
             model.state.l = R.reject(R.equals(label), model.state.l);
           },
+          clearLabel: function modelClearLabel(model) {
+            model.state.l = [];
+          },
           fullLabel: function modelFullLabel(model) {
             return model.state.l.join(' ');
           },

@@ -1,6 +1,80 @@
 'use strict';
 
 describe('label model', function() {
+  describe('modelsMode service', function() {
+    beforeEach(inject([
+      'modelsMode',
+      function(modelsModeService) {
+        this.modelsModeService = modelsModeService;
+
+        this.gameService = spyOnService('game');
+        
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                     };
+      }
+    ]));
+
+    when('user clear models labels', function() {
+      this.ret = this.modelsModeService.actions
+        .clearLabel(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamps'];
+      });
+      
+      it('should clear models labels', function() {
+        expect(this.gameModelSelectionService.get)
+          .toHaveBeenCalledWith('local', 'selection');
+        
+        expect(this.gameService.executeCommand)
+          .toHaveBeenCalledWith('onModels', 'clearLabel', ['stamps'],
+                                this.scope, this.scope.game);
+        expect(this.ret).toBe('game.executeCommand.returnValue');
+      });
+    });
+  });
+
+  describe('modelBaseMode service', function() {
+    beforeEach(inject([
+      'modelBaseMode',
+      function(modelBaseModeService) {
+        this.modelBaseModeService = modelBaseModeService;
+        
+        this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                       gameEvent: jasmine.createSpy('gameEvent'),
+                     };
+      }
+    ]));
+
+    when('user open edit label on model', function() {
+      this.ret = this.modelBaseModeService.actions
+        .openEditLabel(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+      
+      it('should emit openEditLabel event', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('openEditLabel', 'gameModels.findStamp.returnValue');
+        });
+      });
+    });
+  });
+
   describe('model service', function() {
     beforeEach(inject([
       'model',
@@ -60,6 +134,20 @@ describe('label model', function() {
           expect(this.model.state.l)
             .toEqual(e.result);
         });
+      });
+    });
+
+    describe('clearLabel(<label>)', function() {
+      beforeEach(function() {
+        this.model = {
+          state: { l:  ['label1', 'label2'] }
+        };
+      });
+
+      it('should remove all labels from model', function() {
+        this.modelService.clearLabel(this.model);
+        expect(this.model.state.l)
+          .toEqual([]);
       });
     });
   });
