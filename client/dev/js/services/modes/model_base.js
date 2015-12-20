@@ -68,13 +68,23 @@ angular.module('clickApp.services').factory('modelBaseMode', ['modes', 'settings
       scope.gameEvent('openEditLabel', model);
     })();
   };
+  model_actions.openEditDamage = function openEditDamage(scope) {
+    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+    return R.pipeP(function () {
+      return gameModelsService.findStamp(stamps[0], scope.game.models);
+    }, function (model) {
+      scope.gameEvent('toggleEditDamage', model);
+    })();
+  };
+
   var model_default_bindings = {
     'createAoEOnModel': 'ctrl+a',
     'createSprayOnModel': 'ctrl+s',
     'selectAllUnit': 'ctrl+u',
     'selectAllFriendly': 'ctrl+f',
     'setB2B': 'ctrl+shift+clickModel',
-    'openEditLabel': 'shift+l'
+    'openEditLabel': 'shift+l',
+    'openEditDamage': 'shift+d'
   };
   var model_bindings = R.extend(Object.create(modelsModeService.bindings), model_default_bindings);
 

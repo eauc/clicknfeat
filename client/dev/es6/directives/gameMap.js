@@ -131,6 +131,7 @@ angular.module('clickApp.directives')
                     };
                     scope.gameEvent('closeSelectionDetail');
                     scope.gameEvent('closeEditLabel');
+                    scope.gameEvent('closeEditDamage');
                     Mousetrap.trigger(event_name,
                                       undefined,
                                       event);
@@ -155,6 +156,7 @@ angular.module('clickApp.directives')
                   };
                   scope.gameEvent('closeSelectionDetail');
                   scope.gameEvent('closeEditLabel');
+                  scope.gameEvent('closeEditDamage');
                   Mousetrap.trigger(event_name,
                                     undefined,
                                     event);

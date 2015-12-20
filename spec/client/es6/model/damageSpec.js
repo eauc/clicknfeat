@@ -1,6 +1,43 @@
 'use strict';
 
 describe('damage model', function() {
+  describe('modelBaseMode service', function() {
+    beforeEach(inject([
+      'modelBaseMode',
+      function(modelBaseModeService) {
+        this.modelBaseModeService = modelBaseModeService;
+        
+        this.gameModelsService = spyOnService('gameModels');
+        mockReturnPromise(this.gameModelsService.findStamp);
+        this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+        
+        this.gameModelSelectionService = spyOnService('gameModelSelection');
+
+        this.scope = { game: { model_selection: 'selection',
+                               models: 'models'
+                             },
+                       gameEvent: jasmine.createSpy('gameEvent'),
+                     };
+      }
+    ]));
+
+    when('user open edit damage on model', function() {
+      this.ret = this.modelBaseModeService.actions
+        .openEditDamage(this.scope);
+    }, function() {
+      beforeEach(function() {
+        this.gameModelSelectionService.get._retVal = ['stamp'];
+      });
+      
+      it('should emit toggleEditDamage event', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('toggleEditDamage', 'gameModels.findStamp.returnValue');
+        });
+      });
+    });
+  });
+
   describe('model service', function() {
     beforeEach(inject([
       'model',

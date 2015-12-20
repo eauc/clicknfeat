@@ -27,6 +27,7 @@
         }
     }
     .edit-label {
+        z-index: (2*$osd-zindex);
         position: absolute;
 
         input {

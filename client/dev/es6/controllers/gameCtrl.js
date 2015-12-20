@@ -398,6 +398,7 @@ angular.module('clickApp.controllers')
           console.log('$on '+fwd, arguments);
           $scope.gameEvent('closeSelectionDetail');
           $scope.gameEvent('closeEditLabel');
+          $scope.gameEvent('closeEditDamage');
           modesService.currentModeAction(fwd, $scope, target, event, $scope.modes)
             .catch((reason) => {
               $scope.gameEvent('modeActionError', reason);
