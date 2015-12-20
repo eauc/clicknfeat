@@ -147,7 +147,8 @@ angular.module('clickApp.services')
             }
           )();
         },
-        onLeave: function rulerOnLeave(/*scope*/) {
+        onLeave: function rulerOnLeave(scope) {
+          scope.gameEvent('changeRemoteRuler', scope.game.ruler);
         },
         name: 'Ruler',
         actions: ruler_actions,

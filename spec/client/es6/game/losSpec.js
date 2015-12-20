@@ -47,7 +47,7 @@ describe('game los', function() {
                              models: 'models',
                              model_selection: 'selection'
                            },
-                     // gameEvent: jasmine.createSpy('gameEvent'),
+                     gameEvent: jasmine.createSpy('gameEvent'),
                      // $digest: jasmine.createSpy('$digest'),
                    };
     }]));
@@ -72,6 +72,16 @@ describe('game los', function() {
                                     this.scope, this.scope.game);
           });
         });
+      });
+    });
+
+    when('user stops using los', function() {
+      this.ret = this.losModeService
+        .onLeave(this.scope);
+    }, function() {
+      it('should update Los state', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeRemoteLos', this.scope.game.los);
       });
     });
 

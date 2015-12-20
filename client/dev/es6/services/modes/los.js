@@ -89,7 +89,8 @@ angular.module('clickApp.services')
             }
           )();
         },
-        onLeave: function losOnLeave(/*scope*/) {
+        onLeave: function losOnLeave(scope) {
+          scope.gameEvent('changeRemoteLos', scope.game.los);
         },
         name: 'LoS',
         actions: los_actions,

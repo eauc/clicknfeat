@@ -75,6 +75,16 @@ describe('game ruler', function() {
       });
     });
 
+    when('user stops using ruler', function() {
+      this.ret = this.rulerModeService
+        .onLeave(this.scope);
+    }, function() {
+      it('should update Ruler state', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('changeRemoteRuler', this.scope.game.ruler);
+      });
+    });
+
     when('user set ruler max length', function() {
       this.ret = this.rulerModeService.actions.setMaxLength(this.scope);
     }, function() {

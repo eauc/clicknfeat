@@ -142,7 +142,7 @@ angular.module('clickApp.controllers')
           console.log('subscribe Los listener', on, event_name);
           game_los.unsubscribe = pubSubService.subscribe(event_name, () => {
             console.log('update LoS', on);
-            gameLosService.updateOriginTarget($scope, $scope.game, los);
+            gameLosService.updateOriginTarget($scope, $scope.game, $scope.game.los);
           }, game_event_channel);
           game_los.stamp = stamp;
         }, $scope);
@@ -180,7 +180,7 @@ angular.module('clickApp.controllers')
           console.log('subscribe Ruler listener', on, event_name);
           game_ruler.unsubscribe = pubSubService.subscribe(event_name, () => {
             console.log('update Ruler', on);
-            gameRulerService.updateOriginTarget($scope, ruler);
+            gameRulerService.updateOriginTarget($scope, $scope.game.ruler);
           }, game_event_channel);
           game_ruler.stamp = stamp;
         }, $scope);
