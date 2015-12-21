@@ -796,6 +796,11 @@
               "ranges": [1, 2],
               "type": "warrior",
               "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/trollblood/units/Fire_eater_grunt.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -804,6 +809,11 @@
               "name": "Buddy",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/trollblood/units/Fire_eater_buddy.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
