@@ -116,7 +116,7 @@ angular.module('clickApp.services').factory('modes', [function modesServiceFacto
   }
   R.curryService(modesService);
   return modesService;
-}]).factory('allModes', ['defaultMode', 'rulerMode', 'losMode', 'createModelMode', 'modelsMode', 'modelMode', 'modelChargeMode', 'modelPlaceMode', 'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', function () {
+}]).factory('allModes', ['defaultMode', 'rulerMode', 'losMode', 'createModelMode', 'modelsMode', 'modelMode', 'modelChargeMode', 'modelPlaceMode', 'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
   return {};
 }]);
 //# sourceMappingURL=modes.js.map

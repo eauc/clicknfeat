@@ -10,6 +10,7 @@ angular.module('clickApp.services')
     'gameTemplateSelection',
     'gameModels',
     'gameModelSelection',
+    'gameTerrainSelection',
     function defaultModeServiceFactory(modesService,
                                        settingsService,
                                        commonModeService,
@@ -17,19 +18,26 @@ angular.module('clickApp.services')
                                        templateService,
                                        gameTemplateSelectionService,
                                        gameModelsService,
-                                       gameModelSelectionService) {
+                                       gameModelSelectionService,
+                                       gameTerrainSelectionService) {
       var default_actions = Object.create(commonModeService.actions);
+      function clearTerrainSelection(scope) {
+        scope.game.terrain_selection = gameTerrainSelectionService
+          .clear('local', scope, scope.game.terrain_selection);
+      }
       function clearTemplateSelection(scope) {
-        scope.game.template_selection =
-          gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
+        scope.game.template_selection = gameTemplateSelectionService
+          .clear('local', scope, scope.game.template_selection);
       }
       default_actions.setModelSelection = function defaultSetModelSelection(scope, event) {
+        clearTerrainSelection(scope, event);
         clearTemplateSelection(scope, event);
         var stamp = event['click#'].target.state.stamp;
         return gameService.executeCommand('setModelSelection', 'set', [stamp],
                                           scope, scope.game);
       };
       default_actions.toggleModelSelection = function modelsToggleSelection(scope, event) {
+        clearTerrainSelection(scope, event);
         clearTemplateSelection(scope, event);
         var stamp = event['click#'].target.state.stamp;
         if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
@@ -42,21 +50,31 @@ angular.module('clickApp.services')
         }
       };
       default_actions.modelSelectionDetail = function defaultModelSelectionDetail(scope, event) {
+        clearTerrainSelection(scope, event);
+        clearTemplateSelection(scope, event);
         var stamp = event['click#'].target.state.stamp;
         scope.gameEvent('openSelectionDetail', 'model', event['click#'].target);
         return gameService.executeCommand('setModelSelection', 'set', [stamp],
                                           scope, scope.game);
       };
       default_actions.selectTemplate = function defaultSelectTemplate(scope, event) {
+        clearTerrainSelection(scope, event);
         scope.game.template_selection =
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
                                            scope, scope.game.template_selection);
       };
       default_actions.templateSelectionDetail = function defaultTemplateSelectionDetail(scope, event) {
+        clearTerrainSelection(scope, event);
         scope.gameEvent('openSelectionDetail', 'template', event['click#'].target);
         scope.game.template_selection =
           gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp],
                                            scope, scope.game.template_selection);
+      };
+      default_actions.selectTerrain = function defaultSelectTerrain(scope, event) {
+        clearTemplateSelection(scope, event);
+        scope.game.terrain_selection =
+          gameTerrainSelectionService.set('local', [event['click#'].target.state.stamp],
+                                          scope, scope.game.terrain_selection);
       };
       default_actions.enterRulerMode = function defaultEnterRulerMode(scope) {
         return scope.doSwitchToMode('Ruler');
@@ -101,6 +119,7 @@ angular.module('clickApp.services')
         modelSelectionDetail: 'rightClickModel',
         selectTemplate: 'clickTemplate',
         templateSelectionDetail: 'rightClickTemplate',
+        selectTerrain: 'clickTerrain',
       };
       var default_bindings = R.extend(Object.create(commonModeService.bindings),
                                       default_default_bindings);
@@ -108,9 +127,15 @@ angular.module('clickApp.services')
       var default_mode = {
         name: 'Default',
         onEnter: function defaultOnEnter(scope) {
-          gameTemplateSelectionService.checkMode(scope, scope.game.template_selection)
+          gameTemplateSelectionService
+            .checkMode(scope, scope.game.template_selection)
             .catch(function() {
-              return gameModelSelectionService.checkMode(scope, scope.game.model_selection);
+              return gameTerrainSelectionService
+                .checkMode(scope, scope.game.terrain_selection);
+            })
+            .catch(function() {
+              return gameModelSelectionService
+                .checkMode(scope, scope.game.model_selection);
             });
         },
         actions: default_actions,

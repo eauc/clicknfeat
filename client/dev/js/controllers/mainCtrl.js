@@ -1,11 +1,15 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', '$window', 'pubSub', 'prompt', 'settings', 'user', 'gameBoard', 'gameFactions', 'gameScenario', 'allModes', function ($scope, $state, $window, pubSubService, promptService, settingsService, userService, gameBoardService, gameFactionsService, gameScenarioService) {
+angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', '$window', 'pubSub', 'prompt', 'settings', 'user', 'gameBoard', 'gameTerrainInfo', 'gameFactions', 'gameScenario', 'allModes', function ($scope, $state, $window, pubSubService, promptService, settingsService, userService, gameBoardService, gameTerrainInfoService, gameFactionsService, gameScenarioService) {
   console.log('init mainCtrl');
 
   $scope.boards_ready = gameBoardService.init().then(function (boards) {
     $scope.boards = boards;
     console.log('board', boards);
+  });
+  $scope.terrains_ready = gameTerrainInfoService.init().then(function (terrains) {
+    $scope.terrains = terrains;
+    console.log('terrains', terrains);
   });
   $scope.factions_ready = gameFactionsService.init().then(function (factions) {
     $scope.factions = factions;
@@ -20,7 +24,7 @@ angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state
     $scope.settings = settings;
     console.log('settings', settings);
   });
-  $scope.data_ready = self.Promise.all([$scope.boards_ready, $scope.factions_ready, $scope.scenario_ready, $scope.settings_ready]).then(function () {
+  $scope.data_ready = self.Promise.all([$scope.boards_ready, $scope.terrains_ready, $scope.factions_ready, $scope.scenario_ready, $scope.settings_ready]).then(function () {
     console.log('data ready');
   });
   $scope.doResetSettings = function doResetSettings(data) {

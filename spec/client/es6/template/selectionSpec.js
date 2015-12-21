@@ -8,7 +8,10 @@ describe('select template', function() {
         this.defaultModeService = defaultModeService;
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       
-        this.scope = { game: { template_selection: 'selection' } };
+        this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
+
+        this.scope = { game: { template_selection: 'selection',
+                               terrain_selection: 'terrain_selection'} };
         this.scope.gameEvent = jasmine.createSpy('gameEvent');
         this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
       }
@@ -21,6 +24,13 @@ describe('select template', function() {
       it('should set gameTemplateSelection', function() {
         expect(this.gameTemplateSelectionService.set)
           .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
+      });
+
+      it('should clear gameTerrainSelection', function() {
+        expect(this.gameTerrainSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
+        expect(this.scope.game.terrain_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
       });
     });
 
@@ -37,6 +47,13 @@ describe('select template', function() {
       it('should set gameTemplateSelection', function() {
         expect(this.gameTemplateSelectionService.set)
           .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
+      });
+
+      it('should clear gameTerrainSelection', function() {
+        expect(this.gameTerrainSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
+        expect(this.scope.game.terrain_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
       });
     });
   });

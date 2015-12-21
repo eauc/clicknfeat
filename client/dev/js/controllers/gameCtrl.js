@@ -255,6 +255,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   $scope.digestOnGameEvent('changeScenario', $scope);
   $scope.digestOnGameEvent('createModel', $scope);
   $scope.digestOnGameEvent('createTemplate', $scope);
+  $scope.digestOnGameEvent('createTerrain', $scope);
   $scope.digestOnGameEvent('switchMode', $scope);
   $scope.digestOnGameEvent('gameLoaded', $scope);
 
@@ -329,7 +330,7 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
   'dragStartModel', 'dragModel', 'dragEndModel',
   // 'clickTemplate',
   // 'rightClickTemplate',
-  'dragStartTemplate', 'dragTemplate', 'dragEndTemplate',
+  'dragStartTemplate', 'dragTemplate', 'dragEndTemplate', 'dragStartTerrain', 'dragTerrain', 'dragEndTerrain',
   // 'clickMap',
   // 'rightClickMap',
   'moveMap', 'dragStartMap', 'dragMap', 'dragEndMap'];

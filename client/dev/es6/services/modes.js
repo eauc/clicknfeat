@@ -155,5 +155,7 @@ angular.module('clickApp.services')
     'aoeTemplateMode',
     'sprayTemplateMode',
     'wallTemplateMode',
+    'createTerrainMode',
+    'terrainMode',
     () => ({})
   ]);

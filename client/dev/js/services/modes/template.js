@@ -20,7 +20,7 @@ angular.module('clickApp.services').factory('templateMode', ['modes', 'settings'
       return gameService.executeCommand('lockTemplates', !is_locked, stamps, scope, scope.game);
     });
   };
-  var moves = [['moveFront', 'up'], ['moveBack', 'down'], ['rotateLeft', 'left'], ['rotateRight', 'right'], ['shiftUp', 'ctrl+up'], ['shiftDown', 'ctrl+down'], ['shiftLeft', 'ctrl+left'], ['shiftRight', 'ctrl+right']];
+  var moves = [['moveFront', 'up'], ['moveBack', 'down'], ['rotateLeft', 'left'], ['rotateRight', 'right']];
   R.forEach(function (move) {
     template_actions[move[0]] = function templateMove(scope) {
       var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
@@ -31,6 +31,19 @@ angular.module('clickApp.services').factory('templateMode', ['modes', 'settings'
       return gameService.executeCommand('onTemplates', move[0], true, stamps, scope, scope.game);
     };
   }, moves);
+  var shifts = [['shiftUp', 'ctrl+up', 'shiftDown'], ['shiftDown', 'ctrl+down', 'shiftUp'], ['shiftLeft', 'ctrl+left', 'shiftRight'], ['shiftRight', 'ctrl+right', 'shiftLeft']];
+  R.forEach(function (shift) {
+    template_actions[shift[0]] = function modelsShift(scope) {
+      var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      var template_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+      return gameService.executeCommand('onTemplates', template_shift, false, stamps, scope, scope.game);
+    };
+    template_actions[shift[0] + 'Small'] = function templatesShiftSmall(scope) {
+      var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      var template_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
+      return gameService.executeCommand('onTemplates', template_shift, true, stamps, scope, scope.game);
+    };
+  }, shifts);
 
   (function () {
     var drag_template_start_state;
@@ -77,6 +90,10 @@ angular.module('clickApp.services').factory('templateMode', ['modes', 'settings'
     template_default_bindings[move[0]] = move[1];
     template_default_bindings[move[0] + 'Small'] = 'shift+' + move[1];
   }, moves);
+  R.forEach(function (shift) {
+    template_default_bindings[shift[0]] = shift[1];
+    template_default_bindings[shift[0] + 'Small'] = 'shift+' + shift[1];
+  }, shifts);
   var template_bindings = R.extend(Object.create(defaultModeService.bindings), template_default_bindings);
   var template_buttons = [['Delete', 'delete'], ['Lock/Unlock', 'toggleLock']];
   var template_mode = {

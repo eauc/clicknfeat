@@ -428,41 +428,52 @@ describe('misc model', function() {
       });
     });
     
-    xdescribe('shortestLineTo(<factions>, <other>)', function() {
+    when('shortestLineTo(<factions>, <other>)', function() {
+      this.ret = this.modelService.shortestLineTo('factions', this.other, this.model);
+    }, function() {
       beforeEach(function() {
         var info = {
           'model': { base_radius: 7.874 },
-          'other': { base_radius: 9.842 },
+          'other': { base_radius: 9.842 }
         };
-        this.gameFactionsService.getModelInfo.and.callFake(function(i) {
+        this.model = { state: { info: 'model', x: 240, y: 240 } };
+        this.other = { state: { info: 'other', x: 120, y: 120 } };
+
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
+        this.gameFactionsService.getModelInfo.resolveWith = (i) =>{
           return info[i];
-        });
+        };
       });
 
       it('should compute the shortest line between both models', function() {
-        var model = { state: { info: 'model', x: 240, y: 240 } };
-        var other = { state: { info: 'other', x: 120, y: 120 } };
-        expect(this.modelService.shortestLineTo('factions', other, model))
-          .toEqual({
-            start: { x: 234.43224120493713, y: 234.43224120493713 },
-            end: { x: 126.959344940438, y: 126.959344940438 }
-          });
+        this.thenExpect(this.ret, function(result) {
+          expect(result)
+            .toEqual({
+              start: { x: 234.43224120493713, y: 234.43224120493713 },
+              end: { x: 126.959344940438, y: 126.959344940438 }
+            });
+        });
       });
     });
 
-    xdescribe('baseEdgeInDirection(<factions>, <dir>)', function() {
-      beforeEach(function() {
-        this.gameFactionsService.getModelInfo._retVal = {
+    when('baseEdgeInDirection(<factions>, <dir>)', function() {
+      this.ret = this.modelService.baseEdgeInDirection('factions', 42, {
+        state: { x: 140, y: 340 }
+      });
+    }, function() {
+        beforeEach(function() {
+        mockReturnPromise(this.gameFactionsService.getModelInfo);
+        this.gameFactionsService.getModelInfo.resolveWith = {
           base_radius: 7.874
         };
       });
 
       it('should compute the point on model\s base edge in <direction>', function() {
-        expect(this.modelService.baseEdgeInDirection('factions', 42, {
-          state: { x: 140, y: 340 }
-        })).toEqual({
-          x: 145.26873439446965,
-          y: 334.148477644191
+        this.thenExpect(this.ret, function(result) {
+          expect(result).toEqual({
+            x: 145.26873439446965,
+            y: 334.148477644191
+          });
         });
       });
     });

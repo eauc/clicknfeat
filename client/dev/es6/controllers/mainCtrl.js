@@ -8,6 +8,7 @@ angular.module('clickApp.controllers')
     'settings',
     'user',
     'gameBoard',
+    'gameTerrainInfo',
     'gameFactions',
     'gameScenario',
     'allModes',
@@ -19,6 +20,7 @@ angular.module('clickApp.controllers')
              settingsService,
              userService,
              gameBoardService,
+             gameTerrainInfoService,
              gameFactionsService,
              gameScenarioService) {
       console.log('init mainCtrl');
@@ -27,6 +29,11 @@ angular.module('clickApp.controllers')
         .then((boards) => {
           $scope.boards = boards;
           console.log('board', boards);
+        });
+      $scope.terrains_ready = gameTerrainInfoService.init()
+        .then((terrains) => {
+          $scope.terrains = terrains;
+          console.log('terrains', terrains);
         });
       $scope.factions_ready = gameFactionsService.init()
         .then((factions) => {
@@ -46,6 +53,7 @@ angular.module('clickApp.controllers')
         });
       $scope.data_ready = self.Promise.all([
         $scope.boards_ready,
+        $scope.terrains_ready,
         $scope.factions_ready,
         $scope.scenario_ready,
         $scope.settings_ready,

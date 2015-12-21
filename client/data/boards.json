@@ -15,6 +15,16 @@
     "preview": "/data/board/crag_outskirts_low.png"
   },
   {
+    "name": "Desert",
+    "img": "/data/board/desert.png",
+    "preview": "/data/board/desert_low.png"
+  },
+  {
+    "name": "Dirt",
+    "img": "/data/board/dirt.png",
+    "preview": "/data/board/dirt_low.png"
+  },
+  {
     "name": "Dustbowl",
     "img": "/data/board/dustbowl.png",
     "preview": "/data/board/dustbowl_low.png"
@@ -23,6 +33,11 @@
     "name": "Fire and Ice",
     "img": "/data/board/fire_and_ice.png",
     "preview": "/data/board/fire_and_ice_low.png"
+  },
+  {
+    "name": "Grass",
+    "img": "/data/board/grass.png",
+    "preview": "/data/board/grass_low.png"
   },
   {
     "name": "Lumberyard",
@@ -48,6 +63,11 @@
     "name": "Rocky Clearing",
     "img": "/data/board/rocky_clearing.png",
     "preview": "/data/board/rocky_clearing_low.png"
+  },
+  {
+    "name": "Snow",
+    "img": "/data/board/snow.png",
+    "preview": "/data/board/snow_low.png"
   },
   {
     "name": "Snow Drift",

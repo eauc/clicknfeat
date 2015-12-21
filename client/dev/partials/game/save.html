@@ -7,7 +7,9 @@
   <div class="panel panel-info">
     <div class="panel-heading">Save current game</div>
     <div class="panel-body">
-      <a ng-href="{{save.url}}"
+      <a class="btn btn-default"
+         ng-disabled="!save.url"
+         ng-href="{{save.url}}"
          download="{{::save.name}}">
         Download Game File
       </a>
@@ -16,9 +18,22 @@
   <div class="panel panel-info">
     <div class="panel-heading">Save current models selection</div>
     <div class="panel-body">
-      <a ng-href="{{selection_save.url}}"
+      <a class="btn btn-default"
+         ng-disabled="!selection_save.url"
+         ng-href="{{selection_save.url}}"
          download="{{::selection_save.name}}">
         Download Models File
+      </a>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">Save current board and terrain</div>
+    <div class="panel-body">
+      <a class="btn btn-default"
+         ng-disabled="!board_save.url"
+         ng-href="{{board_save.url}}"
+         download="{{::board_save.name}}">
+        Download Board File
       </a>
     </div>
   </div>

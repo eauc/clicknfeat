@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.services').factory('game', ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', function gameServiceFactory(jsonStringifierService, commandsService, gameConnectionService, gameLayersService, gameLosService, gameModelsService, gameModelSelectionService, gameRulerService, gameTemplatesService, gameTemplateSelectionService) {
+angular.module('clickApp.services').factory('game', ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', function gameServiceFactory(jsonStringifierService, commandsService, gameConnectionService, gameLayersService, gameLosService, gameModelsService, gameModelSelectionService, gameRulerService, gameTemplatesService, gameTemplateSelectionService, gameTerrainsService, gameTerrainSelectionService) {
   var gameService = {
     create: function gameCreate(player1) {
       var new_game = {
@@ -36,6 +36,8 @@ angular.module('clickApp.services').factory('game', ['jsonStringifier', 'command
         model_selection: gameModelSelectionService.create(),
         templates: gameTemplatesService.create(),
         template_selection: gameTemplateSelectionService.create(),
+        terrains: gameTerrainsService.create(),
+        terrain_selection: gameTerrainSelectionService.create(),
         layers: gameLayersService.create()
       }, data);
       game = gameConnectionService.create(game);

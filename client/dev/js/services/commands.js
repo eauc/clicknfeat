@@ -53,7 +53,7 @@ angular.module('clickApp.services').factory('commands', [function commandsServic
   };
   R.curryService(commandsService);
   return commandsService;
-}]).factory('allCommands', ['createModelCommand', 'deleteModelCommand', 'setModelSelectionCommand', 'lockModelsCommand', 'onModelsCommand', 'createTemplateCommand', 'deleteTemplatesCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand', 'setLosCommand', 'setRulerCommand', 'setScenarioCommand', function () {
+}]).factory('allCommands', ['createModelCommand', 'deleteModelCommand', 'setModelSelectionCommand', 'lockModelsCommand', 'onModelsCommand', 'createTemplateCommand', 'deleteTemplatesCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand', 'setLosCommand', 'setRulerCommand', 'setScenarioCommand', function () {
   return {};
 }]);
 //# sourceMappingURL=commands.js.map

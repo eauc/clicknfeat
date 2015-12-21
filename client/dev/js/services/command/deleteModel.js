@@ -5,7 +5,7 @@ angular.module('clickApp.services').factory('deleteModelCommand', ['commands', '
     execute: function deleteModelExecute(stamps, scope, game) {
       return R.pipeP(function (stamps) {
         return gameModelsService.findAnyStamps(stamps, game.models);
-      }, R.spy('find any'), R.reject(R.isNil), R.spy('not nil'), R.map(modelService.saveState), R.spy('save'), function (states) {
+      }, R.reject(R.isNil), R.map(modelService.saveState), function (states) {
         var ctxt = {
           models: states,
           desc: ''

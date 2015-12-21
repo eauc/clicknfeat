@@ -21,10 +21,6 @@ describe('move template', function() {
       [ 'moveBack' ],
       [ 'rotateLeft' ],
       [ 'rotateRight' ],
-      [ 'shiftUp' ],
-      [ 'shiftDown' ],
-      [ 'shiftLeft' ],
-      [ 'shiftRight' ],
     ], function(e) {
       when('user '+e.action+' template selection', function() {
         this.ret = this.templateModeService.actions[e.action](this.scope);
@@ -63,6 +59,72 @@ describe('move template', function() {
           expect(this.gameService.executeCommand)
             .toHaveBeenCalledWith('onTemplates', e.action, true,
                                   ['stamp'], this.scope, this.scope.game);
+        });
+      });
+    });
+
+    using([
+      [ 'action'     , 'flipped_action' ],
+      [ 'shiftUp'    , 'shiftDown'      ],
+      [ 'shiftDown'  , 'shiftUp'        ],
+      [ 'shiftLeft'  , 'shiftRight'     ],
+      [ 'shiftRight' , 'shiftLeft'      ],
+    ], function(e) {
+      when('user '+e.action+' template selection', function() {
+        this.ret = this.templateModeService.actions[e.action](this.scope);
+      }, function() {
+        it('should get current selection', function() {
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+        });
+
+        it('should execute onTemplates/'+e.action+' command', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onTemplates', e.action, false,
+                                  'gameTemplateSelection.get.returnValue',
+                                  this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
+        });
+
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map: true };
+        }, function() {
+          it('should execute onTemplates/'+e.flipped_action+' command', function() {
+            expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onTemplates', e.flipped_action, false,
+                                  'gameTemplateSelection.get.returnValue',
+                                  this.scope, this.scope.game);
+            expect(this.ret).toBe('game.executeCommand.returnValue');
+          });
+        });
+      });
+
+      when('user '+e.action+'Small template selection', function() {
+        this.ret = this.templateModeService.actions[e.action+'Small'](this.scope);
+      }, function() {
+        it('should get current selection', function() {
+          expect(this.gameTemplateSelectionService.get)
+            .toHaveBeenCalledWith('local', 'selection');
+        });
+
+        it('should execute onTemplates/'+e.action+'Small command', function() {
+          expect(this.gameService.executeCommand)
+            .toHaveBeenCalledWith('onTemplates', e.action, true,
+                                  'gameTemplateSelection.get.returnValue',
+                                  this.scope, this.scope.game);
+          expect(this.ret).toBe('game.executeCommand.returnValue');
+        });
+
+        when('map is flipped', function() {
+          this.scope.ui_state = { flip_map: true };
+        }, function() {
+          it('should execute onTemplates/'+e.flipped_action+'Small command', function() {
+            expect(this.gameService.executeCommand)
+              .toHaveBeenCalledWith('onTemplates', e.flipped_action, true,
+                                    'gameTemplateSelection.get.returnValue',
+                                    this.scope, this.scope.game);
+            expect(this.ret).toBe('game.executeCommand.returnValue');
+          });
         });
       });
     });

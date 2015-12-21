@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('clickGameEditDamageCtrl', ['$scope', function ($scope) {
+angular.module('clickApp.controllers').controller('clickGameEditDamageCtrl', ['$scope', function () {
   console.log('init clickGameEditDamageCtrl');
 }]);
 

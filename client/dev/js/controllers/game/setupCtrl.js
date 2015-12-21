@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('gameSetupCtrl', ['$scope', 'game', 'gameBoard', 'gameScenario', 'gameModels', function ($scope, gameService, gameBoardService, gameScenarioService, gameModelsService) {
+angular.module('clickApp.controllers').controller('gameSetupCtrl', ['$scope', 'fileImport', 'game', 'gameBoard', 'gameScenario', 'gameModels', 'gameTerrains', function ($scope, fileImportService, gameService, gameBoardService, gameScenarioService, gameModelsService, gameTerrainsService) {
   console.log('init gameSetupCtrl');
 
   $scope.onGameLoad.then(function () {
@@ -13,11 +13,11 @@ angular.module('clickApp.controllers').controller('gameSetupCtrl', ['$scope', 'g
   $scope.$watch('game.board.name', function (value) {
     $scope.board_name = value;
   });
-  $scope.doSetBoard = function doSetBoard() {
+  $scope.doSetBoard = function () {
     var board = gameBoardService.forName($scope.board_name, $scope.boards);
     $scope.doExecuteCommand('setBoard', board);
   };
-  $scope.doSetRandomBoard = function doSetRandomBoard() {
+  $scope.doSetRandomBoard = function () {
     var board,
         name = gameBoardService.name($scope.game.board);
     while (name === gameBoardService.name($scope.game.board)) {
@@ -32,11 +32,11 @@ angular.module('clickApp.controllers').controller('gameSetupCtrl', ['$scope', 'g
     $scope.scenario_name = value;
     $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name, $scope.scenarios);
   });
-  $scope.doSetScenario = function doSetScenario() {
+  $scope.doSetScenario = function () {
     var scenario = gameScenarioService.forName($scope.scenario_name, $scope.scenario_group);
     $scope.doExecuteCommand('setScenario', scenario);
   };
-  $scope.doSetRandomScenario = function doSetRandomScenario() {
+  $scope.doSetRandomScenario = function () {
     var group = gameScenarioService.group('SR15', $scope.scenarios);
     var scenario,
         name = $scope.scenario_name;
@@ -61,8 +61,73 @@ angular.module('clickApp.controllers').controller('gameSetupCtrl', ['$scope', 'g
     })();
   };
 
-  $scope.doToggleLayer = function doToggleLayer(l) {
+  $scope.doToggleLayer = function (l) {
     $scope.doExecuteCommand('setLayers', 'toggle', l);
+  };
+
+  $scope.onAmbianceChange = function () {
+    $scope.category = R.head(R.keys($scope.terrains[$scope.ambiance]));
+    $scope.onCategoryChange();
+  };
+  $scope.onCategoryChange = function () {
+    $scope.entry = R.head(R.keys($scope.terrains[$scope.ambiance][$scope.category]));
+    $scope.onEntryChange();
+  };
+  $scope.onEntryChange = function () {};
+  $scope.data_ready.then(function () {
+    $scope.ambiance = R.head(R.keys($scope.terrains));
+    $scope.onAmbianceChange();
+  });
+  function getTerrainPath() {
+    return [$scope.ambiance, $scope.category, $scope.entry];
+  }
+  $scope.getTerrain = function () {
+    return R.path([$scope.ambiance, $scope.category, $scope.entry], $scope.terrains);
+  };
+  $scope.doCreateTerrain = function () {
+    var terrain_path = getTerrainPath();
+    $scope.create.terrain = {
+      base: { x: 240, y: 240, r: 0 },
+      terrains: [{
+        info: terrain_path,
+        x: 0, y: 0, r: 0
+      }]
+    };
+    console.log('createTerrain', $scope.create.terrain);
+    $scope.doSwitchToMode('CreateTerrain');
+  };
+  $scope.doResetTerrain = function () {
+    return R.pipePromise(function () {
+      return gameTerrainsService.all($scope.game.terrains);
+    }, R.pluck('state'), R.pluck('stamp'), function (stamps) {
+      return gameService.executeCommand('deleteTerrain', stamps, $scope, $scope.game);
+    })().catch(function (reason) {
+      $scope.gameEvent('modeActionError', reason);
+      return self.Promise.reject(reason);
+    });
+  };
+
+  $scope.doImportBoardFile = function (files) {
+    console.log('doImportBoardFile', files);
+    R.pipeP(fileImportService.read$('json'), function (board_info) {
+      console.log(board_info);
+      return R.pipePromise(function () {
+        if (!board_info.board) return null;
+        return gameService.executeCommand('setBoard', board_info.board, $scope, $scope.game);
+      }, function () {
+        if (R.isEmpty(R.pathOr([], ['terrain', 'terrains'], board_info))) {
+          return null;
+        }
+        return R.pipeP(function () {
+          return $scope.doResetTerrain();
+        }, function () {
+          return gameService.executeCommand('createTerrain', board_info.terrain, false, $scope, $scope.game);
+        })();
+      })();
+    })(files[0]).catch(function (reason) {
+      $scope.gameEvent('modeActionError', reason);
+      return self.Promise.reject(reason);
+    });
   };
 }]);
 //# sourceMappingURL=setupCtrl.js.map

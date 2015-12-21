@@ -305,6 +305,7 @@ angular.module('clickApp.controllers')
       $scope.digestOnGameEvent('changeScenario', $scope);
       $scope.digestOnGameEvent('createModel', $scope);
       $scope.digestOnGameEvent('createTemplate', $scope);
+      $scope.digestOnGameEvent('createTerrain', $scope);
       $scope.digestOnGameEvent('switchMode', $scope);
       $scope.digestOnGameEvent('gameLoaded', $scope);
       
@@ -386,6 +387,9 @@ angular.module('clickApp.controllers')
         'dragStartTemplate',
         'dragTemplate',
         'dragEndTemplate',
+        'dragStartTerrain',
+        'dragTerrain',
+        'dragEndTerrain',
         // 'clickMap',
         // 'rightClickMap',
         'moveMap',

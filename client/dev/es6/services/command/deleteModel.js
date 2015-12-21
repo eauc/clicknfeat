@@ -14,11 +14,8 @@ angular.module('clickApp.services')
             (stamps) => {
               return gameModelsService.findAnyStamps(stamps, game.models);
             },
-            R.spy('find any'),
             R.reject(R.isNil),
-            R.spy('not nil'),
             R.map(modelService.saveState),
-            R.spy('save'),
             (states) => {
               var ctxt = {
                 models: states,

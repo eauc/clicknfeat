@@ -10,6 +10,8 @@ angular.module('clickApp.services')
     'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
+    'gameTerrains',
+    'gameTerrainSelection',
     function gameServiceFactory(jsonStringifierService,
                                 commandsService,
                                 gameConnectionService,
@@ -19,7 +21,9 @@ angular.module('clickApp.services')
                                 gameModelSelectionService,
                                 gameRulerService,
                                 gameTemplatesService,
-                                gameTemplateSelectionService) {
+                                gameTemplateSelectionService,
+                                gameTerrainsService,
+                                gameTerrainSelectionService) {
       var gameService = {
         create: function gameCreate(player1) {
           var new_game = {
@@ -53,7 +57,9 @@ angular.module('clickApp.services')
             model_selection: gameModelSelectionService.create(),
             templates: gameTemplatesService.create(),
             template_selection: gameTemplateSelectionService.create(),
-            layers: gameLayersService.create(),
+            terrains: gameTerrainsService.create(),
+            terrain_selection: gameTerrainSelectionService.create(),
+            layers: gameLayersService.create()
           }, data);
           game = gameConnectionService.create(game);
           return gameReplayAll(scope, game)

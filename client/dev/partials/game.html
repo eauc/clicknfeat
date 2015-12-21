@@ -116,6 +116,14 @@
                  xlink:href="{{game.board.img || ''}}">
           </image>
         </g>
+        <g id="game-terrains-locked"
+           ng-show="game.layers | gameLayers:'isDisplayed':'b'"
+           click-game-terrains-list="locked">
+        </g>
+        <g id="game-terrains"
+           ng-show="game.layers | gameLayers:'isDisplayed':'b'"
+           click-game-terrains-list="active">
+        </g>
         <g id="game-deploiement"
            ng-show="game.layers | gameLayers:'isDisplayed':'d'"
            ng-include="'partials/game/deploiement.html'">
@@ -162,6 +170,11 @@
         </g>
         <g id="game-los"
            click-game-los>
+        </g>
+        <g id="game-create-terrains">
+          <g ng-repeat="(index, terrain) in create.terrain.terrains"
+             click-game-create-terrain>
+          </g>
         </g>
         <g id="game-create-models">
           <g ng-repeat="(index, model) in create.model.models"

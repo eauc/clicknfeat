@@ -16,9 +16,12 @@ describe('select model', function() {
 
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       
+        this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
+      
         this.scope = { game: { models: 'models',
                                model_selection: 'selection',
-                               template_selection: 'template_selection'
+                               template_selection: 'template_selection',
+                               terrain_selection: 'terrain_selection'
                              }
                      };
         this.scope.gameEvent = jasmine.createSpy('gameEvent');
@@ -42,6 +45,13 @@ describe('select model', function() {
           .toHaveBeenCalledWith('local', this.scope, 'template_selection');
         expect(this.scope.game.template_selection)
           .toBe('gameTemplateSelection.clear.returnValue');
+      });
+
+      it('should clear gameTerrainSelection', function() {
+        expect(this.gameTerrainSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
+        expect(this.scope.game.terrain_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
       });
     });
 
@@ -81,6 +91,13 @@ describe('select model', function() {
           .toHaveBeenCalledWith('local', this.scope, 'template_selection');
         expect(this.scope.game.template_selection)
           .toBe('gameTemplateSelection.clear.returnValue');
+      });
+
+      it('should clear gameTerrainSelection', function() {
+        expect(this.gameTerrainSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
+        expect(this.scope.game.terrain_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
       });
     });
 
@@ -161,6 +178,20 @@ describe('select model', function() {
           .toHaveBeenCalledWith('setModelSelection', 'set', ['stamp'],
                                 this.scope, this.scope.game);
         expect(this.ret).toBe('game.executeCommand.returnValue');
+      });
+
+      it('should clear gameTemplateSelection', function() {
+        expect(this.gameTemplateSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'template_selection');
+        expect(this.scope.game.template_selection)
+          .toBe('gameTemplateSelection.clear.returnValue');
+      });
+
+      it('should clear gameTerrainSelection', function() {
+        expect(this.gameTerrainSelectionService.clear)
+          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
+        expect(this.scope.game.terrain_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
       });
     });
   });

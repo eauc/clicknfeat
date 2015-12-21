@@ -1,0 +1,22 @@
+{
+  "Snow": {
+    "Hills": {
+      "hill1": {
+        "name": "Hill 1",
+        "img": {
+          "width": 105,
+          "height": 127,
+          "link": "/data/terrain/snow/hill/snow_hill_01.png"
+        }
+      },
+      "hill2": {
+        "name": "Hill 2",
+        "img": {
+          "width": 91,
+          "height": 123,
+          "link": "/data/terrain/snow/hill/snow_hill_02.png"
+        }
+      }
+    }
+  }
+}

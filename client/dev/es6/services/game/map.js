@@ -4,8 +4,10 @@ angular.module('clickApp.services')
   .factory('gameMap', [
     'gameModels',
     'gameTemplates',
+    'gameTerrains',
     function gameMapServiceFactory(gameModelsService,
-                                   gameTemplatesService) {
+                                   gameTemplatesService,
+                                   gameTerrainsService) {
       var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
       var gameMapService = {
         isFlipped: function mapIsFlipped(map) {
@@ -52,24 +54,44 @@ angular.module('clickApp.services')
           if(event.target.classList.contains('template') &&
              event.target.hasAttribute('data-stamp')) {
             stamp = event.target.getAttribute('data-stamp');
-            return gameTemplatesService.findStamp(stamp, game.templates)
-              .then(function onFindTemplateStamp(template) {
+            return R.pipeP(
+              () => {
+                return gameTemplatesService.findStamp(stamp, game.templates);
+              },
+              (template) => {
                 return { type: 'Template',
                          target: template
                        };
-              })
-              .catch(R.always(not_found));
+              }
+            )().catch(R.always(not_found));
           }
           if(event.target.classList.contains('model-base') &&
              event.target.hasAttribute('data-stamp')) {
             stamp = event.target.getAttribute('data-stamp');
-            return gameModelsService.findStamp(stamp, game.models)
-              .then(function onFindModelStamp(model) {
+            return R.pipeP(
+              () => {
+                return gameModelsService.findStamp(stamp, game.models);
+              },
+              (model) => {
                 return { type: 'Model',
                          target: model
                        };
-              })
-              .catch(R.always(not_found));
+              }
+            )().catch(R.always(not_found));
+          }
+          if(event.target.classList.contains('terrain-image') &&
+             event.target.hasAttribute('data-stamp')) {
+            stamp = event.target.getAttribute('data-stamp');
+            return R.pipeP(
+              () => {
+                return gameTerrainsService.findStamp(stamp, game.terrains);
+              },
+              (terrain) => {
+                return { type: 'Terrain',
+                         target: terrain
+                       };
+              }
+            )().catch(R.always(not_found));
           }
           return self.Promise.resolve(not_found);
         },

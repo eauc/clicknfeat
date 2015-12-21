@@ -7,11 +7,13 @@ angular.module('clickApp.controllers')
     'game',
     'gameModels',
     'gameModelSelection',
+    'gameTerrains',
     function($scope,
              fileExportService,
              gameService,
              gameModelsService,
-             gameModelSelectionService) {
+             gameModelSelectionService,
+             gameTerrainsService) {
       console.log('init gameSaveCtrl');
       
       $scope.save = {
@@ -19,7 +21,11 @@ angular.module('clickApp.controllers')
         url: null
       };
       $scope.selection_save = {
-        name: 'models.json',
+        name: 'clicknfeat_models.json',
+        url: null
+      };
+      $scope.board_save = {
+        name: 'clicknfeat_board.json',
         url: null
       };
       function cleanup() {
@@ -27,6 +33,8 @@ angular.module('clickApp.controllers')
         $scope.save.url = null;
         fileExportService.cleanup($scope.selection_save.url);
         $scope.selection_save.url = null;
+        fileExportService.cleanup($scope.board_save.url);
+        $scope.board_save.url = null;
       }
       $scope.updateExports = function updateExports() {
         cleanup();
@@ -46,6 +54,25 @@ angular.module('clickApp.controllers')
             $scope.$digest();
           }
         )($scope.game.models);
+
+        let board = {
+          board: $scope.game.board,
+          terrain: {
+            base: { x: 0, y: 0, r: 0 },
+            terrains: R.pipe(
+              gameTerrainsService.all,
+              R.pluck('state'),
+              R.map(R.pick(['x','y','r','info','lk']))
+            )($scope.game.terrains)
+          }
+        };
+        R.pipeP(
+          fileExportService.generate$('json'),
+          function(url) {
+            $scope.board_save.url = url;
+            $scope.$digest();
+          }
+        )(board);
       };
       $scope.$on('$destroy', cleanup);
       $scope.onGameLoad.then(function onGameLoad() {

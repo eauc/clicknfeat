@@ -1,0 +1,45 @@
+#game {
+    .create-terrain {
+        fill: $create-terrain-fill-color;
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    .terrain-edge {
+        stroke-width: 0;
+        fill: transparent;
+        pointer-events: none;
+    }
+    .terrain-image {
+    }
+
+    .remote-selection {
+        .terrain-edge {
+            stroke-width: 0.75px;
+            stroke: $selection-remote-stroke-color;
+        }
+    }
+    
+    .local-selection {
+        .terrain-edge {
+            stroke-width: 0.75px;
+            stroke: $selection-local-stroke-color;
+        }
+    }    
+
+    #game-terrains-locked {
+        .terrain-edge {
+            stroke-dasharray: 4 10;
+        }
+        .remote-selection {
+            .terrain-edge {
+                stroke-width: 0;
+            }
+        }
+        .local-selection {
+            .terrain-edge {
+                stroke-width: 0.75px;
+            }
+        }    
+    }
+}
