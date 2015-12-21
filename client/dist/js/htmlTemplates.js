@@ -7,6 +7,11 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
   );
 
 
+  $templateCache.put('partials/directives/compat_check.html',
+    "<p class=compat-warning ng-show=compat_error>Your browser is missing crucial features ({{compat_error.join(', ')}}). You should update it.</p>"
+  );
+
+
   $templateCache.put('partials/directives/game_chat_box.html',
     "<div><form ng-submit=doSendChatMessage()><div class=input-group><span class=input-group-btn><button type=submit class=\"btn btn-default\">Send</button></span> <input class=form-control placeholder=Msg... ng-model=\"chat.msg\"></div></form><div class=chat-list><div class=chat ng-repeat=\"c in game.chat.slice(-10).reverse() track by c.stamp\">{{ c.from }} ➝ {{c.msg}}</div></div></div>"
   );

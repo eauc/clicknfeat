@@ -8,12 +8,14 @@
   </head>
   <body ng-controller="mainCtrl">
     <!--[if IE]>
-       <p class="ie-warning">
+       <p class="compat-warning">
          You're using Internet Explorer.
          This browser is not supported.
          You should use Chrome or Firefox instead.
        </p>
     <![endif]-->
+    <click-compat-check>
+    </click-compat-check>
     <nav ng-hide="currentState().data.hide_nav"
          class="navbar navbar-default">
       <div class="container-fluid">
