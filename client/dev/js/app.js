@@ -81,6 +81,11 @@ angular.module('clickApp', ['ui.router', 'clickApp.controllers', 'clickApp.servi
     url: '/debug',
     templateUrl: 'partials/debug.html',
     controller: 'debugCtrl'
+  }).state('info', {
+    url: '/info',
+    templateUrl: 'partials/info.html',
+    controller: 'infoCtrl',
+    data: {}
   });
 }]).config(['$compileProvider', function ($compileProvider) {
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|blob):/);

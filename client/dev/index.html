@@ -38,6 +38,9 @@
                      {{userIsValid() ? '' : 'disabled'}}">
             <a href="#/debug">Debug</a>
           </li>
+          <li class="{{stateIs('info') ? 'active' : ''}}">
+            <a href="#/info">Info</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -73,6 +76,7 @@
     <script src="js/controllers/game/onlineCtrl.js"></script>
     <script src="js/controllers/game/saveCtrl.js"></script>
     <script src="js/controllers/game/setupCtrl.js"></script>
+    <script src="js/controllers/infoCtrl.js"></script>
     <script src="js/controllers/loungeCtrl.js"></script>
     <script src="js/controllers/settingsCtrl.js"></script>
     <script src="js/controllers/settings/bindingsCtrl.js"></script>

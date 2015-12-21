@@ -105,6 +105,12 @@ angular.module('clickApp', [
         templateUrl: 'partials/debug.html',
         controller: 'debugCtrl'
       })
+      .state('info', {
+        url: '/info',
+        templateUrl: 'partials/info.html',
+        controller: 'infoCtrl',
+        data: {}
+      })
     ;
   }
 ]).config([
