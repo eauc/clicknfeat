@@ -58,6 +58,12 @@ angular.module('clickApp.directives')
             };
             function mouseDownMap(event) {
               log('mouseDownMap', event);
+              let inputs = [
+                ...document.querySelectorAll('input'),
+                ...document.querySelectorAll('select'),
+                ...document.querySelectorAll('textarea'),
+              ];
+              R.forEach((e) => { e.blur(); }, inputs);
               event.preventDefault();
               if(event.which !== 1) return;
 
