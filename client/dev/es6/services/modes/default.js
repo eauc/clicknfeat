@@ -20,6 +20,16 @@ angular.module('clickApp.services')
                                        gameModelsService,
                                        gameModelSelectionService,
                                        gameTerrainSelectionService) {
+      let DEFAULT_MOVES = {
+        DragEpsilon: 3
+      };
+      let MOVES = R.clone(DEFAULT_MOVES);
+      settingsService.register('Moves',
+                               'Default',
+                               DEFAULT_MOVES,
+                               function(moves) {
+                                 R.extend(MOVES, moves);
+                               });
       var default_actions = Object.create(commonModeService.actions);
       function clearTerrainSelection(scope) {
         scope.game.terrain_selection = gameTerrainSelectionService
@@ -141,6 +151,7 @@ angular.module('clickApp.services')
         actions: default_actions,
         buttons: default_buttons,
         bindings: default_bindings,
+        moves: () => MOVES
       };
       modesService.registerMode(default_mode);
       settingsService.register('Bindings',

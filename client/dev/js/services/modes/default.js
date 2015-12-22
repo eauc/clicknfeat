@@ -1,6 +1,13 @@
 'use strict';
 
 angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings', 'commonMode', 'game', 'template', 'gameTemplateSelection', 'gameModels', 'gameModelSelection', 'gameTerrainSelection', function defaultModeServiceFactory(modesService, settingsService, commonModeService, gameService, templateService, gameTemplateSelectionService, gameModelsService, gameModelSelectionService, gameTerrainSelectionService) {
+  var DEFAULT_MOVES = {
+    DragEpsilon: 3
+  };
+  var MOVES = R.clone(DEFAULT_MOVES);
+  settingsService.register('Moves', 'Default', DEFAULT_MOVES, function (moves) {
+    R.extend(MOVES, moves);
+  });
   var default_actions = Object.create(commonModeService.actions);
   function clearTerrainSelection(scope) {
     scope.game.terrain_selection = gameTerrainSelectionService.clear('local', scope, scope.game.terrain_selection);
@@ -98,7 +105,10 @@ angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings',
     },
     actions: default_actions,
     buttons: default_buttons,
-    bindings: default_bindings
+    bindings: default_bindings,
+    moves: function moves() {
+      return MOVES;
+    }
   };
   modesService.registerMode(default_mode);
   settingsService.register('Bindings', default_mode.name, default_default_bindings, function (bs) {

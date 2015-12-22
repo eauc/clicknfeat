@@ -5,9 +5,11 @@ angular.module('clickApp.directives')
     '$window',
     'gameMap',
     'terrain',
+    'defaultMode',
     function($window,
              gameMapService,
-             terrainService) {
+             terrainService,
+             defaultModeService) {
       function _eventModifiers(e) {
         var modifiers = [];
         
@@ -76,9 +78,14 @@ angular.module('clickApp.directives')
               event.preventDefault();
               if(event.which !== 1) return;
 
+              drag.now = gameMapService.eventToMapCoordinates(map, event);
+              if(!drag.active &&
+                 Math.abs(drag.now.x - drag.start.x) < defaultModeService.moves().DragEpsilon &&
+                 Math.abs(drag.now.y - drag.start.y) < defaultModeService.moves().DragEpsilon) {
+                return;
+              }
               var emit = drag.active ? 'drag' : 'dragStart';
               drag.active = true;
-              drag.now = gameMapService.eventToMapCoordinates(map, event);
 
               if('Terrain' === drag.target.type &&
                  terrainService.isLocked(drag.target.target)) {

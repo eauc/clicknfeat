@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gameMap', 'terrain', function ($window, gameMapService, terrainService) {
+angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gameMap', 'terrain', 'defaultMode', function ($window, gameMapService, terrainService, defaultModeService) {
   function _eventModifiers(e) {
     var modifiers = [];
 
@@ -68,9 +68,12 @@ angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gam
           event.preventDefault();
           if (event.which !== 1) return;
 
+          drag.now = gameMapService.eventToMapCoordinates(map, event);
+          if (!drag.active && Math.abs(drag.now.x - drag.start.x) < defaultModeService.moves().DragEpsilon && Math.abs(drag.now.y - drag.start.y) < defaultModeService.moves().DragEpsilon) {
+            return;
+          }
           var emit = drag.active ? 'drag' : 'dragStart';
           drag.active = true;
-          drag.now = gameMapService.eventToMapCoordinates(map, event);
 
           if ('Terrain' === drag.target.type && terrainService.isLocked(drag.target.target)) {
             drag.target = { type: 'Map',
