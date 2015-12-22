@@ -9,9 +9,9 @@ angular.module('clickApp.directives')
         [ 'c', '/data/icons/Corrosion.png' ],
         [ 'd', '/data/icons/BoltBlue.png' ],
         [ 'f', '/data/icons/Fire.png' ],
-        [ 'r', '/data/icons/BoltYellow.png' ],
+        [ 'e', '/data/icons/BoltYellow.png' ],
         [ 'k', '/data/icons/KD.png' ],
-        [ 's', '/data/icons/Stationary.png' ],
+        [ 't', '/data/icons/Stationary.png' ],
       ];
 
       return {
