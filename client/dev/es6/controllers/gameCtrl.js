@@ -67,7 +67,11 @@ angular.module('clickApp.controllers')
       var event_loading_queue = [];
       $scope.gameEvent = function gameEvent(...args) {
         var [event] = args;
-        if(event === 'gameLoading') game_is_loading = true;
+        if(event === 'gameLoading') {
+          game_is_loading = true;
+          pubSubService.publish.apply(null, R.append(game_event_channel, args));
+          return;
+        }
 
         if(event === 'gameLoaded') {
           R.pipe(

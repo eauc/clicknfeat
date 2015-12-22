@@ -41,7 +41,11 @@ angular.module('clickApp.controllers').controller('gameCtrl', ['$scope', '$state
 
     var event = args[0];
 
-    if (event === 'gameLoading') game_is_loading = true;
+    if (event === 'gameLoading') {
+      game_is_loading = true;
+      pubSubService.publish.apply(null, R.append(game_event_channel, args));
+      return;
+    }
 
     if (event === 'gameLoaded') {
       R.pipe(R.reverse, R.uniqBy(R.head), R.reverse, R.forEach(function (args) {
