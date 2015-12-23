@@ -18,6 +18,11 @@
         "type": "wardude",
         "fury": 8,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/cephalyx/casters/Thexus1.png"
+          }
+        ],
         "damage": {
           "n": 15
         }

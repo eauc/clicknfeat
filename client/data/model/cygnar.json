@@ -303,6 +303,11 @@
         "type": "wardude",
         "focus": 6,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/cygnar/casters/Stryker3.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -313,6 +318,11 @@
         "type": "wardude",
         "focus": 6,
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/cygnar/casters/Sturgis1.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -432,6 +442,11 @@
         "name": "Dynamo",
         "type": "jack",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/cygnar/jacks/Dynamo.png"
+          }
+        ],
         "damage": {
           "type": "jack",
           "1": [ null, "b",  "b",  "b",  "l", null ],
@@ -638,6 +653,11 @@
         "name": "Reliant",
         "type": "jack",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/cygnar/jacks/Reliant.png"
+          }
+        ],
         "damage": {
           "type": "jack",
           "1": [ null,  "b",  "b",  "b",  "l", null ],
@@ -1365,7 +1385,7 @@
         "base": "small",
         "img": [
           {
-            "link": "/data/model/cygnar/solos/JourneymanWarcaster_Girl.png"
+            "link": "/data/model/cygnar/solos/Allison_Jakes.png"
           }
         ],
         "damage": {

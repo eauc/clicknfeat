@@ -118,6 +118,18 @@
         "type": "wardude",
         "focus": 7,
         "base": "huge",
+        "img": [
+          {
+            "width": 120,
+            "height": 120,
+            "link": "/data/model/cryx/casters/Deneghra3.png"
+          },
+          {
+            "width": 120,
+            "height": 120,
+            "link": "/data/model/cryx/casters/Deneghra3_no_wings.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -180,6 +192,11 @@
         "type": "wardude",
         "focus": 7,
         "base": "large", 
+        "img": [
+          {
+            "link": "/data/model/cryx/casters/Goreshade3.png"
+          }
+        ],
         "damage": {
           "n": 17
         }
@@ -272,6 +289,11 @@
         "type": "wardude",
         "focus": 6,
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/cryx/casters/Sturgis2.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -375,6 +397,11 @@
         "name": "Barathrum",
         "type": "jack",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/cryx/jacks/Barathrum.png"
+          }
+        ],
         "damage": {
           "type": "jack",
           "1": [ null, null,  "b",  "b",  "l", null ],
@@ -560,6 +587,11 @@
         "name": "Inflictor",
         "type": "jack",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/cryx/jacks/Inflictor.png"
+          }
+        ],
         "damage": {
           "type": "jack",
           "1": [ null, null,  "b",  "b",  "l", null ],
@@ -852,11 +884,7 @@
               "base": "large",
               "img": [
                 {
-                  "link": "/data/model/cryx/units/BaneRider.png"
-                },
-                {
-                  "type": "leader",
-                  "link": "/data/model/cryx/units/BaneRiderLeader.png"
+                  "link": "/data/model/cryx/units/Bane_Rider.png"
                 }
               ],
               "damage": {
@@ -888,6 +916,11 @@
               "fk_name": "Skarlock Commander",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cryx/solos/Skarlock_Commander.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1044,6 +1077,11 @@
               "fk_name": "Skarlock Commander",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cryx/solos/Skarlock_Commander.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1317,6 +1355,11 @@
         "type": "wardude",
         "base": "small",
         "focus": 4,
+        "img": [
+          {
+            "link": "/data/model/cryx/solos/Aiakos.png"
+          }
+        ],
         "damage": {
           "n": 5
         }

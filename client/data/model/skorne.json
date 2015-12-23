@@ -210,6 +210,13 @@
         "type": "wardude",
         "fury": 5,
         "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/skorne/locks/Xerxis2.png"
+          }
+        ],
         "damage": {
           "n": 19
         }
@@ -292,6 +299,11 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/skorne/beasts/Aradus_Sentinel.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [  "b",  "b",  "b", null, null, null ],

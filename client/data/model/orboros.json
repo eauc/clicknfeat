@@ -40,6 +40,11 @@
         "type": "wardude",
         "fury": 6,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Bradigus1.png"
+          }
+        ],
         "damage": {
           "n": 17
         }
@@ -93,6 +98,21 @@
           "n": 17
         }
       },
+      "Kaya1": {
+        "name": "Kaya1 (Kaya the Wildborne)",
+        "fk_name": "Kaya the Wildborne",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Kaya1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
       "Kaya2": {
         "name": "Kaya2 (Kaya the Moonhunter & Laris)",
         "fk_name": "Kaya the Moonhunter & Laris",
@@ -137,21 +157,6 @@
           }
         }
       },
-      "Kaya1": {
-        "name": "Kaya1 (Kaya the Wildborne)",
-        "fk_name": "Kaya the Wildborne",
-        "type": "wardude",
-        "fury": 6,
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/orboros/locks/Kaya1.png"
-          }
-        ],
-        "damage": {
-          "n": 16
-        }
-      },
       "Kromac1": {
         "name": "Kromac1 (Kromac the Ravenous)",
         "fk_name": "Kromac the Ravenous",
@@ -160,10 +165,10 @@
         "base": "medium",
         "img": [
           {
-            "link": "/data/model/orboros/locks/Kromac.png"
+            "link": "/data/model/orboros/locks/Kromac1.png"
           },
           {
-            "link": "/data/model/orboros/locks/Kromac_Beast.png"
+            "link": "/data/model/orboros/locks/Kromac1_Beast.png"
           }
         ],
         "damage": {
@@ -176,6 +181,11 @@
         "type": "wardude",
         "fury": 7,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Kromac2.png"
+          }
+        ],
         "damage": {
           "n": 19
         }

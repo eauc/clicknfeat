@@ -385,6 +385,13 @@
         "type": "beast",
         "fury": 5,
         "base": "huge",
+        "img": [
+          {
+            "width": 84,
+            "height": 84,
+            "link": "/data/model/trollblood/beasts/Glacier_King.png"
+          }
+        ],
         "damage": {
           "type": "gargantuan",
           "1": [  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],

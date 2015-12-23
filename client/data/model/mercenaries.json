@@ -1352,6 +1352,11 @@
         "type": "wardude",
         "focus": 4,
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/mercenaries/solos/GastoneCrosse.png"
+          }
+        ],
         "damage": {
           "n": 5
         }

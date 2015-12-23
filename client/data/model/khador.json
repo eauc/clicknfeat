@@ -51,6 +51,11 @@
               "type": "wardude",
               "focus": 6,
               "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Butcher3.png"
+                }
+              ],
               "damage": {
                 "n": 20
               }
@@ -61,6 +66,11 @@
               "name": "War Argus 1",
               "type": "solo",
               "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Butcher3_Argus.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -69,6 +79,11 @@
               "name": "War Argus 2",
               "type": "solo",
               "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Butcher3_Argus.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -300,6 +315,11 @@
               "type": "wardude",
               "fury": 7,
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Zerkova2.png"
+                }
+              ],
               "damage": {
                 "n": 16
               }
@@ -310,6 +330,11 @@
               "name": "Reaver 1",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Zerkova2_Guard1.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -318,6 +343,11 @@
               "name": "Reaver 2",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/khador/casters/Zerkova2_Guard2.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -628,6 +658,11 @@
         "name": "Ruin",
         "type": "jack",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/khador/jacks/Ruin.png"
+          }
+        ],
         "damage": {
           "type": "jack",
           "1": [ "b",  "b",  "b",  "b",  "l", null ],
@@ -1356,6 +1391,11 @@
         "type": "wardude",
         "focus": 4,
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/khador/solos/Andrei_Malakov.png"
+          }
+        ],
         "damage": {
           "n": 5
         }

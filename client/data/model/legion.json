@@ -24,7 +24,12 @@
         "fk_name": "Absylonia, Daughter of Everblight",
         "type": "wardude",
         "fury": 6,
-        "base": "medium",
+        "base": "medium", 
+        "img": [
+          {
+            "link": "/data/model/legion/warlocks/Absylonia2.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -95,6 +100,13 @@
         "type": "wardude",
         "fury": 5,
         "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/legion/warlocks/Lylyth3.png"
+          }
+        ],
         "damage": {
           "n": 18
         }
@@ -330,6 +342,13 @@
         "type": "beast",
         "fury": 5,
         "base": "huge",
+        "img": [
+          {
+            "width": 116.667,
+            "height": 116.667,
+            "link": "/data/model/legion/beasts/Blight_Bringer.png"
+          }
+        ],
         "damage": {
           "type": "gargantuan",
           "1": [ "b", "b", "b", "b", "b", "b",  "b", null, null, null, null, null, null ],
@@ -487,7 +506,14 @@
         "base": "large",
         "img": [
           {
+            "width": 217,
+            "height": 217,
             "link": "/data/model/legion/beasts/Neraph.png"
+          },
+          {
+            "width": 217,
+            "height": 217,
+            "link": "/data/model/legion/beasts/Neraph_no_wings.png"
           }
         ],
         "damage": {
@@ -688,6 +714,9 @@
         "img": [
           {
             "link": "/data/model/legion/beasts/Zuriel.png"
+          },
+          {
+            "link": "/data/model/legion/beasts/Zuriel_no_wings.png"
           }
         ],
         "damage": {

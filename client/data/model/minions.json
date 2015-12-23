@@ -80,6 +80,11 @@
         "type": "wardude",
         "fury": 7,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/minions/warlocks/Jaga_Jaga.png"
+          }
+        ],
         "damage": {
           "n": 16
         }
@@ -434,7 +439,16 @@
               "name": "Leader and Grunts",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/minions/units/Croak_Raider_Grunt.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "/data/model/minions/units/Croak_Raider_Leader.png"
+                }
+              ]
             }
           }
         }
@@ -487,6 +501,11 @@
               "fk_name": "Farrow Brigand Warlord",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/minions/units/Brigand_Warlord.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -742,6 +761,11 @@
         "fk_name": "Efaarit",
         "type": "solo",
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/minions/solos/Efaarit_Scout.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -816,6 +840,11 @@
         "fk_name": "Maximus",
         "type": "solo",
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/minions/solos/Maximus.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
@@ -1001,6 +1030,13 @@
         "fk_name": "Meat Th?resher",
         "type": "be",
         "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/minions/bes/Meat_Tresher.png"
+          }
+        ],
         "damage": {
           "n": 22
         }
@@ -1009,6 +1045,13 @@
         "name": "Sacral Vault",
         "type": "be",
         "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/minions/bes/Sacral_Vault.png"
+          }
+        ],
         "damage": {
           "n": 20
         }

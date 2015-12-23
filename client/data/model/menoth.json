@@ -32,6 +32,11 @@
         "type": "wardude",
         "focus": 6,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/menoth/casters/Anson1.png"
+          }
+        ],
         "damage": {
           "n": 19
         }
@@ -909,6 +914,11 @@
               "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "large",
+              "img": [
+                {
+                  "link": "/data/model/menoth/units/Flame_Bringer.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1280,6 +1290,11 @@
         "fk_name": "Ph?yrrh?us, Flameguard Hero",
         "type": "solo",
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/menoth/solos/Pyrrhus.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1302,6 +1317,11 @@
         "type": "wardude",
         "focus": 4,
         "base": "small",
+        "img": [
+          {
+            "link": "/data/model/menoth/solos/Tristan_Durant.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
