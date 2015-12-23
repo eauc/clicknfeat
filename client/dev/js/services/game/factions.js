@@ -95,7 +95,7 @@ angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'ht
         var grunts = buildGrunts(entries, nb_grunts);
         var others = buildOthers(entries, nb_repeat);
         var models = [].concat(_toConsumableArray(grunts), _toConsumableArray(others));
-        updateUnit(entries, models);
+        updateUnit(entries, R.length(grunts), models);
         return models;
       }
       function buildGrunts(entries, nb_grunts) {
@@ -142,9 +142,9 @@ angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'ht
         name: null,
         number: 0
       };
-      function updateUnit(entries, models) {
+      function updateUnit(entries, nb_grunts, models) {
         var unit_name = findUnitName(entries);
-        if (R.isNil(unit_name) || unit_name !== last_unit.name) {
+        if (R.isNil(unit_name) || unit_name !== last_unit.name || nb_grunts > 0) {
           last_unit.number++;
         }
         last_unit.name = unit_name;

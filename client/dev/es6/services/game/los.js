@@ -33,6 +33,10 @@ angular.module('clickApp.services')
         origin: function gameLosOrigin(los) {
           return R.path(['remote', 'origin'], los);
         },
+        clearOrigin: function gameLosClearOrigin(scope, game, los) {
+          return setOriginTarget(null, los.remote.target, null, false,
+                                 scope, game, los);
+        },
         setOrigin: function gameLosSetOrigin(origin_model, scope, game, los) {
           var origin = origin_model.state.stamp;
           var target = gameLosService.target(los);
@@ -48,6 +52,10 @@ angular.module('clickApp.services')
         },
         target: function gameLosTarget(los) {
           return R.path(['remote', 'target'], los);
+        },
+        clearTarget: function gameLosClearTarget(scope, game, los) {
+          return setOriginTarget(los.remote.origin, null, null, false,
+                                 scope, game, los);
         },
         setTarget: function gameLosSetTarget(target_model, scope, game, los) {
           var origin = gameLosService.origin(los);

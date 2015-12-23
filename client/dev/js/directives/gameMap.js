@@ -1,5 +1,7 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gameMap', 'terrain', 'defaultMode', function ($window, gameMapService, terrainService, defaultModeService) {
   function _eventModifiers(e) {
     var modifiers = [];
@@ -49,6 +51,10 @@ angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gam
         };
         function mouseDownMap(event) {
           log('mouseDownMap', event);
+          var inputs = [].concat(_toConsumableArray(document.querySelectorAll('input')), _toConsumableArray(document.querySelectorAll('select')), _toConsumableArray(document.querySelectorAll('textarea')));
+          R.forEach(function (e) {
+            e.blur();
+          }, inputs);
           event.preventDefault();
           if (event.which !== 1) return;
 

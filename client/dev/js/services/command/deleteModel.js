@@ -17,6 +17,9 @@ angular.module('clickApp.services').factory('deleteModelCommand', ['commands', '
         }, gameModelSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
           game.model_selection = selection;
 
+          R.forEach(function (stamp) {
+            scope.gameEvent('deleteModel-' + stamp);
+          }, stamps);
           scope.gameEvent('createModel');
           return ctxt;
         })(game.models);
@@ -33,6 +36,9 @@ angular.module('clickApp.services').factory('deleteModelCommand', ['commands', '
         }, gameModelSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
           game.model_selection = selection;
 
+          R.forEach(function (stamp) {
+            scope.gameEvent('deleteModel-' + stamp);
+          }, stamps);
           scope.gameEvent('createModel');
         })();
       })(ctxt.models);

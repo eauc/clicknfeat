@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', function (modelService) {
-  var EFFECTS = [['b', '/data/icons/Blind.png'], ['c', '/data/icons/Corrosion.png'], ['d', '/data/icons/BoltBlue.png'], ['f', '/data/icons/Fire.png'], ['r', '/data/icons/BoltYellow.png'], ['k', '/data/icons/KD.png'], ['s', '/data/icons/Stationary.png']];
+  var EFFECTS = [['b', '/data/icons/Blind.png'], ['c', '/data/icons/Corrosion.png'], ['d', '/data/icons/BoltBlue.png'], ['f', '/data/icons/Fire.png'], ['e', '/data/icons/BoltYellow.png'], ['k', '/data/icons/KD.png'], ['t', '/data/icons/Stationary.png']];
 
   return {
     create: function clickGameModelInconsCreate(svgNS, parent) {

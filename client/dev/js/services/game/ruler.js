@@ -31,6 +31,9 @@ angular.module('clickApp.services').factory('gameRuler', ['point', 'model', 'gam
     origin: function gameRulerOrigin(ruler) {
       return R.path(['remote', 'origin'], ruler);
     },
+    clearOrigin: function gameRulerClearOrigin(scope, ruler) {
+      return setOriginTarget(null, ruler.remote.target, ruler.remote.max, scope, ruler);
+    },
     setOrigin: function gameRulerSetOrigin(origin_model, scope, ruler) {
       var origin = origin_model.state.stamp;
       var target = gameRulerService.target(ruler);
@@ -48,6 +51,9 @@ angular.module('clickApp.services').factory('gameRuler', ['point', 'model', 'gam
     },
     targetReached: function gameRulerTargetReached(ruler) {
       return R.path(['remote', 'reached'], ruler);
+    },
+    clearTarget: function gameRulerClearTarget(scope, ruler) {
+      return setOriginTarget(ruler.remote.origin, null, null, scope, ruler);
     },
     setTarget: function gameRulerSetTarget(target_model, scope, ruler) {
       var origin = gameRulerService.origin(ruler);

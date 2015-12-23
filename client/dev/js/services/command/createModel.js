@@ -53,6 +53,9 @@ angular.module('clickApp.services').factory('createModelCommand', ['commands', '
       game.models = gameModelsService.removeStamps(stamps, game.models);
       game.model_selection = gameModelSelectionService.removeFrom('local', stamps, scope, game.model_selection);
       game.model_selection = gameModelSelectionService.removeFrom('remote', stamps, scope, game.model_selection);
+      R.forEach(function (stamp) {
+        scope.gameEvent('deleteModel-' + stamp);
+      }, stamps);
       scope.gameEvent('createModel');
     }
   };

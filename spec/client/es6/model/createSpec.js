@@ -432,6 +432,15 @@ describe('create model', function() {
                                 this.scope, 'gameModelSelection.removeFrom.returnValue');
       });
 
+      it('should emit deleteModel events', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp1');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp2');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp3');
+      });
+
       it('should emit createModel event', function() {
         expect(this.scope.gameEvent)
           .toHaveBeenCalledWith('createModel');

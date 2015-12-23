@@ -33,6 +33,7 @@ angular.module('clickApp.services')
                 (selection) => {
                   game.model_selection = selection;
                   
+                  R.forEach((stamp) => { scope.gameEvent('deleteModel-'+stamp); }, stamps);
                   scope.gameEvent('createModel');
                   return ctxt;
                 }
@@ -58,6 +59,7 @@ angular.module('clickApp.services')
                 (selection) => {
                   game.model_selection = selection;
                   
+                  R.forEach((stamp) => { scope.gameEvent('deleteModel-'+stamp); }, stamps);
                   scope.gameEvent('createModel');
                 }
               )();

@@ -122,15 +122,17 @@ angular.module('clickApp.controllers')
       function updateGameLosOriginTarget(on) {
         let game_los = {
           stamp: null,
-          unsubscribe: null
+          change: null,
+          delete: null
         };
         function cleanupLosListener(origin) {
-          if(game_los.stamp === origin ||
-             R.isNil(game_los.unsubscribe)) return;
+          if(game_los.stamp === origin) return;
           
-          console.log('unsubscribe Los listener', on, game_los.stamp);
-          game_los.unsubscribe();
-          game_los.unsubscribe = null;
+          console.log('unsubscribe Los listeners', on, game_los.stamp);
+          if(game_los.change) game_los.change();
+          game_los.change = null;
+          if(game_los.delete) game_los.delete();
+          game_los.delete = null;
           game_los.stamp = null;
         }
         $scope.onGameEvent('changeRemoteLos', (event, los) => {
@@ -142,12 +144,18 @@ angular.module('clickApp.controllers')
               R.isNil(stamp) ||
               game_los.stamp === stamp ) return;
           
-          let event_name = 'changeModel-'+stamp;
-          console.log('subscribe Los listener', on, event_name);
-          game_los.unsubscribe = pubSubService.subscribe(event_name, () => {
-            console.log('update LoS', on);
+          let change_event = 'changeModel-'+stamp;
+          game_los.change = pubSubService.subscribe(change_event, () => {
+            console.log('update LoS change', on);
             gameLosService.updateOriginTarget($scope, $scope.game, $scope.game.los);
           }, game_event_channel);
+          let delete_event = 'deleteModel-'+stamp;
+          game_los.delete = pubSubService.subscribe(delete_event, () => {
+            console.log('update LoS delete', on);
+            let cmd = (on === 'origin' ? 'clearOrigin' : 'clearTarget');
+            gameLosService[cmd]($scope, $scope.game, $scope.game.los);
+          }, game_event_channel);
+          console.log('subscribe Los listener', on, change_event, delete_event);
           game_los.stamp = stamp;
         }, $scope);
         $scope.$on('$destroy', () => {
@@ -160,15 +168,17 @@ angular.module('clickApp.controllers')
       function updateGameRulerOriginTarget(on) {
         let game_ruler = {
           stamp: null,
-          unsubscribe: null
+          change: null,
+          delete: null
         };
         function cleanupRulerListener(origin) {
-          if(game_ruler.stamp === origin ||
-             R.isNil(game_ruler.unsubscribe)) return;
+          if(game_ruler.stamp === origin) return;
           
           console.log('unsubscribe Ruler listener', on, game_ruler.stamp);
-          game_ruler.unsubscribe();
-          game_ruler.unsubscribe = null;
+          if(game_ruler.change) game_ruler.change();
+          game_ruler.change = null;
+          if(game_ruler.delete) game_ruler.delete();
+          game_ruler.delete = null;
           game_ruler.stamp = null;
         }
         $scope.onGameEvent('changeRemoteRuler', (event, ruler) => {
@@ -180,12 +190,21 @@ angular.module('clickApp.controllers')
               R.isNil(stamp) ||
               game_ruler.stamp === stamp ) return;
           
-          let event_name = 'changeModel-'+stamp;
-          console.log('subscribe Ruler listener', on, event_name);
-          game_ruler.unsubscribe = pubSubService.subscribe(event_name, () => {
-            console.log('update Ruler', on);
+          let change_event = 'changeModel-'+stamp;
+          game_ruler.change = pubSubService.subscribe(change_event, () => {
+            console.log('update Ruler change', on);
             gameRulerService.updateOriginTarget($scope, $scope.game.ruler);
           }, game_event_channel);
+          let delete_event = 'deleteModel-'+stamp;
+          game_ruler.delete = pubSubService.subscribe(delete_event, () => {
+            console.log('update Ruler delete', on);
+            let cmd = (on === 'origin' ? 'clearOrigin' : 'clearTarget');
+            gameRulerService[cmd]($scope, $scope.game.ruler)
+              .then((ruler) => {
+                $scope.game.ruler = ruler;
+              });
+          }, game_event_channel);
+          console.log('subscribe Ruler listener', on, change_event, delete_event);
           game_ruler.stamp = stamp;
         }, $scope);
         $scope.$on('$destroy', () => {

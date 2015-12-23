@@ -117,6 +117,17 @@ describe('delete model', function() {
         });
       });
 
+      it('should emit deleteModel event', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('deleteModel-stamp1');
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('deleteModel-stamp2');
+          expect(this.scope.gameEvent)
+            .toHaveBeenCalledWith('deleteModel-stamp3');
+        });
+      });
+
       it('should emit createModel event', function() {
         this.thenExpect(this.ret, function() {
           expect(this.scope.gameEvent)
@@ -196,6 +207,15 @@ describe('delete model', function() {
         expect(this.gameModelSelectionService.removeFrom)
           .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
                                 this.scope, 'gameModelSelection.removeFrom.returnValue');
+      });
+
+      it('should emit deleteModel event', function() {
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp1');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp2');
+        expect(this.scope.gameEvent)
+          .toHaveBeenCalledWith('deleteModel-stamp3');
       });
 
       it('should emit createModel event', function() {

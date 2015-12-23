@@ -624,7 +624,77 @@ describe('game ruler', function() {
       });
     });
 
-    when('setOrigin(<models>, <origin>, <scope>)', function() {
+    when('clearOrigin(<scope>)', function() {
+      this.ret = this.gameRulerService
+        .clearOrigin(this.scope, this.ruler);
+    }, function() {
+      beforeEach(function() {
+        this.ruler = {
+          remote: { start: { x: 0, y: 0 },
+                    end: { x: 1, y: 1 },
+                    max: 4,
+                    origin: 'origin',
+                    target: null
+                  }
+        };
+      });
+
+      it('should clear ruler origin', function() {
+        this.thenExpect(this.ret, function(result) {
+          expect(result.remote.start)
+            .toEqual(this.ruler.remote.start);
+          expect(result.remote.end)
+            .toEqual({ x: 1.0000000000000002, y: 1 });
+          expect(result.remote.length)
+            .toEqual(0.14);
+          expect(result.remote.max)
+            .toEqual(4);
+          expect(result.remote.origin)
+            .toBe(null);
+          expect(result.remote.target)
+            .toBe(null);
+          expect(result.remote.display)
+            .toBe(false);
+        });
+      });
+    });
+
+    when('clearTarget(<scope>)', function() {
+      this.ret = this.gameRulerService
+        .clearTarget(this.scope, this.ruler);
+    }, function() {
+      beforeEach(function() {
+        this.ruler = {
+          remote: { start: { x: 0, y: 0 },
+                    end: { x: 1, y: 1 },
+                    max: 4,
+                    origin: null,
+                    target: 'target'
+                  }
+        };
+      });
+
+      it('should clear ruler origin', function() {
+        this.thenExpect(this.ret, function(result) {
+          expect(result.remote.start)
+            .toEqual(this.ruler.remote.start);
+          expect(result.remote.end)
+            .toEqual({ x: 1.0000000000000002, y: 1 });
+          expect(result.remote.length)
+            .toEqual(0.14);
+          expect(result.remote.max)
+            .toEqual(4);
+          expect(result.remote.origin)
+            .toBe(null);
+          expect(result.remote.target)
+            .toBe(null);
+          expect(result.remote.display)
+            .toBe(false);
+        });
+      });
+    });
+
+    when('setOrigin(<origin>, <scope>)', function() {
       this.ret = this.gameRulerService
         .setOrigin(this.origin, this.scope, this.ruler);
     }, function() {
@@ -755,7 +825,7 @@ describe('game ruler', function() {
       });
     });
 
-    when('setOriginResetTarget(<models>, <origin>, <scope>)', function() {
+    when('setOriginResetTarget(<origin>, <scope>)', function() {
       this.ret = this.gameRulerService
         .setOriginResetTarget(this.origin, this.scope, this.ruler);
     }, function() {
@@ -799,7 +869,7 @@ describe('game ruler', function() {
       });
     });
 
-    when('setTarget(<models>, <target>, <scope>)', function() {
+    when('setTarget(<target>, <scope>)', function() {
       this.ret = this.gameRulerService
         .setTarget(this.target, this.scope, this.ruler);
     }, function() {

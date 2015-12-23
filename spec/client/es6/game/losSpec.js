@@ -415,6 +415,66 @@ describe('game los', function() {
       });
     });
 
+    when('clearOrigin(<scope>)', function() {
+      this.ret = this.gameLosService
+        .clearOrigin(this.scope, this.game, this.los);
+    }, function() {
+      beforeEach(function() {
+        this.los = this.gameLosService.create();
+        this.los.remote.origin = 'origin';
+      });
+
+      it('should clear origin', function() {
+        this.thenExpect(this.ret, (result) => {
+          expect(this.gameLosService.origin(result))
+            .toBe(null);
+        });
+      });
+
+      it('should reset envelopes', function() {
+        this.thenExpect(this.ret, (result) => {
+          expect(result.computed.envelope)
+          .toBe(null);
+          expect(result.computed.darkness)
+            .toEqual([]);
+          expect(result.computed.shadow)
+            .toEqual([]);
+          expect(result.remote.ignore)
+            .toEqual([]);
+        });
+      });
+    });
+
+    when('clearTarget(<scope>)', function() {
+      this.ret = this.gameLosService
+        .clearTarget(this.scope, this.game, this.los);
+    }, function() {
+      beforeEach(function() {
+        this.los = this.gameLosService.create();
+        this.los.remote.target = 'target';
+      });
+
+      it('should clear origin', function() {
+        this.thenExpect(this.ret, (result) => {
+          expect(this.gameLosService.target(result))
+            .toBe(null);
+        });
+      });
+
+      it('should reset envelopes', function() {
+        this.thenExpect(this.ret, (result) => {
+          expect(result.computed.envelope)
+          .toBe(null);
+          expect(result.computed.darkness)
+            .toEqual([]);
+          expect(result.computed.shadow)
+            .toEqual([]);
+          expect(result.remote.ignore)
+            .toEqual([]);
+        });
+      });
+    });
+
     when('setOriginResetTarget(<origin>, <scope>)', function() {
       this.ret = this.gameLosService
         .setOriginResetTarget(this.origin, this.scope, this.game, this.los);

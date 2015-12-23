@@ -96,6 +96,7 @@ angular.module('clickApp.services')
           game.model_selection =
             gameModelSelectionService.removeFrom('remote', stamps,
                                                  scope, game.model_selection);
+          R.forEach((stamp) => { scope.gameEvent('deleteModel-'+stamp); }, stamps);
           scope.gameEvent('createModel');
         }
       };

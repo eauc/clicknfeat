@@ -73,8 +73,8 @@ describe('load game', function() {
                                   },
               terrains: { active: [], locked: [] },
               terrain_selection: { local: [],
-                                 remote: []
-                               },
+                                   remote: []
+                                 },
               layers: ['b','d','s','m','t'],
             });
         });
