@@ -110,7 +110,7 @@ angular.module('clickApp.services')
             let grunts = buildGrunts(entries, nb_grunts);
             let others = buildOthers(entries, nb_repeat);
             let models = [...grunts, ...others];
-            updateUnit(entries, models);
+            updateUnit(entries, R.length(grunts), models);
             return models;
           }
           function buildGrunts(entries, nb_grunts) {
@@ -150,10 +150,11 @@ angular.module('clickApp.services')
             name: null,
             number: 0
           };
-          function updateUnit(entries, models) {
+          function updateUnit(entries, nb_grunts, models) {
             let unit_name = findUnitName(entries);
             if( R.isNil(unit_name) ||
-                unit_name !== last_unit.name ) {
+                unit_name !== last_unit.name ||
+                nb_grunts > 0 ) {
               last_unit.number++;
             }
             last_unit.name = unit_name;

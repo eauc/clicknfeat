@@ -128,6 +128,33 @@ describe('game import list', function() {
         //#####################################
         //#####################################
         //#####################################
+        [ 'simple unit consecutive',
+          {
+            'unit (?<nb_grunts>\\d+)': {
+              entries: { grunt: [ { path: 'grunt',
+                                    unit_name: 'unit',
+                                    base_radius: 7 }
+                                ]
+                       }
+            },
+          }, [
+            'unit 5',
+            'unit 2',
+          ].join('\n'), [
+            { user: 'toto', info: 'grunt', x:  7, y: 7, r: 0, dsp: [ 'l', 'i' ], u: 1 },
+            { user: 'toto', info: 'grunt', x: 21, y: 7, r: 0, u: 1 },
+            { user: 'toto', info: 'grunt', x: 35, y: 7, r: 0, u: 1 },
+            { user: 'toto', info: 'grunt', x: 49, y: 7, r: 0, u: 1 },
+            { user: 'toto', info: 'grunt', x: 63, y: 7, r: 0, u: 1 },
+            { user: 'toto', info: 'grunt', x: 77, y: 7, r: 0, u: 1 },
+            { user: 'toto', info: 'grunt', x: 91, y: 7, r: 0, dsp: [ 'l', 'i' ], u: 2 },
+            { user: 'toto', info: 'grunt', x: 105, y: 7, r: 0, u: 2 },
+            { user: 'toto', info: 'grunt', x: 119, y: 7, r: 0, u: 2 },
+          ]
+        ],
+        //#####################################
+        //#####################################
+        //#####################################
         [
           'unit with leader model',
           {
@@ -278,6 +305,7 @@ describe('game import list', function() {
             'unit 1',
             '* 2 unit_wa',
             '* unit_ua',
+            'unit 1',
             'other_unit 2',
             'solo',
           ].join('\n'), [
@@ -290,12 +318,15 @@ describe('game import list', function() {
             // does not increment unit number on new ref with same unit name
             { user: 'toto', info: 'officer', x: 63, y: 7, r: 0, u: 1 },
             { user: 'toto', info: 'standard', x: 77, y: 7, r: 0, u: 1 },
+            // increment unit number on same consecutive unit
+            { user: 'toto', info: 'grunt', x: 91, y: 7, r: 0, dsp: [ 'l', 'i' ], u: 2 },
+            { user: 'toto', info: 'grunt', x: 105, y: 7, r: 0, u: 2 },
             // increments unit number on new ref with different unit name
-            { user: 'toto', info: 'other_grunt', x: 91, y: 7, r: 0, dsp: [ 'l', 'i' ], u: 2 },
-            { user: 'toto', info: 'other_grunt', x: 105, y: 7, r: 0, u: 2 },
-            { user: 'toto', info: 'other_grunt', x: 119, y: 7, r: 0, u: 2 },
+            { user: 'toto', info: 'other_grunt', x: 119, y: 7, r: 0, dsp: [ 'l', 'i' ], u: 3 },
+            { user: 'toto', info: 'other_grunt', x: 133, y: 7, r: 0, u: 3 },
+            { user: 'toto', info: 'other_grunt', x: 147, y: 7, r: 0, u: 3 },
             // increments unit number on ref without unit name
-            { user: 'toto', info: 'solo', x: 133, y: 7, r: 0, u: 3 },
+            { user: 'toto', info: 'solo', x: 161, y: 7, r: 0, u: 4 },
           ]
         ],
         //#####################################
