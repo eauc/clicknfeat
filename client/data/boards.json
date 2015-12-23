@@ -10,9 +10,19 @@
     "preview": "/data/board/badlands_necrotite_mine_low.png"
   },
   {
+    "name": "City",
+    "img": "/data/board/city.png",
+    "preview": "/data/board/city_low.png"
+  },
+  {
     "name": "Crag Outskirts",
     "img": "/data/board/crag_outskirts.png",
     "preview": "/data/board/crag_outskirts_low.png"
+  },
+  {
+    "name": "Cryx",
+    "img": "/data/board/cryx.png",
+    "preview": "/data/board/cryx_low.png"
   },
   {
     "name": "Desert",
