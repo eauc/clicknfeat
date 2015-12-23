@@ -168,6 +168,7 @@ class Server < Sinatra::Base
           p ["Sent ping", name, ws.object_id]
         }
         game.addPlayer ws, name
+        @users.signalAllUsers @games.gamesListEvent
       end
       
       ws.onmessage do |data|
