@@ -10,7 +10,8 @@ angular.module('clickApp.services')
             .catch(function(reason) {
               console.log('error getting terrains.json', reason);
               return [];
-            });
+            })
+            .then(updateTerrains);
         },
         getInfo: function gameTerrainInfoGetInfo(path, infos) {
           return new self.Promise((resolve, reject) => {
@@ -20,6 +21,42 @@ angular.module('clickApp.services')
           });
         },
       };
+      function updateTerrains(terrains) {
+        return R.pipe(
+          R.keys,
+          R.sortBy(R.identity),
+          R.reduce((mem, key) => {
+            mem[key] = updateAmbiance(terrains[key]);
+            return mem;
+          }, {})
+        )(terrains);
+      }
+      function updateAmbiance(ambiance) {
+        return R.pipe(
+          R.keys,
+          R.sortBy(R.identity),
+          R.reduce((mem, key) => {
+            mem[key] = updateType(ambiance[key]);
+            return mem;
+          }, {})
+        )(ambiance);
+      }
+      function updateType(type) {
+        return R.pipe(
+          R.keys,
+          R.sortBy(R.identity),
+          R.reduce((mem, key) => {
+            mem[key] = updateTerrain(type[key]);
+            return mem;
+          }, {})
+        )(type);
+      }
+      function updateTerrain(terrain) {
+        return R.pipe(
+          R.assocPath(['img','width'], R.path(['img','width'], terrain) / 3),
+          R.assocPath(['img','height'], R.path(['img','height'], terrain) / 3)
+        )(terrain);
+      }
       R.curryService(gameTerrainInfoService);
       return gameTerrainInfoService;
     }
