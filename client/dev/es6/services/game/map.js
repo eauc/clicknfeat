@@ -8,7 +8,6 @@ angular.module('clickApp.services')
     function gameMapServiceFactory(gameModelsService,
                                    gameTemplatesService,
                                    gameTerrainsService) {
-      var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
       var gameMapService = {
         isFlipped: function mapIsFlipped(map) {
           return map.classList.contains('flipped');
@@ -18,18 +17,12 @@ angular.module('clickApp.services')
           return map_rect.width / 480;
         },
         eventToMapCoordinates: function gameMapEventToMapCoordinates(map, event) {
-          var event_x, event_y;
-          if(is_firefox) {
-            event_x = event.layerX;
-            event_y = event.layerY;
-          }
-          else {
-            event_x = event.offsetX;
-            event_y = event.offsetY;
-          }
+          var map_flipped = gameMapService.isFlipped(map);
           var rect = map.getBoundingClientRect();
-          var map_x = event_x * 480 / rect.width;
-          var map_y = event_y * 480 / rect.height;
+          var map_x = (event.clientX - rect.left) * 480 / rect.width;
+          var map_y = (event.clientY - rect.top) * 480 / rect.height;
+          map_x = ( map_flipped ? 480 - map_x : map_x );
+          map_y = ( map_flipped ? 480 - map_y : map_y );
           return { x: map_x, y: map_y };
         },
         mapToScreenCoordinates: function gameMapMapToScreenCoordinates(map, coord) {

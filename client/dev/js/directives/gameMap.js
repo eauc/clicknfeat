@@ -50,7 +50,7 @@ angular.module('clickApp.directives').directive('clickGameMap', ['$window', 'gam
           now: null
         };
         function mouseDownMap(event) {
-          log('mouseDownMap', event);
+          log('mouseDownMap', event, map.getBoundingClientRect());
           var inputs = [].concat(_toConsumableArray(document.querySelectorAll('input')), _toConsumableArray(document.querySelectorAll('select')), _toConsumableArray(document.querySelectorAll('textarea')));
           R.forEach(function (e) {
             e.blur();

@@ -57,7 +57,7 @@ angular.module('clickApp.directives')
               now: null,
             };
             function mouseDownMap(event) {
-              log('mouseDownMap', event);
+              log('mouseDownMap', event, map.getBoundingClientRect());
               let inputs = [
                 ...document.querySelectorAll('input'),
                 ...document.querySelectorAll('select'),
