@@ -1,96 +1,73 @@
 angular.module('clickApp.controllers')
   .controller('gameSetupCtrl', [
     '$scope',
-    'fileImport',
-    'game',
     'gameBoard',
     'gameScenario',
-    'gameModels',
-    'gameTerrains',
     function($scope,
-             fileImportService,
-             gameService,
              gameBoardService,
-             gameScenarioService,
-             gameModelsService,
-             gameTerrainsService) {
+             gameScenarioService) {
       console.log('init gameSetupCtrl');
 
-      $scope.onGameLoad.then(() => {
-        $scope.gameEvent('refreshModelScenarioAura');
-      });
       $scope.$on('$destroy', () => {
-        $scope.gameEvent('refreshModelScenarioAura');
+        $scope.state.changeEvent('Game.scenario.refresh');
       });
-      
-      $scope.$watch('game.board.name', (value) => {
-        $scope.board_name = value;
+      $scope.state.changeEvent('Game.scenario.refresh');
+
+      $scope.state.data_ready.then(() => {
+        $scope.boards = $scope.state.boards;
+        $scope.terrains = $scope.state.terrains;
+        $scope.scenarios = $scope.state.scenarios;
+        $scope.ambiance = R.head(R.keys($scope.terrains));
+        $scope.onAmbianceChange();
+        $scope.$digest();
       });
+
+      function updateBoardName() {
+        $scope.board_name = R.path(['state','game','board','name'], $scope);
+        $scope.$digest();
+      }
+      $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
+      // $scope.onStateChangeEvent('Game.load.success', updateBoardName, $scope);
+      self.requestAnimationFrame(updateBoardName);
+
       $scope.doSetBoard = () => {
-        var board = gameBoardService.forName($scope.board_name, $scope.boards);
-        $scope.doExecuteCommand('setBoard', board);
+        $scope.stateEvent('Game.board.set', $scope.board_name);
       };
       $scope.doSetRandomBoard = () => {
-        var board, name = gameBoardService.name($scope.game.board);
-        while(name === gameBoardService.name($scope.game.board)) {
-          board = $scope.boards[R.randomRange(0, $scope.boards.length-1)];
-          name = gameBoardService.name(board);
-        }
-        $scope.board_name = name;
-        $scope.doSetBoard();
+        $scope.stateEvent('Game.board.setRandom');
       };
 
-      $scope.$watch('game.scenario.name', (value) => {
-        $scope.scenario_name = value;
+      function updateScenario() {
+        $scope.scenario_name = R.path(['state','game','scenario','name'], $scope);
         $scope.scenario_group = gameScenarioService.groupForName($scope.scenario_name,
                                                                  $scope.scenarios);
-      });
+        $scope.$digest();
+      }
+      $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
+      // $scope.onStateChangeEvent('Game.load.success', updateScenario, $scope);
+      self.requestAnimationFrame(updateScenario);
+
       $scope.doSetScenario = () => {
-        var scenario = gameScenarioService.forName($scope.scenario_name,
-                                                   $scope.scenario_group);
-        $scope.doExecuteCommand('setScenario', scenario);
+        $scope.stateEvent('Game.scenario.set', $scope.scenario_name, $scope.scenario_group);
       };
       $scope.doSetRandomScenario = () => {
-        var group = gameScenarioService.group('SR15', $scope.scenarios);
-        var scenario, name = $scope.scenario_name;
-        while(name === $scope.scenario_name) {
-          scenario = group[1][R.randomRange(0, group[1].length-1)];
-          name = gameScenarioService.name(scenario);
-        }
-        $scope.scenario_group = group;
-        $scope.scenario_name = name;
-        $scope.doSetScenario();
+        $scope.stateEvent('Game.scenario.setRandom');
       };
       $scope.doGenerateObjectives = () => {
-        R.pipePromise(
-          () => {
-            return gameModelsService.all($scope.game.models);
-          },
-          R.filter(R.pipe(
-            R.path(['state','info']),
-            R.head,
-            R.equals('scenario')
-          )),
-          R.map(R.path(['state','stamp'])),
-          (stamps) => {
-            return gameService
-              .executeCommand('deleteModel', stamps, $scope, $scope.game)
-              .catch(R.always(null));
-          },
-          () => {
-            return gameScenarioService
-              .createObjectives($scope.game.scenario);
-          },
-          (objectives) => {
-            var is_flipped = R.path(['ui_state','flip_map'], $scope);
-            return gameService.executeCommand('createModel', objectives, is_flipped,
-                                              $scope, $scope.game);
-          }
-        )();
+        $scope.stateEvent('Game.scenario.generateObjectives');
       };
 
+      function updateLayers() {
+        $scope.layers = R.path(['state','game','layers'], $scope);
+        $scope.$digest();
+      }
+      $scope.onStateChangeEvent('Game.layers.change', updateLayers, $scope);
+      $scope.onStateChangeEvent('Game.load.success', updateLayers, $scope);
+      self.requestAnimationFrame(updateLayers);
+
       $scope.doToggleLayer = (l) => {
-        $scope.doExecuteCommand('setLayers', 'toggle', l);
+        $scope.stateEvent('Game.command.execute',
+                          'setLayers', ['toggle', l]);
       };
 
       $scope.onAmbianceChange = () => {
@@ -103,10 +80,6 @@ angular.module('clickApp.controllers')
       };
       $scope.onEntryChange = () => {
       };
-      $scope.data_ready.then(() => {
-        $scope.ambiance = R.head(R.keys($scope.terrains));
-        $scope.onAmbianceChange();
-      });
       function getTerrainPath() {
         return [ $scope.ambiance,
                  $scope.category,
@@ -121,68 +94,15 @@ angular.module('clickApp.controllers')
                ], $scope.terrains);
       };
       $scope.doCreateTerrain = () => {
-        var terrain_path = getTerrainPath();
-        $scope.create.terrain = {
-          base: { x: 240, y: 240, r: 0 },
-          terrains: [ {
-            info: terrain_path,
-            x: 0, y: 0, r: 0
-          } ]
-        };
-        console.log('createTerrain', $scope.create.terrain);
-        $scope.doSwitchToMode('CreateTerrain');
+        let terrain_path = getTerrainPath();
+        $scope.stateEvent('Game.terrain.create', terrain_path);
       };
       $scope.doResetTerrain = () => {
-        return R.pipePromise(
-          () => {
-            return gameTerrainsService.all($scope.game.terrains);
-          },
-          R.pluck('state'),
-          R.pluck('stamp'),
-          (stamps) => {
-            return gameService
-              .executeCommand('deleteTerrain', stamps,
-                              $scope, $scope.game);
-          }
-        )().catch((reason) => {
-          $scope.gameEvent('modeActionError', reason);
-          return self.Promise.reject(reason);
-        });
+        $scope.stateEvent('Game.terrain.reset');
       };
-      
+
       $scope.doImportBoardFile = (files) => {
-        console.log('doImportBoardFile', files);
-        R.pipeP(
-          fileImportService.read$('json'),
-          (board_info) => {
-            console.log(board_info);
-            return R.pipePromise(
-              () => {
-                if(!board_info.board) return null;
-                return gameService.executeCommand('setBoard', board_info.board,
-                                                  $scope, $scope.game);
-              },
-              () => {
-                if(R.isEmpty(R.pathOr([], ['terrain','terrains'], board_info))) {
-                  return null;
-                }
-                return R.pipeP(
-                  () => {
-                    return $scope.doResetTerrain();
-                  },
-                  () => {
-                    return gameService
-                      .executeCommand('createTerrain', board_info.terrain, false,
-                                      $scope, $scope.game);
-                  }
-                )();
-              }
-            )();
-          }
-        )(files[0]).catch((reason) => {
-          $scope.gameEvent('modeActionError', reason);
-          return self.Promise.reject(reason);
-        });
+        $scope.stateEvent('Game.board.importFile', files[0]);
       };
     }
   ]);

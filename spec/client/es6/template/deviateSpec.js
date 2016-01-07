@@ -1,33 +1,25 @@
-'use strict';
-
 describe('deviate template', function() {
   describe('rollDeviationCommand service', function() {
     beforeEach(inject([ 'rollDeviationCommand', function(rollDeviationCommand) {
       this.rollDeviationCommandService = rollDeviationCommand;
     }]));
 
-    describe('execute(<sides>, <dice>, <scope>, <game>)', function() {
+    describe('execute(<sides>, <dice>, <state>, <game>)', function() {
       beforeEach(function() {
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
         var fake_dice = [5,4];
         var ndie = 0;
         spyOn(R, 'randomRange')
           .and.callFake(function() { return fake_dice[ndie++]; });
 
         this.game = { dice: [] };
-        this.ctxt = this.rollDeviationCommandService.execute(this.scope, this.game);
-      });
-      
-      it('should add dice command to dice rolls', function() {
-        expect(this.game.dice).toEqual([{
-          desc: 'AoE deviation : direction 5, distance 4"',
-          r: 5, d: 4
-        }]);
+        [this.ctxt, this.game] = this.rollDeviationCommandService
+          .execute(this.state, this.game);
       });
       
       it('should send diceRoll event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('diceRoll');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.dice.roll');
       });
 
       it('should return context', function() {
@@ -38,16 +30,17 @@ describe('deviate template', function() {
       });
     });
 
-    describe('replay(<ctxt>, <scope>, <game>)', function() {
+    describe('replay(<ctxt>, <state>, <game>)', function() {
       beforeEach(function() {
         this.ctxt = {
           desc: 'AoE deviation : direction 5, distance 4"',
           r: 5, d: 4
         };
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
         this.game = { dice: [] };
 
-        this.rollDeviationCommandService.replay(this.ctxt, this.scope, this.game);
+        this.game = this.rollDeviationCommandService
+          .replay(this.ctxt, this.state, this.game);
       });
       
       it('should add ctxt to game dice rolls', function() {
@@ -58,24 +51,25 @@ describe('deviate template', function() {
       });
       
       it('should send diceRoll event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('diceRoll');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.dice.roll');
       });
     });
 
-    describe('undo(<ctxt>, <scope>, <game>)', function() {
+    describe('undo(<ctxt>, <state>, <game>)', function() {
       beforeEach(function() {
         this.ctxt = {
           stamp: 'ctxt'
         };
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
         this.game = { dice: [
           { stamp: 'other1' },
           { stamp: 'ctxt' },
           { stamp: 'other2' },
         ] };
 
-        this.rollDeviationCommandService.undo(this.ctxt, this.scope, this.game);
+        this.game = this.rollDeviationCommandService
+          .undo(this.ctxt, this.state, this.game);
       });
       
       it('should remove ctxt from game dice rolls', function() {
@@ -86,8 +80,8 @@ describe('deviate template', function() {
       });
       
       it('should send diceRoll event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('diceRoll');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.dice.roll');
       });
     });
   });
@@ -97,30 +91,32 @@ describe('deviate template', function() {
       'aoeTemplateMode',
       function(aoeTemplateModeService) {
         this.aoeTemplateModeService = aoeTemplateModeService;
-        this.gameService = spyOnService('game');
+
         this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection',
-                  templates: 'templates' },
-          gameEvent: jasmine.createSpy('gameEvent'),
+                  templates: 'templates',
+                  dice: [ { r: 4, d: 2 } ]},
+          changeEvent: jasmine.createSpy('changeEvent'),
+          event: jasmine.createSpy('event')
         };
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update'===e) {
+            this.state.game = R.over(l,u,this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
       }
     ]));
 
     when('user deviates template selection', function() {
-      this.ret = this.aoeTemplateModeService.actions.deviate(this.scope);
+      this.ret = this.aoeTemplateModeService.actions
+        .deviate(this.state);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
-        mockReturnPromise(this.gameService.executeCommand);
-        this.gameService.executeCommand.resolveWith = function(c) {
-          if(c === 'rollDeviation') {
-            return self.Promise.resolve({ r: 4, d: 2 });
-          }
-          return 'game.executeCommand.returnValue';
-        };
       });
 
       it('should get current selection', function() {
@@ -129,39 +125,44 @@ describe('deviate template', function() {
       });
 
       it('should execute rollDeviation command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('rollDeviation',
-                                this.scope, this.scope.game);
+        this.thenExpect(this.ret, function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'rollDeviation', []);
+        });
       });
 
       it('should execute onTemplates/deviate command', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', 'deviate', 4, 2, ['stamp'],
-                                  this.scope, this.scope.game);
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', ['deviate', [4, 2], ['stamp']]);
         });
       });
     });
 
-    describe('when user set max deviation', function() {
+    when('when user set max deviation', function() {
+      this.ret = this.aoeTemplateModeService.actions
+          .setMaxDeviation(this.state);
+    }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
-        mockReturnPromise(this.gameTemplatesService.onStamps);
-        this.gameTemplatesService.onStamps.resolveWith = [42];
-
-        this.ret = this.aoeTemplateModeService.actions
-          .setMaxDeviation(this.scope);
+        mockReturnPromise(this.gameTemplatesService.fromStamps);
+        this.gameTemplatesService.fromStamps$ =
+          R.curryN(4, this.gameTemplatesService.fromStamps);
+        this.gameTemplatesService.fromStamps.resolveWith = [42];
+        this.promptService.prompt.resolveWith = 71;
       });
 
       it('should get current selection max deviation', function() {
         expect(this.gameTemplateSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameTemplatesService.onStamps)
-          .toHaveBeenCalledWith('maxDeviation', ['stamp'], 'templates');
+        expect(this.gameTemplatesService.fromStamps)
+          .toHaveBeenCalledWith('maxDeviation', [], ['stamp'], 'templates');
       });
 
       it('should prompt user for max deviation', function() {
-        this.thenExpect(this.gameTemplatesService.onStamps.promise, function() {
+        this.thenExpect(this.ret, function() {
           expect(this.promptService.prompt)
             .toHaveBeenCalledWith('prompt',
                                   'Set AoE max deviation :',
@@ -169,41 +170,35 @@ describe('deviate template', function() {
         });
       });
 
-      describe('when user set max deviation', function() {
-        beforeEach(function() {
-          this.promptService.prompt.resolveWith = 42;
-        });
-
+      when('user set max deviation', function() {
+        this.promptService.prompt.resolveWith = 42;
+      }, function() {
         it('should set max deviation', function() {
           this.thenExpect(this.ret, function() {
             expect(this.gameTemplatesService.onStamps)
-              .toHaveBeenCalledWith('setMaxDeviation', 42, ['stamp'], 'templates');
+              .toHaveBeenCalledWith('setMaxDeviation', [42], ['stamp'], 'templates');
           });
         });
       });
 
-      describe('when user reset max deviation', function() {
-        beforeEach(function() {
-          this.promptService.prompt.resolveWith = 0;
-        });
-
+      when('user reset max deviation', function() {
+        this.promptService.prompt.resolveWith = 0;
+      }, function() {
         it('should set max deviation', function() {
           this.thenExpect(this.ret, function() {
             expect(this.gameTemplatesService.onStamps)
-              .toHaveBeenCalledWith('setMaxDeviation', null, ['stamp'], 'templates');
+              .toHaveBeenCalledWith('setMaxDeviation', [null], ['stamp'], 'templates');
           });
         });
       });
 
-      describe('when user cancels prompt', function() {
-        beforeEach(function() {
-          this.promptService.prompt.rejectWith = 'canceled';
-        });
-
+      when('when user cancels prompt', function() {
+        this.promptService.prompt.rejectWith = 'canceled';
+      }, function() {
         it('should reset max deviation', function() {
           this.thenExpect(this.ret, function() {
             expect(this.gameTemplatesService.onStamps)
-              .toHaveBeenCalledWith('setMaxDeviation', null, ['stamp'], 'templates');
+              .toHaveBeenCalledWith('setMaxDeviation', [null], ['stamp'], 'templates');
           });
         });
       });
@@ -235,7 +230,9 @@ describe('deviate template', function() {
         [ 6     , 1    , { x: 235, y: 231.3397459621556, r: 330 } ],
       ], function(e, d) {
         it('should deviate template, '+d, function() {
-          this.aoeTemplateService.deviate(e.dir, e.len, this.template);
+          this.template = this.aoeTemplateService
+            .deviate(e.dir, e.len, this.template);
+
           expect(this.template.state)
             .toEqual(e.result);
         });
@@ -253,11 +250,13 @@ describe('deviate template', function() {
           });
 
           it('should deviate template, '+d, function() {
-            this.aoeTemplateService.setMaxDeviation(e.max, this.template);
+            this.template = this.aoeTemplateService
+              .setMaxDeviation(e.max, this.template);
             expect(this.aoeTemplateService.maxDeviation(this.template))
               .toBe(e.max);
 
-            this.aoeTemplateService.deviate(e.dir, e.len, this.template);
+            this.template = this.aoeTemplateService
+              .deviate(e.dir, e.len, this.template);
             expect(this.template.state)
               .toEqual(e.result);
           });
@@ -268,9 +267,13 @@ describe('deviate template', function() {
       }, function() {
         it('should not deviate template', function() {
           this.template.state.lk = true;
-          this.aoeTemplateService.deviate(42, 71, this.template);
-          expect(this.template.state)
-            .toEqual({ x: 240, y: 240, r: 30, lk: true });
+          this.ret = this.aoeTemplateService
+            .deviate(42, 71, this.template);
+
+          this.thenExpectError(this.ret, (reason) => {
+            expect(reason)
+              .toBe('Template is locked');
+          });
         });
       });
     });

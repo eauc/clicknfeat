@@ -1,45 +1,26 @@
 angular.module('clickApp.controllers')
   .controller('gameHelpCtrl', [
     '$scope',
-    'game',
     'modes',
-    'fileExport',
     function($scope,
-             gameService,
-             modesService,
-             fileExportService) {
+             modesService) {
       console.log('init gameHelpCtrl');
 
-      $scope.debug = {
-        name: 'clicknfeat_debug.json',
-        url: null
-      };
-      $scope.updateExports = () => {
-        fileExportService.cleanup($scope.debug.url);
-        fileExportService.generate('json', {
-          settings: $scope.settings.current,
-          game: $scope.game
-        }).then((url) => {
-          $scope.debug.url = url;
-          $scope.$digest();
-        });
-      };
+      function updateDump() {
+        $scope.dump = R.path(['state','exports','dump'], $scope);
+        $scope.$digest();
+      }
+      $scope.onStateChangeEvent('Exports.dump', updateDump, $scope);
+      self.requestAnimationFrame(updateDump);
 
-      $scope.onGameLoad.then(() => {
-        $scope.updateExports();
-        $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
+      function updateBindings() {
+        $scope.bindings = R.pipe(
+          R.path(['state','modes']),
+          modesService.currentModeBindingsPairs
+        )($scope);
         $scope.$digest();
-      });
-      $scope.onGameEvent('saveGame', () => {
-        $scope.updateExports();
-        $scope.$digest();
-      }, $scope);
-      $scope.onGameEvent('switchMode', () => {
-        $scope.bindings = modesService.currentModeBindingsPairs($scope.modes);
-        $scope.$digest();
-      }, $scope);
-      $scope.$on('$destroy', () => {
-        fileExportService.cleanup($scope.debug.url);
-      });
+      }
+      $scope.onStateChangeEvent('Modes.change', updateBindings, $scope);
+      self.requestAnimationFrame(updateBindings);
     }
   ]);

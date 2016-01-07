@@ -8,7 +8,7 @@ angular.module('clickApp.services')
         create: function() {
           return {
             active: [],
-            locked: [],
+            locked: []
           };
         },
         all: function modelsAll(models) {
@@ -20,7 +20,7 @@ angular.module('clickApp.services')
               gameModelsService.all,
               R.find(R.pathEq(['state','stamp'], stamp))
             )(models);
-            if(R.isNil(model)) reject('Model '+stamp+' not found');
+            if(R.isNil(model)) reject(`Model ${stamp} not found`);
             else resolve(model);
           });
         },
@@ -50,60 +50,36 @@ angular.module('clickApp.services')
             else resolve(stamps);
           });
         },
-        onStamps: function modelsOnStamps(method, ...args /*, stamps, models*/) {
-          if('Function' !== R.type(modelService[method])) {
-            return self.Promise.reject('Unknown method '+method+' on models');
-          }
-          
-          var models = R.last(args);
-          var stamps = R.nth(-2, args);
-
-          args = R.slice(0, -2, args);
-          var reason;
+        fromStamps: function modelsFromStamps(method, args, stamps, models) {
+          return fromStamps$(R.compose(R.always, R.always(null)),
+                             method, args, stamps, models);
+        },
+        onStamps: function modelsOnStamps(method, args, stamps, models) {
+          return R.pipeP(
+            fromStamps$(R.always, method, args, stamps),
+            updateModels$(models)
+          )(models);
+        },
+        setStateStamps: function modelsSetStateStamps(states, stamps, models) {
           return R.pipeP(
             gameModelsService.findAnyStamps$(stamps),
-            R.reject(R.isNil),
-            R.map((model) => {
-              return self.Promise.resolve(modelService[method]
-                                          .apply(null, R.append(model, args)))
-                .catch((_reason) => {
-                  console.error(_reason);
-                  reason = _reason;
-                  return '##failed##';
-                });
+            R.addIndex(R.map)((model, index) => {
+              return ( R.isNil(model) ?
+                       null :
+                       modelService.setState(states[index], model)
+                     );
             }),
-            R.promiseAll,
-            (results) => {
-              if(R.isEmpty(R.reject(R.equals('##failed##'), results))) {
-                console.error('Models: onStamps all failed', args);
-                return self.Promise.reject(reason);
-              }
-              return R.map((res) => {
-                return ( res === '##failed##' ?
-                         null : res
-                       );
-              }, results);
-            }
+            R.reject(R.isNil),
+            updateModels$(models)
           )(models);
         },
         lockStamps: function modelsLockStamps(lock, stamps, models) {
           return R.pipeP(
-            () => {
-              return gameModelsService.findAnyStamps(stamps, models);
-            },
+            gameModelsService.findAnyStamps$(stamps),
             R.reject(R.isNil),
-            R.forEach(modelService.setLock$(lock)),
-            () => {
-              var partition = R.pipe(
-                gameModelsService.all,
-                R.partition(modelService.isLocked)
-              )(models);
-              return {
-                active: partition[1],
-                locked: partition[0]
-              };
-            }
-          )();
+            R.map(modelService.setLock$(lock)),
+            updateModels$(models)
+          )(models);
         },
         add: function modelsAdd(mods, models) {
           return R.pipe(
@@ -145,8 +121,38 @@ angular.module('clickApp.services')
               };
             }
           )(models);
-        },
+        }
       };
+      var fromStamps$ = R.curry((onError, method, args, stamps, models) => {
+        if('Function' !== R.type(modelService[method])) {
+          return self.Promise.reject(`Unknown method ${method} on models`);
+        }
+          
+        return R.pipeP(
+          gameModelsService.findAnyStamps$(stamps),
+          R.reject(R.isNil),
+          R.map((model) => {
+            return self.Promise
+              .resolve(modelService[method].apply(null, [...args, model]))
+              .catch(onError(model));
+          }),
+          R.promiseAll
+        )(models);
+      });
+      var updateModels$ = R.curry((models, news) => {
+        return R.pipe(
+          gameModelsService.all,
+          R.concat(news),
+          R.uniqBy(R.path(['state','stamp'])),
+          R.partition(modelService.isLocked),
+          ([locked, active]) => {
+            return {
+              active: active,
+              locked: locked
+            };
+          }
+        )(models);
+      });
       R.curryService(gameModelsService);
       return gameModelsService;
     }

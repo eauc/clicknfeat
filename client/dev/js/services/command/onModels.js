@@ -2,64 +2,65 @@
 
 angular.module('clickApp.services').factory('onModelsCommand', ['commands', 'model', 'gameModels', 'gameModelSelection', function onModelsCommandServiceFactory(commandsService, modelService, gameModelsService, gameModelSelectionService) {
   var onModelsCommandService = {
-    execute: function onModelsExecute(method) /*, stamps, scope, game */{
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
+    execute: function onModelsExecute(method, args, stamps, state, game) {
       if ('Function' !== R.type(modelService[method])) {
         return self.Promise.reject('Unknown method ' + method + ' on model');
       }
 
-      var game = R.last(args);
-      var scope = R.nth(-2, args);
-      var stamps = R.nth(-3, args);
       var ctxt = {
         before: [],
         after: [],
         desc: method
       };
 
-      args = R.pipe(R.slice(0, -2), R.prepend(method), R.append(game.models))(args);
-
-      return R.pipeP(function () {
-        return gameModelsService.onStamps$('saveState', stamps, game.models);
-      }, function (before) {
+      return R.pipeP(gameModelsService.fromStamps$('saveState', [], stamps), function (before) {
         ctxt.before = before;
 
-        return gameModelsService.onStamps.apply(null, args);
-      }, function () {
-        return gameModelsService.onStamps('saveState', stamps, game.models);
+        return gameModelsService.onStamps(method, args, stamps, game.models);
+      }, function (models) {
+        game = R.assoc('models', models, game);
+
+        return gameModelsService.fromStamps('saveState', [], stamps, game.models);
       }, function (after) {
         ctxt.after = after;
 
         R.forEach(function (stamp) {
-          scope.gameEvent('changeModel-' + stamp);
+          state.changeEvent('Game.model.change.' + stamp);
         }, stamps);
 
-        return ctxt;
-      })();
-    },
-    replay: function onModelsRedo(ctxt, scope, game) {
-      var stamps = R.pluck('stamp', ctxt.after);
-      return R.pipeP(gameModelsService.findAnyStamps$(stamps), R.addIndex(R.forEach)(function (model, index) {
-        if (R.isNil(model)) return;
-
-        modelService.setState(ctxt.after[index], model);
-        scope.gameEvent('changeModel-' + modelService.eventName(model));
-      }), function () {
-        game.model_selection = gameModelSelectionService.set('remote', stamps, scope, game.model_selection);
+        return [ctxt, game];
       })(game.models);
     },
-    undo: function onModelsUndo(ctxt, scope, game) {
-      var stamps = R.pluck('stamp', ctxt.before);
-      return R.pipeP(gameModelsService.findAnyStamps$(stamps), R.addIndex(R.forEach)(function (model, index) {
-        if (R.isNil(model)) return;
+    replay: function onModelsRedo(ctxt, state, game) {
+      var stamps = R.pluck('stamp', ctxt.after);
+      return R.pipeP(gameModelsService.setStateStamps$(ctxt.after, stamps), function (models) {
+        game = R.assoc('models', models, game);
 
-        modelService.setState(ctxt.before[index], model);
-        scope.gameEvent('changeModel-' + modelService.eventName(model));
-      }), function () {
-        game.model_selection = gameModelSelectionService.set('remote', stamps, scope, game.model_selection);
+        return gameModelSelectionService.set('remote', stamps, state, game.model_selection);
+      }, function (selection) {
+        game = R.assoc('model_selection', selection, game);
+
+        R.forEach(function (stamp) {
+          state.changeEvent('Game.model.change.' + stamp);
+        }, stamps);
+
+        return game;
+      })(game.models);
+    },
+    undo: function onModelsUndo(ctxt, state, game) {
+      var stamps = R.pluck('stamp', ctxt.before);
+      return R.pipeP(gameModelsService.setStateStamps$(ctxt.before, stamps), function (models) {
+        game = R.assoc('models', models, game);
+
+        return gameModelSelectionService.set('remote', stamps, state, game.model_selection);
+      }, function (selection) {
+        game = R.assoc('model_selection', selection, game);
+
+        R.forEach(function (stamp) {
+          state.changeEvent('Game.model.change.' + stamp);
+        }, stamps);
+
+        return game;
       })(game.models);
     }
   };

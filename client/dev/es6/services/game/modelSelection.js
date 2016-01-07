@@ -6,11 +6,17 @@ angular.module('clickApp.services')
     'gameModels',
     function gameModelSelectionServiceFactory(modesService,
                                               gameModelsService) {
+      function checkSelection(where, state) {
+        if('local' === where) {
+          state.event('Modes.switchTo', 'Default');
+          state.changeEvent('Game.model.selection.local.change');
+        }
+      }
       var gameModelSelectionService = {
         create: function modelSelectionCreate() {
           return {
             local: [],
-            remote: [],
+            remote: []
           };
         },
         'in': function modelSelectionIn(where, stamp, selection) {
@@ -38,67 +44,60 @@ angular.module('clickApp.services')
           }
           return 'Models';
         },
-        checkMode: function modelSelectionCheckMode(scope, selection) {
-          return self.Promise.resolve(gameModelSelectionService
-                                      .modeFor(scope.game.models, selection))
-            .then(function(mode) {
-              return scope.doSwitchToMode(mode);
-            });
+        checkMode: function modelSelectionCheckMode(state, selection) {
+          return R.pipePromise(
+            gameModelSelectionService.modeFor$(state.game.models),
+            (mode) => {
+              state.event('Modes.switchTo', mode);
+            }
+          )(selection);
         },
-        set: function modelSelectionSet(where, stamps, scope, selection) {
+        set: function modelSelectionSet(where, stamps, state, selection) {
           var previous = gameModelSelectionService.get(where, selection);
           var ret = R.assoc(where, stamps, selection);
 
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-            scope.gameEvent('changeLocalModelSelection', ret);
-          }
+          checkSelection(where, state);
           
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeModel-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.model.change.${stamp}`);
           }, stamps);
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeModel-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.model.change.${stamp}`);
           }, previous);
 
           return ret;
         },
-        addTo: function modelSelectionSet(where, stamps, scope, selection) {
+        addTo: function modelSelectionSet(where, stamps, state, selection) {
           var previous = gameModelSelectionService.get(where, selection);
           var new_selection = R.uniq(R.concat(previous, stamps));
           var ret = R.assoc(where, new_selection, selection);
 
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-            scope.gameEvent('changeLocalModelSelection', ret);
-          }
+          checkSelection(where, state);
           
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeModel-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.model.change.${stamp}`);
           }, new_selection);
 
           return ret;
         },
-        removeFrom: function modelSelectionRemoveFrom(where, stamps, scope, selection) {
+        removeFrom: function modelSelectionRemoveFrom(where, stamps, state, selection) {
           var previous = R.prop(where, selection);
           var new_selection = R.difference(previous, stamps);
           var ret = R.assoc(where, new_selection, selection);
           
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-            scope.gameEvent('changeLocalModelSelection', ret);
-          }
+          checkSelection(where, state);
 
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeModel-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.model.change.${stamp}`);
           }, R.uniq(R.concat(previous, stamps)));
 
           return ret;
         },
-        clear: function modelSelectionClear(where, stamps, scope, selection) {
+        clear: function modelSelectionClear(where, stamps, state, selection) {
           var previous = R.prop(where, selection);
-          return gameModelSelectionService.removeFrom(where, previous, scope, selection);
-        },
+          return gameModelSelectionService
+            .removeFrom(where, previous, state, selection);
+        }
       };
       R.curryService(gameModelSelectionService);
       return gameModelSelectionService;

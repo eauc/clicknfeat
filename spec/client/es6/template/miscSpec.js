@@ -1,5 +1,3 @@
-'use strict';
-
 describe('misc template', function() {
   describe('onTemplatesCommand service', function() {
     beforeEach(inject([
@@ -7,223 +5,150 @@ describe('misc template', function() {
       'allTemplates',
       function(onTemplatesCommandService) {
         this.onTemplatesCommandService = onTemplatesCommandService;
-        this.templateService = spyOnService('template');
-        this.templateService.call.and.callThrough();
-        this.templateService.respondTo.and.callThrough();
-        this.templateService.eventName.and.callThrough();
+
+        this.gameTemplatesService = spyOnService('gameTemplates');
+        mockReturnPromise(this.gameTemplatesService.fromStamps);
+        this.gameTemplatesService.fromStamps
+          .resolveWith = 'gameTemplates.fromStamps.returnValue';
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.game = { templates: { active: [ { state: { type: 'aoe',
-                                                        stamp: 'stamp1',
-                                                        _debug: 'debug1' } },
-                                             { state: { type: 'aoe',
-                                                        stamp: 'stamp2',
-                                                        _debug: 'debug2' } },
-                                           ],
-                                   locked: [ { state: { type: 'aoe',
-                                                        stamp: 'stamp3',
-                                                        _debug: 'debug3' } },
-                                           ],
-                                 },
+        this.game = { templates: 'templates',
                       template_selection: 'selection'
                     };
 
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
-
-        this.templateService.saveState.and.callFake(function(t) {
-          return t.state._debug+'State';
-        });
-        this.templateService.method = jasmine.createSpy('method')
-          .and.callFake(function(a1, a2, t) {
-            t.state._debug += 'Method';
-          });
       }
     ]));
 
-    when('execute(<method>, <..args..>, <stamps>, <scope>, <game>)', function() {
+    when('execute(<method>, <..args..>, <stamps>, <state>, <game>)', function() {
       this.ret = this.onTemplatesCommandService
-        .execute(this.method, 'arg1', 'arg2', this.stamps, this.scope, this.game);
+        .execute('method', this.args, this.stamps, this.state, this.game);
     }, function() {
-      when('<method> is unknown', function() {
-        this.method = 'unknown';
-        this.stamps = ['stamp1', 'stamp2'];
-      }, function() {
-        it('should reject promise', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('Unknown call unknown on aoe template');
-          });
-        });
+      beforeEach(function() {
+        this.args = ['arg1', 'arg2'];
+        this.stamps = [ 'stamp1', 'stamp2' ];
       });
 
-      when('<stamps> are not found', function() {
-        this.method = 'method';
-        this.stamps = ['stamp4', 'unknown'];
-      }, function() {
-        it('should reject promise', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('No template found');
-          });
+      it('should save before state', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTemplatesService.fromStamps)
+            .toHaveBeenCalledWith('saveState', [], this.stamps, this.game.templates);
         });
       });
       
-      when('<method> is known and <stamps> are found', function() {
-        this.method = 'method';
-        this.stamps = ['stamp1', 'stamp2'];
-      }, function() {
-        it('should apply <method> on <stamps>', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.templateService.method)
-              .toHaveBeenCalledWith('arg1', 'arg2', this.game.templates.active[0]);
-            expect(this.templateService.method)
-              .toHaveBeenCalledWith('arg1', 'arg2', this.game.templates.active[1]);
-          });
+      it('should apply <method> on <stamps>', function() {
+        this.thenExpect(this.ret, function([ctxt, game]) {
+          expect(this.gameTemplatesService.onStamps)
+            .toHaveBeenCalledWith('method', this.args, this.stamps, this.game.templates);
+          expect(game.templates).toBe('gameTemplates.onStamps.returnValue');
         });
-        
-        it('should emit changeTemplate gameEvents', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-stamp1');
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-stamp2');
-          });
+      });
+      
+      it('should emit changeTemplate changeEvents', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.change.stamp2');
         });
-        
-        it('should return context', function() {
-          this.thenExpect(this.ret, function(ctxt) {
-            expect(ctxt).toEqual({
-              before: [ 'debug1State', 'debug2State' ],
-              after: [ 'debug1MethodState', 'debug2MethodState' ],
-              desc: 'method'
-            });
+      });
+
+      it('should save after state', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTemplatesService.fromStamps)
+            .toHaveBeenCalledWith('saveState', [], this.stamps, 'gameTemplates.onStamps.returnValue');
+        });
+      });
+      
+      it('should return context', function() {
+        this.thenExpect(this.ret, function([ctxt]) {
+          expect(ctxt).toEqual({
+            before: 'gameTemplates.fromStamps.returnValue',
+            after: 'gameTemplates.fromStamps.returnValue',
+            desc: 'method'
           });
         });
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
-      this.ret = this.onTemplatesCommandService
-        .replay(this.ctxt, this.scope, this.game);
-    }, function() {
-      beforeEach(function() {
-        this.ctxt = {
-          before: [ { stamp: 'stamp1', _debug: 'before1' },
-                   { stamp: 'stamp2', _debug: 'before2' }
-                 ],
-          after: [ { stamp: 'stamp1', _debug: 'after1' },
-                   { stamp: 'stamp2', _debug: 'after2' }
-                 ],
-        };
-      });
-
-      when('<ctxt.after.stamps> are not found', function() {
-        this.ctxt.after = [ { stamp: 'stamp4' }, { stamp: 'unknown' } ];
+    using([
+      ['method', 'ctxt'],
+      ['replay', 'after'],
+      ['undo', 'before'],
+    ], function(e) {
+      when(e.method+'(<ctxt>, <state>, <game>)', function() {
+        this.ret = this.onTemplatesCommandService[e.method](this.ctxt, this.state, this.game);
       }, function() {
-        it('should reject promise', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('No template found');
+        beforeEach(function() {
+          this.ctxt = {
+            before: [ { stamp: 'before1' },
+                      { stamp: 'before2' }
+                    ],
+            after: [ { stamp: 'after1' },
+                     { stamp: 'after2' }
+                   ]
+          };
+        });
+        
+        it('should set <after> states', function() {
+          this.thenExpect(this.ret, (game) => {
+            expect(this.gameTemplatesService.setStateStamps)
+              .toHaveBeenCalledWith(this.ctxt[e.ctxt],
+                                    [ e.ctxt+'1', e.ctxt+'2' ],
+                                    'templates');
+            expect(game.templates)
+              .toBe('gameTemplates.setStateStamps.returnValue');
           });
         });
-      });
-
-      it('should set <after> states', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.templateService.setState)
-            .toHaveBeenCalledWith({ stamp: 'stamp1', _debug: 'after1' },
-                                  this.game.templates.active[0]);
-          expect(this.templateService.setState)
-            .toHaveBeenCalledWith({ stamp: 'stamp2', _debug: 'after2' },
-                                  this.game.templates.active[1]);
-        });
-      });
-
-      it('should set remote templateSelection to modified templates', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.gameTemplateSelectionService.set)
-            .toHaveBeenCalledWith('remote', ['stamp1','stamp2'],
-                                  this.scope, 'selection');
-        });
-      });
-
-      it('should emit changeTemplate gameEvents', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp2');
-        });
-      });
-    });
-
-    when('undo(<ctxt>, <scope>, <game>)', function() {
-      this.ret = this.onTemplatesCommandService
-        .undo(this.ctxt, this.scope, this.game);
-    }, function() {
-      beforeEach(function() {
-        this.ctxt = {
-          before: [ { stamp: 'stamp1', _debug: 'before1' },
-                   { stamp: 'stamp2', _debug: 'before2' }
-                 ],
-          after: [ { stamp: 'stamp1', _debug: 'after1' },
-                   { stamp: 'stamp2', _debug: 'after2' }
-                 ],
-        };
-      });
-
-      when('<ctxt.after.stamps> are not found', function() {
-        this.ctxt.before = [ { stamp: 'stamp4' }, { stamp: 'unknown' } ];
-      }, function() {
-        it('should reject promise', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('No template found');
+        
+        it('should set remote templateSelection to modified templates', function() {
+          this.thenExpect(this.ret, (game) => {
+            expect(this.gameTemplateSelectionService.set)
+              .toHaveBeenCalledWith('remote', [e.ctxt+'1',e.ctxt+'2'],
+                                    this.state, 'selection');
+            expect(game.template_selection)
+              .toBe('gameTemplateSelection.set.returnValue');
           });
         });
-      });
-
-      it('should set <before> states', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.templateService.setState)
-            .toHaveBeenCalledWith({ stamp: 'stamp1', _debug: 'before1' },
-                                  this.game.templates.active[0]);
-        });
-      });
-
-      it('should set remote templateSelection to modified templates', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.gameTemplateSelectionService.set)
-            .toHaveBeenCalledWith('remote', ['stamp1','stamp2'],
-                                  this.scope, 'selection');
-        });
-      });
-
-      it('should emit changeTemplate gameEvents', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp2');
+        
+        it('should emit changeTemplate changeEvents', function() {
+          this.thenExpect(this.ret, () => {
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith(`Game.template.change.${e.ctxt}1`);
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith(`Game.template.change.${e.ctxt}2`);
+          });
         });
       });
     });
   });
-
+  
   describe('gameTemplates service', function() {
     beforeEach(inject([
       'gameTemplates',
       function(gameTemplatesService) {
         this.gameTemplatesService = gameTemplatesService;
+
         this.templateService = spyOnService('template');
         mockReturnPromise(this.templateService.call);
-        this.templateService.call.resolveWith = function(a,b,c,t) {
-          return t.state.stamp+'Call';
+
+        this.templates = {
+          active: [
+            { state: { stamp: 'stamp1' } },
+            { state: { stamp: 'stamp2' } },
+          ],
+          locked: [
+            { state: { stamp: 'stamp3' } },
+          ]
         };
       }
     ]));
 
     when('findAnyStamps(<stamps>)', function() {
-      this.ret = this.gameTemplatesService.findAnyStamps(this.stamps,
-                                                         this.templates);
+      this.ret = this.gameTemplatesService
+        .findAnyStamps(this.stamps, this.templates);
     }, function() {
       beforeEach(function() {
         this.templates = {
@@ -233,7 +158,7 @@ describe('misc template', function() {
           ],
           locked: [
             { state: { stamp: 'stamp3' } },
-          ],
+          ]
         };
       });
       
@@ -269,55 +194,141 @@ describe('misc template', function() {
       });
     });
 
-    when('onStamps(<stamps>, <method>, <...args...>)', function() {
-      this.ret = this.gameTemplatesService.onStamps('method', 'arg1', 'arg2',
-                                                    this.stamps,
-                                                    this.templates);
+    
+    when('onStamp(<method>, <...args...>, <stamps>)', function() {
+      this.ret = this.gameTemplatesService
+        .onStamps('method', this.args, this.stamps, this.templates);
     }, function() {
       beforeEach(function() {
-        this.templates = {
-          active: [
-            { state: { stamp: 'stamp1' } },
-            { state: { stamp: 'stamp2' } },
-          ],
-          locked: [
-            { state: { stamp: 'stamp3' } },
-          ],
-        };
+        this.args = ['arg1', 'arg2'];
+        this.stamps = ['stamp2', 'stamp3'];
       });
-      
-      when('templates are not found', function() {
-        this.stamps = ['stamp4', 'unknown'];
+
+      when('none of the <stamps> are found', function() {
+        this.stamps = ['whatever', 'unknown'];
       }, function() {
-        it('should reject promise', function() {
+        it('should reject method', function() {
           this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toEqual('No template found');
+            expect(reason).toBe('No template found');
           });
         });
       });
-      
-      when('templates are found', function() {
-        this.stamps = ['stamp2', 'stamp3'];
+
+      when('some <stamps> are found', function() {
+        this.stamps = ['stamp2', 'whatever', 'stamp3'];
       }, function() {
-        it('should call <method> on <stamps> templates', function() {
-          this.thenExpect(this.ret, function(res) {
+        beforeEach(function() {
+          this.templateService.isLocked.and.callFake((m) => {
+            return m.state.stamp === 'stamp2';
+          });
+          this.templateService.call.resolveWith = (m,a,t) => {
+            return R.assocPath(['state','set'],'set', t);
+          };
+        });
+
+        it('should call <method> on <stamp> template', function() {
+          this.thenExpect(this.ret, function(result) {
             expect(this.templateService.call)
-              .toHaveBeenCalledWith('method', 'arg1', 'arg2',
+              .toHaveBeenCalledWith('method', this.args,
                                     { state: { stamp: 'stamp2' } });
             expect(this.templateService.call)
-              .toHaveBeenCalledWith('method', 'arg1', 'arg2',
+              .toHaveBeenCalledWith('method', this.args,
                                     { state: { stamp: 'stamp3' } });
-
-            expect(res).toEqual(['stamp2Call','stamp3Call']);
+            expect(result)
+              .toEqual({
+                active: [ { state: { stamp: 'stamp3', set: 'set' } },
+                          { state: { stamp: 'stamp1' } }
+                        ],
+                locked: [ { state: { stamp: 'stamp2', set: 'set' } }
+                        ]
+                });
           });
         });
         
-        when('call fails', function() {
-          this.templateService.call.rejectWith = 'reason';
+        when('some calls to <method> fail', function() {
+          this.templateService.call.resolveWith = (m,a,t) => {
+            return ( t.state.stamp === 'stamp2' ?
+                     R.assocPath(['state','set'],'set', t) :
+                     self.Promise.reject('reason')
+                   );
+          };
         }, function() {
-          it('should call <method> on <stamps> templates', function() {
-            this.thenExpectError(this.ret, function(reason) {
-              expect(reason).toEqual('reason');
+          it('should return partial result', function() {
+            this.thenExpect(this.ret, function(result) {
+              expect(result).toEqual({
+                active: [ { state: { stamp: 'stamp3' } },
+                          { state: { stamp: 'stamp1' } }
+                        ],
+                locked: [ { state: { stamp: 'stamp2', set: 'set' } }
+                        ]
+              });
+            });
+          });
+        });
+      });
+    });
+    
+    when('fromStamp(<method>, <...args...>, <stamps>)', function() {
+      this.ret = this.gameTemplatesService
+        .fromStamps('method', this.args, this.stamps, this.templates);
+    }, function() {
+      beforeEach(function() {
+        this.args = ['arg1', 'arg2'];
+        this.stamps = ['stamp2', 'stamp3'];
+      });
+
+      when('none of the <stamps> are found', function() {
+        this.stamps = ['whatever', 'unknown'];
+      }, function() {
+        it('should reject method', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No template found');
+          });
+        });
+      });
+
+      when('some <stamps> are found', function() {
+        this.stamps = ['stamp2', 'whatever', 'stamp3'];
+      }, function() {
+        beforeEach(function() {
+          this.templateService.isLocked.and.callFake((m) => {
+            return m.state.stamp === 'stamp2';
+          });
+          this.templateService.call.resolveWith = (m,a,t) => {
+            return `template.setState.returnValue(${t.state.stamp})`;
+          };
+        });
+
+        it('should call <method> on <stamp> template', function() {
+          this.thenExpect(this.ret, function(result) {
+            expect(this.templateService.call)
+              .toHaveBeenCalledWith('method', this.args,
+                                    { state: { stamp: 'stamp2' } });
+            expect(this.templateService.call)
+              .toHaveBeenCalledWith('method', this.args,
+                                    { state: { stamp: 'stamp3' } });
+            expect(result)
+              .toEqual([
+                'template.setState.returnValue(stamp2)',
+                'template.setState.returnValue(stamp3)'
+              ]);
+          });
+        });
+
+        when('some calls to <method> fail', function() {
+          this.templateService.call.resolveWith = (m,a,t) => {
+            return ( t.state.stamp === 'stamp2' ?
+                     `template.setState.returnValue(${t.state.stamp})` :
+                     self.Promise.reject('reason')
+                   );
+          };
+        }, function() {
+          it('should return partial result', function() {
+            this.thenExpect(this.ret, function(result) {
+              expect(result).toEqual([
+                'template.setState.returnValue(stamp2)',
+                null
+              ]);
             });
           });
         });
@@ -346,7 +357,7 @@ describe('misc template', function() {
 
     when('call(<method>, <...args...>)', function() {
       this.ret = this.templateService
-        .call(this.method, 'arg1', 'arg2', this.template);
+        .call(this.method, ['arg1', 'arg2'], this.template);
     }, function() {
       beforeEach(function() {
         spyOn(this.templateService, 'saveState')
@@ -406,7 +417,7 @@ describe('misc template', function() {
       it('should set a copy of <state> as template\'s state', function() {
         var template = { state: null };
         var state = { stamp: 'stamp' };
-        this.templateService.setState(state, template);
+        template = this.templateService.setState(state, template);
         expect(template.state).toEqual(state);
         expect(template.state).not.toBe(state);
       });

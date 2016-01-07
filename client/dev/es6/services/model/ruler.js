@@ -9,8 +9,8 @@ angular.module('clickApp.services')
             return R.path(['state', 'rml'], model);
           },
           setRulerMaxLength: function modelSetRulerMaxLength(value, model) {
-            model.state = R.assoc('rml', value, model.state);
-          },
+            return R.assocPath(['state','rml'], value, model);
+          }
         };
         return modelRulerService;
       };

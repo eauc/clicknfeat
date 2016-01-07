@@ -1,55 +1,63 @@
 angular.module('clickApp.services')
   .factory('createTemplateCommand', [
     'commands',
+    'point',
     'template',
     'gameTemplates',
     'gameTemplateSelection',
     function createTemplateCommandServiceFactory(commandsService,
+                                                 pointService,
                                                  templateService,
                                                  gameTemplatesService,
                                                  gameTemplateSelectionService) {
       var createTemplateCommandService = {
-        execute: function createTemplateExecute(temps, scope, game) {
+        execute: function createTemplateExecute(create, is_flipped, state, game) {
+          var add$ = pointService.addToWithFlip$(is_flipped);
           return R.pipePromise(
+            R.prop('templates'),
             R.map((temp) => {
-              return templateService.create(temp)
-                .catch(R.always(null));
+              return R.pipe(
+                add$(create.base),
+                R.omit(['stamp']),
+                (temp) => {
+                  return templateService
+                    .create(temp)
+                    .catch(R.always(null));
+                }
+              )(temp);
             }),
             R.promiseAll,
             R.reject(R.isNil),
             (templates)  => {
               if(R.isEmpty(templates)) {
-                console.log('Command CreateTemplate : no valid template definition');
                 return self.Promise.reject('No valid template definition');
               }
-              return templates;
-            },
-            (templates) => {
+
               var ctxt = {
                 templates: R.map(templateService.saveState, templates),
-                desc: templates[0].type,
+                desc: templates[0].type
               };
-
               return R.pipe(
                 gameTemplatesService.add$(templates),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
 
                   return gameTemplateSelectionService
                     .set('local', R.map(R.path(['state','stamp']), templates),
-                         scope, game.template_selection);
+                         state, game.template_selection);
                 },
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
 
-                  scope.gameEvent('createTemplate');
-                  return ctxt;
+                  state.changeEvent('Game.template.create');
+
+                  return [ctxt, game];
                 }
               )(game.templates);
             }
-          )(temps);
+          )(create);
         },
-        replay: function createTemplateReplay(ctxt, scope, game) {
+        replay: function createTemplateReplay(ctxt, state, game) {
           return R.pipePromise(
             R.map((temp) => {
               return templateService.create(temp)
@@ -59,7 +67,6 @@ angular.module('clickApp.services')
             R.reject(R.isNil),
             (templates) => {
               if(R.isEmpty(templates)) {
-                console.log('Command CreateTemplate : no valid template definition');
                 return self.Promise.reject('No valid template definition');
               }
               return templates;
@@ -68,43 +75,47 @@ angular.module('clickApp.services')
               return R.pipe(
                 gameTemplatesService.add$(templates),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
             
                   return gameTemplateSelectionService
                     .set('remote', R.map(R.path(['state','stamp']), templates),
-                         scope, game.template_selection);
+                         state, game.template_selection);
                 },
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
 
-                  scope.gameEvent('createTemplate');
+                  state.changeEvent('Game.template.create');
+
+                  return game;
                 }
               )(game.templates);
             }
           )(ctxt.templates);
         },
-        undo: function createTemplateUndo(ctxt, scope, game) {
+        undo: function createTemplateUndo(ctxt, state, game) {
           return R.pipe(
-            R.map(R.prop('stamp')),
+            R.pluck('stamp'),
             (stamps) => {
               return R.pipe(
                 gameTemplatesService.removeStamps$(stamps),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
 
                   return gameTemplateSelectionService
-                    .removeFrom('local', stamps, scope, game.template_selection);
+                    .removeFrom('local', stamps, state, game.template_selection);
                 },
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
               
                   return gameTemplateSelectionService
-                    .removeFrom('remote', stamps, scope, game.template_selection);
+                    .removeFrom('remote', stamps, state, game.template_selection);
                 },
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
           
-                  scope.gameEvent('createTemplate');
+                  state.changeEvent('Game.template.create');
+
+                  return game;
                 }
               )(game.templates);
             }

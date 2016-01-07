@@ -1,6 +1,4 @@
-'use strict';
-
-describe('reset settings', function() {
+describe('update settings', function() {
   describe('settings service', function() {
     beforeEach(inject([ 'settings', function(settingsService) {
       this.settingsService = settingsService;
@@ -9,7 +7,7 @@ describe('reset settings', function() {
         Bindings: {
           test1: { binding1: 'a1',
                    binding2: 'a2' },
-          test2: { binding1: 'b1' },
+          test2: { binding1: 'b1' }
         }
       };
       this.test1_updater = jasmine.createSpy('test1_updater');
@@ -32,7 +30,7 @@ describe('reset settings', function() {
           Bindings: {
             test1: { binding1: 'a',
                      binding3: 'd' },
-            test3: { binding2: 'c' },
+            test3: { binding2: 'c' }
           }
         };
       });
@@ -65,40 +63,23 @@ describe('reset settings', function() {
           Bindings: {
             test1: { binding1: 'a',
                      binding3: 'd' },
-            test3: { binding2: 'c' },
+            test3: { binding2: 'c' }
           }
         };
         this.settings = this.settingsService.bind(this.data);
       });
       
       it('should update modified settings', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.test1_updater)
-            .toHaveBeenCalledWith({ binding1: 'a',
-                                    binding3: 'd' });
-          expect(this.test2_updater)
-            .toHaveBeenCalledWith({});
-        });
+        expect(this.test1_updater)
+          .toHaveBeenCalledWith({ binding1: 'a',
+                                  binding3: 'd' });
+        expect(this.test2_updater)
+          .toHaveBeenCalledWith({});
       });
       
       it('should return settings object', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.localStorageService.save)
-            .toHaveBeenCalledWith('clickApp.settings', {
-              Bindings: {
-                test1: { binding1: 'a',
-                         binding3: 'd' },
-                test2: { },
-              }
-            });
-        });
-      });
-      
-      it('should return settings object', function() {
-        this.thenExpect(this.ret, function(settings) {
-          expect(settings)
-            .toBe(this.settings);
-        });
+          expect(this.ret)
+          .toBe(this.settings);
       });
     });
   });

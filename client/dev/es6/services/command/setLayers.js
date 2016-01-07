@@ -7,24 +7,35 @@ angular.module('clickApp.services')
     function setLayersCommandServiceFactory(commandsService,
                                             gameLayersService) {
       var setLayersCommandService = {
-        execute: function setLayersExecute(cmd, l, scope, game) {
-          if('Function' !== R.type(gameLayersService[cmd])) return;
+        execute: function setLayersExecute(cmd, l, state, game) {
+          if('Function' !== R.type(gameLayersService[cmd])) {
+            return self.Promise.reject(`Layers unknown method "${cmd}"`);
+          }
+          
           var ctxt = {
             before: game.layers,
-            desc: cmd+'('+l+')',
+            desc: `${cmd}(${l})`
           };
-          game.layers = gameLayersService[cmd](l, game.layers);
+          game = R.assoc('layers', gameLayersService[cmd](l, game.layers), game);
           ctxt.after = game.layers;
-          scope.gameEvent('changeLayers');
-          return ctxt;
+
+          state.changeEvent('Game.layers.change');
+
+          return [ctxt, game];
         },
-        replay: function setLayersRedo(ctxt, scope, game) {
-          game.layers = ctxt.after;
-          scope.gameEvent('changeLayers');
+        replay: function setLayersRedo(ctxt, state, game) {
+          game = R.assoc('layers', ctxt.after, game);
+
+          state.changeEvent('Game.layers.change');
+
+          return game;
         },
-        undo: function setLayersUndo(ctxt, scope, game) {
-          game.layers = ctxt.before;
-          scope.gameEvent('changeLayers');
+        undo: function setLayersUndo(ctxt, state, game) {
+          game = R.assoc('layers', ctxt.before, game);
+
+          state.changeEvent('Game.layers.change');
+
+          return game;
         }
       };
       commandsService.registerCommand('setLayers', setLayersCommandService);

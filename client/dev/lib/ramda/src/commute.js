@@ -9,11 +9,12 @@ var identity = require('./identity');
  * @memberOf R
  * @since v0.8.0
  * @category List
- * @see R.commuteMap
  * @sig Functor f => (x -> f x) -> [f a] -> f [a]
  * @param {Function} of A function that returns the data type to return
  * @param {Array} list An array of functors of the same type
  * @return {*}
+ * @see R.sequence
+ * @deprecated since v0.19.0
  * @example
  *
  *      R.commute(R.of, [[1], [2, 3]]);   //=> [[1, 2], [1, 3]]

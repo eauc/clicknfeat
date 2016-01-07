@@ -1,5 +1,3 @@
-'use strict';
-
 describe('create model', function() {
   describe('createModelMode service', function() {
     beforeEach(inject([
@@ -8,59 +6,48 @@ describe('create model', function() {
         this.createModelModeService = createModelModeService;
         this.gameService = spyOnService('game');
 
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'event','changeEvent'
         ]);
-        this.scope.create = { model: { base: {} } };
+        this.state.create = { model: { base: {} } };
         this.game = 'game';
       }
     ]));
 
     describe('onEnter()', function() {
       beforeEach(function() {
-        this.createModelModeService.onEnter(this.scope);
+        this.createModelModeService.onEnter(this.state);
       });
 
       using([
         [ 'event' ],
-        [ 'enableCreateModel' ],
-        [ 'enableMoveMap' ],
+        [ 'Game.model.create.enable' ],
+        [ 'Game.moveMap.enable' ],
       ], function(e) {
         it('should emit '+e.event+' event', function() {
-          expect(this.scope.gameEvent)
+          expect(this.state.changeEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });
     });
 
     when('user move mouse over map', function() {
-      this.createModelModeService.actions.moveMap(this.scope, {
-        x: 42, y: 71
-      });
+      this.createModelModeService.actions
+        .moveMap(this.state, { x: 42, y: 71 });
     }, function() {
-      it('should update scope\'s create object', function() {
-        expect(this.scope.create.model.base)
-          .toEqual({
-            x: 42, y: 71
-          });
-      });
-
-      it('should emit moveCreateModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('moveCreateModel');
+      it('should emit update state create.model', function() {
+        expect(this.state.create.model.base)
+          .toEqual({ x: 42, y: 71 });
       });
     });
 
     when('user create model', function() {
-      this.ret = this.createModelModeService.actions.create(this.scope, {
-        'click#': { x: 42, y: 71 }
-      });
+      this.ret = this.createModelModeService.actions
+        .create(this.state, { 'click#': { x: 42, y: 71 } });
     }, function() {
-      it('should update scope\'s create object', function() {
-        expect(this.scope.create.model.base)
-          .toEqual({
-            x: 42, y: 71
-          });
+      it('should update state create.model', function() {
+        expect(this.state.create.model.base)
+          .toEqual({ x: 42, y: 71 });
       });
 
       using([
@@ -69,15 +56,14 @@ describe('create model', function() {
         [ false      ],
       ], function(e) {
         when('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
-          this.scope.ui_state = { flip_map: e.flip_map };
+          this.state.ui_state = { flip_map: e.flip_map };
         }, function() {
           it('should execute createModelCommand', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('createModel',
-                                    this.scope.create.model, e.flip_map,
-                                    this.scope, this.scope.game);
-
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.create.model.base)
+              .toEqual({ x: 42, y: 71 });
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'createModel', [ this.state.create.model, e.flip_map ]);
           });
         });
       });
@@ -85,21 +71,21 @@ describe('create model', function() {
 
     describe('onLeave()', function() {
       beforeEach(function() {
-        this.createModelModeService.onLeave(this.scope);
+        this.createModelModeService.onLeave(this.state);
       });
 
-      it('should reset scope\'s create object', function() {
-        expect(this.scope.create)
-          .toEqual({ model: null });
+      it('should clear state create.model', function() {
+        expect(this.state.create.model)
+          .toBe(null);
       });
 
       using([
         [ 'event' ],
-        [ 'disableCreateModel' ],
-        [ 'disableMoveMap' ],
+        [ 'Game.model.create.disable' ],
+        [ 'Game.moveMap.disable' ],
       ], function(e) {
         it('should emit '+e.event+' event', function() {
-          expect(this.scope.gameEvent)
+          expect(this.state.changeEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });
@@ -111,28 +97,30 @@ describe('create model', function() {
       'createModelCommand',
       function(createModelCommandService) {
         this.createModelCommandService = createModelCommandService;
+
         this.modelService = spyOnService('model');
         this.gameModelsService = spyOnService('gameModels');
         this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-        this.scope = {
+        this.state = {
           factions: 'factions',
-          gameEvent: jasmine.createSpy('gameEvent')
+          changeEvent: jasmine.createSpy('changeEvent')
         };
         this.game = { models: 'models',
-                      model_selection: 'selection' };
+                      model_selection: 'selection'
+                    };
 
         var stamp_index = 1;
         mockReturnPromise(this.modelService.create);
-        this.modelService.create.resolveWith = function(f, m) {
+        this.modelService.create.resolveWith = (f, m) => {
           return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
         };
       }
     ]));
 
-    when('execute(<create>, <flip>, <scope>, <game>)', function() {
+    when('execute(<create>, <flip>, <state>, <game>)', function() {
       this.ret = this.createModelCommandService
-        .execute(this.create, this.flip, this.scope, this.game);
+        .execute(this.create, this.flip, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.create = {
@@ -140,15 +128,15 @@ describe('create model', function() {
           models: [ {
             info: ['legion','models','locks','absylonia1'],
             x: 0, y: 0, r: 45,
-            l: [ 'toto' ],
+            l: [ 'toto' ]
           }, {
             info: ['legion','models','units','archers','entries','unit','grunt'],
             x: 20, y: 0, r: 0,
-            l: [ 'titi' ],
+            l: [ 'titi' ]
           }, {
             info: ['legion','models','units','archers','entries','unit','grunt'],
             x: 40, y: 0, r: -45,
-            l: [ 'tata' ],
+            l: [ 'tata' ]
           } ]
         };
         this.flip = false;
@@ -160,19 +148,19 @@ describe('create model', function() {
             .toHaveBeenCalledWith('factions', {
               info: [ 'legion', 'models', 'locks', 'absylonia1' ],
               x: 240, y: 240, r: 225,
-              l: [ 'toto' ],
+              l: [ 'toto' ]
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
               x: 260, y: 240, r: 180,
-              l: [ 'titi' ],
+              l: [ 'titi' ]
             });
           expect(this.modelService.create)
             .toHaveBeenCalledWith('factions', {
               info: ['legion','models','units','archers','entries','unit','grunt'],
               x: 280, y: 240, r: 135,
-              l: [ 'tata' ],
+              l: [ 'tata' ]
             });
         });
       });
@@ -186,19 +174,19 @@ describe('create model', function() {
               .toHaveBeenCalledWith('factions', {
                 info: [ 'legion', 'models', 'locks', 'absylonia1' ],
                 x: 240, y: 240, r: 405,
-                l: [ 'toto' ],
+                l: [ 'toto' ]
               });
             expect(this.modelService.create)
               .toHaveBeenCalledWith('factions', {
                 info: ['legion','models','units','archers','entries','unit','grunt'],
                 x: 220, y: 240, r: 360,
-                l: [ 'titi' ],
+                l: [ 'titi' ]
               });
             expect(this.modelService.create)
               .toHaveBeenCalledWith('factions', {
                 info: ['legion','models','units','archers','entries','unit','grunt'],
                 x: 200, y: 240, r: 315,
-                l: [ 'tata' ],
+                l: [ 'tata' ]
               });
           });
         });
@@ -215,7 +203,7 @@ describe('create model', function() {
       });
 
       it('should add new model to <game> models', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function([ctxt, game]) {
           expect(this.gameModelsService.add)
             .toHaveBeenCalledWith([
               { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
@@ -237,7 +225,7 @@ describe('create model', function() {
                        }
               }
             ], 'models');
-          expect(this.game.models)
+          expect(game.models)
             .toBe('gameModels.add.returnValue');
         });
       });
@@ -246,19 +234,19 @@ describe('create model', function() {
         this.thenExpect(this.ret, function() {
           expect(this.gameModelSelectionService.set)
             .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
-                                  this.scope, 'selection');
+                                  this.state, 'selection');
         });
       });
 
       it('should emit createModel event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('createModel');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.create');
         });
       });
 
       it('should return context', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function([ctxt]) {
           expect(this.modelService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
@@ -289,15 +277,15 @@ describe('create model', function() {
               models: [ 'model.saveState.returnValue',
                         'model.saveState.returnValue',
                         'model.saveState.returnValue' ],
-              desc: 'legion.models.locks.absylonia1',
+              desc: 'legion.models.locks.absylonia1'
             });
         });
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <state>, <game>)', function() {
       this.ret = this.createModelCommandService
-        .replay(this.ctxt, this.scope, this.game);
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -315,7 +303,7 @@ describe('create model', function() {
               stamp: 'stamp'
             }
           ],
-          desc: 'type',
+          desc: 'type'
         };
       });
 
@@ -353,7 +341,7 @@ describe('create model', function() {
       });
 
       it('should add new model to <game> models', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameModelsService.add)
             .toHaveBeenCalledWith([
               { state: { info: [ 'legion', 'models', 'locks', 'absylonia1' ],
@@ -372,7 +360,7 @@ describe('create model', function() {
                        }
               }
             ], 'models');
-          expect(this.game.models)
+          expect(game.models)
             .toBe('gameModels.add.returnValue');
         });
       });
@@ -381,19 +369,22 @@ describe('create model', function() {
         this.thenExpect(this.ret, function() {
           expect(this.gameModelSelectionService.set)
             .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                  this.scope, 'selection');
+                                  this.state, 'selection');
         });
       });
 
       it('should emit createModel event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('createModel');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.create');
         });
       });
     });
 
-    describe('undo(<ctxt>, <scope>, <game>)', function() {
+    when('undo(<ctxt>, <state>, <game>)', function() {
+      this.game = this.createModelCommandService
+        .undo(this.ctxt, this.state, this.game);
+    }, function() {
       beforeEach(function() {
         this.ctxt = {
           models: [
@@ -410,10 +401,8 @@ describe('create model', function() {
               stamp: 'stamp3'
             }
           ],
-          desc: 'type',
+          desc: 'type'
         };
-
-        this.createModelCommandService.undo(this.ctxt, this.scope, this.game);
       });
 
       it('should remove <ctxt.model> from <game> models', function() {
@@ -426,24 +415,24 @@ describe('create model', function() {
       it('should remove <ctxt.model> from modelSelection', function() {
         expect(this.gameModelSelectionService.removeFrom)
           .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                                this.scope, 'selection');
+                                this.state, 'selection');
         expect(this.gameModelSelectionService.removeFrom)
           .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                this.scope, 'gameModelSelection.removeFrom.returnValue');
+                                this.state, 'gameModelSelection.removeFrom.returnValue');
       });
 
       it('should emit deleteModel events', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('deleteModel-stamp1');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('deleteModel-stamp2');
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('deleteModel-stamp3');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.model.delete.stamp1');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.model.delete.stamp2');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.model.delete.stamp3');
       });
 
       it('should emit createModel event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createModel');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.model.create');
       });
     });
   });

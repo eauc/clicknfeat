@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .factory('labelElement', [
     '$window',
@@ -24,12 +22,10 @@ angular.module('clickApp.directives')
         },
         updateOnFlipMap: function labelElementUpdateOnFlipMap(map, center, label) {
           var map_flipped = gameMapService.isFlipped(map);
-          $window.requestAnimationFrame(function _labelElementUpdateOnFlipMap() {
-            label.label.setAttribute('transform',
-                                     map_flipped ? 'rotate(180,'+
-                                     center.x+','+
-                                     center.y+')' : '');
-          });
+          label.label.setAttribute('transform',
+                                   map_flipped ? 'rotate(180,'+
+                                   center.x+','+
+                                   center.y+')' : '');
         },
         update: function labelElementUpdate(map_flipped,
                                             zoom_factor,
@@ -44,12 +40,12 @@ angular.module('clickApp.directives')
           if('visible' === visibility) {
             updateText(text_center, text, label.text);
 
-            $window.requestAnimationFrame(function _labelElementUpdate() {
+            $window.requestAnimationFrame(() => {
               updateBackground(zoom_factor, text_center,
                                label.text, label.bckgnd);
             });
           }
-        },  
+        }
       };
       function updateLabel(map_flipped, flip_center, visibility, label) {
         label.style.visibility = visibility;

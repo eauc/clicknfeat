@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelChargeMode', [
     'modes',
@@ -18,48 +16,53 @@ angular.module('clickApp.services')
                                            gameService,
                                            gameModelsService,
                                            gameModelSelectionService) {
-      var charge_actions = Object.create(modelBaseModeService.actions);
-      charge_actions.endCharge = function modelEndCharge(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return R.pipeP(
-          function() {
-            return gameService.executeCommand('onModels', 'endCharge',
-                                              stamps, scope, scope.game);
+      let charge_actions = Object.create(modelBaseModeService.actions);
+      charge_actions.endCharge = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return R.pipePromise(
+          () => {
+            return state.event('Game.command.execute',
+                               'onModels', ['endCharge', [], stamps]);
           },
-          function() {
-            return scope.doSwitchToMode('Model');
+          () => {
+            return state.event('Modes.switchTo', 'Model');
           }
         )();
       };
-      charge_actions.setTargetModel = function modelSetTargetModel(scope, event) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      charge_actions.setTargetModel = (state, event) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
+          (model) => {
             return R.pipeP(
-              function() {
-                return modelService.chargeTarget(model)
+              () => {
+                return modelService
+                  .chargeTarget(model)
                   .catch(R.always(null));
               },
-              function(target_stamp) {
+              (target_stamp) => {
                 return ( target_stamp === event['click#'].target.state.stamp ?
                          null :
                          event['click#'].target
                        );
               },
-              function(set_target) {
+              (set_target) => {
                 if(R.exists(set_target) &&
-                   model.state.stamp === set_target.state.stamp) return;
+                   model.state.stamp === set_target.state.stamp) return null;
 
-                return gameService.executeCommand('onModels', 'setChargeTarget',
-                                                  scope.factions, set_target,
-                                                  stamps, scope, scope.game);
+                return state.event('Game.command.execute',
+                                   'onModels', [ 'setChargeTarget',
+                                                  [state.factions, set_target],
+                                                 stamps
+                                               ]);
               }
             )();
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      var moves = [
+      let moves = [
         ['moveFront', 'up', 'moveFront'],
         ['moveBack', 'down', 'moveBack'],
         ['rotateLeft', 'left', 'rotateLeft'],
@@ -69,63 +72,63 @@ angular.module('clickApp.services')
         ['shiftLeft', 'ctrl+left', 'shiftRight'],
         ['shiftRight', 'ctrl+right', 'shiftLeft'],
       ];
-      R.forEach(function(move) {
-        charge_actions[move[0]] = buildChargeMove(move[0], move[2], false,
-                                                 move[0]);
-        charge_actions[move[0]+'Small'] = buildChargeMove(move[0], move[2], true,
-                                                         move[0]+'Small');
+      var buildChargeMove$ = R.curry((move, flip_move, small, state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        let _move = ( R.path(['ui_state','flip_map'], state) ?
+                      flip_move :
+                      move
+                    );
+        return R.pipeP(
+          gameModelsService.findStamp$(stamps[0]),
+          (model) => {
+            return modelService
+              .chargeTarget(model)
+              .catch(R.always(null));
+          },
+          (target_stamp) => {
+            return ( R.exists(target_stamp) ?
+                     gameModelsService.findStamp(target_stamp, state.game.models) :
+                     null
+                   );
+          },
+          (target_model) => {
+            return state.event('Game.command.execute',
+                               'onModels', [ _move+'Charge',
+                                             [state.factions, target_model, small],
+                                             stamps
+                                           ]);
+          }
+        )(state.game.models);
+      });
+      R.forEach(([move, keys, flip_move]) => {
+        keys = keys;
+        charge_actions[move] = buildChargeMove$(move, flip_move, false);
+        charge_actions[move+'Small'] = buildChargeMove$(move, flip_move, true);
       }, moves);
-      function buildChargeMove(move, flip_move, small) {
-        return function modelDoChargeMove(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          var _move = ( R.path(['ui_state','flip_map'], scope) ?
-                        flip_move :
-                        move
-                      );
-          return R.pipeP(
-            gameModelsService.findStamp$(stamps[0]),
-            function(model) {
-              return modelService.chargeTarget(model)
-                .catch(R.always(null));
-            },
-            function(target_stamp) {
-              return ( R.exists(target_stamp) ?
-                       gameModelsService.findStamp(target_stamp, scope.game.models) :
-                       null
-                     );
-            },
-            function(target_model) {
-              return gameService.executeCommand('onModels', _move+'Charge',
-                                                scope.factions, target_model, small,
-                                                stamps, scope, scope.game);
-            }
-          )(scope.game.models);
-        };
-      }
 
-      var charge_default_bindings = {
+      let charge_default_bindings = {
         'endCharge': 'c',
-        'setTargetModel': 'shift+clickModel',
+        'setTargetModel': 'shift+clickModel'
       };
-      var charge_bindings = R.extend(Object.create(modelBaseModeService.bindings),
+      let charge_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                      charge_default_bindings);
-      var charge_buttons = modelsModeService.buildButtons({ single: true,
-                                                            end_charge: true });
-      var charge_mode = {
-        onEnter: function modelOnEnter(/*scope*/) {
-        },
-        onLeave: function modelOnLeave(/*scope*/) {
-        },
+      let charge_buttons = modelsModeService.buildButtons({ single: true,
+                                                            end_charge: true
+                                                          });
+      let charge_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'ModelCharge',
         actions: charge_actions,
         buttons: charge_buttons,
-        bindings: charge_bindings,
+        bindings: charge_bindings
       };
       modesService.registerMode(charge_mode);
       settingsService.register('Bindings',
                                charge_mode.name,
                                charge_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(charge_mode.bindings, bs);
                                });
       return charge_mode;

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('setSize template', function() {
   describe('aoeTemplateMode service', function() {
     beforeEach(inject([
@@ -9,8 +7,9 @@ describe('setSize template', function() {
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
@@ -23,7 +22,7 @@ describe('setSize template', function() {
     ], function(e) {
       when('user set '+e.action+' on template selection', function() {
         this.ret = this.aoeTemplateModeService
-          .actions[e.action](this.scope);
+          .actions[e.action](this.state);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -35,11 +34,9 @@ describe('setSize template', function() {
         });
 
         it('should execute onTemplates/setSize command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', 'setSize', e.size, ['stamp'],
-                                  this.scope, this.scope.game);
-
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ 'setSize', [e.size], ['stamp'] ]);
         });
       });
     });
@@ -53,8 +50,9 @@ describe('setSize template', function() {
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
@@ -66,7 +64,7 @@ describe('setSize template', function() {
       [ 'spraySize10', 10 ],
     ], function(e) {
       when('user set '+e.action+' on template selection', function() {
-        this.ret = this.sprayTemplateModeService.actions[e.action](this.scope);
+        this.ret = this.sprayTemplateModeService.actions[e.action](this.state);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -78,11 +76,9 @@ describe('setSize template', function() {
         });
 
         it('should execute onTemplates/setSize command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', 'setSize', e.size, ['stamp'],
-                                  this.scope, this.scope.game);
-
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ 'setSize', [e.size], ['stamp'] ]);
         });
       });
     });
@@ -110,7 +106,8 @@ describe('setSize template', function() {
         });
 
         it('should set template size', function() {
-          this.aoeTemplateService.setSize(e.size, this.template);
+          this.template = this.aoeTemplateService
+            .setSize(e.size, this.template);
           expect(this.aoeTemplateService.size(this.template))
             .toEqual(e.result);
         });
@@ -150,7 +147,8 @@ describe('setSize template', function() {
         });
 
         it('should set template size', function() {
-          this.sprayTemplateService.setSize(e.size, this.template);
+          this.template = this.sprayTemplateService
+            .setSize(e.size, this.template);
           expect(this.sprayTemplateService.size(this.template))
             .toEqual(e.result);
         });

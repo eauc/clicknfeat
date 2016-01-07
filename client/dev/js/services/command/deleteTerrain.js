@@ -2,7 +2,7 @@
 
 angular.module('clickApp.services').factory('deleteTerrainCommand', ['commands', 'terrain', 'gameTerrains', 'gameTerrainSelection', function deleteTerrainCommandServiceFactory(commandsService, terrainService, gameTerrainsService, gameTerrainSelectionService) {
   var deleteTerrainCommandService = {
-    execute: function deleteTerrainExecute(stamps, scope, game) {
+    execute: function deleteTerrainExecute(stamps, state, game) {
       return R.pipeP(function (stamps) {
         return gameTerrainsService.findAnyStamps(stamps, game.terrains);
       }, R.reject(R.isNil), R.map(terrainService.saveState), function (states) {
@@ -11,33 +11,36 @@ angular.module('clickApp.services').factory('deleteTerrainCommand', ['commands',
           desc: ''
         };
         return R.pipe(gameTerrainsService.removeStamps$(stamps), function (game_terrains) {
-          game.terrains = game_terrains;
+          game = R.assoc('terrains', game_terrains, game);
 
-          return gameTerrainSelectionService.removeFrom('local', stamps, scope, game.terrain_selection);
-        }, gameTerrainSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
-          game.terrain_selection = selection;
+          return gameTerrainSelectionService.removeFrom('local', stamps, state, game.terrain_selection);
+        }, gameTerrainSelectionService.removeFrom$('remote', stamps, state), function (selection) {
+          game = R.assoc('terrain_selection', selection, game);
 
-          scope.gameEvent('createTerrain');
-          return ctxt;
+          state.changeEvent('Game.terrain.create');
+
+          return [ctxt, game];
         })(game.terrains);
       })(stamps);
     },
-    replay: function deleteTerrainReplay(ctxt, scope, game) {
-      return R.pipe(R.map(R.prop('stamp')), function (stamps) {
+    replay: function deleteTerrainReplay(ctxt, state, game) {
+      return R.pipe(R.pluck('stamp'), function (stamps) {
         return R.pipe(function () {
           return gameTerrainsService.removeStamps(stamps, game.terrains);
         }, function (game_terrains) {
-          game.terrains = game_terrains;
+          game = R.assoc('terrains', game_terrains, game);
 
-          return gameTerrainSelectionService.removeFrom('local', stamps, scope, game.terrain_selection);
-        }, gameTerrainSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
-          game.terrain_selection = selection;
+          return gameTerrainSelectionService.removeFrom('local', stamps, state, game.terrain_selection);
+        }, gameTerrainSelectionService.removeFrom$('remote', stamps, state), function (selection) {
+          game = R.assoc('terrain_selection', selection, game);
 
-          scope.gameEvent('createTerrain');
+          state.changeEvent('Game.terrain.create');
+
+          return game;
         })();
       })(ctxt.terrains);
     },
-    undo: function deleteTerrainUndo(ctxt, scope, game) {
+    undo: function deleteTerrainUndo(ctxt, state, game) {
       return R.pipePromise(R.map(function (terrain) {
         return self.Promise.resolve(terrainService.create(terrain)).catch(R.always(null));
       }), R.promiseAll, R.reject(R.isNil), function (terrains) {
@@ -46,14 +49,16 @@ angular.module('clickApp.services').factory('deleteTerrainCommand', ['commands',
         }
 
         return R.pipe(gameTerrainsService.add$(terrains), function (game_terrains) {
-          game.terrains = game_terrains;
+          game = R.assoc('terrains', game_terrains, game);
 
           var stamps = R.map(R.path(['state', 'stamp']), terrains);
-          return gameTerrainSelectionService.set('remote', stamps, scope, game.terrain_selection);
+          return gameTerrainSelectionService.set('remote', stamps, state, game.terrain_selection);
         }, function (selection) {
-          game.terrain_selection = selection;
+          game = R.assoc('terrain_selection', selection, game);
 
-          scope.gameEvent('createTerrain');
+          state.changeEvent('Game.terrain.create');
+
+          return game;
         })(game.terrains);
       })(ctxt.terrains);
     }

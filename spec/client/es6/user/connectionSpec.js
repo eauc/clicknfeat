@@ -1,5 +1,3 @@
-'use strict';
-
 describe('user', function() {
   describe('userConnection service', function() {
     beforeEach(inject([ 'userConnection', function(userConnectionService) {
@@ -10,10 +8,13 @@ describe('user', function() {
       this.websocketService.create.resolveWith = 'websocket.create.returnValue';
       mockReturnPromise(this.websocketService.close);
       this.websocketService.close.resolveWith = 'websocket.close.returnValue';
+
+      this.state = { event: jasmine.createSpy('event')
+                   };
     }]));
 
-    when('create()', function() {
-      this.ret = this.userConnectionService.create({});
+    when('init()', function() {
+      this.ret = this.userConnectionService.init({});
     }, function() {
       it('should initialize a connection state', function() {
         expect(this.ret.connection)
@@ -22,10 +23,11 @@ describe('user', function() {
     });
 
     when('open()', function() {
-      this.ret = this.userConnectionService.open(this.user);
+      this.ret = this.userConnectionService
+        .open(this.state, this.user);
     }, function() {
       beforeEach(function() {
-        this.user = this.userConnectionService.create({
+        this.user = this.userConnectionService.init({
           state: { stamp: 'stamp' }
         });
       });
@@ -61,11 +63,12 @@ describe('user', function() {
       this.ret = this.userConnectionService.close(this.user);
     }, function() {
       beforeEach(function(done) {
-        this.user = this.userConnectionService.create({
+        this.user = this.userConnectionService.init({
           state: { stamp: 'stamp' }
         });
-        this.userConnectionService.open(this.user)
-          .then(function() {
+        this.userConnectionService.open(this.state, this.user)
+          .then((user) => {
+            this.user = user;
             done();
           });
       });
@@ -101,14 +104,15 @@ describe('user', function() {
 
     when('sendChat(<to>, <msg>)', function() {
       this.ret = this.userConnectionService
-        .sendChat(this.to, this.msg, this.user);
+        .sendChat({ to: this.to, msg: this.msg}, this.user);
     }, function() {
       beforeEach(function(done) {
-        this.user = this.userConnectionService.create({
+        this.user = this.userConnectionService.init({
           state: { stamp: 'stamp' }
         });
-        this.userConnectionService.open(this.user)
-          .then(function() {
+        this.userConnectionService.open(this.state, this.user)
+          .then((user) => {
+            this.user = user;
             done();
           });
 
@@ -122,8 +126,7 @@ describe('user', function() {
             type: 'chat',
             from: 'stamp',
             to: [ 'stamp1', 'stamp2' ],
-            msg: 'hello',
-            link: null
+            msg: 'hello'
           }, 'websocket.create.returnValue');
         expect(this.ret)
           .toBe('websocket.send.returnValue');
@@ -132,14 +135,15 @@ describe('user', function() {
 
     when('sendChat(<to>, <msg>, <link>)', function() {
       this.ret = this.userConnectionService
-        .sendChat(this.to, this.msg, this.link, this.user);
+        .sendChat({ to: this.to, msg: this.msg, link: this.link}, this.user);
     }, function() {
       beforeEach(function(done) {
-        this.user = this.userConnectionService.create({
+        this.user = this.userConnectionService.init({
           state: { stamp: 'stamp' }
         });
-        this.userConnectionService.open(this.user)
-          .then(function() {
+        this.userConnectionService.open(this.state, this.user)
+          .then((user) => {
+            this.user = user;
             done();
           });
 
@@ -155,7 +159,7 @@ describe('user', function() {
             from: 'stamp',
             to: [ 'stamp1', 'stamp2' ],
             msg: 'hello',
-            link: '#link',
+            link: '#link'
           }, 'websocket.create.returnValue');
         expect(this.ret)
           .toBe('websocket.send.returnValue');
@@ -233,17 +237,18 @@ describe('user', function() {
     });
 
     describe('socket event handlers', function() {
-      beforeEach(inject(['pubSub', function(pubSubService) {
-        this.user = this.userConnectionService.create({
+      beforeEach(function(done) {
+        this.user = this.userConnectionService.init({
           state: { stamp: 'stamp' }
         });
-        this.userConnectionService.open(this.user);
+        this.userConnectionService
+          .open(this.state, this.user)
+          .then((user) => {
+            this.user = user;
+            done();
+          });
         this.handlers = this.websocketService.create.calls.first().args[2];
-
-        this.event_listener = jasmine.createSpy('event_listener');
-        pubSubService.subscribe('#watch#', this.event_listener,
-                                this.user.connection.channel);
-      }]));
+      });
       
       when('users list message', function() {
         this.handlers.users(this.msg);
@@ -255,18 +260,13 @@ describe('user', function() {
                               ] };
         });
         
-        it('should set connection\'s users list', function() {
-          expect(this.user.connection.users)
-            .toEqual([
+        it('should emit "setOnlineUsers" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('User.setOnlineUsers', [
               { name: 'Manu' },
               { name: 'ToTo' },
               { name: 'wood' }
             ]);
-        });
-
-        it('should emit "users" event', function() {
-          expect(this.event_listener)
-            .toHaveBeenCalledWith('users', this.user.connection.users);
         });
       });
       
@@ -277,14 +277,9 @@ describe('user', function() {
           this.msg = { games: 'games' };
         });
         
-        it('should set connection\'s users list', function() {
-          expect(this.user.connection.games)
-            .toBe('games');
-        });
-
-        it('should emit "games" event', function() {
-          expect(this.event_listener)
-            .toHaveBeenCalledWith('games', this.user.connection.games);
+        it('should emit "User.setOnlineGames" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('User.setOnlineGames', this.msg.games);
         });
       });
       
@@ -295,32 +290,141 @@ describe('user', function() {
           this.msg = { msg: 'hello' };
         });
         
-        it('should set connection\'s chat list', function() {
-          expect(this.user.connection.chat)
-            .toEqual([
-              { msg: 'hello' },
-            ]);
-        });
-
-        it('should emit "chat" event', function() {
-          expect(this.event_listener)
-            .toHaveBeenCalledWith('chat', this.user.connection.chat);
+        it('should emit "User.newChatMsg" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('User.newChatMsg', this.msg);
         });
       });
       
       when('close', function() {
         this.handlers.close();
       }, function() {
-        it('should cleanup connection', function() {
-          expect(this.user.connection.users)
-            .toEqual([]);
-          expect(this.userConnectionService.active(this.user))
-            .toBeFalsy();
+        it('should emit "User.connection.close" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('User.connection.close');
         });
+      });
+    });
+  });
 
-        it('should emit "close" event', function() {
-          expect(this.event_listener)
-            .toHaveBeenCalledWith('close');
+  describe('stateUser service', function() {
+    beforeEach(inject([ 'stateUser', function(stateUserService) {
+      this.stateUserService = stateUserService;
+
+      this.userService = spyOnService('user');
+      
+      this.state = { user: { user: 'user' },
+                     changeEvent: jasmine.createSpy('changeEvent')
+                   };
+    }]));
+
+    when('onUserSetOnlineUsers', function() {
+      this.ret = this.stateUserService
+        .onUserSetOnlineUsers(this.state, 'event', 'users');
+    }, function() {        
+      it('should set state users list', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.state.user)
+            .toEqual({
+              user: 'user',
+              connection: { users: 'users' }
+            });
+        });
+      });
+
+      it('should emit "User.change" event', function() { 
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('User.change');
+        });
+      });
+    });
+
+    when('onUserSetOnlineGames', function() {
+      this.ret = this.stateUserService
+        .onUserSetOnlineGames(this.state, 'event', 'games');
+    }, function() {        
+      it('should set state games list', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.state.user)
+            .toEqual({
+              user: 'user',
+              connection: { games: 'games' }
+            });
+        });
+      });
+
+      it('should emit "User.change" event', function() { 
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('User.change');
+        });
+      });
+    });
+    
+    when('chat message', function() {
+      this.ret = this.stateUserService
+        .onUserNewChatMsg(this.state, 'event', this.msg);
+    }, function() {
+      beforeEach(function() {
+        this.msg = { msg: 'hello' };
+      });
+      
+      it('should set connection\'s chat list', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.state.user)
+            .toEqual({
+              user: 'user',
+              connection: {
+                chat: [ { msg: 'hello' }
+                      ]
+              }
+            });
+        });
+      });
+
+      it('should emit "User.change" event', function() { 
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('User.change');
+        });
+      });
+    });
+    
+    when('connection close', function() {
+      this.ret = this.stateUserService
+        .onUserConnectionClose(this.state);
+    }, function() {
+      beforeEach(function() {
+        this.userService.online._retVal = true;
+        this.promptService.prompt.resolveWith = true;
+      });
+      
+      it('should alert user', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.promptService.prompt)
+            .toHaveBeenCalledWith('alert', 'Server connection lost.');
+        });
+      });
+      
+      it('should toggle user online', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.userService.toggleOnline)
+            .toHaveBeenCalledWith(this.state, { user: 'user' });
+        });
+      });
+      
+      it('should update state user', function() {
+        this.thenExpect(this.ret, () => {
+          expect(this.state.user)
+            .toEqual('user.toggleOnline.returnValue');
+        });
+      });
+
+      it('should emit "User.change" event', function() { 
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('User.change');
         });
       });
     });

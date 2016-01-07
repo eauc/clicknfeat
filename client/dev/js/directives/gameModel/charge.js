@@ -1,5 +1,7 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.directives').factory('clickGameModelCharge', ['labelElement', 'model', 'point', 'gameFactions', 'gameModels', 'gameModelSelection', function (labelElementService, modelService, pointService, gameFactionsService, gameModelsService, gameModelSelectionService) {
   return {
     create: function clickGameModelChargeCreate(svgNS, under_models_container, over_models_container) {
@@ -17,22 +19,31 @@ angular.module('clickApp.directives').factory('clickGameModelCharge', ['labelEle
 
       return [charge_path, charge_target, charge_label];
     },
-    cleanup: function clickGameModelCharge(under_models_container, over_models_container, el) {
-      over_models_container.removeChild(el[2].label);
-      over_models_container.removeChild(el[1]);
-      under_models_container.removeChild(el[0]);
+    cleanup: function clickGameModelCharge(under_models_container, over_models_container, element) {
+      var _element = _slicedToArray(element, 3);
+
+      var charge_path = _element[0];
+      var charge_target = _element[1];
+      var charge_label = _element[2];
+
+      over_models_container.removeChild(charge_label.label);
+      over_models_container.removeChild(charge_target);
+      under_models_container.removeChild(charge_path);
     },
-    update: function clickGameModelChargeUpdate(map_flipped, zoom_factor, game, factions, info, model, img, el) {
-      var charge_path = el[0];
-      var charge_target = el[1];
-      var charge_label = el[2];
+    update: function clickGameModelChargeUpdate(map_flipped, zoom_factor, state, info, model, img, element) {
+      var _element2 = _slicedToArray(element, 3);
+
+      var charge_path = _element2[0];
+      var charge_target = _element2[1];
+      var charge_label = _element2[2];
+
       if (!modelService.isCharging(model) && !modelService.isPlacing(model)) {
         charge_path.style.visibility = 'hidden';
         charge_target.style.visibility = 'hidden';
         labelElementService.update(map_flipped, zoom_factor, model.state, model.state, '', charge_label);
         return;
       }
-      var max_dist;
+      var max_dist = undefined;
       if (modelService.isCharging(model)) {
         var charge_length = pointService.distanceTo(model.state, model.state.cha.s);
         var charge_dir = model.state.cha.s.r;
@@ -51,7 +62,7 @@ angular.module('clickApp.directives').factory('clickGameModelCharge', ['labelEle
         }
         labelElementService.update(map_flipped, zoom_factor, model.state.cha.s, model.state.cha.s, label, charge_label);
 
-        if (gameModelSelectionService.in('local', model.state.stamp, game.model_selection) && R.exists(model.state.cha.t)) {
+        if (gameModelSelectionService.in('local', model.state.stamp, state.game.model_selection) && R.exists(model.state.cha.t)) {
           R.pipeP(gameModelsService.findStamp$(model.state.cha.t), function (target) {
             charge_target.setAttribute('cx', target.state.x + '');
             charge_target.setAttribute('cy', target.state.y + '');
@@ -76,8 +87,8 @@ angular.module('clickApp.directives').factory('clickGameModelCharge', ['labelEle
                 charge_target.classList.remove('reached');
               }
               charge_target.style.visibility = 'visible';
-            })(factions);
-          })(game.models);
+            })(state.factions);
+          })(state.game.models);
         }
       }
       if (modelService.isPlacing(model)) {

@@ -39,33 +39,27 @@ angular.module('clickApp.services').factory('gameMap', ['gameModels', 'gameTempl
       };
       if (event.target.classList.contains('template') && event.target.hasAttribute('data-stamp')) {
         stamp = event.target.getAttribute('data-stamp');
-        return R.pipeP(function () {
-          return gameTemplatesService.findStamp(stamp, game.templates);
-        }, function (template) {
+        return R.pipeP(gameTemplatesService.findStamp$(stamp), function (template) {
           return { type: 'Template',
             target: template
           };
-        })().catch(R.always(not_found));
+        })(game.templates).catch(R.always(not_found));
       }
       if (event.target.classList.contains('model-base') && event.target.hasAttribute('data-stamp')) {
         stamp = event.target.getAttribute('data-stamp');
-        return R.pipeP(function () {
-          return gameModelsService.findStamp(stamp, game.models);
-        }, function (model) {
+        return R.pipeP(gameModelsService.findStamp$(stamp), function (model) {
           return { type: 'Model',
             target: model
           };
-        })().catch(R.always(not_found));
+        })(game.models).catch(R.always(not_found));
       }
       if (event.target.classList.contains('terrain-image') && event.target.hasAttribute('data-stamp')) {
         stamp = event.target.getAttribute('data-stamp');
-        return R.pipeP(function () {
-          return gameTerrainsService.findStamp(stamp, game.terrains);
-        }, function (terrain) {
+        return R.pipeP(gameTerrainsService.findStamp$(stamp), function (terrain) {
           return { type: 'Terrain',
             target: terrain
           };
-        })().catch(R.always(not_found));
+        })(game.terrains).catch(R.always(not_found));
       }
       return self.Promise.resolve(not_found);
     }

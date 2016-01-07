@@ -34,20 +34,28 @@ angular.module('clickApp.services')
           },
           setWreckDisplay: function modelSetWreckDisplay(set, model) {
             if(set) {
-              model.state.dsp = R.uniq(R.append('w', model.state.dsp));
+              return R.over(R.lensPath(['state','dsp']),
+                            R.compose(R.uniq, R.append('w')),
+                            model);
             }
             else {
-              model.state.dsp = R.reject(R.equals('w'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('w')),
+                            model);
             }
           },
           toggleWreckDisplay: function modelToggleWreckDisplay(model) {
             if(modelService.isWreckDisplayed(model)) {
-              model.state.dsp = R.reject(R.equals('w'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('w')),
+                            model);
             }
             else {
-              model.state.dsp = R.append('w', model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.append('w'),
+                            model);
             }
-          },
+          }
         };
         return modelWreckService;
       };

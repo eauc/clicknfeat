@@ -4,20 +4,20 @@ angular.module('clickApp.services').factory('modelEffect', [function modelEffect
   return function (modelService) {
     var modelEffectService = {
       isEffectDisplayed: function modelIsEffectDisplayed(effect, model) {
-        return !!R.find(R.equals(effect), R.defaultTo([], model.state.eff));
+        return !!R.find(R.equals(effect), R.pathOr([], ['state', 'eff'], model));
       },
       setEffectDisplay: function modelSetEffectDisplay(effect, set, model) {
         if (set) {
-          model.state.eff = R.uniq(R.append(effect, R.defaultTo([], model.state.eff)));
+          return R.over(R.lensPath(['state', 'eff']), R.compose(R.uniq, R.append(effect), R.defaultTo([])), model);
         } else {
-          model.state.eff = R.reject(R.equals(effect), R.defaultTo([], model.state.eff));
+          return R.over(R.lensPath(['state', 'eff']), R.compose(R.reject(R.equals(effect)), R.defaultTo([])), model);
         }
       },
       toggleEffectDisplay: function modelToggleEffectDisplay(effect, model) {
         if (modelService.isEffectDisplayed(effect, model)) {
-          model.state.eff = R.reject(R.equals(effect), R.defaultTo([], model.state.eff));
+          return R.over(R.lensPath(['state', 'eff']), R.compose(R.reject(R.equals(effect)), R.defaultTo([])), model);
         } else {
-          model.state.eff = R.append(effect, R.defaultTo([], model.state.eff));
+          return R.over(R.lensPath(['state', 'eff']), R.compose(R.append(effect), R.defaultTo([])), model);
         }
       }
     };

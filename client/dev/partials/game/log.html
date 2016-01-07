@@ -6,38 +6,38 @@
     <div class="panel-content">
       <button class="btn btn-default"
               title="{{action_bindings['commandUndoLast'] || ''}}"
-              ng-disabled="game.commands.length === 0"
+              ng-disabled="commands.length === 0"
               ng-click="doModeAction('commandUndoLast')">
         Undo Last
       </button>
       <button class="btn btn-default"
               title="{{action_bindings['commandReplayNext'] || ''}}"
-              ng-disabled="game.undo.length === 0"
+              ng-disabled="undo.length === 0"
               ng-click="doModeAction('commandReplayNext')">
         Replay Next
       </button>
       <div class="log-replay-list"
-           click-log-replay-list="game.undo">
-        <div ng-repeat="(i,cmd) in game.undo.slice(-20) track by cmd.stamp">
+           click-log-replay-list="undo">
+        <div ng-repeat="(i,cmd) in undo.slice(-20) track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
         </div>
       </div>
       <div class="log-replay-list log"
-           click-log-replay-list="game.undo_log">
-        <div ng-repeat="(i,cmd) in game.undo_log.slice(-20) track by cmd.stamp">
+           click-log-replay-list="undo_log">
+        <div ng-repeat="(i,cmd) in undo_log.slice(-20) track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           <span class="text-info">{{::cmd.type}} {{::cmd.desc}}</span>
         </div>
       </div>
       <div class="log-command-list log">
-        <div ng-repeat="(i,cmd) in game.commands_log.slice(-20).reverse() track by cmd.stamp">
+        <div ng-repeat="(i,cmd) in commands_log.slice(-20).reverse() track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           <span class="text-info">{{::cmd.type}} {{::cmd.desc}}</span>
         </div>
       </div>
       <div class="log-command-list">
-        <div ng-repeat="(i,cmd) in game.commands.slice(-20).reverse() track by cmd.stamp">
+        <div ng-repeat="(i,cmd) in commands.slice(-20).reverse() track by cmd.stamp">
           <span class="text-primary">[{{::cmd.user}}]</span>
           {{::cmd.type}} {{::cmd.desc}}
         </div>

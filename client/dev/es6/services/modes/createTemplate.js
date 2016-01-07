@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('createTemplateMode', [
     'modes',
@@ -8,47 +6,54 @@ angular.module('clickApp.services')
     'game',
     function createTemplateModeServiceFactory(modesService,
                                               settingsService,
-                                              commonModeService,
-                                              gameService) {
+                                              commonModeService) {
       var createTemplate_actions = Object.create(commonModeService.actions);
-      createTemplate_actions.moveMap = function createTemplateMoveMap(scope, coord) {
-        scope.create.template.x = coord.x;
-        scope.create.template.y = coord.y;
-        scope.gameEvent('moveCreateTemplate');
+      function updateCreateBase(coord, state) {
+        state.create = R.over(
+          R.lensPath(['template','base']),
+          R.pipe(
+            R.assoc('x', coord.x),
+            R.assoc('y', coord.y)
+          ),
+          state.create
+        );
+      }
+      createTemplate_actions.moveMap = (state, coord) => {
+        updateCreateBase(coord, state);
+        return state.changeEvent('Game.create.update');
       };
-      createTemplate_actions.create = function createTemplateCreate(scope, event) {
-        scope.create.template.x = event['click#'].x;
-        scope.create.template.y = event['click#'].y;
-        scope.create.template.r = R.path(['ui_state','flip_map'], scope) ? 180 : 0;
-        return gameService.executeCommand('createTemplate', [scope.create.template],
-                                          scope, scope.game);
+      createTemplate_actions.create = (state, event) => {
+        let is_flipped = R.path(['ui_state','flip_map'], state);
+        updateCreateBase(event['click#'], state);
+        return state.event('Game.command.execute',
+                           'createTemplate', [state.create.template, is_flipped]);
       };
       var createTemplate_default_bindings = {
-        create: 'clickMap',
+        create: 'clickMap'
       };
       var createTemplate_bindings = R.extend(Object.create(commonModeService.bindings),
                                              createTemplate_default_bindings);
       var createTemplate_buttons = [];
       var createTemplate_mode = {
-        onEnter: function createTemplateOnEnter(scope) {
-          scope.gameEvent('enableCreateTemplate');
-          scope.gameEvent('enableMoveMap');
+        onEnter: (state) => {
+          state.changeEvent('Game.template.create.enable');
+          state.changeEvent('Game.moveMap.enable');
         },
-        onLeave: function createTemplateOnLeave(scope) {
-          scope.create.template = null;
-          scope.gameEvent('disableMoveMap');
-          scope.gameEvent('disableCreateTemplate');
+        onLeave: function createTemplateOnLeave(state) {
+          state.create = R.assoc('template', null, state.create);
+          state.changeEvent('Game.moveMap.disable');
+          state.changeEvent('Game.template.create.disable');
         },
         name: 'CreateTemplate',
         actions: createTemplate_actions,
         buttons: createTemplate_buttons,
-        bindings: createTemplate_bindings,
+        bindings: createTemplate_bindings
       };
       modesService.registerMode(createTemplate_mode);
       settingsService.register('Bindings',
                                createTemplate_mode.name,
                                createTemplate_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(createTemplate_mode.bindings, bs);
                                });
       return createTemplate_mode;

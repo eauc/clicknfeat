@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .factory('clickGameModelMelee', [
     'model',
@@ -20,26 +18,26 @@ angular.module('clickApp.directives')
       }
       return {
         create: function clickGameModelMeleeCreate(svgNS, parent) {
-          var melee = document.createElementNS(svgNS, 'path');
+          let melee = document.createElementNS(svgNS, 'path');
           melee.classList.add('model-melee');
           melee.setAttribute('d', '');
           parent.appendChild(melee);
 
-          var reach = document.createElementNS(svgNS, 'path');
+          let reach = document.createElementNS(svgNS, 'path');
           reach.classList.add('model-melee');
           reach.setAttribute('d', '');
           parent.appendChild(reach);
 
-          var strike = document.createElementNS(svgNS, 'path');
+          let strike = document.createElementNS(svgNS, 'path');
           strike.classList.add('model-melee');
           strike.setAttribute('d', '');
           parent.appendChild(strike);
 
           return [ melee, reach, strike ];
         },
-        update: function clickGameModeMeleeUpdate(info, model, img, el) {
-          var path;
-          var melee = el[0];
+        update: function clickGameModeMeleeUpdate(info, model, img, element) {
+          let [ melee, reach, strike ] = element;
+          let path;
           if(modelService.isMeleeDisplayed('mm', model)) {
             path = computeMeleePath(5, img, info);
             melee.setAttribute('d', path);
@@ -48,7 +46,6 @@ angular.module('clickApp.directives')
           else {
             melee.style.visibility = 'hidden';
           }
-          var reach = el[1];
           if(modelService.isMeleeDisplayed('mr', model)) {
             path = computeMeleePath(20, img, info);
             reach.setAttribute('d', path);
@@ -57,7 +54,6 @@ angular.module('clickApp.directives')
           else {
             reach.style.visibility = 'hidden';
           }
-          var strike = el[2];
           if(modelService.isMeleeDisplayed('ms', model)) {
             path = computeMeleePath(40, img, info);
             strike.setAttribute('d', path);
@@ -66,7 +62,7 @@ angular.module('clickApp.directives')
           else {
             strike.style.visibility = 'hidden';
           }
-        },
+        }
       };
     }
   ]);

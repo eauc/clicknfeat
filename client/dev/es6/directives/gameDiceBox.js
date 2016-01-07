@@ -3,8 +3,17 @@ angular.module('clickApp.directives')
     '$scope',
     function userConnectionCtrl($scope) {
       console.log('gameDiceBoxCtrl');
+
+      function updateList() {
+        $scope.dice = R.clone(R.path(['state','game','dice'], $scope));
+        $scope.$digest();
+      }
+      $scope.onStateChangeEvent('Game.dice.roll', updateList, $scope);
+      self.requestAnimationFrame(updateList);
+
       $scope.doRollDice = function doRoll(sides, nb_dice) {
-        $scope.doExecuteCommand('rollDice', sides, nb_dice);
+        $scope.stateEvent('Game.command.execute',
+                          'rollDice', [sides, nb_dice]);
       };
     }
   ])
@@ -15,8 +24,7 @@ angular.module('clickApp.directives')
         controller: 'gameDiceBoxCtrl',
         templateUrl: 'partials/directives/game_dice_box.html',
         scope: true,
-        link: function(/*scope, element, attrs*/) {
-        }
+        link: () => { }
       };
     }
   ]);

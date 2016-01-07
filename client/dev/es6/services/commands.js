@@ -1,61 +1,59 @@
 angular.module('clickApp.services')
   .factory('commands', [
     function commandsServiceFactory() {
-      var CMD_REGS = {};
-      var commandsService = {
+      let CMD_REGS = {};
+      let commandsService = {
         registerCommand: function commandsRegister(name, command) {
           console.log('register command', name, command);
           CMD_REGS[name] = command;
         },
-        execute: function commandsExecute(name, ...args) {
+        execute: function commandsExecute(name, args, state, game) {
           return R.pipePromise(
-            () => {
-              if(R.isNil(CMD_REGS[name])) {
-                console.log('execute unknown command '+name);
-                return self.Promise.reject('execute unknown command '+name);
-              }
-              return CMD_REGS[name].execute.apply(null, args);
+            R.prop(name),
+            R.rejectIf(R.isNil, `execute unknown command "${name}"`),
+            (cmd) => {
+              return cmd.execute.apply(null, [...args, state, game]);
             },
-            (ctxt) => {
-              ctxt.type = name;
-              return ctxt;
+            ([ctxt, game]) => {
+              return [ R.assoc('type', name, ctxt),
+                       game
+                     ];
             }
-          )();
+          )(CMD_REGS);
         },
-        undo: function commandsUndo(ctxt, scope, game) {
+        undo: function commandsUndo(ctxt, state, game) {
+          return R.pipePromise(
+            R.prop(ctxt.type),
+            R.rejectIf(R.isNil, `undo unknown command "${ctxt.type}"`),
+            (cmd) => {
+              return cmd.undo(ctxt, state, game);
+            }
+          )(CMD_REGS);
+        },
+        replay: function commandsReplay(ctxt, state, game) {
+          return R.pipePromise(
+            R.prop(ctxt.type),
+            R.rejectIf(R.isNil, `replay unknown command ${ctxt.type}`),
+            (cmd) => {
+              return cmd.replay(ctxt, state, game);
+            }
+          )(CMD_REGS);
+        },
+        replayBatch: function commandsReplayBatch(commands, state, game) {
           return R.pipePromise(
             () => {
-              if(R.isNil(CMD_REGS[ctxt.type])) {
-                console.log('undo unknown command '+ctxt.type);
-                return self.Promise.reject('undo unknown command '+ctxt.type);
-              }
-              return CMD_REGS[ctxt.type].undo(ctxt, scope, game);
+              if(R.isEmpty(commands)) return game;
+
+              return R.pipeP(
+                (game) => {
+                  return commandsService.replay(commands[0], state, game)
+                    .catch(R.always(game));
+                },
+                commandsService.replayBatch$(R.tail(commands), state)
+              )(game);
             }
           )();
-        },
-        replay: function commandsReplay(ctxt, scope, game) {
-          return R.pipePromise(
-            () => {
-              if(R.isNil(CMD_REGS[ctxt.type])) {
-                console.log('replay unknown command '+ctxt.type);
-                return self.Promise.reject('replay unknown command '+ctxt.type);
-              }
-              return CMD_REGS[ctxt.type].replay(ctxt, scope, game);
-            }
-          )();
-        },
-        replayBatch: function commandsReplayBatch(commands, scope, game) {
-          if(R.isEmpty(commands)) return self.Promise.resolve();
-          
-          // console.log('Commands: ReplayBatch:');
-          // console.log('Commands: ReplayBatch:', commands);
-          return commandsService.replay(commands[0], scope, game)
-            .catch(R.always(null))
-            .then(() => {
-              return commandsService
-                .replayBatch(R.tail(commands), scope, game);
-            });
-        },
+        }
       };
       R.curryService(commandsService);
       return commandsService;

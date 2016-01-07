@@ -12,11 +12,13 @@ angular.module('clickApp.services')
             return model.state.aur;
           },
           setAuraDisplay: function modelSetAuraDisplay(aura, model) {
-            model.state.aur = aura;
+            return R.assocPath(['state','aur'], aura, model);
           },
           toggleAuraDisplay: function modelToggleAuraDisplay(aura, model) {
-            model.state.aur = (aura === model.state.aur) ? null : aura;
-          },
+            return R.over(R.lensPath(['state','aur']),
+                          (aur) => { return (aura === aur) ? null : aura; },
+                          model);
+          }
         };
         return modelAuraService;
       };

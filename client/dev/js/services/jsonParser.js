@@ -6,11 +6,12 @@ angular.module('clickApp.services').factory('jsonParser', [function jsonParserSe
       return self.Promise.resolve(string).then(function (string) {
         return JSON.parse(string);
       }).catch(function (error) {
-        console.log('JSON Parse error', error);
-        throw error;
+        console.error('JSON Parse error', error);
+        return self.Promise.reject(error.message);
       });
     }
   };
+  R.curryService(jsonParserService);
   return jsonParserService;
 }]);
 //# sourceMappingURL=jsonParser.js.map

@@ -5,52 +5,56 @@ angular.module('clickApp.services')
     function setLosCommandServiceFactory(commandsService,
                                          gameLosService) {
       var setLosCommandService = {
-        execute: function setLosExecute(method, ...args /*, game */) {
+        execute: function setLosExecute(method, args, state, game) {
           if('Function' !== R.type(gameLosService[method])) {
-            return self.Promise.reject('Los unknown method '+method);
+            return self.Promise.reject(`Los unknown method ${method}`);
           }
 
-          var game = R.last(args);
           var ctxt = {
             before: [],
             after: [],
-            desc: method,
+            desc: method
           };
-          args = [ ...R.slice(0, -1, args), game, game.los ];
           
           return R.pipePromise(
-            () => {
-              return gameLosService.saveRemoteState(game.los);
-            },
+            gameLosService.saveRemoteState,
             (before) => {
               ctxt.before = before;
               
-              return gameLosService[method].apply(null, args);
+              return gameLosService[method]
+                .apply(null, [...args, state, game, game.los]);
             },
             (los) => {
-              game.los = los;
+              game = R.assoc('los', los, game);
               
               return gameLosService.saveRemoteState(game.los);
             },
             (after) => {
               ctxt.after = after;
-              return ctxt;
-            }
-          )();
-        },
-        replay: function setLosRedo(ctxt, scope, game) {
-          return R.pipeP(
-            gameLosService.resetRemote$(ctxt.after, scope, game),
-            (los) => {
-              game.los = los;
+
+              state.changeEvent('Game.los.remote.change');
+              
+              return [ctxt, game];
             }
           )(game.los);
         },
-        undo: function setLosUndo(ctxt, scope, game) {
+        replay: function setLosRedo(ctxt, state, game) {
           return R.pipeP(
-            gameLosService.resetRemote$(ctxt.before, scope, game),
+            gameLosService.resetRemote$(ctxt.after, state, game),
             (los) => {
-              game.los = los;
+              state.changeEvent('Game.los.remote.change');
+
+              return R.assoc('los', los, game);
+            }
+          )(game.los);
+        },
+        undo: function setLosUndo(ctxt, state, game) {
+          return R.pipeP(
+            gameLosService.resetRemote$(ctxt.before, state, game),
+            (los) => {
+              state.changeEvent('Game.los.remote.change');
+
+              return R.assoc('los', los, game);
             }
           )(game.los);
         }

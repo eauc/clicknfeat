@@ -15,145 +15,159 @@ angular.module('clickApp.services')
                                          modelService,
                                          gameService,
                                          gameModelsService,
-                                         gameModelSelectionService
-                                        ) {
-      var model_actions = Object.create(modelsModeService.actions);
-      model_actions.createAoEOnModel = function modelCreateAoEModel(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+                                         gameModelSelectionService) {
+      let model_actions = Object.create(modelsModeService.actions);
+      model_actions.createAoEOnModel = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           () => {
-            return gameModelsService.findStamp(stamps[0], scope.game.models);
+            return gameModelsService.findStamp(stamps[0], state.game.models);
           },
           (model) => {
-            var position = R.pick(['x','y'], model.state);
+            let position = R.pick(['x','y'], model.state);
             position.type = 'aoe';
-
-            return gameService.executeCommand('createTemplate', [position],
-                                              scope, scope.game);
+            let create = {
+              base: { x: 0, y: 0 },
+              templates: [position]
+            };
+            let is_flipped = R.path(['ui_state','flip_map'], state);
+            return state.event('Game.command.execute',
+                               'createTemplate', [create, is_flipped]);
           }
         )();
       };
-      model_actions.createSprayOnModel = function modelCreateSprayModel(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.createSprayOnModel = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           () => {
-            return gameModelsService.findStamp(stamps[0], scope.game.models);
+            return gameModelsService.findStamp(stamps[0], state.game.models);
           },
           (model) =>{
-            var position = R.pick(['x','y'], model.state);
+            let position = R.pick(['x','y'], model.state);
             position.type = 'spray';
-
-            return R.pipeP(
+            let create = {
+              base: { x: 0, y: 0 },
+              templates: [position]
+            };
+            let is_flipped = R.path(['ui_state','flip_map'], state);
+            return R.pipePromise(
               () => {
-                return gameService.executeCommand('createTemplate', [position],
-                                                  scope, scope.game);
+                return state.event('Game.command.execute',
+                                   'createTemplate', [create, is_flipped]);
               },
               () => {
                 // simulate set-origin-model in sprayTemplateMode
-                return sprayTemplateModeService
-                  .actions.setOriginModel(scope, { 'click#': { target: model } });
+                return sprayTemplateModeService.actions
+                  .setOriginModel(state, { 'click#': { target: model } });
               }
             )();
           }
         )();
       };
-      model_actions.selectAllFriendly = function modelSelectAllFriendly(scope) {
-        var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.selectAllFriendly = (state) => {
+        let selection = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
           (model) => {
-            var stamps = R.pipe(
+            let stamps = R.pipe(
               gameModelsService.all,
               R.filter(modelService.userIs$(modelService.user(model))),
               R.map(modelService.stamp)
-            )(scope.game.models);
+            )(state.game.models);
 
-            return gameService.executeCommand('setModelSelection', 'set', stamps,
-                                              scope, scope.game);
+            return state.event('Game.command.execute',
+                               'setModelSelection', ['set', stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      model_actions.selectAllUnit = function modelSelectAllUnit(scope) {
-        var selection = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.selectAllUnit = (state) => {
+        let selection = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(selection[0]),
           (model) => {
-            var unit = modelService.unit(model);
+            let unit = modelService.unit(model);
             if(R.isNil(unit)) {
               return self.Promise.reject('Model not in unit');
             }
             
-            var stamps = R.pipe(
+            let stamps = R.pipe(
               gameModelsService.all,
               R.filter(modelService.userIs$(modelService.user(model))),
               R.filter(modelService.unitIs$(unit)),
               R.map(modelService.stamp)
-            )(scope.game.models);
+            )(state.game.models);
             
-            return gameService.executeCommand('setModelSelection', 'set', stamps,
-                                              scope, scope.game);
+            return state.event('Game.command.execute',
+                               'setModelSelection', ['set', stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      model_actions.setB2B = function modelSetB2B(scope, event) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.setB2B = (state, event) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           () => {
-            return gameModelsService.findStamp(stamps[0], scope.game.models);
+            return gameModelsService.findStamp(stamps[0], state.game.models);
           },
           (model) => {
             if(model.state.stamp === event['click#'].target.state.stamp) return null;
             
-            return gameService.executeCommand('onModels', 'setB2B',
-                                              scope.factions, event['click#'].target,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setB2B',
+                                             [state.factions, event['click#'].target],
+                                             stamps
+                                           ]);
           }
         )();
       };
-      model_actions.openEditLabel = function openEditLabel(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.openEditLabel = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           () => {
-            return gameModelsService.findStamp(stamps[0], scope.game.models);
+            return gameModelsService.findStamp(stamps[0], state.game.models);
           },
           (model) => {
-            scope.gameEvent('openEditLabel', model);
+            state.changeEvent('Game.editLabel.open', model);
           }
         )();
       };
-      model_actions.openEditDamage = function openEditDamage(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.openEditDamage = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           () => {
-            return gameModelsService.findStamp(stamps[0], scope.game.models);
+            return gameModelsService.findStamp(stamps[0], state.game.models);
           },
           (model) => {
-            scope.gameEvent('toggleEditDamage', model);
+            state.changeEvent('Game.editDamage.toggle', model);
           }
         )();
       };
 
-      var model_default_bindings = {
+      let model_default_bindings = {
         'createAoEOnModel': 'ctrl+a',
         'createSprayOnModel': 'ctrl+s',
         'selectAllUnit': 'ctrl+u',
         'selectAllFriendly': 'ctrl+f',
         'setB2B': 'ctrl+shift+clickModel',
         'openEditLabel': 'shift+l',
-        'openEditDamage': 'shift+d',
+        'openEditDamage': 'shift+d'
       };
-      var model_bindings = R.extend(Object.create(modelsModeService.bindings),
+      let model_bindings = R.extend(Object.create(modelsModeService.bindings),
                                     model_default_bindings);
 
-      var model_mode = {
-        onEnter: function modelOnEnter(/*scope*/) {
-        },
-        onLeave: function modelOnLeave(/*scope*/) {
-        },
+      let model_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'ModelBase',
         actions: model_actions,
         buttons: [],
-        bindings: model_bindings,
+        bindings: model_bindings
       };
       settingsService.register('Bindings',
                                model_mode.name,

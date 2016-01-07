@@ -1,5 +1,3 @@
-'use strict';
-
 describe('local game', function() {
   describe('game service', function() {
     beforeEach(inject([ 'game', function(gameService) {
@@ -24,59 +22,59 @@ describe('local game', function() {
       'games',
       function(gamesService) {
         this.gamesService = gamesService;
+
+        this.gameService = spyOnService('game');
+        this.gameService.pickForJson
+          .and.callFake((g) => { return g+'_JSON'; });
       }
     ]));
 
     describe('loadLocalGames()', function() {
       it('should retrieve local games from local storage', function() {
-        this.thenExpect(this.gamesService.loadLocalGames(), function(games) {
+        this.localStorageService.load.resolveWith = ['game1','game2'];
+
+        this.ret = this.gamesService.loadLocalGames();
+
+        this.thenExpect(this.ret, (games) => {
           expect(this.localStorageService.load)
-            .toHaveBeenCalledWith('clickApp.local_games');
-                          
+            .toHaveBeenCalledWith('clickApp.games');
+
           expect(games)
             .toEqual(['game1','game2']);
         });
-
-        this.localStorageService.load.resolve(['game1','game2']);
       });
     });
 
     describe('storeLocalGames(<games>)', function() {
       it('should store games', function() {
-        this.thenExpect(this.gamesService.storeLocalGames(['game1','game2']), function(games) {
+        this.localStorageService.save.resolveWith = ['game1','game2'];
+
+        this.ret = this.gamesService.storeLocalGames(['game1','game2']);
+
+        this.thenExpect(this.ret, (games) => {
           expect(this.localStorageService.save)
-            .toHaveBeenCalledWith('clickApp.local_games', ['game1','game2']);
-          
+            .toHaveBeenCalledWith('clickApp.games', ['game1_JSON','game2_JSON']);
+
           expect(games).toEqual(['game1','game2']);
         });
-        
-        this.localStorageService.save.resolve(['game1','game2']);
       });
-    }); 
-    
+    });
+
     describe('removeLocalGame(<game>)', function() {
       it('should store modified games list', function() {
-        this.thenExpect(this.gamesService.removeLocalGame(1, ['game1','game2','game3']), function(games) {
-          expect(this.localStorageService.save)
-            .toHaveBeenCalledWith('clickApp.local_games', ['game1','game3']);
+        this.ret = this.gamesService
+          .removeLocalGame(1, ['game1','game2','game3']);
 
-          expect(games).toEqual(['game1','game3']);
-        });
-        
-        this.localStorageService.save.resolve(['game1','game3']);
+        expect(this.ret).toEqual(['game1','game3']);
       });
     });
 
     describe('newLocalGame(<game>)', function() {
       it('should store appended games list', function() {
-        this.thenExpect(this.gamesService.newLocalGame('game3', ['game1','game2']), function(games) {
-          expect(this.localStorageService.save)
-            .toHaveBeenCalledWith('clickApp.local_games', ['game1','game2','game3']);
+        this.ret = this.gamesService
+          .newLocalGame('game3', ['game1','game2']);
 
-          expect(games).toEqual(['game1','game2','game3']);
-        });
-
-        this.localStorageService.save.resolve(['game1','game2','game3']);
+        expect(this.ret).toEqual(['game1','game2','game3']);
       });
     });
   });

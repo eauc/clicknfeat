@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('gameBoard', [
     'http',
@@ -8,7 +6,7 @@ angular.module('clickApp.services')
         init: function gameBoardInit() {
           return httpService.get('/data/boards.json')
             .catch(function(reason) {
-              console.log('error getting boards.json', reason);
+              console.error('Error getting boards.json', reason);
               return [];
             });
         },
@@ -17,8 +15,9 @@ angular.module('clickApp.services')
         },
         forName: function gameBoardForName(name, boards) {
           return R.find(R.propEq('name', name), boards);
-        },
+        }
       };
+      R.curryService(gameBoardService);
       return gameBoardService;
     }
   ]);

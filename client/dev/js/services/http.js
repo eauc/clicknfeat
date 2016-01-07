@@ -11,14 +11,14 @@ angular.module('clickApp.services').factory('http', [function httpServiceFactory
       } else {
         client.send();
       }
-      client.onload = function ajaxOnLoad() {
+      client.onload = function () {
         if (client.status >= 200 && client.status < 300) {
           resolve(client.response);
         } else {
           reject(client.statusText);
         }
       };
-      client.onerror = function ajaxOnError() {
+      client.onerror = function () {
         reject(client.statusText);
       };
     });

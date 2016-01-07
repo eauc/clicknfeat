@@ -9,80 +9,81 @@ angular.module('clickApp.services')
                                              gameTerrainsService,
                                              gameTerrainSelectionService) {
       var onTerrainsCommandService = {
-        execute: function onTerrainsExecute(method, ...args /*, stamps, scope, game */) {
+        execute: function onTerrainsExecute(method, args, stamps, state, game) {
           if('Function' !== R.type(terrainService[method])) {
-            return self.Promise.reject('Unknown method '+method+' on terrain');
+            return self.Promise.reject(`Unknown method "${method}" on terrain`);
           }
           
-          var game = R.last(args);
-          var scope = R.nth(-2, args);
-          var stamps = R.nth(-3, args);
           var ctxt = {
             before: [],
             after: [],
             desc: method
           };
 
-          args = R.pipe(
-            R.slice(0, -2),
-            R.prepend(method),
-            R.append(game.terrains)
-          )(args);
-
           return R.pipeP(
-            () => {
-              return gameTerrainsService.onStamps$('saveState', stamps, game.terrains);
-            },
+            gameTerrainsService.fromStamps$('saveState', [], stamps),
             (before) => {
               ctxt.before = before;
               
-              return gameTerrainsService.onStamps.apply(null, args);
+              return gameTerrainsService
+                .onStamps(method, args, stamps, game.terrains);
             },
-            () => {
-              return gameTerrainsService.onStamps('saveState', stamps, game.terrains);
+            (terrains) => {
+              game = R.assoc('terrains', terrains, game);
+
+              return gameTerrainsService
+                .fromStamps('saveState', [], stamps, game.terrains);
             },
             (after) => {
               ctxt.after = after;
 
               R.forEach((stamp) => {
-                scope.gameEvent('changeTerrain-'+stamp);
+                state.changeEvent(`Game.terrain.change.${stamp}`);
               }, stamps);
               
-              return ctxt;
-            }
-          )();
-        },
-        replay: function onTerrainsRedo(ctxt, scope, game) {
-          var stamps = R.pluck('stamp', ctxt.after);
-          return R.pipeP(
-            gameTerrainsService.findAnyStamps$(stamps),
-            R.addIndex(R.forEach)((terrain, index) => {
-              if(R.isNil(terrain)) return;
-
-              terrainService.setState(ctxt.after[index], terrain);
-              scope.gameEvent('changeTerrain-'+terrainService.eventName(terrain));
-            }),
-            () => {
-              game.terrain_selection = gameTerrainSelectionService
-                .set('remote', stamps,
-                     scope, game.terrain_selection);
+              return [ctxt, game];
             }
           )(game.terrains);
         },
-        undo: function onTerrainsUndo(ctxt, scope, game) {
+        replay: function onTerrainsRedo(ctxt, state, game) {
+          var stamps = R.pluck('stamp', ctxt.after);
+          return R.pipeP(
+            gameTerrainsService.setStateStamps$(ctxt.after, stamps),
+            (terrains) => {
+              game = R.assoc('terrains', terrains, game);
+              
+              return gameTerrainSelectionService
+                .set('remote', stamps, state, game.terrain_selection);
+            },
+            (selection) => {
+              game = R.assoc('terrain_selection', selection, game);
+
+              R.forEach((stamp) => {
+                state.changeEvent(`Game.terrain.change.${stamp}`);
+              }, stamps);
+              
+              return game;
+            }
+          )(game.terrains);
+        },
+        undo: function onTerrainsUndo(ctxt, state, game) {
           var stamps = R.pluck('stamp', ctxt.before);
           return R.pipeP(
-            gameTerrainsService.findAnyStamps$(stamps),
-            R.addIndex(R.forEach)((terrain, index) => {
-              if(R.isNil(terrain)) return;
+            gameTerrainsService.setStateStamps$(ctxt.before, stamps),
+            (terrains) => {
+              game = R.assoc('terrains', terrains, game);
+              
+              return gameTerrainSelectionService
+                .set('remote', stamps, state, game.terrain_selection);
+            },
+            (selection) => {
+              game = R.assoc('terrain_selection', selection, game);
 
-              terrainService.setState(ctxt.before[index], terrain);
-              scope.gameEvent('changeTerrain-'+terrainService.eventName(terrain));
-            }),
-            () => {
-              game.terrain_selection = gameTerrainSelectionService
-                .set('remote', stamps,
-                     scope, game.terrain_selection);
+              R.forEach((stamp) => {
+                state.changeEvent(`Game.terrain.change.${stamp}`);
+              }, stamps);
+              
+              return game;
             }
           )(game.terrains);
         }

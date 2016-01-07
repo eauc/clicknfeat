@@ -1,5 +1,7 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.directives').factory('clickGameModelArea', ['model', function (modelService) {
   return {
     create: function clickGameModelAreaCreate(svgNS, parent) {
@@ -21,8 +23,12 @@ angular.module('clickApp.directives').factory('clickGameModelArea', ['model', fu
 
       return [area, ctrl_area];
     },
-    update: function clickGameModelAreaUpdate(factions, info, model, img, el) {
-      var ctrl_area = el[1];
+    update: function clickGameModelAreaUpdate(factions, info, model, img, element) {
+      var _element = _slicedToArray(element, 2);
+
+      var area = _element[0];
+      var ctrl_area = _element[1];
+
       ctrl_area.setAttribute('cx', img.width / 2 + '');
       ctrl_area.setAttribute('cy', img.height / 2 + '');
       modelService.isCtrlAreaDisplayed(factions, model).then(function (is_displayed) {
@@ -35,7 +41,6 @@ angular.module('clickApp.directives').factory('clickGameModelArea', ['model', fu
         }
       });
 
-      var area = el[0];
       area.setAttribute('cx', img.width / 2 + '');
       area.setAttribute('cy', img.height / 2 + '');
       if (modelService.isAreaDisplayed(model)) {

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('user', function() {
   describe('user service', function() {
     beforeEach(inject([ 'user', function(userService) {

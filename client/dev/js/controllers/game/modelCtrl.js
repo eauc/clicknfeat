@@ -1,7 +1,15 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'modes', 'fileImport', 'gameFactions', function ($scope, modesService, fileImportService, gameFactionsService) {
+angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', function ($scope) {
   console.log('init gameModelCtrl');
+
+  function updateFactions() {
+    $scope.factions = R.path(['state', 'factions', 'current'], $scope);
+    $scope.faction = R.head(R.keys($scope.factions));
+    $scope.onFactionChange();
+    $scope.$digest();
+  }
+  $scope.state.data_ready.then(updateFactions);
 
   $scope.onFactionChange = function () {
     $scope.section = R.head(R.keys($scope.factions[$scope.faction].models));
@@ -29,10 +37,6 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
   $scope.onModelChange = function () {
     $scope.repeat = 1;
   };
-  $scope.data_ready.then(function () {
-    $scope.faction = R.head(R.keys($scope.factions));
-    $scope.onFactionChange();
-  });
 
   $scope.getEntries = function () {
     return R.path([$scope.faction, 'models', $scope.section, $scope.entry, 'entries'], $scope.factions);
@@ -56,17 +60,7 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
   }
   $scope.doCreateModel = function () {
     var model_path = getModelPath();
-    $scope.create.model = {
-      base: { x: 240, y: 240, r: 0 },
-      models: R.times(function (i) {
-        return {
-          info: model_path,
-          user: R.pathOr('Unknown', ['user', 'state', 'name'], $scope),
-          x: 20 * i, y: 0, r: 0
-        };
-      }, R.defaultTo(1, $scope.repeat))
-    };
-    $scope.doSwitchToMode('CreateModel');
+    $scope.stateEvent('Game.model.create', model_path, $scope.repeat);
   };
 
   $scope.import = {
@@ -74,21 +68,11 @@ angular.module('clickApp.controllers').controller('gameModelCtrl', ['$scope', 'm
   };
   $scope.doImportList = function () {
     // TODO : find min unit number for user
-    var user = R.pathOr('Unknown', ['user', 'state', 'name'], $scope);
-    $scope.create.model = gameFactionsService.buildModelsList($scope.import.list, user, $scope.factions_references);
-    console.log('doImportList', $scope.import.list, $scope.create.model);
-    $scope.doSwitchToMode('CreateModel');
+    $scope.stateEvent('Game.model.importList', $scope.import.list);
   };
 
   $scope.doImportModelsFile = function (files) {
-    console.log('doImportModelsFile', files);
-    R.pipeP(fileImportService.read$('json'), function (create) {
-      $scope.create.model = create;
-      $scope.doSwitchToMode('CreateModel');
-    })(files[0]).catch(function (reason) {
-      $scope.gameEvent('modeActionError', reason);
-      return self.Promise.reject(reason);
-    });
+    $scope.stateEvent('Game.model.importFile', files[0]);
   };
 }]);
 //# sourceMappingURL=modelCtrl.js.map

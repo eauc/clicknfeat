@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .directive('clickGameRuler', [
     'gameMap',
@@ -16,49 +14,48 @@ angular.module('clickApp.directives')
              modesService) {
       return {
         restrict: 'A',
-        link: function(scope, el/*, attrs*/) {
-          var map = document.getElementById('map');
-          var svgNS = map.namespaceURI;
+        link: function(scope, parent) {
+          let map = document.getElementById('map');
+          let svgNS = map.namespaceURI;
 
-          var local_element = createRulerElement(svgNS, el[0]);
-          var remote_element = createRulerElement(svgNS, el[0]);
-          
-          scope.onGameEvent('changeLocalRuler', function onChangeLocalRuler() {
-            updateRuler(map, scope.game.ruler.local, local_element);
+          let state = scope.state;
+          let local_element = createRulerElement(svgNS, parent[0]);
+          let remote_element = createRulerElement(svgNS, parent[0]);
+
+          scope.onStateChangeEvent('Game.ruler.local.change', () => {
+            updateRuler(map, state.game.ruler.local, local_element);
           }, scope);
-          scope.onGameEvent('changeRemoteRuler', function onChangeRemoteRuler() {
-            if(R.isNil(scope.game.ruler)) return;
-            
-            updateRuler(map, scope.game.ruler.remote, remote_element);
+          scope.onStateChangeEvent('Game.ruler.remote.change', () => {
+            updateRuler(map, state.game.ruler.remote, remote_element);
 
-            var display = ( gameRulerService.isDisplayed(scope.game.ruler) ||
-                            'Ruler' === modesService.currentModeName(scope.modes)
+            let display = ( gameRulerService.isDisplayed(state.game.ruler) ||
+                            'Ruler' === modesService.currentModeName(state.modes)
                           );
-            updateOrigin(scope.factions, scope.game.models,
-                         scope.game.ruler, display,
+            updateOrigin(state.factions, state.game.models,
+                         state.game.ruler, display,
                          remote_element.origin);
-            updateTarget(scope.factions, scope.game.models,
-                         scope.game.ruler, display,
+            updateTarget(state.factions, state.game.models,
+                         state.game.ruler, display,
                          remote_element.target);
           }, scope);
-          scope.onGameEvent('mapFlipped', function onMapFlippedRuler(/*event*/) {
-            updateRulerOnMapFlipped(map, scope.game.ruler.local, local_element);
-            updateRulerOnMapFlipped(map, scope.game.ruler.remote, remote_element);
+          scope.onStateChangeEvent('Game.map.flipped', () => {
+            updateRulerOnMapFlipped(map, state.game.ruler.local, local_element);
+            updateRulerOnMapFlipped(map, state.game.ruler.remote, remote_element);
           }, scope);
         }
       };
       function createRulerElement(svgNS, parent) {
-        var group = document.createElementNS(svgNS, 'g');
+        let group = document.createElementNS(svgNS, 'g');
         parent.appendChild(group);
 
-        var line = document.createElementNS(svgNS, 'line');
+        let line = document.createElementNS(svgNS, 'line');
         line.style['marker-start'] = 'url(#ruler-start)';
         line.style['marker-end'] = 'url(#ruler-end)';
         group.appendChild(line);
 
-        var label = labelElementService.create(svgNS, group);
+        let label = labelElementService.create(svgNS, group);
 
-        var origin = document.createElementNS(svgNS, 'circle');
+        let origin = document.createElementNS(svgNS, 'circle');
         origin.classList.add('ruler-origin');
         origin.setAttribute('cx', '0');
         origin.setAttribute('cy', '0');
@@ -66,7 +63,7 @@ angular.module('clickApp.directives')
         origin.style.visibility = 'hidden';
         parent.appendChild(origin);
 
-        var target = document.createElementNS(svgNS, 'circle');
+        let target = document.createElementNS(svgNS, 'circle');
         target.classList.add('ruler-target');
         target.setAttribute('cx', '0');
         target.setAttribute('cy', '0');
@@ -78,31 +75,29 @@ angular.module('clickApp.directives')
                  line: line,
                  label: label,
                  origin: origin,
-                 target: target,
+                 target: target
                };
       }
       function updateRuler(map, ruler, element) {
-        var map_flipped = gameMapService.isFlipped(map);
-        var zoom_factor = gameMapService.zoomFactor(map);
-        var label_flip_center = {
+        let map_flipped = gameMapService.isFlipped(map);
+        let zoom_factor = gameMapService.zoomFactor(map);
+        let label_flip_center = {
           x: (ruler.end.x - ruler.start.x) / 2 + ruler.start.x,
-          y: (ruler.end.y - ruler.start.y) / 2 + ruler.start.y,
+          y: (ruler.end.y - ruler.start.y) / 2 + ruler.start.y
         };
-        var label_text = ruler.display ? ruler.length : '';
-        self.requestAnimationFrame(function _updateRuler() {
-          updateLine(ruler.display, ruler, element.line);
-          labelElementService.update(map_flipped,
-                                     zoom_factor,
-                                     label_flip_center,
-                                     label_flip_center,
-                                     label_text,
-                                     element.label);
-        });
+        let label_text = ruler.display ? ruler.length : '';
+        updateLine(ruler.display, ruler, element.line);
+        labelElementService.update(map_flipped,
+                                   zoom_factor,
+                                   label_flip_center,
+                                   label_flip_center,
+                                   label_text,
+                                   element.label);
       }
       function updateRulerOnMapFlipped(map, ruler, element) {
-        var label_flip_center = {
+        let label_flip_center = {
           x: (ruler.end.x - ruler.start.x) / 2 + ruler.start.x,
-          y: (ruler.end.y - ruler.start.y) / 2 + ruler.start.y,
+          y: (ruler.end.y - ruler.start.y) / 2 + ruler.start.y
         };
         labelElementService.updateOnFlipMap(map, label_flip_center, element.label);
       }
@@ -114,23 +109,23 @@ angular.module('clickApp.directives')
         line.setAttribute('y2', ruler.end.y+'');
       }
       function updateOrigin(factions, models, ruler, display, element) {
-        var origin = gameRulerService.origin(ruler);
+        let origin = gameRulerService.origin(ruler);
         R.pipeP(
           function(origin) {
-            if(R.exists(origin)) {
-              return gameModelsService.findStamp(origin, models);
+            if(R.isNil(origin)) {
+              return self.Promise.reject();
             }
-            return self.Promise.resolve(null);
+            return gameModelsService.findStamp(origin, models);
           },
           function(origin_model) {
             if(!display ||
                R.isNil(origin_model)) {
               element.style.visibility = 'hidden';
-              return;
+              return self.Promise.reject();
             }
-            R.pipeP(
+            return R.pipeP(
               gameFactionsService.getModelInfo$(origin_model.state.info),
-              function(info) {
+              (info) => {
                 element.setAttribute('cx', origin_model.state.x+'');
                 element.setAttribute('cy', origin_model.state.y+'');
                 element.setAttribute('r', info.base_radius+'');
@@ -138,34 +133,34 @@ angular.module('clickApp.directives')
               }
             )(factions);
           }
-        )(origin);
+        )(origin).catch(R.always(null));
       }
       function updateTarget(factions, models, ruler, display, element) {
-        var target = gameRulerService.target(ruler);
+        let target = gameRulerService.target(ruler);
         R.pipeP(
           function(target) {
-            if(R.exists(target)) {
-              return gameModelsService.findStamp(target, models);
+            if(R.isNil(target)) {
+              return self.Promise.reject();
             }
-            return self.Promise.resolve(null);
+            return gameModelsService.findStamp(target, models);
           },
           function(target_model) {
             if(!display ||
                R.isNil(target_model)) {
               element.style.visibility = 'hidden';
-              return;
+              return self.Promise.reject();
             }
-            
+
             if(gameRulerService.targetReached(ruler)) {
               element.classList.add('reached');
             }
             else {
               element.classList.remove('reached');
             }
-            
-            R.pipeP(
+
+            return R.pipeP(
               gameFactionsService.getModelInfo$(target_model.state.info),
-              function(info) {
+              (info) => {
                 element.setAttribute('cx', target_model.state.x+'');
                 element.setAttribute('cy', target_model.state.y+'');
                 element.setAttribute('r', info.base_radius+'');
@@ -173,7 +168,7 @@ angular.module('clickApp.directives')
               }
             )(factions);
           }
-        )(target);
+        )(target).catch(R.always(null));
       }
     }
   ]);

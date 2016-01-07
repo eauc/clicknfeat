@@ -1,18 +1,17 @@
-'use strict';
-
 describe('move model', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
-        this.gameService = spyOnService('game');
+
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         this.gameModelSelectionService.get._retVal = 'stamps';
 
-        this.scope = {
+        this.state = {
           factions: 'factions',
           game: { model_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
@@ -25,7 +24,7 @@ describe('move model', function() {
       [ 'rotateRight' ],
     ], function(e) {
       when('user '+e.action+' model selection', function() {
-        this.ret = this.modelsModeService.actions[e.action](this.scope);
+        this.ret = this.modelsModeService.actions[e.action](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -33,16 +32,16 @@ describe('move model', function() {
         });
 
         it('should execute onModels/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.action, 'factions', false,
-                                  'stamps', this.scope, this.scope.game);
-
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ e.action, ['factions', false],
+                                                'stamps'
+                                              ]);
         });
       });
 
       when('user '+e.action+'Small model selection', function() {
-        this.ret = this.modelsModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.modelsModeService.actions[e.action+'Small'](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -50,10 +49,11 @@ describe('move model', function() {
         });
 
         it('should execute onModels/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ e.action, ['factions', true],
+                                                'stamps'
+                                              ]);
         });
       });
     });
@@ -66,7 +66,7 @@ describe('move model', function() {
       [ 'shiftRight' , 'shiftLeft'      ],
     ], function(e) {
       when('user '+e.action+' model selection', function() {
-        this.ret = this.modelsModeService.actions[e.action](this.scope);
+        this.ret = this.modelsModeService.actions[e.action](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -74,26 +74,28 @@ describe('move model', function() {
         });
 
         it('should execute onModels/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.action, 'factions', false,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ e.action, ['factions', false],
+                                                'stamps'
+                                              ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onModels/'+e.flipped_action+' command', function() {
-            expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.flipped_action, 'factions', false,
-                                  'stamps', this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ e.flipped_action, ['factions', false],
+                                                'stamps'
+                                              ]);
           });
         });
       });
 
       when('user '+e.action+'Small model selection', function() {
-        this.ret = this.modelsModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.modelsModeService.actions[e.action+'Small'](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameModelSelectionService.get)
@@ -101,20 +103,22 @@ describe('move model', function() {
         });
 
         it('should execute onModels/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', e.action, 'factions', true,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ e.action, ['factions', true],
+                                                'stamps'
+                                              ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onModels/'+e.flipped_action+'Small command', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', e.flipped_action, 'factions', true,
-                                    'stamps', this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ e.flipped_action, [ 'factions', true],
+                                                  'stamps'
+                                                ]);
           });
         });
       });
@@ -128,10 +132,10 @@ describe('move model', function() {
       [ 'setOrientationDown' , true      , 0     ],
     ], function(e) {
       when('user '+e.action+' on model selection', function() {
-        this.modelsModeService.actions[e.action](this.scope);
+        this.modelsModeService.actions[e.action](this.state);
       }, function() {
         beforeEach(function() {
-          this.scope.ui_state = { flip_map: false };
+          this.state.ui_state = { flip_map: false };
         });
         
         it('should get current selection', function() {
@@ -140,12 +144,14 @@ describe('move model', function() {
         });
       
         when('map is '+(e.flipped?'':'not ')+'flipped', function() {
-          this.scope.ui_state = { flip_map: e.flipped };
+          this.state.ui_state = { flip_map: e.flipped };
         }, function() {
           it('should execute onModels/setOrientation command', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setOrientation', 'factions', e.dir,
-                                    'stamps', this.scope, this.scope.game);
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setOrientation', ['factions', e.dir],
+                                                  'stamps'
+                                                ]);
           });
         });
       });
@@ -153,7 +159,7 @@ describe('move model', function() {
 
     when('user set target model, ', function() {
       this.ret = this.modelsModeService.actions
-        .setTargetModel(this.scope, this.event);
+        .setTargetModel(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'target' } };
@@ -164,10 +170,11 @@ describe('move model', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
 
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'orientTo', 'factions', this.target,
-                                'stamps', this.scope, this.scope.game);
-        expect(this.ret).toBe('game.executeCommand.returnValue');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'onModels', [ 'orientTo', [ 'factions', this.target],
+                                              'stamps'
+                                            ]);
       });
     });
   });
@@ -178,7 +185,7 @@ describe('move model', function() {
       function(modelService) {
         this.modelService = modelService;
         spyOn(this.modelService, 'checkState')
-          .and.returnValue('model.checkState.returnValue');
+          .and.callFake((f,t,m) => m);
       }
     ]));
 
@@ -224,25 +231,21 @@ describe('move model', function() {
           });
 
           it('should '+e.move+' model, '+dd, function() {
-            expect(R.pick(['x','y','r'], this.model.state))
+            expect(R.pick(['x','y','r'], this.ret.state))
               .toEqual(ee.result);
           });
 
           it('should check state', function() {
             expect(this.modelService.checkState)
-              .toHaveBeenCalledWith('factions', null, this.model);
-            expect(this.ret).toBe('model.checkState.returnValue');
+              .toHaveBeenCalledWith('factions', null, this.ret);
           });
         
           when('model is locked', function() {
-            this.modelService.setLock(true, this.model);
+            this.model = this.modelService.setLock(true, this.model);
           }, function() {
             it('should reject move', function() {
               this.thenExpectError(this.ret, function(reason) {
                 expect(reason).toBe('Model is locked');
-                
-                expect(R.pick(['x','y','r'], this.model.state))
-                  .toEqual({ x: 240, y: 240, r: 180 });
               });
             });
           });
@@ -251,7 +254,8 @@ describe('move model', function() {
     });
 
     when('setOrientation(<dir>)', function() {
-      this.ret = this.modelService.setOrientation('factions', 15, this.model);
+      this.ret = this.modelService
+        .setOrientation('factions', 15, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -260,29 +264,29 @@ describe('move model', function() {
       });
 
       it('should set model orientation', function() {
-        expect(R.pick(['x','y','r'], this.model.state))
+        expect(R.pick(['x','y','r'], this.ret.state))
           .toEqual({ x: 240, y: 240, r: 15 });
       });
 
       when('model is locked', function() {
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
       }, function() {
         it('should not orient model', function() {
-          this.modelService.setOrientation('factions', 15, this.model);
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 240, y: 240, r: 180 });
+          this.thenExpectError(this.ret, (reason) => {
+            expect(reason).toBe('Model is locked');
+          });
         });
       });
 
       it('should check state', function() {
         expect(this.modelService.checkState)
-         .toHaveBeenCalledWith('factions', null, this.model);
-        expect(this.ret).toBe('model.checkState.returnValue');
+         .toHaveBeenCalledWith('factions', null, this.ret);
       });
     });
 
     when('orientTo(<factions>, <other>)', function() {
-      this.ret = this.modelService.orientTo('factions', this.other, this.model);
+      this.ret = this.modelService
+        .orientTo('factions', this.other, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -294,24 +298,23 @@ describe('move model', function() {
       });
       
       it('should orient model to directly face <other>', function() {
-        expect(R.pick(['x','y','r'], this.model.state))
+        expect(R.pick(['x','y','r'], this.ret.state))
           .toEqual({ x: 240, y: 240, r: 135 });
       });
 
       when('model is locked', function() {
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
       }, function() {
         it('should not orient model', function() {
-          this.modelService.orientTo('factions', this.other, this.model);
-          expect(R.pick(['x','y','r'], this.model.state))
-            .toEqual({ x: 240, y: 240, r: 0 });
+          this.thenExpectError(this.ret, (reason) => {
+            expect(reason).toBe('Model is locked');
+          });
         });
       });
 
       it('should check state', function() {
         expect(this.modelService.checkState)
-         .toHaveBeenCalledWith('factions', null, this.model);
-        expect(this.ret).toBe('model.checkState.returnValue');
+         .toHaveBeenCalledWith('factions', null, this.ret);
       });
     });
   });

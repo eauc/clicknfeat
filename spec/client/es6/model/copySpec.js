@@ -1,5 +1,3 @@
-'use strict';
-
 describe('copy model', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -11,13 +9,11 @@ describe('copy model', function() {
         this.gameModelsService.copyStamps.resolveWith = 'gameModels.copyStamps.returnValue';
         this.gameModelSelectionService = spyOnService('gameModelSelection');
         
-        this.scope = jasmine.createSpyObj('scope', [
-          'doSwitchToMode'
+        this.state = jasmine.createSpyObj('state', [
+          'event'
         ]);
-        this.scope.doSwitchToMode
-          .and.returnValue('doSwitchToMode.returnValue');
-        this.scope.create = {  };
-        this.scope.game = { models: 'models',
+        this.state.create = {  };
+        this.state.game = { models: 'models',
                             model_selection: 'selection'
                           };
       }
@@ -25,7 +21,7 @@ describe('copy model', function() {
 
     when('copySelection()', function() {
       this.ret = this.modelsModeService.actions
-        .copySelection(this.scope);
+        .copySelection(this.state);
     }, function() {
       it('should copy current selection', function() {
         expect(this.gameModelSelectionService.get)
@@ -35,13 +31,10 @@ describe('copy model', function() {
       });
 
       it('should enter createModel mode', function() {
-        this.thenExpect(this.ret, function(result) {
-          expect(this.scope.create.model)
-            .toBe('gameModels.copyStamps.returnValue');
-          expect(this.scope.doSwitchToMode)
-            .toHaveBeenCalledWith('CreateModel');
-          expect(result)
-            .toBe('doSwitchToMode.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.model.copy',
+                                  'gameModels.copyStamps.returnValue');
         });
       });
     });
@@ -70,7 +63,7 @@ describe('copy model', function() {
             { state: { stamp: 'stamp4', x: 120, y: 240, r: 90, l: ['tutu'] } },
             { state: { stamp: 'stamp5', x: 240, y: 360, r:  0, l: ['tete'] } },
             { state: { stamp: 'stamp6', x: 360, y: 240, r: 90, l: ['toto'] } },
-          ],
+          ]
         };
       });
 

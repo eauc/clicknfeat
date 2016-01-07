@@ -1,23 +1,21 @@
-'use strict';
-
 describe('game los', function() {
   describe('defaultMode service', function() {
     beforeEach(inject([ 'defaultMode', function(defaultMode) {
       this.defaultModeService = defaultMode;
       this.modesService = spyOnService('modes');
 
-      this.scope = {
+      this.state = {
         modes: 'modes',
-        doSwitchToMode: jasmine.createSpy('doSwitchToMode'),
+        event: jasmine.createSpy('event')
       };
     }]));
 
     when('user uses los', function() {
-      this.defaultModeService.actions.enterLosMode(this.scope);
+      this.defaultModeService.actions.enterLosMode(this.state);
     }, function() {
       it('should switch to los mode', function() {
-        expect(this.scope.doSwitchToMode)
-          .toHaveBeenCalledWith('LoS');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Modes.switchTo','LoS');
       });
     });
   });
@@ -26,35 +24,33 @@ describe('game los', function() {
     beforeEach(inject([ 'losMode', function(losMode) {
       this.losModeService = losMode;
 
-      // this.modesService = spyOnService('modes');
-
-      this.gameService = spyOnService('game');
-      mockReturnPromise(this.gameService.executeCommand);
-      this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
-      
       this.gameLosService = spyOnService('gameLos');
-
-      // this.modelService = spyOnService('model');
 
       this.gameModelsService = spyOnService('gameModels');
       mockReturnPromise(this.gameModelsService.findStamp);
-      this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
+      this.gameModelsService.findStamp
+        .resolveWith = 'gameModels.findStamp.returnValue';
 
       this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-      this.scope = { // modes: 'modes',
-                     game: { los: 'los',
+      this.state = { game: { los: 'los',
                              models: 'models',
                              model_selection: 'selection'
                            },
-                     gameEvent: jasmine.createSpy('gameEvent'),
-                     // $digest: jasmine.createSpy('$digest'),
+                     changeEvent: jasmine.createSpy('gameEvent'),
+                     event: jasmine.createSpy('event')
                    };
+      this.state.event.and.callFake((e, l, u) => {
+        if('Game.update' === e) {
+          this.state.game = R.over(l, u, this.state.game);
+        }
+        return 'state.event.returnValue';
+      });
     }]));
 
     when('user starts using los', function() {
       this.ret = this.losModeService
-        .onEnter(this.scope);
+        .onEnter(this.state);
     }, function() {
       when('there is exactly one model selected', function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -66,10 +62,11 @@ describe('game los', function() {
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp', 'models');
 
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('setLos', 'setOriginResetTarget',
-                                    'gameModels.findStamp.returnValue',
-                                    this.scope, this.scope.game);
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'setLos', [ 'setOriginResetTarget',
+                                                ['gameModels.findStamp.returnValue']
+                                              ]);
           });
         });
       });
@@ -77,11 +74,11 @@ describe('game los', function() {
 
     when('user stops using los', function() {
       this.ret = this.losModeService
-        .onLeave(this.scope);
+        .onLeave(this.state);
     }, function() {
       it('should update Los state', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeRemoteLos', this.scope.game.los);
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.los.remote.change');
       });
     });
 
@@ -92,13 +89,13 @@ describe('game los', function() {
     ], function(e, d) {
       when('user drags los, '+d, function() {
         this.drag = { start: 'start', now: 'now' };
-        this.losModeService.actions[e.action](this.scope, this.drag);
+        this.losModeService.actions[e.action](this.state, this.drag);
       }, function() {
         it('should init local los', function() {
           expect(this.gameLosService.setLocal)
             .toHaveBeenCalledWith('start', 'now',
-                                  this.scope, 'los');
-          expect(this.scope.game.los)
+                                  this.state, 'los');
+          expect(this.state.game.los)
             .toBe('gameLos.setLocal.returnValue');
         });
       });
@@ -107,19 +104,18 @@ describe('game los', function() {
     when('user endDrags los', function() {
       this.drag = { start: 'start', now: 'now' };
       this.losModeService.actions
-        .dragEndMap(this.scope, this.drag);
+        .dragEndMap(this.state, this.drag);
     }, function() {
       it('should execute setRemote command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setLos',
-                                'setRemote', 'start', 'now',
-                                this.scope, this.scope.game);
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setLos', [ 'setRemote', ['start', 'now'] ]);
       });
     });
 
     when('user set los origin', function() {
       this.ret = this.losModeService.actions
-        .setOriginModel(this.scope, this.event);
+        .setOriginModel(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'stamp' } };
@@ -127,20 +123,17 @@ describe('game los', function() {
       });
       
       it('should set los origin model', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setLos',
-                                'setOrigin', this.target,
-                                this.scope, this.scope.game);
-        this.thenExpect(this.ret, function(result) {
-          expect(result)
-            .toBe('game.executeCommand.returnValue');
-        });
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setLos', ['setOrigin', [this.target] ]);
+        expect(this.ret)
+          .toBe('state.event.returnValue');
       });
     });
 
     when('user set los target', function() {
       this.ret = this.losModeService.actions
-        .setTargetModel(this.scope, this.event);
+        .setTargetModel(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'stamp' } };
@@ -148,20 +141,17 @@ describe('game los', function() {
       });
       
       it('should set los target model', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setLos',
-                                'setTarget', this.target,
-                                this.scope, this.scope.game);
-        this.thenExpect(this.ret, function(result) {
-          expect(result)
-            .toBe('game.executeCommand.returnValue');
-        });
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setLos', ['setTarget', [this.target] ]);
+        expect(this.ret)
+          .toBe('state.event.returnValue');
       });
     });
 
     when('user toggle ignore model', function() {
       this.ret = this.losModeService.actions
-        .toggleIgnoreModel(this.scope, this.event);
+        .toggleIgnoreModel(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'stamp' } };
@@ -169,14 +159,11 @@ describe('game los', function() {
       });
       
       it('should toggle ignore model', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('setLos',
-                                'toggleIgnoreModel', this.target,
-                                this.scope, this.scope.game);
-        this.thenExpect(this.ret, function(result) {
-          expect(result)
-            .toBe('game.executeCommand.returnValue');
-        });
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setLos', [ 'toggleIgnoreModel', [this.target] ]);
+        expect(this.ret)
+          .toBe('state.event.returnValue');
       });
     });
   });
@@ -184,21 +171,23 @@ describe('game los', function() {
   describe('setLosCommand service', function() {
     beforeEach(inject([ 'setLosCommand', function(setLosCommand) {
       this.setLosCommandService = setLosCommand;
+
       this.gameLosService = spyOnService('gameLos');
-      this.gameLosService.saveRemoteState.and.callFake(function(r) {
+      this.gameLosService.saveRemoteState.and.callFake((r) => {
         return r+'Save';
       });
       mockReturnPromise(this.gameLosService.resetRemote);
-      this.gameLosService.resetRemote.resolveWith = 'gameLos.resetRemote.returnValue';
+      this.gameLosService.resetRemote
+        .resolveWith = 'gameLos.resetRemote.returnValue';
       
-      this.scope = jasmine.createSpyObj('scope', [
-        'gameEvent',
+      this.state = jasmine.createSpyObj('state', [
+        'changeEvent'
       ]);
     }]));
 
-    when('execute(<method>, <...args...>, <scope>, <game>)', function() {
+    when('execute(<method>, <...args...>, <state>, <game>)', function() {
       this.ret = this.setLosCommandService
-        .execute(this.method, 'args', this.scope, this.game);
+        .execute(this.method, ['args'], this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.game = { los: 'los' };
@@ -218,22 +207,22 @@ describe('game los', function() {
         this.method = 'setRemote';
       }, function() {
         it('should save previous remote los state', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, ([ctxt]) => {
             expect(ctxt.before).toEqual('losSave');
           });
         });
         
         it('should apply <method> on game los', function() {
-          this.thenExpect(this.ret, function() {
+          this.thenExpect(this.ret, ([ctxt, game]) => {
             expect(this.gameLosService.setRemote)
-              .toHaveBeenCalledWith('args', this.scope, this.game, 'los');
-            expect(this.game.los)
+              .toHaveBeenCalledWith('args', this.state, this.game, 'los');
+            expect(game.los)
               .toBe('gameLos.setRemote.returnValue');
           });
         });
         
         it('should save new remote los state', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, ([ctxt]) => {
             expect(ctxt.after)
               .toBe('gameLos.setRemote.returnValueSave');
           });
@@ -246,8 +235,8 @@ describe('game los', function() {
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
     ], function(e) {
-      when(e.method+'(<ctxt>, <scope>, <game>)', function() {
-        this.ret = this.setLosCommandService[e.method](this.ctxt, this.scope, this.game);
+      when(e.method+'(<ctxt>, <state>, <game>)', function() {
+        this.ret = this.setLosCommandService[e.method](this.ctxt, this.state, this.game);
       }, function() {
         beforeEach(function() {
           this.ctxt = {
@@ -258,10 +247,10 @@ describe('game los', function() {
         });
       
         it('should set game remote los', function() {
-          this.thenExpect(this.ret, function() {
+          this.thenExpect(this.ret, function(game) {
             expect(this.gameLosService.resetRemote)
-              .toHaveBeenCalledWith(e.result, this.scope, this.game, e.previous);
-            expect(this.game.los)
+              .toHaveBeenCalledWith(e.result, this.state, this.game, e.previous);
+            expect(game.los)
               .toBe('gameLos.resetRemote.returnValue');
           });
         });
@@ -277,9 +266,9 @@ describe('game los', function() {
       this.gameModelsService = spyOnService('gameModels');
 
       this.game = { models: 'models' };
-      this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-      this.scope.factions = 'factions';
-      this.scope.game = this.game;
+      this.state = jasmine.createSpyObj('state', ['changeEvent']);
+      this.state.factions = 'factions';
+      this.state.game = this.game;
 
       mockReturnPromise(this.gameModelsService.findStamp);
       this.gameModelsService.findStamp.resolveWith = (s) => {
@@ -292,7 +281,7 @@ describe('game los', function() {
     describe('toggleDisplay()', function() {
       beforeEach(function() {
         this.ret = this.gameLosService
-          .toggleDisplay(this.scope, this.game, {
+          .toggleDisplay(this.state, this.game, {
           remote: { display: false }
         });
       });
@@ -305,16 +294,16 @@ describe('game los', function() {
       });
 
       it('should emit changeRemoteLos game event', function() {
-        this.thenExpect(this.ret, (result) => {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeRemoteLos', result);
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.los.remote.change');
         });
       });
     });
 
-    when('setLocal(<start>, <end>, <scope>)', function() {
-      this.ret = this.gameLosService.setLocal(this.start, this.end,
-                                                this.scope, this.los);
+    when('setLocal(<start>, <end>, <state>)', function() {
+      this.ret = this.gameLosService
+        .setLocal(this.start, this.end, this.state, this.los);
     }, function() {
       beforeEach(function() {
         this.start = { x: 100, y: 0 };
@@ -332,14 +321,14 @@ describe('game los', function() {
       });
 
       it('should emit changeLocalLos game event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeLocalLos');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.los.local.change');
       });
     });
 
-    when('setRemote(<start>, <end>, <scope>)', function() {
+    when('setRemote(<start>, <end>, <state>)', function() {
       this.ret = this.gameLosService
-        .setRemote(this.start, this.end, this.scope, this.game, this.los);
+        .setRemote(this.start, this.end, this.state, this.game, this.los);
     }, function() {
       beforeEach(function() {
         this.pointService = spyOnService('point');
@@ -350,16 +339,16 @@ describe('game los', function() {
         this.start = { x: 100, y: 0 };
         this.end = { x: 100, y: 100 };
         this.los = { local: {},
-                       remote: {},
-                     };
+                     remote: {}
+                   };
       });
 
       it('should reset local los state', function() {
         this.thenExpect(this.ret, (result) => {
           expect(result.local)
             .toEqual({ display: false });
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeLocalLos');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.los.local.change');
         });
       });
 
@@ -370,31 +359,32 @@ describe('game los', function() {
                        end: { x: 100, y: 100 },
                        display: true
                      });
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeRemoteLos', result);
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.los.remote.change');
         });
       });
     });
 
-    describe('resetRemote(<state>, <scope>)', function() {
+    describe('resetRemote(<remote>, <state>)', function() {
       beforeEach(function() {
-        this.state = { state: 'state' };
-        this.ret = this.gameLosService.resetRemote(this.state, this.scope);
+        this.remote = { state: 'state' };
+        this.ret = this.gameLosService
+          .resetRemote(this.remote, this.state);
       });
 
       it('should reset remote state', function() {
         this.thenExpect(this.ret, (result) => {
           expect(R.pick(['state'], result.remote))
-            .toEqual(this.state);
+            .toEqual(this.remote);
           expect(result)
             .not.toBe(this.state);
         });
       });
 
       it('should emit changeRemoteLos game events', function() {
-        this.thenExpect(this.ret, (result) => {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeRemoteLos', result);
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.los.remote.change');
         });
       });
     });
@@ -415,9 +405,9 @@ describe('game los', function() {
       });
     });
 
-    when('clearOrigin(<scope>)', function() {
+    when('clearOrigin(<state>)', function() {
       this.ret = this.gameLosService
-        .clearOrigin(this.scope, this.game, this.los);
+        .clearOrigin(this.state, this.game, this.los);
     }, function() {
       beforeEach(function() {
         this.los = this.gameLosService.create();
@@ -445,9 +435,9 @@ describe('game los', function() {
       });
     });
 
-    when('clearTarget(<scope>)', function() {
+    when('clearTarget(<state>)', function() {
       this.ret = this.gameLosService
-        .clearTarget(this.scope, this.game, this.los);
+        .clearTarget(this.state, this.game, this.los);
     }, function() {
       beforeEach(function() {
         this.los = this.gameLosService.create();
@@ -475,9 +465,9 @@ describe('game los', function() {
       });
     });
 
-    when('setOriginResetTarget(<origin>, <scope>)', function() {
+    when('setOriginResetTarget(<origin>, <state>)', function() {
       this.ret = this.gameLosService
-        .setOriginResetTarget(this.origin, this.scope, this.game, this.los);
+        .setOriginResetTarget(this.origin, this.state, this.game, this.los);
     }, function() {
       beforeEach(function() {
         this.los = this.gameLosService.create();

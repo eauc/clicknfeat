@@ -1,39 +1,32 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickGameTerrain', ['gameMap', 'gameTerrainInfo', 'gameTerrainSelection', 'terrain', function (gameMapService, gameTerrainInfoService, gameTerrainSelectionService) {
+angular.module('clickApp.directives').directive('clickGameTerrain', ['gameMap', 'gameTerrains', 'gameTerrainInfo', 'gameTerrainSelection', function (gameMapService, gameTerrainsService, gameTerrainInfoService, gameTerrainSelectionService) {
   var clickGameTerrainDirective = {
     restrict: 'A',
-    link: function link(scope, el /*, attrs*/) {
+    link: function link(scope, parent) {
+      var state = scope.state;
       R.pipeP(function () {
-        return gameTerrainInfoService.getInfo(scope.terrain.state.info, scope.terrains).catch(function (reason) {
+        return gameTerrainInfoService.getInfo(scope.terrain.state.info, state.terrains).catch(function (reason) {
           console.error('clickGameTerrain', reason);
           return self.Promise.reject(reason);
         });
       }, function (info) {
         console.log('gameTerrain', scope.terrain, info);
 
-        return buildTerrainElement(info, scope.terrain, el[0], scope);
+        return buildTerrainElement(state, info, scope.terrain, parent[0], scope);
       })();
     }
   };
-  function buildTerrainElement(info, terrain, container, scope) {
-    var element = createTerrainElement(info, terrain, container);
+  function buildTerrainElement(state, info, terrain, parent, scope) {
+    var element = createTerrainElement(info, terrain, parent);
 
-    // scope.$on('$destroy', gameTerrainOnDestroy(element));
-    // scope.onGameEvent('mapFlipped',
-    //                   gameTerrainOnMapFlipped(info, terrain, element),
-    //                   scope);
-    var updateTerrain = gameTerrainOnUpdate(scope.terrains, info, terrain, scope.game, scope, element);
-    scope.onGameEvent('changeTerrain-' + terrain.state.stamp, updateTerrain, scope);
+    var updateTerrain = gameTerrainOnUpdate(state, info, scope, element);
+    scope.onStateChangeEvent('Game.terrain.change.' + terrain.state.stamp, updateTerrain, scope);
     updateTerrain();
   }
   function createTerrainElement(info, terrain, parent) {
     var map = document.getElementById('map');
     var svgNS = map.namespaceURI;
-
-    // var title = document.createElementNS(svgNS, 'title');
-    // base.appendChild(title);
-    // title.innerHTML = info.name;
 
     var image = document.createElementNS(svgNS, 'image');
     image.classList.add('terrain-image');
@@ -67,19 +60,14 @@ angular.module('clickApp.directives').directive('clickGameTerrain', ['gameMap', 
       edge: edge
     };
   }
-  // function gameTerrainOnDestroy(/*element*/) {
-  //   return function _gameTerrainOnDestroy() {
-  //     console.log('gameTerrainOnDestroy');
-  //   };
-  // }
-  // function gameTerrainOnMapFlipped(/*info, terrain, element*/) {
-  //   return function _gameTerrainOnMapFlipped() {
-  //   };
-  // }
-  function gameTerrainOnUpdate(terrains, info, terrain, game, scope, element) {
+  function gameTerrainOnUpdate(state, info, scope, element) {
     return function () {
-      updateTerrainPosition(info.img, terrain, element);
-      updateTerrainSelection(game.terrain_selection, terrain, element);
+      R.pipeP(function () {
+        return gameTerrainsService.findStamp(scope.terrain.state.stamp, scope.state.game.terrains);
+      }, function (terrain) {
+        updateTerrainPosition(info.img, terrain, element);
+        updateTerrainSelection(state.game.terrain_selection, terrain, element);
+      })();
     };
   }
   function updateTerrainPosition(img, terrain, element) {
@@ -105,8 +93,9 @@ angular.module('clickApp.directives').directive('clickGameTerrain', ['gameMap', 
     restrict: 'A',
     templateUrl: 'partials/game/terrains_list.html',
     scope: true,
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       scope.type = element[0].getAttribute('click-game-terrains-list');
+      scope.digestOnStateChangeEvent('Game.terrain.create', scope);
       console.log('clickGameTerrainsList', scope.type);
     }
   };

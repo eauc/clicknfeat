@@ -8,15 +8,13 @@ angular.module('clickApp.services')
                                        pointService) {
       var aoeTemplateService = Object.create(templateService);
       aoeTemplateService.create = function aoeTemplateCreate(temp) {    
-        temp.state = R.assoc('s', 15, temp.state);
-        return temp;
+        return R.assocPath(['state','s'], 15, temp);
       };
       aoeTemplateService.setSize = function aoeTemplateSetSize(size, temp) {
         if(R.isNil(R.find(R.equals(size), [3,4,5]))) {
           return self.Promise.reject('Invalid size for an AoE');
         }
-        temp.state = R.assoc('s', size * 5, temp.state);
-        return null;
+        return R.assocPath(['state','s'], size * 5, temp);
       };
       aoeTemplateService.size = function aoeTemplateSize(temp) {
         return R.path(['state','s'], temp);
@@ -28,36 +26,39 @@ angular.module('clickApp.services')
         dir = temp.state.r + 60 * (dir-1);
         var max_len = R.defaultTo(len, R.path(['state','m'], temp));
         len = Math.min(len, max_len);
-        temp.state = pointService.translateInDirection(len * 10, dir,
-                                                       temp.state);
-        temp.state = R.assoc('r', dir, temp.state);
-        templateService.checkState(temp.state);
-        return null;
+        return R.pipe(
+          R.over(R.lensProp('state'),
+                 pointService.translateInDirection$(len * 10, dir)),
+          R.assocPath(['state','r'], dir),
+          templateService.checkState
+        )(temp);
       };
       aoeTemplateService.maxDeviation = function aoeTemplateMaxDeviation(temp) {
-        return R.defaultTo(0, R.path(['state','m'], temp));
+        return R.pathOr(0, ['state','m'], temp);
       };
       aoeTemplateService.setMaxDeviation = function aoeTemplateSetMaxDeviation(max, temp) {
-        temp.state = R.assoc('m', max, temp.state);
-        return null;
+        return R.assocPath(['state','m'], max, temp);
       };
       aoeTemplateService.setToRuler = function aoeTemplateSetToRuler(pos, temp) {
         if(templateService.isLocked(temp)) {
           return self.Promise.reject('Template is locked');
         }
-        temp.state = R.pipe(
+        let state = R.pipe(
           R.assoc('x', pos.x),
           R.assoc('y', pos.y),
           R.assoc('r', pos.r),
-          R.assoc('m', pos.m),
-          templateService.checkState
+          R.assoc('m', pos.m)
         )(temp.state);
-        return null;
+        return R.pipe(
+          R.assoc('state', state),
+          templateService.checkState
+        )(temp);
       };
       aoeTemplateService.setTarget = function aoeTemplateSetTarget(factions, origin, target, temp) {
         return templateService.setPosition(target.state, temp);
       };
       templateService.registerTemplate('aoe', aoeTemplateService);
+      R.curryService(aoeTemplateService);
       return aoeTemplateService;
     }
   ])
@@ -69,6 +70,7 @@ angular.module('clickApp.services')
         return temp;
       };
       templateService.registerTemplate('wall', wallTemplateService);
+      R.curryService(wallTemplateService);
       return wallTemplateService;
     }
   ])
@@ -81,15 +83,13 @@ angular.module('clickApp.services')
                                                                             pointService) {
       var sprayTemplateService = Object.create(templateService);
       sprayTemplateService.create = function sprayTemplateCreate(temp) {    
-        temp.state = R.assoc('s', 6, temp.state);
-        return temp;
+        return R.assocPath(['state','s'], 6, temp);
       };
       sprayTemplateService.setSize = function sprayTemplateSetSize(size, temp) {
         if(R.isNil(R.find(R.equals(size), [6,8,10]))) {
           return self.Promise.reject('Invalid size for a Spray');
         }
-        temp.state = R.assoc('s', size, temp.state);
-        return null;
+        return R.assocPath(['state','s'], size, temp);
       };
       sprayTemplateService.size = function sprayTemplateSize(temp) {
         return R.path(['state','s'], temp);
@@ -104,9 +104,10 @@ angular.module('clickApp.services')
         return R.pipeP(
           modelService.baseEdgeInDirection$(factions, temp.state.r),
           (position) => {
-            temp.state = R.assoc('o', origin.state.stamp, temp.state);
-
-            return templateService.setPosition(position, temp);
+            return R.pipe(
+              R.assocPath(['state','o'], origin.state.stamp),
+              templateService.setPosition$(position)
+            )(temp);
           }
         )(origin);
       };
@@ -118,9 +119,10 @@ angular.module('clickApp.services')
         return R.pipeP(
           modelService.baseEdgeInDirection$(factions, direction),
           (position) => {
-            temp.state = R.assoc('r', direction, temp.state);
-            
-            return templateService.setPosition(position, temp);
+            return R.pipe(
+              R.assocPath(['state','r'], direction),
+              templateService.setPosition$(position)
+            )(temp);
           }
         )(origin);
       };
@@ -138,9 +140,12 @@ angular.module('clickApp.services')
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
-          template.state = R.assoc('o', null, template.state);
-          templateService[move](small, template);
-          return null;
+          return R.pipePromise(
+            R.assocPath(['state','o'], null),
+            (template) => {
+              return templateService[move](small, template);
+            }
+          )(template);
         };
       }, FORWARD_MOVES);
       sprayTemplateService.rotateLeft = function sprayTemplateRotateLeft(factions, origin,
@@ -151,7 +156,9 @@ angular.module('clickApp.services')
         if(R.isNil(origin)) return templateService.rotateLeft(small, template);
         
         var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
-        template.state = pointService.rotateLeft(angle, template.state);
+        template = R.over(R.lensProp('state'),
+                          pointService.rotateLeft$(angle),
+                          template);
         return R.pipeP(
           modelService.baseEdgeInDirection$(factions, template.state.r),
           (base_edge) => {
@@ -167,7 +174,9 @@ angular.module('clickApp.services')
         if(R.isNil(origin)) return templateService.rotateRight(small, template);
         
         var angle = templateService.moves()[small ? 'RotateSmall' : 'Rotate'];
-        template.state = pointService.rotateRight(angle, template.state);
+        template = R.over(R.lensProp('state'),
+                          pointService.rotateRight$(angle),
+                          template);
         return R.pipeP(
           modelService.baseEdgeInDirection$(factions, template.state.r),
           (base_edge) => {
@@ -176,6 +185,7 @@ angular.module('clickApp.services')
         )(origin);
       };
       templateService.registerTemplate('spray', sprayTemplateService);
+      R.curryService(sprayTemplateService);
       return sprayTemplateService;
     }
   ])
@@ -184,20 +194,20 @@ angular.module('clickApp.services')
     'point',
     self.templateServiceFactory = function templateServiceFactory(settingsService,
                                                                   pointService) {
-      var TEMP_REGS = {};
-      var DEFAULT_MOVES = {
+      let TEMP_REGS = {};
+      let DEFAULT_MOVES = {
         Move: 10,
         MoveSmall: 1,
         Rotate: 60,
         RotateSmall: 6,
         Shift: 10,
-        ShiftSmall: 1,
+        ShiftSmall: 1
       };
-      var MOVES = R.clone(DEFAULT_MOVES);
+      let MOVES = R.clone(DEFAULT_MOVES);
       settingsService.register('Moves',
                                'Template',
                                DEFAULT_MOVES,
-                               function(moves) {
+                               (moves) => {
                                  R.extend(MOVES, moves);
                                });
       var templateService = {
@@ -209,14 +219,9 @@ angular.module('clickApp.services')
         },
         create: function templateCreate(temp) {
           return R.pipePromise(
-            () => {
-              if(R.isNil(TEMP_REGS[temp.type])) {
-                console.log('Template: create unknown template type '+temp.type);
-                return self.Promise.reject('Create unknown template type '+temp.type);
-              }
-              return null;
-            },
-            () => {
+            R.prop(temp.type),
+            R.rejectIf(R.isNil, `Create unknown template type ${temp.type}`),
+            (service) => {
               var template = {
                 state: {
                   type: temp.type,
@@ -225,13 +230,13 @@ angular.module('clickApp.services')
                   stamp: R.guid()
                 }
               };
-              return TEMP_REGS[temp.type].create(template);
+              return service.create(template);
             },
             (template) => {
               template.state = R.deepExtend(template.state, temp);
               return template;
             }
-          )();
+          )(TEMP_REGS);
         },
         state: function templateState(template) {
           return R.prop('state', template);
@@ -240,131 +245,151 @@ angular.module('clickApp.services')
           return R.clone(R.prop('state', template));
         },
         setState: function templateSetState(state, template) {
-          template.state = R.clone(state);
+          return R.assoc('state', R.clone(state), template);
         },
         respondTo: function templateAnswerTo(method, template) {
           return ( R.exists(TEMP_REGS[template.state.type]) &&
                    R.exists(TEMP_REGS[template.state.type][method])
                  );
         },
-        call: function templateCall(method, ...args /*, template */) {
-          return new self.Promise(function(resolve, reject) {
-            var temp = R.last(args);
-            console.log('Template: call', temp, method, args);
-            if(!templateService.respondTo(method, temp)) {
-              console.log('Template: unknown call '+method+' on '+temp.state.type+' template');
-              reject('Unknown call '+method+' on '+temp.state.type+' template');
+        call: function templateCall(method, args, template) {
+          return new self.Promise((resolve, reject) => {
+            if(!templateService.respondTo(method, template)) {
+              reject(`Unknown call ${method} on ${template.state.type} template`);
               return;
             }
-            resolve(TEMP_REGS[temp.state.type][method].apply(null, args));
+            resolve(TEMP_REGS[template.state.type][method]
+                    .apply(null, [...args, template]));
           });
         },
-        checkState: function templateCheckState(state) {
-          state.x = Math.max(0, Math.min(480, state.x));
-          state.y = Math.max(0, Math.min(480, state.y));
-          return state;
+        checkState: function templateCheckState(template) {
+          return R.pipe(
+            R.over(R.lensPath(['state','x']),
+                   R.compose(R.max(0), R.min(480))),
+            R.over(R.lensPath(['state','y']),
+                   R.compose(R.max(0), R.min(480)))
+          )(template);
         },
         isLocked: function templateIsLocked(template) {
-          return template.state.lk;
+          return R.path(['state','lk'], template);
         },
         setLock: function templateIsLocked(lock, template) {
-          template.state.lk = lock;
+          return R.assocPath(['state','lk'], lock, template);
         },
         setPosition: function templateSet(pos, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
-          template.state = R.pipe(
-            R.assoc('x', pos.x),
-            R.assoc('y', pos.y),
+          return R.pipe(
+            R.assocPath(['state','x'], pos.x),
+            R.assocPath(['state','y'], pos.y),
             templateService.checkState
-          )(template.state);
-          return null;
+          )(template);
         },
         moveFront: function templateMoveFront(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-          template.state = templateService
-            .checkState(pointService.moveFront(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.moveFront$(dist)),
+            templateService.checkState
+          )(template);
         },
         moveBack: function templateMoveBack(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-          template.state = templateService
-            .checkState(pointService.moveBack(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.moveBack$(dist)),
+            templateService.checkState
+          )(template);
         },
         rotateLeft: function templateRotateLeft(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-          template.state = templateService
-            .checkState(pointService.rotateLeft(angle, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.rotateLeft$(angle)),
+            templateService.checkState
+          )(template);
         },
         rotateRight: function templateRotateRight(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-          template.state = templateService
-            .checkState(pointService.rotateRight(angle, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.rotateRight$(angle)),
+            templateService.checkState
+          )(template);
         },
         shiftLeft: function templateShiftLeft(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-          template.state = templateService
-            .checkState(pointService.shiftLeft(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.shiftLeft$(dist)),
+            templateService.checkState
+          )(template);
         },
         shiftRight: function templateShiftRight(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-          template.state = templateService
-            .checkState(pointService.shiftRight(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.shiftRight$(dist)),
+            templateService.checkState
+          )(template);
         },
         shiftUp: function templateShiftUp(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-          template.state = templateService
-            .checkState(pointService.shiftUp(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.shiftUp$(dist)),
+            templateService.checkState
+          )(template);
         },
         shiftDown: function templateShiftDown(small, template) {
           if(templateService.isLocked(template)) {
             return self.Promise.reject('Template is locked');
           }
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-          template.state = templateService
-            .checkState(pointService.shiftDown(dist, template.state));
-          return null;
+          return R.pipe(
+            R.over(R.lensProp('state'),
+                   pointService.shiftDown$(dist)),
+            templateService.checkState
+          )(template);
         },
         eventName: function templateEventName(template) {
           return R.path(['state','stamp'], template);
         },
         addLabel: function templateAddLabel(label, template) {
-          template.state.l = R.uniq(R.append(label, template.state.l));
+          return R.over(R.lensPath(['state','l']),
+                        R.compose(R.uniq, R.append(label)),
+                        template);
         },
         removeLabel: function templateRemoveLabel(label, template) {
-          template.state.l = R.reject(R.equals(label), template.state.l);
+          return R.over(R.lensPath(['state','l']),
+                        R.reject(R.equals(label)),
+                        template);
         },
         fullLabel: function templateFullLabel(template) {
-          return template.state.l.join(' ');
-        },
+          return R.pathOr([], ['state','l'], template).join(' ');
+        }
       };
       R.curryService(templateService);
       return templateService;
@@ -374,5 +399,5 @@ angular.module('clickApp.services')
     'aoeTemplate',
     'sprayTemplate',
     'wallTemplate',
-    function() { return {}; }
+    () => { return {}; }
   ]);

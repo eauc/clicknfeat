@@ -1,35 +1,34 @@
-'use strict';
-
 describe('set scenario', function() {
   describe('setScenarioCommand service', function() {
     beforeEach(inject([ 'setScenarioCommand', function(setScenarioCommand) {
       this.setScenarioCommandService = setScenarioCommand;
     }]));
 
-    describe('execute(<scenario>, <scope>, <game>)', function() {
+    describe('execute(<scenario>, <state>, <game>)', function() {
       beforeEach(function() {
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-        this.game = { scenario: 'before' };
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
 
-        this.ctxt = this.setScenarioCommandService.execute({
+        let game = { scenario: 'before' };
+        [this.ctxt, this.game] = this.setScenarioCommandService.execute({
           name: 'after_name'
-        }, this.scope, this.game);
+        }, this.state, game);
       });
       
       it('should set game scenario', function() {
-        expect(this.game.scenario).toEqual({ name: 'after_name' });
+        expect(this.game.scenario)
+          .toEqual({ name: 'after_name' });
       });
       
       it('should send changeScenario event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeScenario');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.scenario.change');
       });
       
       it('should return context', function() {
         expect(this.ctxt).toEqual({
           before: 'before',
           after: { name: 'after_name' },
-          desc: 'after_name',
+          desc: 'after_name'
         });
       });
     });
@@ -39,16 +38,16 @@ describe('set scenario', function() {
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
     ], function(e) {
-      describe(e.method+'(<ctxt>, <scope>, <game>)', function() {
+      describe(e.method+'(<ctxt>, <state>, <game>)', function() {
         beforeEach(function() {
           this.ctxt = {
             before: 'before',
             after: 'after'
           };
-          this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-          this.game = { scenario: e.previous };
+          this.state = jasmine.createSpyObj('state', ['changeEvent']);
 
-          this.setScenarioCommandService[e.method](this.ctxt, this.scope, this.game);
+          let game = { scenario: e.previous };
+          this.game = this.setScenarioCommandService[e.method](this.ctxt, this.state, game);
         });
       
         it('should set game scenario', function() {
@@ -56,8 +55,8 @@ describe('set scenario', function() {
         });
       
         it('should send changeScenario event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeScenario');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.scenario.change');
         });
       });
     });

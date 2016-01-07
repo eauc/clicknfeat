@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelMelee', [
     function modelMeleeServiceFactory() {
@@ -10,20 +8,28 @@ angular.module('clickApp.services')
           },
           setMeleeDisplay: function modelSetMeleeDisplay(melee, set, model) {
             if(set) {
-              model.state.dsp = R.uniq(R.append(melee, model.state.dsp));
+              return R.over(R.lensPath(['state','dsp']),
+                            R.compose(R.uniq, R.append(melee)),
+                            model);
             }
             else {
-              model.state.dsp = R.reject(R.equals(melee), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals(melee)),
+                            model);
             }
           },
           toggleMeleeDisplay: function modelToggleMeleeDisplay(melee, model) {
             if(modelService.isMeleeDisplayed(melee, model)) {
-              model.state.dsp = R.reject(R.equals(melee), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals(melee)),
+                            model);
             }
             else {
-              model.state.dsp = R.append(melee, model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.append(melee),
+                            model);
             }
-          },
+          }
         };
         return modelMeleeService;
       };

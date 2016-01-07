@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.directives').factory('wallTemplateElement', ['$window', 'template', 'gameTemplateSelection', 'gameMap', 'labelElement', function ($window, templateService, gameTemplateSelectionService, gameMapService, labelElementService) {
+angular.module('clickApp.directives').factory('wallTemplateElement', ['template', 'gameTemplateSelection', 'gameMap', 'labelElement', function (templateService, gameTemplateSelectionService, gameMapService, labelElementService) {
   var wallTemplateElementService = {
     create: function wallTemplateElementServiceCreate(svgNS, parent, template) {
       var group = document.createElementNS(svgNS, 'g');
@@ -21,8 +21,8 @@ angular.module('clickApp.directives').factory('wallTemplateElement', ['$window',
         label: label
       };
     },
-    update: function wallTemplateElementUpdate(map, scope, template, wall) {
-      var selection = scope.game.template_selection;
+    update: function wallTemplateElementUpdate(map, state, template, wall) {
+      var selection = state.game.template_selection;
       var local = gameTemplateSelectionService.in('local', template.state.stamp, selection);
       var remote = gameTemplateSelectionService.in('remote', template.state.stamp, selection);
       var selected = local || remote;
@@ -34,11 +34,10 @@ angular.module('clickApp.directives').factory('wallTemplateElement', ['$window',
         y: template.state.y + 2
       };
       var label_text = templateService.fullLabel(template);
-      $window.requestAnimationFrame(function _wallTemplateElementUpdate() {
-        updateWall(template, wall.wall);
-        updateContainer(selected, local, remote, template, wall.container);
-        labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, wall.label);
-      });
+
+      updateWall(template, wall.wall);
+      updateContainer(selected, local, remote, template, wall.container);
+      labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, wall.label);
     }
   };
   function updateWall(template, wall) {

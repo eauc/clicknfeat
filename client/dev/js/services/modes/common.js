@@ -1,57 +1,57 @@
 'use strict';
 
-angular.module('clickApp.services').factory('commonMode', ['modes', 'settings', 'game', function commonModeServiceFactory(modesService, settingsService, gameService) {
+angular.module('clickApp.services').factory('commonMode', ['modes', 'settings', 'game', function commonModeServiceFactory(modesService, settingsService) {
   var common_actions = {
-    modeBackToDefault: function modeBackToDefault(scope) {
-      return scope.doSwitchToMode('Default');
+    modeBackToDefault: function modeBackToDefault(state) {
+      return state.event('Modes.switchTo', 'Default');
     },
-    commandUndoLast: function commandUndoLast(scope) {
-      return gameService.undoLastCommand(scope, scope.game);
+    commandUndoLast: function commandUndoLast(state) {
+      return state.event('Game.command.undoLast');
     },
-    commandReplayNext: function commandReplayNext(scope) {
-      return gameService.replayNextCommand(scope, scope.game);
+    commandReplayNext: function commandReplayNext(state) {
+      return state.event('Game.command.replayNext');
     },
-    viewScrollLeft: function viewZoomLeft(scope) {
-      scope.gameEvent('viewScrollLeft');
+    viewScrollLeft: function viewScrollLeft(state) {
+      state.changeEvent('Game.view.scrollLeft');
     },
-    viewScrollRight: function viewZoomRight(scope) {
-      scope.gameEvent('viewScrollRight');
+    viewScrollRight: function viewScrollRight(state) {
+      state.changeEvent('Game.view.scrollRight');
     },
-    viewScrollUp: function viewZoomUp(scope) {
-      scope.gameEvent('viewScrollUp');
+    viewScrollUp: function viewScrollUp(state) {
+      state.changeEvent('Game.view.scrollUp');
     },
-    viewScrollDown: function viewZoomDown(scope) {
-      scope.gameEvent('viewScrollDown');
+    viewScrollDown: function viewScrollDown(state) {
+      state.changeEvent('Game.view.scrollDown');
     },
-    viewZoomIn: function viewZoomIn(scope) {
-      scope.gameEvent('viewZoomIn');
+    viewZoomIn: function viewZoomIn(state) {
+      state.changeEvent('Game.view.zoomIn');
     },
-    viewZoomOut: function viewZoomOut(scope) {
-      scope.gameEvent('viewZoomOut');
+    viewZoomOut: function viewZoomOut(state) {
+      state.changeEvent('Game.view.zoomOut');
     },
-    viewZoomReset: function viewZoomReset(scope) {
-      scope.gameEvent('viewZoomReset');
+    viewZoomReset: function viewZoomReset(state) {
+      state.changeEvent('Game.view.zoomReset');
     },
-    flipMap: function flipMap(scope) {
-      scope.gameEvent('flipMap');
+    flipMap: function flipMap(state) {
+      state.changeEvent('Game.view.flipMap');
     },
-    toggleMenu: function toggleMenu(scope) {
-      scope.gameEvent('toggleMenu');
+    toggleMenu: function toggleMenu(state) {
+      state.changeEvent('Game.toggleMenu');
     },
-    roll1D6: function roll1D6(scope) {
-      return gameService.executeCommand('rollDice', 6, 1, scope, scope.game);
+    roll1D6: function roll1D6(state) {
+      return state.event('Game.command.execute', 'rollDice', [6, 1]);
     },
-    roll2D6: function roll2D6(scope) {
-      return gameService.executeCommand('rollDice', 6, 2, scope, scope.game);
+    roll2D6: function roll2D6(state) {
+      return state.event('Game.command.execute', 'rollDice', [6, 2]);
     },
-    roll3D6: function roll3D6(scope) {
-      return gameService.executeCommand('rollDice', 6, 3, scope, scope.game);
+    roll3D6: function roll3D6(state) {
+      return state.event('Game.command.execute', 'rollDice', [6, 3]);
     },
-    roll4D6: function roll4D6(scope) {
-      return gameService.executeCommand('rollDice', 6, 4, scope, scope.game);
+    roll4D6: function roll4D6(state) {
+      return state.event('Game.command.execute', 'rollDice', [6, 4]);
     },
-    roll5D6: function roll5D6(scope) {
-      return gameService.executeCommand('rollDice', 6, 5, scope, scope.game);
+    roll5D6: function roll5D6(state) {
+      return state.event('Game.command.execute', 'rollDice', [6, 5]);
     }
   };
   var common_bindings = {
@@ -67,19 +67,19 @@ angular.module('clickApp.services').factory('commonMode', ['modes', 'settings', 
     viewZoomReset: 'alt+z',
     flipMap: 'ctrl+shift+f',
     toggleMenu: 'ctrl+shift+m'
+    // roll1D6: 'd+1',
+    // roll2D6: 'd+2',
+    // roll3D6: 'd+3',
+    // roll4D6: 'd+4',
+    // roll5D6: 'd+5',
   };
-  // roll1D6: 'd+1',
-  // roll2D6: 'd+2',
-  // roll3D6: 'd+3',
-  // roll4D6: 'd+4',
-  // roll5D6: 'd+5',
   var common_mode = {
     name: 'Common',
     actions: common_actions,
     buttons: [],
     bindings: R.clone(common_bindings)
   };
-  settingsService.register('Bindings', common_mode.name, common_bindings, function updateCommonBindings(bs) {
+  settingsService.register('Bindings', common_mode.name, common_bindings, function (bs) {
     R.extend(common_mode.bindings, bs);
   });
   return common_mode;

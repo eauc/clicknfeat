@@ -4,7 +4,7 @@ angular.module('clickApp.services').factory('gameTerrainInfo', ['http', function
   var gameTerrainInfoService = {
     init: function gameTerrainInfoInit() {
       return httpService.get('/data/terrains.json').catch(function (reason) {
-        console.log('error getting terrains.json', reason);
+        console.error('Error getting terrains.json', reason);
         return [];
       }).then(updateTerrains);
     },
@@ -34,7 +34,7 @@ angular.module('clickApp.services').factory('gameTerrainInfo', ['http', function
     }, {}))(type);
   }
   function updateTerrain(terrain) {
-    return R.pipe(R.assocPath(['img', 'width'], R.path(['img', 'width'], terrain) / 3), R.assocPath(['img', 'height'], R.path(['img', 'height'], terrain) / 3))(terrain);
+    return R.pipe(R.over(R.lensPath(['img', 'width']), R.divide(R.__, 3)), R.over(R.lensPath(['img', 'height']), R.divide(R.__, 3)))(terrain);
   }
   R.curryService(gameTerrainInfoService);
   return gameTerrainInfoService;

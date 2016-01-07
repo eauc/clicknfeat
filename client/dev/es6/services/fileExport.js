@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('fileExport', [
     'jsonStringifier',
@@ -9,16 +7,16 @@ angular.module('clickApp.services')
         json: jsonStringifierService
       };
       var fileExportService = {
-        generate: function(type, data) {
+        generate: function fileExportGenerate(type, data) {
           return R.pipeP(
             stringifiers[type].stringify,
-            function(string) {
+            (string) => {
               return new self.Blob([string], {type: 'text/plain'});
             },
             self.URL.createObjectURL
           )(data);
         },
-        cleanup: function(url) {
+        cleanup: function fileExportCleanup(url) {
           if(!R.isNil(url)) {
             self.URL.revokeObjectURL(url);
           }

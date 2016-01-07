@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelLeader', [
     function modelLeaderServiceFactory() {
@@ -10,20 +8,28 @@ angular.module('clickApp.services')
           },
           setLeaderDisplay: function modelSetLeaderDisplay(set, model) {
             if(set) {
-              model.state.dsp = R.uniq(R.append('l', model.state.dsp));
+              return R.over(R.lensPath(['state','dsp']),
+                            R.compose(R.uniq, R.append('l')),
+                            model);
             }
             else {
-              model.state.dsp = R.reject(R.equals('l'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('l')),
+                            model);
             }
           },
           toggleLeaderDisplay: function modelToggleLeaderDisplay(model) {
             if(modelService.isLeaderDisplayed(model)) {
-              model.state.dsp = R.reject(R.equals('l'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('l')),
+                            model);
             }
             else {
-              model.state.dsp = R.append('l', model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.append('l'),
+                            model);
             }
-          },
+          }
         };
         return modelLeaderService;
       };

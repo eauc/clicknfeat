@@ -1,13 +1,9 @@
-'use strict';
-
 describe('model ruler', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
-
-        this.gameService = spyOnService('game');
 
         this.modelService = spyOnService('model');
 
@@ -17,17 +13,18 @@ describe('model ruler', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user sets ruler max length', function() {
       this.ret = this.modelsModeService.actions
-        .setRulerMaxLength(this.scope);
+        .setRulerMaxLength(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
@@ -64,11 +61,12 @@ describe('model ruler', function() {
           this.promptService.prompt.resolveWith = e.value;
         }, function() {
           it('should set model\'s ruler max length', function() {
-            this.thenExpect(this.ret, function(result) {
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', e.max,
-                                      ['stamp1','stamp2'], this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+            this.thenExpect(this.ret, function() {
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setRulerMaxLength', [e.max],
+                                                    ['stamp1','stamp2']
+                                                  ]);
             });
           });
         });
@@ -78,11 +76,12 @@ describe('model ruler', function() {
         this.promptService.prompt.rejectWith = 'canceled';
       }, function() {
         it('should set model\'s ruler max length', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setRulerMaxLength', null,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setRulerMaxLength', [null],
+                                                  ['stamp1','stamp2']
+                                                ]);
           });
         });
       });
@@ -101,7 +100,8 @@ describe('model ruler', function() {
       it('should set model\'s ruler max length', function() {
         this.model = { state: {} };
         
-        this.modelService.setRulerMaxLength(42, this.model);
+        this.model = this.modelService
+          .setRulerMaxLength(42, this.model);
 
         expect(this.modelService.rulerMaxLength(this.model))
           .toBe(42);

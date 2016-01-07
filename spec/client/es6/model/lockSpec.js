@@ -1,13 +1,9 @@
-'use strict';
-
 describe('model lock', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
-
-        this.gameService = spyOnService('game');
 
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
@@ -18,16 +14,17 @@ describe('model lock', function() {
 
         this.modelService = spyOnService('model');
      
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles lock on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleLock(this.scope);
+        .toggleLock(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -42,15 +39,14 @@ describe('model lock', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(ret) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isLocked)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('lockModels', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-
-              expect(ret).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'lockModels', [ e.set,
+                                                      this.gameModelSelectionService.get._retVal
+                                                    ]);
             });
           });
         });
@@ -65,18 +61,19 @@ describe('model lock', function() {
         this.lockModelsCommandService = lockModelsCommandService;
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.lockStamps);
-        this.gameModelsService.lockStamps.resolveWith = 'gameModels.lockStamps.returnValue';
+        this.gameModelsService.lockStamps
+          .resolveWith = 'gameModels.lockStamps.returnValue';
         
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
         this.game = { models: 'models' };
       }
     ]));
 
-    when('execute(<lock>, <stamps>, <scope>, <game>)', function() {
+    when('execute(<lock>, <stamps>, <state>, <game>)', function() {
       this.ret = this.lockModelsCommandService
-        .execute('lock', this.stamps, this.scope, this.game);
+        .execute('lock', this.stamps, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.stamps = ['stamp1', 'stamp2'];
@@ -93,25 +90,25 @@ describe('model lock', function() {
       });
       
       it('should apply <lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function([ctxt,game]) {
           expect(this.gameModelsService.lockStamps)
             .toHaveBeenCalledWith('lock', this.stamps, 'models');
-          expect(this.game.models)
+          expect(game.models)
             .toBe('gameModels.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeModel gameEvents', function() {
+      it('should emit changeModel changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp2');
         });
       });
 
       it('should return context', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function([ctxt]) {
           expect(ctxt)
             .toEqual({
               stamps: this.stamps,
@@ -121,14 +118,14 @@ describe('model lock', function() {
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <state>, <game>)', function() {
       this.ret = this.lockModelsCommandService
-        .replay(this.ctxt, this.scope, this.game);
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
           stamps: [ 'stamp1', 'stamp2' ],
-          desc: 'lock',
+          desc: 'lock'
         };
       });
 
@@ -143,32 +140,32 @@ describe('model lock', function() {
       });
 
       it('should apply <lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameModelsService.lockStamps)
             .toHaveBeenCalledWith('lock', this.ctxt.stamps, 'models');
-          expect(this.game.models)
+          expect(game.models)
             .toBe('gameModels.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeModel gameEvents', function() {
+      it('should emit changeModel changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp2');
         });
       });
     });
 
-    when('undo(<ctxt>, <scope>, <game>)', function() {
+    when('undo(<ctxt>, <state>, <game>)', function() {
       this.ret = this.lockModelsCommandService
-        .undo(this.ctxt, this.scope, this.game);
+        .undo(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
           stamps: [ 'stamp1', 'stamp2' ],
-          desc: true,
+          desc: true
         };
       });
 
@@ -183,20 +180,20 @@ describe('model lock', function() {
       });
 
       it('should apply !<lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameModelsService.lockStamps)
             .toHaveBeenCalledWith(false, this.ctxt.stamps, 'models');
-          expect(this.game.models)
+          expect(game.models)
             .toBe('gameModels.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeModel gameEvents', function() {
+      it('should emit changeModel changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeModel-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.model.change.stamp2');
         });
       });
     });
@@ -216,7 +213,7 @@ describe('model lock', function() {
           active: [ { state: { stamp: 's1', dsp: [] } },
                     { state: { stamp: 's2', dsp: [] } } ],
           locked: [ { state: { stamp: 's3', dsp: ['lk'] } },
-                    { state: { stamp: 's4', dsp: ['lk'] } } ],
+                    { state: { stamp: 's4', dsp: ['lk'] } } ]
         };
       });
 
@@ -225,32 +222,32 @@ describe('model lock', function() {
         [ true  , ['s1']  , { active: [ { state: { stamp: 's2', dsp: [] } } ],
                               locked: [ { state: { stamp: 's1', dsp: ['lk'] } },
                                         { state: { stamp: 's3', dsp: ['lk'] } },
-                                        { state: { stamp: 's4', dsp: ['lk'] } } ],
+                                        { state: { stamp: 's4', dsp: ['lk'] } } ]
                             } ],
         [ false , ['s1']  , { active: [ { state: { stamp: 's1', dsp: [] } },
                                         { state: { stamp: 's2', dsp: [] } } ],
                               locked: [ { state: { stamp: 's3', dsp: ['lk'] } },
-                                        { state: { stamp: 's4', dsp: ['lk'] } } ],
+                                        { state: { stamp: 's4', dsp: ['lk'] } } ]
                             } ],
         [ true  , ['s3']  , { active: [ { state: { stamp: 's1', dsp: [] } },
                                         { state: { stamp: 's2', dsp: [] } } ],
                               locked: [ { state: { stamp: 's3', dsp: ['lk'] } },
-                                        { state: { stamp: 's4', dsp: ['lk'] } } ],
+                                        { state: { stamp: 's4', dsp: ['lk'] } } ]
                             } ],
-        [ false , ['s4']  , { active: [ { state: { stamp: 's1', dsp: [] } },
-                                        { state: { stamp: 's2', dsp: [] } },
-                                        { state: { stamp: 's4', dsp: [] } } ],
-                              locked: [ { state: { stamp: 's3', dsp: ['lk'] } } ],
+        [ false , ['s4']  , { active: [ { state: { stamp: 's4', dsp: [] } },
+                                        { state: { stamp: 's1', dsp: [] } },
+                                        { state: { stamp: 's2', dsp: [] } } ],
+                              locked: [ { state: { stamp: 's3', dsp: ['lk'] } } ]
                             } ],
         [ true  , ['s2','s3'] , { active: [ { state: { stamp: 's1', dsp: [] } } ],
                                   locked: [ { state: { stamp: 's2', dsp: ['lk'] } },
                                             { state: { stamp: 's3', dsp: ['lk'] } },
-                                            { state: { stamp: 's4', dsp: ['lk'] } } ],
+                                            { state: { stamp: 's4', dsp: ['lk'] } } ]
                                 } ],
         [ false , ['s1','s4'] , { active: [ { state: { stamp: 's1', dsp: [] } },
-                                            { state: { stamp: 's2', dsp: [] } },
-                                            { state: { stamp: 's4', dsp: [] } } ],
-                                  locked: [ { state: { stamp: 's3', dsp: ['lk'] } } ],
+                                            { state: { stamp: 's4', dsp: [] } },
+                                            { state: { stamp: 's2', dsp: [] } } ],
+                                  locked: [ { state: { stamp: 's3', dsp: ['lk'] } } ]
                                 } ],
       ], function(e, d) {
         it('should set lock for <stamps>, '+d, function() {
@@ -277,11 +274,11 @@ describe('model lock', function() {
       it('should set lock for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
         expect(this.modelService.isLocked(this.model))
           .toBeTruthy();
         
-        this.modelService.setLock(false, this.model);
+        this.model = this.modelService.setLock(false, this.model);
         expect(this.modelService.isLocked(this.model))
           .toBeFalsy();
       });

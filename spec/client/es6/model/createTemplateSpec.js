@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model create template', function() {
   describe('modelBaseMode service', function() {
     beforeEach(inject([
@@ -7,10 +5,6 @@ describe('model create template', function() {
       function(modelBaseModeService) {
         this.modelBaseModeService = modelBaseModeService;
 
-        this.gameService = spyOnService('game');
-        mockReturnPromise(this.gameService.executeCommand);
-        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
-        
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
@@ -22,17 +16,19 @@ describe('model create template', function() {
         this.sprayTemplateModeService.actions.setOriginModel
           .and.returnValue('sprayTemplateMode.setOriginModel.returnValue');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       ui_state: { flip_map: 'flip' },
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user create AoE on model', function() {
       this.ret = this.modelBaseModeService.actions
-        .createAoEOnModel(this.scope);
+        .createAoEOnModel(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -42,23 +38,24 @@ describe('model create template', function() {
       });
       
       it('should create AoE centered on model', function() {
-        this.thenExpect(this.ret, function(result) {
+        this.thenExpect(this.ret, function() {
           expect(this.gameModelSelectionService.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsService.findStamp)
             .toHaveBeenCalledWith('stamp', 'models');
         
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('createTemplate', [{ x: 42, y: 71, type: 'aoe' }],
-                                  this.scope, this.scope.game);
-          expect(result).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'createTemplate', [ { base: { x: 0, y: 0 },
+                                                        templates: [ { x: 42, y: 71, type: 'aoe' } ]
+                                                      }, 'flip' ]);
         });
       });
     });
 
     when('user create spray on model', function() {
       this.ret = this.modelBaseModeService.actions
-        .createSprayOnModel(this.scope);
+        .createSprayOnModel(this.state);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -75,16 +72,18 @@ describe('model create template', function() {
           expect(this.gameModelsService.findStamp)
             .toHaveBeenCalledWith('stamp', 'models');
         
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('createTemplate', [{ x: 42, y: 71, type: 'spray' }],
-                                  this.scope, this.scope.game);
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'createTemplate', [ { base: { x: 0, y: 0 },
+                                                        templates: [ { x: 42, y: 71, type: 'spray' } ]
+                                                      }, 'flip' ]);
         });
       });
       
       it('should set model as spray\'s origin', function() {
         this.thenExpect(this.ret, function(result) {
           expect(this.sprayTemplateModeService.actions.setOriginModel)
-            .toHaveBeenCalledWith(this.scope,
+            .toHaveBeenCalledWith(this.state,
                                   { 'click#': { target: this.model } });
 
           expect(result).toBe('sprayTemplateMode.setOriginModel.returnValue');

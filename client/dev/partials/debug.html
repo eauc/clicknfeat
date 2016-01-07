@@ -3,16 +3,15 @@
     <div class="panel-heading">
       <h4 class="panel-title">Import dump file</h4>
     </div>
-    <div class="panel-body"
-         style="
-         max-height: 10em;
-         overflow-y: auto;
-         ">
-      <input style="display: inline;"
-             id="import-file"
-             type="file"
-             multiple
-             ea-file="doOpenDumpFile(file)" />
+    <div class="panel-body">
+      <p class="text-warning">{{result}}</p>
+      <form>
+        <input class="form-control"
+               id="import-file"
+               type="file"
+               multiple
+               ea-file="doLoadDumpFile(file)" />
+      </form>
     </div>
   </div>
 </div>

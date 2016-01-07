@@ -106,63 +106,63 @@
           </clipPath>
         </defs>
         <g id="game-board"
-           ng-show="game.layers | gameLayers:'isDisplayed':'b'">
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'">
           <image id="board-preview"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="{{game.board.preview || ''}}">
+                 xlink:href="{{state.game.board.preview || ''}}">
           </image>
           <image id="board-view"
                  x="0" y="0" width="480" height="480"
-                 xlink:href="{{game.board.img || ''}}">
+                 xlink:href="{{state.game.board.img || ''}}">
           </image>
         </g>
         <g id="game-terrains-locked"
-           ng-show="game.layers | gameLayers:'isDisplayed':'b'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'"
            click-game-terrains-list="locked">
         </g>
         <g id="game-terrains"
-           ng-show="game.layers | gameLayers:'isDisplayed':'b'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'"
            click-game-terrains-list="active">
         </g>
         <g id="game-deploiement"
-           ng-show="game.layers | gameLayers:'isDisplayed':'d'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'d'"
            ng-include="'partials/game/deploiement.html'">
         </g>
         <g id="game-scenario"
-           ng-show="game.layers | gameLayers:'isDisplayed':'s'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'s'"
            ng-include="'partials/game/scenario.html'">
         </g>
         <g id="game-templates-locked"
-           ng-show="game.layers | gameLayers:'isDisplayed':'t'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"
            click-game-templates-list="locked">
         </g>
         <g id="game-under-models"
-           ng-show="game.layers | gameLayers:'isDisplayed':'m'">
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
           <g click-game-los-refresh
              style="clip-path: url(#los-clip);">
-            <polygon ng-repeat="envelope in game.los.computed.shadow"
+            <polygon ng-repeat="envelope in state.game.los.computed.shadow"
                      click-game-los-darkness
                      class="los-shadow">
             </polygon>
-            <polygon ng-repeat="envelope in game.los.computed.darkness"
+            <polygon ng-repeat="envelope in state.game.los.computed.darkness"
                      click-game-los-darkness
                      class="los-darkness">
             </polygon>
           </g>
         </g>
         <g id="game-models-locked"
-           ng-show="game.layers | gameLayers:'isDisplayed':'m'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'"
            click-game-models-list="locked">
         </g>
         <g id="game-models"
-           ng-show="game.layers | gameLayers:'isDisplayed':'m'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'"
            click-game-models-list="active">
         </g>
         <g id="game-over-models"
-           ng-show="game.layers | gameLayers:'isDisplayed':'m'">
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
         </g>
         <g id="game-templates"
-           ng-show="game.layers | gameLayers:'isDisplayed':'t'"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"
            click-game-templates-list="active">
         </g>
         <g id="game-ruler"
@@ -172,17 +172,19 @@
            click-game-los>
         </g>
         <g id="game-create-terrains">
-          <g ng-repeat="(index, terrain) in create.terrain.terrains"
+          <g ng-repeat="(index, terrain) in state.create.terrain.terrains"
              click-game-create-terrain>
           </g>
         </g>
         <g id="game-create-models">
-          <g ng-repeat="(index, model) in create.model.models"
+          <g ng-repeat="(index, model) in state.create.model.models"
              click-game-create-model>
           </g>
         </g>
-        <g  id="game-create-templates"
-            click-game-create-template>
+        <g id="game-create-templates">
+          <g ng-repeat="(index, terrain) in state.create.template.templates"
+             click-game-create-template>
+          </g>
         </g>
         <rect id="game-dragbox"
               click-game-dragbox>
@@ -203,7 +205,7 @@
         <strong>VS</strong>
         <strong>Player 2:</strong> {{game | game:'playerName':'p2'}}
         <form class="form-inline"
-              ng-show="game | gameConnection:'active'"
+              ng-show="state.game | gameConnection:'active'"
               ng-submit="doInvitePlayer()">
           <div class="form-group">
             <div class="input-group">

@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('fileImport', [
     'jsonParser',
@@ -8,18 +6,19 @@ angular.module('clickApp.services')
         'json': jsonParserService
       };
       var fileImportService = {
-        read: function(type, file) {
-          return new self.Promise(function(resolve, reject) {
+        read: function fileImportRead(type, file) {
+          return new self.Promise((resolve, reject) => {
             var reader = new self.FileReader();
-            reader.onload = function(e) {
-              parsers[type].parse(e.target.result)
+            reader.onload = (e) => {
+              parsers[type]
+                .parse(e.target.result)
                 .then(resolve)
                 .catch(reject);
             };
-            reader.onerror = function() {
+            reader.onerror = () => {
               reject(['Error reading file']);
             };
-            reader.onabort = function() {
+            reader.onabort = () => {
               reject(['Abort reading file']);
             };
             reader.readAsText(file);

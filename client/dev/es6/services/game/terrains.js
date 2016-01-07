@@ -8,7 +8,7 @@ angular.module('clickApp.services')
         create: function() {
           return {
             active: [],
-            locked: [],
+            locked: []
           };
         },
         all: function terrainsAll(terrains) {
@@ -20,14 +20,15 @@ angular.module('clickApp.services')
               gameTerrainsService.all,
               R.find(R.pathEq(['state','stamp'], stamp))
             )(terrains);
-            if(R.isNil(terrain)) reject('Terrain '+stamp+' not found');
+            if(R.isNil(terrain)) reject(`Terrain ${stamp} not found`);
             else resolve(terrain);
           });
         },
         findAnyStamps: function terrainsFindAnyStamps(stamps, terrains) {
           return R.pipePromise(
             R.map((stamp) => {
-              return gameTerrainsService.findStamp(stamp, terrains)
+              return gameTerrainsService
+                .findStamp(stamp, terrains)
                 .catch(R.always(null));
             }),
             R.promiseAll,
@@ -39,63 +40,41 @@ angular.module('clickApp.services')
             }
           )(stamps);
         },
-        onStamps: function terrainsOnStamps(method, ...args /*, stamps, terrains*/) {
-          if('Function' !== R.type(terrainService[method])) {
-            return self.Promise.reject('Unknown method '+method+' on terrains');
-          }
-          
-          var terrains = R.last(args);
-          var stamps = R.nth(-2, args);
-
-          args = R.slice(0, -2, args);
-          var reason;
+        fromStamps: function terrainsFromStamps(method, args, stamps, terrains) {
+          return fromStamps$(R.compose(R.always, R.always(null)),
+                             method, args, stamps, terrains);
+        },
+        onStamps: function terrainsOnStamps(method, args, stamps, terrains) {
+          return R.pipeP(
+            fromStamps$(R.always, method, args, stamps),
+            updateTerrains$(terrains)
+          )(terrains);
+        },
+        setStateStamps: function terrainsSetStateStamps(states, stamps, terrains) {
           return R.pipeP(
             gameTerrainsService.findAnyStamps$(stamps),
-            R.reject(R.isNil),
-            R.map((terrain) => {
-              return self.Promise
-                .resolve(terrainService[method].apply(null, R.append(terrain, args)))
-                .catch((_reason) => {
-                  console.error(_reason);
-                  reason = _reason;
-                  return '##failed##';
-                });
+            R.addIndex(R.map)((terrain, index) => {
+              return ( R.isNil(terrain) ?
+                       null :
+                       terrainService.setState(states[index], terrain)
+                     );
             }),
-            R.promiseAll,
-            (results) => {
-              if(R.isEmpty(R.reject(R.equals('##failed##'), results))) {
-                console.error('Terrains: onStamps all failed', args);
-                return self.Promise.reject(reason);
-              }
-              return R.map((res) => {
-                return ( res === '##failed##' ?
-                         null : res
-                       );
-              }, results);
-            }
+            R.reject(R.isNil),
+            updateTerrains$(terrains)
           )(terrains);
         },
         lockStamps: function terrainsLockStamps(lock, stamps, terrains) {
           return R.pipeP(
-            () => {
-              return gameTerrainsService.findAnyStamps(stamps, terrains);
-            },
+            gameTerrainsService.findAnyStamps$(stamps),
             R.reject(R.isNil),
-            R.forEach(terrainService.setLock$(lock)),
-            () => {
-              return updateActiveLocked(terrains);
-            }
-          )();
+            R.map(terrainService.setLock$(lock)),
+            updateTerrains$(terrains)
+          )(terrains);
         },
         add: function terrainsAdd(news, terrains) {
           return R.pipe(
             gameTerrainsService.removeStamps$(R.map(R.path(['state','stamp']), news)),
-            (terrains) => {
-              return R.assoc('active', R.concat(terrains.active, news), terrains);
-            },
-            (terrains) => {
-              return updateActiveLocked(terrains);
-            }
+            R.flip(updateTerrains$)(news)
           )(terrains);
         },
         removeStamps: function terrainsRemoveStamps(stamps, terrains) {
@@ -122,18 +101,38 @@ angular.module('clickApp.services')
               };
             }
           )(terrains);
-        },
+        }
       };
-      function updateActiveLocked(terrains) {
-        var partition = R.pipe(
-          gameTerrainsService.all,
-          R.partition(terrainService.isLocked)
+      var fromStamps$ = R.curry((onError, method, args, stamps, terrains) => {
+        if('Function' !== R.type(terrainService[method])) {
+          return self.Promise.reject(`Unknown method ${method} on terrains`);
+        }
+          
+        return R.pipeP(
+          gameTerrainsService.findAnyStamps$(stamps),
+          R.reject(R.isNil),
+          R.map((terrain) => {
+            return self.Promise
+              .resolve(terrainService[method].apply(null, [...args, terrain]))
+              .catch(onError(terrain));
+          }),
+          R.promiseAll
         )(terrains);
-        return {
-          active: partition[1],
-          locked: partition[0]
-        };
-      }
+      });
+      var updateTerrains$ = R.curry((terrains, news) => {
+        return R.pipe(
+          gameTerrainsService.all,
+          R.concat(news),
+          R.uniqBy(R.path(['state','stamp'])),
+          R.partition(terrainService.isLocked),
+          ([locked, active]) => {
+            return {
+              active: active,
+              locked: locked
+            };
+          }
+        )(terrains);
+      });
       R.curryService(gameTerrainsService);
       return gameTerrainsService;
     }

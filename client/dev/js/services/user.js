@@ -7,19 +7,17 @@ angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'us
       return R.pipe(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0))(user);
     },
     save: function userSave(user) {
-      return R.pipePromise(R.prop('state'), function (state) {
-        return localStorageService.save(STORAGE_KEY, state);
-      }, R.always(user))(user);
+      return R.pipePromise(R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user))(user);
     },
     load: function userLoad() {
       return R.pipeP(function () {
         return localStorageService.load(STORAGE_KEY);
-      }, function (state) {
+      }, R.spyWarn('User load'), function (state) {
         return { state: state };
-      }, userConnectionService.create)();
+      }, userConnectionService.init)();
     },
-    init: function userInit() {
-      return R.pipeP(userService.load, userService.checkOnline)();
+    init: function userInit(state) {
+      return R.pipeP(userService.load, userService.checkOnline$(state))();
     },
     description: function userDescription(user) {
       if (R.type(R.prop('state', user)) !== 'Object') return '';
@@ -64,32 +62,30 @@ angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'us
     online: function userOnline(user) {
       return R.path(['state', 'online'], user);
     },
-    toggleOnline: function userToggleOnline(user) {
-      return userService.online(user) ? userGoOffline(user) : userGoOnline(user);
+    toggleOnline: function userToggleOnline(state, user) {
+      return userService.online(user) ? userGoOffline(user) : userGoOnline(state, user);
     },
-    checkOnline: function userCheckOnline(user) {
-      return R.pipeP(function (user) {
+    checkOnline: function userCheckOnline(state, user) {
+      return R.pipePromise(function (user) {
         if (!userService.online(user)) {
           return self.Promise.reject('No online flag');
         }
-        return self.Promise.resolve(user);
+        return user;
       }, function (user) {
         return userUpdateOnline(user).catch(function () {
           return userCreateOnline(user);
         });
-      }, userOnlineStart)(user).catch(function (reason) {
+      }, userOnlineStart$(state))(user).catch(function (reason) {
         console.error('User: checkOnline error', reason);
         return userOnlineStop(user);
       });
     }
   };
-  function userGoOnline(user) {
-    return userService.checkOnline(R.assocPath(['state', 'online'], true, user));
+  function userGoOnline(state, user) {
+    return R.pipePromise(R.assocPath(['state', 'online'], true), userService.checkOnline$(state))(user);
   }
   function userGoOffline(user) {
-    return R.pipePromise(function (user) {
-      return httpService.delete('/api/users/' + user.state.stamp).catch(R.always(null));
-    }, R.always(user), userOnlineStop)(user);
+    return userOnlineStop(user);
   }
   function userCreateOnline(user) {
     return R.pipePromise(R.prop('state'), httpService.post$('/api/users'), function (state) {
@@ -105,12 +101,13 @@ angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'us
       return R.assoc('state', state, user);
     })(user);
   }
-  function userOnlineStart(user) {
-    return R.pipePromise(userConnectionService.open, R.assocPath(['state', 'online'], true), R.spy('User online start'), userService.save)(user);
-  }
+  var userOnlineStart$ = R.curry(function (state, user) {
+    return R.pipePromise(userConnectionService.open$(state), R.assocPath(['state', 'online'], true))(user);
+  });
   function userOnlineStop(user) {
-    return R.pipePromise(R.assocPath(['state', 'online'], false), R.assocPath(['state', 'stamp'], null), userConnectionService.close, R.spy('User online stop'), userService.save)(user);
+    return R.pipePromise(R.assocPath(['state', 'online'], false), R.assocPath(['state', 'stamp'], null), userConnectionService.close)(user);
   }
+  R.curryService(userService);
   return userService;
 }]);
 //# sourceMappingURL=user.js.map

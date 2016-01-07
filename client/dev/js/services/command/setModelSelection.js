@@ -2,24 +2,28 @@
 
 angular.module('clickApp.services').factory('setModelSelectionCommand', ['commands', 'gameModelSelection', function setModelSelectionCommandServiceFactory(commandsService, gameModelSelectionService) {
   var setModelSelectionCommandService = {
-    execute: function setModelSelectionExecute(method, stamps, scope, game) {
+    execute: function setModelSelectionExecute(method, stamps, state, game) {
       if ('Function' !== R.type(gameModelSelectionService[method])) {
-        console.log('setModelSelection unknown method', method, stamps);
         return self.Promise.reject('SetModelSelection unknown method ' + method);
       }
-      game.model_selection = gameModelSelectionService[method]('local', stamps, scope, game.model_selection);
+
+      var selection = gameModelSelectionService[method]('local', stamps, state, game.model_selection);
+      game = R.assoc('model_selection', selection, game);
+
       var ctxt = {
-        after: R.clone(gameModelSelectionService.get('local', game.model_selection)),
+        after: gameModelSelectionService.get('local', game.model_selection),
         desc: '',
         do_not_log: true
       };
-      return ctxt;
+      return [ctxt, game];
     },
-    replay: function setModelSelectionReplay(ctxt, scope, game) {
-      game.model_selection = gameModelSelectionService.set('remote', ctxt.after, scope, game.model_selection);
+    replay: function setModelSelectionReplay(ctxt, state, game) {
+      var selection = gameModelSelectionService.set('remote', ctxt.after, state, game.model_selection);
+      game = R.assoc('model_selection', selection, game);
+      return game;
     },
-    undo: function setModelSelectionUndo() /*ctxt, scope, game*/{
-      console.log('!!! ERROR : WE SHOULD NOT BE HERE !!!');
+    undo: function setModelSelectionUndo() {
+      return self.Promise.reject('!!! ERROR : WE SHOULD NOT BE HERE !!!');
     }
   };
   commandsService.registerCommand('setModelSelection', setModelSelectionCommandService);

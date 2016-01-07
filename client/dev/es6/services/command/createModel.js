@@ -11,7 +11,7 @@ angular.module('clickApp.services')
                                               gameModelsService,
                                               gameModelSelectionService) {
       var createModelCommandService = {
-        execute: function createModelExecute(create, is_flipped, scope, game) {
+        execute: function createModelExecute(create, is_flipped, state, game) {
           var add$ = pointService.addToWithFlip$(is_flipped);
           return R.pipePromise(
             R.prop('models'),
@@ -20,7 +20,8 @@ angular.module('clickApp.services')
                 add$(create.base),
                 R.omit(['stamp']),
                 (model) => {
-                  return modelService.create(scope.factions, model)
+                  return modelService
+                    .create(state.factions, model)
                     .catch(R.always(null));
                 }
               )(model);
@@ -34,32 +35,33 @@ angular.module('clickApp.services')
             
               var ctxt = {
                 models: R.map(modelService.saveState, models),
-                desc: models[0].state.info.join('.'),
+                desc: models[0].state.info.join('.')
               };
               return R.pipe(
                 gameModelsService.add$(models),
                 (game_models) => {
-                  game.models = game_models;
+                  game = R.assoc('models', game_models, game);
               
                   return gameModelSelectionService.set('local',
                                                        R.map(R.path(['state','stamp']), models),
-                                                       scope, game.model_selection);
+                                                       state, game.model_selection);
                 },
                 (selection) => {
-                  game.model_selection = selection;
+                  game = R.assoc('model_selection', selection, game);
 
-                  scope.gameEvent('createModel');
-                  return ctxt;
+                  state.changeEvent('Game.model.create');
+                  
+                  return [ctxt, game];
                 }
               )(game.models);
             }
           )(create);
         },
-        replay: function createModelReplay(ctxt, scope, game) {
+        replay: function createModelReplay(ctxt, state, game) {
           return R.pipePromise(
             R.prop('models'),
             R.map((model) => {
-              return modelService.create(scope.factions, model)
+              return modelService.create(state.factions, model)
                 .catch(R.always(null));
             }),
             R.promiseAll,
@@ -72,32 +74,36 @@ angular.module('clickApp.services')
               return R.pipe(
                 gameModelsService.add$(models),
                 (game_models) => {
-                  game.models = game_models;
+                  game = R.assoc('models', game_models, game);
                   
                   return gameModelSelectionService.set('remote',
                                                        R.map(R.path(['state','stamp']), models),
-                                                       scope, game.model_selection);
+                                                       state, game.model_selection);
                 },
                 (selection) => {
-                  game.model_selection = selection;
+                  game = R.assoc('model_selection', selection, game);
                   
-                  scope.gameEvent('createModel');
+                  state.changeEvent('Game.model.create');
+
+                  return game;
                 }
               )(game.models);
             }
           )(ctxt);
         },
-        undo: function createModelUndo(ctxt, scope, game) {
-          var stamps = R.map(R.prop('stamp'), ctxt.models);
-          game.models = gameModelsService.removeStamps(stamps, game.models);
-          game.model_selection =
-            gameModelSelectionService.removeFrom('local', stamps,
-                                                 scope, game.model_selection);
-          game.model_selection =
-            gameModelSelectionService.removeFrom('remote', stamps,
-                                                 scope, game.model_selection);
-          R.forEach((stamp) => { scope.gameEvent('deleteModel-'+stamp); }, stamps);
-          scope.gameEvent('createModel');
+        undo: function createModelUndo(ctxt, state, game) {
+          var stamps = R.pluck('stamp', ctxt.models);
+          game = R.pipe(
+            R.over(R.lensProp('models'),
+                   gameModelsService.removeStamps$(stamps)),
+            R.over(R.lensProp('model_selection'),
+                   gameModelSelectionService.removeFrom$('local', stamps, state)),
+            R.over(R.lensProp('model_selection'),
+                   gameModelSelectionService.removeFrom$('remote', stamps, state))
+          )(game);
+          R.forEach((stamp) => { state.changeEvent(`Game.model.delete.${stamp}`); }, stamps);
+          state.changeEvent('Game.model.create');
+          return game;
         }
       };
       commandsService.registerCommand('createModel', createModelCommandService);

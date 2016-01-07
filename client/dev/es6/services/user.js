@@ -19,10 +19,8 @@ angular.module('clickApp.services')
         save: function userSave(user) {
           return R.pipePromise(
             R.prop('state'),
-            (state) => {
-              return localStorageService
-                .save(STORAGE_KEY, state);
-            },
+            R.spyWarn('User save'),
+            localStorageService.save$(STORAGE_KEY),
             R.always(user)
           )(user);
         },
@@ -32,16 +30,17 @@ angular.module('clickApp.services')
               return localStorageService
                 .load(STORAGE_KEY);
             },
+            R.spyWarn('User load'),
             (state) => {
               return { state: state };
             },
-            userConnectionService.create
+            userConnectionService.init
           )();
         },
-        init: function userInit() {
+        init: function userInit(state) {
           return R.pipeP(
             userService.load,
-            userService.checkOnline
+            userService.checkOnline$(state)
           )();
         },
         description: function userDescription(user) {
@@ -86,19 +85,19 @@ angular.module('clickApp.services')
         online: function userOnline(user) {
           return R.path(['state','online'], user);
         },
-        toggleOnline: function userToggleOnline(user) {
+        toggleOnline: function userToggleOnline(state, user) {
           return ( userService.online(user) ?
                    userGoOffline(user) :
-                   userGoOnline(user)
+                   userGoOnline(state, user)
                  );
         },
-        checkOnline: function userCheckOnline(user) {
-          return R.pipeP(
+        checkOnline: function userCheckOnline(state, user) {
+          return R.pipePromise(
             (user) => {
               if(!userService.online(user)) {
                 return self.Promise.reject('No online flag');
               }
-              return self.Promise.resolve(user);
+              return user;
             },
             (user) => {
               return userUpdateOnline(user)
@@ -106,26 +105,22 @@ angular.module('clickApp.services')
                   return userCreateOnline(user);
                 });
             },
-            userOnlineStart
+            userOnlineStart$(state)
           )(user)
             .catch((reason) => {
               console.error('User: checkOnline error', reason);
               return userOnlineStop(user);
             });
-        },
+        }
       };
-      function userGoOnline(user) {
-        return userService.checkOnline(R.assocPath(['state','online'], true, user));
+      function userGoOnline(state, user) {
+        return R.pipePromise(
+          R.assocPath(['state','online'], true),
+          userService.checkOnline$(state)
+        )(user);
       }
       function userGoOffline(user) {
-        return R.pipePromise(
-          (user) => {
-            return httpService.delete('/api/users/'+user.state.stamp)
-              .catch(R.always(null));
-          },
-          R.always(user),
-          userOnlineStop
-        )(user);
+        return userOnlineStop(user);
       }
       function userCreateOnline(user) {
         return R.pipePromise(
@@ -149,23 +144,20 @@ angular.module('clickApp.services')
           }
         )(user);
       }
-      function userOnlineStart(user) {
+      var userOnlineStart$ = R.curry((state, user) => {
         return R.pipePromise(
-          userConnectionService.open,
-          R.assocPath(['state','online'], true),
-          R.spy('User online start'),
-          userService.save
+          userConnectionService.open$(state),
+          R.assocPath(['state','online'], true)
         )(user);
-      }
+      });
       function userOnlineStop(user) {
         return R.pipePromise(
           R.assocPath(['state','online'], false),
           R.assocPath(['state','stamp'], null),
-          userConnectionService.close,
-          R.spy('User online stop'),
-          userService.save
+          userConnectionService.close
         )(user);
       }
+      R.curryService(userService);
       return userService;
     }
   ]);

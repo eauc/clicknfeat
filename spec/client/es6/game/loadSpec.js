@@ -1,24 +1,25 @@
-'use strict';
-
 describe('load game', function() {
   describe('game service', function() {
     beforeEach(inject([ 'game', function(gameService) {
       this.gameService = gameService;
     }]));
 
-    describe('load(scope)', function() {
+    describe('load(state)', function() {
       beforeEach(function() {
-        this.commandsService = spyOnService('commands');
-        mockReturnPromise(this.commandsService.replayBatch);
-        this.commandsService.replayBatch.resolveWith = true;
         this.game = {
           players: { p1: { name: 'p1' } },
           commands: ['cmd1', 'cmd2']
         };
-        this.scope = jasmine.createSpyObj('scope', [
-          '$digest', 'gameEvent', 'saveGame'
+
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
-        this.ret = this.gameService.load(this.scope, this.game);
+
+        this.commandsService = spyOnService('commands');
+        mockReturnPromise(this.commandsService.replayBatch);
+        this.commandsService.replayBatch.resolveWith = (c, s, g) => g;
+
+        this.ret = this.gameService.load(this.state, this.game);
       });
 
       it('should extend game with default values', function() {
@@ -41,27 +42,27 @@ describe('load game', function() {
                   display: false,
                   start: { x:0, y: 0 },
                   end: { x:0, y: 0 },
-                  length: null,
+                  length: null
                 },
                 remote: {
                   display: false,
                   start: { x:0, y: 0 },
                   end: { x:0, y: 0 },
-                  length: null,
-                },
+                  length: null
+                }
               },
               los: {
                 local: {
                   display: false,
                   start: { x:0, y: 0 },
-                  end: { x:0, y: 0 },
+                  end: { x:0, y: 0 }
                 },
                 remote: {
                   display: false,
                   start: { x:0, y: 0 },
-                  end: { x:0, y: 0 },
+                  end: { x:0, y: 0 }
                 },
-                computed: {},
+                computed: {}
               },
               models: { active: [], locked: [] },
               model_selection: { local: [],
@@ -75,7 +76,7 @@ describe('load game', function() {
               terrain_selection: { local: [],
                                    remote: []
                                  },
-              layers: ['b','d','s','m','t'],
+              layers: ['b','d','s','m','t']
             });
         });
       });
@@ -83,23 +84,7 @@ describe('load game', function() {
       it('should replay commands', function() {
         this.thenExpect(this.ret, function(game) {
           expect(this.commandsService.replayBatch)
-            .toHaveBeenCalledWith(['cmd1', 'cmd2'], this.scope, game);
-        });
-      });
-
-      it('should send Loading and Loaded event', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('gameLoading');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('gameLoaded');
-        });
-      });
-
-      it('should save game', function() {
-        this.thenExpect(this.ret, function(game) {
-          expect(this.scope.saveGame)
-            .toHaveBeenCalledWith(game);
+            .toHaveBeenCalledWith(['cmd1', 'cmd2'], this.state, game);
         });
       });
     });

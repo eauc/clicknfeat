@@ -1,5 +1,3 @@
-'use strict';
-
 describe('game', function() {
   describe('gameConnection service', function() {
     beforeEach(inject([ 'gameConnection', function(gameConnectionService) {
@@ -23,12 +21,12 @@ describe('game', function() {
 
     when('open()', function() {
       this.ret = this.gameConnectionService
-        .open(this.user_name, this.scope, this.game);
+        .open(this.user_name, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.user_name = 'user';
         
-        this.scope = {};
+        this.state = {};
         
         this.game = this.gameConnectionService.create({
           public_stamp: 'public_stamp'
@@ -85,14 +83,17 @@ describe('game', function() {
           public_stamp: 'public_stamp'
         });
         this.gameConnectionService.open('user', {}, this.game)
-          .then(function() {
+          .then((game) => {
+            this.game = game;
             done();
           });
       });
 
       it('should close websocket', function() {
-        expect(this.websocketService.close)
-          .toHaveBeenCalledWith('websocket.create.returnValue');
+        this.thenExpect(this.ret, () => {
+          expect(this.websocketService.close)
+            .toHaveBeenCalledWith('websocket.create.returnValue');
+        });
       });
 
       when('websocket close fails', function() {
@@ -117,6 +118,19 @@ describe('game', function() {
       });
     });
 
+    when('cleanup()', function() {
+      this.ret = this.gameConnectionService.cleanup(this.game);
+    }, function() {
+      beforeEach(function() {
+        this.game = {};
+      });
+
+      it('should cleanup connection websocket', function() {
+        expect(this.ret.connection.state.socket)
+          .toBe(null);
+      });
+    });
+
     when('sendEvent(<event>)', function() {
       this.ret = this.gameConnectionService
         .sendEvent(this.event, this.game);
@@ -126,7 +140,8 @@ describe('game', function() {
           public_stamp: 'public_stamp'
         });
         this.gameConnectionService.open('user', {}, this.game)
-          .then(function() {
+          .then((game) => {
+            this.game = game;
             done();
           });
 
@@ -134,234 +149,63 @@ describe('game', function() {
       });
 
       it('should send chat msg on websocket', function() {
-        expect(this.websocketService.send)
-          .toHaveBeenCalledWith(this.event, 'websocket.create.returnValue');
-        expect(this.ret)
-          .toBe('websocket.send.returnValue');
+        this.thenExpect(this.ret, (game) => {
+          expect(this.websocketService.send)
+            .toHaveBeenCalledWith(this.event, 'websocket.create.returnValue');
+          expect(game)
+            .toBe(this.game);
+        });
       });
     });
 
     describe('socket event handlers', function() {
-      beforeEach(inject(['pubSub', function(pubSubService) {
+      beforeEach(inject(['pubSub', function() {
         this.game = this.gameConnectionService.create({
-          public_stamp: 'public_stamp',
-          commands_log: [],
-          undo_log: [],
-          commands: [],
-          undo: [],
-          chat: [],
+          public_stamp: 'public_stamp'
         });
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent', 'saveGame',
+        this.state = jasmine.createSpyObj('state', [
+          'event'
         ]);
-        this.gameConnectionService.open('user', this.scope, this.game);
+        this.gameConnectionService.open('user', this.state, this.game);
         this.handlers = this.websocketService.create.calls.first().args[2];
-
-        this.event_listener = jasmine.createSpy('event_listener');
-        pubSubService.subscribe('#watch#', this.event_listener,
-                                this.game.connection.channel);
-
-        this.commandsService = spyOnService('commands');
-        mockReturnPromise(this.commandsService.replay);
-        this.commandsService.replay.resolveWith = 'commands.replay.returnValue';
-        mockReturnPromise(this.commandsService.undo);
-        this.commandsService.undo.resolveWith = 'commands.undo.returnValue';
-        mockReturnPromise(this.commandsService.replayBatch);
-        this.commandsService.replayBatch.resolveWith = 'commands.replayBatch.returnValue';
       }]));
       
       when('replayCmd message', function() {
         this.ret = this.handlers.replayCmd(this.msg);
       }, function() {
         beforeEach(function() {
-          this.msg = { cmd: { stamp: 'stamp' } };
+          this.msg = { cmd: 'cmd' };
         });
-
-        when('<msg.cmd> is in commands log', function() {
-          this.game.commands_log = [ { stamp: 'log1' },
-                                     { stamp: 'log2' },
-                                     { stamp: 'log3' },
-                                   ];
-          this.msg.cmd.stamp = 'log2';
-        }, function() {
-          it('should remove <msg.cmd> from commands log', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.game.commands_log)
-                .toEqual([ { stamp: 'log1' },
-                           { stamp: 'log3' },
-                         ]);
-            });
-          });
+        
+        it('should send "Game.command.replay" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.replay', this.msg.cmd);
         });
-
-        when('<msg.cmd> is not in commands log', function() {
-          this.game.commands_log = [ { stamp: 'log1' },
-                                     { stamp: 'log2' },
-                                     { stamp: 'log3' },
-                                   ];
-          this.msg.cmd.stamp = 'other';
-        }, function() {
-          it('should replay <msg.cmd>', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.commandsService.replay)
-                .toHaveBeenCalledWith(this.msg.cmd, this.scope, this.game);
-            });
-          });
-
-          when('replay fails', function() {
-            this.commandsService.replay.rejectWith = 'reason';
-          }, function() {
-            it('should not change game', function() {
-              this.thenExpectError(this.ret, function() {
-                expect(this.game.undo).toEqual([]);
-                expect(this.game.commands).toEqual([]);
-                expect(this.scope.saveGame)
-                  .not.toHaveBeenCalled();
-              });
-            });
-          });
-        });
-
-        it('should update game', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.game.undo).toEqual([]);
-            expect(this.game.commands).toEqual([ this.msg.cmd ]);
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('command', 'replay');
-            expect(this.scope.saveGame)
-              .toHaveBeenCalledWith(this.game);
-          });
-        });
-
-        when('<msg.cmd.do_not_log>', function() {
-          this.msg.cmd.do_not_log = true;
-        }, function() {
-          it('should not add <msg.cmd> to history', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.game.commands).toEqual([]);
-            });
-          });
-        });
-      });
-      
-      when('undoCmd message', function() {
-        this.ret = this.handlers.undoCmd(this.msg);
-      }, function() {
-        beforeEach(function() {
-          this.msg = { cmd: { stamp: 'stamp' } };
-        });
-
-        when('<msg.cmd> is in commands log', function() {
-          this.game.undo_log = [ { stamp: 'log1' },
-                                 { stamp: 'log2' },
-                                 { stamp: 'log3' },
-                                   ];
-          this.msg.cmd.stamp = 'log2';
-        }, function() {
-          it('should remove <msg.cmd> from undo log', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.game.undo_log)
-                .toEqual([ { stamp: 'log1' },
-                           { stamp: 'log3' },
-                         ]);
-            });
-          });
-        });
-
-        when('<msg.cmd> is not in commands log', function() {
-          this.game.undo_log = [ { stamp: 'log1' },
-                                 { stamp: 'log2' },
-                                 { stamp: 'log3' },
-                               ];
-          this.msg.cmd.stamp = 'other';
-        }, function() {
-          it('should undo <msg.cmd>', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.commandsService.undo)
-                .toHaveBeenCalledWith(this.msg.cmd, this.scope, this.game);
-            });
-          });
-
-          when('replay fails', function() {
-            this.commandsService.undo.rejectWith = 'reason';
-          }, function() {
-            it('should not change game', function() {
-              this.thenExpectError(this.ret, function() {
-                expect(this.game.undo).toEqual([]);
-                expect(this.game.commands).toEqual([]);
-                expect(this.scope.saveGame)
-                  .not.toHaveBeenCalled();
-              });
-            });
-          });
-        });
-
-        it('should update game', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.game.undo).toEqual([ this.msg.cmd ]);
-            expect(this.game.commands).toEqual([]);
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('command', 'undo');
-            expect(this.scope.saveGame)
-              .toHaveBeenCalledWith(this.game);
-          });
-        });
-      });
+      }); 
       
       when('cmdBatch message', function() {
         this.ret = this.handlers.cmdBatch(this.msg);
       }, function() {
         beforeEach(function() {
-          this.msg = { cmds: [ 'batch' ] };
-        });
-
-        it('should emit "gameLoading" event', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('gameLoading');
-          });
+          this.msg = { cmds: 'cmds' };
         });
         
-        it('should replay <msg.cmds>', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.commandsService.replayBatch)
-              .toHaveBeenCalledWith(this.msg.cmds, this.scope, this.game);
-          });
+        it('should send "Game.command.replayBatch" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.replayBatch', this.msg.cmds);
         });
-
-        when('replay fails', function() {
-          this.commandsService.replayBatch.rejectWith = 'reason';
-        }, function() {
-          it('should not change game', function() {
-            this.thenExpectError(this.ret, function() {
-              expect(this.game.undo).toEqual([]);
-              expect(this.game.commands).toEqual([]);
-              expect(this.scope.saveGame)
-                .not.toHaveBeenCalled();
-            });
-          });
+      }); 
+      
+      when('undoCmd message', function() {
+        this.ret = this.handlers.undoCmd(this.msg);
+      }, function() {
+        beforeEach(function() {
+          this.msg = { cmd: 'cmd' };
         });
-
-        it('should update game', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.game.undo).toEqual([]);
-            expect(this.game.commands).toEqual([ 'batch' ]);
-            // expect(this.scope.gameEvent)
-            //   .toHaveBeenCalledWith('gameLoaded');
-            expect(this.scope.saveGame)
-              .toHaveBeenCalledWith(this.game);
-          });
-        }); 
-
-        when('<msg.end>', function() {
-          this.msg.end = true;
-        }, function() {
-          it('should emit "gameLoaded" event', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.scope.gameEvent)
-                .toHaveBeenCalledWith('gameLoaded');
-            });
-          });
+        
+        it('should send "Game.command.undo" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.undo', this.msg.cmd);
         });
       });
       
@@ -372,39 +216,24 @@ describe('game', function() {
           this.msg = { chat: 'chat' };
         });
 
-        it('should update game', function() {
-          expect(this.game.chat).toEqual([ 'chat' ]);
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('chat');
-          expect(this.scope.saveGame)
-            .toHaveBeenCalledWith(this.game);
-        }); 
-     });
+        it('should send "Game.newChatMsg" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.newChatMsg', this.msg);
+        });
+      });
       
       when('setCmds message', function() {
         this.ret = this.handlers.setCmds(this.msg);
       }, function() {
         beforeEach(function() {
-          this.msg = { cmds: 'cmds' };
+          this.msg = { where: 'where', cmds: 'cmds' };
         });
 
-        using([
-          [ 'where' ],
-          [ 'chat'  ],
-          [ 'commands'  ],
-          [ 'undo'  ],
-        ], function(e, d) {
-          when(d, function() {
-            this.msg.where = e.where;
-          }, function() {
-            it('should update game', function() {
-              expect(this.game[e.where]).toEqual('cmds');
-              expect(this.scope.saveGame)
-                .toHaveBeenCalledWith(this.game);
-            });
-          });
+        it('should send "Game.setCmds" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.setCmds', this.msg);
         });
-     });
+      });
       
       when('players message', function() {
         this.ret = this.handlers.players(this.msg);
@@ -413,25 +242,108 @@ describe('game', function() {
           this.msg = { players: 'players' };
         });
 
-        it('should update game', function() {
-          expect(this.game.players).toEqual('players');
-          expect(this.scope.saveGame)
-            .toHaveBeenCalledWith(this.game);
-        }); 
-     });
+        it('should send "Game.setPlayers" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.setPlayers', this.msg.players);
+        });
+      });
       
       when('close', function() {
         this.handlers.close();
       }, function() {
-        it('should cleanup connection', function() {
-          expect(this.gameConnectionService.active(this.game))
-            .toBeFalsy();
+        it('should send "Game.connection.close" event', function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.connection.close');
         });
+      });
+    });
+  });
+  
+  describe('stateService', function() {
+    beforeEach(inject([
+      'stateGame',
+      function(stateGameService) {
+        this.stateGameService = stateGameService;
+      }
+    ]));
 
-        it('should emit "close" event', function() {
-          expect(this.event_listener)
-            .toHaveBeenCalledWith('close');
-        });
+    describe('onGameNewChatMsg(<msg>)', function() {
+      beforeEach(function() {
+        this.state = {
+          game: {},
+          changeEvent: jasmine.createSpy('changeEvent')
+        };
+      });
+
+      it('should append <msg> to game chat', function() {
+        this.stateGameService
+          .onGameNewChatMsg(this.state, 'event', { chat: 'chat' });
+
+        expect(this.state.game.chat)
+          .toEqual(['chat']);
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.change');
+      });
+    });
+
+    describe('onGameSetCmds(<msg>)', function() {
+      beforeEach(function() {
+        this.state = {
+          game: {},
+          changeEvent: jasmine.createSpy('changeEvent')
+        };
+      });
+
+      it('should set game.<msg.where> to <msg.cmds>', function() {
+        this.stateGameService
+          .onGameSetCmds(this.state, 'event', {
+            where: 'where',
+            cmds: 'cmds'
+          });
+
+        expect(this.state.game.where)
+          .toEqual('cmds');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.change');
+      });
+    });
+
+    describe('onGameSetPlayers(<players>)', function() {
+      beforeEach(function() {
+        this.state = {
+          game: {},
+          changeEvent: jasmine.createSpy('changeEvent')
+        };
+      });
+
+      it('should set game.players to <players>', function() {
+        this.stateGameService
+          .onGameSetPlayers(this.state, 'event', 'players');
+
+        expect(this.state.game.players)
+          .toEqual('players');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.change');
+      });
+    });
+
+    describe('onGameConnectionClose()', function() {
+      beforeEach(function() {
+        this.state = {
+          game: 'game',
+          changeEvent: jasmine.createSpy('changeEvent')
+        };
+        this.gameConnectionService = spyOnService('gameConnection');
+      });
+
+      it('should cleanup game connection', function() {
+        this.stateGameService
+          .onGameConnectionClose(this.state);
+
+        expect(this.state.game)
+          .toBe('gameConnection.cleanup.returnValue');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.change');
       });
     });
   });

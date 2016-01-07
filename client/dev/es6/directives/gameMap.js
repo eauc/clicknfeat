@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .directive('clickGameMap', [
     '$window',
@@ -11,71 +9,65 @@ angular.module('clickApp.directives')
              terrainService,
              defaultModeService) {
       function _eventModifiers(e) {
-        var modifiers = [];
-        
+        let modifiers = [];
+
         if (e.shiftKey) {
           modifiers.push('shift');
         }
-        
+
         if (e.altKey) {
           modifiers.push('alt');
         }
-        
+
         if (e.ctrlKey) {
           modifiers.push('ctrl');
         }
-        
+
         if (e.metaKey) {
           modifiers.push('meta');
         }
-        
+
         return modifiers.sort();
       }
       return {
         restrict: 'A',
-        link: function(scope, element/*, attrs*/) {
-          var log = true ? R.bind(console.log, console) : function() {}; // eslint-disable-line
+        link: function(scope, element) {
+          let log = true ? R.bind(console.log, console) : function() {}; // eslint-disable-line
 
-          var viewport = document.querySelector('#viewport');
-          var map = element[0];
+          let viewport = document.querySelector('#viewport');
+          let map = element[0];
+          let state = scope.state;
 
-          // function test() {
-          //   var map_rect = map.getBoundingClientRect();
-          //   if(map_rect.width > 0) {
-          //     console.error('map rect', map_rect.width);
-          //     return;
-          //   }
-          //   self.requestAnimationFrame(test);
-          // }
-          // test();
-          
-          var mouseEvents = (function() {
-            var drag = {
+          let mouseEvents = (function() {
+            let drag = {
               active: false,
               start: null,
               target: null,
-              now: null,
+              now: null
             };
-            function mouseDownMap(event) {
-              log('mouseDownMap', event, map.getBoundingClientRect());
+            function blurInputs() {
               let inputs = [
                 ...document.querySelectorAll('input'),
                 ...document.querySelectorAll('select'),
                 ...document.querySelectorAll('textarea'),
               ];
               R.forEach((e) => { e.blur(); }, inputs);
+            }
+            function mouseDownMap(event) {
+              log('mouseDownMap', event, map.getBoundingClientRect());
+              blurInputs();
               event.preventDefault();
               if(event.which !== 1) return;
 
               map.addEventListener('mousemove', dragMap);
-              var start = gameMapService.eventToMapCoordinates(map, event);
-              gameMapService.findEventTarget(scope.game, event)
-                .then(function onFindEventTarget(target) {
+              let start = gameMapService.eventToMapCoordinates(map, event);
+              gameMapService.findEventTarget(state.game, event)
+                .then((target) => {
                   drag = {
                     active: false,
                     start: start,
                     target: target,
-                    now: null,
+                    now: null
                   };
                 });
             }
@@ -90,7 +82,7 @@ angular.module('clickApp.directives')
                  Math.abs(drag.now.y - drag.start.y) < defaultModeService.moves().DragEpsilon) {
                 return;
               }
-              var emit = drag.active ? 'drag' : 'dragStart';
+              let emit = drag.active ? 'drag' : 'dragStart';
               drag.active = true;
 
               if('Terrain' === drag.target.type &&
@@ -99,12 +91,14 @@ angular.module('clickApp.directives')
                                 target: null
                               };
               }
-              scope.$emit(emit+drag.target.type,
-                          { target: drag.target.target,
-                            start: drag.start,
-                            now: drag.now
-                          },
-                          event);
+              scope.stateEvent('Modes.current.action',
+                               emit+drag.target.type,
+                               [ { target: drag.target.target,
+                                   start: drag.start,
+                                   now: drag.now
+                                 },
+                                 event
+                               ]);
             }
             function mouseLeaveMap(event) {
               log('mouseLeaveMap', event);
@@ -113,12 +107,14 @@ angular.module('clickApp.directives')
               map.removeEventListener('mousemove', dragMap);
               if(drag.active) {
                 drag.active = false;
-                scope.$emit('dragEnd'+drag.target.type,
-                            { target: drag.target.target,
-                              start: drag.start,
-                              now: drag.now
-                            },
-                            event);
+                scope.stateEvent('Modes.current.action',
+                                 'dragEnd'+drag.target.type,
+                                 [ { target: drag.target.target,
+                                     start: drag.start,
+                                     now: drag.now
+                                   },
+                                   event
+                                 ]);
               }
             }
             function clickMap(event) {
@@ -128,20 +124,22 @@ angular.module('clickApp.directives')
 
               map.removeEventListener('mousemove', dragMap);
 
-              var now = gameMapService.eventToMapCoordinates(map, event);
+              let now = gameMapService.eventToMapCoordinates(map, event);
               if(drag.active) {
                 drag.active = false;
-                scope.$emit('dragEnd'+drag.target.type,
-                            { target: drag.target.target,
-                              start: drag.start,
-                              now: now
-                            },
-                            event);
+                scope.stateEvent('Modes.current.action',
+                                 'dragEnd'+drag.target.type,
+                                 [ { target: drag.target.target,
+                                     start: drag.start,
+                                     now: now
+                                   },
+                                   event
+                                 ]);
               }
               else {
-                gameMapService.findEventTarget(scope.game, event)
-                  .then(function onFindEventTarget(target) {
-                    var event_name = R.pipe(
+                gameMapService.findEventTarget(state.game, event)
+                  .then((target) => {
+                    let event_name = R.pipe(
                       R.append('click'+target.type),
                       R.join('+')
                     )(_eventModifiers(event));
@@ -150,12 +148,10 @@ angular.module('clickApp.directives')
                       x: now.x,
                       y: now.y
                     };
-                    scope.gameEvent('closeSelectionDetail');
-                    scope.gameEvent('closeEditLabel');
-                    scope.gameEvent('closeEditDamage');
-                    Mousetrap.trigger(event_name,
-                                      undefined,
-                                      event);
+                    state.changeEvent('Game.selectionDetail.close');
+                    state.changeEvent('Game.editLabel.close');
+                    state.changeEvent('Game.editDamage.close');
+                    Mousetrap.trigger(event_name, undefined, event);
                   });
               }
             }
@@ -163,10 +159,10 @@ angular.module('clickApp.directives')
               log('rightClickMap', event);
               event.preventDefault();
 
-              var now = gameMapService.eventToMapCoordinates(map, event);
-              gameMapService.findEventTarget(scope.game, event)
-                .then(function onFindEventTarget(target) {
-                  var event_name = R.pipe(
+              let now = gameMapService.eventToMapCoordinates(map, event);
+              gameMapService.findEventTarget(state.game, event)
+                .then((target) => {
+                  let event_name = R.pipe(
                     R.append('rightClick'+target.type),
                     R.join('+')
                   )(_eventModifiers(event));
@@ -175,20 +171,19 @@ angular.module('clickApp.directives')
                     x: now.x,
                     y: now.y
                   };
-                  scope.gameEvent('closeSelectionDetail');
-                  scope.gameEvent('closeEditLabel');
-                  scope.gameEvent('closeEditDamage');
-                  Mousetrap.trigger(event_name,
-                                    undefined,
-                                    event);
+                  state.changeEvent('Game.selectionDetail.close');
+                  state.changeEvent('Game.editLabel.close');
+                  state.changeEvent('Game.editDamage.close');
+                  Mousetrap.trigger(event_name, undefined, event);
                 });
             }
             function moveMap(event) {
               log('moveMap', event);
               event.preventDefault();
 
-              var now = gameMapService.eventToMapCoordinates(map, event);
-              scope.$emit('moveMap', now, event);
+              let now = gameMapService.eventToMapCoordinates(map, event);
+              scope.stateEvent('Modes.current.action',
+                               'moveMap', [now, event]);
             }
             return {
               down: mouseDownMap,
@@ -196,12 +191,12 @@ angular.module('clickApp.directives')
               leave: mouseLeaveMap,
               click: clickMap,
               rightClick: rightClickMap,
-              move: moveMap,
+              move: moveMap
             };
           })();
 
-          var moveEvents = (function() {
-            var move_enabled = false;
+          let moveEvents = (function() {
+            let move_enabled = false;
             function onEnableMove() {
               if(move_enabled) return;
               map.addEventListener('mousemove', mouseEvents.move);
@@ -214,88 +209,85 @@ angular.module('clickApp.directives')
             }
             return {
               enable: onEnableMove,
-              disable: onDisableMove,
+              disable: onDisableMove
             };
           })();
 
-          var flipMap = (function() {
-            var deploiement_labels;
-            scope.ui_state.flip_map = false;
+          let flipMap = (function() {
+            let deploiement_labels;
+            state.ui_state = R.assoc('flip_map', false, R.propOr({}, 'ui_state', state));
             map.classList.remove('flipped');
-            return function flipMap() {
-              deploiement_labels = R.defaultTo(document.querySelector('#deploiement-labels'),
-                                               deploiement_labels);
-              scope.ui_state.flip_map = !map.classList.contains('flipped');
+            return function onFlipMap() {
+              deploiement_labels = document.querySelector('#deploiement-labels');
+              state.ui_state.flip_map = !map.classList.contains('flipped');
               map.classList.toggle('flipped');
-              if(scope.ui_state.flip_map) {
-                deploiement_labels.setAttribute('transform','rotate(180,240,240)');
+              if(state.ui_state.flip_map) {
+                deploiement_labels
+                  .setAttribute('transform','rotate(180,240,240)');
               }
               else {
-                deploiement_labels.setAttribute('transform','');
+                deploiement_labels
+                  .setAttribute('transform','');
               }
-              scope.gameEvent('mapFlipped');
+              state.changeEvent('Game.map.flipped');
             };
           })();
 
-          var zoomEvents = (function() {
+          let zoomEvents = (function() {
             function zoomReset() {
-              var rect = viewport.getBoundingClientRect();
-              var hw = Math.min(rect.width, rect.height);
+              let rect = viewport.getBoundingClientRect();
+              let hw = Math.min(rect.width, rect.height);
               setMapDimensions(hw-15);
             }
             function zoomIn() {
-              var vp = findViewportCenter();
-              var cx_cy = vp[0];
-              var vw_vh = vp[1];
-    
-              var rect = map.getBoundingClientRect();
-              var cx = (vw_vh[0] > rect.width) ? rect.width / 2 : cx_cy[0];
-              var cy = (vw_vh[1] > rect.height) ? rect.height / 2 : cx_cy[1];
+              let [[cx,cy],[vw,vh]] = findViewportCenter();
+
+              let rect = map.getBoundingClientRect();
+              cx = (vw > rect.width) ? rect.width / 2 : cx;
+              cy = (vh > rect.height) ? rect.height / 2 : cy;
 
               setMapDimensions(rect.width*2);
-              setViewportCenter(cx*2, cy*2, vw_vh[0], vw_vh[1]);
+              setViewportCenter(cx*2, cy*2, vw, vh);
             }
             function zoomOut() {
-              var vp = findViewportCenter();
-              var cx_cy = vp[0];
-              var vw_vh = vp[1];
-              var hw = Math.min(vw_vh[0], vw_vh[1]);
-            
-              var rect = map.getBoundingClientRect();
+              let [[cx,cy],[vw,vh]] = findViewportCenter();
+              let hw = Math.min(vw, vh);
+
+              let rect = map.getBoundingClientRect();
 
               setMapDimensions(Math.max(hw-15, rect.width/2));
-              setViewportCenter(cx_cy[0]/2, cx_cy[1]/2, vw_vh[0], vw_vh[1]);
+              setViewportCenter(cx/2, cy/2, vw, vh);
             }
             return {
               in: zoomIn,
               out: zoomOut,
-              reset: zoomReset,
+              reset: zoomReset
             };
           })();
 
-          var scrollEvents = (function() {
-            var scroll_indent = 30;
+          let scrollEvents = (function() {
+            let scroll_indent = 30;
             function scrollLeft() {
-              var left = viewport.scrollLeft;
-              $window.requestAnimationFrame(function _scrollLeft() {
+              let left = viewport.scrollLeft;
+              $window.requestAnimationFrame(() => {
                 viewport.scrollLeft = left - scroll_indent;
               });
             }
             function scrollRight() {
-              var left = viewport.scrollLeft;
-              $window.requestAnimationFrame(function _scrollRight() {
+              let left = viewport.scrollLeft;
+              $window.requestAnimationFrame(() => {
                 viewport.scrollLeft = left + scroll_indent;
               });
             }
             function scrollUp() {
-              var top = viewport.scrollTop;
-              $window.requestAnimationFrame(function _scrollUp() {
+              let top = viewport.scrollTop;
+              $window.requestAnimationFrame(() => {
                 viewport.scrollTop = top - scroll_indent;
               });
             }
             function scrollDown() {
-              var top = viewport.scrollTop;
-              $window.requestAnimationFrame(function _scrollDown() {
+              let top = viewport.scrollTop;
+              $window.requestAnimationFrame(() => {
                 viewport.scrollTop = top + scroll_indent;
               });
             }
@@ -303,57 +295,51 @@ angular.module('clickApp.directives')
               left: scrollLeft,
               right: scrollRight,
               up: scrollUp,
-              down: scrollDown,
+              down: scrollDown
             };
           })();
 
           function setMapDimensions(dim) {
-            $window.requestAnimationFrame(function _setMapDimensions() {
-              map.style.width = dim+'px';
-              map.style.height = dim+'px';
-            });
-          }          
+            map.style.width = dim+'px';
+            map.style.height = dim+'px';
+          }
 
           function findViewportCenter() {
-            var rect = viewport.getBoundingClientRect();
-            var vw = rect.width;
-            var vh = rect.height;
+            let rect = viewport.getBoundingClientRect();
+            let vw = rect.width;
+            let vh = rect.height;
 
-            var cx = viewport.scrollLeft + vw/2;
-            var cy = viewport.scrollTop + vh/2;
+            let cx = viewport.scrollLeft + vw/2;
+            let cy = viewport.scrollTop + vh/2;
 
             return [[cx, cy], [vw, vh]];
           }
 
           function setViewportCenter(cx, cy, vw, vh) {
-            $window.requestAnimationFrame(function _setViewportCenter() {
-              viewport.scrollLeft = cx - vw/2;
-              viewport.scrollTop = cy - vh/2;
-            });
+            viewport.scrollLeft = cx - vw/2;
+            viewport.scrollTop = cy - vh/2;
           }
 
           map.addEventListener('mouseup', mouseEvents.click);
           map.addEventListener('mousedown', mouseEvents.down);
           map.addEventListener('mouseleave', mouseEvents.leave);
-          map.addEventListener('dragstart', function dragStartDisable(event){
+          map.addEventListener('dragstart', (event) => {
             event.preventDefault();
           });
           map.addEventListener('contextmenu', mouseEvents.rightClick);
-          
-          scope.onGameEvent('flipMap', flipMap, scope);
-          scope.onGameEvent('enableMoveMap', moveEvents.enable, scope);
-          scope.onGameEvent('disableMoveMap', moveEvents.disable, scope);
-          scope.onGameEvent('viewZoomIn', zoomEvents.in, scope);
-          scope.onGameEvent('viewZoomOut', zoomEvents.out, scope);
-          scope.onGameEvent('viewZoomReset', zoomEvents.reset, scope);
-          scope.onGameEvent('viewScrollLeft', scrollEvents.left, scope);
-          scope.onGameEvent('viewScrollRight', scrollEvents.right, scope);
-          scope.onGameEvent('viewScrollUp', scrollEvents.up, scope);
-          scope.onGameEvent('viewScrollDown', scrollEvents.down, scope);
 
-          $window.requestAnimationFrame(function initMap() {
-            zoomEvents.reset();
-          });
+          scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
+          scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
+          scope.onStateChangeEvent('Game.moveMap.disable', moveEvents.disable, scope);
+          scope.onStateChangeEvent('Game.view.zoomIn', zoomEvents.in, scope);
+          scope.onStateChangeEvent('Game.view.zoomOut', zoomEvents.out, scope);
+          scope.onStateChangeEvent('Game.view.zoomReset', zoomEvents.reset, scope);
+          scope.onStateChangeEvent('Game.view.scrollLeft', scrollEvents.left, scope);
+          scope.onStateChangeEvent('Game.view.scrollRight', scrollEvents.right, scope);
+          scope.onStateChangeEvent('Game.view.scrollUp', scrollEvents.up, scope);
+          scope.onStateChangeEvent('Game.view.scrollDown', scrollEvents.down, scope);
+
+          $window.requestAnimationFrame(zoomEvents.reset);
         }
       };
     }

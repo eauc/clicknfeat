@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelPlaceMode', [
     'modes',
@@ -16,46 +14,53 @@ angular.module('clickApp.services')
                                           gameService,
                                           gameModelsService,
                                           gameModelSelectionService) {
-      var model_actions = Object.create(modelBaseModeService.actions);
-      model_actions.endPlace = function modelEndPlace(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return R.pipeP(
+      let model_actions = Object.create(modelBaseModeService.actions);
+      model_actions.endPlace = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return R.pipePromise(
           function() {
-            return gameService.executeCommand('onModels', 'endPlace',
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'endPlace', [], stamps]);
           },
           function() {
-            return scope.doSwitchToMode('Model');
+            return state.event('Modes.switchTo', 'Model');
           }
         )();
       };
-      model_actions.setTargetModel = function modelSetTargetModel(scope, event) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.setTargetModel = (state, event) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            if(model.state.stamp === event['click#'].target.state.stamp) return;
+          (model) => {
+            if(model.state.stamp === event['click#'].target.state.stamp) return null;
             
-            return gameService.executeCommand('onModels', 'setPlaceTarget',
-                                              scope.factions, event['click#'].target,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setPlaceTarget',
+                                             [state.factions, event['click#'].target],
+                                             stamps
+                                           ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      model_actions.setOriginModel = function modelSetOriginModel(scope, event) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      model_actions.setOriginModel = (state, event) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          function(model) {
-            if(model.state.stamp === event['click#'].target.state.stamp) return;
+          (model) => {
+            if(model.state.stamp === event['click#'].target.state.stamp) return null;
             
-            return gameService.executeCommand('onModels', 'setPlaceOrigin',
-                                              scope.factions, event['click#'].target,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setPlaceOrigin',
+                                             [state.factions, event['click#'].target],
+                                             stamps
+                                           ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      var moves = [
+      let moves = [
         ['moveFront', 'up', 'moveFront'],
         ['moveBack', 'down', 'moveBack'],
         ['rotateLeft', 'left', 'rotateLeft'],
@@ -65,50 +70,49 @@ angular.module('clickApp.services')
         ['shiftLeft', 'ctrl+left', 'shiftRight'],
         ['shiftRight', 'ctrl+right', 'shiftLeft'],
       ];
-      R.forEach(function(move) {
-        model_actions[move[0]] = buildPlaceMove(move[0], move[2], false,
-                                                move[0]);
-        model_actions[move[0]+'Small'] = buildPlaceMove(move[0], move[2], true,
-                                                        move[0]+'Small');
+      var buildPlaceMove$ = R.curry((move, flip_move, small, state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        let _move = ( R.path(['ui_state','flip_map'], state) ?
+                      flip_move :
+                      move
+                    );
+
+        return state.event('Game.command.execute',
+                           'onModels', [ _move+'Place',
+                                         [state.factions, small],
+                                         stamps
+                                       ]);
+      });
+      R.forEach(([move, keys, flip_move]) => {
+        keys = keys;
+        model_actions[move] = buildPlaceMove$(move, flip_move, false);
+        model_actions[move+'Small'] = buildPlaceMove$(move, flip_move, true);
       }, moves);
-      function buildPlaceMove(move, flip_move, small) {
-        return function modelDoPlaceMove(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          var _move = ( R.path(['ui_state','flip_map'], scope) ?
-                        flip_move :
-                        move
-                      );
 
-          return gameService.executeCommand('onModels', _move+'Place',
-                                            scope.factions, small,
-                                            stamps, scope, scope.game);
-        };
-      }
-
-      var model_default_bindings = {
+      let model_default_bindings = {
         'endPlace': 'p',
         'setTargetModel': 'shift+clickModel',
-        'setOriginModel': 'ctrl+clickModel',
+        'setOriginModel': 'ctrl+clickModel'
       };
-      var model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
+      let model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                     model_default_bindings);
-      var model_buttons = modelsModeService.buildButtons({ single: true,
-                                                           end_place: true });
-      var model_mode = {
-        onEnter: function modelOnEnter(/*scope*/) {
-        },
-        onLeave: function modelOnLeave(/*scope*/) {
-        },
+      let model_buttons = modelsModeService.buildButtons({ single: true,
+                                                           end_place: true
+                                                         });
+      let model_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'ModelPlace',
         actions: model_actions,
         buttons: model_buttons,
-        bindings: model_bindings,
+        bindings: model_bindings
       };
       modesService.registerMode(model_mode);
       settingsService.register('Bindings',
                                model_mode.name,
                                model_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(model_mode.bindings, bs);
                                });
       return model_mode;

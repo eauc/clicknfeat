@@ -1,75 +1,67 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('commonMode', [
     'modes',
     'settings',
     'game',
     function commonModeServiceFactory(modesService,
-                                      settingsService,
-                                      gameService) {
+                                      settingsService) {
       var common_actions = {
-        modeBackToDefault: function modeBackToDefault(scope) {
-          return scope.doSwitchToMode('Default');
+        modeBackToDefault: (state) => {
+          return state.event('Modes.switchTo', 'Default');
         },
-        commandUndoLast: function commandUndoLast(scope) {
-          return gameService.undoLastCommand(scope, scope.game);
+        commandUndoLast: (state) => {
+          return state.event('Game.command.undoLast');
         },
-        commandReplayNext: function commandReplayNext(scope) {
-          return gameService.replayNextCommand(scope, scope.game);
+        commandReplayNext: (state) => {
+          return state.event('Game.command.replayNext');
         },
-        viewScrollLeft: function viewZoomLeft(scope) {
-          scope.gameEvent('viewScrollLeft');
+        viewScrollLeft: (state) => {
+          state.changeEvent('Game.view.scrollLeft');
         },
-        viewScrollRight: function viewZoomRight(scope) {
-          scope.gameEvent('viewScrollRight');
+        viewScrollRight: (state) => {
+          state.changeEvent('Game.view.scrollRight');
         },
-        viewScrollUp: function viewZoomUp(scope) {
-          scope.gameEvent('viewScrollUp');
+        viewScrollUp: (state) => {
+          state.changeEvent('Game.view.scrollUp');
         },
-        viewScrollDown: function viewZoomDown(scope) {
-          scope.gameEvent('viewScrollDown');
+        viewScrollDown: (state) => {
+          state.changeEvent('Game.view.scrollDown');
         },
-        viewZoomIn: function viewZoomIn(scope) {
-          scope.gameEvent('viewZoomIn');
+        viewZoomIn: (state) => {
+          state.changeEvent('Game.view.zoomIn');
         },
-        viewZoomOut: function viewZoomOut(scope) {
-          scope.gameEvent('viewZoomOut');
+        viewZoomOut: (state) => {
+          state.changeEvent('Game.view.zoomOut');
         },
-        viewZoomReset: function viewZoomReset(scope) {
-          scope.gameEvent('viewZoomReset');
+        viewZoomReset: (state) => {
+          state.changeEvent('Game.view.zoomReset');
         },
-        flipMap: function flipMap(scope) {
-          scope.gameEvent('flipMap');
+        flipMap: (state) => {
+          state.changeEvent('Game.view.flipMap');
         },
-        toggleMenu: function toggleMenu(scope) {
-          scope.gameEvent('toggleMenu');
+        toggleMenu: (state) => {
+          state.changeEvent('Game.toggleMenu');
         },
-        roll1D6: function roll1D6(scope) {
-          return gameService.executeCommand('rollDice',
-                                            6, 1,
-                                            scope, scope.game);
+        roll1D6: (state) => {
+          return state.event('Game.command.execute',
+                             'rollDice', [6, 1]);
         },
-        roll2D6: function roll2D6(scope) {
-          return gameService.executeCommand('rollDice',
-                                            6, 2,
-                                            scope, scope.game);
+        roll2D6: (state) => {
+          return state.event('Game.command.execute',
+                             'rollDice', [6, 2]);
         },
-        roll3D6: function roll3D6(scope) {
-          return gameService.executeCommand('rollDice',
-                                            6, 3,
-                                            scope, scope.game);
+        roll3D6: (state) => {
+          return state.event('Game.command.execute',
+                             'rollDice', [6, 3]);
         },
-        roll4D6: function roll4D6(scope) {
-          return gameService.executeCommand('rollDice',
-                                            6, 4,
-                                            scope, scope.game);
+        roll4D6: (state) => {
+          return state.event('Game.command.execute',
+                             'rollDice', [6, 4]);
         },
-        roll5D6: function roll5D6(scope) {
-          return gameService.executeCommand('rollDice',
-                                            6, 5,
-                                            scope, scope.game);
-        },
+        roll5D6: (state) => {
+          return state.event('Game.command.execute',
+                             'rollDice', [6, 5]);
+        }
       };
       var common_bindings = {
         commandUndoLast: 'ctrl+z',
@@ -83,7 +75,7 @@ angular.module('clickApp.services')
         viewZoomOut: 'alt+-',
         viewZoomReset: 'alt+z',
         flipMap: 'ctrl+shift+f',
-        toggleMenu: 'ctrl+shift+m',
+        toggleMenu: 'ctrl+shift+m'
         // roll1D6: 'd+1',
         // roll2D6: 'd+2',
         // roll3D6: 'd+3',
@@ -94,12 +86,12 @@ angular.module('clickApp.services')
         name: 'Common',
         actions: common_actions,
         buttons: [],
-        bindings: R.clone(common_bindings),
+        bindings: R.clone(common_bindings)
       };
       settingsService.register('Bindings',
                                common_mode.name,
                                common_bindings,
-                               function updateCommonBindings(bs) {
+                               (bs) => {
                                  R.extend(common_mode.bindings, bs);
                                });
       return common_mode;

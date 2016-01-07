@@ -1,35 +1,34 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .directive('clickGameCreateModel', [
-    '$window',
     'gameFactions',
     'gameMap',
-    function($window,
-             gameFactionsService,
+    function(gameFactionsService,
              gameMapService) {
       return {
         restrict: 'A',
-        link: function(scope, el/*, attrs*/) {
+        link: function(scope, parent) {
           var map = document.getElementById('map');
           var svgNS = map.namespaceURI;
 
           console.log('clickCreateModel', scope.index);
-          var model = R.nth(scope.index, scope.create.model.models);
+          let state = scope.state;
+          let model = R.nth(scope.index, state.create.model.models);
 
           R.pipeP(
             gameFactionsService.getModelInfo$(model.info),
-            function(info) {
-              var element = createModelElement(info, document, svgNS, el[0]);
-              var is_flipped = gameMapService.isFlipped(map);
-              setModelPosition(scope.create.model.base, is_flipped, model, element);
-          
-              scope.onGameEvent('moveCreateModel', function onMoveCreateModel() {
+            (info) => {
+              let element = createModelElement(info, document, svgNS, parent[0]);
+              let is_flipped = gameMapService.isFlipped(map);
+              setModelPosition(state.create.model.base, is_flipped, model, element);
+
+              scope.onStateChangeEvent('Game.create.update', () => {
+                if(R.isNil(R.path(['create','model'], state))) return;
+
                 is_flipped = gameMapService.isFlipped(map);
-                setModelPosition(scope.create.model.base, is_flipped, model, element);
+                setModelPosition(state.create.model.base, is_flipped, model, element);
               }, scope);
             }
-          )(scope.factions);
+          )(state.factions);
         }
       };
       function createModelElement(info, document, svgNS, parent) {

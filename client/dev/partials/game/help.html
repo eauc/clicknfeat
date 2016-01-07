@@ -2,8 +2,10 @@
   <div class="panel panel-info">
     <div class="panel-heading">Debug dump file</div>
     <div class="panel-body">
-      <a ng-href="{{debug.url}}"
-         download="{{::debug.name}}">
+      <a class="btn btn-default"
+         ng-disabled="!dump.url"
+         ng-href="{{dump.url}}"
+         download="{{dump.name}}">
         Download Dump File
       </a>
     </div>

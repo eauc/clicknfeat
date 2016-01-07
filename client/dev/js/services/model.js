@@ -67,43 +67,34 @@ angular.module('clickApp.services').factory('model', ['settings', 'point', 'game
       return R.clone(R.prop('state', model));
     },
     setState: function modelSetState(state, model) {
-      model.state = R.clone(state);
+      return R.assoc('state', R.clone(state), model);
     },
     state_checkers: [],
     state_updaters: [],
     checkState: function modelCheckState(factions, target, model) {
       return R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
         var radius = info.base_radius;
-        return R.pipe(
-        // R.spyError('start'),
-        R.assoc('x', Math.max(0 + radius, Math.min(480 - radius, model.state.x))), R.assoc('y', Math.max(0 + radius, Math.min(480 - radius, model.state.y))),
-        // R.spyError('afterBoard'),
-        function (state) {
+        return R.pipe(R.assoc('x', Math.max(0 + radius, Math.min(480 - radius, model.state.x))), R.assoc('y', Math.max(0 + radius, Math.min(480 - radius, model.state.y))), function (state) {
           return R.reduce(function (state, checker) {
             return checker(info, target, state);
           }, state, modelService.state_checkers);
-        },
-        // R.spyError('afterCheck'),
-        function (state) {
+        }, function (state) {
           return R.reduce(function (state, updater) {
             return updater(state);
           }, state, modelService.state_updaters);
-        }
-        // R.spyError('afterUpdate')
-        )(model.state);
+        })(model.state);
       }, function (state) {
-        model.state = state;
-        return model;
+        return R.assoc('state', state, model);
       })(factions);
     },
     isLocked: function modelIsLocked(model) {
-      return !!R.find(R.equals('lk'), R.defaultTo([], R.path(['state', 'dsp'], model)));
+      return R.pipe(R.pathOr([], ['state', 'dsp']), R.find(R.equals('lk')), R.exists)(model);
     },
     setLock: function modelSetLock(set, model) {
       if (set) {
-        model.state.dsp = R.uniq(R.append('lk', model.state.dsp));
+        return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('lk')), model);
       } else {
-        model.state.dsp = R.reject(R.equals('lk'), model.state.dsp);
+        return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('lk')), model);
       }
     },
     modeFor: function modelModeFor(model) {

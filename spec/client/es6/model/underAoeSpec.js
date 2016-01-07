@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model under AoE', function() {
   describe('model service', function() {
     beforeEach(inject([

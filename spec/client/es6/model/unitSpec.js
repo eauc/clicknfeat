@@ -1,13 +1,9 @@
-'use strict';
-
 describe('model unit', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
-
-        this.gameService = spyOnService('game');
 
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
@@ -18,16 +14,17 @@ describe('model unit', function() {
 
         this.modelService = spyOnService('model');
       
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles unit display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleUnitDisplay(this.scope);
+        .toggleUnitDisplay(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -42,14 +39,14 @@ describe('model unit', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isUnitDisplayed)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setUnitDisplay', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setUnitDisplay', [e.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                  ]);
             });
           });
         });
@@ -57,7 +54,7 @@ describe('model unit', function() {
     });
     
     when('user set unit number', function() {
-      this.ret = this.modelsModeService.actions.setUnit(this.scope);
+      this.ret = this.modelsModeService.actions.setUnit(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
@@ -95,11 +92,12 @@ describe('model unit', function() {
           this.promptService.prompt.resolveWith = e.value;
         }, function() {
           it('should set model\'s unit number', function() {
-            this.thenExpect(this.ret, function(result) {
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setUnit', e.unit,
-                                      ['stamp1','stamp2'], this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+            this.thenExpect(this.ret, function() {
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setUnit', [e.unit],
+                                                    ['stamp1','stamp2']
+                                                  ]);
             });
           });
         });
@@ -109,11 +107,12 @@ describe('model unit', function() {
         this.promptService.prompt.rejectWith = 'canceled';
       }, function() {
         it('should reset model\'s unit', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setUnit', null,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setUnit', [null],
+                                                  ['stamp1','stamp2']
+                                                ]);
           });
         });
       });
@@ -126,24 +125,24 @@ describe('model unit', function() {
       function(modelModeService) {
         this.modelModeService = modelModeService;
 
-        this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user select all unit', function() {
-      this.ret = this.modelModeService.actions.selectAllUnit(this.scope);
+      this.ret = this.modelModeService.actions.selectAllUnit(this.state);
     }, function() {
       beforeEach(function() {
-        this.scope.game.models = {
+        this.state.game.models = {
           active: [
             { state: { stamp: 'a1', user: 'user', u: 42 } },
             { state: { stamp: 'a2', user: 'other', u: 42 } },
@@ -168,15 +167,14 @@ describe('model unit', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
         expect(this.gameModelsService.findStamp)
-          .toHaveBeenCalledWith('stamp1', this.scope.game.models);
+          .toHaveBeenCalledWith('stamp1', this.state.game.models);
       });
       
       it('should select all models with the same user & unit number', function() {
-        this.thenExpect(this.ret, function(result) {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('setModelSelection', 'set', ['a1', 'l1'],
-                                  this.scope, this.scope.game);
-          expect(result).toBe('game.executeCommand.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'setModelSelection', ['set', ['a1', 'l1']]);
         });
       });
     });
@@ -194,7 +192,7 @@ describe('model unit', function() {
       it('should return a list of all models', function() {
         expect(this.gameModelsService.all({
           active: [ 'active' ],
-          locked: [ 'locked' ],
+          locked: [ 'locked' ]
         })).toEqual([ 'active', 'locked' ]);
       });
     });
@@ -258,7 +256,7 @@ describe('model unit', function() {
           state: { stamp: 'stamp' }
         };
         
-        this.modelService.setUnit(42, this.model);
+        this.model = this.modelService.setUnit(42, this.model);
         
         expect(this.modelService.unit(this.model))
           .toBe(42);
@@ -269,11 +267,11 @@ describe('model unit', function() {
       it('should toggle unit display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleUnitDisplay(this.model);
+        this.model = this.modelService.toggleUnitDisplay(this.model);
         expect(this.modelService.isUnitDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleUnitDisplay(this.model);
+        this.model = this.modelService.toggleUnitDisplay(this.model);
         expect(this.modelService.isUnitDisplayed(this.model))
           .toBeFalsy();
       });
@@ -283,11 +281,11 @@ describe('model unit', function() {
       it('should set unit display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setUnitDisplay(true, this.model);
+        this.model = this.modelService.setUnitDisplay(true, this.model);
         expect(this.modelService.isUnitDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setUnitDisplay(false, this.model);
+        this.model = this.modelService.setUnitDisplay(false, this.model);
         expect(this.modelService.isUnitDisplayed(this.model))
           .toBeFalsy();
       });

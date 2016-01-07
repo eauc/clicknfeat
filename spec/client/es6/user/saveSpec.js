@@ -1,5 +1,3 @@
-'use strict';
-
 describe('user load/store', function() {
   describe('user service', function() {
     beforeEach(inject([ 'user', function(userService) {
@@ -13,7 +11,8 @@ describe('user load/store', function() {
         this.user = { state: { name: 'exemple' },
                       connection: 'connection'
                     };
-        this.localStorageService.save.resolveWith = 'localStorage.save.returnValue';
+        this.localStorageService.save
+          .resolveWith = 'localStorage.save.returnValue';
       });
       
       it('should save user in local storage', function() {

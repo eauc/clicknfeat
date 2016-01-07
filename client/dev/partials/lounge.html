@@ -3,13 +3,13 @@
   <div class="panel panel-info">
     <div class="panel-heading">
       <h4 class="panel-title">
-        {{ user | user:'description' }} /
-        {{ (user | user:'online') ? 'Online' : 'Offline' }}
-        ( {{ user.state.stamp }} )
+        {{ state.user | user:'description' }} /
+        {{ (state.user | user:'online') ? 'Online' : 'Offline' }}
+        <!-- ( {{ state.user.state.stamp }} ) -->
       </h4>
     </div>
     <div class="panel-body"
-         ng-show="user | userConnection:'active'">
+         ng-show="state.user | user:'online'">
       <click-user-connection>
       </click-user-connection>
     </div>
@@ -17,19 +17,19 @@
       <button type="button"
               class="btn btn-default"
               ng-click="doUserToggleOnline()">
-        Go {{ (user | user:'online') ? 'Offline' : 'Online' }}
+        Go {{ (state.user | user:'online') ? 'Offline' : 'Online' }}
       </button>
     </div>
   </div>
   <div class="panel panel-info"
-       ng-show="user | userConnection:'active'">
+       ng-show="state.user | userConnection:'active'">
     <div class="panel-heading">
       <h4 class="panel-title">Online Games</h4>
     </div>
     <div class="game-list panel-body">
-      <click-games-list games="user.connection.games"
-                        selection="online_games_selection">
-      </click-games-list>
+      <!-- <click-games-list games="state.user.connection.games" -->
+      <!--                   selection="online_games_selection"> -->
+      <!-- </click-games-list> -->
     </div>
     <div class="panel-footer">
       <form>
@@ -64,7 +64,7 @@
       <h4 class="panel-title">Local games</h4>
     </div>
     <div class="game-list panel-body">
-      <click-games-list games="local_games"
+      <click-games-list games="state.local_games"
                         selection="local_games_selection">
       </click-games-list>
     </div>

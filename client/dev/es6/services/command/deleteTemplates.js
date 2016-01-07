@@ -9,7 +9,7 @@ angular.module('clickApp.services')
                                                   gameTemplatesService,
                                                   gameTemplateSelectionService) {
       var deleteTemplatesCommandService = {
-        execute: function deleteTemplatesExecute(stamps, scope, game) {
+        execute: function deleteTemplatesExecute(stamps, state, game) {
           return R.pipeP(
             gameTemplatesService.findAnyStamps$(stamps),
             R.reject(R.isNil),
@@ -17,75 +17,80 @@ angular.module('clickApp.services')
             (states) => {
               var ctxt = {
                 templates: states,
-                desc: '',
+                desc: ''
               };
 
               return R.pipe(
                 gameTemplatesService.removeStamps$(stamps),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
                   
                   return gameTemplateSelectionService
-                    .removeFrom('local', stamps, scope, game.template_selection);
+                    .removeFrom('local', stamps, state, game.template_selection);
                 },
                 gameTemplateSelectionService
-                  .removeFrom$('remote', stamps, scope),
+                  .removeFrom$('remote', stamps, state),
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
 
-                  scope.gameEvent('createTemplate');
-                  return ctxt;
+                  state.changeEvent('Game.template.create');
+
+                  return [ctxt, game];
                 }
               )(game.templates);
             }
           )(game.templates);
         },
-        replay: function deleteTemplatesReplay(ctxt, scope, game) {
+        replay: function deleteTemplatesReplay(ctxt, state, game) {
           return R.pipe(
-            R.map(R.prop('stamp')),
+            R.pluck('stamp'),
             (stamps) => {
               return R.pipe(
                 gameTemplatesService.removeStamps$(stamps),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
+                  
                   return gameTemplateSelectionService
-                    .removeFrom('local', stamps, scope, game.template_selection);
+                    .removeFrom('local', stamps, state, game.template_selection);
                 },
                 gameTemplateSelectionService
-                  .removeFrom$('remote', stamps, scope),
+                  .removeFrom$('remote', stamps, state),
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
                   
-                  scope.gameEvent('createTemplate');
+                  state.changeEvent('Game.template.create');
+
+                  return game;
                 }
               )(game.templates);
             }
           )(ctxt.templates);
         },
-        undo: function deleteTemplatesUndo(ctxt, scope, game) {
+        undo: function deleteTemplatesUndo(ctxt, state, game) {
           return R.pipePromise(
             R.map(templateService.create),
             R.promiseAll,
             R.reject(R.isNil),
             (templates) => {
               if(R.isEmpty(templates)) {
-                console.log('DeleteTemplates: No valid template definition');
                 return self.Promise.reject('No valid template definition');
               }
 
               return R.pipe(
                 gameTemplatesService.add$(templates),
                 (game_templates) => {
-                  game.templates = game_templates;
+                  game = R.assoc('templates', game_templates, game);
           
                   return gameTemplateSelectionService
                     .set('remote', R.map(R.path(['state','stamp']), templates),
-                         scope, game.template_selection);
+                         state, game.template_selection);
                 },
                 (selection) => {
-                  game.template_selection = selection;
+                  game = R.assoc('template_selection', selection, game);
 
-                  scope.gameEvent('createTemplate');
+                  state.changeEvent('Game.template.create');
+
+                  return game;
                 }
               )(game.templates);
             }

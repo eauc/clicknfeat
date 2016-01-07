@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGameDragbox', [function () {
   return {
     restrict: 'A',
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       console.log('gameDragbox');
 
       var box = element[0];
@@ -13,19 +13,16 @@ angular.module('clickApp.directives').directive('clickGameDragbox', [function ()
         var y = Math.min(start.y, end.y);
         var width = Math.abs(start.x - end.x);
         var height = Math.abs(start.y - end.y);
-        self.requestAnimationFrame(function _updateDragbox() {
-          box.style.visibility = 'visible';
-          box.setAttribute('x', x + '');
-          box.setAttribute('y', y + '');
-          box.setAttribute('width', width + '');
-          box.setAttribute('height', height + '');
-        });
+
+        box.style.visibility = 'visible';
+        box.setAttribute('x', x + '');
+        box.setAttribute('y', y + '');
+        box.setAttribute('width', width + '');
+        box.setAttribute('height', height + '');
       }
-      scope.onGameEvent('enableDragbox', updateDragbox, scope);
-      scope.onGameEvent('disableDragbox', function disableDragbox() {
-        self.requestAnimationFrame(function _disableDragbox() {
-          box.style.visibility = 'hidden';
-        });
+      scope.onStateChangeEvent('Game.dragBox.enable', updateDragbox, scope);
+      scope.onStateChangeEvent('Game.dragBox.disable', function () {
+        box.style.visibility = 'hidden';
       }, scope);
     }
   };

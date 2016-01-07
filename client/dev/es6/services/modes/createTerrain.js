@@ -6,37 +6,43 @@ angular.module('clickApp.services')
     'game',
     function createTerrainModeServiceFactory(modesService,
                                              settingsService,
-                                             commonModeService,
-                                             gameService) {
+                                             commonModeService) {
       var createTerrain_actions = Object.create(commonModeService.actions);
-      createTerrain_actions.moveMap = function createTerrainMoveMap(scope, coord) {
-        scope.create.terrain.base.x = coord.x;
-        scope.create.terrain.base.y = coord.y;
-        scope.gameEvent('moveCreateTerrain');
+      function updateCreateBase(coord, state) {
+        state.create = R.over(
+          R.lensPath(['terrain','base']),
+          R.pipe(
+            R.assoc('x', coord.x),
+            R.assoc('y', coord.y)
+          ),
+          state.create
+        );
+      }
+      createTerrain_actions.moveMap = (state, coord) => {
+        updateCreateBase(coord, state);
+        return state.changeEvent('Game.create.update');
       };
-      createTerrain_actions.create = function createTerrainCreate(scope, event) {
-        scope.create.terrain.base.x = event['click#'].x;
-        scope.create.terrain.base.y = event['click#'].y;
-        var is_flipped = R.path(['ui_state','flip_map'], scope);
-        return gameService
-          .executeCommand('createTerrain', scope.create.terrain, is_flipped,
-                          scope, scope.game);
+      createTerrain_actions.create = (state, event) => {
+        let is_flipped = R.path(['ui_state','flip_map'], state);
+        updateCreateBase(event['click#'], state);
+        return state.event('Game.command.execute',
+                           'createTerrain', [ state.create.terrain, is_flipped ]);
       };
       var createTerrain_default_bindings = {
         'create': 'clickMap'
       };
       var createTerrain_bindings = R.extend(Object.create(commonModeService.bindings),
-                                          createTerrain_default_bindings);
+                                            createTerrain_default_bindings);
       var createTerrain_buttons = [];
       var createTerrain_mode = {
-        onEnter: function createTerrainOnEnter(scope) {
-          scope.gameEvent('enableCreateTerrain');
-          scope.gameEvent('enableMoveMap');
+        onEnter: (state) => {
+          state.changeEvent('Game.terrain.create.enable');
+          state.changeEvent('Game.moveMap.enable');
         },
-        onLeave: function createTerrainOnLeave(scope) {
-          scope.create.terrain = null;
-          scope.gameEvent('disableMoveMap');
-          scope.gameEvent('disableCreateTerrain');
+        onLeave: (state) => {
+          state.create = R.assoc('terrain', null, state.create);
+          state.changeEvent('Game.moveMap.disable');
+          state.changeEvent('Game.terrain.create.disable');
         },
         name: 'CreateTerrain',
         actions: createTerrain_actions,
@@ -47,7 +53,7 @@ angular.module('clickApp.services')
       settingsService.register('Bindings',
                                createTerrain_mode.name,
                                createTerrain_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(createTerrain_mode.bindings, bs);
                                });
       return createTerrain_mode;

@@ -1,11 +1,10 @@
 #game {
-    #create-template-aoe,
-    #create-template-wall,
-    #create-template-spray {
+    .create-template-aoe,
+    .create-template-wall,
+    .create-template-spray {
         fill: $create-template-fill-color;
         opacity: 0.8;
         pointer-events: none;
-        visibility: hidden;
     }
 
     .template {

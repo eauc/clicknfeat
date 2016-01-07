@@ -17,6 +17,7 @@ angular.module('clickApp', ['ui.router', 'clickApp.controllers', 'clickApp.servi
     controller: 'userCtrl',
     data: {}
   }).state('settings', {
+    abstract: true,
     url: '/settings',
     templateUrl: 'partials/settings.html',
     controller: 'settingsCtrl',
@@ -38,6 +39,7 @@ angular.module('clickApp', ['ui.router', 'clickApp.controllers', 'clickApp.servi
     templateUrl: 'partials/settings/moves.html',
     controller: 'settingsMovesCtrl'
   }).state('game', {
+    abstract: true,
     url: '/game/:online/:private/:id',
     templateUrl: 'partials/game.html',
     controller: 'gameCtrl',

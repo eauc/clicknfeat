@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('infoCtrl', [
     function() {

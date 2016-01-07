@@ -1,67 +1,64 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('clickGameSelectionDetailCtrl', ['$scope', 'game', 'gameFactions', function ($scope, gameService, gameFactionsService) {
+angular.module('clickApp.directives').controller('clickGameSelectionDetailCtrl', ['$scope', 'game', 'gameFactions', function ($scope, gameService, gameFactionsService) {
   console.log('init clickGameSelectionDetailCtrl');
+  var state = $scope.state;
+
   $scope.edit = { label: '',
     max_deviation: 0
   };
   var updateOnOpenType = {
-    template: function updateOnOpenTemplate() {
-      $scope.edit.max_deviation = R.defaultTo(0, R.path(['state', 'm'], $scope.selection));
+    template: function template() {
+      $scope.edit.max_deviation = R.pathOr(0, ['state', 'm'], $scope.selection);
     },
-    model: function updateOnOpenModel() {
-      gameFactionsService.getModelInfo($scope.selection.state.info, $scope.factions).then(function (info) {
+    model: function model() {
+      gameFactionsService.getModelInfo($scope.selection.state.info, state.factions).then(function (info) {
         $scope.info = info;
+        $scope.$digest();
       });
     }
   };
   $scope.show = { info: false };
-  $scope.updateOnOpen = function updateOnOpen() {
+  $scope.updateOnOpen = function () {
     $scope.show.info = false;
     updateOnOpenType[$scope.type]();
   };
-  $scope.labelDisplay = function labelDisplay(l) {
+  $scope.labelDisplay = function (l) {
     return s.truncate(l, 12);
   };
 
-  $scope.doSetMaxDeviation = function doSetMaxDeviation() {
+  $scope.doSetMaxDeviation = function () {
     var max = $scope.edit.max_deviation > 0 ? $scope.edit.max_deviation : null;
-    $scope.doExecuteCommand('onTemplates', 'setMaxDeviation', max, [$scope.selection.state.stamp]);
+    $scope.stateEvent('Game.command.execute', 'onTemplates', ['setMaxDeviation', [max], [$scope.selection.state.stamp]]);
   };
-  $scope.doAddLabel = function doAddLabel() {
+  $scope.doAddLabel = function () {
     var cmd = $scope.type === 'template' ? 'onTemplates' : 'onModels';
     var new_label = s.trim($scope.edit.label);
     if (R.length(new_label) === 0) return;
 
-    $scope.doExecuteCommand(cmd, 'addLabel', new_label, [$scope.selection.state.stamp]).then(function () {
+    $scope.stateEvent('Game.command.execute', cmd, ['addLabel', [new_label], [$scope.selection.state.stamp]]).then(function () {
       $scope.$digest();
     });
     $scope.edit.label = '';
   };
-  $scope.doRemoveLabel = function doRemoveLabel(label) {
+  $scope.doRemoveLabel = function (label) {
     var cmd = $scope.type === 'template' ? 'onTemplates' : 'onModels';
-    $scope.doExecuteCommand(cmd, 'removeLabel', label, [$scope.selection.state.stamp]).then(function () {
+    $scope.stateEvent('Game.command.execute', cmd, ['removeLabel', [label], [$scope.selection.state.stamp]]).then(function () {
       $scope.$digest();
     });
   };
-}]);
-
-angular.module('clickApp.directives').directive('clickGameSelectionDetail', ['$window', 'game', 'gameMap', function ($window, gameService, gameMapService) {
+}]).directive('clickGameSelectionDetail', ['$window', 'game', 'gameMap', function ($window, gameService, gameMapService) {
   return {
     restrict: 'A',
     scope: true,
     controller: 'clickGameSelectionDetailCtrl',
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       console.log('gameSelectionDetail');
       var viewport = document.getElementById('viewport');
       var map = document.getElementById('map');
 
       scope.type = 'model';
       closeSelectionDetail();
-
-      // $window.requestAnimationFrame(function _digest() {
-      //   scope.$digest();
-      // });
 
       function openSelectionDetail($event, type, selection) {
         // console.log('openSelectionDetail');
@@ -76,13 +73,10 @@ angular.module('clickApp.directives').directive('clickGameSelectionDetail', ['$w
       function closeSelectionDetail() {
         // console.log('closeSelectionDetail');
         scope.selection = {};
-        $window.requestAnimationFrame(function _closeSelectionDetail() {
-          scope.$digest();
-          element[0].style.display = 'none';
-          element[0].style.visibility = 'hidden';
-          element[0].style.left = 0 + 'px';
-          element[0].style.top = 0 + 'px';
-        });
+        element[0].style.display = 'none';
+        element[0].style.visibility = 'hidden';
+        element[0].style.left = 0 + 'px';
+        element[0].style.top = 0 + 'px';
       }
       function displaySelectionDetail() {
         scope.$digest();
@@ -128,8 +122,8 @@ angular.module('clickApp.directives').directive('clickGameSelectionDetail', ['$w
         return Math.max(0, screen_pos.y - detail_rect.height) + 'px';
       }
 
-      scope.onGameEvent('openSelectionDetail', openSelectionDetail, scope);
-      scope.onGameEvent('closeSelectionDetail', closeSelectionDetail, scope);
+      scope.onStateChangeEvent('Game.selectionDetail.open', openSelectionDetail, scope);
+      scope.onStateChangeEvent('Game.selectionDetail.close', closeSelectionDetail, scope);
       scope.doClose = closeSelectionDetail;
     }
   };

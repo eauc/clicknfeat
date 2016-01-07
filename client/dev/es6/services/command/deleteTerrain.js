@@ -9,7 +9,7 @@ angular.module('clickApp.services')
                                                 gameTerrainsService,
                                                 gameTerrainSelectionService) {
       var deleteTerrainCommandService = {
-        execute: function deleteTerrainExecute(stamps, scope, game) {
+        execute: function deleteTerrainExecute(stamps, state, game) {
           return R.pipeP(
             (stamps) => {
               return gameTerrainsService.findAnyStamps(stamps, game.terrains);
@@ -24,47 +24,50 @@ angular.module('clickApp.services')
               return R.pipe(
                 gameTerrainsService.removeStamps$(stamps),
                 (game_terrains) => {
-                  game.terrains = game_terrains;
+                  game = R.assoc('terrains', game_terrains, game);
 
                   return gameTerrainSelectionService
-                    .removeFrom('local', stamps, scope, game.terrain_selection);
+                    .removeFrom('local', stamps, state, game.terrain_selection);
                 },
-                gameTerrainSelectionService.removeFrom$('remote', stamps, scope),
+                gameTerrainSelectionService.removeFrom$('remote', stamps, state),
                 (selection) => {
-                  game.terrain_selection = selection;
+                  game = R.assoc('terrain_selection', selection, game);
                   
-                  scope.gameEvent('createTerrain');
-                  return ctxt;
+                  state.changeEvent('Game.terrain.create');
+                  
+                  return [ctxt, game];
                 }
               )(game.terrains);
             }
           )(stamps);
         },
-        replay: function deleteTerrainReplay(ctxt, scope, game) {
+        replay: function deleteTerrainReplay(ctxt, state, game) {
           return R.pipe(
-            R.map(R.prop('stamp')),
+            R.pluck('stamp'),
             (stamps) => {
               return R.pipe(
                 () => {
                   return gameTerrainsService.removeStamps(stamps, game.terrains);
                 },
                 (game_terrains) => {
-                  game.terrains = game_terrains;
+                  game = R.assoc('terrains', game_terrains, game);
 
                   return gameTerrainSelectionService
-                    .removeFrom('local', stamps, scope, game.terrain_selection);
+                    .removeFrom('local', stamps, state, game.terrain_selection);
                 },
-                gameTerrainSelectionService.removeFrom$('remote', stamps, scope),
+                gameTerrainSelectionService.removeFrom$('remote', stamps, state),
                 (selection) => {
-                  game.terrain_selection = selection;
+                  game = R.assoc('terrain_selection', selection, game);
                   
-                  scope.gameEvent('createTerrain');
+                  state.changeEvent('Game.terrain.create');
+
+                  return game;
                 }
               )();
             }
           )(ctxt.terrains);
         },
-        undo: function deleteTerrainUndo(ctxt, scope, game) {
+        undo: function deleteTerrainUndo(ctxt, state, game) {
           return R.pipePromise(
             R.map((terrain) => {
               return self.Promise
@@ -81,16 +84,18 @@ angular.module('clickApp.services')
               return R.pipe(
                 gameTerrainsService.add$(terrains),
                 (game_terrains) => {
-                  game.terrains = game_terrains;
+                  game = R.assoc('terrains', game_terrains, game);
 
                   var stamps = R.map(R.path(['state','stamp']), terrains);
                   return gameTerrainSelectionService
-                    .set('remote', stamps, scope, game.terrain_selection);
+                    .set('remote', stamps, state, game.terrain_selection);
                 },
                 (selection) => {
-                  game.terrain_selection = selection;
+                  game = R.assoc('terrain_selection', selection, game);
                   
-                  scope.gameEvent('createTerrain');
+                  state.changeEvent('Game.terrain.create');
+
+                  return game;
                 }
               )(game.terrains);
             }

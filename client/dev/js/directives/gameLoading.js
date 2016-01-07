@@ -3,12 +3,12 @@
 angular.module('clickApp.directives').directive('clickGameLoading', [function () {
   return {
     restrict: 'A',
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       console.log('gameLoading');
-      scope.onGameEvent('gameLoading', function () {
+      scope.onStateChangeEvent('Game.loading', function () {
         element[0].style.display = 'block';
       }, scope);
-      scope.onGameEvent('gameLoaded', function () {
+      scope.onStateChangeEvent('Game.loaded', function () {
         element[0].style.display = 'none';
       }, scope);
     }

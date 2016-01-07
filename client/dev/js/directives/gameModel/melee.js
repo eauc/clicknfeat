@@ -1,5 +1,7 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.directives').factory('clickGameModelMelee', ['model', function (modelService) {
   function computeMeleePath(size, img, info) {
     return ['M', img.width / 2 - info.base_radius - size, ',', img.height / 2, ' ', 'L', img.width / 2 + info.base_radius + size, ',', img.height / 2, ' ', 'A', info.base_radius + size, ',', info.base_radius + size, ' 0 0,0 ', img.width / 2 - info.base_radius - size, ',', img.height / 2, ' ', 'M', img.width / 2, ',', img.height / 2, ' ', 'L', img.width / 2, ',', img.height / 2 - info.base_radius - size, ' '].join('');
@@ -23,9 +25,14 @@ angular.module('clickApp.directives').factory('clickGameModelMelee', ['model', f
 
       return [melee, reach, strike];
     },
-    update: function clickGameModeMeleeUpdate(info, model, img, el) {
-      var path;
-      var melee = el[0];
+    update: function clickGameModeMeleeUpdate(info, model, img, element) {
+      var _element = _slicedToArray(element, 3);
+
+      var melee = _element[0];
+      var reach = _element[1];
+      var strike = _element[2];
+
+      var path = undefined;
       if (modelService.isMeleeDisplayed('mm', model)) {
         path = computeMeleePath(5, img, info);
         melee.setAttribute('d', path);
@@ -33,7 +40,6 @@ angular.module('clickApp.directives').factory('clickGameModelMelee', ['model', f
       } else {
         melee.style.visibility = 'hidden';
       }
-      var reach = el[1];
       if (modelService.isMeleeDisplayed('mr', model)) {
         path = computeMeleePath(20, img, info);
         reach.setAttribute('d', path);
@@ -41,7 +47,6 @@ angular.module('clickApp.directives').factory('clickGameModelMelee', ['model', f
       } else {
         reach.style.visibility = 'hidden';
       }
-      var strike = el[2];
       if (modelService.isMeleeDisplayed('ms', model)) {
         path = computeMeleePath(40, img, info);
         strike.setAttribute('d', path);

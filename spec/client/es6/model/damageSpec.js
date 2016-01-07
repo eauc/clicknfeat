@@ -1,5 +1,3 @@
-'use strict';
-
 describe('damage model', function() {
   describe('modelBaseMode service', function() {
     beforeEach(inject([
@@ -13,17 +11,17 @@ describe('damage model', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       gameEvent: jasmine.createSpy('gameEvent'),
+                       changeEvent: jasmine.createSpy('changeEvent'),
                      };
       }
     ]));
 
     when('user open edit damage on model', function() {
       this.ret = this.modelBaseModeService.actions
-        .openEditDamage(this.scope);
+        .openEditDamage(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -31,8 +29,8 @@ describe('damage model', function() {
       
       it('should emit toggleEditDamage event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('toggleEditDamage', 'gameModels.findStamp.returnValue');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.editDamage.toggle', 'gameModels.findStamp.returnValue');
         });
       });
     });
@@ -55,7 +53,8 @@ describe('damage model', function() {
         this.model = { state: { info: ['info'], dmg: { n: 3, t: 3 } } };
       }, function() {
         it('should reset current damage', function() {
-          expect(this.model.state.dmg).toEqual({ n: 0, t: 0 });
+          expect(this.ret.state.dmg)
+            .toEqual({ n: 0, t: 0 });
         });
       });
 
@@ -69,7 +68,7 @@ describe('damage model', function() {
         } } };
       }, function() {
         it('should reset current damage', function() {
-          expect(this.model.state.dmg).toEqual({
+          expect(this.ret.state.dmg).toEqual({
             'col1': [ 0, 0, 0, 0 ],
             'col2': [ 0, 0, 0, 0 ],
             'col3': [ 0, 0, 0, 0 ],
@@ -94,8 +93,9 @@ describe('damage model', function() {
         this.i = 5;
       }, function() {
         it('should set current damage to <i>', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ n: 5, t: 5 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg)
+              .toEqual({ n: 5, t: 5 });
           });
         });
       });
@@ -105,8 +105,8 @@ describe('damage model', function() {
         this.i = 3;
       }, function() {
         it('should reset current damage', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ n: 0, t: 0 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg).toEqual({ n: 0, t: 0 });
           });
         });
       });
@@ -116,8 +116,8 @@ describe('damage model', function() {
         this.i = 15;
       }, function() {
         it('should set maximum info damage', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ n: 10, t: 10 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg).toEqual({ n: 10, t: 10 });
           });
         });
       });
@@ -128,7 +128,8 @@ describe('damage model', function() {
         .setFieldDamage('factions', this.i, this.model);
     }, function() {
       beforeEach(function() {
-        this.gameFactionsService.getModelInfo.resolveWith = { damage: { field: 10 } };
+        this.gameFactionsService.getModelInfo
+          .resolveWith = { damage: { field: 10 } };
       });
 
       when('<i> is different from current field damage', function() {
@@ -136,8 +137,8 @@ describe('damage model', function() {
         this.i = 5;
       }, function() {
         it('should set current field damage to <i>', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ f: 5 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg).toEqual({ f: 5 });
           });
         });
       });
@@ -147,8 +148,8 @@ describe('damage model', function() {
         this.i = 3;
       }, function() {
         it('should reset current damage', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ f: 0 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg).toEqual({ f: 0 });
           });
         });
       });
@@ -158,8 +159,8 @@ describe('damage model', function() {
         this.i = 15;
       }, function() {
         it('should set maximum info damage', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.model.state.dmg).toEqual({ f: 10 });
+          this.thenExpect(this.ret, function(model) {
+            expect(model.state.dmg).toEqual({ f: 10 });
           });
         });
       });
@@ -189,8 +190,8 @@ describe('damage model', function() {
           } } };
         }, function() {
           it('should set current box damage', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.dmg).toEqual(e.result);
             });
           });
         });
@@ -208,8 +209,8 @@ describe('damage model', function() {
           } } };
         }, function() {
           it('should not set current box damage', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.dmg).toEqual(e.result);
             });
           });
         });
@@ -286,8 +287,8 @@ describe('damage model', function() {
           this.model = { state: { info: ['info'], dmg: e.current } };
         }, function() {
           it('should set full damage to <col>', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.dmg).toEqual(e.result);
             });
           });
         });
@@ -331,8 +332,8 @@ describe('damage model', function() {
           this.model = { state: { info: ['info'], dmg: e.current } };
         }, function() {
           it('should clear all damage from <col>', function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.model.state.dmg).toEqual(e.result);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.dmg).toEqual(e.result);
             });
           });
         });

@@ -13,34 +13,45 @@ describe('select terrain', function() {
 
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       
-        this.scope = { game: { terrains: 'terrains',
+        this.state = { game: { terrains: 'terrains',
                                model_selection: 'selection',
                                template_selection: 'template_selection',
                                terrain_selection: 'terrain_selection'
-                             }
+                             },
+                       changeEvent: jasmine.createSpy('changeEvent'),
+                       event: jasmine.createSpy('event')
                      };
-        this.scope.gameEvent = jasmine.createSpy('gameEvent');
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update' === e) {
+            this.state.game = R.over(l,u, this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
         this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
       }
     ]));
 
     when('user set terrain selection', function() {
       this.ret = this.defaultModeService.actions
-        .selectTerrain(this.scope, this.event);
+        .selectTerrain(this.state, this.event);
     }, function() {
       it('should set gameTerrainSelection', function() {
-        expect(this.gameTerrainSelectionService.set)
-          .toHaveBeenCalledWith('local', ['stamp'],
-                                this.scope, 'terrain_selection');
-        expect(this.scope.game.terrain_selection)
-          .toBe('gameTerrainSelection.set.returnValue');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTerrainSelectionService.set)
+            .toHaveBeenCalledWith('local', ['stamp'],
+                                  this.state, 'terrain_selection');
+          expect(this.state.game.terrain_selection)
+            .toBe('gameTerrainSelection.set.returnValue');
+        });
       });
 
       it('should clear gameTemplateSelection', function() {
-        expect(this.gameTemplateSelectionService.clear)
-          .toHaveBeenCalledWith('local', this.scope, 'template_selection');
-        expect(this.scope.game.template_selection)
-          .toBe('gameTemplateSelection.clear.returnValue');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTemplateSelectionService.clear)
+            .toHaveBeenCalledWith('local', this.state, 'template_selection');
+          expect(this.state.game.template_selection)
+            .toBe('gameTemplateSelection.clear.returnValue');
+        });
       });
     });
   });
@@ -55,7 +66,15 @@ describe('select terrain', function() {
 
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
       
-        this.scope = { game: { terrain_selection: 'terrain_selection' } };
+        this.state = { game: { terrain_selection: 'terrain_selection' },
+                       event: jasmine.createSpy('event')
+                     };
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update' === e) {
+            this.state.game = R.over(l,u, this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
       }
     ]));
 
@@ -66,12 +85,12 @@ describe('select terrain', function() {
     ], function(e) {
       when('user '+e.action, function() {
         this.ret = this.terrainModeService
-          .actions[e.action](this.scope, 'event');
+          .actions[e.action](this.state, 'event');
       }, function() {
         it('should clear local terrain selection', function() {
           expect(this.gameTerrainSelectionService.clear)
-            .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
-          expect(this.scope.game.terrain_selection)
+            .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+          expect(this.state.game.terrain_selection)
             .toBe('gameTerrainSelection.clear.returnValue');
         });
       });
@@ -89,18 +108,18 @@ describe('select terrain', function() {
         this.terrainService = spyOnService('terrain');
         spyOn(this.gameTerrainSelectionService, 'checkMode');
         
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent', 'doSwitchToMode'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent', 'event'
         ]);
-        this.scope.game = { terrains: 'terrains' };
-        this.scope.modes = 'modes';
+        this.state.game = { terrains: 'terrains' };
+        this.state.modes = 'modes';
       }
     ]));
 
     function testChangeLocalSelection() {
-      it('should switch to Default mode', function() {
-        expect(this.scope.doSwitchToMode)
-          .toHaveBeenCalledWith('Default');
+      it('should emit change event', function() {
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.terrain.selection.local.change');
       });
     }
     
@@ -109,9 +128,9 @@ describe('select terrain', function() {
       [ 'local' ],
       [ 'remote' ],
     ], function(e) {
-      when('set('+e.where+', <stamps>, <scope>)', function() {
+      when('set('+e.where+', <stamps>, <state>)', function() {
         this.ret = this.gameTerrainSelectionService.set(e.where, this.after,
-                                                      this.scope, this.selection);
+                                                      this.state, this.selection);
       }, function() {        
         beforeEach(function() {
           this.selection = { local: [ 'before1', 'before2' ],
@@ -132,14 +151,14 @@ describe('select terrain', function() {
         });
 
         it('should emit changeTerrain event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-after1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-after2');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-before1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-before2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.after1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.after2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.before1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.before2');
         });
 
         if(e.where === 'local') {
@@ -147,9 +166,9 @@ describe('select terrain', function() {
         }
       });
 
-      when('removeFrom('+e.where+', <stamps>, <scope>)', function() {
+      when('removeFrom('+e.where+', <stamps>, <state>)', function() {
         this.ret = this.gameTerrainSelectionService.removeFrom(e.where, this.remove,
-                                                             this.scope, this.selection);
+                                                             this.state, this.selection);
       }, function() {
         beforeEach(function() {
           this.selection = { local: [ 'stamp1', 'stamp2' ],
@@ -169,12 +188,12 @@ describe('select terrain', function() {
 
         it('should emit changeTerrain event', function() {
           // also emit stamp1 to update single selection styles
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp3');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp3');
         });
 
         if(e.where === 'local') {
@@ -182,9 +201,9 @@ describe('select terrain', function() {
         }
       });
 
-      when('addTo('+e.where+', <stamps>, <scope>)', function() {
+      when('addTo('+e.where+', <stamps>, <state>)', function() {
         this.ret = this.gameTerrainSelectionService.addTo(e.where, this.add,
-                                                        this.scope, this.selection);
+                                                        this.state, this.selection);
       }, function() {
         beforeEach(function() {
           this.add = ['stamp2', 'stamp3'];
@@ -202,12 +221,12 @@ describe('select terrain', function() {
 
         it('should emit changeTerrain event', function() {            
           // also emit stamp1 to update single selection styles
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp3');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp3');
         });
 
         if(e.where === 'local') {
@@ -215,9 +234,9 @@ describe('select terrain', function() {
         }
       });
 
-      when('clear('+e.where+', <stamps>, <scope>)', function() {
+      when('clear('+e.where+', <stamps>, <state>)', function() {
         this.ret = this.gameTerrainSelectionService
-          .clear(e.where, this.scope, this.selection);
+          .clear(e.where, this.state, this.selection);
       }, function() {
         beforeEach(function() {
           this.selection = { local: ['stamp1', 'stamp2'],
@@ -233,33 +252,25 @@ describe('select terrain', function() {
         });
 
         it('should emit changeTerrain event', function() {            
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
         });
-
-        if(e.where === 'local') {
-          it('should check mode for selection', function() {   
-            expect(this.scope.doSwitchToMode)
-              .toHaveBeenCalledWith('Default');
-          });
-        }
       });
     });
 
-    when('checkMode(<scope>)', function() {
+    when('checkMode(<state>)', function() {
       this.ret = this.gameTerrainSelectionService
-        .checkMode(this.scope, this.selection);
+        .checkMode(this.state, this.selection);
     }, function() {
       beforeEach(function() {
         this.gameTerrainSelectionService.checkMode.and.callThrough();
-        this.scope = { modes: 'modes',
+        this.state = { modes: 'modes',
                        game: { terrains: 'terrains' },
-                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+                       event: jasmine.createSpy('event')
                      };
         this.selection = { local: [ 'stamp' ] };
-        // this.terrainService.isPlacing._retVal = false;
       });
 
       when('<selection> is empty', function() {
@@ -274,8 +285,8 @@ describe('select terrain', function() {
 
       it('should switch to mode for terrain', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.doSwitchToMode)
-            .toHaveBeenCalledWith('Terrain');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Modes.switchTo','Terrain');
         });
       });
     });

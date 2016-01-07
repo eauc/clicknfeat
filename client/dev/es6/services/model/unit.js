@@ -15,24 +15,32 @@ angular.module('clickApp.services')
             return R.propEq('u', unit, model.state);
           },
           setUnit: function modelSetUnit(unit, model) {
-            model.state = R.assoc('u', unit, model.state);
+            return R.assocPath(['state','u'], unit, model);
           },
           setUnitDisplay: function modelSetUnitDisplay(set, model) {
             if(set) {
-              model.state.dsp = R.uniq(R.append('u', model.state.dsp));
+              return R.over(R.lensPath(['state','dsp']),
+                            R.compose(R.uniq, R.append('u')),
+                            model);
             }
             else {
-              model.state.dsp = R.reject(R.equals('u'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('u')),
+                            model);
             }
           },
           toggleUnitDisplay: function modelToggleUnitDisplay(model) {
             if(modelService.isUnitDisplayed(model)) {
-              model.state.dsp = R.reject(R.equals('u'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('u')),
+                            model);
             }
             else {
-              model.state.dsp = R.append('u', model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.append('u'),
+                            model);
             }
-          },
+          }
         };
         return modelUnitService;
       };

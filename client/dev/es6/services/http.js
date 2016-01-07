@@ -1,10 +1,8 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('http', [
     function httpServiceFactory() {
       function ajaxRequest(method, url, data) {
-        return new self.Promise(function(resolve, reject) {
+        return new self.Promise((resolve, reject) => {
           var client = new self.XMLHttpRequest();
           client.open(method, url);
           client.responseType = 'json';
@@ -14,7 +12,7 @@ angular.module('clickApp.services')
           else {
             client.send();
           }
-          client.onload = function ajaxOnLoad() {
+          client.onload = () => {
             if(client.status >= 200 &&
                client.status < 300) {
               resolve(client.response);
@@ -23,7 +21,7 @@ angular.module('clickApp.services')
               reject(client.statusText);
             }
           };
-          client.onerror = function ajaxOnError() {
+          client.onerror = () => {
             reject(client.statusText);
           };
         });
@@ -40,7 +38,7 @@ angular.module('clickApp.services')
         },
         delete: function httpGet(url) {
           return ajaxRequest('DELETE', url);
-        },
+        }
       };
       R.curryService(httpService);
       return httpService;

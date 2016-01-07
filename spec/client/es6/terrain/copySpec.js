@@ -12,13 +12,11 @@ describe('copy terrain', function() {
 
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
         
-        this.scope = jasmine.createSpyObj('scope', [
-          'doSwitchToMode'
+        this.state = jasmine.createSpyObj('state', [
+          'event'
         ]);
-        this.scope.doSwitchToMode
-          .and.returnValue('doSwitchToMode.returnValue');
-        this.scope.create = {  };
-        this.scope.game = { terrains: 'terrains',
+        this.state.create = {  };
+        this.state.game = { terrains: 'terrains',
                             terrain_selection: 'selection'
                           };
       }
@@ -26,7 +24,7 @@ describe('copy terrain', function() {
 
     when('copySelection()', function() {
       this.ret = this.terrainModeService.actions
-        .copySelection(this.scope);
+        .copySelection(this.state);
     }, function() {
       it('should copy current selection', function() {
         expect(this.gameTerrainSelectionService.get)
@@ -36,13 +34,11 @@ describe('copy terrain', function() {
       });
 
       it('should enter createTerrain mode', function() {
-        this.thenExpect(this.ret, function(result) {
-          expect(this.scope.create.terrain)
+        this.thenExpect(this.ret, function() {
+          expect(this.state.create.terrain)
             .toBe('gameTerrains.copyStamps.returnValue');
-          expect(this.scope.doSwitchToMode)
-            .toHaveBeenCalledWith('CreateTerrain');
-          expect(result)
-            .toBe('doSwitchToMode.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Modes.switchTo','CreateTerrain');
         });
       });
     });

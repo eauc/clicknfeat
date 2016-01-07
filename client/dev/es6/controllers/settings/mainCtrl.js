@@ -1,62 +1,20 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('settingsMainCtrl', [
     '$scope',
-    'fileImport',
-    'fileExport',
-    function($scope,
-             fileImportService,
-             fileExportService) {
+    function($scope) {
       console.log('init settingsMainCtrl');
       
-      $scope.save = {
-        name: 'clicknfeat_settings.json',
-        url: null,
-      };
-      function cleanup() {
-        fileExportService.cleanup($scope.save.url);
-      }
-      $scope.updateExports = function updateExports() {
-        cleanup();
-        
-        R.pipeP(
-          function() {
-            return fileExportService
-              .generate('json', $scope.settings.current);
-          },
-          function(url) {
-            $scope.save.url = url;
-          }
-        )();
-      };
-      $scope.$on('$destroy', cleanup);
-      $scope.data_ready
-        .then(function() {
-          $scope.updateExports();
-        });
+      $scope.digestOnStateChangeEvent('Exports.settings', $scope);
+      $scope.onStateChangeEvent('Settings.loadFile', (event, result) => {
+        $scope.load_settings_result = result;
+        $scope.$digest();
+      }, $scope);
 
-      $scope.doOpenSettingsFile = function(files) {
-        console.log('openSettingsFile', files);
-
-        $scope['open_result'] = '';
-        R.pipe(
-          function() {
-            return fileImportService.read('json', files[0])
-              .catch(function(error) {
-                $scope['open_result'] = error;
-              });
-          },
-          function(data) {
-            if(R.isNil(data)) return;
-            
-            $scope.doResetSettings(data);
-            $scope['open_result'] = [ 'Settings loaded' ];
-          },
-          function() {
-            $scope.$digest();
-          }
-        )();
+      $scope.doLoadSettingsFile = (files) => {
+        $scope.stateEvent('Settings.loadFile', files[0]);
+      };
+      $scope.doResetSettings = () => {
+        $scope.stateEvent('Settings.reset', {});
       };
     }
   ]);

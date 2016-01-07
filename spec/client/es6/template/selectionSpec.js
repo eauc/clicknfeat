@@ -1,5 +1,3 @@
-'use strict';
-
 describe('select template', function() {
   describe('defaultMode service', function() {
     beforeEach(inject([
@@ -10,50 +8,73 @@ describe('select template', function() {
       
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
 
-        this.scope = { game: { template_selection: 'selection',
-                               terrain_selection: 'terrain_selection'} };
-        this.scope.gameEvent = jasmine.createSpy('gameEvent');
+        this.state = { game: { template_selection: 'selection',
+                               terrain_selection: 'terrain_selection'},
+                       changeEvent: jasmine.createSpy('changeEvent'),
+                       event: jasmine.createSpy('event')
+                     };
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update'===e) {
+            this.state.game = R.over(l,u,this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
+        
         this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
       }
     ]));
 
     when('user selects template', function() {
-      this.defaultModeService.actions
-        .selectTemplate(this.scope, this.event);
+      this.ret = this.defaultModeService.actions
+        .selectTemplate(this.state, this.event);
     }, function() {
       it('should set gameTemplateSelection', function() {
-        expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTemplateSelectionService.set)
+            .toHaveBeenCalledWith('local', ['stamp'], this.state, 'selection');
+          expect(this.state.game.template_selection)
+            .toBe('gameTemplateSelection.set.returnValue');
+        });
       });
 
       it('should clear gameTerrainSelection', function() {
-        expect(this.gameTerrainSelectionService.clear)
-          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
-        expect(this.scope.game.terrain_selection)
-          .toBe('gameTerrainSelection.clear.returnValue');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTerrainSelectionService.clear)
+            .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+          expect(this.state.game.terrain_selection)
+            .toBe('gameTerrainSelection.clear.returnValue');
+        });
       });
     });
 
     when('user right-click on template', function() {
-      this.defaultModeService.actions
-        .templateSelectionDetail(this.scope, this.event);
+      this.ret = this.defaultModeService.actions
+        .templateSelectionDetail(this.state, this.event);
     }, function() {
       it('should open template selection detail', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('openSelectionDetail', 'template',
-                                { state: { stamp: 'stamp' } });
+        this.thenExpect(this.ret, () => {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.selectionDetail.open', 'template',
+                                  { state: { stamp: 'stamp' } });
+        });
       });
 
       it('should set gameTemplateSelection', function() {
-        expect(this.gameTemplateSelectionService.set)
-          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTemplateSelectionService.set)
+            .toHaveBeenCalledWith('local', ['stamp'], this.state, 'selection');
+          expect(this.state.game.template_selection)
+            .toBe('gameTemplateSelection.set.returnValue');
+        });
       });
 
       it('should clear gameTerrainSelection', function() {
-        expect(this.gameTerrainSelectionService.clear)
-          .toHaveBeenCalledWith('local', this.scope, 'terrain_selection');
-        expect(this.scope.game.terrain_selection)
-          .toBe('gameTerrainSelection.clear.returnValue');
+        this.thenExpect(this.ret, () => {
+          expect(this.gameTerrainSelectionService.clear)
+            .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+          expect(this.state.game.terrain_selection)
+            .toBe('gameTerrainSelection.clear.returnValue');
+        });
       });
     });
   });
@@ -65,7 +86,15 @@ describe('select template', function() {
         this.templateModeService = templateModeService;
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = { game: { template_selection: 'selection' } };
+        this.state = { game: { template_selection: 'selection' },
+                       event: jasmine.createSpy('event')
+                     };
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update'===e) {
+            this.state.game = R.over(l,u,this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
       }
     ]));
 
@@ -77,11 +106,11 @@ describe('select template', function() {
     ], function(e) {
       when('user does '+e.action, function() {
         this.templateModeService
-          .actions[e.action](this.scope);
+          .actions[e.action](this.state);
       }, function() {
         it('should clear gameTemplateSelection', function() {
           expect(this.gameTemplateSelectionService.clear)
-            .toHaveBeenCalledWith('local', this.scope, 'selection');
+            .toHaveBeenCalledWith('local', this.state, 'selection');
         });
       });
     });
@@ -95,11 +124,11 @@ describe('select template', function() {
         this.gameTemplatesService = spyOnService('gameTemplates');
         this.modesService = spyOnService('modes');
 
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent', 'doSwitchToMode'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent', 'event'
         ]);
-        this.scope.game = { templates: 'templates' };
-        this.scope.modes = 'modes';
+        this.state.game = { templates: 'templates' };
+        this.state.modes = 'modes';
       }
     ]));
 
@@ -108,9 +137,9 @@ describe('select template', function() {
       [ 'local' ],
       [ 'remote' ],
     ], function(e) {
-      when('set(<where>, <stamp>, <scope>)', function() {
-        this.ret = this.gameTemplateSelectionService.set(e.where, ['stamp'],
-                                                         this.scope, this.selection);
+      when('set(<where>, <stamp>, <state>)', function() {
+        this.ret = this.gameTemplateSelectionService
+          .set(e.where, ['stamp'], this.state, this.selection);
       }, function() {
         beforeEach(function() {
           this.selection = { local: [], remote: [] };
@@ -122,19 +151,14 @@ describe('select template', function() {
         });
 
         it('should emit changeTemplate event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTemplate-stamp');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.change.stamp');
         });
 
         if(e.where === 'local') {
-          it('should switch to correct mode', function() {
-            expect(this.scope.doSwitchToMode)
-              .toHaveBeenCalledWith('Default');
-          });
-
           it('should emit changeLocalTemplateSelection event', function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.selection.local.change');
           });
         }
         
@@ -142,15 +166,15 @@ describe('select template', function() {
           this.selection[e.where] = [ 'previous' ];
         }, function() {
           it('should emit changeTemplate event', function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-previous');
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.change.previous');
           });
         });
       });
 
-      when('removeFrom(<where>, <stamp>, <scope>)', function() {
+      when('removeFrom(<where>, <stamp>, <state>)', function() {
         this.ret = this.gameTemplateSelectionService.removeFrom(e.where, ['stamp'],
-                                                                this.scope, this.selection);
+                                                                this.state, this.selection);
       }, function() {
         when('<stamp> is in previous selection', function() {
           this.selection = { local: ['stamp'], remote: ['stamp'] };
@@ -161,20 +185,15 @@ describe('select template', function() {
           });
 
           if(e.where === 'local') {
-            it('should switch to Default mode', function() {
-              expect(this.scope.doSwitchToMode)
-                .toHaveBeenCalledWith('Default');
-            });
-
             it('should emit changeLocalTemplateSelection event', function() {
-              expect(this.scope.gameEvent)
-                .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
+              expect(this.state.changeEvent)
+                .toHaveBeenCalledWith('Game.template.selection.local.change');
             });
           }
 
           it('should emit changeTemplate event', function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-stamp');
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.change.stamp');
           });
         });
 
@@ -188,8 +207,8 @@ describe('select template', function() {
         });
       });
 
-      when('clear(<where>, <scope>)', function() {
-        this.ret = this.gameTemplateSelectionService.clear(e.where, this.scope,
+      when('clear(<where>, <state>)', function() {
+        this.ret = this.gameTemplateSelectionService.clear(e.where, this.state,
                                                            this.selection);
       }, function() {
         beforeEach(function() {
@@ -202,14 +221,9 @@ describe('select template', function() {
         });
 
         if(e.where === 'local') {
-          it('should switch to Default mode', function() {            
-            expect(this.scope.doSwitchToMode)
-              .toHaveBeenCalledWith('Default');
-          });
-
           it('should emit changeLocalTemplateSelection event', function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeLocalTemplateSelection', this.ret);
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.selection.local.change');
           });
         }
 
@@ -217,34 +231,9 @@ describe('select template', function() {
           this.selection[e.where] = [ 'previous' ];
         }, function() {
           it('should emit changeTemplate event', function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('changeTemplate-previous');
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.change.previous');
           });
-        });
-      });
-
-      describe('inSingle(<where>, <stamp>)', function() {
-        beforeEach(function() {
-          this.selection = { local: [], remote: [] };
-        });
-        
-        it('should check whether <stamp> is alone in selection', function() {
-          this.selection = this.gameTemplateSelectionService.set(e.where, ['stamp'],
-                                                                 this.scope, this.selection);
-          expect(this.gameTemplateSelectionService.inSingle(e.where, 'other', this.selection))
-            .toBeFalsy();
-          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
-            .toBeTruthy();
-          
-          this.selection = this.gameTemplateSelectionService.set(e.where, ['other'],
-                                                                 this.scope, this.selection);
-          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
-            .toBeFalsy();
-
-          this.selection = this.gameTemplateSelectionService.clear(e.where,
-                                                                   this.scope, this.selection);
-          expect(this.gameTemplateSelectionService.inSingle(e.where, 'stamp', this.selection))
-            .toBeFalsy();
         });
       });
     });

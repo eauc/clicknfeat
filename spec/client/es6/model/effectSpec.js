@@ -1,13 +1,9 @@
-'use strict';
-
 describe('model effects', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
       'modelsMode',
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
-
-        this.gameService = spyOnService('game');
 
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
@@ -18,16 +14,17 @@ describe('model effects', function() {
 
         this.modelService = spyOnService('model');
       
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles leader display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleLeaderDisplay(this.scope);
+        .toggleLeaderDisplay(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -42,14 +39,14 @@ describe('model effects', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isLeaderDisplayed)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setLeaderDisplay', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setLeaderDisplay', [e.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                  ]);
             });
           });
         });
@@ -58,7 +55,7 @@ describe('model effects', function() {
 
     when('user toggles incorporeal display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleIncorporealDisplay(this.scope);
+        .toggleIncorporealDisplay(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -73,14 +70,14 @@ describe('model effects', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isIncorporealDisplayed)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setIncorporealDisplay', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setIncorporealDisplay', [e.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                  ]);
             });
           });
         });
@@ -99,7 +96,7 @@ describe('model effects', function() {
     ], function(e) {
       when('user toggles '+e.effect+' display on models', function() {
         this.ret = this.modelsModeService
-          .actions['toggle'+e.effect+'EffectDisplay'](this.scope);
+          .actions['toggle'+e.effect+'EffectDisplay'](this.state);
       }, function() {
         using([
           ['first', 'set'],
@@ -114,14 +111,14 @@ describe('model effects', function() {
                 .toHaveBeenCalledWith('local', 'selection');
               expect(this.gameModelsService.findStamp)
                 .toHaveBeenCalledWith('stamp1', 'models');
-              this.thenExpect(this.ret, function(result) {
+              this.thenExpect(this.ret, function() {
                 expect(this.modelService.isEffectDisplayed)
                   .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-                expect(this.gameService.executeCommand)
-                  .toHaveBeenCalledWith('onModels', 'setEffectDisplay', e.flag, ee.set,
-                                        this.gameModelSelectionService.get._retVal,
-                                        this.scope, this.scope.game);
-                expect(result).toBe('game.executeCommand.returnValue');
+                expect(this.state.event)
+                  .toHaveBeenCalledWith('Game.command.execute',
+                                        'onModels', [ 'setEffectDisplay', [e.flag, ee.set],
+                                                      this.gameModelSelectionService.get._retVal
+                                                    ]);
               });
             });
           });
@@ -142,11 +139,11 @@ describe('model effects', function() {
       it('should toggle leader display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleLeaderDisplay(this.model);
+        this.model = this.modelService.toggleLeaderDisplay(this.model);
         expect(this.modelService.isLeaderDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleLeaderDisplay(this.model);
+        this.model = this.modelService.toggleLeaderDisplay(this.model);
         expect(this.modelService.isLeaderDisplayed(this.model))
           .toBeFalsy();
       });
@@ -156,11 +153,11 @@ describe('model effects', function() {
       it('should set leader display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setLeaderDisplay(true, this.model);
+        this.model = this.modelService.setLeaderDisplay(true, this.model);
         expect(this.modelService.isLeaderDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setLeaderDisplay(false, this.model);
+        this.model = this.modelService.setLeaderDisplay(false, this.model);
         expect(this.modelService.isLeaderDisplayed(this.model))
           .toBeFalsy();
       });
@@ -170,11 +167,11 @@ describe('model effects', function() {
       it('should toggle incorporeal display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleIncorporealDisplay(this.model);
+        this.model = this.modelService.toggleIncorporealDisplay(this.model);
         expect(this.modelService.isIncorporealDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleIncorporealDisplay(this.model);
+        this.model = this.modelService.toggleIncorporealDisplay(this.model);
         expect(this.modelService.isIncorporealDisplayed(this.model))
           .toBeFalsy();
       });
@@ -184,11 +181,11 @@ describe('model effects', function() {
       it('should set incorporeal display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setIncorporealDisplay(true, this.model);
+        this.model = this.modelService.setIncorporealDisplay(true, this.model);
         expect(this.modelService.isIncorporealDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setIncorporealDisplay(false, this.model);
+        this.model = this.modelService.setIncorporealDisplay(false, this.model);
         expect(this.modelService.isIncorporealDisplayed(this.model))
           .toBeFalsy();
       });
@@ -208,11 +205,11 @@ describe('model effects', function() {
         it('should toggle effect display for <model>', function() {
           this.model = { state: { dsp: [] } };
           
-          this.modelService.toggleEffectDisplay(ee.flag, this.model);
+          this.model = this.modelService.toggleEffectDisplay(ee.flag, this.model);
           expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
             .toBeTruthy();
           
-          this.modelService.toggleEffectDisplay(ee.flag, this.model);
+          this.model = this.modelService.toggleEffectDisplay(ee.flag, this.model);
           expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
             .toBeFalsy();
         });
@@ -222,11 +219,11 @@ describe('model effects', function() {
         it('should set effect display for <model>', function() {
           this.model = { state: { dsp: [] } };
           
-          this.modelService.setEffectDisplay(ee.flag, true, this.model);
+          this.model = this.modelService.setEffectDisplay(ee.flag, true, this.model);
           expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
             .toBeTruthy();
           
-          this.modelService.setEffectDisplay(ee.flag, false, this.model);
+          this.model = this.modelService.setEffectDisplay(ee.flag, false, this.model);
           expect(this.modelService.isEffectDisplayed(ee.flag, this.model))
             .toBeFalsy();
         });

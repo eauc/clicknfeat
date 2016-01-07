@@ -2,7 +2,7 @@
 
 angular.module('clickApp.services').factory('deleteModelCommand', ['commands', 'model', 'gameModels', 'gameModelSelection', function deleteModelCommandServiceFactory(commandsService, modelService, gameModelsService, gameModelSelectionService) {
   var deleteModelCommandService = {
-    execute: function deleteModelExecute(stamps, scope, game) {
+    execute: function deleteModelExecute(stamps, state, game) {
       return R.pipeP(function (stamps) {
         return gameModelsService.findAnyStamps(stamps, game.models);
       }, R.reject(R.isNil), R.map(modelService.saveState), function (states) {
@@ -11,55 +11,60 @@ angular.module('clickApp.services').factory('deleteModelCommand', ['commands', '
           desc: ''
         };
         return R.pipe(gameModelsService.removeStamps$(stamps), function (game_models) {
-          game.models = game_models;
+          game = R.assoc('models', game_models, game);
 
-          return gameModelSelectionService.removeFrom('local', stamps, scope, game.model_selection);
-        }, gameModelSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
-          game.model_selection = selection;
+          return gameModelSelectionService.removeFrom('local', stamps, state, game.model_selection);
+        }, gameModelSelectionService.removeFrom$('remote', stamps, state), function (selection) {
+          game = R.assoc('model_selection', selection, game);
 
           R.forEach(function (stamp) {
-            scope.gameEvent('deleteModel-' + stamp);
+            state.changeEvent('Game.model.delete.' + stamp);
           }, stamps);
-          scope.gameEvent('createModel');
-          return ctxt;
+          state.changeEvent('Game.model.create');
+
+          return [ctxt, game];
         })(game.models);
       })(stamps);
     },
-    replay: function deleteModelReplay(ctxt, scope, game) {
-      return R.pipe(R.map(R.prop('stamp')), function (stamps) {
+    replay: function deleteModelReplay(ctxt, state, game) {
+      return R.pipe(R.pluck('stamp'), function (stamps) {
         return R.pipe(function () {
           return gameModelsService.removeStamps(stamps, game.models);
         }, function (game_models) {
-          game.models = game_models;
+          game = R.assoc('models', game_models, game);
 
-          return gameModelSelectionService.removeFrom('local', stamps, scope, game.model_selection);
-        }, gameModelSelectionService.removeFrom$('remote', stamps, scope), function (selection) {
-          game.model_selection = selection;
+          return gameModelSelectionService.removeFrom('local', stamps, state, game.model_selection);
+        }, gameModelSelectionService.removeFrom$('remote', stamps, state), function (selection) {
+          game = R.assoc('model_selection', selection, game);
 
           R.forEach(function (stamp) {
-            scope.gameEvent('deleteModel-' + stamp);
+            state.changeEvent('Game.model.delete.' + stamp);
           }, stamps);
-          scope.gameEvent('createModel');
+          state.changeEvent('Game.model.create');
+
+          return game;
         })();
       })(ctxt.models);
     },
-    undo: function deleteModelUndo(ctxt, scope, game) {
+    undo: function deleteModelUndo(ctxt, state, game) {
       return R.pipePromise(R.map(function (model) {
-        return modelService.create(scope.factions, model).catch(R.always(null));
+        return modelService.create(state.factions, model).catch(R.always(null));
       }), R.promiseAll, R.reject(R.isNil), function (models) {
         if (R.isEmpty(models)) {
           return self.Promise.reject('No valid model definition');
         }
 
         return R.pipe(gameModelsService.add$(models), function (game_models) {
-          game.models = game_models;
+          game = R.assoc('models', game_models, game);
 
           var stamps = R.map(R.path(['state', 'stamp']), models);
-          return gameModelSelectionService.set('remote', stamps, scope, game.model_selection);
+          return gameModelSelectionService.set('remote', stamps, state, game.model_selection);
         }, function (selection) {
-          game.model_selection = selection;
+          game = R.assoc('model_selection', selection, game);
 
-          scope.gameEvent('createModel');
+          state.changeEvent('Game.model.create');
+
+          return game;
         })(game.models);
       })(ctxt.models);
     }

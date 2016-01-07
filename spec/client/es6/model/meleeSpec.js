@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model melee', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -18,9 +16,10 @@ describe('model melee', function() {
 
         this.modelService = spyOnService('model');
       
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
@@ -33,7 +32,7 @@ describe('model melee', function() {
     ], function(e, d) {
       when('user toggles melee display on models, '+d, function() {
         this.ret = this.modelsModeService
-          .actions['toggle'+e.melee+'Display'](this.scope);
+          .actions['toggle'+e.melee+'Display'](this.state);
       }, function() {
         using([
           ['first', 'set'],
@@ -51,11 +50,11 @@ describe('model melee', function() {
               this.thenExpect(this.ret, function(result) {
                 expect(this.modelService.isMeleeDisplayed)
                   .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-                expect(this.gameService.executeCommand)
-                  .toHaveBeenCalledWith('onModels', 'setMeleeDisplay', e.flag, ee.set,
-                                        this.gameModelSelectionService.get._retVal,
-                                        this.scope, this.scope.game);
-                expect(result).toBe('game.executeCommand.returnValue');
+                expect(this.state.event)
+                  .toHaveBeenCalledWith('Game.command.execute',
+                                        'onModels', [ 'setMeleeDisplay', [e.flag, ee.set],
+                                                      this.gameModelSelectionService.get._retVal
+                                                    ]);
               });
             });
           });
@@ -77,11 +76,11 @@ describe('model melee', function() {
       it('should toggle melee display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleMeleeDisplay('melee', this.model);
+        this.model = this.modelService.toggleMeleeDisplay('melee', this.model);
         expect(this.modelService.isMeleeDisplayed('melee', this.model))
           .toBeTruthy();
         
-        this.modelService.toggleMeleeDisplay('melee', this.model);
+        this.model = this.modelService.toggleMeleeDisplay('melee', this.model);
         expect(this.modelService.isMeleeDisplayed('melee', this.model))
           .toBeFalsy();
       });
@@ -91,11 +90,11 @@ describe('model melee', function() {
       it('should set melee display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setMeleeDisplay('melee', true, this.model);
+        this.model = this.modelService.setMeleeDisplay('melee', true, this.model);
         expect(this.modelService.isMeleeDisplayed('melee', this.model))
           .toBeTruthy();
         
-        this.modelService.setMeleeDisplay('melee', false, this.model);
+        this.model = this.modelService.setMeleeDisplay('melee', false, this.model);
         expect(this.modelService.isMeleeDisplayed('melee', this.model))
           .toBeFalsy();
       });

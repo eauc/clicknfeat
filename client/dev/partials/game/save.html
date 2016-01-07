@@ -1,16 +1,16 @@
 <div>
-  <button type="button"
-          class="btn btn-default"
-          ng-click="updateExports()">
-    Update files
-  </button>
+  <!-- <button type="button" -->
+  <!--         class="btn btn-default" -->
+  <!--         ng-click="updateExports()"> -->
+  <!--   Update files -->
+  <!-- </button> -->
   <div class="panel panel-info">
     <div class="panel-heading">Save current game</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!save.url"
-         ng-href="{{save.url}}"
-         download="{{::save.name}}">
+         ng-disabled="!exports.game.url"
+         ng-href="{{exports.game.url}}"
+         download="{{exports.game.name}}">
         Download Game File
       </a>
     </div>
@@ -19,9 +19,9 @@
     <div class="panel-heading">Save current models selection</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!selection_save.url"
-         ng-href="{{selection_save.url}}"
-         download="{{::selection_save.name}}">
+         ng-disabled="!exports.models.url"
+         ng-href="{{exports.models.url}}"
+         download="{{exports.models.name}}">
         Download Models File
       </a>
     </div>
@@ -30,9 +30,9 @@
     <div class="panel-heading">Save current board and terrain</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!board_save.url"
-         ng-href="{{board_save.url}}"
-         download="{{::board_save.name}}">
+         ng-disabled="!exports.board.url"
+         ng-href="{{exports.board.url}}"
+         download="{{exports.board.name}}">
         Download Board File
       </a>
     </div>

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('user online', function() {
   describe('user service', function() {
     beforeEach(inject([ 'user', function(userService) {
@@ -19,53 +17,54 @@ describe('user online', function() {
       mockReturnPromise(this.httpService.delete);
       this.httpService.delete.resolveWith = 'http.delete.returnValue';
       
-      this.localStorageService.save.resolveWith = 'localStorage.save.returnValue';
+      this.localStorageService.save
+        .resolveWith = 'localStorage.save.returnValue';
 
       this.user = {
         state: { stamp: null },
-        connection: 'connection',
+        connection: 'connection'
       };
+      this.state = {};
     }]));
 
     when('toggleOnline()', function() {
-      this.ret = this.userService.toggleOnline(this.user);
+      this.ret = this.userService
+        .toggleOnline(this.state, this.user);
     }, function() {
       beforeEach(function() {
         spyOn(this.userService, 'checkOnline')
           .and.returnValue('user.checkOnline.returnValue');
+        this.userService.checkOnline$ = R.curryN(2, this.userService.checkOnline);
+        
         this.user.state.stamp = 'stamp';
       });
 
       when('user is online', function() {
         this.user.state.online = true;
       }, function() {
-        it('should delete user on server', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.httpService.delete)
-              .toHaveBeenCalledWith('/api/users/stamp');
-          });
-        });
-
         it_should_set_user_offline();
       });
 
-      when('user is not offline', function() {
+      when('user is offline', function() {
         this.user.state.online = false;
       }, function() {
         it('should try to go online', function() {
-          expect(this.userService.checkOnline)
-            .toHaveBeenCalledWith({
-              state: { stamp: 'stamp', online: true },
-              connection: 'connection'
-            });
-          expect(this.ret)
-            .toBe('user.checkOnline.returnValue');
+          this.thenExpect(this.ret, function(user) {
+            expect(this.userService.checkOnline)
+              .toHaveBeenCalledWith(this.state, {
+                state: { stamp: 'stamp', online: true },
+                connection: 'connection'
+              });
+            expect(user)
+              .toBe('user.checkOnline.returnValue');
+          });
         });
       });
     });
     
     when('checkOnline()', function() {
-      this.ret = this.userService.checkOnline(this.user);
+      this.ret = this.userService
+        .checkOnline(this.state, this.user);
     }, function() {
       when('user is not online', function() {
         this.user.state.online = false;
@@ -163,8 +162,6 @@ function it_should_set_user_offline() {
         .toBe(null);
       expect(this.userService.online(user))
         .toBeFalsy();
-      expect(this.localStorageService.save)
-        .toHaveBeenCalledWith('clickApp.user', user.state);
     });
   });
 }
@@ -172,7 +169,7 @@ function it_should_set_user_online() {
   it('should set user online', function() {
     this.thenExpect(this.ret, function(user) {
       expect(this.userConnectionService.open)
-        .toHaveBeenCalledWith({
+        .toHaveBeenCalledWith(this.state, {
           state: {
             stamp: 'stamp',
             server: 'update'
@@ -181,8 +178,6 @@ function it_should_set_user_online() {
         });
       expect(this.userService.online(user))
         .toBeTruthy();
-      expect(this.localStorageService.save)
-        .toHaveBeenCalledWith('clickApp.user', user.state);
     });
   });
 }

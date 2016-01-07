@@ -15,28 +15,30 @@
       <th>Current</th>
     </tr>
     <tr ng-repeat="a in getBindingsKeys(mode)"
-        class="{{ settings.current.Bindings[mode][a] !== settings.default.Bindings[mode][a] ?
+        class="{{
+               edit_settings.Bindings[mode][a] &&
+               edit_settings.Bindings[mode][a] !== state.settings.default.Bindings[mode][a] ?
                'modified' : ''
                }}">
       <td class="vertical-center">{{::a}}</td>
-      <td class="vertical-center">{{::settings.default.Bindings[mode][a]}}</td>
+      <td class="vertical-center">{{::state.settings.default.Bindings[mode][a]}}</td>
       <td>
         <div class="input-group">
           <input type="text"
                  class="form-control"
-                 placeholder="{{::settings.default.Bindings[mode][a]}}"
-                 ng-model="settings.current.Bindings[mode][a]"
-                 ng-change="doUpdateSettings()"/>
+                 placeholder="{{::state.settings.default.Bindings[mode][a]}}"
+                 ng-model="edit_settings.Bindings[mode][a]" />
           <span class="input-group-btn">
             <button class="btn btn-default"
                     type="button"
-                    ng-click="doRecordBinding(a)">
+                    ng-click="doRecordBinding(a)"
+                    ng-disabled="recording">
               <span class="glyphicon glyphicon-record">
               </span>
             </button>
           </span>
         </div>
-        <span style="font-style: italic;"
+        <span class="hint"
               ng-show="recording === a">
           Recording...
         </span>

@@ -1,14 +1,10 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .factory('wallTemplateElement', [
-    '$window',
     'template',
     'gameTemplateSelection',
     'gameMap',
     'labelElement',
-    function($window,
-             templateService,
+    function(templateService,
              gameTemplateSelectionService,
              gameMapService,
              labelElementService) {
@@ -29,17 +25,15 @@ angular.module('clickApp.directives')
 
           return { container: group,
                    wall: rect,
-                   label: label,
+                   label: label
                  };
         },
-        update: function wallTemplateElementUpdate(map, scope, template, wall) {
-          var selection = scope.game.template_selection;
-          var local =
-              gameTemplateSelectionService.in('local', template.state.stamp,
-                                              selection);
-          var remote =
-              gameTemplateSelectionService.in('remote', template.state.stamp,
-                                              selection);
+        update: function wallTemplateElementUpdate(map, state, template, wall) {
+          var selection = state.game.template_selection;
+          var local = gameTemplateSelectionService
+                .in('local', template.state.stamp, selection);
+          var remote = gameTemplateSelectionService
+                .in('remote', template.state.stamp, selection);
           var selected = (local || remote);
 
           var map_flipped = gameMapService.isFlipped(map);
@@ -49,17 +43,16 @@ angular.module('clickApp.directives')
                                     y: template.state.y+2
                                   };
           var label_text = templateService.fullLabel(template);
-          $window.requestAnimationFrame(function _wallTemplateElementUpdate() {
-            updateWall(template, wall.wall);
-            updateContainer(selected, local, remote, template, wall.container);
-            labelElementService.update(map_flipped,
-                                       zoom_factor,
-                                       label_flip_center,
-                                       label_text_center,
-                                       label_text,
-                                       wall.label);
-          });
-        },
+
+          updateWall(template, wall.wall);
+          updateContainer(selected, local, remote, template, wall.container);
+          labelElementService.update(map_flipped,
+                                     zoom_factor,
+                                     label_flip_center,
+                                     label_text_center,
+                                     label_text,
+                                     wall.label);
+        }
       };
       function updateWall(template, wall) {
         wall.setAttribute('x', (template.state.x-20)+'');
@@ -72,7 +65,7 @@ angular.module('clickApp.directives')
         else container.classList.remove('local');
         if(remote) container.classList.add('remote');
         else container.classList.remove('remote');
-            
+
         container.setAttribute('transform', ('rotate('+
                                              template.state.r+','+
                                              template.state.x+','+

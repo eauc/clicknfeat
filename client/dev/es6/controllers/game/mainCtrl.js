@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('gameMainCtrl', [
     '$scope',
@@ -7,8 +5,8 @@ angular.module('clickApp.controllers')
       console.log('init gameMainCtrl');
 
       $scope.hints.go_to_main = false;
-      
-      $scope.doUseRuler = function doUseRuler() {
+
+      $scope.doUseRuler = () => {
         if($scope.currentModeIs('Ruler')) {
           $scope.doModeAction('modeBackToDefault');
         }
@@ -16,12 +14,13 @@ angular.module('clickApp.controllers')
           $scope.doModeAction('enterRulerMode');
         }
       };
-      $scope.doToggleShowRuler = function doToggleShowRuler() {
-        $scope.doExecuteCommand('setRuler', 'toggleDisplay');
+      $scope.doToggleShowRuler = () => {
+        $scope.stateEvent('Game.command.execute',
+                          'setRuler', ['toggleDisplay', []]);
       };
-      $scope.digestOnGameEvent('changeRemoteRuler', $scope);
+      $scope.digestOnStateChangeEvent('Game.ruler.remote.change', $scope);
 
-      $scope.doUseLos = function doUseLos() {
+      $scope.doUseLos = () => {
         if($scope.currentModeIs('LoS')) {
           $scope.doModeAction('modeBackToDefault');
         }
@@ -29,14 +28,14 @@ angular.module('clickApp.controllers')
           $scope.doModeAction('enterLosMode');
         }
       };
-      $scope.doToggleShowLos = function doToggleShowLos() {
-        $scope.doExecuteCommand('setLos', 'toggleDisplay');
+      $scope.doToggleShowLos = () => {
+        $scope.stateEvent('Game.command.execute',
+                          'setLos', ['toggleDisplay', []]);
       };
-      $scope.digestOnGameEvent('changeRemoteLos', $scope);
-      
-      $scope.doCreateTemplate = function doCreateTemplate(type) {
-        $scope.create.template = { type: type, x: 240, y: 240 };
-        $scope.doSwitchToMode('CreateTemplate', $scope, $scope.modes);
+      $scope.digestOnStateChangeEvent('Game.los.remote.change', $scope);
+
+      $scope.doCreateTemplate = (type) => {
+        $scope.stateEvent('Game.template.create', type);
       };
     }
   ]);

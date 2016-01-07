@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('aoeTemplateMode', [
     'modes',
@@ -19,76 +17,87 @@ angular.module('clickApp.services')
                                            gameRulerService,
                                            promptService) {
       var template_actions = Object.create(templateModeService.actions);
-      template_actions.aoeSize3 = function aoeSize3(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 3,
-                                          stamps, scope, scope.game);
+      template_actions.aoeSize3 = (state) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [3], stamps]);
       };
-      template_actions.aoeSize4 = function aoeSize4(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 4,
-                                          stamps, scope, scope.game);
+      template_actions.aoeSize4 = (state) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [4], stamps]);
       };
-      template_actions.aoeSize5 = function aoeSize5(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 5,
-                                          stamps, scope, scope.game);
+      template_actions.aoeSize5 = (state) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [5], stamps]);
       };
-      template_actions.setTargetModel = function aoeSetTargetModel(scope, event) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates',
-                                          'setTarget', scope.factions, null, event['click#'].target,
-                                          stamps, scope,  scope.game);
+      template_actions.setTargetModel = (state, event) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates',
+                           ['setTarget', [state.factions, null, event['click#'].target],
+                            stamps
+                           ]);
       };
-      template_actions.setMaxDeviation = function rulerSetMaxDeviation(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      template_actions.setMaxDeviation = (state) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
         return R.pipeP(
-          function() {
-            return gameTemplatesService.onStamps$('maxDeviation', stamps, scope.game.templates);
-          },
-          function(maxes) {
+          gameTemplatesService.fromStamps$('maxDeviation', [], stamps),
+          (maxes) => {
             var max = maxes[0];
-            return promptService.prompt('prompt', 'Set AoE max deviation :', max)
-              .catch(function(error) {
+            return promptService
+              .prompt('prompt', 'Set AoE max deviation :', max)
+              .catch((error) => {
                 console.log(error);
                 return null;
               });
           },
-          function(value) {
+          (value) => {
             value = (value === 0) ? null : value;
-            return gameTemplatesService
-              .onStamps('setMaxDeviation', value, stamps, scope.game.templates);
+            return state.event('Game.update', R.lensProp('templates'),
+                               gameTemplatesService.onStamps$('setMaxDeviation', [value], stamps));
           }
-        )();
+        )(state.game.templates);
       };
-      template_actions.deviate = function aoeDeviate(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return R.pipeP(
+      template_actions.deviate = (state) => {
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return R.pipePromise(
           function() {
-            return gameService.executeCommand$('rollDeviation', scope, scope.game);
+            return state.event('Game.command.execute',
+                               'rollDeviation', []);
           },
+          R.always(state),
+          R.path(['game','dice']),
+          R.last,
           function(deviation) {
-            return gameService.executeCommand('onTemplates', 'deviate',
-                                              deviation.r, deviation.d,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onTemplates', [ 'deviate', [deviation.r, deviation.d],
+                                                stamps
+                                              ]);
           }
         )();
       };
-      template_actions.setToRulerTarget = function aoeSetToRulerTarget(scope) {
-        if(!gameRulerService.isDisplayed(scope.game.ruler)) return;
+      template_actions.setToRulerTarget = (state) => {
+        if(!gameRulerService.isDisplayed(state.game.ruler)) return null;
         
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+        var stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
         return R.pipeP(
-          function() {
-            return gameRulerService.targetAoEPosition(scope.game.models,
-                                                      scope.game.ruler);
-          },
-          function(position) {
-            return gameService.executeCommand('onTemplates',
-                                              'setToRuler', position,
-                                              stamps, scope, scope.game);
+          gameRulerService.targetAoEPosition$(state.game.models),
+          (position) => {
+            return state.event('Game.command.execute',
+                               'onTemplates', [ 'setToRuler', [position],
+                                                stamps
+                                              ]);
           }
-        )();
+        )(state.game.ruler);
       };
 
       var template_default_bindings = {
@@ -98,7 +107,7 @@ angular.module('clickApp.services')
         aoeSize5: '5',
         deviate: 'd',
         setMaxDeviation: 'shift+d',
-        setToRulerTarget: 'shift+r',
+        setToRulerTarget: 'shift+r'
       };
       var template_bindings = R.extend(Object.create(templateModeService.bindings),
                                        template_default_bindings);
@@ -112,20 +121,18 @@ angular.module('clickApp.services')
       ], templateModeService.buttons);
 
       var template_mode = {
-        onEnter: function templateOnEnter(/*scope*/) {
-        },
-        onLeave: function templateOnLeave(/*scope*/) {
-        },
+        onEnter: (/*state*/) => {},
+        onLeave: (/*state*/) => {},
         name: 'aoe'+templateModeService.name,
         actions: template_actions,
         buttons: template_buttons,
-        bindings: template_bindings,
+        bindings: template_bindings
       };
       modesService.registerMode(template_mode);
       settingsService.register('Bindings',
                                template_mode.name,
                                template_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(template_mode.bindings, bs);
                                });
       return template_mode;

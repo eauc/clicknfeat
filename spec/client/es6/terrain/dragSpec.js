@@ -5,8 +5,6 @@ describe('drag terrain', function() {
       function(terrainModeService) {
         this.terrainModeService = terrainModeService;
 
-        this.gameService = spyOnService('game');
-
         this.terrainService = spyOnService('terrain');
         this.terrainService.saveState.and.callThrough();
         this.terrainService.eventName.and.callThrough();
@@ -15,18 +13,22 @@ describe('drag terrain', function() {
 
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
 
-        this.scope = {
+        this.state = {
           game: { terrain_selection: 'selection',
                   terrains: [ { state: { stamp: 'stamp1', x: 240, y: 240, r: 180 } },
                             { state: { stamp: 'stamp2', x: 200, y: 300, r:  90 } } ]
                 },
           modes: 'modes',
           factions: 'factions',
-          gameEvent: jasmine.createSpy('gameEvent')
+          changeEvent: jasmine.createSpy('changeEvent'),
+          event: jasmine.createSpy('event')
         };
-
-        mockReturnPromise(this.gameService.executeCommand);
-        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
+        this.state.event.and.callFake((e,l,u) => {
+          if('Game.update' === e) {
+            this.state.game = R.over(l,u, this.state.game);
+          }
+          return 'state.event.returnValue';
+        });
         
         mockReturnPromise(this.gameTerrainsService.findAnyStamps);
         this.gameTerrainsService.findAnyStamps.resolveWith = function(ss, ms) {
@@ -44,7 +46,7 @@ describe('drag terrain', function() {
 
     when('user starts dragging terrain', function() {
       this.ret = this.terrainModeService.actions
-        .dragStartTerrain(this.scope, this.event);
+        .dragStartTerrain(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -71,7 +73,7 @@ describe('drag terrain', function() {
       it('should set current selection', function() {
         expect(this.gameTerrainSelectionService.set)
           .toHaveBeenCalledWith('local', ['stamp'],
-                                this.scope, 'selection');
+                                this.state, 'selection');
       });
 
       it('should update target position', function() {
@@ -80,14 +82,14 @@ describe('drag terrain', function() {
       });
       
       it('should emit changeTerrain event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTerrain-stamp');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.terrain.change.stamp');
       });
     });
 
     when('user drags terrain', function() {
       this.ret = this.terrainModeService.actions
-        .dragTerrain(this.scope, this.event);
+        .dragTerrain(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -100,10 +102,10 @@ describe('drag terrain', function() {
         this.gameTerrainSelectionService.in._retVal = true;
         this.terrainService.isLocked._retVal = false;
         this.terrainModeService.actions
-          .dragStartTerrain(this.scope, this.event);
+          .dragStartTerrain(this.state, this.event);
 
         this.terrainService.setPosition.calls.reset();
-        this.scope.gameEvent.calls.reset();
+        this.state.changeEvent.calls.reset();
 
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -128,14 +130,14 @@ describe('drag terrain', function() {
       });
 
       it('should emit changeTerrain event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeTerrain-stamp');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.terrain.change.stamp');
       });
     });
 
     when('user ends draging terrain', function() {
       this.ret = this.terrainModeService.actions
-        .dragEndTerrain(this.scope, this.event);
+        .dragEndTerrain(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.event = {
@@ -148,9 +150,9 @@ describe('drag terrain', function() {
         this.gameTerrainSelectionService.in._retVal = true;
         this.terrainService.isLocked._retVal = false;
         this.terrainModeService.actions
-          .dragStartTerrain(this.scope, this.event);
+          .dragStartTerrain(this.state, this.event);
 
-        this.scope.gameEvent.calls.reset();
+        this.state.changeEvent.calls.reset();
         this.terrainService.setPosition.calls.reset();
 
         this.event = {
@@ -176,13 +178,12 @@ describe('drag terrain', function() {
       });
 
       it('should execute onTerrains/setPosition command', function() {
-        this.thenExpect(this.ret, function(result) {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains',
-                                  'setPosition', { stamp: 'stamp', x: 270, y: 230, r: 180 },
-                                  ['stamp'], this.scope, this.scope.game);
-          expect(result).toBe('game.executeCommand.returnValue');
-        });
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'onTerrains', [ 'setPosition',
+                                                [ { stamp: 'stamp', x: 270, y: 230, r: 180 } ],
+                                                ['stamp']
+                                              ]);
       });
     });
   });
@@ -193,7 +194,7 @@ describe('drag terrain', function() {
       function(terrainService) {
         this.terrainService = terrainService;
         spyOn(this.terrainService, 'checkState')
-          .and.returnValue('terrain.checkState.returnValue');
+          .and.callFake(R.identity);
       }
     ]));
 
@@ -209,25 +210,22 @@ describe('drag terrain', function() {
       });
 
       it('should set terrain position', function() {
-        expect(R.pick(['x','y','r'], this.terrain.state))
+        expect(R.pick(['x','y','r'], this.ret.state))
           .toEqual({ x: 15, y: 42, r: 180 });
       });
 
       it('should check state', function() {
         expect(this.terrainService.checkState)
-          .toHaveBeenCalledWith(this.terrain);
-        expect(this.ret).toBe('terrain.checkState.returnValue');
+          .toHaveBeenCalledWith(this.ret);
       });
 
       when('terrain is locked', function() {
-        this.terrainService.setLock(true, this.terrain);
+        this.terrain = this.terrainService
+          .setLock(true, this.terrain);
       }, function() {
         it('should reject move', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('Terrain is locked');
-
-            expect(R.pick(['x','y','r'], this.terrain.state))
-              .toEqual({ x: 240, y: 240, r: 180 });
           });
         });
       });
@@ -246,25 +244,22 @@ describe('drag terrain', function() {
       });
       
       it('should set terrain position', function() {
-        expect(R.pick(['x','y','r'], this.terrain.state))
+        expect(R.pick(['x','y','r'], this.ret.state))
           .toEqual({ x: 455, y: 460, r: 180 });
       });
 
       it('should check state', function() {
         expect(this.terrainService.checkState)
-          .toHaveBeenCalledWith(this.terrain);
-        expect(this.ret).toBe('terrain.checkState.returnValue');
+          .toHaveBeenCalledWith(this.ret);
       });
 
       when('terrain is locked', function() {
-        this.terrainService.setLock(true, this.terrain);
+        this.terrain = this.terrainService
+          .setLock(true, this.terrain);
       }, function() {
         it('should reject move', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('Terrain is locked');
-
-            expect(R.pick(['x','y','r'], this.terrain.state))
-              .toEqual({ x: 440, y: 440, r: 180 });
           });
         });
       });

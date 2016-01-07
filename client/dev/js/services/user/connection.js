@@ -2,32 +2,29 @@
 
 angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub', 'websocket', function userConnectionServiceFactory(httpService, pubSubService, websocketService) {
   var userConnectionService = {
-    create: function userConnectionInit(user) {
+    init: function userConnectionInit(user) {
       var connection = {
-        state: { socket: null },
-        channel: pubSubService.init()
+        state: { socket: null }
       };
       return R.assoc('connection', connection, user);
     },
-    open: function userConnectionOpen(user) {
+    open: function userConnectionOpen(state, user) {
       if (R.exists(user.connection.state.socket)) {
         return self.Promise.resolve(user);
       }
 
       var handlers = {
-        close: closeHandler$(user.connection),
-        users: usersMessageHandler$(user.connection),
-        games: gamesMessageHandler$(user.connection),
-        chat: chatMessageHandler$(user.connection)
+        close: closeHandler$(state),
+        users: usersMessageHandler$(state),
+        games: gamesMessageHandler$(state),
+        chat: chatMessageHandler$(state)
       };
 
-      user.connection.state = R.assoc('socket', null, user.connection.state);
-
+      user = R.assocPath(['connection', 'state', 'socket'], null, user);
       return R.pipeP(function () {
         return websocketService.create('/api/users/' + user.state.stamp, 'user', handlers);
       }, function (socket) {
-        user.connection.state = R.assoc('socket', socket, user.connection.state);
-        return user;
+        return R.assocPath(['connection', 'state', 'socket'], socket, user);
       })();
     },
     close: function userConnectionClose(user) {
@@ -37,31 +34,19 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
         }
         return websocketService.close(user.connection.state.socket);
       }, function () {
-        cleanupConnection(user.connection);
-        return user;
+        return R.assoc('connection', cleanupConnection(user.connection), user);
       })();
     },
     active: function userConnectionActive(user) {
       return R.pipe(R.path(['connection', 'state', 'socket']), R.exists)(user);
     },
-    sendChat: function userConnectionSendChat(dest, msg) {
-      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
-      }
-
-      var user = R.last(args);
-
+    sendChat: function userConnectionSendChat(chat, user) {
       if (!userConnectionService.active(user)) {
         return self.Promise.reject('Not active');
       }
 
-      return websocketService.send({
-        type: 'chat',
-        from: user.state.stamp,
-        to: dest,
-        msg: msg,
-        link: R.length(args) === 2 ? R.head(args) : null
-      }, user.connection.state.socket);
+      chat = R.pipe(R.assoc('type', 'chat'), R.assoc('from', user.state.stamp))(chat);
+      return websocketService.send(chat, user.connection.state.socket);
     },
     userNameForStamp: function userNameForStamp(stamp, user) {
       return R.pipe(userForStamp$(stamp), R.defaultTo({ name: 'Unknown' }), R.prop('name'), function (n) {
@@ -77,30 +62,25 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
     }
   };
   function cleanupConnection(connection) {
-    connection.state = R.assoc('socket', null, connection.state);
-    connection.users = [];
+    return R.pipe(R.assocPath(['state', 'socket'], null), R.assoc('users', []))(connection);
   }
-  function closeHandler$(connection) {
-    return function closeHandler() {
-      console.log('User connection: close');
-      cleanupConnection(connection);
-      pubSubService.publish('close', connection.channel);
+  function closeHandler$(state) {
+    return function () {
+      console.error('User connection: close');
+      state.event('User.connection.close');
     };
   }
-  var usersMessageHandler$ = R.curry(function usersMessageHandler(connection, msg) {
+  var usersMessageHandler$ = R.curry(function usersMessageHandler(state, msg) {
     console.log('User connection: users list', msg);
-    connection.users = R.pipe(R.propOr([], 'users'), R.sortBy(R.compose(R.toLower, R.prop('name'))))(msg);
-    pubSubService.publish('users', connection.users, connection.channel);
+    state.event('User.setOnlineUsers', R.pipe(R.propOr([], 'users'), R.sortBy(R.compose(R.toLower, R.prop('name'))))(msg));
   });
-  var gamesMessageHandler$ = R.curry(function gamesMessageHandler(connection, msg) {
+  var gamesMessageHandler$ = R.curry(function gamesMessageHandler(state, msg) {
     console.log('User connection: games list', msg);
-    connection.games = R.pipe(R.propOr([], 'games'))(msg);
-    pubSubService.publish('games', connection.games, connection.channel);
+    state.event('User.setOnlineGames', R.pipe(R.propOr([], 'games'))(msg));
   });
-  var chatMessageHandler$ = R.curry(function chatMessageHandler(connection, msg) {
+  var chatMessageHandler$ = R.curry(function chatMessageHandler(state, msg) {
     console.log('User connection: chat msg', msg);
-    connection.chat = R.pipe(R.defaultTo([]), R.append(msg))(connection.chat);
-    pubSubService.publish('chat', connection.chat, connection.channel);
+    state.event('User.newChatMsg', msg);
   });
   var userForStamp$ = R.curry(function userForStamp(stamp, connection) {
     return R.pipe(R.prop('users'), R.find(R.propEq('stamp', stamp)))(connection);
@@ -108,6 +88,7 @@ angular.module('clickApp.services').factory('userConnection', ['http', 'pubSub',
   var usersForStamps$ = R.curry(function usersForStamps(stamps, connection) {
     return R.pipe(R.map(R.flip(userForStamp$)(connection)), R.reject(R.isNil))(stamps);
   });
+  R.curryService(userConnectionService);
   return userConnectionService;
 }]);
-//# sourceMappingURL=userConnection.js.map
+//# sourceMappingURL=connection.js.map

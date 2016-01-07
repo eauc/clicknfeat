@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('websocket', [
     '$document',
@@ -10,10 +8,12 @@ angular.module('clickApp.services')
                                      jsonStringifierService) {
       return {
         create: function websocketCreate(url, name, handlers) {
-          return new self.Promise(function(resolve, reject) {
+          return new self.Promise((resolve, reject) => {
             name = R.defaultTo(url, name);
-            handlers.error = R.defaultTo(defaultErrorHandler, handlers.error);
-            handlers.close = R.defaultTo(defaultCloseHandler, handlers.close);
+            handlers = R.pipe(
+              R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)),
+              R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler))
+            )(handlers);
 
             var scheme = 'ws://';
             var uri = scheme + self.document.location.host + url;
@@ -39,7 +39,7 @@ angular.module('clickApp.services')
               console.log('WebSocket message', name, event);
               R.pipeP(
                 jsonParserService.parse,
-                function(msg) {
+                (msg) => {
                   if(R.isNil(handlers[msg.type])) {
                     handlers.error('Unknown msg type', msg);
                     return;
@@ -59,17 +59,15 @@ angular.module('clickApp.services')
         send: function websocketSend(event, socket) {
           return R.pipeP(
             jsonStringifierService.stringify,
-            function(data) {
-              socket.send(data);
-            }
+            socket.send
           )(event);
         },
         close: function websocketClose(socket) {
-          return new self.Promise(function(resolve/*, reject */) {
+          return new self.Promise((resolve) => {
             socket.close();
             resolve();
           });
-        },
+        }
       };
     }
   ]);

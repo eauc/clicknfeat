@@ -1,59 +1,57 @@
-'use strict';
-
 describe('create template', function() {
   describe('createTemplateMode service', function() {
     beforeEach(inject([
       'createTemplateMode',
       function(createTemplateModeService) {
         this.createTemplateModeService = createTemplateModeService;
-        this.gameService = spyOnService('game');
 
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'event', 'changeEvent'
         ]);
-        this.scope.create = { template: {} };
+        this.state.create = { template: {} };
         this.game = 'game';
       }
     ]));
 
     describe('onEnter()', function() {
       beforeEach(function() {
-        this.createTemplateModeService.onEnter(this.scope);
+        this.createTemplateModeService.onEnter(this.state);
       });
 
       using([
         [ 'event' ],
-        [ 'enableCreateTemplate' ],
-        [ 'enableMoveMap' ],
+        [ 'Game.template.create.enable' ],
+        [ 'Game.moveMap.enable' ],
       ], function(e) {
         it('should emit '+e.event+' event', function() {
-          expect(this.scope.gameEvent)
+          expect(this.state.changeEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });
     });
 
     when('user move mouse over map', function() {
-      this.createTemplateModeService.actions.moveMap(this.scope, {
-        x: 42, y: 71
-      });
+      this.createTemplateModeService.actions
+        .moveMap(this.state, { x: 42, y: 71 });
     }, function() {
-      it('should update scope\'s create object', function() {
-        expect(this.scope.create.template)
+      it('should update state\'s create object', function() {
+        expect(this.state.create)
           .toEqual({
-            x: 42, y: 71
+            template: {
+              base: { x: 42, y: 71 }
+            }
           });
       });
 
       it('should emit moveCreateTemplate event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('moveCreateTemplate');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.create.update');
       });
     });
 
     when('user create\'s template', function() {
       this.ret = this.createTemplateModeService
-        .actions.create(this.scope, {
+        .actions.create(this.state, {
           'click#': { x: 42, y: 71 }
         });
     }, function() {
@@ -63,44 +61,43 @@ describe('create template', function() {
         [ false     , 0   ],
       ], function(e, d) {
         when('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
-          this.scope.ui_state = { flip_map: e.flip_map };
+          this.state.ui_state = { flip_map: e.flip_map };
         }, function() {
-          it('should update scope\'s create object, '+d, function() {
-            expect(this.scope.create.template)
+          it('should update state\'s create object, '+d, function() {
+            expect(this.state.create)
               .toEqual({
-                x: 42, y: 71, r: e.r
+                template: {
+                  base: { x: 42, y: 71 }
+                }
               });
           });
-        });
-      });
       
-      it('should execute createTemplateCommand', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('createTemplate',
-                                [this.scope.create.template],
-                                this.scope, this.scope.game);
-        expect(this.ret)
-          .toBe('game.executeCommand.returnValue');
+          it('should execute createTemplateCommand', function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'createTemplate', [this.state.create.template, e.flip_map]);
+          });
+        });
       });
     });
 
     describe('onLeave()', function() {
       beforeEach(function() {
-        this.createTemplateModeService.onLeave(this.scope);
+        this.createTemplateModeService.onLeave(this.state);
       });
 
-      it('should reset scope\'s create object', function() {
-        expect(this.scope.create)
+      it('should reset state\'s create object', function() {
+        expect(this.state.create)
           .toEqual({ template: null });
       });
 
       using([
         [ 'event' ],
-        [ 'disableCreateTemplate' ],
-        [ 'disableMoveMap' ],
+        [ 'Game.template.create.disable' ],
+        [ 'Game.moveMap.disable' ],
       ], function(e) {
         it('should emit '+e.event+' event', function() {
-          expect(this.scope.gameEvent)
+          expect(this.state.changeEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });
@@ -112,190 +109,294 @@ describe('create template', function() {
       'createTemplateCommand',
       function(createTemplateCommandService) {
         this.createTemplateCommandService = createTemplateCommandService;
+
         this.templateService = spyOnService('template');
-        mockReturnPromise(this.templateService.create);
         this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
+
+        this.state = {
+          factions: 'factions',
+          changeEvent: jasmine.createSpy('changeEvent')
+        };
+        this.game = { templates: 'templates',
+                      template_selection: 'selection'
+                    };
+
+        var stamp_index = 1;
+        mockReturnPromise(this.templateService.create);
+        this.templateService.create.resolveWith = (m) => {
+          return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
+        };
       }
     ]));
 
-    when('execute(<state>, <scope>, <game>)', function() {
+    when('execute(<create>, <flip>, <state>, <game>)', function() {
       this.ret = this.createTemplateCommandService
-        .execute([this.state], this.scope, this.game);
+        .execute(this.create, this.flip, this.state, this.game);
     }, function() {
       beforeEach(function() {
-        this.state = { state: 'state', type: 'type' };
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
-        ]);
-        this.game = { templates: 'templates',
-                      template_selection: 'selection' };
-
+        this.create = {
+          base: { x: 240, y: 240, r: 180 },
+          templates: [ {
+            x: 0, y: 0, r: 45
+          }, {
+            x: 20, y: 0, r: 0
+          }, {
+            x: 40, y: 0, r: -45
+          } ]
+        };
+        this.flip = false;
       });
 
-      when('template creation fails', function() {
-        this.templateService.create.rejectWith = 'reason';
-      }, function() {
-        it('should reject promise', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('No valid template definition');
-          });
+      it('should create new templates from <create>', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 240, y: 240, r: 225
+            });
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 260, y: 240, r: 180
+            });
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 280, y: 240, r: 135
+            });
         });
       });
-      
-      when('template creation succeeds', function() {
-        this.templateService.create.resolveWith = {
-          state: { stamp: 'stamp'}, type: 'type'
-        };
+
+      when('map is flipped', function() {
+        this.flip = true;
       }, function() {
-        it('should create a new template from <state>', function() {
+        it('should flip new templates positions', function() {
           this.thenExpect(this.ret, function() {
             expect(this.templateService.create)
-              .toHaveBeenCalledWith(this.state);
-          });
-        });
-
-        it('should add new template to <game> templates', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.gameTemplatesService.add)
-              .toHaveBeenCalledWith([{
-                state: { stamp: 'stamp' }, type: 'type'
-              }], 'templates');
-            expect(this.game.templates)
-              .toBe('gameTemplates.add.returnValue');
-          });
-        });
-
-        it('should set local templateSelection to new template', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.gameTemplateSelectionService.set)
-              .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
-            expect(this.game.template_selection)
-              .toBe('gameTemplateSelection.set.returnValue');
-          });
-        });
-
-        it('should emit createTemplate event', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('createTemplate');
-          });
-        });
-
-        it('should return context', function() {
-          this.thenExpect(this.ret, function(ctxt) {
-            expect(this.templateService.saveState)
               .toHaveBeenCalledWith({
-                state: { stamp: 'stamp' }, type: 'type'
+                x: 240, y: 240, r: 405
               });
-            expect(ctxt)
-              .toEqual({
-                templates: ['template.saveState.returnValue'],
-                desc: 'type',
+            expect(this.templateService.create)
+              .toHaveBeenCalledWith({
+                x: 220, y: 240, r: 360
+              });
+            expect(this.templateService.create)
+              .toHaveBeenCalledWith({
+                x: 200, y: 240, r: 315
               });
           });
         });
       });
-    });
-    
-    when('replay(<ctxt>, <scope>, <game>)', function() {
-      this.ret = this.createTemplateCommandService
-        .replay(this.ctxt, this.scope, this.game);
-    }, function() {
-      beforeEach(function() {
-        this.ctxt = {
-          templates: [{ stamp: 'stamp' }],
-          desc: 'type',
-        };
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
-        ]);
-        this.game = { templates: 'templates',
-                      template_selection: 'selection' };
-      });
 
-      when('template creation fails', function() {
+      when('create templates fails', function() {
         this.templateService.create.rejectWith = 'reason';
       }, function() {
-        it('should reject promise', function() {
+        it('should reject command', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('No valid template definition');
           });
         });
       });
 
-      when('template creation succeeds', function() {
-        this.templateService.create.resolveWith = {
-          state: this.ctxt.templates[0]
-        };
-      }, function() {
-        it('should create a new template from <ctxt.template>', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.templateService.create)
-              .toHaveBeenCalledWith({ stamp: 'stamp' });
-          });
+      it('should add new template to <game> templates', function() {
+        this.thenExpect(this.ret, function([ctxt, game]) {
+          expect(this.gameTemplatesService.add)
+            .toHaveBeenCalledWith([
+              { state: { x: 240, y: 240, r: 225,
+                         stamp: 'stamp1'
+                       }
+              },
+              { state: { x: 260, y: 240, r: 180,
+                         stamp: 'stamp2'
+                       }
+              },
+              { state: { x: 280, y: 240, r: 135,
+                         stamp: 'stamp3'
+                       }
+              }
+            ], 'templates');
+          expect(game.templates)
+            .toBe('gameTemplates.add.returnValue');
         });
-        
-        it('should add new template to <game> templates', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.gameTemplatesService.add)
-              .toHaveBeenCalledWith([{ state: { stamp: 'stamp' } }], 'templates');
-            expect(this.game.templates)
-              .toBe('gameTemplates.add.returnValue');
-          });
+      });
+
+      it('should set local templateSelection to new template', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplateSelectionService.set)
+            .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
+                                  this.state, 'selection');
         });
-        
-        it('should set remote templateSelection to new template', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.gameTemplateSelectionService.set)
-              .toHaveBeenCalledWith('remote', ['stamp'], this.scope, 'selection');
-          });
+      });
+
+      it('should emit createTemplate event', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.create');
         });
-        
-        it('should emit createTemplate event', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('createTemplate');
-          });
+      });
+
+      it('should return context', function() {
+        this.thenExpect(this.ret, function([ctxt]) {
+          expect(this.templateService.saveState)
+            .toHaveBeenCalledWith({
+              state: { x: 240, y: 240, r: 225,
+                       stamp: 'stamp1'
+                     }
+            });
+          expect(this.templateService.saveState)
+            .toHaveBeenCalledWith({
+              state: { x: 260, y: 240, r: 180,
+                       stamp: 'stamp2'
+                     }
+            });
+          expect(this.templateService.saveState)
+            .toHaveBeenCalledWith({
+              state: { x: 280, y: 240, r: 135,
+                       stamp: 'stamp3'
+                     }
+            });
+
+          expect(ctxt)
+            .toEqual({
+              templates: [ 'template.saveState.returnValue',
+                           'template.saveState.returnValue',
+                           'template.saveState.returnValue' ],
+              desc: undefined
+            });
         });
       });
     });
 
-    when('undo(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <state>, <game>)', function() {
       this.ret = this.createTemplateCommandService
-        .undo(this.ctxt, this.scope, this.game);
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
-          templates: [{ stamp: 'stamp' }],
-          desc: 'type',
+          templates: [
+            { x: 240, y: 240,
+              stamp: 'stamp'
+            },
+            { x: 260, y: 240,
+              stamp: 'stamp'
+            },
+            { x: 280, y: 240,
+              stamp: 'stamp'
+            }
+          ],
+          desc: 'type'
         };
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
-        ]);
-        this.game = { templates: 'templates',
-                      template_selection: 'selection' };
+      });
 
+      it('should create new templates from <ctxt.templates>', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 240, y: 240,
+              stamp: 'stamp'
+            });
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 260, y: 240,
+              stamp: 'stamp'
+            });
+          expect(this.templateService.create)
+            .toHaveBeenCalledWith({
+              x: 280, y: 240,
+              stamp: 'stamp'
+            });
+        });
+      });
+
+      when('create templates fails', function() {
+        this.templateService.create.rejectWith = 'reason';
+      }, function() {
+        it('should reject command', function() {
+          this.thenExpectError(this.ret, function(reason) {
+            expect(reason).toBe('No valid template definition');
+          });
+        });
+      });
+
+      it('should add new template to <game> templates', function() {
+        this.thenExpect(this.ret, function(game) {
+          expect(this.gameTemplatesService.add)
+            .toHaveBeenCalledWith([
+              { state: { x: 240, y: 240,
+                         stamp: 'stamp1'
+                       }
+              },
+              { state: { x: 260, y: 240,
+                         stamp: 'stamp2'
+                       }
+              },
+              { state: { x: 280, y: 240,
+                         stamp: 'stamp3'
+                       }
+              }
+            ], 'templates');
+          expect(game.templates)
+            .toBe('gameTemplates.add.returnValue');
+        });
+      });
+
+      it('should set remote templateSelection to new template', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.gameTemplateSelectionService.set)
+            .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
+                                  this.state, 'selection');
+        });
+      });
+
+      it('should emit createTemplate event', function() {
+        this.thenExpect(this.ret, function() {
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.create');
+        });
+      });
+    });
+
+    when('undo(<ctxt>, <state>, <game>)', function() {
+      this.game = this.createTemplateCommandService
+        .undo(this.ctxt, this.state, this.game);
+    }, function() {
+      beforeEach(function() {
+        this.ctxt = {
+          templates: [
+            { info: [ 'legion', 'templates', 'locks', 'absylonia1' ],
+              x: 240, y: 240,
+              stamp: 'stamp1'
+            },
+            { info: [ 'legion', 'templates', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+              x: 260, y: 240,
+              stamp: 'stamp2'
+            },
+            { info: [ 'legion', 'templates', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+              x: 280, y: 240,
+              stamp: 'stamp3'
+            }
+          ],
+          desc: 'type'
+        };
       });
 
       it('should remove <ctxt.template> from <game> templates', function() {
         expect(this.gameTemplatesService.removeStamps)
-          .toHaveBeenCalledWith(['stamp'], 'templates');
+          .toHaveBeenCalledWith(['stamp1','stamp2','stamp3'], 'templates');
         expect(this.game.templates)
           .toBe('gameTemplates.removeStamps.returnValue');
       });
 
       it('should remove <ctxt.template> from templateSelection', function() {
         expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('local', ['stamp'], this.scope, 'selection');
+          .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
+                                this.state, 'selection');
         expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('remote', ['stamp'], this.scope,
-                                'gameTemplateSelection.removeFrom.returnValue');
+          .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
+                                this.state, 'gameTemplateSelection.removeFrom.returnValue');
       });
 
       it('should emit createTemplate event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.template.create');
       });
     });
   });

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('load settings', function() {
   describe('settings service', function() {
     beforeEach(inject([ 'settings', function(settingsService) {
@@ -14,7 +12,7 @@ describe('load settings', function() {
           Bindings: {
             test1: { binding1: 'a1',
                      binding2: 'a2' },
-            test2: { binding1: 'b1' },
+            test2: { binding1: 'b1' }
           }
         };
         this.test1_updater = jasmine.createSpy('test1_updater');
@@ -63,7 +61,7 @@ describe('load settings', function() {
           Bindings: {
             test1: { binding1: 'a',
                      binding3: 'd' },
-            test3: { binding2: 'c' },
+            test3: { binding2: 'c' }
           }
         };
       }, function() {

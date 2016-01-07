@@ -6,29 +6,15 @@
     </div>
     <div class="panel-content">
       <form>
-        <div class="form-group">
-          <label class="control-label"
-                 for="import-file">
-            Choose file
-          </label>
-          <input id="import-file"
-                 type="file"
-                 multiple
-                 ea-file="doOpenSettingsFile(file)" />
-        </div>
+        <input class="form-control"
+               id="import-file"
+               type="file"
+               multiple
+               ea-file="doLoadSettingsFile(file)" />
       </form>
       <div class="error-list">
-        <div ng-repeat="err in open_result">
-          <strong class="text-warning">{{::err}}</strong>
-        </div>
+        <strong class="text-warning">{{load_settings_result}}</strong>
       </div>
-    </div>
-    <div class="panel-footer">
-      <button type="button"
-              class="btn btn-default"
-              ng-click="doResetSettings({})">
-        Reset Settings
-      </button>
     </div>
   </div>
   <div class="panel panel-info">
@@ -38,10 +24,16 @@
     </div>
     <div class="panel-content">
       <a class="btn btn-default"
-         ng-href="{{save.url}}"
-         download="{{::save.name}}">
+         ng-disabled="!state.exports.settings.url"
+         ng-href="{{state.exports.settings.url}}"
+         download="{{::state.exports.settings.name}}">
         Download Settings File
       </a>
     </div>
   </div>
+  <button type="button"
+          class="btn btn-default"
+          ng-click="doResetSettings({})">
+    Reset Settings
+  </button>
 </div>

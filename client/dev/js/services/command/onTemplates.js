@@ -2,61 +2,62 @@
 
 angular.module('clickApp.services').factory('onTemplatesCommand', ['commands', 'template', 'gameTemplates', 'gameTemplateSelection', function onTemplatesCommandServiceFactory(commandsService, templateService, gameTemplatesService, gameTemplateSelectionService) {
   var onTemplatesCommandService = {
-    execute: function onTemplatesExecute(method) /*, stamps, scope, game */{
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
-      var game = R.last(args);
-      var scope = R.nth(-2, args);
-      var stamps = R.nth(-3, args);
+    execute: function onTemplatesExecute(method, args, stamps, state, game) {
       var ctxt = {
         before: [],
         after: [],
         desc: method
       };
 
-      args = R.pipe(R.slice(0, -2), R.append(game.templates), R.prepend(method))(args);
-
-      return R.pipeP(function () {
-        return gameTemplatesService.onStamps('saveState', stamps, game.templates);
-      }, function (before) {
+      return R.pipePromise(gameTemplatesService.fromStamps$('saveState', [], stamps), function (before) {
         ctxt.before = before;
 
-        return gameTemplatesService.onStamps.apply(null, args);
-      }, function () {
-        return gameTemplatesService.onStamps('saveState', stamps, game.templates);
+        return gameTemplatesService.onStamps(method, args, stamps, game.templates);
+      }, function (templates) {
+        game = R.assoc('templates', templates, game);
+
+        return gameTemplatesService.fromStamps('saveState', [], stamps, game.templates);
       }, function (after) {
         ctxt.after = after;
 
         R.forEach(function (stamp) {
-          scope.gameEvent('changeTemplate-' + stamp);
+          state.changeEvent('Game.template.change.' + stamp);
         }, stamps);
 
-        return ctxt;
-      })();
+        return [ctxt, game];
+      })(game.templates);
     },
-    replay: function onTemplatesRedo(ctxt, scope, game) {
-      return R.pipe(R.map(R.prop('stamp')), function (stamps) {
-        return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.addIndex(R.forEach)(function (template, index) {
-          if (R.isNil(template)) return;
+    replay: function onTemplatesRedo(ctxt, state, game) {
+      var stamps = R.pluck('stamp', ctxt.after);
+      return R.pipePromise(gameTemplatesService.setStateStamps$(ctxt.after, stamps), function (templates) {
+        game = R.assoc('templates', templates, game);
 
-          templateService.setState(ctxt.after[index], template);
-          scope.gameEvent('changeTemplate-' + templateService.eventName(template));
-        }), function () {
-          game.template_selection = gameTemplateSelectionService.set('remote', stamps, scope, game.template_selection);
-        })(game.templates);
-      })(ctxt.after);
+        return gameTemplateSelectionService.set('remote', stamps, state, game.template_selection);
+      }, function (selection) {
+        game = R.assoc('template_selection', selection, game);
+
+        R.forEach(function (stamp) {
+          state.changeEvent('Game.template.change.' + stamp);
+        }, stamps);
+
+        return game;
+      })(game.templates);
     },
-    undo: function onTemplatesUndo(ctxt, scope, game) {
-      return R.pipe(R.map(R.prop('stamp')), function (stamps) {
-        return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.addIndex(R.forEach)(function (template, index) {
-          templateService.setState(ctxt.before[index], template);
-          scope.gameEvent('changeTemplate-' + templateService.eventName(template));
-        }), function () {
-          game.template_selection = gameTemplateSelectionService.set('remote', stamps, scope, game.template_selection);
-        })(game.templates);
-      })(ctxt.before);
+    undo: function onTemplatesUndo(ctxt, state, game) {
+      var stamps = R.pluck('stamp', ctxt.before);
+      return R.pipePromise(gameTemplatesService.setStateStamps$(ctxt.before, stamps), function (templates) {
+        game = R.assoc('templates', templates, game);
+
+        return gameTemplateSelectionService.set('remote', stamps, state, game.template_selection);
+      }, function (selection) {
+        game = R.assoc('template_selection', selection, game);
+
+        R.forEach(function (stamp) {
+          state.changeEvent('Game.template.change.' + stamp);
+        }, stamps);
+
+        return game;
+      })(game.templates);
     }
   };
   commandsService.registerCommand('onTemplates', onTemplatesCommandService);

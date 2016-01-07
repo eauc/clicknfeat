@@ -1,5 +1,3 @@
-'use strict';
-
 describe('game import list', function() {
   describe('gameFactionsService', function() {
     beforeEach(inject([ 'gameFactions', function(gameFactionsService) {

@@ -18,7 +18,7 @@
     "angular-mocks": "~1.4",
     "angular-ui-router": "~0.2",
     "bootstrap": "~3.3",
-    "ramda": "~0.18",
+    "ramda": "~0.19",
     "underscore.string": "~3.2",
     "xregexp": "~3.0",
     "mousetrap": "https://github.com/eauc/mousetrap.git#master",

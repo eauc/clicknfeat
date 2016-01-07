@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('clickApp.services').factory('modelArea', ['gameFactions', function modelAreaServiceFactory(gameFactionsService) {
-  return function () /*modelService*/{
+  return function () {
     var modelAreaService = {
       isCtrlAreaDisplayed: function modelIsCtrlAreaDisplayed(factions, model) {
         return R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
@@ -10,16 +10,16 @@ angular.module('clickApp.services').factory('modelArea', ['gameFactions', functi
       },
       setCtrlAreaDisplay: function modelSetCtrlAreaDisplay(set, model) {
         if (set) {
-          model.state.dsp = R.uniq(R.append('a', model.state.dsp));
+          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('a')), model);
         } else {
-          model.state.dsp = R.reject(R.equals('a'), model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('a')), model);
         }
       },
       toggleCtrlAreaDisplay: function modelToggleCtrlAreaDisplay(model) {
         if (R.find(R.equals('a'), model.state.dsp)) {
-          model.state.dsp = R.reject(R.equals('a'), model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('a')), model);
         } else {
-          model.state.dsp = R.append('a', model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.append('a'), model);
         }
       },
       isAreaDisplayed: function modelIsAreaDisplayed(model) {
@@ -29,10 +29,12 @@ angular.module('clickApp.services').factory('modelArea', ['gameFactions', functi
         return model.state.are;
       },
       setAreaDisplay: function modelSetAreaDisplay(area, model) {
-        model.state.are = area;
+        return R.assocPath(['state', 'are'], area, model);
       },
       toggleAreaDisplay: function modelToggleAreaDisplay(area, model) {
-        model.state.are = area === model.state.are ? null : area;
+        return R.over(R.lensPath(['state', 'are']), function (are) {
+          return area === are ? null : area;
+        }, model);
       }
     };
     return modelAreaService;

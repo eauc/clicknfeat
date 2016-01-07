@@ -1,37 +1,31 @@
 angular.module('clickApp.services')
   .factory('gameConnection', [
-    'pubSub',
     'websocket',
-    'commands',
-    function gameConnectionServiceFactory(pubSubService,
-                                          websocketService,
-                                          commandsService) {
+    function gameConnectionServiceFactory(websocketService) {
       var gameConnectionService = {
         create: function gameConnectionInit(game) {
           var connection = {
-            state: { socket: null },
-            channel: pubSubService.init()
+            state: { socket: null }
           };
           return R.assoc('connection', connection, game);
         },
-        open: function gameConnectionOpen(user_name, scope, game) {
+        open: function gameConnectionOpen(user_name, state, game) {
           if(R.exists(game.connection.state.socket)) {
-            return self.Promise.resolve(game.connection);
+            return self.Promise.resolve(game);
           }
           user_name = s.trim(user_name);
 
           var handlers = {
-            close: closeHandler$(game),
-            chat: chatHandler$(scope, game),
-            replayCmd: replayCmdHandler$(scope, game),
-            undoCmd: undoCmdHandler$(scope, game),
-            cmdBatch: cmdBatchHandler$(scope, game),
-            setCmds: setCmdsHandler$(scope, game),
-            players: playersHandler$(scope, game),
+            close: closeHandler$(state),
+            chat: chatHandler$(state),
+            replayCmd: replayCmdHandler$(state),
+            undoCmd: undoCmdHandler$(state),
+            cmdBatch: cmdBatchHandler$(state),
+            setCmds: setCmdsHandler$(state),
+            players: playersHandler$(state)
           };
 
-          game.connection.state = R.assoc('socket', null,
-                                          game.connection.state);
+          game = R.assocPath(['connection','state','socket'], null, game);
 
           var url = [
             '/api/games',
@@ -52,26 +46,25 @@ angular.module('clickApp.services')
                 .create(url, 'game', handlers);
             },
             (socket) => {
-              game.connection.state = R.assoc('socket', socket,
-                                              game.connection.state);
-              return game;
+              return R.assocPath(['connection', 'state', 'socket'],
+                                 socket, game);
             }
           )();
         },
         close: function gameConnectionClose(game) {
-          return R.pipeP(
-            () => {
-              if(R.isNil(game.connection.state.socket)) {
-                return self.Promise.resolve();
-              }
-              return websocketService
-                .close(game.connection.state.socket);
+          return R.pipePromise(
+            R.path(['connection','state','socket']),
+            (socket) => {
+              if(R.isNil(game)) return null;
+
+              return websocketService.close(socket);
             },
-            () => {
-              cleanupConnection(game.connection);
-              return game;
-            }
-          )();
+            R.always(game),
+            gameConnectionService.cleanup
+          )(game);
+        },
+        cleanup: function gameConnectionCleanup(game) {
+          return R.assocPath(['connection','state','socket'], null, game);
         },
         active: function gameConnectionActive(game) {
           return R.pipe(
@@ -79,106 +72,74 @@ angular.module('clickApp.services')
             R.exists
           )(game);
         },
-        sendEvent: function gameConnectionSendEvent(event, game) {
-          if(!gameConnectionService.active(game)) {
-            return self.Promise.reject('Not active');
-          }
-          return websocketService
-            .send(event, game.connection.state.socket);
+        sendReplayCommand: function gameConnectionSendReplayCommand(command, game) {
+          return R.pipeP(
+            gameConnectionService.sendEvent$({
+              type: 'replayCmd',
+              cmd: command
+            }),
+            (game) => {
+              return R.over(R.lensProp('commands_log'),
+                            R.compose(R.append(command), R.defaultTo([])),
+                            game);
+            }
+          )(game);
         },
+        sendUndoCommand: function gameConnectionSendUndoCommand(command, game) {
+          return R.pipeP(
+            gameConnectionService.sendEvent$({
+              type: 'undoCmd',
+              cmd: command
+            }),
+            (game) => {
+              return R.over(R.lensProp('undo_log'),
+                            R.compose(R.append(command), R.defaultTo([])),
+                            game);
+            }
+          )(game);
+        },
+        sendEvent: function gameConnectionSendEvent(event, game) {
+          return R.pipePromise(
+            () => {
+              if(!gameConnectionService.active(game)) {
+                return self.Promise.reject('Not active');
+              }
+              return websocketService
+                .send(event, game.connection.state.socket);
+            },
+            R.always(game)
+          )();
+        }
       };
-      function cleanupConnection(connection) {
-        connection.state = R.assoc('socket', null,
-                                   connection.state);
-      }
-      function closeHandler$(game) {
-        return function closeHandler() {
-          console.log('Game connection: close');
-          cleanupConnection(game.connection);
-          pubSubService.publish('close', game.connection.channel);
+      function closeHandler$(state) {
+        return () => {
+          console.error('Game connection: close');
+          state.event('Game.connection.close');
         };
       }
-      var replayCmdHandler$ = R.curry(function replayCmdHandler(scope, game, msg) {
-        console.log('Game connection: replayCmd event', msg);
-        return R.pipePromise(
-          (command) => {
-            if(R.find(R.propEq('stamp', command.stamp), game.commands_log)) {
-              game.commands_log = R.reject(R.propEq('stamp', command.stamp),
-                                           game.commands_log);
-              console.log('Game connection: replayCmd log', msg);
-              return null;
-            }
-            return commandsService.replay(command, scope, game);
-          },  
-          () => {
-            game.undo = R.reject(R.propEq('stamp', msg.cmd.stamp),
-                                 game.undo);
-            if(!msg.cmd.do_not_log) {
-              game.commands = R.append(msg.cmd, game.commands);
-            }
-            scope.gameEvent('command', 'replay');
-
-            return scope.saveGame(game);
-          }
-        )(msg.cmd);
+      var replayCmdHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: replayCmd', msg);
+        state.event('Game.command.replay', msg.cmd);
       });
-      var undoCmdHandler$ = R.curry(function undoCmdHandler(scope, game, msg) {
-        console.log('Game connection: undoCmd event', msg);
-        return R.pipePromise(
-          (command) => {
-            if(R.find(R.propEq('stamp', command.stamp), game.undo_log)) {
-              game.undo_log = R.reject(R.propEq('stamp', command.stamp),
-                                       game.undo_log);
-              console.log('Game connection: undoCmd log', msg);
-              return null;
-            }
-            return commandsService.undo(command, scope, game);
-          },
-          () => {
-            game.commands = R.reject(R.propEq('stamp', msg.cmd.stamp),
-                                     game.commands);
-            game.undo = R.append(msg.cmd, game.undo);
-
-            scope.gameEvent('command', 'undo');
-
-            return scope.saveGame(game);
-          }
-        )(msg.cmd);
+      var undoCmdHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: undoCmd', msg);
+        state.event('Game.command.undo', msg.cmd);
       });
-      var cmdBatchHandler$ = R.curry(function cmdBatchHandler(scope, game, msg) {
-        console.log('Game connection: cmdBatch event', msg);
-        scope.gameEvent('gameLoading');
-        return R.pipeP(
-          () => {
-            return commandsService
-              .replayBatch(msg.cmds, scope, game);
-          },
-          () => {
-            game.commands = R.concat(game.commands, msg.cmds);
-            if(msg.end) scope.gameEvent('gameLoaded');
-
-            return scope.saveGame(game);
-          }
-        )();
+      var cmdBatchHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: cmdBatch', msg);
+        state.event('Game.command.replayBatch', msg.cmds);
       });
-      var chatHandler$ = R.curry(function chatHandler(scope, game, msg) {
-        console.log('Game connection: chat event', msg);
-        game.chat = R.append(msg.chat, game.chat);
-
-        scope.gameEvent('chat');
-        return scope.saveGame(game);
+      var chatHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: chat msg', msg);
+        state.event('Game.newChatMsg', msg);
       });
-      var setCmdsHandler$ = R.curry(function setCmdsHandler(scope, game, msg) {
-        console.log('Game connection: setCmds event', msg);
-        game[msg.where] = msg.cmds;
-
-        return scope.saveGame(game);
+      var setCmdsHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: setCmds', msg);
+        state.event('Game.setCmds', msg);
       });
-      var playersHandler$ = R.curry(function playersHandler(scope, game, msg) {
-        console.log('Game connection: players event', msg);
-        game.players = msg.players;
-
-        return scope.saveGame(game);
+      var playersHandler$ = R.curry((state, msg) => {
+        console.log('Game connection: players', msg);
+        state.event('Game.setPlayers', msg.players);
       });
       R.curryService(gameConnectionService);
       return gameConnectionService;

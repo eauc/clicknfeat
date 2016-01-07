@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('sprayTemplateMode', [
     'modes',
@@ -18,109 +16,119 @@ angular.module('clickApp.services')
                                              gameTemplatesService,
                                              gameTemplateSelectionService,
                                              gameModelsService) {
-      var template_actions = Object.create(templateModeService.actions);
-      template_actions.spraySize6 = function spraySize6(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 6,
-                                          stamps, scope, scope.game);
+      let template_actions = Object.create(templateModeService.actions);
+      template_actions.spraySize6 = (state) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [6], stamps]);
       };
-      template_actions.spraySize8 = function spraySize8(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 8,
-                                          stamps, scope, scope.game);
+      template_actions.spraySize8 = (state) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [8], stamps]);
       };
-      template_actions.spraySize10 = function spraySize10(scope) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setSize', 10,
-                                          stamps, scope, scope.game);
+      template_actions.spraySize10 = (state) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', ['setSize', [10], stamps]);
       };
-      template_actions.setOriginModel = function spraySetOriginModel(scope, event) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-        return gameService.executeCommand('onTemplates', 'setOrigin',
-                                          scope.factions, event['click#'].target,
-                                          stamps, scope,  scope.game);
+      template_actions.setOriginModel = (state, event) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return state.event('Game.command.execute',
+                           'onTemplates', [ 'setOrigin',
+                                            [state.factions, event['click#'].target],
+                                            stamps
+                                          ]);
       };
-      template_actions.setTargetModel = function spraySetTargetModel(scope, event) {
-        var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
+      template_actions.setTargetModel = (state, event) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
         return R.pipeP(
           gameTemplatesService.findStamp$(stamps[0]),
           sprayTemplateService.origin,
-          function(origin) {
-            if(R.isNil(origin)) return;
+          (origin) => {
+            if(R.isNil(origin)) return null;
 
-            return gameModelsService.findStamp(origin, scope.game.models);
+            return gameModelsService
+              .findStamp(origin, state.game.models);
           },
-          function(origin_model) {
-            if(R.isNil(origin_model)) return;
+          (origin_model) => {
+            if(R.isNil(origin_model)) return null;
           
-            return gameService.executeCommand('onTemplates', 'setTarget',
-                                              scope.factions, origin_model, event['click#'].target,
-                                              stamps, scope,  scope.game);
+            return state.event('Game.command.execute',
+                               'onTemplates', [ 'setTarget',
+                                                [state.factions, origin_model, event['click#'].target],
+                                                stamps
+                                              ]);
           }
-        )(scope.game.templates);
+        )(state.game.templates);
       };
-      var moves = [
+      let moves = [
         ['rotateLeft', 'left'],
         ['rotateRight', 'right'],
       ];
-      function buildTemplateMove(move, small) {
-        return function templateMove(scope) {
-          var stamps = gameTemplateSelectionService.get('local', scope.game.template_selection);
-          return R.pipeP(
-            function() {
-              return gameTemplatesService.findStamp(stamps[0], scope.game.templates);
-            },
-            sprayTemplateService.origin,
-            function(origin) {
-              if(R.isNil(origin)) return;
+      let buildTemplateMove$ = R.curry((move, small, state) => {
+        let stamps = gameTemplateSelectionService
+              .get('local', state.game.template_selection);
+        return R.pipeP(
+          function() {
+            return gameTemplatesService
+              .findStamp(stamps[0], state.game.templates);
+          },
+          sprayTemplateService.origin,
+          (origin) => {
+            if(R.isNil(origin)) return null;
               
-              return gameModelsService.findStamp(origin, scope.game.models);
-            },
-            function(origin_model) {
-              return gameService
-                .executeCommand('onTemplates', move[0],
-                                scope.factions, origin_model, small,
-                                stamps, scope, scope.game);
-            }
-          )();
-        };
-      }
-      R.forEach(function(move) {
-        template_actions[move[0]] = buildTemplateMove(move, false);
-        template_actions[move[0]+'Small'] = buildTemplateMove(move, true);
+            return gameModelsService
+              .findStamp(origin, state.game.models);
+          },
+          (origin_model) => {
+            return state.event('Game.command.execute',
+                               'onTemplates', [ move,
+                                                [state.factions, origin_model, small],
+                                                stamps
+                                              ]);
+          }
+        )();
+      });
+      R.forEach(([move]) => {
+        template_actions[move] = buildTemplateMove$(move, false);
+        template_actions[move+'Small'] = buildTemplateMove$(move, true);
       }, moves);
-      var template_default_bindings = {
+      let template_default_bindings = {
         setOriginModel: 'ctrl+clickModel',
         setTargetModel: 'shift+clickModel',
         spraySize6: '6',
         spraySize8: '8',
-        spraySize10: '0',
+        spraySize10: '0'
       };
-      var template_bindings = R.extend(Object.create(templateModeService.bindings),
+      let template_bindings = R.extend(Object.create(templateModeService.bindings),
                                        template_default_bindings);
 
-      var template_buttons = R.concat([
+      let template_buttons = R.concat([
         [ 'Size', 'toggle', 'size' ],
         [ 'Spray6', 'spraySize6', 'size' ],
         [ 'Spray8', 'spraySize8', 'size' ],
         [ 'Spray10', 'spraySize10', 'size' ],
       ], templateModeService.buttons);
 
-      var template_mode = {
-        onEnter: function templateOnEnter(/*scope*/) {
-        },
-        onLeave: function templateOnLeave(/*scope*/) {
-        },
+      let template_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'spray'+templateModeService.name,
         actions: template_actions,
         buttons: template_buttons,
-        bindings: template_bindings,
+        bindings: template_bindings
       };
       modesService.registerMode(template_mode);
       settingsService.register('Bindings',
                                template_mode.name,
                                template_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(template_mode.bindings, bs);
                                });
       return template_mode;

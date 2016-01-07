@@ -1,84 +1,41 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', '$window', 'pubSub', 'prompt', 'settings', 'user', 'gameBoard', 'gameTerrainInfo', 'gameFactions', 'gameScenario', 'allModes', function ($scope, $state, $window, pubSubService, promptService, settingsService, userService, gameBoardService, gameTerrainInfoService, gameFactionsService, gameScenarioService) {
+angular.module('clickApp.controllers').controller('mainCtrl', ['$scope', '$state', 'state', 'user', function ($scope, $state, stateService, userService) {
   console.log('init mainCtrl');
 
-  $scope.boards_ready = gameBoardService.init().then(function (boards) {
-    $scope.boards = boards;
-    console.log('board', boards);
-  });
-  $scope.terrains_ready = gameTerrainInfoService.init().then(function (terrains) {
-    $scope.terrains = terrains;
-    console.log('terrains', terrains);
-  });
-  $scope.factions_ready = gameFactionsService.init().then(function (factions) {
-    $scope.factions = factions;
-    $scope.factions_references = gameFactionsService.buildReferences(factions);
-    console.log('factions', factions, $scope.factions_references);
-  });
-  $scope.scenario_ready = gameScenarioService.init().then(function (scenarios) {
-    $scope.scenarios = scenarios;
-    console.log('scenarios', scenarios);
-  });
-  $scope.settings_ready = settingsService.init().then(function (settings) {
-    $scope.settings = settings;
-    console.log('settings', settings);
-  });
-  $scope.data_ready = self.Promise.all([$scope.boards_ready, $scope.terrains_ready, $scope.factions_ready, $scope.scenario_ready, $scope.settings_ready]).then(function () {
-    console.log('data ready');
-  });
-  $scope.doResetSettings = function doResetSettings(data) {
-    R.pipePromise(settingsService.bind, settingsService.update, function (settings) {
-      $scope.settings = settings;
-      $scope.$digest();
-    })(data);
+  $scope.state = stateService.init();
+  $scope.stateEvent = function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return stateService.event.apply(null, [].concat(args, [$scope.state]));
   };
-  $scope.reloadFactions = function reloadFactions() {
-    return gameFactionsService.init().then(function (factions) {
-      $scope.factions = factions;
-      console.log('factions', factions);
+  $scope.onStateChangeEvent = function (event, listener, scope) {
+    var unsubscribe = stateService.onChangeEvent(event, listener, $scope.state);
+    scope.$on('$destroy', function () {
+      unsubscribe();
     });
   };
+  $scope.digestOnStateChangeEvent = function (event, scope) {
+    $scope.onStateChangeEvent(event, function () {
+      scope.$digest();
+    }, scope);
+  };
+  $scope.reloadFactions = function () {
+    stateService.event('Factions.reload', $scope.state);
+  };
 
-  $scope.user = {};
-  $scope.user_ready = R.pipeP(userService.init, function onLoadUser(user) {
-    $scope.user = user;
-    console.log('loaded user', $scope.user);
-    $scope.checkUser();
-    $scope.$digest();
-    pubSubService.subscribe('#watch#', function () {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      console.log('UserConnection event', args);
-      $scope.$digest();
-    }, $scope.user.connection.channel);
-    pubSubService.subscribe('close', function () {
-      if (userService.online($scope.user)) {
-        R.pipeP(function () {
-          return promptService.prompt('alert', 'Server connection lost.');
-        }, function () {
-          return userService.toggleOnline($scope.user);
-        }, $scope.setUser)();
-      }
-    }, $scope.user.connection.channel);
-  })();
   $scope.userIsValid = function () {
-    return userService.isValid($scope.user);
+    return userService.isValid($scope.state.user);
   };
   $scope.checkUser = function () {
     if (!$scope.userIsValid()) {
       $state.go('user');
     }
   };
-  $scope.setUser = function (new_user) {
-    return R.pipePromise(function (new_user) {
-      console.log('set user', new_user);
-      $scope.user = new_user;
-      $scope.$digest();
-    })(new_user);
-  };
+  $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
+  $scope.digestOnStateChangeEvent('User.change', $scope);
 
   $scope.goToState = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {

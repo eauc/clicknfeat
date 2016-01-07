@@ -29,24 +29,21 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
         return gameTemplatesService.findStamp(stamp, templates).catch(R.always(null));
       }), R.promiseAll, function (stamps) {
         if (R.isEmpty(R.reject(R.isNil, stamps))) {
-          console.log('DeleteTemplate : no templates found');
           return self.Promise.reject('No template found');
         }
         return stamps;
       })(stamps);
     },
-    onStamps: function templatesOnStamps() {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      var templates = R.last(args);
-      var stamps = R.nth(-2, args);
-
-      args = R.slice(0, -2, args);
-      return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.map(function (template) {
-        return templateService.call.apply(null, R.append(template, args));
-      }), R.promiseAll)(templates);
+    fromStamps: function templatesFromStamps(method, args, stamps, templates) {
+      return fromStamps$(R.compose(R.always, R.always(null)), method, args, stamps, templates);
+    },
+    onStamps: function templatesOnStamps(method, args, stamps, templates) {
+      return R.pipeP(fromStamps$(R.always, method, args, stamps), updateTemplates$(templates))(templates);
+    },
+    setStateStamps: function templatesSetStateStamps(states, stamps, templates) {
+      return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.addIndex(R.map)(function (template, index) {
+        return R.isNil(template) ? null : templateService.setState(states[index], template);
+      }), R.reject(R.isNil), updateTemplates$(templates))(templates);
     },
     add: function templatesAdd(temps, templates) {
       return R.pipe(gameTemplatesService.removeStamps$(R.map(R.path(['state', 'stamp']), temps)), function (templates) {
@@ -66,19 +63,7 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
       return R.find(R.pathEq(['state', 'stamp'], stamp), templates.locked);
     },
     lockStamps: function templatesLockStamps(lock, stamps, templates) {
-      return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.forEach(templateService.setLock$(lock)), function () {
-        var _R$pipe = R.pipe(gameTemplatesService.all, R.partition(templateService.isLocked))(templates);
-
-        var _R$pipe2 = _slicedToArray(_R$pipe, 2);
-
-        var locked = _R$pipe2[0];
-        var active = _R$pipe2[1];
-
-        return {
-          active: active,
-          locked: locked
-        };
-      })(templates);
+      return R.pipePromise(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.map(templateService.setLock$(lock)), updateTemplates$(templates))(templates);
     },
     modeForStamp: function templateSelectionModeForStamp(stamp, templates) {
       return R.pipeP(gameTemplatesService.findStamp$(stamp), R.path(['state', 'type']), R.defaultTo('aoe'), function (type) {
@@ -86,6 +71,24 @@ angular.module('clickApp.services').factory('gameTemplates', ['template', functi
       })(templates);
     }
   };
+  var fromStamps$ = R.curry(function (onError, method, args, stamps, templates) {
+    return R.pipeP(gameTemplatesService.findAnyStamps$(stamps), R.reject(R.isNil), R.map(function (template) {
+      return self.Promise.resolve(templateService.call(method, args, template)).catch(onError(template));
+    }), R.promiseAll)(templates);
+  });
+  var updateTemplates$ = R.curry(function (templates, news) {
+    return R.pipe(gameTemplatesService.all, R.concat(news), R.uniqBy(R.path(['state', 'stamp'])), R.partition(templateService.isLocked), function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2);
+
+      var locked = _ref2[0];
+      var active = _ref2[1];
+
+      return {
+        active: active,
+        locked: locked
+      };
+    })(templates);
+  });
   R.curryService(gameTemplatesService);
   return gameTemplatesService;
 }]);

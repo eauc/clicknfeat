@@ -1,5 +1,3 @@
-'use strict';
-
 describe('label model', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -11,16 +9,17 @@ describe('label model', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user clear models labels', function() {
       this.ret = this.modelsModeService.actions
-        .clearLabel(this.scope);
+        .clearLabel(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamps'];
@@ -30,10 +29,9 @@ describe('label model', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
         
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'clearLabel', ['stamps'],
-                                this.scope, this.scope.game);
-        expect(this.ret).toBe('game.executeCommand.returnValue');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'onModels', ['clearLabel', [], ['stamps']]);
       });
     });
   });
@@ -50,17 +48,17 @@ describe('label model', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       gameEvent: jasmine.createSpy('gameEvent'),
+                       changeEvent: jasmine.createSpy('changeEvent')
                      };
       }
     ]));
 
     when('user open edit label on model', function() {
       this.ret = this.modelBaseModeService.actions
-        .openEditLabel(this.scope);
+        .openEditLabel(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -68,8 +66,9 @@ describe('label model', function() {
       
       it('should emit openEditLabel event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('openEditLabel', 'gameModels.findStamp.returnValue');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.editLabel.open',
+                                  'gameModels.findStamp.returnValue');
         });
       });
     });
@@ -110,8 +109,8 @@ describe('label model', function() {
         [ 'label2'  , ['label1', 'label2'] ],
       ], function(e, d) {
         it('should add <label> to model\'s labels, '+d, function() {
-          this.modelService.addLabel(e.label, this.model);
-          expect(this.model.state.l)
+          this.ret = this.modelService.addLabel(e.label, this.model);
+          expect(this.ret.state.l)
             .toEqual(e.result);
         });
       });
@@ -130,8 +129,8 @@ describe('label model', function() {
         [ 'unknown'  , ['label1', 'label2'] ],
       ], function(e, d) {
         it('should remove <label> from model\'s labels, '+d, function() {
-          this.modelService.removeLabel(e.label, this.model);
-          expect(this.model.state.l)
+          this.ret = this.modelService.removeLabel(e.label, this.model);
+          expect(this.ret.state.l)
             .toEqual(e.result);
         });
       });
@@ -145,8 +144,8 @@ describe('label model', function() {
       });
 
       it('should remove all labels from model', function() {
-        this.modelService.clearLabel(this.model);
-        expect(this.model.state.l)
+        this.ret = this.modelService.clearLabel(this.model);
+        expect(this.ret.state.l)
           .toEqual([]);
       });
     });

@@ -4,7 +4,7 @@ angular.module('clickApp.services').factory('gameBoard', ['http', function gameB
   var gameBoardService = {
     init: function gameBoardInit() {
       return httpService.get('/data/boards.json').catch(function (reason) {
-        console.log('error getting boards.json', reason);
+        console.error('Error getting boards.json', reason);
         return [];
       });
     },
@@ -15,6 +15,7 @@ angular.module('clickApp.services').factory('gameBoard', ['http', function gameB
       return R.find(R.propEq('name', name), boards);
     }
   };
+  R.curryService(gameBoardService);
   return gameBoardService;
 }]);
 //# sourceMappingURL=board.js.map

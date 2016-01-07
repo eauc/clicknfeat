@@ -10,16 +10,19 @@ angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', fun
   $scope.selectionIsEmpty = function () {
     return R.isEmpty($scope.selection.list);
   };
-  $scope.setSelection = function (index) {
+  function setSelection(index) {
+    R.pipe(R.defaultTo(R.head($scope.selection.list)), R.defaultTo(0), R.min(R.length($scope.games) - 1), R.max(0), function (index) {
+      $scope.selection.list = [index];
+    })(index);
+  }
+  $scope.doSetSelection = function (index) {
     if (R.exists($scope.current) && $scope.games[index].public_stamp === $scope.current) return;
 
-    if (R.isEmpty($scope.games)) {
-      $scope.selection.list = [];
-    } else {
-      $scope.selection.list = [Math.min(R.length($scope.games) - 1, index)];
-    }
-    console.log('GamesList: selection', $scope.selection.list);
+    setSelection(index);
   };
+  $scope.$watch('games', function () {
+    setSelection();
+  });
 }]).directive('clickGamesList', [function () {
   return {
     restrict: 'E',
@@ -30,7 +33,7 @@ angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', fun
       selection: '=',
       current: '='
     },
-    link: function link() /*scope, element, attrs*/{}
+    link: function link() {}
   };
 }]);
 //# sourceMappingURL=gamesList.js.map

@@ -2,38 +2,42 @@
 
 angular.module('clickApp.services').factory('lockModelsCommand', ['commands', 'gameModels', function lockModelsCommandServiceFactory(commandsService, gameModelsService) {
   var lockModelsCommandService = {
-    execute: function lockModelsExecute(lock, stamps, scope, game) {
+    execute: function lockModelsExecute(lock, stamps, state, game) {
       var ctxt = {
         desc: lock,
         stamps: stamps
       };
 
       return R.pipeP(gameModelsService.lockStamps$(lock, stamps), function (game_models) {
-        game.models = game_models;
+        game = R.assoc('models', game_models, game);
 
         R.forEach(function (stamp) {
-          scope.gameEvent('changeModel-' + stamp);
+          state.changeEvent('Game.model.change.' + stamp);
         }, stamps);
 
-        return ctxt;
+        return [ctxt, game];
       })(game.models);
     },
-    replay: function lockModelsRedo(ctxt, scope, game) {
+    replay: function lockModelsRedo(ctxt, state, game) {
       return R.pipeP(gameModelsService.lockStamps$(ctxt.desc, ctxt.stamps), function (game_models) {
-        game.models = game_models;
+        game = R.assoc('models', game_models, game);
 
         R.forEach(function (stamp) {
-          scope.gameEvent('changeModel-' + stamp);
+          state.changeEvent('Game.model.change.' + stamp);
         }, ctxt.stamps);
+
+        return game;
       })(game.models);
     },
-    undo: function lockModelsUndo(ctxt, scope, game) {
+    undo: function lockModelsUndo(ctxt, state, game) {
       return R.pipeP(gameModelsService.lockStamps$(!ctxt.desc, ctxt.stamps), function (game_models) {
-        game.models = game_models;
+        game = R.assoc('models', game_models, game);
 
         R.forEach(function (stamp) {
-          scope.gameEvent('changeModel-' + stamp);
+          state.changeEvent('Game.model.change.' + stamp);
         }, ctxt.stamps);
+
+        return game;
       })(game.models);
     }
   };

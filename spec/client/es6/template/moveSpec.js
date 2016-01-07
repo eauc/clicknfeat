@@ -1,5 +1,3 @@
-'use strict';
-
 describe('move template', function() {
   describe('templateMode service', function() {
     beforeEach(inject([
@@ -9,8 +7,9 @@ describe('move template', function() {
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
@@ -23,7 +22,7 @@ describe('move template', function() {
       [ 'rotateRight' ],
     ], function(e) {
       when('user '+e.action+' template selection', function() {
-        this.ret = this.templateModeService.actions[e.action](this.scope);
+        this.ret = this.templateModeService.actions[e.action](this.state);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -35,16 +34,14 @@ describe('move template', function() {
         });
 
         it('should execute onTemplates/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, false,
-                                  ['stamp'], this.scope, this.scope.game);
-
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ e.action, [false], ['stamp'] ]);
         });
       });
 
       when('user '+e.action+'Small template selection', function() {
-        this.templateModeService.actions[e.action+'Small'](this.scope);
+        this.templateModeService.actions[e.action+'Small'](this.state);
       }, function() {
         beforeEach(function() {
           this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -56,9 +53,9 @@ describe('move template', function() {
         });
 
         it('should execute onTemplates/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, true,
-                                  ['stamp'], this.scope, this.scope.game);
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ e.action, [true], ['stamp'] ]);
         });
       });
     });
@@ -71,7 +68,7 @@ describe('move template', function() {
       [ 'shiftRight' , 'shiftLeft'      ],
     ], function(e) {
       when('user '+e.action+' template selection', function() {
-        this.ret = this.templateModeService.actions[e.action](this.scope);
+        this.ret = this.templateModeService.actions[e.action](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTemplateSelectionService.get)
@@ -79,28 +76,28 @@ describe('move template', function() {
         });
 
         it('should execute onTemplates/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, false,
-                                  'gameTemplateSelection.get.returnValue',
-                                  this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ e.action, [false],
+                                                   'gameTemplateSelection.get.returnValue'
+                                                 ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onTemplates/'+e.flipped_action+' command', function() {
-            expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.flipped_action, false,
-                                  'gameTemplateSelection.get.returnValue',
-                                  this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ e.flipped_action, [false],
+                                                   'gameTemplateSelection.get.returnValue'
+                                                 ]);
           });
         });
       });
 
       when('user '+e.action+'Small template selection', function() {
-        this.ret = this.templateModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.templateModeService.actions[e.action+'Small'](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTemplateSelectionService.get)
@@ -108,22 +105,22 @@ describe('move template', function() {
         });
 
         it('should execute onTemplates/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTemplates', e.action, true,
-                                  'gameTemplateSelection.get.returnValue',
-                                  this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTemplates', [ e.action, [true],
+                                                   'gameTemplateSelection.get.returnValue'
+                                                 ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onTemplates/'+e.flipped_action+'Small command', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onTemplates', e.flipped_action, true,
-                                    'gameTemplateSelection.get.returnValue',
-                                    this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onTemplates', [ e.flipped_action, [true],
+                                                     'gameTemplateSelection.get.returnValue'
+                                                   ]);
           });
         });
       });
@@ -190,7 +187,7 @@ describe('move template', function() {
           [ true   , e.small_result ],
         ], function(ee, dd) {
           it('should '+e.move+' template, '+dd, function() {
-            this.templateService[e.move](ee.small, this.template);
+            this.template = this.templateService[e.move](ee.small, this.template);
             expect(this.template.state)
               .toEqual(ee.result);
           });
@@ -198,7 +195,7 @@ describe('move template', function() {
         if(e.length > 3) {
           it('should stay on the board', function() {
             this.template.state = e.before_check;
-            this.templateService[e.move](false, this.template);
+            this.template = this.templateService[e.move](false, this.template);
             expect(this.template.state)
               .toEqual(e.after_check);
           });
@@ -206,13 +203,6 @@ describe('move template', function() {
         when('template is locked', function() {
           this.template.state.lk = true;
         }, function() {
-          it('should not '+e.move+' template', function() {
-            this.templateService[e.move](false, this.template);
-
-            expect(R.pick(['x','y','r'], this.template.state))
-              .toEqual({ x: 240, y: 240, r: 180 });
-          });
-
           it('should reject move', function() {
             this.ret = this.templateService[e.move](false, this.template);
 

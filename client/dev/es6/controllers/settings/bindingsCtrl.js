@@ -4,30 +4,41 @@ angular.module('clickApp.controllers')
     function($scope) {
       console.log('init settingsBindingsCtrl');
 
-      $scope.data_ready
-        .then(() => {
-          $scope.modes = R.keys($scope.settings.default['Bindings']).sort();
-          $scope.mode = R.head($scope.modes);
-        });
       $scope.getBindingsKeys = (mode) => {
-        return R.keys($scope.settings.default['Bindings'][mode]).sort();
+        return R.keys($scope.state.settings.default['Bindings'][mode]).sort();
       };
-      
-      $scope.doRecordBinding = function doRecordBinding(action) {
+      function updateModes() {
+        $scope.modes = R.keys($scope.state.settings.default['Bindings']).sort();
+        $scope.mode = R.defaultTo(R.head($scope.modes), $scope.mode);
+      }
+      $scope.state.data_ready.then(updateModes);
+
+      $scope.doRecordBinding = (action) => {
         if($scope.recording) return;
-        
-        console.log('recording seq');
         $scope.recording = action;
-        
-        Mousetrap.record(function mousetrapRecord(seq) {
-          console.log('seq recorded', seq);
 
-          $scope.settings.current.Bindings[$scope.mode][action] = seq.join(' ');
-          $scope.doUpdateSettings();
-          $scope.recording = null;
-
-          $scope.$digest();
-        });
+        R.pipeP(
+          () => {
+            return new self.Promise((resolve) => {
+              Mousetrap.record((seq) => {
+                console.log('Mousetrap seq recorded', seq);
+                resolve(seq);
+              });
+            });
+          },
+          (seq) => {
+            if(R.isNil(seq) || R.isEmpty(seq)) {
+              return;
+            }
+            $scope.edit_settings.Bindings[$scope.mode][action] = seq.join(' ');
+          },
+          () => {
+            $scope.recording = null;
+            $scope.$digest();
+          }
+        )();
       };
+
+      $scope.$on('$destroy', $scope.doUpdateSettings);
     }
   ]);

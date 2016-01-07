@@ -8,8 +8,9 @@ describe('move terrain', function() {
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
         this.gameTerrainSelectionService.get._retVal = 'stamps';
 
-        this.scope = {
-          game: { terrain_selection: 'selection' }
+        this.state = {
+          game: { terrain_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
@@ -22,7 +23,7 @@ describe('move terrain', function() {
       [ 'rotateRight' ],
     ], function(e) {
       when('user '+e.action+' terrain selection', function() {
-        this.ret = this.terrainModeService.actions[e.action](this.scope);
+        this.ret = this.terrainModeService.actions[e.action](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTerrainSelectionService.get)
@@ -30,16 +31,14 @@ describe('move terrain', function() {
         });
 
         it('should execute onTerrains/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains', e.action, false,
-                                  'stamps', this.scope, this.scope.game);
-
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTerrains', [ e.action, [false], 'stamps' ]);
         });
       });
 
       when('user '+e.action+'Small terrain selection', function() {
-        this.ret = this.terrainModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.terrainModeService.actions[e.action+'Small'](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTerrainSelectionService.get)
@@ -47,10 +46,9 @@ describe('move terrain', function() {
         });
 
         it('should execute onTerrains/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains', e.action, true,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTerrains', [ e.action, [true], 'stamps' ]);
         });
       });
     });
@@ -63,7 +61,7 @@ describe('move terrain', function() {
       [ 'shiftRight' , 'shiftLeft'      ],
     ], function(e) {
       when('user '+e.action+' terrain selection', function() {
-        this.ret = this.terrainModeService.actions[e.action](this.scope);
+        this.ret = this.terrainModeService.actions[e.action](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTerrainSelectionService.get)
@@ -71,26 +69,24 @@ describe('move terrain', function() {
         });
 
         it('should execute onTerrains/'+e.action+' command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains', e.action, false,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTerrains', [ e.action, [false], 'stamps' ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onTerrains/'+e.flipped_action+' command', function() {
-            expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains', e.flipped_action, false,
-                                  'stamps', this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTerrains', [ e.flipped_action, [false], 'stamps' ]);
           });
         });
       });
 
       when('user '+e.action+'Small terrain selection', function() {
-        this.ret = this.terrainModeService.actions[e.action+'Small'](this.scope);
+        this.ret = this.terrainModeService.actions[e.action+'Small'](this.state);
       }, function() {
         it('should get current selection', function() {
           expect(this.gameTerrainSelectionService.get)
@@ -98,20 +94,18 @@ describe('move terrain', function() {
         });
 
         it('should execute onTerrains/'+e.action+'Small command', function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onTerrains', e.action, true,
-                                  'stamps', this.scope, this.scope.game);
-          expect(this.ret).toBe('game.executeCommand.returnValue');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onTerrains', [ e.action, [true], 'stamps' ]);
         });
 
         when('map is flipped', function() {
-          this.scope.ui_state = { flip_map: true };
+          this.state.ui_state = { flip_map: true };
         }, function() {
           it('should execute onTerrains/'+e.flipped_action+'Small command', function() {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onTerrains', e.flipped_action, true,
-                                    'stamps', this.scope, this.scope.game);
-            expect(this.ret).toBe('game.executeCommand.returnValue');
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onTerrains', [ e.flipped_action, [true], 'stamps' ]);
           });
         });
       });
@@ -124,7 +118,7 @@ describe('move terrain', function() {
       function(terrainService) {
         this.terrainService = terrainService;
         spyOn(this.terrainService, 'checkState')
-          .and.returnValue('terrain.checkState.returnValue');
+          .and.callFake(R.identity);
       }
     ]));
 
@@ -170,25 +164,22 @@ describe('move terrain', function() {
           });
 
           it('should '+e.move+' terrain, '+dd, function() {
-            expect(R.pick(['x','y','r'], this.terrain.state))
+            expect(R.pick(['x','y','r'], this.ret.state))
               .toEqual(ee.result);
           });
 
           it('should check state', function() {
             expect(this.terrainService.checkState)
-              .toHaveBeenCalledWith(this.terrain);
-            expect(this.ret).toBe('terrain.checkState.returnValue');
+              .toHaveBeenCalledWith(this.ret);
           });
         
           when('terrain is locked', function() {
-            this.terrainService.setLock(true, this.terrain);
+            this.terrain = this.terrainService
+              .setLock(true, this.terrain);
           }, function() {
             it('should reject move', function() {
               this.thenExpectError(this.ret, function(reason) {
                 expect(reason).toBe('Terrain is locked');
-                
-                expect(R.pick(['x','y','r'], this.terrain.state))
-                  .toEqual({ x: 240, y: 240, r: 180 });
               });
             });
           });

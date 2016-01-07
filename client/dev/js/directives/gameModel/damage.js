@@ -1,10 +1,12 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', function (modelService) {
   return {
     create: function clickGameModelDamageCreate(svgNS, info, parent) {
-      var damage_bar_red;
-      var damage_bar_green;
+      var damage_bar_red = undefined;
+      var damage_bar_green = undefined;
       if (!(info.damage.type === 'warrior' && info.damage.n === 1)) {
         damage_bar_red = document.createElementNS(svgNS, 'line');
         damage_bar_red.classList.add('model-damage-bar');
@@ -25,8 +27,8 @@ angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', 
         parent.appendChild(damage_bar_green);
       }
 
-      var field_bar_red;
-      var field_bar_green;
+      var field_bar_red = undefined;
+      var field_bar_green = undefined;
       if (R.exists(info.damage.field)) {
         field_bar_red = document.createElementNS(svgNS, 'line');
         field_bar_red.classList.add('model-damage-bar');
@@ -49,11 +51,13 @@ angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', 
 
       return [damage_bar_red, damage_bar_green, field_bar_red, field_bar_green];
     },
-    update: function clickGameModelDamageUpdate(info, model, img, el) {
-      var damage_bar_red = el[0];
-      var damage_bar_green = el[1];
-      var field_bar_red = el[2];
-      var field_bar_green = el[3];
+    update: function clickGameModelDamageUpdate(info, model, img, element) {
+      var _element = _slicedToArray(element, 4);
+
+      var damage_bar_red = _element[0];
+      var damage_bar_green = _element[1];
+      var field_bar_red = _element[2];
+      var field_bar_green = _element[3];
 
       if (R.isNil(damage_bar_red)) return;
 

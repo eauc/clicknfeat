@@ -9,62 +9,70 @@ angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings',
     R.extend(MOVES, moves);
   });
   var default_actions = Object.create(commonModeService.actions);
-  function clearTerrainSelection(scope) {
-    scope.game.terrain_selection = gameTerrainSelectionService.clear('local', scope, scope.game.terrain_selection);
+  function clearTemplateSelection$(state) {
+    return function () {
+      return state.event('Game.update', R.lensProp('template_selection'), gameTemplateSelectionService.clear$('local', state));
+    };
   }
-  function clearTemplateSelection(scope) {
-    scope.game.template_selection = gameTemplateSelectionService.clear('local', scope, scope.game.template_selection);
+  function clearTerrainSelection$(state) {
+    return function () {
+      return state.event('Game.update', R.lensProp('terrain_selection'), gameTerrainSelectionService.clear$('local', state));
+    };
   }
-  default_actions.setModelSelection = function defaultSetModelSelection(scope, event) {
-    clearTerrainSelection(scope, event);
-    clearTemplateSelection(scope, event);
-    var stamp = event['click#'].target.state.stamp;
-    return gameService.executeCommand('setModelSelection', 'set', [stamp], scope, scope.game);
+  default_actions.setModelSelection = function (state, event) {
+    return R.pipePromise(clearTemplateSelection$(state), clearTerrainSelection$(state), function () {
+      var stamp = event['click#'].target.state.stamp;
+      return state.event('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+    })();
   };
-  default_actions.toggleModelSelection = function modelsToggleSelection(scope, event) {
-    clearTerrainSelection(scope, event);
-    clearTemplateSelection(scope, event);
-    var stamp = event['click#'].target.state.stamp;
-    if (gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
-      return gameService.executeCommand('setModelSelection', 'removeFrom', [stamp], scope, scope.game);
-    } else {
-      return gameService.executeCommand('setModelSelection', 'addTo', [stamp], scope, scope.game);
-    }
+  default_actions.toggleModelSelection = function (state, event) {
+    return R.pipePromise(clearTemplateSelection$(state), clearTerrainSelection$(state), function () {
+      var stamp = event['click#'].target.state.stamp;
+      if (gameModelSelectionService.in('local', stamp, state.game.model_selection)) {
+        return state.event('Game.command.execute', 'setModelSelection', ['removeFrom', [stamp]]);
+      } else {
+        return state.event('Game.command.execute', 'setModelSelection', ['addTo', [stamp]]);
+      }
+    })();
   };
-  default_actions.modelSelectionDetail = function defaultModelSelectionDetail(scope, event) {
-    clearTerrainSelection(scope, event);
-    clearTemplateSelection(scope, event);
-    var stamp = event['click#'].target.state.stamp;
-    scope.gameEvent('openSelectionDetail', 'model', event['click#'].target);
-    return gameService.executeCommand('setModelSelection', 'set', [stamp], scope, scope.game);
+  default_actions.modelSelectionDetail = function (state, event) {
+    return R.pipePromise(clearTemplateSelection$(state), clearTerrainSelection$(state), function () {
+      var stamp = event['click#'].target.state.stamp;
+      state.changeEvent('Game.selectionDetail.open', 'model', event['click#'].target);
+      return state.event('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+    })();
   };
-  default_actions.selectTemplate = function defaultSelectTemplate(scope, event) {
-    clearTerrainSelection(scope, event);
-    scope.game.template_selection = gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp], scope, scope.game.template_selection);
+  default_actions.selectTemplate = function (state, event) {
+    return R.pipePromise(clearTerrainSelection$(state), function () {
+      return state.event('Game.update', R.lensProp('template_selection'), gameTemplateSelectionService.set$('local', [event['click#'].target.state.stamp], state));
+    })();
   };
-  default_actions.templateSelectionDetail = function defaultTemplateSelectionDetail(scope, event) {
-    clearTerrainSelection(scope, event);
-    scope.gameEvent('openSelectionDetail', 'template', event['click#'].target);
-    scope.game.template_selection = gameTemplateSelectionService.set('local', [event['click#'].target.state.stamp], scope, scope.game.template_selection);
+  default_actions.templateSelectionDetail = function (state, event) {
+    return R.pipePromise(clearTerrainSelection$(state), function () {
+      return state.event('Game.update', R.lensProp('template_selection'), gameTemplateSelectionService.set$('local', [event['click#'].target.state.stamp], state));
+    }, function () {
+      return state.changeEvent('Game.selectionDetail.open', 'template', event['click#'].target);
+    })();
   };
-  default_actions.selectTerrain = function defaultSelectTerrain(scope, event) {
-    clearTemplateSelection(scope, event);
-    scope.game.terrain_selection = gameTerrainSelectionService.set('local', [event['click#'].target.state.stamp], scope, scope.game.terrain_selection);
+  default_actions.selectTerrain = function (state, event) {
+    return R.pipePromise(clearTemplateSelection$(state), function () {
+      return state.event('Game.update', R.lensProp('terrain_selection'), gameTerrainSelectionService.set$('local', [event['click#'].target.state.stamp], state));
+    })();
   };
-  default_actions.enterRulerMode = function defaultEnterRulerMode(scope) {
-    return scope.doSwitchToMode('Ruler');
+  default_actions.enterRulerMode = function (state) {
+    return state.event('Modes.switchTo', 'Ruler');
   };
-  default_actions.enterLosMode = function defaultEnterLosMode(scope) {
-    return scope.doSwitchToMode('LoS');
+  default_actions.enterLosMode = function (state) {
+    return state.event('Modes.switchTo', 'LoS');
   };
-  default_actions.dragStartMap = function defaultDragStartMap(scope, event) {
-    scope.gameEvent('enableDragbox', event.start, event.now);
+  default_actions.dragStartMap = function (state, event) {
+    state.changeEvent('Game.dragBox.enable', event.start, event.now);
   };
-  default_actions.dragMap = function defaultDragMap(scope, event) {
-    scope.gameEvent('enableDragbox', event.start, event.now);
+  default_actions.dragMap = function (state, event) {
+    state.changeEvent('Game.dragBox.enable', event.start, event.now);
   };
-  default_actions.dragEndMap = function defaultDragEndMap(scope, event) {
-    scope.gameEvent('disableDragbox');
+  default_actions.dragEndMap = function (state, event) {
+    state.changeEvent('Game.dragBox.disable');
     var top_left = {
       x: Math.min(event.now.x, event.start.x),
       y: Math.min(event.now.y, event.start.y)
@@ -75,11 +83,10 @@ angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings',
     };
     return R.pipeP(gameModelsService.findStampsBetweenPoints$(top_left, bottom_right), function (stamps) {
       if (R.isEmpty(stamps)) {
-        return;
+        return null;
       }
-
-      return gameService.executeCommand('setModelSelection', 'set', stamps, scope, scope.game);
-    })(scope.game.models);
+      return state.event('Game.command.execute', 'setModelSelection', ['set', stamps]);
+    })(state.game.models);
   };
 
   var default_default_bindings = {
@@ -96,12 +103,12 @@ angular.module('clickApp.services').factory('defaultMode', ['modes', 'settings',
   var default_buttons = [];
   var default_mode = {
     name: 'Default',
-    onEnter: function defaultOnEnter(scope) {
-      gameTemplateSelectionService.checkMode(scope, scope.game.template_selection).catch(function () {
-        return gameTerrainSelectionService.checkMode(scope, scope.game.terrain_selection);
+    onEnter: function onEnter(state) {
+      gameTemplateSelectionService.checkMode(state, state.game.template_selection).catch(function () {
+        return gameTerrainSelectionService.checkMode(state, state.game.terrain_selection);
       }).catch(function () {
-        return gameModelSelectionService.checkMode(scope, scope.game.model_selection);
-      });
+        return gameModelSelectionService.checkMode(state, state.game.model_selection);
+      }).catch(R.always(null));
     },
     actions: default_actions,
     buttons: default_buttons,

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('init modes', function() {
   describe('modesService', function() {
     beforeEach(inject([
@@ -17,11 +15,11 @@ describe('init modes', function() {
       }
     ]));
 
-    when('init(<scope>)', function() {
-      this.ret = this.modesService.init(this.scope);
+    when('init(<state>)', function() {
+      this.ret = this.modesService.init(this.state);
     }, function() {
       beforeEach(function() {
-        this.scope = { 'this': 'scope' };
+        this.state = { 'this': 'state' };
       });
 
       it('should start in default mode', function() {
@@ -34,7 +32,7 @@ describe('init modes', function() {
       it('should enter default mode', function() {
         this.thenExpect(this.ret, function() {
           expect(this.defaultModeService.onEnter)
-            .toHaveBeenCalledWith(this.scope);
+            .toHaveBeenCalledWith(this.state);
         });
       });
 
@@ -43,27 +41,18 @@ describe('init modes', function() {
           mockReturnPromise(this.defaultModeService.onEnter);
           this.defaultModeService.onEnter.rejectWith = 'reason';
         });
-        
+
         it('should reject promise', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('reason');
           });
         });
       });
-      
+
       it('should reset Mousetrap bindings', function() {
         this.thenExpect(this.ret, function() {
           expect(Mousetrap.reset)
             .toHaveBeenCalled();
-        });
-      });
-
-      it('should setup default mode\'s buttons', function() {
-        this.thenExpect(this.ret, function() {
-          expect(this.scope.action_buttons)
-            .toEqual(this.defaultModeService.buttons);
-          expect(this.scope.action_bindings.test)
-            .toBe('ctrl+test');
         });
       });
 
@@ -78,17 +67,16 @@ describe('init modes', function() {
     describe('Mousetrap binding', function() {
       beforeEach(function(done) {
         this.event = jasmine.createSpyObj('event', ['preventDefault']);
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'event','changeEvent'
         ]);
-        this.modesService.init(this.scope)
+        this.modesService.init(this.state)
           .then((modes) => {
             this.modes = modes;
-            this.actionBinding = findCallByArgs(Mousetrap.bind,
-                                                function(args) {
-                                                  return args[0] === 'ctrl+test';
-                                                }).args[1];
-            
+            this.actionBinding = findCallByArgs(Mousetrap.bind, (args) => {
+              return args[0] === 'ctrl+test';
+            }).args[1];
+
             done();
           });
       });
@@ -97,25 +85,8 @@ describe('init modes', function() {
         this.ret = this.actionBinding(this.event);
       }, function() {
         it('should should call associated mode action', function() {
-          expect(this.defaultModeService.actions.test)
-            .toHaveBeenCalledWith(this.scope, this.event);
-        });
-
-        it('should prevent event default', function() {
-          expect(this.event.preventDefault)
-            .toHaveBeenCalled();
-        });
-        
-        when('action fails', function() {
-          mockReturnPromise(this.defaultModeService.actions.test);
-          this.defaultModeService.actions.test.rejectWith = 'reason';
-        }, function() {
-          it('should emit "modeActionError" event', function() {
-            this.thenExpectError(this.defaultModeService.actions.test.promise, function() {
-              expect(this.scope.gameEvent)
-                .toHaveBeenCalledWith('modeActionError', 'reason');
-            });
-          });
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Modes.current.action', 'test', [this.event]);
         });
       });
     });

@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelMode', [
     'modes',
@@ -18,56 +16,57 @@ angular.module('clickApp.services')
                                      gameService,
                                      gameModelsService,
                                      gameModelSelectionService) {
-      var model_actions = Object.create(modelBaseModeService.actions);
-      model_actions.startCharge = function modelStartCharge(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return R.pipeP(
+      let model_actions = Object.create(modelBaseModeService.actions);
+      model_actions.startCharge = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return R.pipePromise(
           function() {
-            return gameService.executeCommand$('onModels', 'startCharge',
-                                               stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', ['startCharge', [], stamps]);
           },
           function() {
-            return scope.doSwitchToMode('ModelCharge');
+            return state.event('Modes.switchTo', 'ModelCharge');
           }
         )();
       };
-      model_actions.startPlace = function modelStartPlace(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return R.pipeP(
+      model_actions.startPlace = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return R.pipePromise(
           function() {
-            return gameService.executeCommand('onModels', 'startPlace',
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'startPlace', [], stamps]);
           },
           function() {
-            return scope.doSwitchToMode('ModelPlace');
+            return state.event('Modes.switchTo', 'ModelPlace');
           }
         )();
       };
 
-      var model_default_bindings = {
+      let model_default_bindings = {
         'startCharge': 'c',
-        'startPlace': 'p',
+        'startPlace': 'p'
       };
-      var model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
+      let model_bindings = R.extend(Object.create(modelBaseModeService.bindings),
                                     model_default_bindings);
-      var model_buttons = modelsModeService.buildButtons({ single: true,
+      let model_buttons = modelsModeService.buildButtons({ single: true,
                                                            start_charge: true,
-                                                           start_place: true });
-      var model_mode = {
-        onEnter: function modelOnEnter(/*scope*/) {
-        },
-        onLeave: function modelOnLeave(/*scope*/) {
-        },
+                                                           start_place: true
+                                                         });
+      let model_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'Model',
         actions: model_actions,
         buttons: model_buttons,
-        bindings: model_bindings,
+        bindings: model_bindings
       };
       modesService.registerMode(model_mode);
       settingsService.register('Bindings',
                                model_mode.name,
                                model_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(model_mode.bindings, bs);
                                });
       return model_mode;

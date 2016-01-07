@@ -32,9 +32,9 @@
   </button>
   </div>
   <div class="dice-list">
-    <div ng-repeat="(i,dice) in game.dice.slice(-10).reverse() track by dice.stamp">
-      <span class="text-primary">[{{::dice.user}}]</span>
-      {{::dice.desc}}
+    <div ng-repeat="(i,die) in dice.slice(-10).reverse() track by die.stamp">
+      <span class="text-primary">[{{::die.user}}]</span>
+      {{::die.desc}}
     </div>
   </div>
 </div>

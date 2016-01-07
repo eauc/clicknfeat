@@ -3,6 +3,6 @@
             {{current && g.public_stamp === current ? 'bg-primary':''}}
             {{isInSelection(i) ? 'bg-info':''}}
             "
-     ng-click="setSelection(i)">
+     ng-click="doSetSelection(i)">
   {{::g | game:'description'}}
 </div>

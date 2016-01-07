@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('clickApp.directives').factory('sprayTemplateElement', ['$window', 'template', 'sprayTemplate', 'gameTemplateSelection', 'gameModels', 'gameFactions', 'gameMap', 'labelElement', function ($window, templateService, sprayTemplateService, gameTemplateSelectionService, gameModelsService, gameFactionsService, gameMapService, labelElementService) {
+angular.module('clickApp.directives').factory('sprayTemplateElement', ['template', 'sprayTemplate', 'gameTemplateSelection', 'gameModels', 'gameFactions', 'gameMap', 'labelElement', function (templateService, sprayTemplateService, gameTemplateSelectionService, gameModelsService, gameFactionsService, gameMapService, labelElementService) {
   var POINTS = {
     6: '8.75,0 5.125,-59 10,-60 14.875,-59 11.25,0',
     8: '8.75,0 3.5,-78.672 10,-80 16.5,-78.672 11.25,0',
@@ -35,8 +35,8 @@ angular.module('clickApp.directives').factory('sprayTemplateElement', ['$window'
         origin: origin
       };
     },
-    update: function sprayTemplateElementUpdate(map, scope, template, spray) {
-      var selection = scope.game.template_selection;
+    update: function sprayTemplateElementUpdate(map, state, template, spray) {
+      var selection = state.game.template_selection;
       var local = gameTemplateSelectionService.in('local', template.state.stamp, selection);
       var remote = gameTemplateSelectionService.in('remote', template.state.stamp, selection);
       var selected = local || remote;
@@ -49,21 +49,18 @@ angular.module('clickApp.directives').factory('sprayTemplateElement', ['$window'
         y: template.state.y + 5
       };
       var label_text = templateService.fullLabel(template);
-      $window.requestAnimationFrame(function _sprayTemplateElementUpdate() {
-        updateContainer(template, spray.container);
-        updateSpray(stroke_color, template, spray.spray);
-        labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, spray.label);
-      });
 
-      R.pipeP(function () {
-        return self.Promise.resolve(sprayTemplateService.origin(template));
-      }, function (origin) {
-        if (R.isNil(origin)) return;
+      updateContainer(template, spray.container);
+      updateSpray(stroke_color, template, spray.spray);
+      labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, spray.label);
 
-        return gameModelsService.findStamp(origin, scope.game.models);
+      R.pipePromise(sprayTemplateService.origin, function (origin) {
+        if (R.isNil(origin)) return null;
+
+        return gameModelsService.findStamp(origin, state.game.models);
       }, function (origin_model) {
-        updateOrigin(scope.factions, local, origin_model, spray.origin);
-      })();
+        updateOrigin(state.factions, local, origin_model, spray.origin);
+      })(template);
     }
   };
   function updateContainer(template, container) {
@@ -75,18 +72,16 @@ angular.module('clickApp.directives').factory('sprayTemplateElement', ['$window'
     spray.style.stroke = stroke_color;
   }
   function updateOrigin(factions, local, model, origin) {
-    $window.requestAnimationFrame(function _aoeTemplateElementUpdateOrigin() {
-      if (!local || R.isNil(model)) {
-        origin.style.visibility = 'hidden';
-        return;
-      }
-      R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
-        origin.setAttribute('cx', model.state.x + '');
-        origin.setAttribute('cy', model.state.y + '');
-        origin.setAttribute('r', info.base_radius + '');
-        origin.style.visibility = 'visible';
-      })(factions);
-    });
+    if (!local || R.isNil(model)) {
+      origin.style.visibility = 'hidden';
+      return;
+    }
+    R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
+      origin.setAttribute('cx', model.state.x + '');
+      origin.setAttribute('cy', model.state.y + '');
+      origin.setAttribute('r', info.base_radius + '');
+      origin.style.visibility = 'visible';
+    })(factions);
   }
   return sprayTemplateElementService;
 }]);

@@ -1,35 +1,34 @@
-'use strict';
-
 describe('set board', function() {
   describe('setBoardCommand service', function() {
     beforeEach(inject([ 'setBoardCommand', function(setBoardCommand) {
       this.setBoardCommandService = setBoardCommand;
     }]));
 
-    describe('execute(<board>, <scope>, <game>)', function() {
+    describe('execute(<board>, <state>, <game>)', function() {
       beforeEach(function() {
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-        this.game = { board: 'before' };
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
 
-        this.ctxt = this.setBoardCommandService.execute({
+        let game = { board: 'before' };
+        [this.ctxt, this.game] = this.setBoardCommandService.execute({
           name: 'after_name'
-        }, this.scope, this.game);
+        }, this.state, game);
       });
       
       it('should set game board', function() {
-        expect(this.game.board).toEqual({ name: 'after_name' });
+        expect(this.game.board)
+          .toEqual({ name: 'after_name' });
       });
       
       it('should send changeBoard event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('changeBoard');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.board.change');
       });
       
       it('should return context', function() {
         expect(this.ctxt).toEqual({
           before: 'before',
           after: { name: 'after_name' },
-          desc: 'after_name',
+          desc: 'after_name'
         });
       });
     });
@@ -39,16 +38,16 @@ describe('set board', function() {
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
     ], function(e) {
-      describe(e.method+'(<ctxt>, <scope>, <game>)', function() {
+      describe(e.method+'(<ctxt>, <state>, <game>)', function() {
         beforeEach(function() {
           this.ctxt = {
             before: 'before',
             after: 'after'
           };
-          this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-          this.game = { board: e.previous };
+          this.state = jasmine.createSpyObj('state', ['changeEvent']);
 
-          this.setBoardCommandService[e.method](this.ctxt, this.scope, this.game);
+          let game = { board: e.previous };
+          this.game = this.setBoardCommandService[e.method](this.ctxt, this.state, game);
         });
       
         it('should set game board', function() {
@@ -56,8 +55,8 @@ describe('set board', function() {
         });
       
         it('should send changeBoard event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeBoard');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.board.change');
         });
       });
     });

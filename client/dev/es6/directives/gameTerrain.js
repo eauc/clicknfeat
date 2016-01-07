@@ -1,21 +1,21 @@
 angular.module('clickApp.directives')
   .directive('clickGameTerrain', [
     'gameMap',
+    'gameTerrains',
     'gameTerrainInfo',
     'gameTerrainSelection',
-    'terrain',
-    function(
-      gameMapService,
-      gameTerrainInfoService,
-      gameTerrainSelectionService
-    ) {
+    function(gameMapService,
+             gameTerrainsService,
+             gameTerrainInfoService,
+             gameTerrainSelectionService) {
       var clickGameTerrainDirective = {
         restrict: 'A',
-        link: (scope, el/*, attrs*/) => {
+        link: (scope, parent) => {
+          let state = scope.state;
           R.pipeP(
             () => {
               return gameTerrainInfoService
-                .getInfo(scope.terrain.state.info, scope.terrains)
+                .getInfo(scope.terrain.state.info, state.terrains)
                 .catch((reason) => {
                   console.error('clickGameTerrain', reason);
                   return self.Promise.reject(reason);
@@ -24,37 +24,25 @@ angular.module('clickApp.directives')
             (info) => {
               console.log('gameTerrain', scope.terrain, info);
 
-              return buildTerrainElement(info, scope.terrain, el[0], scope);
+              return buildTerrainElement(state, info, scope.terrain,
+                                         parent[0], scope);
             }
           )();
         }
       };
-      function buildTerrainElement(info, terrain, container, scope) {
-        var element = createTerrainElement(info, terrain, container);
-        
-        // scope.$on('$destroy', gameTerrainOnDestroy(element));
-        // scope.onGameEvent('mapFlipped',
-        //                   gameTerrainOnMapFlipped(info, terrain, element),
-        //                   scope);
-        var updateTerrain = gameTerrainOnUpdate(scope.terrains,
-                                                info,
-                                                terrain,
-                                                scope.game,
-                                                scope,
-                                                element);
-        scope.onGameEvent('changeTerrain-'+terrain.state.stamp,
-                          updateTerrain,
-                          scope);
+      function buildTerrainElement(state, info, terrain, parent, scope) {
+        var element = createTerrainElement(info, terrain, parent);
+
+        var updateTerrain = gameTerrainOnUpdate(state, info,
+                                                scope, element);
+        scope.onStateChangeEvent(`Game.terrain.change.${terrain.state.stamp}`,
+                                 updateTerrain, scope);
         updateTerrain();
       }
       function createTerrainElement(info, terrain, parent) {
         var map = document.getElementById('map');
         var svgNS = map.namespaceURI;
-        
-        // var title = document.createElementNS(svgNS, 'title');
-        // base.appendChild(title);
-        // title.innerHTML = info.name;
-          
+
         var image = document.createElementNS(svgNS, 'image');
         image.classList.add('terrain-image');
         image.setAttribute('data-stamp', terrain.state.stamp);
@@ -64,7 +52,7 @@ angular.module('clickApp.directives')
         image.setAttribute('height', info.img.height+'');
         image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', info.img.link);
         parent.appendChild(image);
-          
+
         var direction = document.createElementNS(svgNS, 'line');
         direction.classList.add('terrain-los');
         direction.setAttribute('x1', (info.img.width/2)+'');
@@ -87,20 +75,20 @@ angular.module('clickApp.directives')
                  edge: edge
                };
       }
-      // function gameTerrainOnDestroy(/*element*/) {
-      //   return function _gameTerrainOnDestroy() {
-      //     console.log('gameTerrainOnDestroy');
-      //   };
-      // }
-      // function gameTerrainOnMapFlipped(/*info, terrain, element*/) {
-      //   return function _gameTerrainOnMapFlipped() {
-      //   };
-      // }
-      function gameTerrainOnUpdate(terrains, info, terrain, game, scope, element) {
+      function gameTerrainOnUpdate(state, info, scope, element) {
         return () => {
-          updateTerrainPosition(info.img, terrain, element);
-          updateTerrainSelection(game.terrain_selection,
-                                 terrain, element);
+          R.pipeP(
+            () => {
+              return gameTerrainsService
+                .findStamp(scope.terrain.state.stamp,
+                           scope.state.game.terrains);
+            },
+            (terrain) => {
+              updateTerrainPosition(info.img, terrain, element);
+              updateTerrainSelection(state.game.terrain_selection,
+                                     terrain, element);
+            }
+          )();
         };
       }
       function updateTerrainPosition(img, terrain, element) {
@@ -143,8 +131,9 @@ angular.module('clickApp.directives')
         restrict: 'A',
         templateUrl: 'partials/game/terrains_list.html',
         scope: true,
-        link: function(scope, element/*, attrs*/) {
+        link: function(scope, element) {
           scope.type = element[0].getAttribute('click-game-terrains-list');
+          scope.digestOnStateChangeEvent('Game.terrain.create', scope);
           console.log('clickGameTerrainsList', scope.type);
         }
       };

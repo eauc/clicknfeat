@@ -12,6 +12,7 @@ angular.module('clickApp.services').factory('jsonStringifier', [function jsonStr
     }
     return value;
   }
+  R.curryService(jsonStringifierService);
   return jsonStringifierService;
 }]);
 //# sourceMappingURL=jsonStringifier.js.map

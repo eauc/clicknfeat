@@ -1,44 +1,45 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 angular.module('clickApp.services').factory('setRulerCommand', ['commands', 'gameRuler', function setRulerCommandServiceFactory(commandsService, gameRulerService) {
   var setRulerCommandService = {
-    execute: function setRulerExecute(method) /*, scope, game */{
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
+    execute: function setRulerExecute(method, args, state, game) {
       if ('Function' !== R.type(gameRulerService[method])) {
         return self.Promise.reject('Ruler unknown method ' + method);
       }
 
-      var game = R.last(args);
       var ctxt = {
         before: [],
         after: [],
         desc: method
       };
-      args = R.append(game.ruler, R.slice(0, -1, args));
 
-      return R.pipePromise(function () {
-        return gameRulerService.saveRemoteState(game.ruler);
-      }, function (before) {
+      return R.pipePromise(gameRulerService.saveRemoteState, function (before) {
         ctxt.before = before;
 
-        return gameRulerService[method].apply(null, args);
+        return gameRulerService[method].apply(null, [].concat(_toConsumableArray(args), [state, game.ruler]));
       }, function (ruler) {
-        game.ruler = ruler;
+        game = R.assoc('ruler', ruler, game);
 
         return gameRulerService.saveRemoteState(game.ruler);
       }, function (after) {
         ctxt.after = after;
-        return ctxt;
-      })();
+
+        state.changeEvent('Game.ruler.remote.change');
+
+        return [ctxt, game];
+      })(game.ruler);
     },
-    replay: function setRulerRedo(ctxt, scope, game) {
-      game.ruler = gameRulerService.resetRemote(ctxt.after, scope, game.ruler);
+    replay: function setRulerRedo(ctxt, state, game) {
+      game = R.over(R.lensProp('ruler'), gameRulerService.resetRemote$(ctxt.after, state), game);
+      state.changeEvent('Game.ruler.remote.change');
+      return game;
     },
-    undo: function setRulerUndo(ctxt, scope, game) {
-      game.ruler = gameRulerService.resetRemote(ctxt.before, scope, game.ruler);
+    undo: function setRulerUndo(ctxt, state, game) {
+      game = R.over(R.lensProp('ruler'), gameRulerService.resetRemote$(ctxt.before, state), game);
+      state.changeEvent('Game.ruler.remote.change');
+      return game;
     }
   };
   commandsService.registerCommand('setRuler', setRulerCommandService);

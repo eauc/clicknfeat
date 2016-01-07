@@ -5,22 +5,22 @@ angular.module('clickApp.directives')
     function userConnectionCtrl($scope,
                                 gameService) {
       console.log('gameChatBoxCtrl');
-      
+
       $scope.chat = { msg: '' };
       $scope.doSendChatMessage = function() {
         var msg = s.trim($scope.chat.msg);
         if(R.isEmpty(msg)) return;
-        
+
         R.pipeP(
-          gameService.sendChat$(R.path(['user', 'state', 'name'], $scope),
+          gameService.sendChat$(R.path(['user', 'state', 'name'], $scope.state),
                                 msg),
-          function() {
+          () => {
             $scope.chat.msg = '';
             $scope.$digest();
           }
-        )($scope.game);
+        )($scope.state.game);
       };
-      $scope.digestOnGameEvent('chat', $scope);
+      $scope.digestOnStateChangeEvent('Game.chat', $scope);
     }
   ])
   .directive('clickGameChatBox', [
@@ -30,8 +30,7 @@ angular.module('clickApp.directives')
         controller: 'gameChatBoxCtrl',
         templateUrl: 'partials/directives/game_chat_box.html',
         scope: true,
-        link: function(/*scope, element, attrs*/) {
-        }
+        link: () => { }
       };
     }
   ]);

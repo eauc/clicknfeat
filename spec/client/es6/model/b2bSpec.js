@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model b2b', function() {
   describe('modelBaseMode service', function() {
     beforeEach(inject([
@@ -14,15 +12,16 @@ describe('model b2b', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
-        this.scope = { game: { model_selection: 'selection' },
-                       factions: 'factions'
+        this.state = { game: { model_selection: 'selection' },
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user set model B2B', function() {
       this.ret = this.modelBaseModeService.actions
-        .setB2B(this.scope, this.event);
+        .setB2B(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.target = { state: { stamp: 'target' } };
@@ -42,7 +41,7 @@ describe('model b2b', function() {
       }, function() {
         it('should do nothing', function() {
           this.thenExpect(this.ret, () => {
-            expect(this.gameService.executeCommand)
+            expect(this.state.event)
               .not.toHaveBeenCalled();
           });
         });
@@ -53,10 +52,12 @@ describe('model b2b', function() {
       }, function() {
         it('should place selected model B2B with target', function() {
           this.thenExpect(this.ret, () => {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', 'setB2B',
-                                    'factions', this.target,
-                                    ['stamp'], this.scope, this.scope.game);
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setB2B',
+                                                  ['factions', this.target],
+                                                  ['stamp']
+                                                ]);
           });
         });
       });
@@ -129,23 +130,22 @@ describe('model b2b', function() {
         };
         this.fake_info = {
           info: { base_radius: 9.842 },
-          other_info: { base_radius: 7.874 },
+          other_info: { base_radius: 7.874 }
         };
 
-        this.gameFactionsService.getModelInfo.resolveWith = (i) => {
-          return this.fake_info[i];
-        };
+        this.gameFactionsService.getModelInfo
+          .resolveWith = (i) => { return this.fake_info[i]; };
       });
 
       it('should move model B2B with <other>', function() {
-        this.thenExpect(this.ret, () => {
-          expect(R.pick(['x','y'], this.model.state))
+        this.thenExpect(this.ret, (model) => {
+          expect(R.pick(['x','y'], model.state))
             .toEqual({ x: 247.47289626449913, y: 247.47289626449913 });
         });
       });
       
       when('model is locked', function() {
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
       }, function() {
         it('should reject setB2B', function() {
           this.thenExpectError(this.ret, (reason) => {

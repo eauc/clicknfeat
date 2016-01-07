@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model auras', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -18,9 +16,10 @@ describe('model auras', function() {
 
         this.modelService = spyOnService('model');
       
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
@@ -36,7 +35,7 @@ describe('model auras', function() {
     ], function(e) {
       when('user toggles '+e.aura+' aura display on models', function() {
         this.ret = this.modelsModeService
-          .actions['toggle'+e.aura+'AuraDisplay'](this.scope);
+          .actions['toggle'+e.aura+'AuraDisplay'](this.state);
       }, function() {
         using([
           ['first' , 'set'],
@@ -54,11 +53,11 @@ describe('model auras', function() {
               this.thenExpect(this.ret, function(result) {
                 expect(this.modelService.auraDisplay)
                   .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-                expect(this.gameService.executeCommand)
-                  .toHaveBeenCalledWith('onModels', 'setAuraDisplay', ee.set,
-                                        this.gameModelSelectionService.get._retVal,
-                                        this.scope, this.scope.game);
-                expect(result).toBe('game.executeCommand.returnValue');
+                expect(this.state.event)
+                  .toHaveBeenCalledWith('Game.command.execute',
+                                        'onModels', [ 'setAuraDisplay', [ee.set],
+                                                      this.gameModelSelectionService.get._retVal
+                                                    ]);
               });
             });
           });
@@ -79,13 +78,13 @@ describe('model auras', function() {
       it('should toggle aura display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleAuraDisplay('aura', this.model);
+        this.model = this.modelService.toggleAuraDisplay('aura', this.model);
         expect(this.modelService.auraDisplay(this.model))
           .toBe('aura');
         expect(this.modelService.isAuraDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleAuraDisplay('aura', this.model);
+        this.model = this.modelService.toggleAuraDisplay('aura', this.model);
         expect(this.modelService.auraDisplay(this.model))
           .toBe(null);
         expect(this.modelService.isAuraDisplayed(this.model))
@@ -97,13 +96,13 @@ describe('model auras', function() {
       it('should set aura display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setAuraDisplay('aura', this.model);
+        this.model = this.modelService.setAuraDisplay('aura', this.model);
         expect(this.modelService.auraDisplay(this.model))
           .toBe('aura');
         expect(this.modelService.isAuraDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setAuraDisplay(null, this.model);
+        this.model = this.modelService.setAuraDisplay(null, this.model);
         expect(this.modelService.auraDisplay(this.model))
           .toBe(null);
         expect(this.modelService.isAuraDisplayed(this.model))

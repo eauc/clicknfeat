@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model charge', function() {
   describe('modelMode service', function() {
     beforeEach(inject([
@@ -7,25 +5,21 @@ describe('model charge', function() {
       function(modelModeService) {
         this.modelModeService = modelModeService;
 
-        this.gameService = spyOnService('game');
-        mockReturnPromise(this.gameService.executeCommand);
-        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
-
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
                        factions: 'factions',
                        modes: 'modes',
-                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user starts charge on model', function() {
       this.ret = this.modelModeService.actions
-        .startCharge(this.scope);
+        .startCharge(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -33,16 +27,16 @@ describe('model charge', function() {
 
       it('should start charge for model', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'startCharge', ['stamp'],
-                                  this.scope, this.scope.game);
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ 'startCharge', [], ['stamp'] ]);
         });
       });
 
       it('should switch to charge mode', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.doSwitchToMode)
-            .toHaveBeenCalledWith('ModelCharge');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Modes.switchTo', 'ModelCharge');
         });
       });
     });
@@ -55,10 +49,6 @@ describe('model charge', function() {
         this.modelChargeModeService = modelChargeModeService;
 
         this.modesService = spyOnService('modes');
-
-        this.gameService = spyOnService('game');
-        mockReturnPromise(this.gameService.executeCommand);
-        this.gameService.executeCommand.resolveWith = 'game.executeCommand.returnValue';
 
         this.modelService = spyOnService('model');
         mockReturnPromise(this.modelService.chargeTarget);
@@ -74,19 +64,19 @@ describe('model charge', function() {
         this.modelsModeService = spyOnService('modelsMode');
         // spyOn(this.modelsModeService.actions, 'clickModel');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
                        factions: 'factions',
                        modes: 'modes',
-                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user ends charge on model', function() {
       this.ret = this.modelChargeModeService.actions
-        .endCharge(this.scope);
+        .endCharge(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -94,23 +84,23 @@ describe('model charge', function() {
 
       it('should end charge for model', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('onModels', 'endCharge', ['stamp'],
-                                  this.scope, this.scope.game);
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'onModels', [ 'endCharge', [], ['stamp'] ]);
         });
       });
 
       it('should switch to Model mode', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.doSwitchToMode)
-            .toHaveBeenCalledWith('Model');
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Modes.switchTo','Model');
         });
       });
     });
 
     when('user sets target model', function() {
       this.ret = this.modelChargeModeService.actions
-        .setTargetModel(this.scope, this.event);
+        .setTargetModel(this.state, this.event);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp'];
@@ -125,7 +115,7 @@ describe('model charge', function() {
       }, function() {
         it('should do nothing', function() {
           this.thenExpect(this.ret, function() {
-            expect(this.gameService.executeCommand)
+            expect(this.state.event)
               .not.toHaveBeenCalled();
           });
         });
@@ -134,13 +124,13 @@ describe('model charge', function() {
       when('target is another model', function() {
       }, function() {
         it('should set charge target for model', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels',
-                                    'setChargeTarget',
-                                    this.scope.factions, this.event['click#'].target,
-                                    ['stamp'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setChargeTarget',
+                                                  [this.state.factions, this.event['click#'].target],
+                                                  ['stamp']
+                                                  ]);
           });
         });
       });
@@ -179,11 +169,11 @@ describe('model charge', function() {
     ], function(e, d) {
       when('user '+e.action+' on model, '+d, function() {
         this.ret = this.modelChargeModeService
-          .actions[e.action](this.scope);
+          .actions[e.action](this.state);
       }, function() {
         beforeEach(function() {
           this.gameModelSelectionService.get._retVal = ['stamp'];
-          this.scope.ui_state = { flip_map: e.flipped };
+          this.state.ui_state = { flip_map: e.flipped };
         });
 
         it('should fetch charging model', function() {
@@ -202,12 +192,13 @@ describe('model charge', function() {
           this.modelService.chargeTarget.rejectWith = 'reason';
         }, function() {
           it('should execute move without target', function() {
-            this.thenExpect(this.ret, function(result) {
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', e.move+'Charge',
-                                      'factions', null, e.small,
-                                      ['stamp'], this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+            this.thenExpect(this.ret, function() {
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ e.move+'Charge',
+                                                    ['factions', null, e.small],
+                                                    ['stamp']
+                                                  ]);
             });
           });
         });
@@ -220,12 +211,15 @@ describe('model charge', function() {
         });
         
         it('should charge-move model with defined target', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels', e.move+'Charge',
-                                    'factions', 'gameModels.findStamp.returnValue', e.small,
-                                    ['stamp'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ e.move+'Charge',
+                                                  ['factions',
+                                                   'gameModels.findStamp.returnValue',
+                                                   e.small],
+                                                  ['stamp']
+                                                ]);
           });
         });
       });
@@ -248,17 +242,18 @@ describe('model charge', function() {
         
         this.gameModelSelectionService = spyOnService('gameModelSelection');
       
-        this.scope = { game: { model_selection: 'selection',
+        this.state = { game: { model_selection: 'selection',
                                models: 'models'
                              },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user set charge max length', function() {
       this.ret = this.modelsModeService.actions
-        .setChargeMaxLength(this.scope);
+        .setChargeMaxLength(this.state);
     }, function() {
       beforeEach(function() {
         this.gameModelSelectionService.get._retVal = ['stamp1','stamp2'];
@@ -290,12 +285,13 @@ describe('model charge', function() {
         this.promptService.prompt.rejectWith = 'canceled';
       }, function() {
         it('should reset model\'s charge max length', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onModels',
-                                    'setChargeMaxLength', 'factions', null,
-                                    ['stamp1','stamp2'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onModels', [ 'setChargeMaxLength',
+                                                  ['factions', null],
+                                                  ['stamp1','stamp2']
+                                                ]);
           });
         });
       });
@@ -309,12 +305,13 @@ describe('model charge', function() {
           this.promptService.prompt.resolveWith = e.value;
         }, function() {
           it('should set model\'s charge max length', function() {
-            this.thenExpect(this.ret, function(result) {
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels',
-                                      'setChargeMaxLength', 'factions', e.max,
-                                      ['stamp1','stamp2'], this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+            this.thenExpect(this.ret, function() {
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setChargeMaxLength',
+                                                    ['factions', e.max],
+                                                    ['stamp1','stamp2']
+                                                  ]);
             });
           });
         });
@@ -328,7 +325,7 @@ describe('model charge', function() {
       function(modelService) {
         this.modelService = modelService;
         spyOn(this.modelService, 'checkState')
-          .and.returnValue('model.checkState.returnValue');
+          .and.callFake((f,t,m) => m);
       }
     ]));
 
@@ -343,31 +340,28 @@ describe('model charge', function() {
       });
       
       it('should start charge on model', function() {
-        expect(this.model.state.cha)
+        expect(this.ret.state.cha)
           .toEqual({
             s: { x: 240, y: 240, r: 180 },
             t: null
           });
-        expect(this.modelService.isCharging(this.model))
+        expect(this.modelService.isCharging(this.ret))
           .toBeTruthy();
       });
 
       when('model is locked', function() {
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
       }, function() {
         it('should reject charge start', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('Model is locked');
-            
-            expect(this.modelService.isCharging(this.model))
-              .toBeFalsy();
           });
         });
       });
     });
 
     when('endCharge()', function() {
-      this.modelService.endCharge(this.model);
+      this.ret = this.modelService.endCharge(this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -381,9 +375,9 @@ describe('model charge', function() {
       });
 
       it('should start charge on model', function() {
-        expect(this.model.state.cha)
+        expect(this.ret.state.cha)
           .toBe(null);
-        expect(this.modelService.isCharging(this.model))
+        expect(this.modelService.isCharging(this.ret))
           .toBeFalsy();
       });
     });
@@ -409,25 +403,23 @@ describe('model charge', function() {
       });
       
       it('should set charge <target> on model', function() {
-        this.thenExpect(this.modelService.chargeTarget(this.model), function(result) {
+        let target = this.modelService.chargeTarget(this.ret);
+        this.thenExpect(target, function(result) {
           expect(result).toBe('target');
         });
       });
 
       it('should orient model toward <target>', function() {
-        expect(this.model.state.r)
+        expect(this.ret.state.r)
           .toBe(-45);
       });
 
       when('model is locked', function() {
-        this.modelService.setLock(true, this.model);
+        this.model = this.modelService.setLock(true, this.model);
       }, function() {
         it('should reject set target', function() {
           this.thenExpectError(this.ret, function(reason) {
             expect(reason).toBe('Model is locked');
-            
-            expect(this.model.state.r)
-              .toBe(180);
           });
         });
       });
@@ -444,14 +436,13 @@ describe('model charge', function() {
       });
       
       it('should set charge max length on model', function() {
-        expect(this.modelService.chargeMaxLength(this.model))
+        expect(this.modelService.chargeMaxLength(this.ret))
           .toBe(42);
       });
 
       it('should check state', function() {
         expect(this.modelService.checkState)
-          .toHaveBeenCalledWith('factions', null, this.model);
-        expect(this.ret).toBe('model.checkState.returnValue');
+          .toHaveBeenCalledWith('factions', null, this.ret);
       });
     });
 
@@ -538,16 +529,15 @@ describe('model charge', function() {
             this.target = null;
           }, function() {
             it('should '+e.move+' model, '+dd, function() {
-              expect(R.pick(['x','y','r'], this.model.state))
+              expect(R.pick(['x','y','r'], this.ret.state))
                 .toEqual(ee.result);
-              expect(this.model.state.cha.s)
+              expect(this.ret.state.cha.s)
                 .toEqual(ee.start_result);
             });
 
             it('should check state', function() {
               expect(this.modelService.checkState)
-                .toHaveBeenCalledWith('factions', this.target, this.model);
-              expect(this.ret).toBe('model.checkState.returnValue');
+                .toHaveBeenCalledWith('factions', this.target, this.ret);
             });
           });
         });
@@ -558,28 +548,24 @@ describe('model charge', function() {
           };
         }, function() {            
           it('should '+e.move+' model', function() {
-            expect(R.pick(['x','y','r'], this.model.state))
+            expect(R.pick(['x','y','r'], this.ret.state))
               .toEqual(e.result);
-            expect(this.model.state.cha.s)
+            expect(this.ret.state.cha.s)
               .toEqual(e.start_result);
           });
 
           it('should check state', function() {
             expect(this.modelService.checkState)
-              .toHaveBeenCalledWith('factions', this.target, this.model);
-            expect(this.ret).toBe('model.checkState.returnValue');
+              .toHaveBeenCalledWith('factions', this.target, this.ret);
           });
         });
 
         when('model is locked', function() {
-          this.modelService.setLock(true, this.model);
+          this.model = this.modelService.setLock(true, this.model);
         }, function() {
           it('should reject move', function() {
             this.thenExpectError(this.ret, function(reason) {
               expect(reason).toBe('Model is locked');
-            
-              expect(R.pick(['x','y','r'], this.model.state))
-                .toEqual({ x: 240, y: 240, r: 180 });
             });
           });
         });

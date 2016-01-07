@@ -1,32 +1,41 @@
 'use strict';
 
 angular.module('clickApp.services').factory('games', ['localStorage', 'http', 'game', function gamesServiceFactory(localStorageService, httpService, gameService) {
-  var LOCAL_GAMES_STORAGE_KEY = 'clickApp.local_games';
+  var LOCAL_GAMES_STORAGE_KEY = 'clickApp.games';
   var gamesService = {
     loadLocalGames: function gamesLoadLocalGames() {
-      return localStorageService.load(LOCAL_GAMES_STORAGE_KEY).catch(R.spy('games: Failed to load local games')).then(R.defaultTo([]));
+      return R.pipeP(function () {
+        return localStorageService.load(LOCAL_GAMES_STORAGE_KEY).catch(R.spy('games: Failed to load local games'));
+      }, R.defaultTo([]), R.spyWarn('Games local load'))();
     },
     storeLocalGames: function gamesStoreLocalGames(games) {
-      return localStorageService.save(LOCAL_GAMES_STORAGE_KEY, games);
+      return R.pipePromise(R.map(gameService.pickForJson), R.spyWarn('Games local store'), localStorageService.save$(LOCAL_GAMES_STORAGE_KEY))(games);
     },
     newLocalGame: function gamesNewLocalGame(game, games) {
-      var ret = R.append(game, games);
-      return gamesService.storeLocalGames(ret);
+      return R.append(game, games);
     },
-    updateLocalGame: function gamesUpdateLocalGame(index, game, games) {
-      var ret = R.update(index, game, games);
-      return gamesService.storeLocalGames(ret);
+    loadLocalGame: function gamesLoadLocalGame(id, games) {
+      return new self.Promise(function (resolve, reject) {
+        if (id >= R.length(games)) {
+          reject('Unknown local game id ' + id);
+          return;
+        }
+
+        R.pipe(R.nth(id), R.spyError('Games: load local game'), resolve)(games);
+      });
     },
     removeLocalGame: function gamesRemoveLocalGame(index, games) {
-      var ret = R.remove(index, 1, games);
-      return gamesService.storeLocalGames(ret);
+      return R.remove(index, 1, games);
+    },
+    updateLocalGame: function gamesUpdateLocalGame(index, game, games) {
+      return R.update(parseInt(index), game, games);
     },
     newOnlineGame: function gamesNewOnlineGame(game) {
-      return R.pipePromise(gameService.pickForJson, R.spyError('upload game'), httpService.post$('/api/games'), R.spyError('upload game response'))(game);
+      return R.pipePromise(gameService.pickForJson, R.spyWarn('upload game'), httpService.post$('/api/games'), R.spyWarn('upload game response'))(game);
     },
     loadOnlineGame: function gamesLoadOnlineGame(is_private, id) {
       var url = ['/api/games', is_private ? 'private' : 'public', id].join('/');
-      return R.pipeP(httpService.get, R.spyError('load online game'))(url);
+      return R.pipeP(httpService.get, R.spyError('Games: load online game'))(url);
     }
   };
   R.curryService(gamesService);

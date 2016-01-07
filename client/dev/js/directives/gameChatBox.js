@@ -8,19 +8,19 @@ angular.module('clickApp.directives').controller('gameChatBoxCtrl', ['$scope', '
     var msg = s.trim($scope.chat.msg);
     if (R.isEmpty(msg)) return;
 
-    R.pipeP(gameService.sendChat$(R.path(['user', 'state', 'name'], $scope), msg), function () {
+    R.pipeP(gameService.sendChat$(R.path(['user', 'state', 'name'], $scope.state), msg), function () {
       $scope.chat.msg = '';
       $scope.$digest();
-    })($scope.game);
+    })($scope.state.game);
   };
-  $scope.digestOnGameEvent('chat', $scope);
+  $scope.digestOnStateChangeEvent('Game.chat', $scope);
 }]).directive('clickGameChatBox', [function () {
   return {
     restrict: 'E',
     controller: 'gameChatBoxCtrl',
     templateUrl: 'partials/directives/game_chat_box.html',
     scope: true,
-    link: function link() /*scope, element, attrs*/{}
+    link: function link() {}
   };
 }]);
 //# sourceMappingURL=gameChatBox.js.map

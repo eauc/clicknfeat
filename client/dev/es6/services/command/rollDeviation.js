@@ -5,26 +5,35 @@ angular.module('clickApp.services')
     'commands',
     function rollDeviationCommandServiceFactory(commandsService) {
       var rollDeviationCommandService = {
-        execute: function rollDeviationExecute(scope, game) {
+        execute: function rollDeviationExecute(state, game) {
           var direction = R.randomRange(1, 6);
           var distance = R.randomRange(1, 6);
           
           var ctxt = {
-            desc: 'AoE deviation : direction '+direction+', distance '+distance+'"',
+            desc: `AoE deviation : direction ${direction}, distance ${distance}"`,
             r: direction,
-            d: distance,
+            d: distance
           };
-          game.dice = R.append(ctxt, game.dice);
-          scope.gameEvent('diceRoll');
-          return ctxt;
+
+          state.changeEvent('Game.dice.roll');
+
+          return [ctxt, game];
         },
-        replay: function rollDiceRedo(ctxt, scope, game) {
-          game.dice = R.append(ctxt, game.dice);
-          scope.gameEvent('diceRoll');
+        replay: function rollDiceRedo(ctxt, state, game) {
+          let dice = R.propOr([], 'dice', game);
+          game = R.assoc('dice', R.append(ctxt, dice), game);
+
+          state.changeEvent('Game.dice.roll');
+
+          return game;
         },
-        undo: function rollDiceUndo(ctxt, scope, game) {
-          game.dice = R.reject(R.propEq('stamp', ctxt.stamp), game.dice);
-          scope.gameEvent('diceRoll');
+        undo: function rollDiceUndo(ctxt, state, game) {
+          let dice = R.propOr([], 'dice', game);
+          game = R.assoc('dice', R.reject(R.propEq('stamp', ctxt.stamp), dice), game);
+
+          state.changeEvent('Game.dice.roll');
+
+          return game;
         }
       };
       commandsService.registerCommand('rollDeviation', rollDeviationCommandService);

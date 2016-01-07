@@ -5,23 +5,31 @@ angular.module('clickApp.services')
     'commands',
     function setBoardCommandServiceFactory(commandsService) {
       var setBoardCommandService = {
-        execute: function setBoardExecute(board, scope, game) {
+        execute: function setBoardExecute(board, state, game) {
           var ctxt = {
             before: game.board,
             after: board,
-            desc: board.name,
+            desc: board.name
           };
-          game.board = board;
-          scope.gameEvent('changeBoard');
-          return ctxt;
+          game = R.assoc('board', board, game);
+
+          state.changeEvent('Game.board.change');
+
+          return [ctxt, game];
         },
-        replay: function setBoardRedo(ctxt, scope, game) {
-          game.board = ctxt.after;
-          scope.gameEvent('changeBoard');
+        replay: function setBoardRedo(ctxt, state, game) {
+          game = R.assoc('board', ctxt.after, game);
+
+          state.changeEvent('Game.board.change');
+
+          return game;
         },
-        undo: function setBoardUndo(ctxt, scope, game) {
-          game.board = ctxt.before;
-          scope.gameEvent('changeBoard');
+        undo: function setBoardUndo(ctxt, state, game) {
+          game = R.assoc('board', ctxt.before, game);
+          
+          state.changeEvent('Game.board.change');
+
+          return game;
         }
       };
       commandsService.registerCommand('setBoard', setBoardCommandService);

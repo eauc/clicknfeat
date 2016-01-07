@@ -18,11 +18,16 @@ angular.module('clickApp.services')
           UPDATERS[type][name] = updater;
         },
         load: function settingsLoad() {
-          return localStorageService.load(SETTINGS_STORAGE_KEY)
-            .catch(function(/* error */) {
-              console.log('settings: failed to load data');
-              return {};
-            });
+          return R.pipeP(
+            () => {
+              return localStorageService.load(SETTINGS_STORAGE_KEY)
+                .catch(function(/* error */) {
+                  console.log('settings: failed to load data');
+                });
+            },
+            R.defaultTo({}),
+            R.spyWarn('Settings load')
+          )();
         },
         init: function settingsInit() {
           return R.pipeP(
@@ -51,7 +56,7 @@ angular.module('clickApp.services')
             function(binded) {
               return {
                 default: DEFAULT_SETTINGS,
-                current: binded,
+                current: binded
               };
             }
           )(DEFAULT_SETTINGS);
@@ -71,13 +76,13 @@ angular.module('clickApp.services')
               )(settings.current[type]);
             })
           )(settings.current);
-          return settingsService.store(settings);
+          return settings;
         },
         store: function settingsStore(settings) {
-          console.log('storing settings', settings.current);
-          return localStorageService
-            .save(SETTINGS_STORAGE_KEY, settings.current)
-            .then(R.always(settings));
+          return R.pipePromise(
+            R.spyWarn('Settings store'),
+            localStorageService.save$(SETTINGS_STORAGE_KEY)
+          )(settings.current);
         }
       };
       return settingsService;

@@ -1,15 +1,15 @@
-'use strict';
-
 angular.module('clickApp.controllers')
   .controller('settingsMovesCtrl', [
     '$scope',
     function($scope) {
       console.log('init settingsMovesCtrl');
 
-      $scope.data_ready
-        .then(function() {
-          $scope.modes = R.keys($scope.settings.default['Moves']).sort();
-          $scope.mode = R.head($scope.modes);
-        });
+      function updateModes() {
+        $scope.modes = R.keys($scope.state.settings.default['Moves']).sort();
+        $scope.mode = R.defaultTo(R.head($scope.modes), $scope.mode);
+      }
+      $scope.state.data_ready.then(updateModes);
+
+      $scope.$on('$destroy', $scope.doUpdateSettings);
     }
   ]);

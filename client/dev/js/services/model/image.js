@@ -23,21 +23,21 @@ angular.module('clickApp.services').factory('modelImage', ['gameFactions', funct
         return R.pipeP(gameFactionsService.getModelInfo$(model.state.info), R.prop('img'), R.filter(R.propEq('type', 'default')), function (imgs) {
           return model.state.img >= imgs.length - 1 ? 0 : model.state.img + 1;
         }, function (next_img) {
-          model.state = R.assoc('img', next_img, model.state);
+          return R.assocPath(['state', 'img'], next_img, model);
         })(factions);
       },
       setImageDisplay: function modelSetImageDisplay(set, model) {
         if (set) {
-          model.state.dsp = R.uniq(R.append('i', model.state.dsp));
+          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('i')), model);
         } else {
-          model.state.dsp = R.reject(R.equals('i'), model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('i')), model);
         }
       },
       toggleImageDisplay: function modelToggleImageDisplay(model) {
         if (modelService.isImageDisplayed(model)) {
-          model.state.dsp = R.reject(R.equals('i'), model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('i')), model);
         } else {
-          model.state.dsp = R.append('i', model.state.dsp);
+          return R.over(R.lensPath(['state', 'dsp']), R.append('i'), model);
         }
       }
     };

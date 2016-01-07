@@ -27,6 +27,7 @@ angular.module('clickApp', [
         data: {}
       })
       .state('settings', {
+        abstract: true,
         url: '/settings',
         templateUrl: 'partials/settings.html',
         controller: 'settingsCtrl',
@@ -35,24 +36,25 @@ angular.module('clickApp', [
       .state('settings.Main', {
         url: '/main',
         templateUrl: 'partials/settings/main.html',
-        controller: 'settingsMainCtrl',
+        controller: 'settingsMainCtrl'
       })
       .state('settings.Models', {
         url: '/models',
         templateUrl: 'partials/settings/models.html',
-        controller: 'settingsModelsCtrl',
+        controller: 'settingsModelsCtrl'
       })
       .state('settings.Bindings', {
         url: '/bindings',
         templateUrl: 'partials/settings/bindings.html',
-        controller: 'settingsBindingsCtrl',
+        controller: 'settingsBindingsCtrl'
       })
       .state('settings.Moves', {
         url: '/moves',
         templateUrl: 'partials/settings/moves.html',
-        controller: 'settingsMovesCtrl',
+        controller: 'settingsMovesCtrl'
       })
       .state('game', {
+        abstract: true,
         url: '/game/:online/:private/:id',
         templateUrl: 'partials/game.html',
         controller: 'gameCtrl',

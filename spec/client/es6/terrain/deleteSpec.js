@@ -5,29 +5,26 @@ describe('delete terrain', function() {
       function(terrainModeService) {
         this.terrainModeService = terrainModeService;
 
-        this.gameService = spyOnService('game');
-
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
         this.gameTerrainSelectionService.get._retVal = 'stamps';
         
-        this.scope = {
-          game: { terrain_selection: 'selection' }
+        this.state = {
+          game: { terrain_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
 
     when('user delete terrain', function() {
       this.ret = this.terrainModeService.actions
-        .delete(this.scope);
+        .delete(this.state);
     }, function() {
       it('should execute deleteTerrainCommand', function() {
         expect(this.gameTerrainSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('deleteTerrain',
-                                'stamps',
-                                this.scope, this.scope.game);
-        expect(this.ret).toBe('game.executeCommand.returnValue');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'deleteTerrain', ['stamps']);
       });
     });
   });
@@ -45,18 +42,18 @@ describe('delete terrain', function() {
 
         this.gameTerrainSelectionService = spyOnService('gameTerrainSelection');
 
-        this.scope = {
+        this.state = {
           factions: 'factions',
-          gameEvent: jasmine.createSpy('gameEvent')
+          changeEvent: jasmine.createSpy('changeEvent')
         };
         this.game = { terrains: 'terrains',
                       terrain_selection: 'selection' };
       }
     ]));
 
-    when('execute(<stamps>, <scope>, <game>)', function() {
+    when('execute(<stamps>, <state>, <game>)', function() {
       this.ret = this.deleteTerrainCommandService
-        .execute(this.stamps, this.scope, this.game);
+        .execute(this.stamps, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.stamps = ['stamp1', 'stamp2', 'stamp3'];
@@ -100,10 +97,10 @@ describe('delete terrain', function() {
       });
       
       it('should remove terrains from <game> terrains', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function([ctxt, game]) {
           expect(this.gameTerrainsService.removeStamps)
             .toHaveBeenCalledWith(this.stamps, 'terrains');
-          expect(this.game.terrains)
+          expect(game.terrains)
             .toBe('gameTerrains.removeStamps.returnValue');
         });
       });
@@ -112,22 +109,22 @@ describe('delete terrain', function() {
         this.thenExpect(this.ret, function() {
           expect(this.gameTerrainSelectionService.removeFrom)
             .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                                  this.scope, 'selection');
+                                  this.state, 'selection');
           expect(this.gameTerrainSelectionService.removeFrom)
             .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                  this.scope, 'gameTerrainSelection.removeFrom.returnValue');
+                                  this.state, 'gameTerrainSelection.removeFrom.returnValue');
         });
       });
 
       it('should emit createTerrain event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('createTerrain');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.create');
         });
       });
 
       it('should resolve context', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function([ctxt]) {
           expect(this.terrainService.saveState)
             .toHaveBeenCalledWith({
               state: { info: [ 'snow', 'hill', 'hill1' ],
@@ -160,9 +157,9 @@ describe('delete terrain', function() {
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <state>, <game>)', function() {
       this.ret = this.deleteTerrainCommandService
-        .replay(this.ctxt, this.scope, this.game);
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -187,28 +184,28 @@ describe('delete terrain', function() {
       it('should remove <ctxt.terrains> from <game> terrains', function() {
         expect(this.gameTerrainsService.removeStamps)
           .toHaveBeenCalledWith(['stamp1','stamp2','stamp3'], 'terrains');
-        expect(this.game.terrains)
+        expect(this.ret.terrains)
           .toBe('gameTerrains.removeStamps.returnValue');
       });
 
       it('should remove <ctxt.terrains> from terrainSelection', function() {
         expect(this.gameTerrainSelectionService.removeFrom)
           .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                                this.scope, 'selection');
+                                this.state, 'selection');
         expect(this.gameTerrainSelectionService.removeFrom)
           .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                this.scope, 'gameTerrainSelection.removeFrom.returnValue');
+                                this.state, 'gameTerrainSelection.removeFrom.returnValue');
       });
 
       it('should emit createTerrain event', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTerrain');
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.terrain.create');
       });
     });
 
-    when('undo(<ctxt>, <scope>, <game>)', function() {
+    when('undo(<ctxt>, <state>, <game>)', function() {
       this.ret = this.deleteTerrainCommandService
-        .undo(this.ctxt, this.scope, this.game);
+        .undo(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -259,7 +256,7 @@ describe('delete terrain', function() {
       });
       
       it('should add new terrain to <game> terrains', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameTerrainsService.add)
             .toHaveBeenCalledWith([
               { state: { info: [ 'snow', 'hill', 'hill1' ],
@@ -279,7 +276,7 @@ describe('delete terrain', function() {
               }
             ], 'terrains');
           
-          expect(this.game.terrains)
+          expect(game.terrains)
             .toBe('gameTerrains.add.returnValue');
         });
       });
@@ -288,14 +285,14 @@ describe('delete terrain', function() {
         this.thenExpect(this.ret, function() {
           expect(this.gameTerrainSelectionService.set)
             .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                                  this.scope, 'selection');
+                                  this.state, 'selection');
         });
       });
 
       it('should emit createTerrain event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('createTerrain');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.create');
         });
       });
     });

@@ -5,23 +5,31 @@ angular.module('clickApp.services')
     'commands',
     function setScenarioCommandServiceFactory(commandsService) {
       var setScenarioCommandService = {
-        execute: function setScenarioExecute(scenario, scope, game) {
+        execute: function setScenarioExecute(scenario, state, game) {
           var ctxt = {
             before: game.scenario,
             after: scenario,
-            desc: scenario.name,
+            desc: scenario.name
           };
-          game.scenario = scenario;
-          scope.gameEvent('changeScenario');
-          return ctxt;
+          game = R.assoc('scenario', scenario, game);
+
+          state.changeEvent('Game.scenario.change');
+          
+          return [ctxt, game];
         },
-        replay: function setScenarioRedo(ctxt, scope, game) {
-          game.scenario = ctxt.after;
-          scope.gameEvent('changeScenario');
+        replay: function setScenarioRedo(ctxt, state, game) {
+          game = R.assoc('scenario', ctxt.after, game);
+
+          state.changeEvent('Game.scenario.change');
+
+          return game;
         },
-        undo: function setScenarioUndo(ctxt, scope, game) {
-          game.scenario = ctxt.before;
-          scope.gameEvent('changeScenario');
+        undo: function setScenarioUndo(ctxt, state, game) {
+          game = R.assoc('scenario', ctxt.before, game);
+          
+          state.changeEvent('Game.scenario.change');
+
+          return game;
         }
       };
       commandsService.registerCommand('setScenario', setScenarioCommandService);

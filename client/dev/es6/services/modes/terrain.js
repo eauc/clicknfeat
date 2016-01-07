@@ -14,153 +14,166 @@ angular.module('clickApp.services')
                                        gameService,
                                        gameTerrainsService,
                                        gameTerrainSelectionService) {
-      var terrain_actions = Object.create(defaultModeService.actions);
-      function clearTerrainSelection(scope/*, event*/) {
-        scope.game.terrain_selection = gameTerrainSelectionService
-          .clear('local', scope, scope.game.terrain_selection);
+      let terrain_actions = Object.create(defaultModeService.actions);
+      function clearTerrainSelection(state) {
+        return state.event('Game.update', R.lensProp('terrain_selection'),
+                           gameTerrainSelectionService.clear$('local', state));
       }
       terrain_actions.modeBackToDefault = clearTerrainSelection;
       terrain_actions.clickMap = clearTerrainSelection;
       terrain_actions.rightClickMap = clearTerrainSelection;
-      terrain_actions.copySelection = function terrainsCopySelection(scope) {
-        var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
+      terrain_actions.copySelection = (state) => {
+        let stamps = gameTerrainSelectionService
+              .get('local', state.game.terrain_selection);
         return R.pipeP(
           gameTerrainsService.copyStamps$(stamps),
           (copy) => {
-            scope.create.terrain = copy;
-            return scope.doSwitchToMode('CreateTerrain');
+            state.create.terrain = copy;
+            return state.event('Modes.switchTo','CreateTerrain');
           }
-        )(scope.game.terrains);
+        )(state.game.terrains);
       };
-      terrain_actions.delete = function terrainDelete(scope) {
-        var stamps = gameTerrainSelectionService
-              .get('local', scope.game.terrain_selection);
-        return gameService.executeCommand('deleteTerrain', stamps,
-                                          scope, scope.game);
+      terrain_actions.delete = (state) => {
+        let stamps = gameTerrainSelectionService
+              .get('local', state.game.terrain_selection);
+        return state.event('Game.command.execute',
+                           'deleteTerrain', [stamps]);
       };
-      terrain_actions.toggleLock = function terrainLock(scope) {
-        var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
+      terrain_actions.toggleLock = (state) => {
+        let stamps = gameTerrainSelectionService
+              .get('local', state.game.terrain_selection);
         return R.pipeP(
           () => {
             return gameTerrainsService
-              .findStamp(stamps[0], scope.game.terrains);
+              .findStamp(stamps[0], state.game.terrains);
           },
           (terrain) => {
-            var is_locked = terrainService.isLocked(terrain);
+            let is_locked = terrainService.isLocked(terrain);
         
-            return gameService
-              .executeCommand('lockTerrains', !is_locked, stamps,
-                              scope, scope.game);
+            return state.event('Game.command.execute',
+                               'lockTerrains', [!is_locked, stamps]);
           }
         )();
       };
-      var moves = [
+      let moves = [
         ['moveFront', 'up'],
         ['moveBack', 'down'],
         ['rotateLeft', 'left'],
         ['rotateRight', 'right'],
       ];
-      R.forEach(function(move) {
-        terrain_actions[move[0]] = function terrainMove(scope) {
-          var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
-          return gameService.executeCommand('onTerrains', move[0], false,
-                                            stamps, scope, scope.game);
+      R.forEach(([move]) => {
+        terrain_actions[move] = (state) => {
+          let stamps = gameTerrainSelectionService
+                .get('local', state.game.terrain_selection);
+          return state.event('Game.command.execute',
+                             'onTerrains', [ move, [false], stamps ]);
         };
-        terrain_actions[move[0]+'Small'] = function terrainMove(scope) {
-          var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
-          return gameService.executeCommand('onTerrains', move[0], true,
-                                            stamps, scope, scope.game);
+        terrain_actions[move+'Small'] = (state) => {
+          let stamps = gameTerrainSelectionService
+                .get('local', state.game.terrain_selection);
+          return state.event('Game.command.execute',
+                             'onTerrains', [ move, [true], stamps ]);
         };
       }, moves);
-      var shifts = [
+      let shifts = [
         ['shiftUp', 'ctrl+up', 'shiftDown'],
         ['shiftDown', 'ctrl+down', 'shiftUp'],
         ['shiftLeft', 'ctrl+left', 'shiftRight'],
         ['shiftRight', 'ctrl+right', 'shiftLeft'],
       ];
-      R.forEach(function(shift) {
-        terrain_actions[shift[0]] = function modelsShift(scope) {
-          var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
-          var terrain_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-          return gameService.executeCommand('onTerrains', terrain_shift, false,
-                                            stamps, scope, scope.game);
+      R.forEach(([shift, key, flip_shift]) => {
+        key = key;
+        terrain_actions[shift] = (state) => {
+          let stamps = gameTerrainSelectionService
+                .get('local', state.game.terrain_selection);
+          let terrain_shift = ( R.path(['ui_state', 'flip_map'], state) ?
+                                flip_shift :
+                                shift
+                              );
+          return state.event('Game.command.execute',
+                             'onTerrains', [ terrain_shift, [false], stamps ]);
         };
-        terrain_actions[shift[0]+'Small'] = function terrainsShiftSmall(scope) {
-          var stamps = gameTerrainSelectionService.get('local', scope.game.terrain_selection);
-          var terrain_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-          return gameService.executeCommand('onTerrains', terrain_shift, true,
-                                            stamps, scope, scope.game);
+        terrain_actions[shift+'Small'] = (state) => {
+          let stamps = gameTerrainSelectionService
+                .get('local', state.game.terrain_selection);
+          let terrain_shift = ( R.path(['ui_state', 'flip_map'], state) ?
+                                flip_shift :
+                                shift
+                              );
+          return state.event('Game.command.execute',
+                             'onTerrains', [ terrain_shift, [true], stamps ]);
         };
       }, shifts);
 
-      (function() {
-        var drag_terrain_start_state;
+      (() => {
+        let drag_terrain_start_state;
         function updateStateWithDelta(event, state) {
-          var dx = event.now.x - event.start.x;
-          var dy = event.now.y - event.start.y;
+          let dx = event.now.x - event.start.x;
+          let dy = event.now.y - event.start.y;
           state.x = drag_terrain_start_state.x + dx;
           state.y = drag_terrain_start_state.y + dy;
         }
-        terrain_actions.dragStartTerrain = function terrainDragStartTerrain(scope, event) {
+        terrain_actions.dragStartTerrain = (state, event) => {
           if(terrainService.isLocked(event.target)) {
             return self.Promise.reject('Terrain is locked');
           }
 
           drag_terrain_start_state = R.clone(event.target.state);
-          terrain_actions.dragTerrain(scope, event);
-          scope.game.terrain_selection = gameTerrainSelectionService
-            .set('local', [event.target.state.stamp],
-                 scope, scope.game.terrain_selection);
+          terrain_actions.dragTerrain(state, event);
+          return state
+            .event('Game.update', R.lensProp('terrain_selection'),
+                   gameTerrainSelectionService.set$('local', [event.target.state.stamp], state));
         };
         defaultModeService.actions.dragStartTerrain = terrain_actions.dragStartTerrain;
-        terrain_actions.dragTerrain = function terrainDragTerrain(scope, event) {
+        terrain_actions.dragTerrain = (state, event) => {
           if(terrainService.isLocked(event.target)) {
             return self.Promise.reject('Terrain is locked');
           }
 
           updateStateWithDelta(event, event.target.state);
-          scope.gameEvent('changeTerrain-'+event.target.state.stamp);
+          state.changeEvent(`Game.terrain.change.${event.target.state.stamp}`);
+          return null;
         };
-        terrain_actions.dragEndTerrain = function terrainDragEndTerrain(scope, event) {
+        terrain_actions.dragEndTerrain = (state, event) => {
           if(terrainService.isLocked(event.target)) {
             return self.Promise.reject('Terrain is locked');
           }
 
-          terrainService.setPosition(drag_terrain_start_state, event.target);
-          var end_state = R.clone(drag_terrain_start_state);
+          event.target.state = R.clone(drag_terrain_start_state);
+          let end_state = R.clone(drag_terrain_start_state);
           updateStateWithDelta(event, end_state);
-          return gameService.executeCommand('onTerrains', 'setPosition', end_state,
-                                            [event.target.state.stamp],
-                                            scope, scope.game);
+          return state.event('Game.command.execute',
+                             'onTerrains', [ 'setPosition',
+                                             [end_state],
+                                             [event.target.state.stamp]
+                                           ]);
         };
       })();
 
-      var terrain_default_bindings = {
+      let terrain_default_bindings = {
         'clickMap': 'clickMap',
         'rightClickMap': 'rightClickMap',
         'copySelection': 'ctrl+c',
         'delete': 'del',
         'toggleLock': 'l'
       };
-      R.forEach(function(move) {
-        terrain_default_bindings[move[0]] = move[1];
-        terrain_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
+      R.forEach(([move, keys]) => {
+        terrain_default_bindings[move] = keys;
+        terrain_default_bindings[move+'Small'] = 'shift+'+keys;
       }, moves);
-      R.forEach(function(shift) {
-        terrain_default_bindings[shift[0]] = shift[1];
-        terrain_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
+      R.forEach(([shift, keys]) => {
+        terrain_default_bindings[shift] = keys;
+        terrain_default_bindings[shift+'Small'] = 'shift+'+keys;
       }, shifts);
-      var terrain_bindings = R.extend(Object.create(defaultModeService.bindings),
+      let terrain_bindings = R.extend(Object.create(defaultModeService.bindings),
                                        terrain_default_bindings);
-      var terrain_buttons = [
+      let terrain_buttons = [
         [ 'Delete', 'delete' ],
         [ 'Lock/Unlock', 'toggleLock' ],
       ];
-      var terrain_mode = {
-        onEnter: function terrainOnEnter(/*scope*/) {
-        },
-        onLeave: function terrainOnLeave(/*scope*/) {
-        },
+      let terrain_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'Terrain',
         actions: terrain_actions,
         buttons: terrain_buttons,
@@ -170,7 +183,7 @@ angular.module('clickApp.services')
       settingsService.register('Bindings',
                                terrain_mode.name,
                                terrain_default_bindings,
-                               function(bs) {
+                               (bs) => {
                                  R.extend(terrain_mode.bindings, bs);
                                });
       return terrain_mode;

@@ -22,6 +22,7 @@ self.it = (function() {
       .catch(function(error) {
         expect('This promise').toBe('not rejected');
         expect(error).toBe(null);
+        console.error(error);
       })
       .then(this._done);
   };

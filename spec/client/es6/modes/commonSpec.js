@@ -1,5 +1,3 @@
-'use strict';
-
 describe('commonMode', function() {
   describe('commonModeService', function() {
     beforeEach(inject([
@@ -11,24 +9,24 @@ describe('commonMode', function() {
 
     using([
       [ 'action', 'event'  ],
-      [ 'viewScrollLeft', 'viewScrollLeft' ],
-      [ 'viewScrollRight', 'viewScrollRight' ],
-      [ 'viewScrollDown', 'viewScrollDown' ],
-      [ 'viewScrollUp', 'viewScrollUp' ],
-      [ 'viewZoomIn', 'viewZoomIn' ],
-      [ 'viewZoomOut', 'viewZoomOut' ],
-      [ 'viewZoomReset', 'viewZoomReset' ],
-      [ 'flipMap', 'flipMap' ],
-      [ 'toggleMenu', 'toggleMenu' ],
+      [ 'viewScrollLeft', 'Game.view.scrollLeft' ],
+      [ 'viewScrollRight', 'Game.view.scrollRight' ],
+      [ 'viewScrollDown', 'Game.view.scrollDown' ],
+      [ 'viewScrollUp', 'Game.view.scrollUp' ],
+      [ 'viewZoomIn', 'Game.view.zoomIn' ],
+      [ 'viewZoomOut', 'Game.view.zoomOut' ],
+      [ 'viewZoomReset', 'Game.view.zoomReset' ],
+      [ 'flipMap', 'Game.view.flipMap' ],
+      [ 'toggleMenu', 'Game.toggleMenu' ],
     ], function(e) {
       describe(e.action+'()', function() {
         beforeEach(function() {
-          this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+          this.state = jasmine.createSpyObj('state', ['changeEvent']);
         });
 
         it('should broadcast "'+e.event+'" event', function() {
-          this.commonModeService.actions[e.action](this.scope);
-          expect(this.scope.gameEvent)
+          this.commonModeService.actions[e.action](this.state);
+          expect(this.state.changeEvent)
             .toHaveBeenCalledWith(e.event);
         });
       });
@@ -37,16 +35,16 @@ describe('commonMode', function() {
     describe('modeBackToDefault', function() {
       beforeEach(function() {
         this.modesService = spyOnService('modes');
-        this.scope = { modes: 'modes',
-                       doSwitchToMode: jasmine.createSpy('doSwitchToMode')
+        this.state = { modes: 'modes',
+                       event: jasmine.createSpy('event')
                      };
         
-        this.commonModeService.actions.modeBackToDefault(this.scope);
+        this.commonModeService.actions.modeBackToDefault(this.state);
       });
 
       it('should switch to default mode', function() {
-        expect(this.scope.doSwitchToMode)
-          .toHaveBeenCalledWith('Default');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Modes.switchTo','Default');
       });
     });
   });

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model areas', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -18,16 +16,17 @@ describe('model areas', function() {
 
         this.modelService = spyOnService('model');
       
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles ctrl area display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleCtrlAreaDisplay(this.scope);
+        .toggleCtrlAreaDisplay(this.state);
     }, function() {
       using([
         ['first', 'set' ],
@@ -45,11 +44,11 @@ describe('model areas', function() {
             this.thenExpect(this.ret, function(result) {
               expect(this.modelService.isCtrlAreaDisplayed)
                 .toHaveBeenCalledWith('factions', 'gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setCtrlAreaDisplay', ee.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setCtrlAreaDisplay', [ee.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                    ]);
             });
           });
         });
@@ -63,7 +62,7 @@ describe('model areas', function() {
     ], function(e) {
       when('user toggles '+e.area+'" area display on models', function() {
         this.ret = this.modelsModeService
-          .actions['toggle'+e.area+'InchesAreaDisplay'](this.scope);
+          .actions['toggle'+e.area+'InchesAreaDisplay'](this.state);
       }, function() {
         using([
           ['first' , 'set'],
@@ -81,11 +80,11 @@ describe('model areas', function() {
               this.thenExpect(this.ret, function(result) {
                 expect(this.modelService.areaDisplay)
                   .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-                expect(this.gameService.executeCommand)
-                  .toHaveBeenCalledWith('onModels', 'setAreaDisplay', ee.set,
-                                        this.gameModelSelectionService.get._retVal,
-                                        this.scope, this.scope.game);
-                expect(result).toBe('game.executeCommand.returnValue');
+                expect(this.state.event)
+                  .toHaveBeenCalledWith('Game.command.execute',
+                                        'onModels', [ 'setAreaDisplay', [ee.set],
+                                                      this.gameModelSelectionService.get._retVal
+                                                    ]);
               });
             });
           });
@@ -112,12 +111,12 @@ describe('model areas', function() {
       it('should toggle ctrlArea display for <model>', function(done) {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleCtrlAreaDisplay(this.model);
+        this.model = this.modelService.toggleCtrlAreaDisplay(this.model);
         this.ret = this.modelService.isCtrlAreaDisplayed('factions', this.model);
         this.ret.then((result) => {
           expect(result).toBeTruthy();
         
-          this.modelService.toggleCtrlAreaDisplay(this.model);
+          this.model = this.modelService.toggleCtrlAreaDisplay(this.model);
           this.ret = this.modelService.isCtrlAreaDisplayed('factions', this.model);
           this.ret.then(function(result) {
             expect(result).toBeFalsy();
@@ -132,12 +131,12 @@ describe('model areas', function() {
       it('should set ctrlArea display for <model>', function(done) {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setCtrlAreaDisplay(true, this.model);
+        this.model = this.modelService.setCtrlAreaDisplay(true, this.model);
         this.ret = this.modelService.isCtrlAreaDisplayed('factions', this.model);
         this.ret.then((result) => {
           expect(result).toBeTruthy();
         
-          this.modelService.setCtrlAreaDisplay(false, this.model);
+          this.model = this.modelService.setCtrlAreaDisplay(false, this.model);
           this.ret = this.modelService.isCtrlAreaDisplayed('factions', this.model);
           this.ret.then(function(result) {
             expect(result).toBeFalsy();
@@ -152,13 +151,13 @@ describe('model areas', function() {
       it('should toggle area display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleAreaDisplay('area', this.model);
+        this.model = this.modelService.toggleAreaDisplay('area', this.model);
         expect(this.modelService.areaDisplay(this.model))
           .toBe('area');
         expect(this.modelService.isAreaDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleAreaDisplay('area', this.model);
+        this.model = this.modelService.toggleAreaDisplay('area', this.model);
         expect(this.modelService.areaDisplay(this.model))
           .toBe(null);
         expect(this.modelService.isAreaDisplayed(this.model))
@@ -170,13 +169,13 @@ describe('model areas', function() {
       it('should set area display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setAreaDisplay('area', this.model);
+        this.model = this.modelService.setAreaDisplay('area', this.model);
         expect(this.modelService.areaDisplay(this.model))
           .toBe('area');
         expect(this.modelService.isAreaDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setAreaDisplay(null, this.model);
+        this.model = this.modelService.setAreaDisplay(null, this.model);
         expect(this.modelService.areaDisplay(this.model))
           .toBe(null);
         expect(this.modelService.isAreaDisplayed(this.model))

@@ -6,8 +6,8 @@ angular.module('clickApp.services').factory('wallTemplateMode', ['modes', 'setti
   var template_bindings = R.extend(Object.create(templateModeService.bindings), template_default_bindings);
   var template_buttons = R.concat([], templateModeService.buttons);
   var template_mode = {
-    onEnter: function templateOnEnter() /*scope*/{},
-    onLeave: function templateOnLeave() /*scope*/{},
+    onEnter: function onEnter() {},
+    onLeave: function onLeave() {},
     name: 'wall' + templateModeService.name,
     actions: template_actions,
     buttons: template_buttons,
@@ -17,7 +17,7 @@ angular.module('clickApp.services').factory('wallTemplateMode', ['modes', 'setti
   // settingsService.register('Bindings',
   //                          template_mode.name,
   //                          template_default_bindings,
-  //                          function(bs) {
+  //                          (bs) => {
   //                            R.extend(template_mode.bindings, bs);
   //                          });
   return template_mode;

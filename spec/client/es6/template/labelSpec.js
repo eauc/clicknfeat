@@ -1,5 +1,3 @@
-'use strict';
-
 describe('label template', function() {
   describe('template service', function() {
     beforeEach(inject([
@@ -36,7 +34,8 @@ describe('label template', function() {
         [ 'label2'  , ['label1', 'label2'] ],
       ], function(e, d) {
         it('should add <label> to template\'s labels, '+d, function() {
-          this.templateService.addLabel(e.label, this.template);
+          this.template = this.templateService
+            .addLabel(e.label, this.template);
           expect(this.template.state.l)
             .toEqual(e.result);
         });
@@ -56,7 +55,8 @@ describe('label template', function() {
         [ 'unknown'  , ['label1', 'label2'] ],
       ], function(e, d) {
         it('should remove <label> from template\'s labels, '+d, function() {
-          this.templateService.removeLabel(e.label, this.template);
+          this.template = this.templateService
+            .removeLabel(e.label, this.template);
           expect(this.template.state.l)
             .toEqual(e.result);
         });

@@ -18,252 +18,280 @@ angular.module('clickApp.services')
                                       gameModelSelectionService,
                                       pointService,
                                       promptService) {
-      var models_actions = Object.create(defaultModeService.actions);
-      function modelsClearSelection(scope) {
-        return gameService.executeCommand('setModelSelection', 'clear', null,
-                                          scope, scope.game);
+      let models_actions = Object.create(defaultModeService.actions);
+      function modelsClearSelection(state) {
+        return state.event('Game.command.execute',
+                           'setModelSelection', [ 'clear', null ]);
       }
       models_actions.clickMap = modelsClearSelection;
       models_actions.rightClickMap = modelsClearSelection;
       models_actions.modeBackToDefault = modelsClearSelection;
-      models_actions.deleteSelection = function modelsDeleteSelection(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('deleteModel', stamps, scope, scope.game);
+      models_actions.deleteSelection = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'deleteModel', [stamps]);
       };
-      models_actions.toggleLock = function modelsToggleLock(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleLock = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isLocked,
           (present) => {
-            return gameService.executeCommand('lockModels', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'lockModels', [ !present, stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleImageDisplay = function modelsToggleImageDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleImageDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isImageDisplayed,
           (present) => {
-            return gameService.executeCommand('onModels', 'setImageDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setImageDisplay', [!present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.setNextImage = function modelsSetNextImage(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'setNextImage', scope.factions,
-                                          stamps, scope, scope.game);
+      models_actions.setNextImage = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'setNextImage', [state.factions], stamps]);
       };
-      models_actions.toggleWreckDisplay = function modelsToggleWreckDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleWreckDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isWreckDisplayed,
           (present) => {
-            return gameService.executeCommand('onModels', 'setWreckDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setWreckDisplay', [!present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleUnitDisplay = function modelsToggleUnitDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleUnitDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isUnitDisplayed,
           (present) => {
-            return gameService.executeCommand('onModels', 'setUnitDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setUnitDisplay', [!present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.setUnit = function modelsSetUnit(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.setUnit = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           (model) => {
-            var value = R.defaultTo(0, modelService.unit(model));
+            let value = R.defaultTo(0, modelService.unit(model));
 
-            return promptService.prompt('prompt',
-                                        'Set unit number :',
-                                        value)
+            return promptService
+              .prompt('prompt', 'Set unit number :', value)
               .catch(R.always(null));
           },
           (value) => {
-            return gameService.executeCommand('onModels', 'setUnit', value,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setUnit', [value], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleMeleeDisplay = function modelsToggleMeleeDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleMeleeDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('mm'),
           (present) => {
-            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mm', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setMeleeDisplay', ['mm', !present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleReachDisplay = function modelsToggleReachDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleReachDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('mr'),
           (present) => {
-            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'mr', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setMeleeDisplay', ['mr', !present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleStrikeDisplay = function modelsToggleStrikeDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleStrikeDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isMeleeDisplayed$('ms'),
           (present) => {
-            return gameService.executeCommand('onModels', 'setMeleeDisplay', 'ms', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setMeleeDisplay', ['ms', !present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleCounterDisplay = function modelsToggleCounterDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleCounterDisplay = (state) => {
+        let stamps = gameModelSelectionService.get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isCounterDisplayed$('c'),
           (present) => {
-            return gameService.executeCommand('onModels', 'setCounterDisplay', 'c', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setCounterDisplay', ['c', !present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.incrementCounter = function modelsIncrementCounter(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'incrementCounter', 'c',
-                                          stamps, scope, scope.game);
+      models_actions.incrementCounter = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'incrementCounter', ['c'], stamps]);
       };
-      models_actions.decrementCounter = function modelsDecrementCounter(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'decrementCounter', 'c',
-                                          stamps, scope, scope.game);
+      models_actions.decrementCounter = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'decrementCounter', ['c'], stamps]);
       };
-      models_actions.toggleSoulsDisplay = function modelsToggleSoulsDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleSoulsDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isCounterDisplayed$('s'),
           (present) => {
-            return gameService.executeCommand('onModels', 'setCounterDisplay', 's', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setCounterDisplay', ['s', !present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.incrementSouls = function modelsIncrementSouls(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'incrementCounter', 's',
-                                          stamps, scope, scope.game);
+      models_actions.incrementSouls = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'incrementCounter', ['s'], stamps]);
       };
-      models_actions.decrementSouls = function modelsDecrementSouls(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'decrementCounter', 's',
-                                          stamps, scope, scope.game);
+      models_actions.decrementSouls = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'decrementCounter', ['s'], stamps]);
       };
-      models_actions.setRulerMaxLength = function modelsSetRulerMaxLength(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.setRulerMaxLength = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.rulerMaxLength,
           R.defaultTo(0),
           (value) => {
-            return promptService.prompt('prompt',
-                                        'Set ruler max length :',
-                                        value)
+            return promptService
+              .prompt('prompt', 'Set ruler max length :', value)
               .catch(R.always(null));
           },
           (value) => {
             value = (value === 0) ? null : value;
 
-            return gameService.executeCommand('onModels', 'setRulerMaxLength', value,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setRulerMaxLength', [value], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.setChargeMaxLength = function modelsSetChargeMaxLength(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.setChargeMaxLength = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.chargeMaxLength,
           (value) => {
-            return promptService.prompt('prompt', 'Set charge max length :', value)
+            return promptService
+              .prompt('prompt', 'Set charge max length :', value)
               .catch(R.always(null));
           },
           (value) => {
             value = (value === 0) ? null : value;
 
-            return gameService.executeCommand('onModels',
-                                              'setChargeMaxLength', scope.factions, value,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setChargeMaxLength',
+                                             [state.factions, value],
+                                             stamps
+                                           ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.setPlaceMaxLength = function modelsSetPlaceMaxLength(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.setPlaceMaxLength = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.placeMaxLength,
           R.defaultTo(0),
           (value) => {
-            return promptService.prompt('prompt','Set place max length :', value)
+            return promptService
+              .prompt('prompt','Set place max length :', value)
               .catch(R.always(null));
           },
           (value) => {
             value = (value === 0) ? null : value;
 
-            return gameService.executeCommand('onModels',
-                                              'setPlaceMaxLength', scope.factions, value,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setPlaceMaxLength',
+                                             [state.factions, value],
+                                             stamps
+                                           ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.togglePlaceWithin = function modelsTogglePlaceWithin(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.togglePlaceWithin = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.placeWithin,
           (present) => {
-            return gameService.executeCommand('onModels',
-                                              'setPlaceWithin', scope.factions, !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setPlaceWithin',
+                                             [state.factions, !present],
+                                             stamps
+                                           ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleLeaderDisplay = function modelsToggleLeaderDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleLeaderDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isLeaderDisplayed,
           (present) => {
-            return gameService.executeCommand('onModels', 'setLeaderDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setLeaderDisplay', [!present], stamps ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.toggleIncorporealDisplay = function modelsToggleIncorporealDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleIncorporealDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
           modelService.isIncorporealDisplayed,
           (present) => {
-            return gameService.executeCommand('onModels', 'setIncorporealDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setIncorporealDisplay', [!present], stamps ]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      var effects = [
+      let effects = [
         [ 'Blind', 'b' ],
         [ 'Corrosion', 'c' ],
         [ 'Disrupt', 'd' ],
@@ -272,20 +300,21 @@ angular.module('clickApp.services')
         [ 'KD', 'k' ],
         [ 'Stationary', 't' ],
       ];
-      R.forEach(function(effect) {
-        models_actions['toggle'+effect[0]+'EffectDisplay'] = function modelsToggleEffectDisplay(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      R.forEach(([effect, flag]) => {
+        models_actions['toggle'+effect+'EffectDisplay'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
-            modelService.isEffectDisplayed$(effect[1]),
+            modelService.isEffectDisplayed$(flag),
             (present) => {
-              return gameService.executeCommand('onModels', 'setEffectDisplay', effect[1], !present,
-                                                stamps, scope, scope.game);
+              return state.event('Game.command.execute',
+                                 'onModels', [ 'setEffectDisplay', [flag, !present], stamps]);
             }
-          )(scope.game.models);
+          )(state.game.models);
         };
       }, effects);
-      var auras = [
+      let auras = [
         [ 'Red', '#F00' ],
         [ 'Green', '#0F0' ],
         [ 'Blue', '#00F' ],
@@ -293,139 +322,174 @@ angular.module('clickApp.services')
         [ 'Purple', '#F0F' ],
         [ 'Cyan', '#0FF' ],
       ];
-      R.forEach(function(aura) {
-        models_actions['toggle'+aura[0]+'AuraDisplay'] = function modelsToggleAuraDisplay(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      R.forEach(([aura, hex]) => {
+        models_actions['toggle'+aura+'AuraDisplay'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
             modelService.auraDisplay,
             (present) => {
-              return gameService.executeCommand('onModels', 'setAuraDisplay',
-                                                (present === aura[1]) ? null : aura[1],
-                                                stamps, scope, scope.game);
+              return state.event('Game.command.execute',
+                                 'onModels', [ 'setAuraDisplay',
+                                               [(present === hex) ? null : hex],
+                                               stamps
+                                             ]);
             }
-          )(scope.game.models);
+          )(state.game.models);
         };
       }, auras);
-      models_actions.toggleCtrlAreaDisplay = function modelsToggleCtrlAreaDisplay(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.toggleCtrlAreaDisplay = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.findStamp$(stamps[0]),
-          modelService.isCtrlAreaDisplayed$(scope.factions),
+          modelService.isCtrlAreaDisplayed$(state.factions),
           (present) => {
-            return gameService.executeCommand('onModels', 'setCtrlAreaDisplay', !present,
-                                              stamps, scope, scope.game);
+            return state.event('Game.command.execute',
+                               'onModels', [ 'setCtrlAreaDisplay', [!present], stamps]);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      var areas = R.range(0, 10);
-      R.forEach(function(area) {
-        var size = area === 0 ? 10 : area;
-        models_actions['toggle'+size+'InchesAreaDisplay'] = function modelsToggleAreaDisplay(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      let areas = R.range(0, 10);
+      R.forEach((area) => {
+        let size = area === 0 ? 10 : area;
+        models_actions['toggle'+size+'InchesAreaDisplay'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
           return R.pipeP(
             gameModelsService.findStamp$(stamps[0]),
             (model) => {
-              var present = modelService.areaDisplay(model);
+              let present = modelService.areaDisplay(model);
 
-              return gameService.executeCommand('onModels', 'setAreaDisplay',
-                                                (present === size) ? null : size,
-                                                stamps, scope, scope.game);
+              return state.event('Game.command.execute',
+                                 'onModels', [ 'setAreaDisplay',
+                                               [(present === size) ? null : size],
+                                               stamps
+                                             ]);
             }
-          )(scope.game.models);
+          )(state.game.models);
         };
-        var big_size = size + 10;
-        models_actions['toggle'+big_size+'InchesAreaDisplay'] =
-          function modelsToggle10InchesAreaDisplay(scope) {
-            var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-            return R.pipeP(
-              gameModelsService.findStamp$(stamps[0]),
-              (model) => {
-                var present = modelService.areaDisplay(model);
+        let big_size = size + 10;
+        models_actions['toggle'+big_size+'InchesAreaDisplay'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
+          return R.pipeP(
+            gameModelsService.findStamp$(stamps[0]),
+            (model) => {
+              let present = modelService.areaDisplay(model);
 
-                return gameService.executeCommand('onModels', 'setAreaDisplay',
-                                                  (present === big_size) ? null : big_size,
-                                                  stamps, scope, scope.game);
+              return state.event('Game.command.execute',
+                                 'onModels', [ 'setAreaDisplay',
+                                               [(present === big_size) ? null : big_size],
+                                               stamps
+                                             ]);
               }
-            )(scope.game.models);
+            )(state.game.models);
           };
       }, areas);
-      var moves = [
+      let moves = [
         ['moveFront', 'up'],
         ['moveBack', 'down'],
         ['rotateLeft', 'left'],
         ['rotateRight', 'right'],
       ];
-      R.forEach(function(move) {
-        models_actions[move[0]] = function modelsMove(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          return gameService.executeCommand('onModels', move[0], scope.factions, false,
-                                            stamps, scope, scope.game);
+      R.forEach(([move, key]) => {
+        key = key;
+        models_actions[move] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
+          return state.event('Game.command.execute',
+                             'onModels', [ move, [state.factions, false], stamps ]);
         };
-        models_actions[move[0]+'Small'] = function modelsMoveSmall(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          return gameService.executeCommand('onModels', move[0], scope.factions, true,
-                                            stamps, scope, scope.game);
+        models_actions[move+'Small'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
+          return state.event('Game.command.execute',
+                             'onModels', [ move, [state.factions, true], stamps ]);
         };
       }, moves);
-      var shifts = [
+      let shifts = [
         ['shiftUp', 'ctrl+up', 'shiftDown'],
         ['shiftDown', 'ctrl+down', 'shiftUp'],
         ['shiftLeft', 'ctrl+left', 'shiftRight'],
         ['shiftRight', 'ctrl+right', 'shiftLeft'],
       ];
-      R.forEach(function(shift) {
-        models_actions[shift[0]] = function modelsShift(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-          return gameService.executeCommand('onModels', model_shift, scope.factions, false,
-                                            stamps, scope, scope.game);
+      R.forEach(([shift, key, flip_shift]) => {
+        key = key;
+        models_actions[shift] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
+          let model_shift = ( R.path(['ui_state', 'flip_map'], state) ?
+                              flip_shift :
+                              shift
+                            );
+          return state.event('Game.command.execute',
+                             'onModels', [ model_shift, [state.factions, false], stamps ]);
         };
-        models_actions[shift[0]+'Small'] = function modelsShiftSmall(scope) {
-          var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-          var model_shift = R.path(['ui_state', 'flip_map'], scope) ? shift[2] : shift[0];
-          return gameService.executeCommand('onModels', model_shift, scope.factions, true,
-                                            stamps, scope, scope.game);
+        models_actions[shift+'Small'] = (state) => {
+          let stamps = gameModelSelectionService
+                .get('local', state.game.model_selection);
+          let model_shift = ( R.path(['ui_state', 'flip_map'], state) ?
+                              flip_shift :
+                              shift
+                            );
+          return state.event('Game.command.execute',
+                             'onModels', [ model_shift, [state.factions, true], stamps ]);
         };
       }, shifts);
-      models_actions.setOrientationUp = function modelsSetOrientationUp(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        var orientation = scope.ui_state.flip_map ? 180 : 0;
-        gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
-                                   stamps, scope, scope.game);
+      models_actions.setOrientationUp = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        let orientation = state.ui_state.flip_map ? 180 : 0;
+        state.event('Game.command.execute',
+                    'onModels', [ 'setOrientation',
+                                  [state.factions, orientation],
+                                  stamps
+                                ]);
       };
-      models_actions.setOrientationDown = function modelsSetOrientationDown(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        var orientation = scope.ui_state.flip_map ? 0 : 180;
-        gameService.executeCommand('onModels', 'setOrientation', scope.factions, orientation,
-                                   stamps, scope, scope.game);
+      models_actions.setOrientationDown = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        let orientation = state.ui_state.flip_map ? 0 : 180;
+        state.event('Game.command.execute',
+                    'onModels', [ 'setOrientation',
+                                  [state.factions, orientation],
+                                  stamps
+                                ]);
       };
-      models_actions.setTargetModel = function modelsSetTargetModel(scope, event) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels',
-                                          'orientTo', scope.factions, event['click#'].target,
-                                          stamps, scope, scope.game);
+      models_actions.setTargetModel = (state, event) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'orientTo',
+                                         [state.factions, event['click#'].target],
+                                         stamps
+                                       ]);
       };
 
-      (function() {
-        var drag_charge_target;
-        var drag_models_start_states;
-        var drag_models_start_selection;
-        models_actions.dragStartModel = function modelsDragStartModel(scope, event) {
-          var stamp = event.target.state.stamp;
-          return R.pipeP(
+      (() => {
+        let drag_charge_target;
+        let drag_models_start_states;
+        let drag_models_start_selection;
+        models_actions.dragStartModel = (state, event) => {
+          let stamp = event.target.state.stamp;
+          return R.pipePromise(
             () => {
-              if(gameModelSelectionService.in('local', stamp, scope.game.model_selection)) {
-                return self.Promise.resolve();
-              }
-              return gameService.executeCommand('setModelSelection', 'set', [stamp],
-                                                scope, scope.game);
+              let in_selection = gameModelSelectionService
+                    .in('local', stamp, state.game.model_selection);
+              if(in_selection) return null;
+
+              return state.event('Game.command.execute',
+                                 'setModelSelection', ['set', [stamp]]);
             },
             () => {
-              return gameModelSelectionService.get('local', scope.game.model_selection);
+              return gameModelSelectionService
+                .get('local', state.game.model_selection);
             },
             (stamps) => {
-              return gameModelsService.findAnyStamps(stamps, scope.game.models);
+              return gameModelsService
+                .findAnyStamps(stamps, state.game.models);
             },
             R.reject(R.isNil),
             (models) => {
@@ -434,7 +498,8 @@ angular.module('clickApp.services')
                 R.pipeP(
                   modelService.chargeTarget,
                   (target_stamp) => {
-                    return gameModelsService.findStamp(target_stamp, scope.game.models);
+                    return gameModelsService
+                      .findStamp(target_stamp, state.game.models);
                   },
                   (target_model) => {
                     drag_charge_target = target_model;
@@ -451,66 +516,69 @@ angular.module('clickApp.services')
             (states) => {
               drag_models_start_states = states;
 
-              return models_actions.dragModel(scope, event);
+              return models_actions.dragModel(state, event);
             }
           )();
         };
         defaultModeService.actions.dragStartModel = models_actions.dragStartModel;
-        models_actions.dragModel = function modelsDragModel(scope, event) {
+        models_actions.dragModel = (state, event) => {
           return R.pipePromise(
             R.addIndex(R.map)((model, index) => {
-              var pos = {
+              let pos = {
                 x: drag_models_start_states[index].x + event.now.x - event.start.x,
                 y: drag_models_start_states[index].y + event.now.y - event.start.y
               };
-              return modelService.setPosition(scope.factions, drag_charge_target,
-                                              pos, model);
+              return modelService
+                .setPosition_(state.factions, drag_charge_target, pos, model);
             }),
             R.promiseAll,
             R.forEach((model) => {
-              scope.gameEvent('changeModel-'+modelService.eventName(model));
+              state.changeEvent(`Game.model.change.${model.state.stamp}`);
             })
           )(drag_models_start_selection);
         };
-        models_actions.dragEndModel = function modelsDragEndModel(scope, event) {
+        models_actions.dragEndModel = (state, event) => {
           return R.pipePromise(
             R.addIndex(R.map)((model, index) => {
-              return modelService.setPosition(scope.factions, drag_charge_target,
-                                              drag_models_start_states[index], model);
+              return modelService
+                .setPosition_(state.factions, drag_charge_target,
+                             drag_models_start_states[index], model);
             }),
             R.promiseAll,
             R.map(R.path(['state','stamp'])),
             (stamps) => {
-              var shift = {
+              let shift = {
                 x: event.now.x - event.start.x,
                 y: event.now.y - event.start.y
               };
-              return gameService.executeCommand('onModels',
-                                                'shiftPosition',
-                                                scope.factions, drag_charge_target, shift,
-                                                stamps, scope, scope.game);
+              return state.event('Game.command.execute',
+                                 'onModels', [ 'shiftPosition',
+                                               [state.factions, drag_charge_target, shift],
+                                               stamps
+                                             ]);
             }
           )(drag_models_start_selection);
         };
       })();
 
-      models_actions.copySelection = function modelsCopySelection(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+      models_actions.copySelection = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
         return R.pipeP(
           gameModelsService.copyStamps$(stamps),
           (copy) => {
-            scope.create.model = copy;
-            return scope.doSwitchToMode('CreateModel');
+            return state.event('Game.model.copy', copy);
           }
-        )(scope.game.models);
+        )(state.game.models);
       };
-      models_actions.clearLabel = function modelsClearLabel(scope) {
-        var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-        return gameService.executeCommand('onModels', 'clearLabel',
-                                          stamps, scope, scope.game);
+      models_actions.clearLabel = (state) => {
+        let stamps = gameModelSelectionService
+              .get('local', state.game.model_selection);
+        return state.event('Game.command.execute',
+                           'onModels', [ 'clearLabel', [], stamps]);
       };
       
-      var models_default_bindings = {
+      let models_default_bindings = {
         'clickMap': 'clickMap',
         'rightClickMap': 'rightClickMap',
         'deleteSelection': 'del',
@@ -540,44 +608,42 @@ angular.module('clickApp.services')
         'setUnit': 'shift+u',
         'toggleLeaderDisplay': 'alt+l',
         'toggleIncorporealDisplay': 'alt+g',
-        'clearLabel': 'ctrl+shift+l',
+        'clearLabel': 'ctrl+shift+l'
       };
-      R.forEach(function(move) {
-        models_default_bindings[move[0]] = move[1];
-        models_default_bindings[move[0]+'Small'] = 'shift+'+move[1];
+      R.forEach(([move, keys]) => {
+        models_default_bindings[move] = keys;
+        models_default_bindings[move+'Small'] = 'shift+'+keys;
       }, moves);
-      R.forEach(function(shift) {
-        models_default_bindings[shift[0]] = shift[1];
-        models_default_bindings[shift[0]+'Small'] = 'shift+'+shift[1];
+      R.forEach(([shift, keys]) => {
+        models_default_bindings[shift] = keys;
+        models_default_bindings[shift+'Small'] = 'shift+'+keys;
       }, shifts);
-      R.forEach(function(area) {
-        var size = area === 0 ? 10 : area;
+      R.forEach((area) => {
+        let size = area === 0 ? 10 : area;
         models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+'+area;
         size += 10;
         models_default_bindings['toggle'+size+'InchesAreaDisplay'] = 'alt+shift+'+area;
       }, areas);
-      R.addIndex(R.forEach)(function(aura, index) {
-        models_default_bindings['toggle'+aura[0]+'AuraDisplay'] = 'ctrl+'+(index+1);
+      R.addIndex(R.forEach)(([aura], index) => {
+        models_default_bindings['toggle'+aura+'AuraDisplay'] = 'ctrl+'+(index+1);
       }, auras);
-      R.forEach(function(effect) {
-        models_default_bindings['toggle'+effect[0]+'EffectDisplay'] = 'alt+'+effect[1];
+      R.forEach(([effect, keys]) => {
+        models_default_bindings['toggle'+effect+'EffectDisplay'] = 'alt+'+keys;
       }, effects);
-      var models_bindings = R.extend(Object.create(defaultModeService.bindings),
+      let models_bindings = R.extend(Object.create(defaultModeService.bindings),
                                      models_default_bindings);
 
-      var models_buttons = buildModelsModesButtons();
-      var models_mode = {
-        onEnter: function modelsOnEnter(/*scope*/) {
-        },
-        onLeave: function modelsOnLeave(/*scope*/) {
-        },
+      let models_buttons = buildModelsModesButtons();
+      let models_mode = {
+        onEnter: () => { },
+        onLeave: () => { },
         name: 'Models',
         actions: models_actions,
         buttons: models_buttons,
         buildButtons: buildModelsModesButtons,
         bindings: models_bindings,
         areas: areas,
-        // auras: auras,
+        auras: auras,
         effects: effects
       };
       modesService.registerMode(models_mode);
@@ -592,7 +658,7 @@ angular.module('clickApp.services')
                                          start_charge, end_charge,
                                          start_place, end_place
                                        } = {}) {
-        var ret = [
+        let ret = [
           [ 'Delete', 'deleteSelection' ],
           [ 'Copy', 'copySelection' ],
           [ 'Lock', 'toggleLock' ],
@@ -627,20 +693,20 @@ angular.module('clickApp.services')
         ret = R.append([ 'Areas', 'toggle', 'areas' ], ret);
         ret = R.append([ 'CtrlArea', 'toggleCtrlAreaDisplay', 'areas' ], ret);
         ret = R.concat(ret, R.map((area) => {
-          var size = area + 1;
+          let size = area + 1;
           return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
         }, areas));
         ret = R.concat(ret, R.map((area) => {
-          var size = area + 11;
+          let size = area + 11;
           return [ size+'"', 'toggle'+size+'InchesAreaDisplay', 'areas' ];
         }, areas));
         ret = R.append([ 'Auras', 'toggle', 'auras' ], ret);
-        ret = R.concat(ret, R.map((aura) => {
-          return [ aura[0], 'toggle'+aura[0]+'AuraDisplay', 'auras' ];
+        ret = R.concat(ret, R.map(([aura]) => {
+          return [ aura, 'toggle'+aura+'AuraDisplay', 'auras' ];
         }, auras));
         ret = R.append([ 'Effects', 'toggle', 'effects' ], ret);
-        ret = R.concat(ret, R.map((effect) => {
-          return [ effect[0], 'toggle'+effect[0]+'EffectDisplay', 'effects' ];
+        ret = R.concat(ret, R.map(([effect]) => {
+          return [ effect, 'toggle'+effect+'EffectDisplay', 'effects' ];
         }, effects));
         ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
         ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);

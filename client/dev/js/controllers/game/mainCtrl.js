@@ -5,33 +5,32 @@ angular.module('clickApp.controllers').controller('gameMainCtrl', ['$scope', fun
 
   $scope.hints.go_to_main = false;
 
-  $scope.doUseRuler = function doUseRuler() {
+  $scope.doUseRuler = function () {
     if ($scope.currentModeIs('Ruler')) {
       $scope.doModeAction('modeBackToDefault');
     } else {
       $scope.doModeAction('enterRulerMode');
     }
   };
-  $scope.doToggleShowRuler = function doToggleShowRuler() {
-    $scope.doExecuteCommand('setRuler', 'toggleDisplay');
+  $scope.doToggleShowRuler = function () {
+    $scope.stateEvent('Game.command.execute', 'setRuler', ['toggleDisplay', []]);
   };
-  $scope.digestOnGameEvent('changeRemoteRuler', $scope);
+  $scope.digestOnStateChangeEvent('Game.ruler.remote.change', $scope);
 
-  $scope.doUseLos = function doUseLos() {
+  $scope.doUseLos = function () {
     if ($scope.currentModeIs('LoS')) {
       $scope.doModeAction('modeBackToDefault');
     } else {
       $scope.doModeAction('enterLosMode');
     }
   };
-  $scope.doToggleShowLos = function doToggleShowLos() {
-    $scope.doExecuteCommand('setLos', 'toggleDisplay');
+  $scope.doToggleShowLos = function () {
+    $scope.stateEvent('Game.command.execute', 'setLos', ['toggleDisplay', []]);
   };
-  $scope.digestOnGameEvent('changeRemoteLos', $scope);
+  $scope.digestOnStateChangeEvent('Game.los.remote.change', $scope);
 
-  $scope.doCreateTemplate = function doCreateTemplate(type) {
-    $scope.create.template = { type: type, x: 240, y: 240 };
-    $scope.doSwitchToMode('CreateTemplate', $scope, $scope.modes);
+  $scope.doCreateTemplate = function (type) {
+    $scope.stateEvent('Game.template.create', type);
   };
 }]);
 //# sourceMappingURL=mainCtrl.js.map

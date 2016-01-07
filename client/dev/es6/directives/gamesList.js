@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .controller('gamesListCtrl', [
     '$scope',
@@ -7,26 +5,30 @@ angular.module('clickApp.directives')
       console.log('gamesListCtrl', $scope.games);
 
       $scope.selection.list = [];
-      $scope.isInSelection = function(index) {
+      $scope.isInSelection = (index) => {
         return R.exists(R.find(R.equals(index), $scope.selection.list));
       };
-      $scope.selectionIsEmpty = function() {
+      $scope.selectionIsEmpty = () => {
         return R.isEmpty($scope.selection.list);
       };
-      $scope.setSelection = function(index) {
+      function setSelection(index) {
+        R.pipe(
+          R.defaultTo(R.head($scope.selection.list)),
+          R.defaultTo(0),
+          R.min(R.length($scope.games)-1),
+          R.max(0),
+          (index) => {
+            $scope.selection.list = [index];
+          }
+        )(index);
+      }
+      $scope.doSetSelection = (index) => {
         if(R.exists($scope.current) &&
            $scope.games[index].public_stamp === $scope.current) return;
-        
-        if(R.isEmpty($scope.games)) {
-          $scope.selection.list = [];
-        }
-        else {          
-          $scope.selection.list = [ Math.min(R.length($scope.games)-1,
-                                             index)
-                                  ];
-        }
-        console.log('GamesList: selection', $scope.selection.list);
+
+        setSelection(index);
       };
+      $scope.$watch('games', () => { setSelection(); });
     }
   ])
   .directive('clickGamesList', [
@@ -40,8 +42,7 @@ angular.module('clickApp.directives')
           selection: '=',
           current: '='
         },
-        link: function(/*scope, element, attrs*/) {
-        }
+        link: () => { }
       };
     }
   ]);

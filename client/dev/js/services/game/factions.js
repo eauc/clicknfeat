@@ -14,43 +14,82 @@ angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'ht
   var STORAGE_KEY = 'clickApp.factions_desc';
   var gameFactionsService = {
     init: function gameFactionsInit() {
+      return R.pipeP(gameFactionsService.loadDefault, function (base) {
+        return R.pipeP(gameFactionsService.loadDesc, function (desc) {
+          return { base: base,
+            desc: desc
+          };
+        })();
+      }, gameFactionsService.updateDesc, R.spy('Factions'))();
+    },
+    loadDefault: function gameFactionsLoadDefault() {
       return R.pipeP(httpService.get, function (data) {
-        return R.map(function (faction) {
+        return R.pipe(R.keys, R.map(function (faction) {
           return httpService.get(data[faction]).then(function (fdata) {
-            if (R.isNil(fdata)) {
-              console.log('factions: Error getting ' + faction + ' info', data[faction]);
-            }
             return [faction, fdata];
           });
-        }, R.keys(data));
-      }, R.promiseAll, R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, _ref) {
+        }))(data);
+      }, R.promiseAll, R.reduce(function (mem, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var name = _ref2[0];
         var faction = _ref2[1];
 
-        return R.assoc(name, updateFaction(faction), mem);
-      }, {}), function (factions) {
-        return gameFactionsService.loadDesc().then(gameFactionsService.applyDesc$(factions));
-      })('/data/model/factions.json').catch(R.spyError('factions: error getting description'));
+        return R.assoc(name, faction, mem);
+      }, {}))('/data/model/factions.json');
+    },
+    updateDesc: function gameFactionsUpdateDesc(factions) {
+      return R.pipe(gameFactionsService.applyDesc, gameFactionsService.updateInfo, gameFactionsService.buildReferences)(factions);
     },
     loadDesc: function gameFactionsLoadDesc() {
-      return localStorageService.load(STORAGE_KEY).catch(function () {
-        console.log('factions: no stored desc');
-      }).then(R.defaultTo({}));
+      return R.pipeP(function () {
+        return localStorageService.load(STORAGE_KEY).catch(R.spyError('Factions: no stored desc'));
+      }, R.defaultTo({}), R.spyWarn('Factions Desc load'))();
     },
-    applyDesc: function gameFactionsApplyDesc(factions, desc) {
-      return R.deepExtend(factions, desc);
+    applyDesc: function gameFactionsApplyDesc(_ref3) {
+      var base = _ref3.base;
+      var desc = _ref3.desc;
+
+      return { base: base,
+        desc: desc,
+        current: R.deepExtend(base, desc)
+      };
     },
-    storeDesc: function gameFactionsStoreDesc(desc) {
-      return localStorageService.save(STORAGE_KEY, desc);
+    updateInfo: function gameFactionsUpdateInfo(_ref4) {
+      var base = _ref4.base;
+      var desc = _ref4.desc;
+      var current = _ref4.current;
+
+      return { base: base,
+        desc: desc,
+        current: R.pipe(R.toPairs, R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, _ref5) {
+          var _ref6 = _slicedToArray(_ref5, 2);
+
+          var name = _ref6[0];
+          var faction = _ref6[1];
+
+          return R.assoc(name, updateFaction(faction), mem);
+        }, {}))(current)
+      };
     },
-    buildReferences: function gameFactionsBuildReferences(factions) {
-      return R.reduce(buildFactionRefs(factions), {}, R.keys(factions));
+    storeDesc: function gameFactionsStoreDesc(factions) {
+      return R.pipePromise(R.prop('desc'), R.spyWarn('Factions Desc store'), localStorageService.save$(STORAGE_KEY))(factions);
+    },
+    buildReferences: function gameFactionsBuildReferences(_ref7) {
+      var base = _ref7.base;
+      var desc = _ref7.desc;
+      var current = _ref7.current;
+
+      return {
+        base: base,
+        desc: desc,
+        current: current,
+        references: R.reduce(buildFactionRefs(current), {}, R.keys(current))
+      };
     },
     getModelInfo: function gameFactionsGetModelInfo(path, factions) {
       return new self.Promise(function (resolve, reject) {
-        var info = R.path(path, factions);
+        var info = R.path(['current'].concat(_toConsumableArray(path)), factions);
         if (R.isNil(info)) reject('Model info ' + path.join('.') + ' not found');else resolve(info);
       });
     },
@@ -81,16 +120,14 @@ angular.module('clickApp.services').factory('gameFactions', ['localStorage', 'ht
       return R.pipe(s.lines, R.map(parseLine), R.reject(R.isNil))(list);
     },
     buildModelsList: function gameFactionsBuildModelsList(list, user, references) {
-      console.log('buildModelsList', list, user, references);
       var info = gameFactionsService.getListInfo(list, references);
-      console.log('buildModelsList: info', info);
 
-      function buildUnit(_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 3);
+      function buildUnit(_ref8) {
+        var _ref9 = _slicedToArray(_ref8, 3);
 
-        var entries = _ref4[0];
-        var nb_grunts = _ref4[1];
-        var nb_repeat = _ref4[2];
+        var entries = _ref9[0];
+        var nb_grunts = _ref9[1];
+        var nb_repeat = _ref9[2];
 
         var grunts = buildGrunts(entries, nb_grunts);
         var others = buildOthers(entries, nb_repeat);

@@ -45,7 +45,8 @@ angular.module('clickApp.services')
               models: R.map((objective) => {
                 return R.pipe(
                   R.assoc('r', 0),
-                  R.assoc('info', R.concat(['scenario','models'], R.prop('info', objective))),
+                  R.assoc('info', R.concat(['scenario','models'],
+                                           R.prop('info', objective))),
                   pointService.differenceFrom$(base)
                 )(objective);
               }, objectives)
@@ -65,7 +66,7 @@ angular.module('clickApp.services')
           return ( R.exists(scenario.killbox) &&
                    isInKillbox(circle, scenario.killbox)
                  );
-        },
+        }
       };
       function isInCircle(circle, c) {
         let line = {

@@ -7,8 +7,8 @@ angular.module('clickApp.services')
       var gameTerrainInfoService = {
         init: function gameTerrainInfoInit() {
           return httpService.get('/data/terrains.json')
-            .catch(function(reason) {
-              console.log('error getting terrains.json', reason);
+            .catch((reason) => {
+              console.error('Error getting terrains.json', reason);
               return [];
             })
             .then(updateTerrains);
@@ -16,10 +16,10 @@ angular.module('clickApp.services')
         getInfo: function gameTerrainInfoGetInfo(path, infos) {
           return new self.Promise((resolve, reject) => {
             var info = R.path(path, infos);
-            if(R.isNil(info)) reject('Terrain info '+path.join('.')+' not found');
+            if(R.isNil(info)) reject(`Terrain info ${path.join('.')} not found`);
             else resolve(info);
           });
-        },
+        }
       };
       function updateTerrains(terrains) {
         return R.pipe(
@@ -53,8 +53,8 @@ angular.module('clickApp.services')
       }
       function updateTerrain(terrain) {
         return R.pipe(
-          R.assocPath(['img','width'], R.path(['img','width'], terrain) / 3),
-          R.assocPath(['img','height'], R.path(['img','height'], terrain) / 3)
+          R.over(R.lensPath(['img','width']), R.divide(R.__, 3)),
+          R.over(R.lensPath(['img','height']), R.divide(R.__, 3))
         )(terrain);
       }
       R.curryService(gameTerrainInfoService);

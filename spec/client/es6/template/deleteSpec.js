@@ -1,22 +1,22 @@
-'use strict';
-
 describe('delete template', function() {
   describe('templateMode service', function() {
     beforeEach(inject([
       'templateMode',
       function(templateModeService) {
         this.templateModeService = templateModeService;
+
         this.gameService = spyOnService('game');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
-          game: { template_selection: 'selection' }
+        this.state = {
+          game: { template_selection: 'selection' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
 
     when('user deletes current template selection', function() {
-      this.ret = this.templateModeService.actions.delete(this.scope);
+      this.ret = this.templateModeService.actions.delete(this.state);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -28,11 +28,9 @@ describe('delete template', function() {
       });
 
       it('should execute deleteTemplates command', function() {
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('deleteTemplates', ['stamp'],
-                                this.scope, this.scope.game);
-
-        expect(this.ret).toBe('game.executeCommand.returnValue');
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'deleteTemplates', [ ['stamp'] ]);
       });
     });
   });
@@ -42,20 +40,21 @@ describe('delete template', function() {
       'deleteTemplatesCommand',
       function(deleteTemplatesCommandService) {
         this.deleteTemplatesCommandService = deleteTemplatesCommandService;
+
         this.templateService = spyOnService('template');
         this.gameTemplatesService = spyOnService('gameTemplates');
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
       }
     ]));
 
-    when('execute(<stamps>, <scope>, <game>)', function() {
+    when('execute(<stamps>, <state>, <game>)', function() {
       this.ret = this.deleteTemplatesCommandService
-        .execute(this.stamps, this.scope, this.game);
+        .execute(this.stamps, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.stamps = ['stamp1', 'stamp2'];
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
@@ -84,7 +83,7 @@ describe('delete template', function() {
         ];
       }, function() {
         it('should save <stamps> state in context', function() {
-          this.thenExpect(this.ret, function(ctxt) {
+          this.thenExpect(this.ret, function([ctxt]) {
             expect(this.templateService.saveState)
               .toHaveBeenCalledWith({ state: { stamp: 'stamp1' } });
             expect(this.templateService.saveState)
@@ -96,46 +95,47 @@ describe('delete template', function() {
         });
         
         it('should remove <stamps> from game templates', function() {
-          this.thenExpect(this.ret, function() {
+          this.thenExpect(this.ret, function([ctxt, game]) {
             expect(this.gameTemplatesService.removeStamps)
               .toHaveBeenCalledWith(['stamp1','stamp2'], jasmine.any(String));
-            expect(this.game.templates)
+            expect(game.templates)
               .toBe('gameTemplates.removeStamps.returnValue');
           });
         });
 
         it('should remove <stamps> from local selection', function() {
-          this.thenExpect(this.ret, function() {
+          this.thenExpect(this.ret, function([ctxt, game]) {
             expect(this.gameTemplateSelectionService.removeFrom)
-              .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.scope,
+              .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.state,
                                     'selection');
             expect(this.gameTemplateSelectionService.removeFrom)
-              .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.scope,
+              .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.state,
                                     'gameTemplateSelection.removeFrom.returnValue');
-            expect(this.game.template_selection)
+            expect(game.template_selection)
               .toBe('gameTemplateSelection.removeFrom.returnValue');
           });
         });
 
-        it('should emit createTemplate gameEvent', function() {
+        it('should emit createTemplate changeEvent', function() {
           this.thenExpect(this.ret, function() {
-            expect(this.scope.gameEvent)
-              .toHaveBeenCalledWith('createTemplate');
+            expect(this.state.changeEvent)
+              .toHaveBeenCalledWith('Game.template.create');
           });
         });
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
-      this.deleteTemplatesCommandService
-        .replay(this.ctxt, this.scope, this.game);
+    when('replay(<ctxt>, <state>, <game>)', function() {
+      this.ret = this.deleteTemplatesCommandService
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
-          templates: [ { stamp: 'stamp1' }, { stamp: 'stamp2' } ],
+          templates: [ { stamp: 'stamp1' },
+                       { stamp: 'stamp2' } ]
         };
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
@@ -144,37 +144,38 @@ describe('delete template', function() {
       it('should remove <stamps> from game templates', function() {
         expect(this.gameTemplatesService.removeStamps)
           .toHaveBeenCalledWith(['stamp1','stamp2'], jasmine.any(String));
-        expect(this.game.templates)
+        expect(this.ret.templates)
           .toBe('gameTemplates.removeStamps.returnValue');
       });
 
       it('should remove <stamps> from local selection', function() {
         expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.scope,
+          .toHaveBeenCalledWith('local', ['stamp1','stamp2'], this.state,
                                 'selection');
         expect(this.gameTemplateSelectionService.removeFrom)
-          .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.scope,
+          .toHaveBeenCalledWith('remote', ['stamp1','stamp2'], this.state,
                                 'gameTemplateSelection.removeFrom.returnValue');
-        expect(this.game.template_selection)
+        expect(this.ret.template_selection)
           .toBe('gameTemplateSelection.removeFrom.returnValue');
       });
 
-      it('should emit createTemplate gameEvent', function() {
-        expect(this.scope.gameEvent)
-          .toHaveBeenCalledWith('createTemplate');
+      it('should emit createTemplate changeEvent', function() {
+        expect(this.state.changeEvent)
+          .toHaveBeenCalledWith('Game.template.create');
       });
     });
 
-    when('undo(<ctxt>, <scope>, <game>)', function() {
+    when('undo(<ctxt>, <state>, <game>)', function() {
       this.ret = this.deleteTemplatesCommandService
-        .undo(this.ctxt, this.scope, this.game);
+        .undo(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
-          templates: [ { stamp: 'stamp1' }, { stamp: 'stamp2' } ],
+          templates: [ { stamp: 'stamp1' },
+                       { stamp: 'stamp2' } ]
         };
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
         this.game = { templates: 'templates',
                       template_selection: 'selection' };
@@ -195,12 +196,12 @@ describe('delete template', function() {
       });
 
       it('should add new templates to <game> templates', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameTemplatesService.add)
             .toHaveBeenCalledWith([ { state: { stamp: 'stamp1' } },
                                     { state: { stamp: 'stamp2' } } ],
                                   'templates');
-          expect(this.game.templates)
+          expect(game.templates)
             .toBe('gameTemplates.add.returnValue');
         });
       });
@@ -209,14 +210,14 @@ describe('delete template', function() {
         this.thenExpect(this.ret, function() {
           expect(this.gameTemplateSelectionService.set)
             .toHaveBeenCalledWith('remote', ['stamp1','stamp2'],
-                                  this.scope, 'selection');
+                                  this.state, 'selection');
         });
       });
 
       it('should emit createTemplate event', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('createTemplate');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.template.create');
         });
       });
     });

@@ -38,114 +38,90 @@ angular.module('clickApp.services').factory('terrain', ['settings', 'point', fun
       return R.clone(R.prop('state', terrain));
     },
     setState: function terrainSetState(state, terrain) {
-      terrain.state = R.clone(state);
+      return R.assoc('state', R.clone(state), terrain);
     },
     checkState: function terrainCheckState(terrain) {
-      terrain.state = R.pipe(R.assoc('x', Math.max(0, Math.min(480, terrain.state.x))), R.assoc('y', Math.max(0, Math.min(480, terrain.state.y))))(terrain.state);
-      return terrain;
+      return R.pipe(R.over(R.lensPath(['state', 'x']), R.compose(R.max(0), R.min(480))), R.over(R.lensPath(['state', 'y']), R.compose(R.max(0), R.min(480))))(terrain);
     },
     isLocked: function terrainIsLocked(terrain) {
       return R.path(['state', 'lk'], terrain);
     },
     setLock: function terrainSetLock(set, terrain) {
-      terrain.state = R.assoc('lk', set, terrain.state);
-      return terrain;
+      return R.assocPath(['state', 'lk'], set, terrain);
     },
     setPosition: function terrainSet(pos, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
-      terrain.state = R.pipe(R.assoc('x', pos.x), R.assoc('y', pos.y))(terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.assocPath(['state', 'x'], pos.x), R.assocPath(['state', 'y'], pos.y), terrainService.checkState)(terrain);
     },
     shiftPosition: function terrainSet(shift, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
-      terrain.state = R.pipe(R.assoc('x', terrain.state.x + shift.x), R.assoc('y', terrain.state.y + shift.y))(terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.assocPath(['state', 'x'], terrain.state.x + shift.x), R.assocPath(['state', 'y'], terrain.state.y + shift.y), terrainService.checkState)(terrain);
     },
     setOrientation: function terrainSet(orientation, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
-      terrain.state = R.assoc('r', orientation, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.assocPath(['state', 'r'], orientation, terrain), terrainService.checkState)(terrain);
     },
     moveFront: function terrainMoveFront(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-      terrain.state = pointService.moveFront(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.moveFront$(dist)), terrainService.checkState)(terrain);
     },
     moveBack: function terrainMoveBack(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'MoveSmall' : 'Move'];
-      terrain.state = pointService.moveBack(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.moveBack$(dist)), terrainService.checkState)(terrain);
     },
     rotateLeft: function terrainRotateLeft(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-      terrain.state = pointService.rotateLeft(angle, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.rotateLeft$(angle)), terrainService.checkState)(terrain);
     },
     rotateRight: function terrainRotateRight(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-      terrain.state = pointService.rotateRight(angle, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.rotateRight$(angle)), terrainService.checkState)(terrain);
     },
     shiftLeft: function terrainShiftLeft(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-      terrain.state = pointService.shiftLeft(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.shiftLeft$(dist)), terrainService.checkState)(terrain);
     },
     shiftRight: function terrainShiftRight(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-      terrain.state = pointService.shiftRight(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.shiftRight$(dist)), terrainService.checkState)(terrain);
     },
     shiftUp: function terrainShiftUp(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-      terrain.state = pointService.shiftUp(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.shiftUp$(dist)), terrainService.checkState)(terrain);
     },
     shiftDown: function terrainShiftDown(small, terrain) {
       if (terrainService.isLocked(terrain)) {
         return self.Promise.reject('Terrain is locked');
       }
-
       var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-      terrain.state = pointService.shiftDown(dist, terrain.state);
-      return terrainService.checkState(terrain);
+      return R.pipe(R.over(R.lensProp('state'), pointService.shiftDown$(dist)), terrainService.checkState)(terrain);
     }
   };
   R.curryService(terrainService);

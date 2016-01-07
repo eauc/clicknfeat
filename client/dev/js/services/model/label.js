@@ -4,16 +4,16 @@ angular.module('clickApp.services').factory('modelLabel', [function modelLabelSe
   return function () /*modelService*/{
     var modelLabelService = {
       addLabel: function modelAddLabel(label, model) {
-        model.state.l = R.uniq(R.append(label, model.state.l));
+        return R.over(R.lensPath(['state', 'l']), R.compose(R.uniq, R.append(label)), model);
       },
       removeLabel: function modelRemoveLabel(label, model) {
-        model.state.l = R.reject(R.equals(label), model.state.l);
+        return R.over(R.lensPath(['state', 'l']), R.reject(R.equals(label)), model);
       },
       clearLabel: function modelClearLabel(model) {
-        model.state.l = [];
+        return R.assocPath(['state', 'l'], [], model);
       },
       fullLabel: function modelFullLabel(model) {
-        return model.state.l.join(' ');
+        return R.pathOr([], ['state', 'l'], model).join(' ');
       }
     };
     return modelLabelService;

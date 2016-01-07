@@ -1,44 +1,51 @@
 'use strict';
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+
 angular.module('clickApp.services').factory('modelPlaceMode', ['modes', 'settings', 'modelsMode', 'modelBaseMode', 'game', 'gameModels', 'gameModelSelection', function modelPlaceModeServiceFactory(modesService, settingsService, modelsModeService, modelBaseModeService, gameService, gameModelsService, gameModelSelectionService) {
   var model_actions = Object.create(modelBaseModeService.actions);
-  model_actions.endPlace = function modelEndPlace(scope) {
-    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-    return R.pipeP(function () {
-      return gameService.executeCommand('onModels', 'endPlace', stamps, scope, scope.game);
+  model_actions.endPlace = function (state) {
+    var stamps = gameModelSelectionService.get('local', state.game.model_selection);
+    return R.pipePromise(function () {
+      return state.event('Game.command.execute', 'onModels', ['endPlace', [], stamps]);
     }, function () {
-      return scope.doSwitchToMode('Model');
+      return state.event('Modes.switchTo', 'Model');
     })();
   };
-  model_actions.setTargetModel = function modelSetTargetModel(scope, event) {
-    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+  model_actions.setTargetModel = function (state, event) {
+    var stamps = gameModelSelectionService.get('local', state.game.model_selection);
     return R.pipeP(gameModelsService.findStamp$(stamps[0]), function (model) {
-      if (model.state.stamp === event['click#'].target.state.stamp) return;
+      if (model.state.stamp === event['click#'].target.state.stamp) return null;
 
-      return gameService.executeCommand('onModels', 'setPlaceTarget', scope.factions, event['click#'].target, stamps, scope, scope.game);
-    })(scope.game.models);
+      return state.event('Game.command.execute', 'onModels', ['setPlaceTarget', [state.factions, event['click#'].target], stamps]);
+    })(state.game.models);
   };
-  model_actions.setOriginModel = function modelSetOriginModel(scope, event) {
-    var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
+  model_actions.setOriginModel = function (state, event) {
+    var stamps = gameModelSelectionService.get('local', state.game.model_selection);
     return R.pipeP(gameModelsService.findStamp$(stamps[0]), function (model) {
-      if (model.state.stamp === event['click#'].target.state.stamp) return;
+      if (model.state.stamp === event['click#'].target.state.stamp) return null;
 
-      return gameService.executeCommand('onModels', 'setPlaceOrigin', scope.factions, event['click#'].target, stamps, scope, scope.game);
-    })(scope.game.models);
+      return state.event('Game.command.execute', 'onModels', ['setPlaceOrigin', [state.factions, event['click#'].target], stamps]);
+    })(state.game.models);
   };
   var moves = [['moveFront', 'up', 'moveFront'], ['moveBack', 'down', 'moveBack'], ['rotateLeft', 'left', 'rotateLeft'], ['rotateRight', 'right', 'rotateRight'], ['shiftUp', 'ctrl+up', 'shiftDown'], ['shiftDown', 'ctrl+down', 'shiftUp'], ['shiftLeft', 'ctrl+left', 'shiftRight'], ['shiftRight', 'ctrl+right', 'shiftLeft']];
-  R.forEach(function (move) {
-    model_actions[move[0]] = buildPlaceMove(move[0], move[2], false, move[0]);
-    model_actions[move[0] + 'Small'] = buildPlaceMove(move[0], move[2], true, move[0] + 'Small');
-  }, moves);
-  function buildPlaceMove(move, flip_move, small) {
-    return function modelDoPlaceMove(scope) {
-      var stamps = gameModelSelectionService.get('local', scope.game.model_selection);
-      var _move = R.path(['ui_state', 'flip_map'], scope) ? flip_move : move;
+  var buildPlaceMove$ = R.curry(function (move, flip_move, small, state) {
+    var stamps = gameModelSelectionService.get('local', state.game.model_selection);
+    var _move = R.path(['ui_state', 'flip_map'], state) ? flip_move : move;
 
-      return gameService.executeCommand('onModels', _move + 'Place', scope.factions, small, stamps, scope, scope.game);
-    };
-  }
+    return state.event('Game.command.execute', 'onModels', [_move + 'Place', [state.factions, small], stamps]);
+  });
+  R.forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 3);
+
+    var move = _ref2[0];
+    var keys = _ref2[1];
+    var flip_move = _ref2[2];
+
+    keys = keys;
+    model_actions[move] = buildPlaceMove$(move, flip_move, false);
+    model_actions[move + 'Small'] = buildPlaceMove$(move, flip_move, true);
+  }, moves);
 
   var model_default_bindings = {
     'endPlace': 'p',
@@ -47,10 +54,11 @@ angular.module('clickApp.services').factory('modelPlaceMode', ['modes', 'setting
   };
   var model_bindings = R.extend(Object.create(modelBaseModeService.bindings), model_default_bindings);
   var model_buttons = modelsModeService.buildButtons({ single: true,
-    end_place: true });
+    end_place: true
+  });
   var model_mode = {
-    onEnter: function modelOnEnter() /*scope*/{},
-    onLeave: function modelOnLeave() /*scope*/{},
+    onEnter: function onEnter() {},
+    onLeave: function onLeave() {},
     name: 'ModelPlace',
     actions: model_actions,
     buttons: model_buttons,

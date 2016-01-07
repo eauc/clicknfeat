@@ -1,25 +1,28 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickGameCreateTerrain', ['$window', 'gameTerrainInfo', 'gameMap', function ($window, gameTerrainInfoService, gameMapService) {
+angular.module('clickApp.directives').directive('clickGameCreateTerrain', ['gameTerrainInfo', 'gameMap', function (gameTerrainInfoService, gameMapService) {
   return {
     restrict: 'A',
-    link: function link(scope, el /*, attrs*/) {
+    link: function link(scope, parent) {
       var map = document.getElementById('map');
       var svgNS = map.namespaceURI;
 
       console.log('clickCreateTerrain', scope.index);
-      var terrain = R.nth(scope.index, scope.create.terrain.terrains);
+      var state = scope.state;
+      var terrain = R.nth(scope.index, state.create.terrain.terrains);
 
       R.pipeP(gameTerrainInfoService.getInfo$(terrain.info), function (info) {
-        var element = createTerrainElement(info, document, svgNS, el[0]);
+        var element = createTerrainElement(info, document, svgNS, parent[0]);
         var is_flipped = gameMapService.isFlipped(map);
-        setTerrainPosition(info, scope.create.terrain.base, is_flipped, terrain, element);
+        setTerrainPosition(info, state.create.terrain.base, is_flipped, terrain, element);
 
-        scope.onGameEvent('moveCreateTerrain', function () {
+        scope.onStateChangeEvent('Game.create.update', function () {
+          if (R.isNil(R.path(['create', 'terrain'], state))) return;
+
           is_flipped = gameMapService.isFlipped(map);
-          setTerrainPosition(info, scope.create.terrain.base, is_flipped, terrain, element);
+          setTerrainPosition(info, state.create.terrain.base, is_flipped, terrain, element);
         }, scope);
-      })(scope.terrains);
+      })(state.terrains);
     }
   };
   function createTerrainElement(info, document, svgNS, parent) {

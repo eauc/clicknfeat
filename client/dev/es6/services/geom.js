@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('point', [
     function pointServiceFactory() {
@@ -106,7 +104,7 @@ angular.module('clickApp.services')
         },
         scalarProduct: function pointScalarProduct(other, point) {
           return other.x * point.x + other.y * point.y;
-        },
+        }
       };
       R.curryService(pointService);
       return pointService;
@@ -125,7 +123,7 @@ angular.module('clickApp.services')
             x: (line.end.x - line.start.x) / length,
             y: (line.end.y - line.start.y) / length
           };
-        },
+        }
       };
       R.curryService(lineService);
       return lineService;
@@ -251,16 +249,16 @@ angular.module('clickApp.services')
           let directions = circleService.envelopeDirectionsTo(target, origin);
           let envelop = {
             left: {
-              start: circleService.pointOnEdgeInDirection(directions.left,
-                                                          origin),
-              end: circleService.pointOnEdgeInDirection(directions.left,
-                                                        target)
+              start: circleService
+                .pointOnEdgeInDirection(directions.left, origin),
+              end: circleService
+                .pointOnEdgeInDirection(directions.left, target)
             },
             right: {
-              start: circleService.pointOnEdgeInDirection(directions.right,
-                                                          origin),
-              end: circleService.pointOnEdgeInDirection(directions.right,
-                                                        target)
+              start: circleService
+                .pointOnEdgeInDirection(directions.right, origin),
+              end: circleService
+                .pointOnEdgeInDirection(directions.right, target)
             }
           };
           return envelop;
@@ -282,12 +280,12 @@ angular.module('clickApp.services')
             },
             right: {
               start: { x: envelope.right.end.x, y: envelope.right.end.y }
-            },
+            }
           };
           let translate_left = 800;
           let translate_right = 800;
-          let vector_product = pointService.vectorProduct(envelope.left.vector,
-                                                          envelope.right.vector);
+          let vector_product = pointService
+                .vectorProduct(envelope.left.vector, envelope.right.vector);
           if(vector_product > 0.001) {
             let envelope_end = {
               start: envelope.left.end,
@@ -305,14 +303,14 @@ angular.module('clickApp.services')
           }
           translate_left = Math.min(800, translate_left);
           translate_right = Math.min(800, translate_right);
-          outside_envelope.left.end = pointService.translateInVector(translate_left,
-                                                                     envelope.left.vector,
-                                                                     outside_envelope.left.start);
-          outside_envelope.right.end = pointService.translateInVector(translate_right,
-                                                                      envelope.right.vector,
-                                                                      outside_envelope.right.start);
+          outside_envelope.left.end = pointService
+            .translateInVector(translate_left, envelope.left.vector,
+                               outside_envelope.left.start);
+          outside_envelope.right.end = pointService
+            .translateInVector(translate_right, envelope.right.vector,
+                               outside_envelope.right.start);
           return outside_envelope;
-        },
+        }
       };
       function findLeftEnvelopeLine(directions, target, intervenings, origin) {
         let rad_inc = (directions.right - directions.left) / 180;

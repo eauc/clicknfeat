@@ -8,11 +8,10 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
         if (modelService.isLocked(model)) {
           return self.Promise.reject('Model is locked');
         }
-        model.state = R.assoc('cha', {
+        return R.assocPath(['state', 'cha'], {
           s: R.pick(['x', 'y', 'r'], model.state),
           t: null
-        }, model.state);
-        return model;
+        }, model);
       },
       isCharging: function modelIsCharging(model) {
         return R.exists(model.state.cha);
@@ -27,18 +26,16 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
         });
       },
       endCharge: function modelEndCharge(model) {
-        model.state = R.assoc('cha', null, model.state);
-        return model;
+        return R.assocPath(['state', 'cha'], null, model);
       },
       setChargeTarget: function modelSetChargeTarget(factions, other, model) {
         if (modelService.isLocked(model)) {
           return self.Promise.reject('Model is locked');
         }
         if (R.exists(other)) {
-          model.state.cha = R.assoc('t', other.state.stamp, model.state.cha);
-          model.state = R.assoc('r', pointService.directionTo(other.state, model.state), model.state);
+          model = R.pipe(R.over(R.lensPath(['state', 'cha']), R.assoc('t', other.state.stamp)), R.over(R.lensProp('state'), R.assoc('r', pointService.directionTo(other.state, model.state))))(model);
         } else {
-          model.state.cha = R.assoc('t', null, model.state.cha);
+          model = R.assocPath(['state', 'cha', 't'], null, model);
         }
         return modelService.checkState(factions, other, model);
       },
@@ -46,7 +43,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
         return R.path(['state', 'cml'], model);
       },
       setChargeMaxLength: function modelSetChargeMaxLength(factions, value, model) {
-        model.state = R.assoc('cml', value, model.state);
+        model = R.assocPath(['state', 'cml'], value, model);
         return modelService.checkState(factions, null, model);
       },
       moveFrontCharge: function modelMoveFrontCharge(factions, target, small, model) {
@@ -55,7 +52,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
         }
         var dist = MOVES[small ? 'MoveSmall' : 'Move'];
         var direction = model.state.cha.s.r;
-        model.state = pointService.translateInDirection(dist, direction, model.state);
+        model = R.over(R.lensProp('state'), pointService.translateInDirection$(dist, direction), model);
         return modelService.checkState(factions, target, model);
       },
       moveBackCharge: function modelMoveBackCharge(factions, target, small, model) {
@@ -66,7 +63,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
         var direction = model.state.cha.s.r + 180;
         var distance = pointService.distanceTo(model.state, model.state.cha.s);
         if (dist > distance) dist = distance;
-        model.state = pointService.translateInDirection(dist, direction, model.state);
+        model = R.over(R.lensProp('state'), pointService.translateInDirection$(dist, direction), model);
         return modelService.checkState(factions, target, model);
       },
       rotateLeftCharge: function modelRotateLeftCharge(factions, target, small, model) {
@@ -74,7 +71,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
-        model.state = R.pipe(pointService.rotateLeftAround$(angle, model.state.cha.s), R.assocPath(['cha', 's', 'r'], model.state.cha.s.r - angle))(model.state);
+        model = R.pipe(R.over(R.lensProp('state'), pointService.rotateLeftAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.subtract(R.__, angle)))(model);
         return modelService.checkState(factions, target, model);
       },
       rotateRightCharge: function modelRotateRightCharge(factions, target, small, model) {
@@ -82,7 +79,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
-        model.state = R.pipe(pointService.rotateRightAround$(angle, model.state.cha.s), R.assocPath(['cha', 's', 'r'], model.state.cha.s.r + angle))(model.state);
+        model = R.pipe(R.over(R.lensProp('state'), pointService.rotateRightAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.add(angle)))(model);
         return modelService.checkState(factions, target, model);
       },
       shiftLeftCharge: function modelShiftLeftCharge(factions, target, small, model) {
@@ -90,7 +87,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-        model.state = pointService.shiftLeft(dist, model.state);
+        model = R.over(R.lensProp('state'), pointService.shiftLeft$(dist), model);
         return modelService.checkState(factions, target, model);
       },
       shiftRightCharge: function modelShiftRightCharge(factions, target, small, model) {
@@ -98,7 +95,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-        model.state = pointService.shiftRight(dist, model.state);
+        model = R.over(R.lensProp('state'), pointService.shiftRight$(dist), model);
         return modelService.checkState(factions, target, model);
       },
       shiftUpCharge: function modelShiftUpCharge(factions, target, small, model) {
@@ -106,7 +103,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-        model.state = pointService.shiftUp(dist, model.state);
+        model = R.over(R.lensProp('state'), pointService.shiftUp$(dist), model);
         return modelService.checkState(factions, target, model);
       },
       shiftDownCharge: function modelShiftDownCharge(factions, target, small, model) {
@@ -114,7 +111,7 @@ angular.module('clickApp.services').factory('modelCharge', ['point', function mo
           return self.Promise.reject('Model is locked');
         }
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
-        model.state = pointService.shiftDown(dist, model.state);
+        model = R.over(R.lensProp('state'), pointService.shiftDown$(dist), model);
         return modelService.checkState(factions, target, model);
       }
     };

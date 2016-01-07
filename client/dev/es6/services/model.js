@@ -42,7 +42,7 @@ angular.module('clickApp.services')
                                  modelRulerService,
                                  modelUnitService,
                                  modelWreckService) {
-      var DEFAULT_MOVES = {
+      let DEFAULT_MOVES = {
         Move: 10,
         MoveSmall: 5,
         Rotate: 15,
@@ -50,21 +50,21 @@ angular.module('clickApp.services')
         Shift: 10,
         ShiftSmall: 1,
         RotateCharge: 10,
-        RotateChargeSmall: 2,
+        RotateChargeSmall: 2
       };
-      var MOVES = R.clone(DEFAULT_MOVES);
+      let MOVES = R.clone(DEFAULT_MOVES);
       settingsService.register('Moves',
                                'Model',
                                DEFAULT_MOVES,
-                               function(moves) {
+                               (moves) => {
                                  R.extend(MOVES, moves);
                                });
       var modelService = {
         create: function modelCreate(factions, temp) {
           return R.pipeP(
             gameFactionsService.getModelInfo$(temp.info),
-            function(info) {
-              var model = {
+            (info) => {
+              let model = {
                 state: {
                   x: 0, y: 0, r: 0,
                   img: 0,
@@ -116,49 +116,52 @@ angular.module('clickApp.services')
           return R.clone(R.prop('state', model));
         },
         setState: function modelSetState(state, model) {
-          model.state = R.clone(state);
+          return R.assoc('state', R.clone(state), model);
         },
         state_checkers: [],
         state_updaters: [],
         checkState: function modelCheckState(factions, target, model) {
           return R.pipeP(
             gameFactionsService.getModelInfo$(model.state.info),
-            function(info) {
+            (info) => {
               var radius = info.base_radius;
               return R.pipe(
-                // R.spyError('start'),
                 R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
                 R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
-                // R.spyError('afterBoard'),
-                function(state) {
-                  return R.reduce(function(state, checker) {
+                (state) => {
+                  return R.reduce((state, checker) => {
                     return checker(info, target, state);
                   }, state, modelService.state_checkers);
                 },
-                // R.spyError('afterCheck'),
-                function(state) {
+                (state) => {
                   return R.reduce(function(state, updater) {
                     return updater(state);
                   }, state, modelService.state_updaters);
                 }
-                // R.spyError('afterUpdate')
               )(model.state);
             },
-            function(state) {
-              model.state = state;
-              return model;
+            (state) => {
+              return R.assoc('state', state, model);
             }
           )(factions);
         },
         isLocked: function modelIsLocked(model) {
-          return !!R.find(R.equals('lk'), R.defaultTo([], R.path(['state', 'dsp'], model)));
+          return R.pipe(
+            R.pathOr([], ['state', 'dsp']),
+            R.find(R.equals('lk')),
+            R.exists
+          )(model);
         },
         setLock: function modelSetLock(set, model) {
           if(set) {
-            model.state.dsp = R.uniq(R.append('lk', model.state.dsp));
+            return R.over(R.lensPath(['state','dsp']),
+                          R.compose(R.uniq, R.append('lk')),
+                          model);
           }
           else {
-            model.state.dsp = R.reject(R.equals('lk'), model.state.dsp);
+            return R.over(R.lensPath(['state','dsp']),
+                          R.reject(R.equals('lk')),
+                          model);
           }
         },
         modeFor: function modelModeFor(model) {
@@ -177,7 +180,7 @@ angular.module('clickApp.services')
             R.reject(R.isNil),
             R.join('/')
           )(info);
-        },
+        }
       };
       function initDamage(info) {
         if(info.type === 'warrior') {

@@ -1,17 +1,18 @@
 'use strict';
 
-angular.module('clickApp.services').factory('createTerrainMode', ['modes', 'settings', 'commonMode', 'game', function createTerrainModeServiceFactory(modesService, settingsService, commonModeService, gameService) {
+angular.module('clickApp.services').factory('createTerrainMode', ['modes', 'settings', 'commonMode', 'game', function createTerrainModeServiceFactory(modesService, settingsService, commonModeService) {
   var createTerrain_actions = Object.create(commonModeService.actions);
-  createTerrain_actions.moveMap = function createTerrainMoveMap(scope, coord) {
-    scope.create.terrain.base.x = coord.x;
-    scope.create.terrain.base.y = coord.y;
-    scope.gameEvent('moveCreateTerrain');
+  function updateCreateBase(coord, state) {
+    state.create = R.over(R.lensPath(['terrain', 'base']), R.pipe(R.assoc('x', coord.x), R.assoc('y', coord.y)), state.create);
+  }
+  createTerrain_actions.moveMap = function (state, coord) {
+    updateCreateBase(coord, state);
+    return state.changeEvent('Game.create.update');
   };
-  createTerrain_actions.create = function createTerrainCreate(scope, event) {
-    scope.create.terrain.base.x = event['click#'].x;
-    scope.create.terrain.base.y = event['click#'].y;
-    var is_flipped = R.path(['ui_state', 'flip_map'], scope);
-    return gameService.executeCommand('createTerrain', scope.create.terrain, is_flipped, scope, scope.game);
+  createTerrain_actions.create = function (state, event) {
+    var is_flipped = R.path(['ui_state', 'flip_map'], state);
+    updateCreateBase(event['click#'], state);
+    return state.event('Game.command.execute', 'createTerrain', [state.create.terrain, is_flipped]);
   };
   var createTerrain_default_bindings = {
     'create': 'clickMap'
@@ -19,14 +20,14 @@ angular.module('clickApp.services').factory('createTerrainMode', ['modes', 'sett
   var createTerrain_bindings = R.extend(Object.create(commonModeService.bindings), createTerrain_default_bindings);
   var createTerrain_buttons = [];
   var createTerrain_mode = {
-    onEnter: function createTerrainOnEnter(scope) {
-      scope.gameEvent('enableCreateTerrain');
-      scope.gameEvent('enableMoveMap');
+    onEnter: function onEnter(state) {
+      state.changeEvent('Game.terrain.create.enable');
+      state.changeEvent('Game.moveMap.enable');
     },
-    onLeave: function createTerrainOnLeave(scope) {
-      scope.create.terrain = null;
-      scope.gameEvent('disableMoveMap');
-      scope.gameEvent('disableCreateTerrain');
+    onLeave: function onLeave(state) {
+      state.create = R.assoc('terrain', null, state.create);
+      state.changeEvent('Game.moveMap.disable');
+      state.changeEvent('Game.terrain.create.disable');
     },
     name: 'CreateTerrain',
     actions: createTerrain_actions,

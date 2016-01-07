@@ -1,5 +1,3 @@
-'use strict';
-
 describe('set aoe to ruler', function() {
   describe('aoeTemplateMode service', function() {
     beforeEach(inject([
@@ -7,25 +5,24 @@ describe('set aoe to ruler', function() {
       function(aoeTemplateModeService) {
         this.aoeTemplateModeService = aoeTemplateModeService;
 
-        this.gameService = spyOnService('game');
-
         this.gameRulerService = spyOnService('gameRuler');
         mockReturnPromise(this.gameRulerService.targetAoEPosition);
         this.gameRulerService.targetAoEPosition
           .resolveWith = 'gameRuler.targetAoEPosition.returnValue';
         this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection',
                   ruler:'ruler',
                   models: 'models' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
 
     when('user set aoe to ruler target', function() {
       this.ret = this.aoeTemplateModeService.actions.
-        setToRulerTarget(this.scope);
+        setToRulerTarget(this.state);
     }, function() {
       beforeEach(function() {
         this.gameTemplateSelectionService.get._retVal = ['stamp'];
@@ -35,7 +32,7 @@ describe('set aoe to ruler', function() {
         this.gameRulerService.isDisplayed._retVal = false;
       }, function() {
         it('should not execute command', function() {
-          expect(this.gameService.executeCommand)
+          expect(this.state.event)
             .not.toHaveBeenCalled();
         });
       });
@@ -54,12 +51,13 @@ describe('set aoe to ruler', function() {
         });
 
         it('should execute onTemplates/setToRuler command', function() {
-          this.thenExpect(this.ret, function(result) {
-            expect(this.gameService.executeCommand)
-              .toHaveBeenCalledWith('onTemplates', 'setToRuler',
-                                    'gameRuler.targetAoEPosition.returnValue',
-                                    ['stamp'], this.scope, this.scope.game);
-            expect(result).toBe('game.executeCommand.returnValue');
+          this.thenExpect(this.ret, function() {
+            expect(this.state.event)
+              .toHaveBeenCalledWith('Game.command.execute',
+                                    'onTemplates', [ 'setToRuler',
+                                                     ['gameRuler.targetAoEPosition.returnValue'],
+                                                     ['stamp']
+                                                   ]);
           });
         });
       });
@@ -72,28 +70,27 @@ describe('set aoe to ruler', function() {
       function(rulerModeService) {
         this.rulerModeService = rulerModeService;
 
-        this.gameService = spyOnService('game');
-
         this.gameRulerService = spyOnService('gameRuler');
         mockReturnPromise(this.gameRulerService.targetAoEPosition);
         this.gameRulerService.targetAoEPosition
           .resolveWith = 'gameRuler.targetAoEPosition.returnValue';
 
-        this.scope = {
+        this.state = {
           game: { template_selection: 'selection',
                   ruler:'ruler',
                   models: 'models' },
+          event: jasmine.createSpy('event')
         };
       }
     ]));
 
     when('user create aoe on ruler\'s target', function() {
       this.ret = this.rulerModeService.actions
-        .createAoEOnTarget(this.scope);
+        .createAoEOnTarget(this.state);
     }, function() {
       beforeEach(function() {
         this.gameRulerService.targetAoEPosition.resolveWith = {
-          x: 42, y: 71,
+          x: 42, y: 71, r: 45
         };
       });
       
@@ -103,13 +100,13 @@ describe('set aoe to ruler', function() {
       });
       
       it('should execute createTemplate command', function() {
-        this.thenExpect(this.ret, function(result) {
-          expect(this.gameService.executeCommand)
-            .toHaveBeenCalledWith('createTemplate', [{
-              x:42, y:71,
-              type: 'aoe',
-            }], this.scope, this.scope.game);
-          expect(result).toBe('game.executeCommand.returnValue');
+        this.thenExpect(this.ret, function() {
+          expect(this.state.event)
+            .toHaveBeenCalledWith('Game.command.execute',
+                                  'createTemplate', [ { base: { x: 0, y: 0, r: 0 },
+                                                        templates: [ { x: 42, y: 71, r: 45,
+                                                                       type: 'aoe' } ]
+                                                      }, false ]);
         });
       });
     });

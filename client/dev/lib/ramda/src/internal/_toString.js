@@ -35,9 +35,12 @@ module.exports = function _toString(x, seen) {
     case '[object Undefined]':
       return 'undefined';
     default:
-      return (typeof x.constructor === 'function' && x.constructor.name !== 'Object' &&
-              typeof x.toString === 'function' && x.toString() !== '[object Object]') ?
-             x.toString() :  // Function, RegExp, user-defined types
-             '{' + mapPairs(x, keys(x)).join(', ') + '}';
+      if (typeof x.toString === 'function') {
+        var repr = x.toString();
+        if (repr !== '[object Object]') {
+          return repr;
+        }
+      }
+      return '{' + mapPairs(x, keys(x)).join(', ') + '}';
   }
 };

@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model image', function() {
   describe('modelsMode service', function() {
     beforeEach(inject([
@@ -7,7 +5,6 @@ describe('model image', function() {
       function(modelsModeService) {
         this.modelsModeService = modelsModeService;
 
-        this.gameService = spyOnService('game');
         this.gameModelsService = spyOnService('gameModels');
         mockReturnPromise(this.gameModelsService.findStamp);
         this.gameModelsService.findStamp.resolveWith = 'gameModels.findStamp.returnValue';
@@ -17,16 +14,17 @@ describe('model image', function() {
 
         this.modelService = spyOnService('model');
      
-        this.scope = { game: { models: 'models',
+        this.state = { game: { models: 'models',
                                model_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles image display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleImageDisplay(this.scope);
+        .toggleImageDisplay(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -41,14 +39,14 @@ describe('model image', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isImageDisplayed)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setImageDisplay', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setImageDisplay', [e.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                  ]);
             });
           });
         });
@@ -57,21 +55,22 @@ describe('model image', function() {
 
     when('user set next image on models', function() {
       this.modelsModeService.actions
-        .setNextImage(this.scope);
+        .setNextImage(this.state);
     }, function() {
       it('should set next image on local selection', function() {
         expect(this.gameModelSelectionService.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameService.executeCommand)
-          .toHaveBeenCalledWith('onModels', 'setNextImage', 'factions', 
-                                this.gameModelSelectionService.get._retVal,
-                                this.scope, this.scope.game);
+        expect(this.state.event)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'onModels', [ 'setNextImage', ['factions'], 
+                                              this.gameModelSelectionService.get._retVal
+                                            ]);
       });
     });
 
     when('user toggles wreck display on models', function() {
       this.ret = this.modelsModeService.actions
-        .toggleWreckDisplay(this.scope);
+        .toggleWreckDisplay(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -86,14 +85,14 @@ describe('model image', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
-            this.thenExpect(this.ret, function(result) {
+            this.thenExpect(this.ret, function() {
               expect(this.modelService.isWreckDisplayed)
                 .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('onModels', 'setWreckDisplay', e.set,
-                                      this.gameModelSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-              expect(result).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'onModels', [ 'setWreckDisplay', [e.set],
+                                                    this.gameModelSelectionService.get._retVal
+                                                  ]);
             });
           });
         });
@@ -202,8 +201,8 @@ describe('model image', function() {
         ],
       ], function(e, d) {
         when('model is '+(e.is_leader ? '':'not ')+'a unit leader', function() {
-          this.modelService.setLeaderDisplay(e.is_leader, this.model);
-          this.modelService.setImageDisplay(e.is_displayed, this.model);
+          this.model = this.modelService.setLeaderDisplay(e.is_leader, this.model);
+          this.model = this.modelService.setImageDisplay(e.is_displayed, this.model);
         }, function() {
           beforeEach(function() {
             this.gameFactionsService.getModelInfo.resolveWith = {
@@ -241,8 +240,8 @@ describe('model image', function() {
         ],
       ], function(e, d) {
         when('model is incorporeal', function() {
-          this.modelService.setIncorporealDisplay(e.is_incorporeal, this.model);
-          this.modelService.setImageDisplay(e.is_displayed, this.model);
+          this.model = this.modelService.setIncorporealDisplay(e.is_incorporeal, this.model);
+          this.model = this.modelService.setImageDisplay(e.is_displayed, this.model);
         }, function() {
           beforeEach(function() {
             this.gameFactionsService.getModelInfo.resolveWith = {
@@ -304,8 +303,8 @@ describe('model image', function() {
           });
           
           it('should set next image <model>, '+d, function() {
-            this.thenExpect(this.ret, function() {
-              expect(this.model.state.img).toBe(e.next_img);
+            this.thenExpect(this.ret, function(model) {
+              expect(model.state.img).toBe(e.next_img);
             });
           });
         });
@@ -316,11 +315,11 @@ describe('model image', function() {
       it('should toggle image display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleImageDisplay(this.model);
+        this.model = this.modelService.toggleImageDisplay(this.model);
         expect(this.modelService.isImageDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleImageDisplay(this.model);
+        this.model = this.modelService.toggleImageDisplay(this.model);
         expect(this.modelService.isImageDisplayed(this.model))
           .toBeFalsy();
       });
@@ -330,11 +329,11 @@ describe('model image', function() {
       it('should set image display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setImageDisplay(true, this.model);
+        this.model = this.modelService.setImageDisplay(true, this.model);
         expect(this.modelService.isImageDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setImageDisplay(false, this.model);
+        this.model = this.modelService.setImageDisplay(false, this.model);
         expect(this.modelService.isImageDisplayed(this.model))
           .toBeFalsy();
       });
@@ -399,11 +398,11 @@ describe('model image', function() {
       it('should toggle wreck display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.toggleWreckDisplay(this.model);
+        this.model = this.modelService.toggleWreckDisplay(this.model);
         expect(this.modelService.isWreckDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.toggleWreckDisplay(this.model);
+        this.model = this.modelService.toggleWreckDisplay(this.model);
         expect(this.modelService.isWreckDisplayed(this.model))
           .toBeFalsy();
       });
@@ -413,11 +412,11 @@ describe('model image', function() {
       it('should set wreck display for <model>', function() {
         this.model = { state: { dsp: [] } };
         
-        this.modelService.setWreckDisplay(true, this.model);
+        this.model = this.modelService.setWreckDisplay(true, this.model);
         expect(this.modelService.isWreckDisplayed(this.model))
           .toBeTruthy();
         
-        this.modelService.setWreckDisplay(false, this.model);
+        this.model = this.modelService.setWreckDisplay(false, this.model);
         expect(this.modelService.isWreckDisplayed(this.model))
           .toBeFalsy();
       });

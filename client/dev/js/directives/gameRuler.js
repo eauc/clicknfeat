@@ -3,28 +3,27 @@
 angular.module('clickApp.directives').directive('clickGameRuler', ['gameMap', 'labelElement', 'gameRuler', 'gameModels', 'gameFactions', 'modes', function (gameMapService, labelElementService, gameRulerService, gameModelsService, gameFactionsService, modesService) {
   return {
     restrict: 'A',
-    link: function link(scope, el /*, attrs*/) {
+    link: function link(scope, parent) {
       var map = document.getElementById('map');
       var svgNS = map.namespaceURI;
 
-      var local_element = createRulerElement(svgNS, el[0]);
-      var remote_element = createRulerElement(svgNS, el[0]);
+      var state = scope.state;
+      var local_element = createRulerElement(svgNS, parent[0]);
+      var remote_element = createRulerElement(svgNS, parent[0]);
 
-      scope.onGameEvent('changeLocalRuler', function onChangeLocalRuler() {
-        updateRuler(map, scope.game.ruler.local, local_element);
+      scope.onStateChangeEvent('Game.ruler.local.change', function () {
+        updateRuler(map, state.game.ruler.local, local_element);
       }, scope);
-      scope.onGameEvent('changeRemoteRuler', function onChangeRemoteRuler() {
-        if (R.isNil(scope.game.ruler)) return;
+      scope.onStateChangeEvent('Game.ruler.remote.change', function () {
+        updateRuler(map, state.game.ruler.remote, remote_element);
 
-        updateRuler(map, scope.game.ruler.remote, remote_element);
-
-        var display = gameRulerService.isDisplayed(scope.game.ruler) || 'Ruler' === modesService.currentModeName(scope.modes);
-        updateOrigin(scope.factions, scope.game.models, scope.game.ruler, display, remote_element.origin);
-        updateTarget(scope.factions, scope.game.models, scope.game.ruler, display, remote_element.target);
+        var display = gameRulerService.isDisplayed(state.game.ruler) || 'Ruler' === modesService.currentModeName(state.modes);
+        updateOrigin(state.factions, state.game.models, state.game.ruler, display, remote_element.origin);
+        updateTarget(state.factions, state.game.models, state.game.ruler, display, remote_element.target);
       }, scope);
-      scope.onGameEvent('mapFlipped', function onMapFlippedRuler() /*event*/{
-        updateRulerOnMapFlipped(map, scope.game.ruler.local, local_element);
-        updateRulerOnMapFlipped(map, scope.game.ruler.remote, remote_element);
+      scope.onStateChangeEvent('Game.map.flipped', function () {
+        updateRulerOnMapFlipped(map, state.game.ruler.local, local_element);
+        updateRulerOnMapFlipped(map, state.game.ruler.remote, remote_element);
       }, scope);
     }
   };
@@ -70,10 +69,8 @@ angular.module('clickApp.directives').directive('clickGameRuler', ['gameMap', 'l
       y: (ruler.end.y - ruler.start.y) / 2 + ruler.start.y
     };
     var label_text = ruler.display ? ruler.length : '';
-    self.requestAnimationFrame(function _updateRuler() {
-      updateLine(ruler.display, ruler, element.line);
-      labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_flip_center, label_text, element.label);
-    });
+    updateLine(ruler.display, ruler, element.line);
+    labelElementService.update(map_flipped, zoom_factor, label_flip_center, label_flip_center, label_text, element.label);
   }
   function updateRulerOnMapFlipped(map, ruler, element) {
     var label_flip_center = {
@@ -92,34 +89,34 @@ angular.module('clickApp.directives').directive('clickGameRuler', ['gameMap', 'l
   function updateOrigin(factions, models, ruler, display, element) {
     var origin = gameRulerService.origin(ruler);
     R.pipeP(function (origin) {
-      if (R.exists(origin)) {
-        return gameModelsService.findStamp(origin, models);
+      if (R.isNil(origin)) {
+        return self.Promise.reject();
       }
-      return self.Promise.resolve(null);
+      return gameModelsService.findStamp(origin, models);
     }, function (origin_model) {
       if (!display || R.isNil(origin_model)) {
         element.style.visibility = 'hidden';
-        return;
+        return self.Promise.reject();
       }
-      R.pipeP(gameFactionsService.getModelInfo$(origin_model.state.info), function (info) {
+      return R.pipeP(gameFactionsService.getModelInfo$(origin_model.state.info), function (info) {
         element.setAttribute('cx', origin_model.state.x + '');
         element.setAttribute('cy', origin_model.state.y + '');
         element.setAttribute('r', info.base_radius + '');
         element.style.visibility = 'visible';
       })(factions);
-    })(origin);
+    })(origin).catch(R.always(null));
   }
   function updateTarget(factions, models, ruler, display, element) {
     var target = gameRulerService.target(ruler);
     R.pipeP(function (target) {
-      if (R.exists(target)) {
-        return gameModelsService.findStamp(target, models);
+      if (R.isNil(target)) {
+        return self.Promise.reject();
       }
-      return self.Promise.resolve(null);
+      return gameModelsService.findStamp(target, models);
     }, function (target_model) {
       if (!display || R.isNil(target_model)) {
         element.style.visibility = 'hidden';
-        return;
+        return self.Promise.reject();
       }
 
       if (gameRulerService.targetReached(ruler)) {
@@ -128,13 +125,13 @@ angular.module('clickApp.directives').directive('clickGameRuler', ['gameMap', 'l
         element.classList.remove('reached');
       }
 
-      R.pipeP(gameFactionsService.getModelInfo$(target_model.state.info), function (info) {
+      return R.pipeP(gameFactionsService.getModelInfo$(target_model.state.info), function (info) {
         element.setAttribute('cx', target_model.state.x + '');
         element.setAttribute('cy', target_model.state.y + '');
         element.setAttribute('r', info.base_radius + '');
         element.style.visibility = 'visible';
       })(factions);
-    })(target);
+    })(target).catch(R.always(null));
   }
 }]);
 //# sourceMappingURL=gameRuler.js.map

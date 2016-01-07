@@ -48,46 +48,40 @@ angular.module('clickApp.services')
              event.target.hasAttribute('data-stamp')) {
             stamp = event.target.getAttribute('data-stamp');
             return R.pipeP(
-              () => {
-                return gameTemplatesService.findStamp(stamp, game.templates);
-              },
+              gameTemplatesService.findStamp$(stamp),
               (template) => {
                 return { type: 'Template',
                          target: template
                        };
               }
-            )().catch(R.always(not_found));
+            )(game.templates).catch(R.always(not_found));
           }
           if(event.target.classList.contains('model-base') &&
              event.target.hasAttribute('data-stamp')) {
             stamp = event.target.getAttribute('data-stamp');
             return R.pipeP(
-              () => {
-                return gameModelsService.findStamp(stamp, game.models);
-              },
+              gameModelsService.findStamp$(stamp),
               (model) => {
                 return { type: 'Model',
                          target: model
                        };
               }
-            )().catch(R.always(not_found));
+            )(game.models).catch(R.always(not_found));
           }
           if(event.target.classList.contains('terrain-image') &&
              event.target.hasAttribute('data-stamp')) {
             stamp = event.target.getAttribute('data-stamp');
             return R.pipeP(
-              () => {
-                return gameTerrainsService.findStamp(stamp, game.terrains);
-              },
+              gameTerrainsService.findStamp$(stamp),
               (terrain) => {
                 return { type: 'Terrain',
                          target: terrain
                        };
               }
-            )().catch(R.always(not_found));
+            )(game.terrains).catch(R.always(not_found));
           }
           return self.Promise.resolve(not_found);
-        },
+        }
       };
       R.curryService(gameMapService);
       return gameMapService;

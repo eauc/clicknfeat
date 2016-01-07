@@ -2,58 +2,52 @@
 
 angular.module('clickApp.services').factory('createTerrainCommand', ['commands', 'point', 'terrain', 'gameTerrains', 'gameTerrainSelection', function createTerrainCommandServiceFactory(commandsService, pointService, terrainService, gameTerrainsService, gameTerrainSelectionService) {
   var createTerrainCommandService = {
-    execute: function createTerrainExecute(create, is_flipped, scope, game) {
+    execute: function createTerrainExecute(create, is_flipped, state, game) {
       var add$ = pointService.addToWithFlip$(is_flipped);
       return R.pipePromise(R.prop('terrains'), R.map(function (terrain) {
-        return R.pipe(add$(create.base), R.omit(['stamp']), function (terrain) {
+        return R.pipe(add$(create.base), R.omit(['stamp']), R.spyError('terrain', create, is_flipped), function (terrain) {
           return self.Promise.resolve(terrainService.create(terrain)).catch(R.always(null));
         })(terrain);
-      }), R.promiseAll, R.reject(R.isNil), function (terrains) {
-        if (R.isEmpty(terrains)) {
-          return self.Promise.reject('No valid terrain definition');
-        }
-
+      }), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid terrain definition'), R.spyError('terrains'), function (terrains) {
         var ctxt = {
           terrains: R.map(terrainService.saveState, terrains),
           desc: terrains[0].state.info.join('.')
         };
         return R.pipe(gameTerrainsService.add$(terrains), function (game_terrains) {
-          game.terrains = game_terrains;
+          game = R.assoc('terrains', game_terrains, game);
 
-          return gameTerrainSelectionService.set('local', R.map(R.path(['state', 'stamp']), terrains), scope, game.terrain_selection);
+          return gameTerrainSelectionService.set('local', R.map(R.path(['state', 'stamp']), terrains), state, game.terrain_selection);
         }, function (selection) {
-          game.terrain_selection = selection;
+          game = R.assoc('terrain_selection', selection, game);
 
-          scope.gameEvent('createTerrain');
-          return ctxt;
+          state.changeEvent('Game.terrain.create');
+
+          return [ctxt, game];
         })(game.terrains);
       })(create);
     },
-    replay: function createTerrainReplay(ctxt, scope, game) {
+    replay: function createTerrainReplay(ctxt, state, game) {
       return R.pipePromise(R.prop('terrains'), R.map(function (terrain) {
         return self.Promise.resolve(terrainService.create(terrain)).catch(R.always(null));
-      }), R.promiseAll, R.reject(R.isNil), function (terrains) {
-        if (R.isEmpty(terrains)) {
-          return self.Promise.reject('No valid terrain definition');
-        }
-
+      }), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid terrain definition'), function (terrains) {
         return R.pipe(gameTerrainsService.add$(terrains), function (game_terrains) {
-          game.terrains = game_terrains;
+          game = R.assoc('terrains', game_terrains, game);
 
-          return gameTerrainSelectionService.set('remote', R.map(R.path(['state', 'stamp']), terrains), scope, game.terrain_selection);
+          return gameTerrainSelectionService.set('remote', R.map(R.path(['state', 'stamp']), terrains), state, game.terrain_selection);
         }, function (selection) {
-          game.terrain_selection = selection;
+          game = R.assoc('terrain_selection', selection, game);
 
-          scope.gameEvent('createTerrain');
+          state.changeEvent('Game.terrain.create');
+
+          return game;
         })(game.terrains);
       })(ctxt);
     },
-    undo: function createTerrainUndo(ctxt, scope, game) {
-      var stamps = R.map(R.prop('stamp'), ctxt.terrains);
-      game.terrains = gameTerrainsService.removeStamps(stamps, game.terrains);
-      game.terrain_selection = gameTerrainSelectionService.removeFrom('local', stamps, scope, game.terrain_selection);
-      game.terrain_selection = gameTerrainSelectionService.removeFrom('remote', stamps, scope, game.terrain_selection);
-      scope.gameEvent('createTerrain');
+    undo: function createTerrainUndo(ctxt, state, game) {
+      var stamps = R.pluck('stamp', ctxt.terrains);
+      game = R.pipe(R.over(R.lensProp('terrains'), gameTerrainsService.removeStamps$(stamps)), R.over(R.lensProp('terrain_selection'), gameTerrainSelectionService.removeFrom$('local', stamps, state)), R.over(R.lensProp('terrain_selection'), gameTerrainSelectionService.removeFrom$('remote', stamps, state)))(game);
+      state.changeEvent('Game.terrain.create');
+      return game;
     }
   };
   commandsService.registerCommand('createTerrain', createTerrainCommandService);

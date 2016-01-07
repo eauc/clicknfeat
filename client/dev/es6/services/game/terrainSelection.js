@@ -1,88 +1,88 @@
 angular.module('clickApp.services')
   .factory('gameTerrainSelection', [
     function gameTerrainSelectionServiceFactory() {
+      function checkSelection(where, state) {
+        if('local' === where) {
+          state.event('Modes.switchTo', 'Default');
+          state.changeEvent('Game.terrain.selection.local.change');
+        }
+      }
       var gameTerrainSelectionService = {
         create: function terrainSelectionCreate() {
           return {
             local: [],
-            remote: [],
+            remote: []
           };
         },
         'in': function terrainSelectionIn(where, stamp, selection) {
           var stamps = R.prop(where, selection);
           return R.find(R.equals(stamp), stamps);
         },
-        get: function terrainSelectionGet(where, selection) {
-          return R.pipe(
-            R.defaultTo({}),
-            R.propOr([], where)
-          )(selection);
+        get: function terrainSelectionGet(where, selection = {}) {
+          R.spyError('titi', arguments);
+          return R.propOr([], where, selection);
         },
-        checkMode: function terrainSelectionCheckMode(scope, selection) {
+        checkMode: function terrainSelectionCheckMode(state, selection) {
           return R.pipePromise(
-            gameTerrainSelectionService.get$('local'),
+            (selection) => {
+              return gameTerrainSelectionService.get('local', selection);
+            },
             R.head,
             (stamp) => {
               if(R.isNil(stamp)) {
                 return self.Promise.reject('No terrain selection');
               }
 
-              return scope.doSwitchToMode('Terrain');
+              return state.event('Modes.switchTo', 'Terrain');
             }
           )(selection);
         },
-        set: function terrainSelectionSet(where, stamps, scope, selection) {
+        set: function terrainSelectionSet(where, stamps, state, selection) {
           var previous = gameTerrainSelectionService.get(where, selection);
           var ret = R.assoc(where, stamps, selection);
 
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-          }
+          checkSelection(where, state);
           
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeTerrain-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.terrain.change.${stamp}`);
           }, stamps);
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeTerrain-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.terrain.change.${stamp}`);
           }, previous);
 
           return ret;
         },
-        addTo: function terrainSelectionSet(where, stamps, scope, selection) {
+        addTo: function terrainSelectionSet(where, stamps, state, selection) {
           var previous = gameTerrainSelectionService.get(where, selection);
           var new_selection = R.uniq(R.concat(previous, stamps));
           var ret = R.assoc(where, new_selection, selection);
 
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-          }
+          checkSelection(where, state);
           
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeTerrain-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.terrain.change.${stamp}`);
           }, new_selection);
 
           return ret;
         },
-        removeFrom: function terrainSelectionRemoveFrom(where, stamps, scope, selection) {
+        removeFrom: function terrainSelectionRemoveFrom(where, stamps, state, selection) {
           var previous = R.prop(where, selection);
           var new_selection = R.difference(previous, stamps);
           var ret = R.assoc(where, new_selection, selection);
           
-          if('local' === where) {
-            scope.doSwitchToMode('Default');
-          }
+          checkSelection(where, state);
 
-          R.forEach(function(stamp) {
-            scope.gameEvent('changeTerrain-'+stamp);
+          R.forEach((stamp) => {
+            state.changeEvent(`Game.terrain.change.${stamp}`);
           }, R.uniq(R.concat(previous, stamps)));
 
           return ret;
         },
-        clear: function terrainSelectionClear(where, scope, selection) {
+        clear: function terrainSelectionClear(where, state, selection) {
           var previous = R.prop(where, selection);
           return gameTerrainSelectionService
-            .removeFrom(where, previous, scope, selection);
-        },
+            .removeFrom(where, previous, state, selection);
+        }
       };
       R.curryService(gameTerrainSelectionService);
       return gameTerrainSelectionService;

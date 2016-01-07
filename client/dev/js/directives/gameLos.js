@@ -3,26 +3,25 @@
 angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameLos', 'gameModels', 'gameFactions', function (modesService, gameLosService, gameModelsService, gameFactionsService) {
   return {
     restrict: 'A',
-    link: function link(scope, el /*, attrs*/) {
+    link: function link(scope, parent) {
       var map = document.getElementById('map');
       var under_models_container = document.getElementById('game-under-models');
       var svgNS = map.namespaceURI;
 
-      var local_element = createLosElement(svgNS, under_models_container, el[0]);
-      var remote_element = createLosElement(svgNS, under_models_container, el[0]);
+      var state = scope.state;
+      var local_element = createLosElement(svgNS, under_models_container, parent[0]);
+      var remote_element = createLosElement(svgNS, under_models_container, parent[0]);
 
-      scope.onGameEvent('changeLocalLos', function () {
-        updateLine(scope.game.los.local, local_element.line);
+      scope.onStateChangeEvent('Game.los.local.change', function () {
+        updateLine(state.game.los.local, local_element.line);
       }, scope);
-      scope.onGameEvent('changeRemoteLos', function (event, los) {
-        if (R.isNil(los)) return;
+      scope.onStateChangeEvent('Game.los.remote.change', function () {
+        updateLine(state.game.los.remote, remote_element.line);
 
-        updateLine(scope.game.los.remote, remote_element.line);
-
-        var display = gameLosService.isDisplayed(los) || 'LoS' === modesService.currentModeName(scope.modes);
-        updateEnvelope(scope.game.los, display, remote_element.envelope);
-        updateOriginTarget(scope.factions, scope.game.models, gameLosService.origin(los), display, remote_element.origin);
-        updateOriginTarget(scope.factions, scope.game.models, gameLosService.target(los), display, remote_element.target);
+        var display = gameLosService.isDisplayed(state.game.los) || 'LoS' === modesService.currentModeName(state.modes);
+        updateEnvelope(state.game.los, display, remote_element.envelope);
+        updateOriginTarget(state.factions, state.game.models, gameLosService.origin(state.game.los), display, remote_element.origin);
+        updateOriginTarget(state.factions, state.game.models, gameLosService.target(state.game.los), display, remote_element.target);
       }, scope);
     }
   };
@@ -113,30 +112,32 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
       if (R.exists(stamp)) {
         return gameModelsService.findStamp(stamp, models);
       }
-      return self.Promise.resolve(null);
+      return self.Promise.reject();
     }, function (model) {
       if (!display || R.isNil(model)) {
         element.style.visibility = 'hidden';
-        return;
+        return self.Promise.reject();
       }
-      R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
+      return R.pipeP(gameFactionsService.getModelInfo$(model.state.info), function (info) {
         element.setAttribute('cx', model.state.x + '');
         element.setAttribute('cy', model.state.y + '');
         element.setAttribute('r', info.base_radius + '');
         element.style.visibility = 'visible';
       })(factions);
-    })(stamp);
+    })(stamp).catch(R.always(null));
   }
 }]).directive('clickGameLosClip', [function () {
   return {
     restrict: 'A',
-    link: function link(scope, el /*, attrs*/) {
-      scope.onGameLoad.then(function () {
-        updateEnvelope(scope.game.los, el[0]);
-      });
+    link: function link(scope, element) {
+      var state = scope.state;
 
-      scope.onGameEvent('changeRemoteLos', function (event, los) {
-        updateEnvelope(los, el[0]);
+      scope.onStateChangeEvent('Game.loaded', function () {
+        updateEnvelope(state.game.los, element[0]);
+      }, scope);
+
+      scope.onStateChangeEvent('Game.los.remote.change', function () {
+        updateEnvelope(state.game.los, element[0]);
       }, scope);
     }
   };
@@ -179,16 +180,16 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
 }]).directive('clickGameLosDarkness', ['gameLos', 'modes', function (gameLosService, modesService) {
   return {
     restrict: 'A',
-    link: function link(scope, el) {
-      // console.log('gameLosDarkness', scope, el);
+    link: function link(scope, element) {
+      var state = scope.state;
+      updatePolygon(scope, state, element[0]);
 
-      updatePolygon(scope, scope.game.los, el[0]);
-      scope.onGameEvent('changeRemoteLos', function (event, los) {
-        updatePolygon(scope, los, el[0]);
+      scope.onStateChangeEvent('Game.remote.los.change', function () {
+        updatePolygon(scope, state, state.game.los, element[0]);
       }, scope);
     }
   };
-  function updatePolygon(scope, los, polygon) {
+  function updatePolygon(scope, state, polygon) {
     var _R$propOr = R.propOr({}, 'envelope', scope);
 
     var _R$propOr$left = _R$propOr.left;
@@ -224,7 +225,7 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     // console.log('gameLosDarkness envelope points', points);
     polygon.setAttribute('points', points);
 
-    var display = gameLosService.isDisplayed(los) || 'LoS' === modesService.currentModeName(scope.modes);
+    var display = gameLosService.isDisplayed(state.game.los) || 'LoS' === modesService.currentModeName(state.modes);
     polygon.style['visibility'] = display ? 'visible' : 'hidden';
   }
 }]).directive('clickGameLosRefresh', [function () {
@@ -234,7 +235,7 @@ angular.module('clickApp.directives').directive('clickGameLos', ['modes', 'gameL
     link: function link(scope) {
       // console.log('gameLosRefresh', scope);
 
-      scope.digestOnGameEvent('changeRemoteLos', scope);
+      scope.digestOnStateChangeEvent('Game.los.remote.change', scope);
     }
   };
 }]);

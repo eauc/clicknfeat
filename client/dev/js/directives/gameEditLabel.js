@@ -9,7 +9,7 @@ angular.module('clickApp.controllers').controller('clickGameEditLabelCtrl', ['$s
     var new_label = s.trim($scope.edit.label);
     if (R.length(new_label) === 0) return;
 
-    $scope.doExecuteCommand('onModels', 'addLabel', new_label, [$scope.selection.state.stamp]).then(function () {
+    $scope.stateEvent('Game.command.execute', 'onModels', ['addLabel', [new_label], [$scope.selection.state.stamp]]).then(function () {
       $scope.edit.label = '';
       $scope.doClose();
       $scope.$digest();
@@ -23,7 +23,7 @@ angular.module('clickApp.directives').directive('clickGameEditLabel', ['$window'
     template: ['<form ng-submit="doAddLabel()">', '<input type="text" ng-model="edit.label" ng-change="doRefresh()" />', '</form>'].join(''),
     scope: true,
     controller: 'clickGameEditLabelCtrl',
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       console.log('gameEditLabel');
       var map = document.getElementById('map');
       var input = element[0].querySelector('input');
@@ -31,19 +31,17 @@ angular.module('clickApp.directives').directive('clickGameEditLabel', ['$window'
       closeEditLabel();
 
       function closeEditLabel() {
-        console.log('closeEditLabel');
+        // console.log('closeEditLabel');
 
         scope.selection = {};
 
-        $window.requestAnimationFrame(function _closeEditLabel() {
-          element[0].style.display = 'none';
-          element[0].style.visibility = 'hidden';
-          element[0].style.left = 0 + 'px';
-          element[0].style.top = 0 + 'px';
-        });
+        element[0].style.display = 'none';
+        element[0].style.visibility = 'hidden';
+        element[0].style.left = 0 + 'px';
+        element[0].style.top = 0 + 'px';
       }
       function openEditLabel(event, selection) {
-        console.log('openEditLabel');
+        // console.log('openEditLabel');
 
         scope.selection = selection;
         scope.edit = { label: '' };
@@ -82,8 +80,8 @@ angular.module('clickApp.directives').directive('clickGameEditLabel', ['$window'
         input.style.width = R.length(scope.edit.label) + 'em';
       }
 
-      scope.onGameEvent('openEditLabel', openEditLabel, scope);
-      scope.onGameEvent('closeEditLabel', closeEditLabel, scope);
+      scope.onStateChangeEvent('Game.editLabel.open', openEditLabel, scope);
+      scope.onStateChangeEvent('Game.editLabel.close', closeEditLabel, scope);
       input.addEventListener('keydown', function (event) {
         console.log('toto', event);
         if (event.keyCode === 27) {

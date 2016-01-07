@@ -17,16 +17,17 @@ describe('terrain lock', function() {
 
         this.terrainService = spyOnService('terrain');
      
-        this.scope = { game: { terrains: 'terrains',
+        this.state = { game: { terrains: 'terrains',
                                terrain_selection: 'selection' },
-                       factions: 'factions'
+                       factions: 'factions',
+                       event: jasmine.createSpy('event')
                      };
       }
     ]));
 
     when('user toggles lock on terrains', function() {
       this.ret = this.terrainModeService.actions
-        .toggleLock(this.scope);
+        .toggleLock(this.state);
     }, function() {
       using([
         ['first', 'set'],
@@ -41,15 +42,14 @@ describe('terrain lock', function() {
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameTerrainsService.findStamp)
               .toHaveBeenCalledWith('stamp1', 'terrains');
-            this.thenExpect(this.ret, function(ret) {
+            this.thenExpect(this.ret, function() {
               expect(this.terrainService.isLocked)
                 .toHaveBeenCalledWith('gameTerrains.findStamp.returnValue');
-              expect(this.gameService.executeCommand)
-                .toHaveBeenCalledWith('lockTerrains', e.set,
-                                      this.gameTerrainSelectionService.get._retVal,
-                                      this.scope, this.scope.game);
-
-              expect(ret).toBe('game.executeCommand.returnValue');
+              expect(this.state.event)
+                .toHaveBeenCalledWith('Game.command.execute',
+                                      'lockTerrains', [ e.set,
+                                                        this.gameTerrainSelectionService.get._retVal
+                                                      ]);
             });
           });
         });
@@ -66,16 +66,16 @@ describe('terrain lock', function() {
         mockReturnPromise(this.gameTerrainsService.lockStamps);
         this.gameTerrainsService.lockStamps.resolveWith = 'gameTerrains.lockStamps.returnValue';
         
-        this.scope = jasmine.createSpyObj('scope', [
-          'gameEvent'
+        this.state = jasmine.createSpyObj('state', [
+          'changeEvent'
         ]);
         this.game = { terrains: 'terrains' };
       }
     ]));
 
-    when('execute(<lock>, <stamps>, <scope>, <game>)', function() {
+    when('execute(<lock>, <stamps>, <state>, <game>)', function() {
       this.ret = this.lockTerrainsCommandService
-        .execute('lock', this.stamps, this.scope, this.game);
+        .execute('lock', this.stamps, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.stamps = ['stamp1', 'stamp2'];
@@ -92,25 +92,25 @@ describe('terrain lock', function() {
       });
       
       it('should apply <lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function([ctxt,game]) {
           expect(this.gameTerrainsService.lockStamps)
             .toHaveBeenCalledWith('lock', this.stamps, 'terrains');
-          expect(this.game.terrains)
+          expect(game.terrains)
             .toBe('gameTerrains.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeTerrain gameEvents', function() {
+      it('should emit changeTerrain changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
         });
       });
 
       it('should return context', function() {
-        this.thenExpect(this.ret, function(ctxt) {
+        this.thenExpect(this.ret, function([ctxt]) {
           expect(ctxt)
             .toEqual({
               stamps: this.stamps,
@@ -120,14 +120,14 @@ describe('terrain lock', function() {
       });
     });
 
-    when('replay(<ctxt>, <scope>, <game>)', function() {
+    when('replay(<ctxt>, <state>, <game>)', function() {
       this.ret = this.lockTerrainsCommandService
-        .replay(this.ctxt, this.scope, this.game);
+        .replay(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
           stamps: [ 'stamp1', 'stamp2' ],
-          desc: 'lock',
+          desc: 'lock'
         };
       });
 
@@ -142,32 +142,32 @@ describe('terrain lock', function() {
       });
 
       it('should apply <lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameTerrainsService.lockStamps)
             .toHaveBeenCalledWith('lock', this.ctxt.stamps, 'terrains');
-          expect(this.game.terrains)
+          expect(game.terrains)
             .toBe('gameTerrains.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeTerrain gameEvents', function() {
+      it('should emit changeTerrain changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
         });
       });
     });
 
-    when('undo(<ctxt>, <scope>, <game>)', function() {
+    when('undo(<ctxt>, <state>, <game>)', function() {
       this.ret = this.lockTerrainsCommandService
-        .undo(this.ctxt, this.scope, this.game);
+        .undo(this.ctxt, this.state, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
           stamps: [ 'stamp1', 'stamp2' ],
-          desc: true,
+          desc: true
         };
       });
 
@@ -182,20 +182,20 @@ describe('terrain lock', function() {
       });
 
       it('should apply !<lock> on <stamps>', function() {
-        this.thenExpect(this.ret, function() {
+        this.thenExpect(this.ret, function(game) {
           expect(this.gameTerrainsService.lockStamps)
             .toHaveBeenCalledWith(false, this.ctxt.stamps, 'terrains');
-          expect(this.game.terrains)
+          expect(game.terrains)
             .toBe('gameTerrains.lockStamps.returnValue');
         });
       });
 
-      it('should emit changeTerrain gameEvents', function() {
+      it('should emit changeTerrain changeEvents', function() {
         this.thenExpect(this.ret, function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp1');
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeTerrain-stamp2');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.terrain.change.stamp2');
         });
       });
     });
@@ -236,9 +236,10 @@ describe('terrain lock', function() {
                               locked: [ { state: { stamp: 's3', lk: true } },
                                         { state: { stamp: 's4', lk: true } } ]
                             } ],
-        [ false , ['s4']  , { active: [ { state: { stamp: 's1' } },
-                                        { state: { stamp: 's2' } },
-                                        { state: { stamp: 's4', lk: false } } ],
+        [ false , ['s4']  , { active: [ { state: { stamp: 's4', lk: false } },
+                                        { state: { stamp: 's1' } },
+                                        { state: { stamp: 's2' } }
+                                      ],
                               locked: [ { state: { stamp: 's3', lk: true } } ]
                             } ],
         [ true  , ['s2','s3'] , { active: [ { state: { stamp: 's1' } } ],
@@ -247,8 +248,8 @@ describe('terrain lock', function() {
                                             { state: { stamp: 's4', lk: true } } ]
                                 } ],
         [ false , ['s1','s4'] , { active: [ { state: { stamp: 's1', lk: false } },
-                                            { state: { stamp: 's2' } },
-                                            { state: { stamp: 's4', lk: false } } ],
+                                            { state: { stamp: 's4', lk: false } },
+                                            { state: { stamp: 's2' } } ],
                                   locked: [ { state: { stamp: 's3', lk: true } } ]
                                 } ],
       ], function(e, d) {
@@ -276,11 +277,11 @@ describe('terrain lock', function() {
       it('should set lock for <terrain>', function() {
         this.terrain = { state: { dsp: [] } };
         
-        this.terrainService.setLock(true, this.terrain);
+        this.terrain = this.terrainService.setLock(true, this.terrain);
         expect(this.terrainService.isLocked(this.terrain))
           .toBeTruthy();
         
-        this.terrainService.setLock(false, this.terrain);
+        this.terrain = this.terrainService.setLock(false, this.terrain);
         expect(this.terrainService.isLocked(this.terrain))
           .toBeFalsy();
       });

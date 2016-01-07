@@ -1,5 +1,3 @@
-'use strict';
-
 describe('game', function() {
   describe('game service', function() {
     beforeEach(inject([
@@ -12,7 +10,6 @@ describe('game', function() {
     describe('description()', function() {
       using([
         [ 'game', 'desc' ],
-        [ { description: 'gameDesc' }, 'gameDesc' ],
         [ { players: { p1: { name: 'p1' },
                        p2: { name: null } } }, 'P1 vs John Doe' ],
         [ { players: { p1: { name: null },
@@ -27,22 +24,30 @@ describe('game', function() {
       });
     });
     
-    describe('toJson()', function() {
+    when('toJson()', function() {
+      this.ret = this.gameService.toJson({
+        players: 'players',
+        commands: 'commands',
+        undo: 'undo',
+        other: 'other'
+      });
+    }, function() {
+      beforeEach(function() {
+        this.jsonStringifierService.stringify
+          .resolveWith = 'jsonStringifier.stringify.returnValue';
+      });
+      
       it('should pick selected keys', function() {
-        this.thenExpect(this.gameService.toJson({
-          players: 'players',
-          commands: 'commands',
-          undo: 'undo',
-          other: 'other',
-        }), function(json) {
+        this.thenExpect(this.ret, (json) => {
           expect(this.jsonStringifierService.stringify)
-            .toHaveBeenCalledWith({'players':'players','commands':'commands','undo':'undo'});
+            .toHaveBeenCalledWith({
+              players:'players',
+              commands:'commands',
+              undo:'undo'
+            });
 
           expect(json).toEqual('jsonStringifier.stringify.returnValue');
         });
-
-        this.jsonStringifierService.stringify
-          .resolve('jsonStringifier.stringify.returnValue');
       });
     });
   });

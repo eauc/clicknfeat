@@ -1,5 +1,3 @@
-'use strict';
-
 describe('game chat', function() {
   describe('gameService', function() {
     beforeEach(inject([ 'game', function(gameService) {

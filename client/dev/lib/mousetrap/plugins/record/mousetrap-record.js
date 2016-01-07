@@ -48,6 +48,15 @@
          */
         _origHandleKey = Mousetrap.prototype.handleKey;
 
+    function _preventDefault(e) {
+        if (e.preventDefault) {
+            e.preventDefault();
+            return;
+        }
+
+        e.returnValue = false;
+    }
+
     /**
      * handles a character key event
      *
@@ -63,6 +72,8 @@
             _origHandleKey.apply(self, arguments);
             return;
         }
+
+      _preventDefault(e);
 
         // remember this character if we're currently recording a sequence
         if (e.type == 'keydown') {

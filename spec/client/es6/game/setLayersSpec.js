@@ -1,5 +1,3 @@
-'use strict';
-
 describe('set layers', function() {
   describe('setLayersCommand service', function() {
     beforeEach(inject([ 'setLayersCommand', function(setLayersCommand) {
@@ -7,21 +5,22 @@ describe('set layers', function() {
       this.gameLayersService = spyOnService('gameLayers');
     }]));
 
-    when('execute(<cmd>, <layer>, <scope>, <game>)', function() {
-      this.ctxt = this.setLayersCommandService.execute(this.cmd, 'l',
-                                                       this.scope, this.game);
+    when('execute(<cmd>, <layer>, <state>, <game>)', function() {
+      this.ret = this.setLayersCommandService
+        .execute(this.cmd, 'l', this.state, this.game);
     }, function() {
       beforeEach(function() {
-        this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
+        this.state = jasmine.createSpyObj('state', ['changeEvent']);
         this.game = { layers: 'before' };
-
       });
 
       when('gameLayers service does not respond to <cmd>', function() {
         this.cmd = 'whatever';
       }, function() {
-        it('should return Nil', function() {
-          expect(this.ctxt).toBe(undefined);
+        it('should reject command', function() {
+          this.thenExpectError(this.ret, (reason) => {
+            expect(reason).toBe('Layers unknown method "whatever"');
+          });
         });
       });
 
@@ -34,12 +33,12 @@ describe('set layers', function() {
         });
       
         it('should send changeLayers event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeLayers');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.layers.change');
         });
 
         it('should return ctxt', function() {
-          expect(this.ctxt)
+          expect(this.ret[0])
             .toEqual({
               before: 'before',
               desc: 'toggle(l)',
@@ -54,16 +53,16 @@ describe('set layers', function() {
       [ 'replay', 'before'  , 'after'  ],
       [ 'undo'  , 'after'   , 'before' ],
     ], function(e) {
-      describe(e.method+'(<ctxt>, <scope>, <game>)', function() {
+      describe(e.method+'(<ctxt>, <state>, <game>)', function() {
         beforeEach(function() {
           this.ctxt = {
             before: 'before',
             after: 'after'
           };
-          this.scope = jasmine.createSpyObj('scope', ['gameEvent']);
-          this.game = { layers: e.previous };
+          this.state = jasmine.createSpyObj('state', ['changeEvent']);
 
-          this.setLayersCommandService[e.method](this.ctxt, this.scope, this.game);
+          let game = { layers: e.previous };
+          this.game = this.setLayersCommandService[e.method](this.ctxt, this.state, game);
         });
       
         it('should set game layers', function() {
@@ -71,8 +70,8 @@ describe('set layers', function() {
         });
       
         it('should send changeLayers event', function() {
-          expect(this.scope.gameEvent)
-            .toHaveBeenCalledWith('changeLayers');
+          expect(this.state.changeEvent)
+            .toHaveBeenCalledWith('Game.layers.change');
         });
       });
     });

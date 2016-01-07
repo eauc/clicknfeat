@@ -1,5 +1,3 @@
-'use strict';
-
 describe('model check state', function() {
   describe('model service', function() {
     beforeEach(inject([

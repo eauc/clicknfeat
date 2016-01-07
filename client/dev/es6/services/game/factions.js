@@ -4,60 +4,104 @@ angular.module('clickApp.services')
     'http',
     function gameFactionsServiceFactory(localStorageService,
                                         httpService) {
-      var BASE_RADIUS = {
+      let BASE_RADIUS = {
         huge: 24.605,
         large: 9.842,
         medium: 7.874,
         small: 5.905
       };
-      var STORAGE_KEY = 'clickApp.factions_desc';
-      var gameFactionsService = {
+      let STORAGE_KEY = 'clickApp.factions_desc';
+      let gameFactionsService = {
         init: function gameFactionsInit() {
+          return R.pipeP(
+            gameFactionsService.loadDefault,
+            (base) => {
+              return R.pipeP(
+                gameFactionsService.loadDesc,
+                (desc) => {
+                  return { base: base,
+                           desc: desc
+                         };
+                }
+              )();
+            },
+            gameFactionsService.updateDesc,
+            R.spy('Factions')
+          )();
+        },
+        loadDefault: function gameFactionsLoadDefault() {
           return R.pipeP(
             httpService.get,
             (data) => {
-              return R.map((faction) => {
-                return httpService.get(data[faction])
-                  .then((fdata) => {
-                    if(R.isNil(fdata)) {
-                      console.log('factions: Error getting '+faction+' info', data[faction]);
-                    }
-                    return [ faction, fdata ];
-                  });
-              }, R.keys(data));
+              return R.pipe(
+                R.keys,
+                R.map((faction) => {
+                  return httpService.get(data[faction])
+                    .then((fdata) => { return [ faction, fdata ]; });
+                })
+              )(data);
             },
             R.promiseAll,
-            R.sortBy(R.compose(R.prop('name'), R.nth(1))),
-            R.reduce(function(mem, [name, faction]) {
-              return R.assoc(name, updateFaction(faction), mem);
-            }, {}),
-            (factions) => {
-              return gameFactionsService.loadDesc()
-                .then(gameFactionsService.applyDesc$(factions));
-            }
-          )('/data/model/factions.json')
-            .catch(R.spyError('factions: error getting description'));
+            R.reduce((mem, [name, faction]) => {
+              return R.assoc(name, faction, mem);
+            }, {})
+          )('/data/model/factions.json');
+        },
+        updateDesc: function gameFactionsUpdateDesc(factions) {
+          return R.pipe(
+            gameFactionsService.applyDesc,
+            gameFactionsService.updateInfo,
+            gameFactionsService.buildReferences
+          )(factions);
         },
         loadDesc: function gameFactionsLoadDesc() {
-          return localStorageService.load(STORAGE_KEY)
-            .catch(() => {
-              console.log('factions: no stored desc');
-            })
-            .then(R.defaultTo({}));
+          return R.pipeP(
+            () => {
+              return localStorageService
+                .load(STORAGE_KEY)
+                .catch(R.spyError('Factions: no stored desc'));
+            },
+            R.defaultTo({}),
+            R.spyWarn('Factions Desc load')            
+          )();
         },
-        applyDesc: function gameFactionsApplyDesc(factions, desc) {
-          return R.deepExtend(factions, desc);
+        applyDesc: function gameFactionsApplyDesc({ base, desc }) {
+          return { base: base,
+                   desc: desc,
+                   current: R.deepExtend(base, desc)
+                 };
         },
-        storeDesc: function gameFactionsStoreDesc(desc) {
-          return localStorageService.save(STORAGE_KEY, desc);
+        updateInfo: function gameFactionsUpdateInfo({ base, desc, current}) {
+          return { base: base,
+                   desc: desc,
+                   current: R.pipe(
+                     R.toPairs,
+                     R.sortBy(R.compose(R.prop('name'), R.nth(1))),
+                     R.reduce((mem, [name, faction]) => {
+                       return R.assoc(name, updateFaction(faction), mem);
+                     }, {})
+                   )(current)
+                 };
         },
-        buildReferences: function gameFactionsBuildReferences(factions) {
-          return R.reduce(buildFactionRefs(factions), {}, R.keys(factions));
+        storeDesc: function gameFactionsStoreDesc(factions) {
+          return R.pipePromise(
+            R.prop('desc'),
+            R.spyWarn('Factions Desc store'),
+            localStorageService.save$(STORAGE_KEY)
+          )(factions);
+        },
+        buildReferences: function gameFactionsBuildReferences({ base, desc, current }) {
+          return {
+            base: base,
+            desc: desc,
+            current: current,
+            references: R.reduce(buildFactionRefs(current), {}, R.keys(current))
+          };
         },
         getModelInfo: function gameFactionsGetModelInfo(path, factions) {
           return new self.Promise((resolve, reject) => {
-            var info = R.path(path, factions);
-            if(R.isNil(info)) reject('Model info '+path.join('.')+' not found');
+            var info = R.path(['current',...path], factions);
+            if(R.isNil(info)) reject(`Model info ${path.join('.')} not found`);
             else resolve(info);
           });
         },
@@ -69,10 +113,10 @@ angular.module('clickApp.services')
               buildEntry(line)
             )(references);
           }
-          let lineMatchesReference = R.curry((line, reference) => {
+          var lineMatchesReference = R.curry((line, reference) => {
             return XRegExp.exec(line, reference.regexp);
           });
-          let buildEntry = R.curry((line, reference) => {
+          var buildEntry = R.curry((line, reference) => {
             if(R.isNil(reference)) return reference;
             
             let match = XRegExp.exec(line, reference.regexp);
@@ -82,13 +126,13 @@ angular.module('clickApp.services')
               parseNbRepeat(match.nb_repeat)
             ];
           });
-          let parseNbGrunts = (nb_grunts) => {
+          var parseNbGrunts = (nb_grunts) => {
             return R.pipe(
               R.defaultTo('0'),
               (s) => { return parseFloat(s)+1; }
             )(nb_grunts);
           };
-          let parseNbRepeat = (nb_repeat) => {
+          var parseNbRepeat = (nb_repeat) => {
             return R.pipe(
               R.defaultTo('0'),
               (s) => { return parseFloat(s); }
@@ -102,9 +146,7 @@ angular.module('clickApp.services')
           )(list);
         },
         buildModelsList: function gameFactionsBuildModelsList(list, user, references) {
-          console.log('buildModelsList', list, user, references);
           let info = gameFactionsService.getListInfo(list, references);
-          console.log('buildModelsList: info', info);
           
           function buildUnit([entries, nb_grunts, nb_repeat]) {
             let grunts = buildGrunts(entries, nb_grunts);
@@ -212,7 +254,7 @@ angular.module('clickApp.services')
         buildReferenceRegexp: function gameFactionsBuildReferenceRegexp(name) {
           let regexp = '^\\**\\s*'+name;
           return XRegExp(regexp, 'i');
-        },
+        }
       };
       function updateFaction(faction) {
         // console.log(faction);

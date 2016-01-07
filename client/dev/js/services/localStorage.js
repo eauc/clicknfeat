@@ -3,7 +3,7 @@
 angular.module('clickApp.services').factory('localStorage', ['jsonParser', 'jsonStringifier', function (jsonParserService, jsonStringifierService) {
   var localStorageService = {
     getItem: function localStorageGetItem(key) {
-      return new self.Promise(function (resolve /*, reject*/) {
+      return new self.Promise(function (resolve) {
         resolve(self.localStorage.getItem(key));
       });
     },
@@ -11,7 +11,7 @@ angular.module('clickApp.services').factory('localStorage', ['jsonParser', 'json
       return localStorageService.getItem(key).then(jsonParserService.parse);
     },
     setItem: function localStoragesetItem(key, value) {
-      return new self.Promise(function (resolve /*, reject*/) {
+      return new self.Promise(function (resolve) {
         self.localStorage.setItem(key, value);
         resolve(value);
       });
@@ -20,7 +20,7 @@ angular.module('clickApp.services').factory('localStorage', ['jsonParser', 'json
       return jsonStringifierService.stringify(value).then(localStorageService.setItem$(key)).then(R.always(value));
     },
     removeItem: function localStorageRemoveItem(key) {
-      return new self.Promise(function (resolve /*, reject*/) {
+      return new self.Promise(function (resolve) {
         resolve(self.localStorage.removeItem(key));
       });
     }

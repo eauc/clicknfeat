@@ -3,8 +3,8 @@ var _reduce = require('./internal/_reduce');
 
 
 /**
- * Takes a predicate and a list and returns the pair of lists of
- * elements which do and do not satisfy the predicate, respectively.
+ * Takes a predicate and a list and returns the pair of lists of elements which
+ * do and do not satisfy the predicate, respectively.
  *
  * @func
  * @memberOf R
@@ -15,6 +15,7 @@ var _reduce = require('./internal/_reduce');
  * @param {Array} list The array to partition.
  * @return {Array} A nested array, containing first an array of elements that satisfied the predicate,
  *         and second an array of elements that did not satisfy.
+ * @see R.filter, R.reject
  * @example
  *
  *      R.partition(R.contains('s'), ['sss', 'ttt', 'foo', 'bars']);

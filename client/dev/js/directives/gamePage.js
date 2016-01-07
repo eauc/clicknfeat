@@ -3,7 +3,7 @@
 angular.module('clickApp.directives').directive('clickGamePage', ['$window', function ($window) {
   return {
     restrict: 'A',
-    link: function link(scope, element /*, attrs*/) {
+    link: function link(scope, element) {
       var toggleMenuClick = (function () {
         var gameview_width_mem = undefined;
         return function () {
@@ -28,7 +28,7 @@ angular.module('clickApp.directives').directive('clickGamePage', ['$window', fun
       })();
 
       element[0].querySelector('#menu-toggle').addEventListener('click', toggleMenuClick);
-      scope.onGameEvent('toggleMenu', toggleMenuClick, scope);
+      scope.onStateChangeEvent('Game.toggleMenu', toggleMenuClick, scope);
 
       var gameview = element[0].querySelector('#gameview');
       var rect = gameview.getBoundingClientRect();

@@ -1,30 +1,17 @@
-index-dev.html/app.min.js
-binding:
-- warn unknown binding
-- click events as bindings ?
-specs :
-- mockCtrl
 model
-- ruler origin target : update when model change ?
-- template origin target : update when model change ?
-- highlight models in melee ?
-scenarios
-- white aura on contesting models
-- red aura on killboxing wardudes
-los
-- line
-- from model
-- update when origin/target move ?
-refac backToDefault :
-- [right]clickMap -> clear all selections (commonMode ?)
-- enforce escape in all modes
-- model/template selection -> back to models/templates mode -> back to default mode
-- ruler + bug show/hide button + toggle use ruler button
-online - users login
-online - users chat + notification
-online - game chat
-online - game synchro
-fk import
-save model selection
-
+- build roaster
+- replace (within base)
+- highlight models in melee
+- wreck: hide effects/icons/souls/counters
+online:
+- save online game in cache
+- load local game online & reverse
+- server : remove unused users after 30s
+load:
+- fucking bug with loading banner
+game:
+- put msg hints in directives
 =================================
+- singleSelection/refreshTargetOrigin
+- game online
+- optimize state save

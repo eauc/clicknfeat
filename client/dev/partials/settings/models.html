@@ -1,6 +1,5 @@
 <div id="settings-main">
-  <p class="text-danger"><strong>{{error}}</strong></p>
-  <p class="text-success"><strong>{{success}}</strong></p>
+  <p class="text-warning"><strong>{{result}}</strong></p>
   <div class="panel panel-info">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-import"></span>
@@ -9,7 +8,7 @@
     <div class="panel-body row">
       <form class="">
         <div class="form-group {{ hasDesc(f) ? 'bg-info' : '' }}"
-             ng-repeat="(f, faction) in factions">
+             ng-repeat="(f, faction) in state.factions.base">
           <label class="control-label col-xs-3 text-right">
             <span class="clickable glyphicon glyphicon-trash"
                   ng-click="doClearFactionDesc(f)">

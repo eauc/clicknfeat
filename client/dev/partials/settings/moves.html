@@ -14,8 +14,12 @@
       <th>Default</th>
       <th>Current</th>
     </tr>
-    <tr ng-repeat="(a,b) in settings.default.Moves[mode]"
-        class="{{settings.current.Moves[mode][a] !== b ? 'modified' : ''}}">
+    <tr ng-repeat="(a,b) in state.settings.default.Moves[mode]"
+        class="{{
+               edit_settings.Moves[mode][a] &&
+               edit_settings.Moves[mode][a] !== b ?
+               'modified' : ''
+               }}">
       <td class="vertical-center">{{::a}}</td>
       <td class="vertical-center">{{::b}}</td>
       <td>
@@ -23,8 +27,7 @@
           <input type="number"
                  class="form-control"
                  placeholder="{{::b}}"
-                 ng-model="settings.current.Moves[mode][a]"
-                 ng-change="doUpdateSettings()"/>
+                 ng-model="edit_settings.Moves[mode][a]" />
         </div>
       </td>
     </tr>

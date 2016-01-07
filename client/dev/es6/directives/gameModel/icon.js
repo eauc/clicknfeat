@@ -1,10 +1,8 @@
-'use strict';
-
 angular.module('clickApp.directives')
   .factory('clickGameModelIcon', [
     'model',
     function(modelService) {
-      var EFFECTS = [
+      let EFFECTS = [
         [ 'b', '/data/icons/Blind.png' ],
         [ 'c', '/data/icons/Corrosion.png' ],
         [ 'd', '/data/icons/BoltBlue.png' ],
@@ -16,8 +14,8 @@ angular.module('clickApp.directives')
 
       return {
         create: function clickGameModelInconsCreate(svgNS, parent) {
-          var effects = R.reduce(function(mem, effect) {
-            var image = document.createElementNS(svgNS, 'image');
+          let effects = R.reduce(function(mem, effect) {
+            let image = document.createElementNS(svgNS, 'image');
             image.classList.add('model-image');
             image.setAttribute('x', '0');
             image.setAttribute('y', '0');
@@ -28,8 +26,8 @@ angular.module('clickApp.directives')
             parent.appendChild(image);
             return R.assoc(effect[0], image, mem);
           }, {}, EFFECTS);
-          
-          var leader = document.createElementNS(svgNS, 'image');
+
+          let leader = document.createElementNS(svgNS, 'image');
           leader.classList.add('model-image');
           leader.setAttribute('x', '0');
           leader.setAttribute('y', '0');
@@ -38,7 +36,7 @@ angular.module('clickApp.directives')
           leader.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '/data/icons/Leader.png');
           parent.appendChild(leader);
 
-          var lock = document.createElementNS(svgNS, 'image');
+          let lock = document.createElementNS(svgNS, 'image');
           lock.classList.add('model-image');
           lock.setAttribute('x', '0');
           lock.setAttribute('y', '0');
@@ -51,17 +49,18 @@ angular.module('clickApp.directives')
 
           return [ effects, leader, lock ];
         },
-        update: function clickGameModelIconsUpdate(info, model, img, el) {
-          var effects = el[0];
+        update: function clickGameModelIconsUpdate(info, model, img, element) {
+          let [ effects, leader, lock ] = element;
+
           R.pipe(
             R.keys,
-            R.filter(function(effect) {
+            R.filter((effect) => {
               return modelService.isEffectDisplayed(effect, model);
             }),
-            function(actives) {
-              var base_x = img.width / 2 - (R.length(actives) * 10 / 2);
-              var base_y = img.height / 2 + info.base_radius + 1;
-              R.addIndex(R.forEach)(function(effect, i) {
+            (actives) => {
+              let base_x = img.width / 2 - (R.length(actives) * 10 / 2);
+              let base_y = img.height / 2 + info.base_radius + 1;
+              R.addIndex(R.forEach)((effect, i) => {
                 effects[effect].setAttribute('x', (base_x + i * 10)+'');
                 effects[effect].setAttribute('y', (base_y)+'');
                 effects[effect].style.visibility = 'visible';
@@ -70,15 +69,14 @@ angular.module('clickApp.directives')
           )(effects);
           R.pipe(
             R.keys,
-            R.reject(function(effect) {
+            R.reject((effect) => {
               return modelService.isEffectDisplayed(effect, model);
             }),
-            R.forEach(function(effect) {
+            R.forEach((effect) => {
               effects[effect].style.visibility = 'hidden';
             })
           )(effects);
 
-          var leader = el[1];
           leader.setAttribute('x', (img.width / 2 - 0.7 * info.base_radius - 5)+'');
           leader.setAttribute('y', (img.height / 2 - 0.7 * info.base_radius - 5)+'');
           if(modelService.isLeaderDisplayed(model)) {
@@ -88,7 +86,6 @@ angular.module('clickApp.directives')
             leader.style.visibility = 'hidden';
           }
 
-          var lock = el[2];
           if(!modelService.isLocked(model)) {
             lock.style.visibility = 'hidden';
             return;
@@ -96,7 +93,7 @@ angular.module('clickApp.directives')
           lock.setAttribute('x', (img.width/2+info.base_radius-5)+'');
           lock.setAttribute('y', (img.height/2-5)+'');
           lock.style.visibility = 'visible';
-        },
+        }
       };
     }
   ]);

@@ -9,7 +9,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox"
-                   ng-checked="game.layers | gameLayers:'isDisplayed':'b'"
+                   ng-checked="layers | gameLayers:'isDisplayed':'b'"
                    ng-click="doToggleLayer('b')">
             Board
           </label>
@@ -17,7 +17,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox"
-                   ng-checked="game.layers | gameLayers:'isDisplayed':'d'"
+                   ng-checked="layers | gameLayers:'isDisplayed':'d'"
                    ng-click="doToggleLayer('d')">
             Deploiement
           </label>
@@ -25,7 +25,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox"
-                   ng-checked="game.layers | gameLayers:'isDisplayed':'s'"
+                   ng-checked="layers | gameLayers:'isDisplayed':'s'"
                    ng-click="doToggleLayer('s')">
             Scenario
           </label>
@@ -33,7 +33,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox"
-                   ng-checked="game.layers | gameLayers:'isDisplayed':'m'"
+                   ng-checked="layers | gameLayers:'isDisplayed':'m'"
                    ng-click="doToggleLayer('m')">
             Models
           </label>
@@ -41,7 +41,7 @@
         <div class="checkbox">
           <label>
             <input type="checkbox"
-                   ng-checked="game.layers | gameLayers:'isDisplayed':'t'"
+                   ng-checked="layers | gameLayers:'isDisplayed':'t'"
                    ng-click="doToggleLayer('t')">
             Templates
           </label>

@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('modelIncorporeal', [
     function modelIncorporealServiceFactory() {
@@ -10,20 +8,28 @@ angular.module('clickApp.services')
           },
           setIncorporealDisplay: function modelSetIncorporealDisplay(set, model) {
             if(set) {
-              model.state.dsp = R.uniq(R.append('in', model.state.dsp));
+              return R.over(R.lensPath(['state','dsp']),
+                            R.compose(R.uniq, R.append('in')),
+                            model);
             }
             else {
-              model.state.dsp = R.reject(R.equals('in'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('in')),
+                            model);
             }
           },
           toggleIncorporealDisplay: function modelToggleIncorporealDisplay(model) {
             if(modelService.isIncorporealDisplayed(model)) {
-              model.state.dsp = R.reject(R.equals('in'), model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.reject(R.equals('in')),
+                            model);
             }
             else {
-              model.state.dsp = R.append('in', model.state.dsp);
+              return R.over(R.lensPath(['state','dsp']),
+                            R.append('in'),
+                            model);
             }
-          },
+          }
         };
         return modelIncorporealService;
       };

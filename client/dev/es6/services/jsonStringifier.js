@@ -1,12 +1,11 @@
-'use strict';
-
 angular.module('clickApp.services')
   .factory('jsonStringifier', [
     function jsonStringifierServiceFactory() {
       var jsonStringifierService = {
         stringify: function jsonStringify(data) {
-          return self.Promise.resolve(JSON.stringify(data, jsonFilter));
-        },
+          return self.Promise
+            .resolve(JSON.stringify(data, jsonFilter));
+        }
       };
       function jsonFilter(key, value) {
         if(s.startsWith(key, '$$')) {
@@ -14,6 +13,7 @@ angular.module('clickApp.services')
         }
         return value;
       }
+      R.curryService(jsonStringifierService);
       return jsonStringifierService;
     }
   ]);

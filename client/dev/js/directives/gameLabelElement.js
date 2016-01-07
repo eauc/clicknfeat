@@ -19,9 +19,7 @@ angular.module('clickApp.directives').factory('labelElement', ['$window', 'gameM
     },
     updateOnFlipMap: function labelElementUpdateOnFlipMap(map, center, label) {
       var map_flipped = gameMapService.isFlipped(map);
-      $window.requestAnimationFrame(function _labelElementUpdateOnFlipMap() {
-        label.label.setAttribute('transform', map_flipped ? 'rotate(180,' + center.x + ',' + center.y + ')' : '');
-      });
+      label.label.setAttribute('transform', map_flipped ? 'rotate(180,' + center.x + ',' + center.y + ')' : '');
     },
     update: function labelElementUpdate(map_flipped, zoom_factor, flip_center, text_center, text, label) {
       text = R.defaultTo('', text) + '';
@@ -31,7 +29,7 @@ angular.module('clickApp.directives').factory('labelElement', ['$window', 'gameM
       if ('visible' === visibility) {
         updateText(text_center, text, label.text);
 
-        $window.requestAnimationFrame(function _labelElementUpdate() {
+        $window.requestAnimationFrame(function () {
           updateBackground(zoom_factor, text_center, label.text, label.bckgnd);
         });
       }

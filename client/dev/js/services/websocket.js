@@ -5,8 +5,7 @@ angular.module('clickApp.services').factory('websocket', ['$document', 'jsonPars
     create: function websocketCreate(url, name, handlers) {
       return new self.Promise(function (resolve, reject) {
         name = R.defaultTo(url, name);
-        handlers.error = R.defaultTo(defaultErrorHandler, handlers.error);
-        handlers.close = R.defaultTo(defaultCloseHandler, handlers.close);
+        handlers = R.pipe(R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)), R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler)))(handlers);
 
         var scheme = 'ws://';
         var uri = scheme + self.document.location.host + url;
@@ -47,12 +46,10 @@ angular.module('clickApp.services').factory('websocket', ['$document', 'jsonPars
       });
     },
     send: function websocketSend(event, socket) {
-      return R.pipeP(jsonStringifierService.stringify, function (data) {
-        socket.send(data);
-      })(event);
+      return R.pipeP(jsonStringifierService.stringify, socket.send)(event);
     },
     close: function websocketClose(socket) {
-      return new self.Promise(function (resolve /*, reject */) {
+      return new self.Promise(function (resolve) {
         socket.close();
         resolve();
       });
