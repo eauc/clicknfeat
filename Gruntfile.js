@@ -114,27 +114,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    jasmine: {
-      spec: {
-        src: app_js_src,
-        options: {
-          specs: spec_js_src,
-          helpers: spec_js_helpers,
-          vendor: [
-              'client/dev/lib/babel-polyfill/browser-polyfill.js',
-              'client/dev/lib/xregexp/src/xregexp.js',
-              'client/dev/lib/ramda/dist/ramda.js',
-              'client/dev/lib/underscore.string/dist/underscore.string.js',
-              'client/dev/lib/angular/angular.js',
-              'client/dev/lib/angular-ui-router/release/angular-ui-router.min.js',
-              'client/dev/lib/angular-mocks/angular-mocks.js',
-              'client/dev/lib/mousetrap/mousetrap.js',
-          ],
-          outfile: 'spec/client/SpecRunner.html',
-          keepRunner: true
-        }
-      }
-    },
     watch: {
       app_src: {
         files: [ 'client/dev/es6/**/*.js' ],
@@ -145,7 +124,7 @@ module.exports = function(grunt) {
       },
       spec_src: {
         files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
-        tasks: [ 'eslint', 'babel', 'jasmine:spec' ],
+        tasks: [ 'eslint', 'babel' ],
         options: {
           spawn: true
         }
@@ -173,7 +152,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('gruntify-eslint');
-  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
@@ -187,10 +165,5 @@ module.exports = function(grunt) {
     'usemin',
     'concat:appendTemplates',
     'sass'
-  ]);
-
-  grunt.registerTask('test', [
-    'babel',
-    'jasmine'
   ]);
 };
