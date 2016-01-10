@@ -22,13 +22,25 @@ angular.module('clickApp.services')
         export: function stateExportsExportData(name, buildData, state) {
           return R.pipePromise(
             buildData,
-            stateExportsService.rejectIf$(R.isNil),
+            R.rejectIf(R.equals(R.path(['exports',`_${name}`], state)),
+                       'unchanged'),
+            (data) => {
+              state.exports = R.assoc(`_${name}`, data, state.exports);
+              return data;
+            },
+            R.rejectIf(R.isNil, 'nil'),
             fileExportService.generate$('json')
           )(state)
-            .catch(R.compose(R.always(null),
-                             R.spyWarn('Export error', name)
-                            )
-                  )
+            .catch((error) => {
+              switch(error) {
+              case 'nil': return null;
+              case 'unchanged': return self.Promise.reject();
+              default: {
+                console.warn('Exports: error', name, error);
+                return null;
+              }
+              }
+            })
             .then((url) => {
               state.exports = R.pipe(
                 R.defaultTo({}),
@@ -40,7 +52,8 @@ angular.module('clickApp.services')
               )(state.exports);
               console.warn('Exports', state.exports);
               state.changeEvent(`Exports.${name}`);
-            });
+            })
+            .catch(R.always(null));
         }
       };
       R.curryService(stateExportsService);

@@ -37,13 +37,7 @@ angular.module('clickApp.services').factory('stateData', ['pubSub', 'stateExport
       return state;
     },
     save: function stateDataSave(state) {
-      return R.pipeP(function () {
-        return exportCurrentSettings(state);
-      }, function () {
-        return settingsService.store(state.settings);
-      }, function () {
-        return gameFactionsService.storeDesc(state.factions);
-      })();
+      return R.pipeP(R.always(exportCurrentSettings(state)), R.always(storeCurrentSettings(state)), R.always(storeCurrentFactions(state)))();
     },
     onSettingsLoadFile: function stateOnSettingsLoadFile(state, event, file) {
       return R.pipeP(fileImportService.read$('json'), settingsService.bind, settingsService.update, setSettings$(state), function () {
@@ -81,6 +75,17 @@ angular.module('clickApp.services').factory('stateData', ['pubSub', 'stateExport
     state.changeEvent('Factions.change');
   });
   var exportCurrentSettings = stateExportsService.export$('settings', R.path(['settings', 'current']));
+  var storeCurrentSettings = function storeCurrentSettings(state) {
+    if (state._settings === state.settings) return null;
+    state._settings = state.settings;
+    return settingsService.store(state.settings);
+  };
+  var storeCurrentFactions = function storeCurrentFactions(state) {
+    if (state._factions === state.factions) return null;
+    state._factions = state.factions;
+    return gameFactionsService.storeDesc(state.factions);
+  };
+
   R.curryService(stateDataService);
   return stateDataService;
 }]);

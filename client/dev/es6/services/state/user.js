@@ -32,7 +32,7 @@ angular.module('clickApp.services')
           return state;
         },
         save: function stateUserSave(state) {
-          return userService.save(state.user);
+          return saveCurrentUser(state);
         },
         onUserSet: function stateOnUserSet(state, event, user_state) {
           return R.pipePromise(
@@ -99,6 +99,11 @@ angular.module('clickApp.services')
         console.log('stateSetUser', state.user);
         state.changeEvent('User.change');
       });
+      function saveCurrentUser(state) {
+        if(state._user === state.user) return null;
+        state._user = state.user;
+        return userService.save(state.user);
+      }
       R.curryService(stateUserService);
       return stateUserService;
     }

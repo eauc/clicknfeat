@@ -16,14 +16,29 @@ angular.module('clickApp.services').factory('stateExports', ['fileExport', funct
       return obj;
     },
     export: function stateExportsExportData(name, buildData, state) {
-      return R.pipePromise(buildData, stateExportsService.rejectIf$(R.isNil), fileExportService.generate$('json'))(state).catch(R.compose(R.always(null), R.spyWarn('Export error', name))).then(function (url) {
+      return R.pipePromise(buildData, R.rejectIf(R.equals(R.path(['exports', '_' + name], state)), 'unchanged'), function (data) {
+        state.exports = R.assoc('_' + name, data, state.exports);
+        return data;
+      }, R.rejectIf(R.isNil, 'nil'), fileExportService.generate$('json'))(state).catch(function (error) {
+        switch (error) {
+          case 'nil':
+            return null;
+          case 'unchanged':
+            return self.Promise.reject();
+          default:
+            {
+              console.warn('Exports: error', name, error);
+              return null;
+            }
+        }
+      }).then(function (url) {
         state.exports = R.pipe(R.defaultTo({}), cleanupExport$([name]), R.assocPath([name], {
           name: 'clicknfeat_' + name + '.json',
           url: url
         }))(state.exports);
         console.warn('Exports', state.exports);
         state.changeEvent('Exports.' + name);
-      });
+      }).catch(R.always(null));
     }
   };
   R.curryService(stateExportsService);

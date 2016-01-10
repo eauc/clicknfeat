@@ -16,12 +16,13 @@ angular.module('clickApp.services').factory('stateGames', ['game', 'games', 'fil
     save: function stateGamesSave(state) {
       return R.pipePromise(function (games) {
         var current_game_local_id = parseInt(R.path(['game', 'local_id'], state));
-        if (R.isNil(current_game_local_id) || isNaN(current_game_local_id)) return games;
+        if (R.isNil(current_game_local_id) || isNaN(current_game_local_id) || state._game === state.game) return state;
+        state._game = state.game;
         return R.pipe(gamesService.updateLocalGame$(current_game_local_id, state.game), function (games) {
           state.local_games = games;
-          return games;
+          return state;
         })(games);
-      }, gamesService.storeLocalGames)(state.local_games);
+      }, saveCurrentGames)(state.local_games);
     },
     onGamesLocalCreate: function stateOnGamesLocalCreate(state, event) {
       event = event;
@@ -49,6 +50,11 @@ angular.module('clickApp.services').factory('stateGames', ['game', 'games', 'fil
     console.log('stateSetLocalGames', state.local_games);
     state.changeEvent('Games.local.change');
   });
+  function saveCurrentGames(state) {
+    if (state._local_games === state.local_games) return null;
+    state._local_games = state.local_games;
+    return gamesService.storeLocalGames(state.local_games);
+  }
   R.curryService(stateGamesService);
   return stateGamesService;
 }]);

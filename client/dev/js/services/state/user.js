@@ -17,7 +17,7 @@ angular.module('clickApp.services').factory('stateUser', ['user', 'userConnectio
       return state;
     },
     save: function stateUserSave(state) {
-      return userService.save(state.user);
+      return saveCurrentUser(state);
     },
     onUserSet: function stateOnUserSet(state, event, user_state) {
       return R.pipePromise(R.assoc('state', user_state), userService.checkOnline$(state), setUser$(state))(state.user);
@@ -55,6 +55,11 @@ angular.module('clickApp.services').factory('stateUser', ['user', 'userConnectio
     console.log('stateSetUser', state.user);
     state.changeEvent('User.change');
   });
+  function saveCurrentUser(state) {
+    if (state._user === state.user) return null;
+    state._user = state.user;
+    return userService.save(state.user);
+  }
   R.curryService(stateUserService);
   return stateUserService;
 }]);
