@@ -1,6 +1,6 @@
 'use strict';
 
-R.extend = (function () {
+R.extend = function () {
   return function (obj) {
     for (var _len = arguments.length, extensions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       extensions[_key - 1] = arguments[_key];
@@ -14,9 +14,9 @@ R.extend = (function () {
     }, extensions);
     return obj;
   };
-})();
+}();
 
-R.deepExtend = (function () {
+R.deepExtend = function () {
   return function (obj) {
     for (var _len2 = arguments.length, extensions = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
       extensions[_key2 - 1] = arguments[_key2];
@@ -54,5 +54,5 @@ R.deepExtend = (function () {
     }, extensions);
     return obj;
   };
-})();
+}();
 //# sourceMappingURL=deepExtend.js.map

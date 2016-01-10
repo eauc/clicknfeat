@@ -1,6 +1,6 @@
 'use strict';
 
-R.random = (function () {
+R.random = function () {
   var random = function random(min, max) {
     var rval = 0;
     var range = max - min;
@@ -36,7 +36,7 @@ R.random = (function () {
   return function () {
     return random(0, 1000000000) / 1000000000;
   };
-})();
+}();
 
 R.randomRange = function (min, max) {
   return min + R.random() * (max - min + 1) | 0;

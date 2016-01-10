@@ -72,7 +72,8 @@ angular.module('clickApp.services')
         },
         pickForJson: function gamePickForJson(game) {
           return R.pick([
-            'players', 'commands', 'undo', 'chat'
+            'players', 'commands', 'undo', 'chat',
+            'local_stamp', 'private_stamp', 'public_stamp'
           ], game);
         },
         toJson: function gameToJson(game) {

@@ -9,7 +9,7 @@ angular.module('clickApp.services')
       var stateGamesService = {
         init: function stateGamesInit(state) {
           state.local_games = {};
-          state.games_ready = R.pipeP(
+          state.games_ready = R.pipePromise(
             gamesService.loadLocalGames,
             setLocalGames$(state)
           )();
@@ -26,23 +26,7 @@ angular.module('clickApp.services')
           return state;
         },
         save: function stateGamesSave(state) {
-          return R.pipePromise(
-            (games) => {
-              let current_game_local_id = parseInt(R.path(['game','local_id'], state));
-              if(R.isNil(current_game_local_id) ||
-                 isNaN(current_game_local_id) ||
-                 state._game === state.game) return state;
-              state._game = state.game;
-              return R.pipe(
-                gamesService.updateLocalGame$(current_game_local_id, state.game),
-                (games) => {
-                  state.local_games = games;
-                  return state;
-                }
-              )(games);
-            },
-            saveCurrentGames
-          )(state.local_games);
+          return state;
         },
         onGamesLocalCreate: function stateOnGamesLocalCreate(state, event) {
           event = event;
@@ -62,19 +46,19 @@ angular.module('clickApp.services')
             stateGamesService.loadNewLocalGame$(state)
           )(file);
         },
-        onGamesLocalDelete: function stateOnGamesLocalDelete(state, event, index) {
+        onGamesLocalDelete: function stateOnGamesLocalDelete(state, event, id) {
           return R.pipePromise(
-            gamesService.removeLocalGame$(index),
+            gamesService.removeLocalGame$(id),
             setLocalGames$(state)
           )(state.local_games);
         },
         loadNewLocalGame: function stateLoadNewLocalGame(state, game) {
-          return R.pipe(
+          return R.pipePromise(
             gamesService.newLocalGame$(game),
             setLocalGames$(state),
             () => {
               state.changeEvent('Games.local.load',
-                                R.length(state.local_games) - 1);
+                                R.prop('local_stamp', R.last(state.local_games)));
             }
           )(state.local_games);
         }
@@ -84,11 +68,6 @@ angular.module('clickApp.services')
         console.log('stateSetLocalGames', state.local_games);
         state.changeEvent('Games.local.change');
       });
-      function saveCurrentGames(state) {
-        if(state._local_games === state.local_games) return null;
-        state._local_games = state.local_games;
-        return gamesService.storeLocalGames(state.local_games);
-      }
       R.curryService(stateGamesService);
       return stateGamesService;
     }

@@ -5,6 +5,14 @@ angular.module('clickApp.services')
     function(jsonParserService,
              jsonStringifierService) {
       var localStorageService = {
+        keys: function localStorageKeys() {
+          return R.pipe(
+            R.always(self.localStorage.length),
+            R.range(0),
+            R.map(R.bind(self.localStorage.key,
+                         self.localStorage))
+          )();
+        },
         getItem: function localStorageGetItem(key) {
           return new self.Promise((resolve) => {
             resolve(self.localStorage.getItem(key));

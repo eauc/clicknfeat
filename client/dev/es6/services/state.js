@@ -80,6 +80,7 @@ angular.module('clickApp.services')
             () => { return exportCurrentDumpFile(state); },
             () => { state.processing = processing; },
             () => {
+              // console.log(state.change_queue);
               state.change_queue = R.uniq(state.change_queue);
               return (function dispatchChange(queue) {
                 if(R.isEmpty(queue)) return null;

@@ -14,4 +14,3 @@ game:
 =================================
 - singleSelection/refreshTargetOrigin
 - game online
-- optimize state save

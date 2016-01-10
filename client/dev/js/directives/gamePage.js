@@ -4,7 +4,7 @@ angular.module('clickApp.directives').directive('clickGamePage', ['$window', fun
   return {
     restrict: 'A',
     link: function link(scope, element) {
-      var toggleMenuClick = (function () {
+      var toggleMenuClick = function () {
         var gameview_width_mem = undefined;
         return function () {
           var gameview = element[0].querySelector('#gameview');
@@ -25,7 +25,7 @@ angular.module('clickApp.directives').directive('clickGamePage', ['$window', fun
           dice_osd.classList.toggle('show');
           chat_osd.classList.toggle('show');
         };
-      })();
+      }();
 
       element[0].querySelector('#menu-toggle').addEventListener('click', toggleMenuClick);
       scope.onStateChangeEvent('Game.toggleMenu', toggleMenuClick, scope);

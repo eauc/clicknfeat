@@ -86,10 +86,11 @@ angular.module('clickApp.services')
           return state;
         },
         save: function stateGameSave(state) {
-          return R.pipeP(
-            () => { return exportCurrentGame(state); },
-            () => { return exportCurrentModelSelection(state); },
-            () => { return exportCurrentBoard(state); }
+          return R.pipePromise(
+            R.always(saveCurrentGame(state)),
+            R.always(exportCurrentGame(state)),
+            R.always(exportCurrentModelSelection(state)),
+            R.always(exportCurrentBoard(state))
           )();
         },
         onGameLoad: function stateGameOnLoad(state, event, is_online, is_private, id) {
@@ -127,11 +128,6 @@ angular.module('clickApp.services')
               if(!is_online) return game;
               return gameConnectionService
                 .open$(R.path(['user','state','name'], state), state, game);
-            },
-            (game) => {
-              if(is_online) return game;
-
-              return R.assoc('local_id', id, game);
             },
             setGame$(state),
             () => {
@@ -386,6 +382,21 @@ angular.module('clickApp.services')
         return null;
         // return self.Promise.reject(error);
       });
+      function saveCurrentGame(state) {
+        if(state._game === state.game) return null;
+        state._game = state.game;
+
+        if(R.isNil(R.path(['game','local_stamp'], state))) return null;
+        return R.pipePromise(
+          R.always(state.local_games),
+          gamesService.updateLocalGame$(state.game),
+          (games) => {
+            state.local_games = games;
+            console.log('stateSetLocalGames', state.local_games);
+            state.changeEvent('Games.local.change');
+          }
+        )();
+      }
       var exportCurrentGame = stateExportsService
             .export$('game', R.prop('game'));
       function exportCurrentModelSelection(state) {

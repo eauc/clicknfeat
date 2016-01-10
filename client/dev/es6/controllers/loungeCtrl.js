@@ -19,15 +19,24 @@ angular.module('clickApp.controllers')
         $scope.stateEvent('Games.local.create');
       };
       $scope.doLoadLocalGame = function() {
-        $scope.stateEvent('Games.local.load',
-                          $scope.local_games_selection.list[0]);
+        let id = R.pipe(
+          R.always($scope.state.local_games),
+          R.nth($scope.local_games_selection.list[0]),
+          R.prop('local_stamp')
+        )();
+        console.log('load', $scope.state.local_games, $scope.local_games_selection.list[0], id);
+        $scope.stateEvent('Games.local.load', id);
       };
       $scope.doOpenLocalGameFile = function(files) {
         $scope.stateEvent('Games.local.loadFile', files[0]);
       };
       $scope.doDeleteLocalGame = function() {
-        $scope.stateEvent('Games.local.delete',
-                          $scope.local_games_selection.list[0]);
+        let id = R.pipe(
+          R.always($scope.state.local_games),
+          R.nth($scope.local_games_selection.list[0]),
+          R.prop('local_stamp')
+        )();
+        $scope.stateEvent('Games.local.delete', id);
       };
 
       // $scope.online_games_selection = {};
