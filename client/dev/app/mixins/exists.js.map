@@ -1,0 +1,1 @@
+{"version":3,"sources":["exists.es6"],"names":[],"mappings":";;AAAA,EAAE,MAAF,GAAW,UAAC,CAAD,EAAO;AAAE,SAAO,CAAC,EAAE,KAAF,CAAQ,CAAR,CAAD,CAAT;CAAP","file":"exists.js","sourcesContent":["R.exists = (a) => { return !R.isNil(a); };\n"]}

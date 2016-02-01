@@ -1,5 +1,5 @@
 RACK_ENV=production bundle exec rerun --dir server -- rackup -p 4567
-babel -w -s true -d client/dev/js/ client/dev/es6/
+babel --only *.es6 -s true -w -d client/dev/app client/dev/app
 babel -w -s true -d spec/client/js/ spec/client/es6/
-esw -w client/dev/es6/ spec/client/es6/
-sass --watch client/dev/css/app.scss:client/dist/css/app.css
+esw -w client/dev/es6/**/*.es6 spec/client/es6/
+sass -I client/dev/app --watch client/dev/app/styles/app.scss:client/dev/app/styles/app.css

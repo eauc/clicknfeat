@@ -1,0 +1,1 @@
+{"version":3,"sources":["infoCtrl.es6"],"names":[],"mappings":";;AAAA,QAAQ,MAAR,CAAe,sBAAf,EACG,UADH,CACc,UADd,EAC0B,CACtB,YAAW;AACT,UAAQ,GAAR,CAAY,eAAZ,EADS;CAAX,CAFJ","file":"infoCtrl.js","sourcesContent":["angular.module('clickApp.controllers')\n  .controller('infoCtrl', [\n    function() {\n      console.log('init infoCtrl');\n    }\n  ]);\n"]}

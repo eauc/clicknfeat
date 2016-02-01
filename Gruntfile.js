@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     eslint: {
       app_src: {
-        src: 'client/dev/es6/',
+        src: [ 'client/dev/app/**/*.es6' ],
         options: {
           config: '.eslintrc.json'
         }
@@ -29,9 +29,9 @@ module.exports = function(grunt) {
       app_src: {
         files: [{
           expand: true,
-          cwd: 'client/dev/es6',
-          src: ['**/*.js'],
-          dest: 'client/dev/js',
+          cwd: 'client/dev/app',
+          src: ['**/*.es6'],
+          dest: 'client/dev/app',
           ext: '.js'
         }]
       },
@@ -87,18 +87,19 @@ module.exports = function(grunt) {
     },
     sass: {
       dist: {
+        options: {
+          loadPath: [ 'client/dev/app' ],
+          style: 'compressed'
+        },
         files: {
-          'client/dist/css/app.css': 'client/dev/css/app.scss'
+          'client/dist/css/app.min.css': 'client/dev/app/styles/app.scss'
         }
-      },
-      options: {
-        style: 'compressed'
       }
     },
     ngtemplates: {
       'clickApp.services': {
         cwd:      'client/dev/',
-        src:      'partials/**/*.html',
+        src:      'app/**/*.html',
         dest:     'client/dist/js/htmlTemplates.js',
         options: {
           htmlmin: {
@@ -113,36 +114,6 @@ module.exports = function(grunt) {
           }
         }
       }
-    },
-    watch: {
-      app_src: {
-        files: [ 'client/dev/es6/**/*.js' ],
-        tasks: [ 'eslint:app_src', 'babel:app_src', 'uglify:app_src' ],
-        options: {
-          spawn: true
-        }
-      },
-      spec_src: {
-        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
-        tasks: [ 'eslint', 'babel' ],
-        options: {
-          spawn: true
-        }
-      },
-      babel: {
-        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
-        tasks: [ 'babel' ],
-        options: {
-          spawn: true
-        }
-      },
-      eslint: {
-        files: [ 'client/dev/es6/**/*.js', 'spec/client/es6/**/*.js' ],
-        tasks: [ 'eslint' ],
-        options: {
-          spawn: true
-        }
-      }
     }
   });
 
@@ -152,7 +123,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('gruntify-eslint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
