@@ -16,7 +16,7 @@
     <div class="panel-footer">
       <button type="button"
               class="btn btn-default"
-              ng-click="doUserToggleOnline()">
+              ng-click="lounge.doUserToggleOnline()">
         Go {{ (state.user | user:'online') ? 'Offline' : 'Online' }}
       </button>
     </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="game-list panel-body">
       <!-- <click-games-list games="state.user.connection.games" -->
-      <!--                   selection="online_games_selection"> -->
+      <!--                   selection="lounge.online_games_selection"> -->
       <!-- </click-games-list> -->
     </div>
     <div class="panel-footer">
@@ -36,13 +36,13 @@
         <div class="btn-group">
           <button type="button"
                   class="btn btn-default"
-                  ng-click="doCreateOnlineGame()">
+                  ng-click="lounge.doCreateOnlineGame()">
             New Game
           </button>
           <button type="button"
                   class="btn btn-default"
-                  ng-click="doLoadOnlineGame()"
-                  ng-disabled="online_games_selection.list.length <= 0">
+                  ng-click="lounge.doLoadOnlineGame()"
+                  ng-disabled="lounge.online_games_selection.list.length <= 0">
             Watch Game
           </button>
         </div>
@@ -54,7 +54,7 @@
                  id="import-file"
                  type="file"
                  multiple
-                 ea-file="doOpenOnlineGameFile(file)" />
+                 ea-file="lounge.doOpenOnlineGameFile(file)" />
         </div>
       </form>
     </div>
@@ -65,7 +65,7 @@
     </div>
     <div class="game-list panel-body">
       <click-games-list games="state.local_games"
-                        selection="local_games_selection">
+                        selection="lounge.local_games_selection">
       </click-games-list>
     </div>
     <div class="panel-footer">
@@ -73,19 +73,19 @@
         <div class="btn-group">
           <button type="button"
                   class="btn btn-default"
-                  ng-click="doCreateLocalGame()">
+                  ng-click="lounge.doCreateLocalGame()">
             New Game
           </button>
           <button type="button"
                   class="btn btn-default"
-                  ng-click="doLoadLocalGame()"
-                  ng-disabled="local_games_selection.list.length <= 0">
+                  ng-click="lounge.doLoadLocalGame()"
+                  ng-disabled="lounge.local_games_selection.list.length <= 0">
             Load Game
           </button>
           <button type="button"
                   class="btn btn-default"
-                  ng-click="doDeleteLocalGame(index)"
-                  ng-disabled="local_games_selection.list.length <= 0">
+                  ng-click="lounge.doDeleteLocalGame(index)"
+                  ng-disabled="lounge.local_games_selection.list.length <= 0">
             Delete Game
           </button>
         </div>
@@ -97,7 +97,7 @@
                  id="import-file"
                  type="file"
                  multiple
-                 ea-file="doOpenLocalGameFile(file)" />
+                 ea-file="lounge.doOpenLocalGameFile(file)" />
         </div>
       </form>
     </div>

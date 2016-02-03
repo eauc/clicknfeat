@@ -3,11 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$scope', '$state'];
-
-  // 'state',
-  // 'user',
-  function appCtrl($scope, $state, stateService, userService) {
+  appCtrl.$inject = ['$rootScope', '$state', 'state', 'user'];
+  function appCtrl($rootScope, $state, stateService, userModel) {
     console.log('init appCtrl');
 
     var vm = this;
@@ -15,8 +12,8 @@
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
 
-    // $scope.state = stateService.init();
-    // $scope.stateEvent = stateEvent;
+    $rootScope.state = stateService.init();
+    $rootScope.stateEvent = stateEvent;
     // $scope.onStateChangeEvent = onStateChangeEvent;
     // $scope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     // $scope.reloadFactions = reloadFactions;
@@ -24,14 +21,17 @@
     // $scope.userIsValid = userIsValid;
     // $scope.checkUser = checkUser;
 
-    // $scope.goToState = goToState;
+    $rootScope.goToState = goToState;
 
-    // activate();
+    activate();
 
-    // function stateEvent(...args) {
-    //   return stateService.event
-    //     .apply(null, [...args, $scope.state]);
-    // }
+    function stateEvent() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return stateService.queueEvent(args, $rootScope.state);
+    }
     // function onStateChangeEvent(event, listener, scope) {
     //   let unsubscribe = stateService
     //         .onChangeEvent(event, listener, $scope.state);
@@ -64,19 +64,30 @@
     function stateMatches(match) {
       return 0 <= $state.current.name.indexOf(match);
     }
-    // function goToState(...args) {
-    //   self.setTimeout(() => {
-    //     $state.go.apply($state, args);
-    //   }, 100);
-    // }
+    function goToState() {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      self.setTimeout(function () {
+        $state.go.apply($state, args);
+      }, 100);
+    }
     // function currentState() {
     //   return $state.current;
     // }
 
-    // function activate() {
-    //   $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
-    //   $scope.digestOnStateChangeEvent('User.change', $scope);
-    // }
+    function activate() {
+      $rootScope.state.user_ready.then(checkUserOnInit);
+      //   $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
+      //   $scope.digestOnStateChangeEvent('User.change', $scope);
+    }
+    function checkUserOnInit() {
+      console.log('Checking user on init');
+      if (userModel.isValid($rootScope.state.user)) return;
+
+      $state.transitionTo('user');
+    }
   }
 })();
 //# sourceMappingURL=appCtrl.js.map

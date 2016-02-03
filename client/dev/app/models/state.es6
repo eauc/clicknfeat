@@ -1,135 +1,164 @@
-angular.module('clickApp.services')
-  .factory('state', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('state', stateServiceFactory);
+
+  stateServiceFactory.$inject = [
     'pubSub',
-    'fileImport',
-    'stateExports',
-    'stateData',
+    // 'fileImport',
+    // 'stateExports',
+    // 'stateData',
     'stateUser',
-    'stateGame',
-    'stateGames',
-    'stateModes',
-    function stateServiceFactory(pubSubService,
-                                 fileImportService,
-                                 stateExportsService,
-                                 stateDataService,
-                                 stateUserService,
-                                 stateGameService,
-                                 stateGamesService,
-                                 stateModesService) {
-      var stateService = {
-        init: function stateInit() {
-          let state = pubSubService.init({}, 'State');
-          state.processing = false;
-          state.change_queue = [];
+    // 'stateGame',
+    // 'stateGames',
+    // 'stateModes',
+  ];
+  function stateServiceFactory(pubSubService,
+                               // fileImportService,
+                               // stateExportsService,
+                               // stateDataService,
+                               stateUserService) {
+    // stateGameService,
+    // stateGamesService,
+    // stateModesService
+    // ) {
+    const stateService = {
+      init: stateInit,
+      queueEvent: stateQueueEvent,
+      onChangeEvent: stateOnChangeEvent,
+      onLoadDumpFile: stateOnLoadDumpFile
+    };
+    R.curryService(stateService);
+    return stateService;
 
-          state.event = (...args) => {
-            return stateService.event
-              .apply(null, [...args, state]);
-          };
-          state.onEvent = (...args) => {
-            return pubSubService.subscribe
-              .apply(null, [...args, state]);
-          };
+    function stateInit() {
+      let state = pubSubService.init({
+        event_queue: [],
+        onEvent: onEvent,
+        change: pubSubService.init({}, 'State.Change'),
+        change_event_queue: [],
+        queueChangeEvent: queueChangeEvent
+      }, 'State');
 
-          state.change = pubSubService.init({}, 'State.Change');
-          state.changeEvent = (...args) => {
-            if(state.processing) {
-              console.info('State <--- ChangeEvent', args[0], R.tail(args));
-              state.change_queue = R.append(args, state.change_queue);
-              return self.Promise.resolve();
-            }
-            console.info('State <=== ChangeEvent', args[0], R.tail(args));
-            return pubSubService.publish
-              .apply(null, [...args, state.change]);
-          };
-          state.changeEventUnbuffered = (...args) => {
-            console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
-            return pubSubService.publish
-              .apply(null, [...args, state.change]);
-          };
+      state = R.pipe(
+        // starting here State is mutable
+        // stateDataService.init,
+        stateUserService.init
+        // stateGameService.init,
+        // stateGamesService.init,
+        // stateModesService.init,
+      )(state);
 
-          state = stateDataService.init(state);
-          state = stateUserService.init(state);
-          state = stateGameService.init(state);
-          state = stateGamesService.init(state);
-          state = stateModesService.init(state);
+      // exportCurrentDumpFile(state);
+      stateQueueEvent(['State.init'], state);
+      return state;
 
-          exportCurrentDumpFile(state);
-          return state;
-        },
-        event: function stateEvent(...args) {
-          let state = R.last(args);
-          let processing = state.processing;
-          state.processing = true;
-          console.info('State ---> Event', args[0], R.init(R.tail(args)));
-          // console.trace();
-          return R.pipeP(
-            () => {
-              return pubSubService.publish
-                .apply(null, args);
-            },
-            () => {
-              if(processing) return self.Promise.reject();
-              else return null;
-            },
-            () => { return stateDataService.save(state); },
-            () => { return stateUserService.save(state); },
-            () => { return stateGameService.save(state); },
-            () => { return stateGamesService.save(state); },
-            () => { return stateModesService.save(state); },
-            () => { return exportCurrentDumpFile(state); },
-            () => { state.processing = processing; },
-            () => {
-              // console.log(state.change_queue);
-              state.change_queue = R.uniq(state.change_queue);
-              return (function dispatchChange(queue) {
-                if(R.isEmpty(queue)) return null;
-                let args = R.head(queue);
-                console.log('State: change queue <===', R.head(args));
-                return pubSubService.publish
-                  .apply(null, [...args, state.change])
-                  .then(() => {
-                    return dispatchChange(R.tail(queue));
-                  });
-              })(state.change_queue);
-            },
-            () => { state.change_queue = []; }
-          )().catch(R.always(null))
-            .then(() => { state.processing = processing; });
-        },
-        onChangeEvent: function stateOnChangeEvent(event, listener, state) {
-          return pubSubService.subscribe(event, listener, state.change);
-        },
-        onLoadDumpFile: function stateOnLoadDumpFile(state, event, file) {
-          return R.pipeP(
-            fileImportService.read$('json'),
-            (data) => {
-              return R.pipeP(
-                () => {
-                  return stateDataService
-                    .onSettingsReset(state, event, data.settings);
-                },
-                () => {
-                  return stateGamesService
-                    .loadNewLocalGame(state, data.game);
-                },
-                () => {
-                  state.changeEvent('State.loadDumpFile', 'File loaded');
-                }
-              )();
-            }
-          )(file).catch((error) => {
-            state.changeEvent('State.loadDumpFile', error);
-          });
-        }
-      };
-      var exportCurrentDumpFile = stateExportsService
-            .export$('dump', (state) => {
-              return { settings: R.pathOr({}, ['settings','current'], state),
-                       game: R.propOr({}, 'game', state)
-                     };
-            });
-      R.curryService(stateService);
-      return stateService;
+      function onEvent(...args) {
+        return pubSubService.subscribe
+          .apply(null, [...args, state]);
+      }
+      function queueChangeEvent(...args) {
+        return new self.Promise((resolve) => {
+          console.info('StateChange <---', args[0], R.tail(args));
+          state.change_event_queue = R.append([
+            resolve, args
+          ], state.change_event_queue);
+        });
+      }
+      // state.event = (...args) => {
+      //   return stateService.event
+      //     .apply(null, [...args, state]);
+      // };
+      // state.changeEventUnbuffered = (...args) => {
+      //   console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
+      //   return pubSubService.publish
+      //     .apply(null, [...args, state.change]);
+      // };
     }
-  ]);
+    function stateQueueEvent(args, state) {
+      return new self.Promise((resolve) => {
+        console.info('State ---> Event', args[0], R.tail(args));
+        state.event_queue = R.append([
+          resolve, args
+        ], state.event_queue);
+        startEventQueueProcessing(state);
+      });
+    }
+    function startEventQueueProcessing(state) {
+      if(state.processing_event_queue) return;
+      state.processing_event_queue = true;
+      self.Promise.resolve(processNextEvent(state))
+        .then(() => { state.processing_event_queue = false; });
+    }
+    function processNextEvent(state) {
+      if(R.isEmpty(state.event_queue)) return null;
+
+      const [ resolve, args ] = R.head(state.event_queue);
+      console.info('State ===> Event', args[0], R.tail(args));
+      return R.pipeP(
+        R.always(stateEvent(args, state)),
+        // () => { return stateDataService.save(state); },
+        () => { return stateUserService.save(state); },
+        // () => { return stateGameService.save(state); },
+        // () => { return stateGamesService.save(state); },
+        // () => { return stateModesService.save(state); },
+        // () => { return exportCurrentDumpFile(state); },
+        () => { return processNextChangeEvent(state); }
+      )().catch(R.always(null))
+        .then(() => {
+          state.event_queue = R.tail(state.event_queue);
+          resolve();
+          return processNextEvent(state);
+        });
+    }
+    function processNextChangeEvent(state) {
+      if(R.isEmpty(state.change_event_queue)) return null;
+
+      state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)),
+                                          state.change_event_queue);
+      let [ resolve, args ] = R.head(state.change_event_queue);
+      console.log('StateChange <===', R.head(args), R.tail(args));
+      return pubSubService.publish
+        .apply(null, [...args, state.change])
+        .then(() => {
+          state.change_event_queue = R.tail(state.change_event_queue);
+          resolve();
+          return processNextChangeEvent(state);
+        });
+    }
+    function stateEvent(args, state) {
+      return pubSubService.publish
+        .apply(null, [...args, state]);
+    }
+    function stateOnChangeEvent(event, listener, state) {
+      return pubSubService.subscribe(event, listener, state.change);
+    }
+    function stateOnLoadDumpFile(state, event, file) {
+        // return R.pipeP(
+        //   fileImportService.read$('json'),
+        //   (data) => {
+        //     return R.pipeP(
+        //       () => {
+        //         return stateDataService
+        //           .onSettingsReset(state, event, data.settings);
+        //       },
+        //       () => {
+        //         return stateGamesService
+        //           .loadNewLocalGame(state, data.game);
+        //       },
+        //       () => {
+        //         state.changeEvent('State.loadDumpFile', 'File loaded');
+        //       }
+        //     )();
+        //   }
+        // )(file).catch((error) => {
+        //   state.changeEvent('State.loadDumpFile', error);
+        // });
+    }
+    // const exportCurrentDumpFile = stateExportsService
+    //         .export$('dump', (state) => {
+    //           return { settings: R.pathOr({}, ['settings','current'], state),
+    //                    game: R.propOr({}, 'game', state)
+    //                  };
+    //         });
+  }
+})();

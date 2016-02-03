@@ -1,30 +1,49 @@
 'use strict';
 
-angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'userConnection', function userServiceFactory(httpService, localStorageService, userConnectionService) {
-  var STORAGE_KEY = 'clickApp.user';
-  var userService = {
-    isValid: function isValid(user) {
+(function () {
+  angular.module('clickApp.models').factory('user', userModelFactory);
+
+  userModelFactory.$inject = ['http', 'localStorage', 'userConnection'];
+  function userModelFactory(httpService, localStorageService, userConnectionService) {
+    var STORAGE_KEY = 'clickApp.user';
+    var userModel = {
+      isValid: userIsValid,
+      saveP: userSaveP,
+      loadP: userLoadP,
+      initP: userInitP,
+      description: userDescription,
+      stateDescription: userStateDescription,
+      online: userOnline
+    };
+    // const userOnlineStart$ = R.curry(userOnlineStart);
+    // toggleOnline: userToggleOnline,
+    // checkOnline: userCheckOnline
+    R.curryService(userModel);
+    return userModel;
+
+    function userIsValid(user) {
       return R.pipe(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0))(user);
-    },
-    save: function userSave(user) {
-      return R.pipePromise(R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user))(user);
-    },
-    load: function userLoad() {
-      return R.pipeP(function () {
-        return localStorageService.load(STORAGE_KEY);
-      }, R.spyWarn('User load'), function (state) {
+    }
+    function userSaveP(user) {
+      return R.pipePromise(R.prop('state'), R.spyWarn('User save'), localStorageService.saveP$(STORAGE_KEY), R.always(user))(user);
+    }
+    function userLoadP() {
+      return R.pipeP(R.always(localStorageService.loadP(STORAGE_KEY)), R.defaultTo({}), R.spyWarn('User load'), function (state) {
         return { state: state };
       }, userConnectionService.init)();
-    },
-    init: function userInit(state) {
-      return R.pipeP(userService.load, userService.checkOnline$(state))();
-    },
-    description: function userDescription(user) {
+    }
+    function userInitP(state) {
+      return R.pipeP(userLoad
+      // ,
+      // userModel.checkOnline$(state)
+      )();
+    }
+    function userDescription(user) {
       if (R.type(R.prop('state', user)) !== 'Object') return '';
 
-      return userService.stateDescription(user.state);
-    },
-    stateDescription: function userStateDescription() {
+      return userModel.stateDescription(user.state);
+    }
+    function userStateDescription() {
       var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       var name = _ref.name;
@@ -58,56 +77,81 @@ angular.module('clickApp.services').factory('user', ['http', 'localStorage', 'us
         ret += ' - likes ' + ck_position.join(',');
       }
       return ret;
-    },
-    online: function userOnline(user) {
+    }
+    function userOnline(user) {
       return R.path(['state', 'online'], user);
-    },
-    toggleOnline: function userToggleOnline(state, user) {
-      return userService.online(user) ? userGoOffline(user) : userGoOnline(state, user);
-    },
-    checkOnline: function userCheckOnline(state, user) {
-      return R.pipePromise(function (user) {
-        if (!userService.online(user)) {
-          return self.Promise.reject('No online flag');
-        }
-        return user;
-      }, function (user) {
-        return userUpdateOnline(user).catch(function () {
-          return userCreateOnline(user);
-        });
-      }, userOnlineStart$(state))(user).catch(function (reason) {
-        console.error('User: checkOnline error', reason);
-        return userOnlineStop(user);
-      });
     }
-  };
-  function userGoOnline(state, user) {
-    return R.pipePromise(R.assocPath(['state', 'online'], true), userService.checkOnline$(state))(user);
-  }
-  function userGoOffline(user) {
-    return userOnlineStop(user);
-  }
-  function userCreateOnline(user) {
-    return R.pipePromise(R.prop('state'), httpService.post$('/api/users'), function (state) {
-      return R.assoc('state', state, user);
-    })(user);
-  }
-  function userUpdateOnline(user) {
-    if (R.isNil(user.state.stamp)) {
-      return self.Promise.reject('No valid stamp');
-    }
+    // function userToggleOnline(state, user) {
+    //   return ( userModel.online(user) ?
+    //            userGoOffline(user) :
+    //            userGoOnline(state, user)
+    //          );
+    // }
+    // function userCheckOnline(state, user) {
+    //   return R.pipePromise(
+    //     (user) => {
+    //       if(!userModel.online(user)) {
+    //         return self.Promise.reject('No online flag');
+    //       }
+    //       return user;
+    //     },
+    //     (user) => {
+    //       return userUpdateOnline(user)
+    //         .catch(() => {
+    //           return userCreateOnline(user);
+    //         });
+    //     },
+    //     userOnlineStart$(state)
+    //   )(user)
+    //     .catch((reason) => {
+    //       console.error('User: checkOnline error', reason);
+    //       return userOnlineStop(user);
+    //     });
+    // }
+    // function userGoOnline(state, user) {
+    //   return R.pipePromise(
+    //     R.assocPath(['state','online'], true),
+    //     userModel.checkOnline$(state)
+    //   )(user);
+    // }
+    // function userGoOffline(user) {
+    //   return userOnlineStop(user);
+    // }
+    // function userCreateOnline(user) {
+    //   return R.pipePromise(
+    //     R.prop('state'),
+    //     httpService.post$('/api/users'),
+    //     (state) => {
+    //       return R.assoc('state', state, user);
+    //     }
+    //   )(user);
+    // }
+    // function userUpdateOnline(user) {
+    //   if(R.isNil(user.state.stamp)) {
+    //     return self.Promise.reject('No valid stamp');
+    //   }
 
-    return R.pipePromise(R.prop('state'), httpService.put$('/api/users/' + user.state.stamp), function (state) {
-      return R.assoc('state', state, user);
-    })(user);
+    //   return R.pipePromise(
+    //     R.prop('state'),
+    //     httpService.put$('/api/users/'+user.state.stamp),
+    //     (state) => {
+    //       return R.assoc('state', state, user);
+    //     }
+    //   )(user);
+    // }
+    // function userOnlineStart(state, user) {
+    //   return R.pipePromise(
+    //     userConnectionService.open$(state),
+    //     R.assocPath(['state','online'], true)
+    //   )(user);
+    // }
+    // function userOnlineStop(user) {
+    //   return R.pipePromise(
+    //     R.assocPath(['state','online'], false),
+    //     R.assocPath(['state','stamp'], null),
+    //     userConnectionService.close
+    //   )(user);
+    // }
   }
-  var userOnlineStart$ = R.curry(function (state, user) {
-    return R.pipePromise(userConnectionService.open$(state), R.assocPath(['state', 'online'], true))(user);
-  });
-  function userOnlineStop(user) {
-    return R.pipePromise(R.assocPath(['state', 'online'], false), R.assocPath(['state', 'stamp'], null), userConnectionService.close)(user);
-  }
-  R.curryService(userService);
-  return userService;
-}]);
+})();
 //# sourceMappingURL=user.js.map

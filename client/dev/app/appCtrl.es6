@@ -3,15 +3,15 @@
     .controller('appCtrl', appCtrl);
 
   appCtrl.$inject = [
-    '$scope',
+    '$rootScope',
     '$state',
-    // 'state',
-    // 'user',
+    'state',
+    'user',
   ];
-  function appCtrl($scope,
+  function appCtrl($rootScope,
                    $state,
                    stateService,
-                   userService) {
+                   userModel) {
     console.log('init appCtrl');
 
     const vm = this;
@@ -19,8 +19,8 @@
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
 
-    // $scope.state = stateService.init();
-    // $scope.stateEvent = stateEvent;
+    $rootScope.state = stateService.init();
+    $rootScope.stateEvent = stateEvent;
     // $scope.onStateChangeEvent = onStateChangeEvent;
     // $scope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     // $scope.reloadFactions = reloadFactions;
@@ -28,14 +28,13 @@
     // $scope.userIsValid = userIsValid;
     // $scope.checkUser = checkUser;
 
-    // $scope.goToState = goToState;
+    $rootScope.goToState = goToState;
 
-    // activate();
+    activate();
 
-    // function stateEvent(...args) {
-    //   return stateService.event
-    //     .apply(null, [...args, $scope.state]);
-    // }
+    function stateEvent(...args) {
+      return stateService.queueEvent(args, $rootScope.state);
+    }
     // function onStateChangeEvent(event, listener, scope) {
     //   let unsubscribe = stateService
     //         .onChangeEvent(event, listener, $scope.state);
@@ -68,18 +67,25 @@
     function stateMatches(match) {
       return 0 <= $state.current.name.indexOf(match);
     }
-    // function goToState(...args) {
-    //   self.setTimeout(() => {
-    //     $state.go.apply($state, args);
-    //   }, 100);
-    // }
+    function goToState(...args) {
+      self.setTimeout(() => {
+        $state.go.apply($state, args);
+      }, 100);
+    }
     // function currentState() {
     //   return $state.current;
     // }
 
-    // function activate() {
+    function activate() {
+      $rootScope.state.user_ready.then(checkUserOnInit);
     //   $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
     //   $scope.digestOnStateChangeEvent('User.change', $scope);
-    // }
+    }
+    function checkUserOnInit() {
+      console.log('Checking user on init');
+      if(userModel.isValid($rootScope.state.user)) return;
+
+      $state.transitionTo('user');
+    }
   }
 })();

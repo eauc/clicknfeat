@@ -1,17 +1,29 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('userCtrl', ['$scope', '$state', 'user', function ($scope, $state) {
-  console.log('init userCtrl');
+(function () {
+  angular.module('clickApp.controllers').controller('userCtrl', userCtrl);
 
-  $scope.state.user_ready.then(function () {
-    console.log('copy user for edition', $scope.state.user);
-    $scope.edit_user = R.clone($scope.state.user.state);
-    $scope.$digest();
-  });
+  userCtrl.$inject = ['$scope'];
+  function userCtrl($scope) {
+    var vm = this;
+    console.log('init userCtrl');
 
-  $scope.doSaveUser = function () {
-    $state.go('lounge');
-    $scope.stateEvent('User.set', $scope.edit_user);
-  };
-}]);
+    vm.doSave = doSave;
+    activate();
+
+    function doSave() {
+      $scope.stateEvent('User.set', vm.edit).then(function () {
+        $scope.goToState('lounge');
+      });
+    }
+
+    function activate() {
+      $scope.state.user_ready.then(function () {
+        console.log('copy user for edition', $scope.state.user);
+        vm.edit = R.clone($scope.state.user.state);
+        $scope.$digest();
+      });
+    }
+  }
+})();
 //# sourceMappingURL=userCtrl.js.map

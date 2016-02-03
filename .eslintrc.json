@@ -15,12 +15,12 @@
     "findCallByArgs": false,
     "describe": false,
     "xdescribe": false,
-    "when": false,
-    "xwhen": false,
+    "context": false,
+    "xcontext": false,
     "beforeEach": false,
+    "example": false,
     "it": false,
     "fit": false,
-    "using": false,
     "expect": false
   },
   "rules": {

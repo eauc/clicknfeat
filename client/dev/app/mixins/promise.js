@@ -9,4 +9,8 @@ R.pipePromise = function () {
 
   return R.pipeP.apply(R, R.prepend(R.bind(self.Promise.resolve, self.Promise), args));
 };
-//# sourceMappingURL=pipePromise.js.map
+
+R.rejectIf = R.curry(function (test, reason, obj) {
+  if (test(obj)) return self.Promise.reject(reason);else return obj;
+});
+//# sourceMappingURL=promise.js.map

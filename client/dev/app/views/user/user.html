@@ -1,12 +1,13 @@
 <div class="container">
-  <form name="user_form">
+  <form name="user_form"
+        ng-submit="user.doSave()">
     <div class="form-group">
       <label for="name">Name</label>
       <input id="name"
              name="name"
              class="form-control"
              type="text"
-             ng-model="edit_user.name"
+             ng-model="user.edit.name"
              required="required" />
     </div>
     <div class="form-group">
@@ -15,7 +16,7 @@
              name="language"
              class="form-control"
              type="text"
-             ng-model="edit_user.language"
+             ng-model="user.edit.language"
              placeholder="FR, EN, ..." />
     </div>
     <div class="form-group">
@@ -24,7 +25,7 @@
               name="chat"
               class="form-control"
               type="text"
-              ng-model="edit_user.chat"
+              ng-model="user.edit.chat"
               multiple="multiple">
         <option value="text">Text</option>
         <option value="skype">Skype</option>
@@ -35,7 +36,7 @@
       <select id="faction"
               name="faction"
               class="form-control"
-              ng-model="edit_user.faction"
+              ng-model="user.edit.faction"
               multiple="multiple">
         <option value="circle">Circle Orboros</option>
         <option value="cryx">Cryx</option>
@@ -57,7 +58,7 @@
              name="game_size"
              class="form-control"
              type="text"
-             ng-model="edit_user.game_size"
+             ng-model="user.edit.game_size"
              placeholder="50, 35, ..." />
     </div>
     <div class="form-group">
@@ -66,7 +67,7 @@
               name="ck_position"
               class="form-control"
               type="text"
-              ng-model="edit_user.ck_position"
+              ng-model="user.edit.ck_position"
               multiple="multiple">
         <option value="Missionary">Missionary</option>
         <option value="69">69</option>
@@ -77,8 +78,8 @@
       </select>
     </div>
     <div class="form-group">
-      <button class="btn btn-default"
-              ng-click="doSaveUser()"
+      <button type="submit"
+              class="btn btn-default"
               ng-disabled="!user_form.$valid">
         Save User
       </button>

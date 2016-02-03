@@ -29,9 +29,12 @@ module.exports = function(config) {
       'client/dev/lib/angular-ui-router/release/angular-ui-router.min.js',
       'client/dev/lib/angular-mocks/angular-mocks.js',
       'client/dev/lib/mousetrap/mousetrap.js',
-      'client/dev/js/**/*.js',
-      'spec/client/js/helpers/*.js',
-      'spec/client/js/**/*Spec.js',
+      'client/dev/app/mixins/**/*.js',
+      'client/dev/app/specs/helpers/*.js',
+      'client/dev/app/specs/env.js',
+      'client/dev/app/app.js',
+      'client/dev/app/models/**/*.js',
+      'client/dev/app/services/**/*.js',
       {
         pattern: '**/*.js.map',
         included: false
@@ -40,7 +43,7 @@ module.exports = function(config) {
 
 
     // list of files to exclude
-    exclude: [ '!**/*.min.js' ],
+    // exclude: [ 'client/dev/app/app.js' ],
 
 
     // preprocess matching files before serving them to the browser
@@ -51,7 +54,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: [ 
+    reporters: [
       'html',
       'jasmine-diff',
       'progress'
@@ -87,5 +90,5 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser should be started simultaneous
     concurrency: Infinity
-  })
-}
+  });
+};

@@ -1,129 +1,183 @@
 'use strict';
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-angular.module('clickApp.services').factory('state', ['pubSub', 'fileImport', 'stateExports', 'stateData', 'stateUser', 'stateGame', 'stateGames', 'stateModes', function stateServiceFactory(pubSubService, fileImportService, stateExportsService, stateDataService, stateUserService, stateGameService, stateGamesService, stateModesService) {
-  var stateService = {
-    init: function stateInit() {
-      var state = pubSubService.init({}, 'State');
-      state.processing = false;
-      state.change_queue = [];
+(function () {
+  angular.module('clickApp.services').factory('state', stateServiceFactory);
 
-      state.event = function () {
+  stateServiceFactory.$inject = ['pubSub',
+  // 'fileImport',
+  // 'stateExports',
+  // 'stateData',
+  'stateUser'];
+
+  // 'stateGame',
+  // 'stateGames',
+  // 'stateModes',
+  function stateServiceFactory(pubSubService,
+  // fileImportService,
+  // stateExportsService,
+  // stateDataService,
+  stateUserService) {
+    // stateGameService,
+    // stateGamesService,
+    // stateModesService
+    // ) {
+    var stateService = {
+      init: stateInit,
+      queueEvent: stateQueueEvent,
+      onChangeEvent: stateOnChangeEvent,
+      onLoadDumpFile: stateOnLoadDumpFile
+    };
+    R.curryService(stateService);
+    return stateService;
+
+    function stateInit() {
+      var state = pubSubService.init({
+        event_queue: [],
+        onEvent: onEvent,
+        change: pubSubService.init({}, 'State.Change'),
+        change_event_queue: [],
+        queueChangeEvent: queueChangeEvent
+      }, 'State');
+
+      state = R.pipe(
+      // starting here State is mutable
+      // stateDataService.init,
+      stateUserService.init
+      // stateGameService.init,
+      // stateGamesService.init,
+      // stateModesService.init,
+      )(state);
+
+      // exportCurrentDumpFile(state);
+      stateQueueEvent(['State.init'], state);
+      return state;
+
+      function onEvent() {
         for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
           args[_key] = arguments[_key];
         }
 
-        return stateService.event.apply(null, [].concat(args, [state]));
-      };
-      state.onEvent = function () {
+        return pubSubService.subscribe.apply(null, [].concat(args, [state]));
+      }
+      function queueChangeEvent() {
         for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
 
-        return pubSubService.subscribe.apply(null, [].concat(args, [state]));
-      };
-
-      state.change = pubSubService.init({}, 'State.Change');
-      state.changeEvent = function () {
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
-        }
-
-        if (state.processing) {
-          console.info('State <--- ChangeEvent', args[0], R.tail(args));
-          state.change_queue = R.append(args, state.change_queue);
-          return self.Promise.resolve();
-        }
-        console.info('State <=== ChangeEvent', args[0], R.tail(args));
-        return pubSubService.publish.apply(null, [].concat(args, [state.change]));
-      };
-      state.changeEventUnbuffered = function () {
-        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          args[_key4] = arguments[_key4];
-        }
-
-        console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
-        return pubSubService.publish.apply(null, [].concat(args, [state.change]));
-      };
-
-      state = stateDataService.init(state);
-      state = stateUserService.init(state);
-      state = stateGameService.init(state);
-      state = stateGamesService.init(state);
-      state = stateModesService.init(state);
-
-      exportCurrentDumpFile(state);
-      return state;
-    },
-    event: function stateEvent() {
-      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
+        return new self.Promise(function (resolve) {
+          console.info('StateChange <---', args[0], R.tail(args));
+          state.change_event_queue = R.append([resolve, args], state.change_event_queue);
+        });
       }
-
-      var state = R.last(args);
-      var processing = state.processing;
-      state.processing = true;
-      console.info('State ---> Event', args[0], R.init(R.tail(args)));
-      // console.trace();
-      return R.pipeP(function () {
-        return pubSubService.publish.apply(null, args);
-      }, function () {
-        if (processing) return self.Promise.reject();else return null;
-      }, function () {
-        return stateDataService.save(state);
-      }, function () {
-        return stateUserService.save(state);
-      }, function () {
-        return stateGameService.save(state);
-      }, function () {
-        return stateGamesService.save(state);
-      }, function () {
-        return stateModesService.save(state);
-      }, function () {
-        return exportCurrentDumpFile(state);
-      }, function () {
-        state.processing = processing;
-      }, function () {
-        // console.log(state.change_queue);
-        state.change_queue = R.uniq(state.change_queue);
-        return function dispatchChange(queue) {
-          if (R.isEmpty(queue)) return null;
-          var args = R.head(queue);
-          console.log('State: change queue <===', R.head(args));
-          return pubSubService.publish.apply(null, [].concat(_toConsumableArray(args), [state.change])).then(function () {
-            return dispatchChange(R.tail(queue));
-          });
-        }(state.change_queue);
-      }, function () {
-        state.change_queue = [];
-      })().catch(R.always(null)).then(function () {
-        state.processing = processing;
-      });
-    },
-    onChangeEvent: function stateOnChangeEvent(event, listener, state) {
-      return pubSubService.subscribe(event, listener, state.change);
-    },
-    onLoadDumpFile: function stateOnLoadDumpFile(state, event, file) {
-      return R.pipeP(fileImportService.read$('json'), function (data) {
-        return R.pipeP(function () {
-          return stateDataService.onSettingsReset(state, event, data.settings);
-        }, function () {
-          return stateGamesService.loadNewLocalGame(state, data.game);
-        }, function () {
-          state.changeEvent('State.loadDumpFile', 'File loaded');
-        })();
-      })(file).catch(function (error) {
-        state.changeEvent('State.loadDumpFile', error);
+      // state.event = (...args) => {
+      //   return stateService.event
+      //     .apply(null, [...args, state]);
+      // };
+      // state.changeEventUnbuffered = (...args) => {
+      //   console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
+      //   return pubSubService.publish
+      //     .apply(null, [...args, state.change]);
+      // };
+    }
+    function stateQueueEvent(args, state) {
+      return new self.Promise(function (resolve) {
+        console.info('State ---> Event', args[0], R.tail(args));
+        state.event_queue = R.append([resolve, args], state.event_queue);
+        startEventQueueProcessing(state);
       });
     }
-  };
-  var exportCurrentDumpFile = stateExportsService.export$('dump', function (state) {
-    return { settings: R.pathOr({}, ['settings', 'current'], state),
-      game: R.propOr({}, 'game', state)
-    };
-  });
-  R.curryService(stateService);
-  return stateService;
-}]);
+    function startEventQueueProcessing(state) {
+      if (state.processing_event_queue) return;
+      state.processing_event_queue = true;
+      self.Promise.resolve(processNextEvent(state)).then(function () {
+        state.processing_event_queue = false;
+      });
+    }
+    function processNextEvent(state) {
+      if (R.isEmpty(state.event_queue)) return null;
+
+      var _R$head = R.head(state.event_queue);
+
+      var _R$head2 = _slicedToArray(_R$head, 2);
+
+      var resolve = _R$head2[0];
+      var args = _R$head2[1];
+
+      console.info('State ===> Event', args[0], R.tail(args));
+      return R.pipeP(R.always(stateEvent(args, state)),
+      // () => { return stateDataService.save(state); },
+      function () {
+        return stateUserService.save(state);
+      },
+      // () => { return stateGameService.save(state); },
+      // () => { return stateGamesService.save(state); },
+      // () => { return stateModesService.save(state); },
+      // () => { return exportCurrentDumpFile(state); },
+      function () {
+        return processNextChangeEvent(state);
+      })().catch(R.always(null)).then(function () {
+        state.event_queue = R.tail(state.event_queue);
+        resolve();
+        return processNextEvent(state);
+      });
+    }
+    function processNextChangeEvent(state) {
+      if (R.isEmpty(state.change_event_queue)) return null;
+
+      state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)), state.change_event_queue);
+
+      var _R$head3 = R.head(state.change_event_queue);
+
+      var _R$head4 = _slicedToArray(_R$head3, 2);
+
+      var resolve = _R$head4[0];
+      var args = _R$head4[1];
+
+      console.log('StateChange <===', R.head(args), R.tail(args));
+      return pubSubService.publish.apply(null, [].concat(_toConsumableArray(args), [state.change])).then(function () {
+        state.change_event_queue = R.tail(state.change_event_queue);
+        resolve();
+        return processNextChangeEvent(state);
+      });
+    }
+    function stateEvent(args, state) {
+      return pubSubService.publish.apply(null, [].concat(_toConsumableArray(args), [state]));
+    }
+    function stateOnChangeEvent(event, listener, state) {
+      return pubSubService.subscribe(event, listener, state.change);
+    }
+    function stateOnLoadDumpFile(state, event, file) {}
+    // return R.pipeP(
+    //   fileImportService.read$('json'),
+    //   (data) => {
+    //     return R.pipeP(
+    //       () => {
+    //         return stateDataService
+    //           .onSettingsReset(state, event, data.settings);
+    //       },
+    //       () => {
+    //         return stateGamesService
+    //           .loadNewLocalGame(state, data.game);
+    //       },
+    //       () => {
+    //         state.changeEvent('State.loadDumpFile', 'File loaded');
+    //       }
+    //     )();
+    //   }
+    // )(file).catch((error) => {
+    //   state.changeEvent('State.loadDumpFile', error);
+    // });
+
+    // const exportCurrentDumpFile = stateExportsService
+    //         .export$('dump', (state) => {
+    //           return { settings: R.pathOr({}, ['settings','current'], state),
+    //                    game: R.propOr({}, 'game', state)
+    //                  };
+    //         });
+  }
+})();
 //# sourceMappingURL=state.js.map
