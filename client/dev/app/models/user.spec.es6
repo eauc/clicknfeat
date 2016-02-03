@@ -25,7 +25,7 @@ describe('user model', function() {
   });
 
   context('save()', function() {
-    return this.userModel.saveP(this.user);
+    return this.userModel.save(this.user);
   }, function() {
     beforeEach(function() {
       this.user = { state: { name: 'exemple' },
@@ -34,10 +34,10 @@ describe('user model', function() {
     });
 
     it('should save user in local storage', function() {
-      expect(this.localStorageService.saveP)
+      expect(this.localStorageService.save)
         .toHaveBeenCalledWith('clickApp.user', this.user.state);
 
-        expect(this.context).toEqual(this.user);
+      expect(this.context).toEqual(this.user);
     });
   });
 

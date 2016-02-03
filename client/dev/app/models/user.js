@@ -8,7 +8,7 @@
     var STORAGE_KEY = 'clickApp.user';
     var userModel = {
       isValid: userIsValid,
-      saveP: userSaveP,
+      save: userSave,
       loadP: userLoadP,
       initP: userInitP,
       description: userDescription,
@@ -22,18 +22,18 @@
     return userModel;
 
     function userIsValid(user) {
-      return R.pipe(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0))(user);
+      return R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
     }
-    function userSaveP(user) {
-      return R.pipePromise(R.prop('state'), R.spyWarn('User save'), localStorageService.saveP$(STORAGE_KEY), R.always(user))(user);
+    function userSave(user) {
+      return R.thread(user)(R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user));
     }
     function userLoadP() {
-      return R.pipeP(R.always(localStorageService.loadP(STORAGE_KEY)), R.defaultTo({}), R.spyWarn('User load'), function (state) {
+      return R.threadP(STORAGE_KEY)(localStorageService.loadP, R.defaultTo({}), R.spyWarn('User load'), function (state) {
         return { state: state };
-      }, userConnectionService.init)();
+      }, userConnectionService.init);
     }
     function userInitP(state) {
-      return R.pipeP(userLoad
+      return R.pipeP(userLoadP
       // ,
       // userModel.checkOnline$(state)
       )();

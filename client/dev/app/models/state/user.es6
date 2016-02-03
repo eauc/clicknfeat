@@ -11,9 +11,9 @@
                                    // userConnectionService,
                                    // promptService) {
     const stateUserService = {
-      init: stateUserInit,
+      create: stateUserCreate,
       save: stateUserSave,
-      onStateInit: stateUserOnStateInit,
+      onStateInit: stateUserOnInit,
       onUserSet: stateUserOnSet,
       // onUserToggleOnline: stateOnUserToggleOnline,
       // onUserSendChatMsg: stateOnUserSendChatMsg,
@@ -26,7 +26,7 @@
     R.curryService(stateUserService);
     return stateUserService;
 
-    function stateUserInit(state) {
+    function stateUserCreate(state) {
       state.user = {};
       state.user_ready = new self.Promise((resolve) => {
         state.onEvent('State.init',
@@ -55,21 +55,21 @@
       state._user = state.user;
       return userModel.save(state.user);
     }
-    function stateUserOnStateInit(state, ready, event) {
+    function stateUserOnInit(state, ready, event) {
       event = event;
-      return R.pipeP(
-        userModel.init,
+      return R.threadP(state)(
+        userModel.initP,
         setUser$(state),
         () => { state.user_ready.fulfilled = true; },
         ready
-      )(state);
+      );
     }
     function stateUserOnSet(state, event, user_state) {
-      return R.pipePromise(
+      return R.threadP(state.user)(
         R.assoc('state', user_state),
         // userService.checkOnline$(state),
         setUser$(state)
-      )(state.user);
+      );
     }
     // function stateOnUserToggleOnline(state, event) {
     //   event = event;
@@ -126,7 +126,7 @@
     function setUser(state, user) {
       state.user = user;
       console.log('stateSetUser', state.user);
-      state.queueChangeEvent('User.change');
+      state.queueChangeEventP('User.change');
     }
   }
 })();

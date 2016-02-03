@@ -22,41 +22,40 @@
     // stateModesService
     // ) {
     const stateService = {
-      init: stateInit,
-      queueEvent: stateQueueEvent,
+      create: stateCreate,
+      queueEventP: stateQueueEventP,
       onChangeEvent: stateOnChangeEvent,
-      onLoadDumpFile: stateOnLoadDumpFile
+      // onLoadDumpFile: stateOnLoadDumpFile
     };
     R.curryService(stateService);
     return stateService;
 
-    function stateInit() {
+    function stateCreate() {
       let state = pubSubService.init({
         event_queue: [],
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
-        queueChangeEvent: queueChangeEvent
+        queueChangeEventP: queueChangeEventP
       }, 'State');
 
-      state = R.pipe(
+      state = R.thread(state)(
         // starting here State is mutable
-        // stateDataService.init,
-        stateUserService.init
-        // stateGameService.init,
-        // stateGamesService.init,
-        // stateModesService.init,
-      )(state);
+        // stateDataService.create,
+        stateUserService.create
+        // stateGameService.create,
+        // stateGamesService.create,
+        // stateModesService.create,
+      );
 
       // exportCurrentDumpFile(state);
-      stateQueueEvent(['State.init'], state);
       return state;
 
       function onEvent(...args) {
         return pubSubService.subscribe
           .apply(null, [...args, state]);
       }
-      function queueChangeEvent(...args) {
+      function queueChangeEventP(...args) {
         return new self.Promise((resolve) => {
           console.info('StateChange <---', args[0], R.tail(args));
           state.change_event_queue = R.append([
@@ -74,7 +73,7 @@
       //     .apply(null, [...args, state.change]);
       // };
     }
-    function stateQueueEvent(args, state) {
+    function stateQueueEventP(args, state) {
       return new self.Promise((resolve) => {
         console.info('State ---> Event', args[0], R.tail(args));
         state.event_queue = R.append([
@@ -86,51 +85,59 @@
     function startEventQueueProcessing(state) {
       if(state.processing_event_queue) return;
       state.processing_event_queue = true;
-      self.Promise.resolve(processNextEvent(state))
+      self.Promise.resolve(processNextEventP(state))
         .then(() => { state.processing_event_queue = false; });
     }
-    function processNextEvent(state) {
-      if(R.isEmpty(state.event_queue)) return null;
+    function processNextEventP(state) {
+      if(R.isEmpty(state.event_queue)) {
+        return self.Promise.resolve();
+      }
 
       const [ resolve, args ] = R.head(state.event_queue);
       console.info('State ===> Event', args[0], R.tail(args));
-      return R.pipeP(
-        R.always(stateEvent(args, state)),
+      return R.threadP(stateEventP(args, state))(
         // () => { return stateDataService.save(state); },
         () => { return stateUserService.save(state); },
         // () => { return stateGameService.save(state); },
         // () => { return stateGamesService.save(state); },
         // () => { return stateModesService.save(state); },
         // () => { return exportCurrentDumpFile(state); },
-        () => { return processNextChangeEvent(state); }
-      )().catch(R.always(null))
+        () => { return processNextChangeEventP(state); }
+      ).catch(R.spyAndDiscardError('processNextEvent'))
         .then(() => {
           state.event_queue = R.tail(state.event_queue);
           resolve();
-          return processNextEvent(state);
+          return processNextEventP(state);
         });
     }
-    function processNextChangeEvent(state) {
-      if(R.isEmpty(state.change_event_queue)) return null;
+    function processNextChangeEventP(state) {
+      if(R.isEmpty(state.change_event_queue)) {
+        return self.Promise.resolve();
+      }
 
       state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)),
                                           state.change_event_queue);
       let [ resolve, args ] = R.head(state.change_event_queue);
       console.log('StateChange <===', R.head(args), R.tail(args));
-      return pubSubService.publish
-        .apply(null, [...args, state.change])
-        .then(() => {
+      return R.threadP(stateChangeEventP(args, state))(
+        () => {
           state.change_event_queue = R.tail(state.change_event_queue);
           resolve();
-          return processNextChangeEvent(state);
-        });
+          return processNextChangeEventP(state);
+        }
+      );
     }
-    function stateEvent(args, state) {
-      return pubSubService.publish
+    function stateEventP(args, state) {
+      return pubSubService.publishP
         .apply(null, [...args, state]);
     }
+    function stateChangeEventP(args, state) {
+      return pubSubService.publishP
+        .apply(null, [...args, state.change]);
+    }
     function stateOnChangeEvent(event, listener, state) {
-      return pubSubService.subscribe(event, listener, state.change);
+      return pubSubService
+        .subscribe(event, listener, state.change);
     }
     function stateOnLoadDumpFile(state, event, file) {
         // return R.pipeP(

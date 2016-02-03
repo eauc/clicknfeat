@@ -12,7 +12,7 @@
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
 
-    $rootScope.state = stateService.init();
+    $rootScope.state = stateService.create();
     $rootScope.stateEvent = stateEvent;
     // $scope.onStateChangeEvent = onStateChangeEvent;
     // $scope.digestOnStateChangeEvent = digestOnStateChangeEvent;
@@ -30,7 +30,7 @@
         args[_key] = arguments[_key];
       }
 
-      return stateService.queueEvent(args, $rootScope.state);
+      return stateService.queueEventP(args, $rootScope.state);
     }
     // function onStateChangeEvent(event, listener, scope) {
     //   let unsubscribe = stateService
@@ -78,6 +78,7 @@
     // }
 
     function activate() {
+      $rootScope.stateEvent('State.init');
       $rootScope.state.user_ready.then(checkUserOnInit);
       //   $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
       //   $scope.digestOnStateChangeEvent('User.change', $scope);

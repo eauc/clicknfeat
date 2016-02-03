@@ -26,34 +26,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     // stateModesService
     // ) {
     var stateService = {
-      init: stateInit,
-      queueEvent: stateQueueEvent,
-      onChangeEvent: stateOnChangeEvent,
-      onLoadDumpFile: stateOnLoadDumpFile
+      create: stateCreate,
+      queueEventP: stateQueueEventP,
+      onChangeEvent: stateOnChangeEvent
     };
+    // onLoadDumpFile: stateOnLoadDumpFile
     R.curryService(stateService);
     return stateService;
 
-    function stateInit() {
+    function stateCreate() {
       var state = pubSubService.init({
         event_queue: [],
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
-        queueChangeEvent: queueChangeEvent
+        queueChangeEventP: queueChangeEventP
       }, 'State');
 
-      state = R.pipe(
+      state = R.thread(state)(
       // starting here State is mutable
-      // stateDataService.init,
-      stateUserService.init
-      // stateGameService.init,
-      // stateGamesService.init,
-      // stateModesService.init,
-      )(state);
+      // stateDataService.create,
+      stateUserService.create
+      // stateGameService.create,
+      // stateGamesService.create,
+      // stateModesService.create,
+      );
 
       // exportCurrentDumpFile(state);
-      stateQueueEvent(['State.init'], state);
       return state;
 
       function onEvent() {
@@ -63,7 +62,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         return pubSubService.subscribe.apply(null, [].concat(args, [state]));
       }
-      function queueChangeEvent() {
+      function queueChangeEventP() {
         for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
         }
@@ -83,7 +82,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       //     .apply(null, [...args, state.change]);
       // };
     }
-    function stateQueueEvent(args, state) {
+    function stateQueueEventP(args, state) {
       return new self.Promise(function (resolve) {
         console.info('State ---> Event', args[0], R.tail(args));
         state.event_queue = R.append([resolve, args], state.event_queue);
@@ -93,12 +92,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function startEventQueueProcessing(state) {
       if (state.processing_event_queue) return;
       state.processing_event_queue = true;
-      self.Promise.resolve(processNextEvent(state)).then(function () {
+      self.Promise.resolve(processNextEventP(state)).then(function () {
         state.processing_event_queue = false;
       });
     }
-    function processNextEvent(state) {
-      if (R.isEmpty(state.event_queue)) return null;
+    function processNextEventP(state) {
+      if (R.isEmpty(state.event_queue)) {
+        return self.Promise.resolve();
+      }
 
       var _R$head = R.head(state.event_queue);
 
@@ -108,7 +109,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var args = _R$head2[1];
 
       console.info('State ===> Event', args[0], R.tail(args));
-      return R.pipeP(R.always(stateEvent(args, state)),
+      return R.threadP(stateEventP(args, state))(
       // () => { return stateDataService.save(state); },
       function () {
         return stateUserService.save(state);
@@ -118,15 +119,17 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       // () => { return stateModesService.save(state); },
       // () => { return exportCurrentDumpFile(state); },
       function () {
-        return processNextChangeEvent(state);
-      })().catch(R.always(null)).then(function () {
+        return processNextChangeEventP(state);
+      }).catch(R.spyAndDiscardError('processNextEvent')).then(function () {
         state.event_queue = R.tail(state.event_queue);
         resolve();
-        return processNextEvent(state);
+        return processNextEventP(state);
       });
     }
-    function processNextChangeEvent(state) {
-      if (R.isEmpty(state.change_event_queue)) return null;
+    function processNextChangeEventP(state) {
+      if (R.isEmpty(state.change_event_queue)) {
+        return self.Promise.resolve();
+      }
 
       state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)), state.change_event_queue);
 
@@ -138,14 +141,17 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var args = _R$head4[1];
 
       console.log('StateChange <===', R.head(args), R.tail(args));
-      return pubSubService.publish.apply(null, [].concat(_toConsumableArray(args), [state.change])).then(function () {
+      return R.threadP(stateChangeEventP(args, state))(function () {
         state.change_event_queue = R.tail(state.change_event_queue);
         resolve();
-        return processNextChangeEvent(state);
+        return processNextChangeEventP(state);
       });
     }
-    function stateEvent(args, state) {
-      return pubSubService.publish.apply(null, [].concat(_toConsumableArray(args), [state]));
+    function stateEventP(args, state) {
+      return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state]));
+    }
+    function stateChangeEventP(args, state) {
+      return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state.change]));
     }
     function stateOnChangeEvent(event, listener, state) {
       return pubSubService.subscribe(event, listener, state.change);
