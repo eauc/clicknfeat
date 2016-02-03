@@ -5,12 +5,12 @@
   jsonParserServiceFactory.$inject = [];
   function jsonParserServiceFactory() {
     const jsonParserService = {
-      parse: jsonParse
+      parseP: jsonParseP
     };
     R.curryService(jsonParserService);
     return jsonParserService;
 
-    function jsonParse(string) {
+    function jsonParseP(string) {
       return self.Promise.resolve(string)
         .then((string) => {
           return JSON.parse(string);

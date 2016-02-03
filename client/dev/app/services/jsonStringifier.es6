@@ -11,8 +11,7 @@
     return jsonStringifierService;
 
     function jsonStringify(data) {
-      return self.Promise
-        .resolve(JSON.stringify(data, jsonFilter));
+      return JSON.stringify(data, jsonFilter);
     }
     function jsonFilter(key, value) {
       if(s.startsWith(key, '$$')) {

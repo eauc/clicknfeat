@@ -7,39 +7,34 @@
   function localStorageServiceFactory(jsonParserService, jsonStringifierService) {
     var localStorageService = {
       keys: localStorageKeys,
-      getItemP: localStorageGetItemP,
+      getItem: localStorageGetItem,
       loadP: localStorageLoadP,
-      setItemP: localStorageSetItemP,
-      saveP: localStorageSaveP,
-      removeItemP: localStorageRemoveItemP
+      setItem: localStorageSetItem,
+      save: localStorageSave,
+      removeItem: localStorageRemoveItem
     };
     R.curryService(localStorageService);
     return localStorageService;
 
     function localStorageKeys() {
-      return R.pipe(R.always(self.localStorage.length), R.range(0), R.map(R.bind(self.localStorage.key, self.localStorage)))();
+      return R.thread(self.localStorage.length)(R.range(0), R.map(R.bind(self.localStorage.key, self.localStorage)));
     }
-    function localStorageGetItemP(key) {
-      return new self.Promise(function (resolve) {
-        resolve(self.localStorage.getItem(key));
-      });
+    function localStorageGetItem(key) {
+      return self.localStorage.getItem(key);
     }
     function localStorageLoadP(key) {
-      return localStorageService.getItem(key).then(jsonParserService.parse);
+      return R.threadP(key)(localStorageService.getItem, jsonParserService.parseP);
     }
-    function localStorageSetItemP(key, value) {
-      return new self.Promise(function (resolve) {
-        self.localStorage.setItem(key, value);
-        resolve(value);
-      });
+    function localStorageSetItem(key, value) {
+      self.localStorage.setItem(key, value);
+      return value;
     }
-    function localStorageSaveP(key, value) {
-      return jsonStringifierService.stringify(value).then(localStorageService.setItem$(key)).then(R.always(value));
+    function localStorageSave(key, value) {
+      R.thread(value)(jsonStringifierService.stringify, localStorageService.setItem$(key));
+      return value;
     }
-    function localStorageRemoveItemP(key) {
-      return new self.Promise(function (resolve) {
-        resolve(self.localStorage.removeItem(key));
-      });
+    function localStorageRemoveItem(key) {
+      return self.localStorage.removeItem(key);
     }
   }
 })();

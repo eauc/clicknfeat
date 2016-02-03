@@ -9,17 +9,13 @@
 
   self.it.wrapper = function wrapper(test) {
     return function wrappedTest(done) {
-      var _this = this;
-
       // console.log('wrapper', 'base');
-      return R.pipePromise(function () {
-        return test.apply(_this, [done]);
-      }, function () {
+      return R.threadP(test.apply(this, [done]))(function () {
         if (R.length(test) === 0) {
           // console.log('wrapper', 'base', 'auto done');
           done();
         }
-      })();
+      });
     };
   };
   self.it.wrapper._debug = 'thenExpect';

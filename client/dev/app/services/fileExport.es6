@@ -1,28 +1,36 @@
-angular.module('clickApp.services')
-  .factory('fileExport', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('fileExport', fileExportServiceFactory);
+
+  fileExportServiceFactory.$inject = [
     'jsonStringifier',
-    function fileExportServiceFactory(jsonStringifierService) {
-      self.URL = self.URL || self.webkitURL;
-      var stringifiers = {
-        json: jsonStringifierService
-      };
-      var fileExportService = {
-        generate: function fileExportGenerate(type, data) {
-          return R.pipeP(
-            stringifiers[type].stringify,
-            (string) => {
-              return new self.Blob([string], {type: 'text/plain'});
-            },
-            self.URL.createObjectURL
-          )(data);
+  ];
+  function fileExportServiceFactory(jsonStringifierService) {
+    self.URL = self.URL || self.webkitURL;
+    const stringifiers = {
+      json: jsonStringifierService
+    };
+
+    const fileExportService = {
+      generate: fileExportGenerate,
+      cleanup: fileExportCleanup
+    };
+    R.curryService(fileExportService);
+    return fileExportService;
+
+    function fileExportGenerate(type, data) {
+      return R.thread(data)(
+        stringifiers[type].stringify,
+        (string) => {
+          return new self.Blob([string], {type: 'text/plain'});
         },
-        cleanup: function fileExportCleanup(url) {
-          if(!R.isNil(url)) {
-            self.URL.revokeObjectURL(url);
-          }
-        }
-      };
-      R.curryService(fileExportService);
-      return fileExportService;
+        self.URL.createObjectURL
+      )(data);
     }
-  ]);
+    function fileExportCleanup(url) {
+      if(!R.isNil(url)) {
+        self.URL.revokeObjectURL(url);
+      }
+    }
+  }
+})();

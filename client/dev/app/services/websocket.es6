@@ -9,20 +9,20 @@
   function websocketServiceFactory(jsonParserService,
                                    jsonStringifierService) {
     const websocketService = {
-      create: websocketCreate,
+      createP: websocketCreateP,
       send: websocketSend,
       close: websocketClose
     };
     R.curryService(websocketService);
     return websocketService;
 
-    function websocketCreate(url, name, handlers) {
+    function websocketCreateP(url, name, handlers) {
       return new self.Promise((resolve, reject) => {
         name = R.defaultTo(url, name);
-        handlers = R.pipe(
+        handlers = R.thread(handlers)(
           R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)),
           R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler))
-        )(handlers);
+        );
 
         var scheme = 'ws://';
         var uri = scheme + self.document.location.host + url;
@@ -51,8 +51,8 @@
         }
         function websocketOnMessage(event) {
           console.log('WebSocket message', name, event);
-          R.pipeP(
-            jsonParserService.parse,
+          R.threadP(event.data)(
+            jsonParserService.parseP,
             (msg) => {
               if(R.isNil(handlers[msg.type])) {
                 handlers.error('Unknown msg type', msg);
@@ -71,16 +71,15 @@
       });
     }
     function websocketSend(event, socket) {
-      return R.pipeP(
+      return R.thread(event)(
         jsonStringifierService.stringify,
-        socket.send
-      )(event);
+        socket.send,
+        R.always(socket)
+      );
     }
     function websocketClose(socket) {
-      return new self.Promise((resolve) => {
-        socket.close();
-        resolve();
-      });
+      socket.close();
+      return socket;
     }
   }
 })();

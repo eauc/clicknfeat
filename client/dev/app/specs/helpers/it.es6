@@ -8,17 +8,14 @@
   self.it.wrapper = function wrapper(test) {
     return function wrappedTest(done) {
       // console.log('wrapper', 'base');
-      return R.pipePromise(
-        () => {
-          return test.apply(this, [done]);
-        },
+      return R.threadP(test.apply(this, [done]))(
         () => {
           if(R.length(test) === 0) {
             // console.log('wrapper', 'base', 'auto done');
             done();
           }
         }
-      )();
+      );
     };
   };
   self.it.wrapper._debug = 'thenExpect';

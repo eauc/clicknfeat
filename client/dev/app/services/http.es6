@@ -5,27 +5,27 @@
   httpServiceFactory.$inject = [];
   function httpServiceFactory() {
     const httpService = {
-      get: httpGet,
-      post: httpPost,
-      put: httpPut,
-      delete: httpDelete
+      getP: httpGetP,
+      postP: httpPostP,
+      putP: httpPutP,
+      deleteP: httpDeleteP
     };
     R.curryService(httpService);
     return httpService;
 
-    function httpGet(url) {
-      return ajaxRequest('GET', url);
+    function httpGetP(url) {
+      return ajaxRequestP('GET', url);
     }
-    function httpPost(url, data) {
-      return ajaxRequest('POST', url, data);
+    function httpPostP(url, data) {
+      return ajaxRequestP('POST', url, data);
     }
-    function httpPut(url, data) {
-      return ajaxRequest('PUT', url, data);
+    function httpPutP(url, data) {
+      return ajaxRequestP('PUT', url, data);
     }
-    function httpDelete(url) {
-      return ajaxRequest('DELETE', url);
+    function httpDeleteP(url) {
+      return ajaxRequestP('DELETE', url);
     }
-    function ajaxRequest(method, url, data) {
+    function ajaxRequestP(method, url, data) {
       return new self.Promise((resolve, reject) => {
         const client = new self.XMLHttpRequest();
         client.open(method, url);

@@ -5,7 +5,7 @@ self.spyOnService = function () {
     var _service = undefined;
     angular.mock.inject([name, function (service) {
       _service = service;
-      R.pipe(R.always(service), R.keys, R.filter(R.compose(R.equals('Function'), R.type, R.flip(R.prop)(service))), R.reject(R.compose(R.equals('$'), R.last)), R.forEach(function (key) {
+      R.thread(service)(R.keys, R.filter(R.compose(R.equals('Function'), R.type, R.flip(R.prop)(service))), R.reject(R.compose(R.equals('$'), R.last)), R.forEach(function (key) {
         var arity = service[key].length;
         var mock_return_value = name + '.' + key + '.returnValue';
         if (R.last(key) === 'P') {
@@ -14,7 +14,7 @@ self.spyOnService = function () {
           spyOn(service, key).and.returnValue(mock_return_value);
         }
         service[key + '$'] = R.curryN(arity, service[key]);
-      }))();
+      }));
     }]);
     return _service;
   };

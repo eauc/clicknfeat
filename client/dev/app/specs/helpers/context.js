@@ -19,18 +19,16 @@
         var _this = this;
 
         // console.log('wrapper', _desc);
-        return R.pipeP(function () {
-          var context = R.bind(setup, _this)();
-          return self.Promise.resolve(context).catch(function (error) {
-            console.warn('Setup error', _desc, error);
-            _this.catchError = R.pipe(R.defaultTo([]), R.append(error))(_this.catchError);
-          });
-        }, function (context) {
+        var context = self.Promise.resolve(R.bind(setup, this)()).catch(function (error) {
+          console.warn('Setup error', _desc, error);
+          _this.catchError = R.thread(_this.catchError)(R.defaultTo([]), R.append(error));
+        });
+        return R.threadP(context)(function (context) {
           // console.log('context', _desc, context);
           _this.context = context;
         }, function () {
           return _wrapper(test).apply(_this, [done]);
-        })();
+        });
       };
     };
     wrapper._debug = _desc;

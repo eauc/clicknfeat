@@ -15,19 +15,16 @@
     let wrapper = function(test) {
       return function(done) {
         // console.log('wrapper', _desc);
-        return R.pipeP(
-          () => {
-            let context = R.bind(setup, this)();
-            return self.Promise
-              .resolve(context)
-              .catch((error) => {
-                console.warn('Setup error', _desc, error);
-                this.catchError = R.pipe(
-                  R.defaultTo([]),
-                  R.append(error)
-                )(this.catchError);
-              });
-          },
+        const context = self.Promise
+                .resolve(R.bind(setup, this)())
+                .catch((error) => {
+                  console.warn('Setup error', _desc, error);
+                  this.catchError = R.thread(this.catchError)(
+                    R.defaultTo([]),
+                    R.append(error)
+                  );
+                });
+        return R.threadP(context)(
           (context) => {
             // console.log('context', _desc, context);
             this.context = context;
@@ -35,7 +32,7 @@
           () => {
             return _wrapper(test).apply(this, [done]);
           }
-        )();
+        );
       };
     };
     wrapper._debug = _desc;

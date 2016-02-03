@@ -6,17 +6,17 @@
   websocketServiceFactory.$inject = ['jsonParser', 'jsonStringifier'];
   function websocketServiceFactory(jsonParserService, jsonStringifierService) {
     var websocketService = {
-      create: websocketCreate,
+      createP: websocketCreateP,
       send: websocketSend,
       close: websocketClose
     };
     R.curryService(websocketService);
     return websocketService;
 
-    function websocketCreate(url, name, handlers) {
+    function websocketCreateP(url, name, handlers) {
       return new self.Promise(function (resolve, reject) {
         name = R.defaultTo(url, name);
-        handlers = R.pipe(R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)), R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler)))(handlers);
+        handlers = R.thread(handlers)(R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)), R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler)));
 
         var scheme = 'ws://';
         var uri = scheme + self.document.location.host + url;
@@ -45,7 +45,7 @@
         }
         function websocketOnMessage(event) {
           console.log('WebSocket message', name, event);
-          R.pipeP(jsonParserService.parse, function (msg) {
+          R.threadP(event.data)(jsonParserService.parseP, function (msg) {
             if (R.isNil(handlers[msg.type])) {
               handlers.error('Unknown msg type', msg);
               return;
@@ -62,13 +62,11 @@
       });
     }
     function websocketSend(event, socket) {
-      return R.pipeP(jsonStringifierService.stringify, socket.send)(event);
+      return R.thread(event)(jsonStringifierService.stringify, socket.send, R.always(socket));
     }
     function websocketClose(socket) {
-      return new self.Promise(function (resolve) {
-        socket.close();
-        resolve();
-      });
+      socket.close();
+      return socket;
     }
   }
 })();

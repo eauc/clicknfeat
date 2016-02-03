@@ -9,55 +9,55 @@
     const pubSubService = {
       init: pubSubInit,
       subscribe: pubSubSubscribe,
-      publish: pubSubPublish
+      publishP: pubSubPublishP
     };
-    const signalListeners$ = R.curry(signalListeners);
+    const signalListenersP$ = R.curry(signalListenersP);
     R.curryService(pubSubService);
     return pubSubService;
 
     function pubSubInit(data, name = 'channel') {
-      return R.pipe(
+      return R.thread(data)(
         R.defaultTo({}),
         R.assoc('_pubSubName', name),
         R.assoc('_pubSubCache', {})
-      )(data);
+      );
     }
     function pubSubSubscribe(event, listener, pubSub) {
-      return R.pipe(
+      return R.thread(pubSub)(
         R.prop('_pubSubCache'),
         (cache) => {
-          return R.pipe(
+          return R.thread(cache)(
             R.propOr([], event),
             R.append(listener),
             (listeners) => {
               cache[event] = listeners;
               return unsubscribe(event, listener, cache);
             }
-          )(cache);
+          );
         }
-      )(pubSub);
+      );
     }
-    function pubSubPublish(...args) {
+    function pubSubPublishP(...args) {
       const [event] = args;
-      return R.pipePromise(
+      return R.threadP(args)(
         R.last,
-        signalListeners$(event, R.init(args)),
-        signalListeners$(WATCH_EVENT, R.init(args))
-      )(args);
+        signalListenersP$(event, R.init(args)),
+        signalListenersP$(WATCH_EVENT, R.init(args))
+      );
     }
     function unsubscribe(event, listener, cache) {
       return () => {
         cache[event] = R.reject(R.equals(listener), cache[event]);
       };
     }
-    function signalListeners(event, args, channel) {
-      return R.pipePromise(
+    function signalListenersP(event, args, channel) {
+      return R.threadP(channel)(
         R.pathOr([], ['_pubSubCache', event]),
         warnIfNoListeners,
-        R.map(resolveListener),
+        R.map(resolveListenerP),
         R.promiseAll,
         R.always(channel)
-      )(channel);
+      );
 
       function warnIfNoListeners(listeners) {
         if(R.isEmpty(listeners) &&
@@ -66,7 +66,7 @@
         }
         return listeners;
       }
-      function resolveListener(listener) {
+      function resolveListenerP(listener) {
         return new self.Promise((resolve) => {
           let ret;
           try {
