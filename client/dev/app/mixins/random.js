@@ -1,7 +1,23 @@
 'use strict';
 
-R.random = function () {
-  var random = function random(min, max) {
+(function () {
+  R.random = function random() {
+    return _random(0, 1000000000) / 1000000000;
+  };
+
+  R.randomRange = function randomRange(min, max) {
+    return min + R.random() * (max - min + 1) | 0;
+  };
+
+  R.guid = function guid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = R.random() * 16 | 0,
+          v = c == 'x' ? r : r & 0x3 | 0x8;
+      return v.toString(16);
+    });
+  };
+
+  function _random(min, max) {
     var rval = 0;
     var range = max - min;
 
@@ -28,25 +44,10 @@ R.random = function () {
 
     if (rval >= range) {
       // Integer out of acceptable range
-      return random(min, max);
+      return _random(min, max);
     }
     // Return an integer that falls within the range
     return min + rval;
-  };
-  return function () {
-    return random(0, 1000000000) / 1000000000;
-  };
-}();
-
-R.randomRange = function (min, max) {
-  return min + R.random() * (max - min + 1) | 0;
-};
-
-R.guid = function () {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = R.random() * 16 | 0,
-        v = c == 'x' ? r : r & 0x3 | 0x8;
-    return v.toString(16);
-  });
-};
+  }
+})();
 //# sourceMappingURL=random.js.map

@@ -21,8 +21,8 @@
 
     $rootScope.state = stateService.create();
     $rootScope.stateEvent = stateEvent;
-    // $scope.onStateChangeEvent = onStateChangeEvent;
-    // $scope.digestOnStateChangeEvent = digestOnStateChangeEvent;
+    $rootScope.onStateChangeEvent = onStateChangeEvent;
+    $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     // $scope.reloadFactions = reloadFactions;
 
     // $scope.userIsValid = userIsValid;
@@ -35,16 +35,16 @@
     function stateEvent(...args) {
       return stateService.queueEventP(args, $rootScope.state);
     }
-    // function onStateChangeEvent(event, listener, scope) {
-    //   let unsubscribe = stateService
-    //         .onChangeEvent(event, listener, $scope.state);
-    //   scope.$on('$destroy', () => { unsubscribe(); });
-    // }
-    // function digestOnStateChangeEvent(event, scope) {
-    //   $scope.onStateChangeEvent(event, () => {
-    //     scope.$digest();
-    //   }, scope);
-    // }
+    function onStateChangeEvent(event, listener, scope) {
+      let unsubscribe = stateService
+            .onChangeEvent(event, listener, $rootScope.state);
+      scope.$on('$destroy', () => { unsubscribe(); });
+    }
+    function digestOnStateChangeEvent(event, scope) {
+      onStateChangeEvent(event, () => {
+        scope.$digest();
+      }, scope);
+    }
     // function reloadFactions() {
     //   stateService.event('Factions.reload', $scope.state);
     // }

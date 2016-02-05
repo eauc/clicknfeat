@@ -1,8 +1,8 @@
-<div ng-repeat="(i,g) in games"
+<div ng-repeat="(i,g) in vm.games"
      class="clickable
-            {{current && g.public_stamp === current ? 'bg-primary':''}}
-            {{isInSelection(i) ? 'bg-info':''}}
+            {{vm.current && g.public_stamp === current ? 'bg-primary':''}}
+            {{vm.isInSelection(i) ? 'bg-info':''}}
             "
-     ng-click="doSetSelection(i)">
+     ng-click="vm.doSetSelection(i)">
   {{::g | game:'description'}}
 </div>

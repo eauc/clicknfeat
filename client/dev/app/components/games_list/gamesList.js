@@ -1,39 +1,55 @@
 'use strict';
 
-angular.module('clickApp.directives').controller('gamesListCtrl', ['$scope', function userConnectionCtrl($scope) {
-  console.log('gamesListCtrl', $scope.games);
+(function () {
+  angular.module('clickApp.directives').controller('gamesListCtrl', gamesListCtrl).directive('clickGamesList', gamesListDirectiveFactory);
 
-  $scope.selection.list = [];
-  $scope.isInSelection = function (index) {
-    return R.exists(R.find(R.equals(index), $scope.selection.list));
-  };
-  $scope.selectionIsEmpty = function () {
-    return R.isEmpty($scope.selection.list);
-  };
-  function setSelection(index) {
-    R.pipe(R.defaultTo(R.head($scope.selection.list)), R.defaultTo(0), R.min(R.length($scope.games) - 1), R.max(0), function (index) {
-      $scope.selection.list = [index];
-    })(index);
+  function gamesListDirectiveFactory() {
+    return {
+      restrict: 'E',
+      templateUrl: 'app/components/games_list/games_list.html',
+      scope: {},
+      link: function link() {},
+      controller: 'gamesListCtrl',
+      controllerAs: 'vm',
+      bindToController: {
+        games: '=',
+        selection: '=',
+        current: '='
+      }
+    };
   }
-  $scope.doSetSelection = function (index) {
-    if (R.exists($scope.current) && $scope.games[index].public_stamp === $scope.current) return;
+  gamesListCtrl.$inject = ['$scope'];
+  function gamesListCtrl($scope) {
+    var vm = this;
+    console.log('gamesListCtrl', vm.games);
 
-    setSelection(index);
-  };
-  $scope.$watch('games', function () {
-    setSelection();
-  });
-}]).directive('clickGamesList', [function () {
-  return {
-    restrict: 'E',
-    controller: 'gamesListCtrl',
-    templateUrl: 'partials/directives/games_list.html',
-    scope: {
-      games: '=',
-      selection: '=',
-      current: '='
-    },
-    link: function link() {}
-  };
-}]);
+    vm.selection.list = [];
+    vm.isInSelection = isInSelection;
+    vm.doSetSelection = doSetSelection;
+
+    activate();
+
+    function activate() {
+      $scope.$watch('vm.games', function () {
+        setSelection();
+      });
+    }
+    function isInSelection(index) {
+      return R.exists(R.find(R.equals(index), vm.selection.list));
+    }
+    function selectionIsEmpty() {
+      return R.isEmpty(vm.selection.list);
+    }
+    function doSetSelection(index) {
+      if (R.exists(vm.current) && vm.games[index].public_stamp === vm.current) return;
+
+      setSelection(index);
+    }
+    function setSelection(index) {
+      R.thread(index)(R.defaultTo(R.head(vm.selection.list)), R.defaultTo(0), R.min(R.length(vm.games) - 1), R.max(0), function (index) {
+        vm.selection.list = [index];
+      });
+    }
+  }
+})();
 //# sourceMappingURL=gamesList.js.map

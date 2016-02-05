@@ -1,6 +1,7 @@
 (function() {
   angular.module('clickApp.filters')
     .filter('capitalize', capitalizeFilterFactory)
+    .filter('game', gameFilterFactory)
     .filter('user', userFilterFactory)
     .filter('userConnection', userConnectionFilterFactory);
 
@@ -10,12 +11,24 @@
       return s.capitalize(input);
     };
   }
+  gameFilterFactory.$inject = [
+    'game',
+  ];
+  function gameFilterFactory(gameModel) {
+    return function gameFilter(input, method, ...args) {
+      if(R.isNil(gameModel[method])) {
+        console.error('Game Filter: method "'+method+'" does not exist');
+        return null;
+      }
+      return gameModel[method].apply(null, R.append(input, args));
+    };
+  }
   userFilterFactory.$inject = [
     'user',
   ];
   function userFilterFactory(userModel) {
     return function userFilter(input, method, ...args) {
-      if(!R.exists(userModel[method])) {
+      if(R.isNil(userModel[method])) {
         console.error('User Filter: method "'+method+'" does not exist');
         return null;
       }
@@ -27,7 +40,7 @@
   ];
   function userConnectionFilterFactory(userConnectionModel) {
     return function userConnectionFilter(input, method, ...args) {
-      if(!R.exists(userConnectionModel[method])) {
+      if(R.isNil(userConnectionModel[method])) {
         console.error('UserConnection Filter: method "'+method+'" does not exist');
         return null;
       }

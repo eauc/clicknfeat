@@ -8,40 +8,50 @@
     var vm = this;
     console.log('init loungeCtrl');
 
-    // $scope.onStateChangeEvent('Games.local.load', (event, id) => {
-    //   $scope.goToState('game.main', {
-    //     online: 'offline',
-    //     private: 'private',
-    //     id: id
-    //   });
-    //   $scope.$digest();
-    // }, $scope);
+    vm.local_games_selection = {};
+    vm.localGamesIsEmpty = localGamesIsEmpty;
+    vm.doCreateLocalGame = doCreateLocalGame;
+    vm.doLoadLocalGame = doLoadLocalGame;
+    vm.doOpenLocalGameFile = doOpenLocalGameFile;
+    vm.doDeleteLocalGame = doDeleteLocalGame;
 
-    // $scope.local_games_selection = {};
-    // $scope.digestOnStateChangeEvent('Games.local.change', $scope);
-    // $scope.doCreateLocalGame = () => {
-    //   $scope.stateEvent('Games.local.create');
-    // };
-    // $scope.doLoadLocalGame = function() {
-    //   let id = R.pipe(
-    //     R.always($scope.state.local_games),
-    //     R.nth($scope.local_games_selection.list[0]),
-    //     R.prop('local_stamp')
-    //   )();
-    //   console.log('load', $scope.state.local_games, $scope.local_games_selection.list[0], id);
-    //   $scope.stateEvent('Games.local.load', id);
-    // };
-    // $scope.doOpenLocalGameFile = function(files) {
-    //   $scope.stateEvent('Games.local.loadFile', files[0]);
-    // };
-    // $scope.doDeleteLocalGame = function() {
-    //   let id = R.pipe(
-    //     R.always($scope.state.local_games),
-    //     R.nth($scope.local_games_selection.list[0]),
-    //     R.prop('local_stamp')
-    //   )();
-    //   $scope.stateEvent('Games.local.delete', id);
-    // };
+    activate();
+
+    function activate() {
+      $scope.digestOnStateChangeEvent('Games.local.change', $scope);
+      $scope.onStateChangeEvent('Games.local.load', onGamesLocalLoad, $scope);
+    }
+
+    function onGamesLocalLoad(event, id) {
+      // $scope.goToState('game.main', {
+      //   online: 'offline',
+      //   private: 'private',
+      //   id: id
+      // });
+      $scope.$digest();
+    }
+    function localGamesIsEmpty() {
+      return $scope.state.local_games.length <= 0 || vm.local_games_selection.list.length <= 0;
+    }
+    function doCreateLocalGame() {
+      $scope.stateEvent('Games.local.create');
+    };
+    function doLoadLocalGame() {
+      //   let id = R.pipe(
+      //     R.always($scope.state.local_games),
+      //     R.nth($scope.local_games_selection.list[0]),
+      //     R.prop('local_stamp')
+      //   )();
+      //   console.log('load', $scope.state.local_games, $scope.local_games_selection.list[0], id);
+      //   $scope.stateEvent('Games.local.load', id);
+    };
+    function doOpenLocalGameFile(files) {
+      //   $scope.stateEvent('Games.local.loadFile', files[0]);
+    };
+    function doDeleteLocalGame() {
+      var id = R.thread($scope.state.local_games)(R.nth(vm.local_games_selection.list[0]), R.prop('local_stamp'));
+      $scope.stateEvent('Games.local.delete', id);
+    };
 
     // $scope.online_games_selection = {};
     // function loadNewOnlineGame(game) {

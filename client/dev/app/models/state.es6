@@ -9,16 +9,16 @@
     // 'stateData',
     'stateUser',
     // 'stateGame',
-    // 'stateGames',
+    'stateGames',
     // 'stateModes',
   ];
   function stateServiceFactory(pubSubService,
                                // fileImportService,
                                // stateExportsService,
                                // stateDataService,
-                               stateUserService) {
-    // stateGameService,
-    // stateGamesService,
+                               stateUserService,
+                               // stateGameService,
+                               stateGamesService) {
     // stateModesService
     // ) {
     const stateService = {
@@ -42,9 +42,9 @@
       state = R.thread(state)(
         // starting here State is mutable
         // stateDataService.create,
-        stateUserService.create
+        stateUserService.create,
         // stateGameService.create,
-        // stateGamesService.create,
+        stateGamesService.create
         // stateModesService.create,
       );
 
@@ -99,7 +99,7 @@
         // () => { return stateDataService.save(state); },
         () => { return stateUserService.save(state); },
         // () => { return stateGameService.save(state); },
-        // () => { return stateGamesService.save(state); },
+        () => { return stateGamesService.save(state); },
         // () => { return stateModesService.save(state); },
         // () => { return exportCurrentDumpFile(state); },
         () => { return processNextChangeEventP(state); }

@@ -28,10 +28,10 @@
           <li class="{{app.stateIs('user') ? 'active' : ''}}">
             <a href="#/user">User</a>
           </li>
-          <!-- <li class="{{main.stateIs('lounge') ? 'active' : ''}} -->
-          <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
-          <!--   <a href="#/lounge">Lounge</a> -->
-          <!-- </li> -->
+          <li class="{{app.stateIs('lounge') ? 'active' : ''}}
+                     {{(state.user | user:'isValid') ? '' : 'disabled'}}">
+            <a href="#/lounge">Lounge</a>
+          </li>
           <!-- <li class="{{main.stateMatches('settings') ? 'active' : ''}} -->
           <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
           <!--   <a href="#/settings/main">Settings</a> -->
@@ -64,6 +64,7 @@
     <script src="app/mixins/curryService.js"></script>
     <script src="app/mixins/exists.js"></script>
     <script src="app/mixins/promise.js"></script>
+    <script src="app/mixins/random.js"></script>
     <script src="app/mixins/spy.js"></script>
     <script src="app/mixins/thread.js"></script>
     <!-- <script src="js/mixins/deepExtend.js"></script> -->
@@ -77,7 +78,10 @@
     <script src="app/views/lounge/loungeCtrl.js"></script>
     <script src="app/views/user/userConfig.js"></script>
     <script src="app/views/user/userCtrl.js"></script>
+    <script src="app/models/game.js"></script>
+    <script src="app/models/games.js"></script>
     <script src="app/models/state.js"></script>
+    <script src="app/models/state/games.js"></script>
     <script src="app/models/state/user.js"></script>
     <script src="app/models/user.js"></script>
     <script src="app/models/user/connection.js"></script>
@@ -87,6 +91,7 @@
     <script src="app/services/localStorage.js"></script>
     <script src="app/services/pubSub.js"></script>
     <script src="app/services/websocket.js"></script>
+    <script src="app/components/games_list/gamesList.js"></script>
     <!-- <script src="js/controllers/debugCtrl.js"></script> -->
     <!-- <script src="js/controllers/gameCtrl.js"></script> -->
     <!-- <script src="js/controllers/game/helpCtrl.js"></script> -->
