@@ -3,9 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier'];
+  gameModelFactory.$inject = ['jsonStringifier', 'commands'];
 
-  // 'commands',
   // 'gameConnection',
   // 'gameLayers',
   // 'gameLos',
@@ -16,28 +15,25 @@
   // 'gameTemplateSelection',
   // 'gameTerrains',
   // 'gameTerrainSelection',
-  function gameModelFactory(jsonStringifierService
-  // commandsService,
-  // gameConnectionService,
-  // gameLayersService,
-  // gameLosService,
-  // gameModelsService,
-  // gameModelSelectionService,
-  // gameRulerService,
-  // gameTemplatesService,
-  // gameTemplateSelectionService,
-  // gameTerrainsService,
-  // gameTerrainSelectionService
-  ) {
+  function gameModelFactory(jsonStringifierService, commandsService) {
+    // gameConnectionService,
+    // gameLayersService,
+    // gameLosService,
+    // gameModelsService,
+    // gameModelSelectionService,
+    // gameRulerService,
+    // gameTemplatesService,
+    // gameTemplateSelectionService,
+    // gameTerrainsService,
+    // gameTerrainSelectionService
+    // ) {
     var gameModel = {
       create: gameCreate,
-      // load: gameLoad,
+      loadP: gameLoadP,
       // pickForJson: gamePickForJson,
       toJson: gameToJson,
-      // playerName: gamePlayerName,
       description: gameDescription
     };
-    // const gameReplayAll$ = R.curry(gameReplayAll);
     // executeCommand: gameExecuteCommand,
     // undoCommand: gameUndoCommand,
     // undoLastCommand: gameUndoLastCommand,
@@ -45,6 +41,12 @@
     // replayCommandsBatch: gameReplayCommandsBatch,
     // replayNextCommand: gameReplayNextCommand,
     // sendChat: gameSendChat
+    var GAME_PROTO = {
+      toJSON: function gameToJson() {
+        return gameModel.pickForJson(this);
+      }
+    };
+    var gameReplayAllP$ = R.curry(gameReplayAllP);
     R.curryService(gameModel);
     return gameModel;
 
@@ -57,42 +59,40 @@
       };
       return new_game;
     }
-    // function gameLoad(state, data) {
-    //   return R.pipe(
-    //     () => {
-    //       return Object.create({
-    //         toJSON: function() { return gameModel.pickForJson(this); }
-    //       });
-    //     },
-    //     (game) => {
-    //       return R.deepExtend(game, {
-    //         players: {
-    //           p1: { name: null },
-    //           p2: { name: null }
-    //         },
-    //         board: {},
-    //         scenario: {},
-    //         chat: [],
-    //         commands: [],
-    //         commands_log: [],
-    //         undo: [],
-    //         undo_log: [],
-    //         dice: [],
-    //         ruler: gameRulerService.create(),
-    //         los: gameLosService.create(),
-    //         models: gameModelsService.create(),
-    //         model_selection: gameModelSelectionService.create(),
-    //         templates: gameTemplatesService.create(),
-    //         template_selection: gameTemplateSelectionService.create(),
-    //         terrains: gameTerrainsService.create(),
-    //         terrain_selection: gameTerrainSelectionService.create(),
-    //         layers: gameLayersService.create()
-    //       }, data);
-    //     },
-    //     gameConnectionService.create,
-    //     gameReplayAll$(state)
-    //   )();
-    // }
+    function gameLoadP(state, data) {
+      return R.threadP(Object.create(GAME_PROTO))(extendGameDefaultWithData,
+      // gameConnectionService.create,
+      gameReplayAllP$(state));
+
+      function extendGameDefaultWithData(game) {
+        return R.deepExtend(game, defaultGameState(), data);
+      }
+    }
+    function defaultGameState() {
+      return {
+        players: {
+          p1: { name: null },
+          p2: { name: null }
+        },
+        board: {},
+        scenario: {},
+        chat: [],
+        commands: [],
+        commands_log: [],
+        undo: [],
+        undo_log: [],
+        dice: []
+      };
+    }
+    // ruler: gameRulerService.create(),
+    // los: gameLosService.create(),
+    // models: gameModelsService.create(),
+    // model_selection: gameModelSelectionService.create(),
+    // templates: gameTemplatesService.create(),
+    // template_selection: gameTemplateSelectionService.create(),
+    // terrains: gameTerrainsService.create(),
+    // terrain_selection: gameTerrainSelectionService.create(),
+    // layers: gameLayersService.create()
     function gamePickForJson(game) {
       return R.pick(['players', 'commands', 'undo', 'chat', 'local_stamp', 'private_stamp', 'public_stamp'], game);
     }
@@ -286,33 +286,34 @@
     //       }
     //     }, game);
     // }
-    // function gameReplayBatchs(batchs, state, game) {
-    //   if(R.isEmpty(batchs)) return game;
+    function gameReplayBatchsP(batchs, state, game) {
+      if (R.isEmpty(batchs)) {
+        return self.Promise.resolve(game);
+      }
 
-    //   console.log('Game: ReplayBatchs:', batchs);
-    //   return R.pipeP(
-    //     commandsService.replayBatch$(batchs[0], state),
-    //     (game) => {
-    //       return new self.Promise((resolve) => {
-    //         self.requestAnimationFrame(() => {
-    //           resolve(gameReplayBatchs(R.tail(batchs), state, game));
-    //       });
-    //       });
-    //     }
-    //   )(game);
-    // }
-    // function gameReplayAll(state, game) {
-    //   return new self.Promise((resolve) => {
-    //     if(R.isEmpty(game.commands)) {
-    //       resolve(game);
-    //     }
+      console.log('Game: ReplayBatchs:', batchs);
+      return R.threadP(game)(commandsService.replayBatchP$(batchs[0], state), recurP);
 
-    //     var batchs = R.splitEvery(game.commands.length, game.commands);
-    //     self.requestAnimationFrame(() => {
-    //       resolve(gameReplayBatchs(batchs, state, game));
-    //     });
-    //   });
-    // }
+      function recurP(game) {
+        return new self.Promise(function (resolve) {
+          self.requestAnimationFrame(function () {
+            resolve(gameReplayBatchsP(R.tail(batchs), state, game));
+          });
+        });
+      }
+    }
+    function gameReplayAllP(state, game) {
+      return new self.Promise(function (resolve) {
+        if (R.isEmpty(game.commands)) {
+          resolve(game);
+        }
+
+        var batchs = R.splitEvery(game.commands.length, game.commands);
+        self.requestAnimationFrame(function () {
+          resolve(gameReplayBatchsP(batchs, state, game));
+        });
+      });
+    }
   }
 })();
 //# sourceMappingURL=game.js.map

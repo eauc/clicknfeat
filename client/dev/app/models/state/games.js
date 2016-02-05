@@ -13,7 +13,7 @@
       save: stateGamesSave,
       onStateInit: stateGamesOnInit,
       onGamesLocalCreate: stateGamesOnLocalCreate,
-      // onGamesLocalLoad: stateOnGamesLocalLoad,
+      onGamesLocalLoad: stateOnGamesLocalLoad,
       // onGamesLocalLoadFile: stateOnGamesLocalLoadFile,
       onGamesLocalDelete: stateOnGamesLocalDelete
     };
@@ -30,8 +30,7 @@
       });
 
       state.onEvent('Games.local.create', stateGamesService.onGamesLocalCreate$(state));
-      // state.onEvent('Games.local.load',
-      //               stateGamesService.onGamesLocalLoad$(state));
+      state.onEvent('Games.local.load', stateGamesService.onGamesLocalLoad$(state));
       // state.onEvent('Games.local.loadFile',
       //               stateGamesService.onGamesLocalLoadFile$(state));
       state.onEvent('Games.local.delete', stateGamesService.onGamesLocalDelete$(state));
@@ -49,9 +48,9 @@
       event = event;
       return R.thread(state.user.state)(gameModel.create, loadNewLocalGame$(state));
     }
-    // function stateOnGamesLocalLoad(state, event, index) {
-    //   state.changeEvent('Games.local.load', index);
-    // }
+    function stateOnGamesLocalLoad(state, event, index) {
+      state.queueChangeEventP('Games.local.load', index);
+    }
     // function stateOnGamesLocalLoadFile(state, event, file) {
     //   return R.pipePromise(
     //     fileImportService.read$('json'),

@@ -1,8 +1,12 @@
 'use strict';
 
-self.spyOnPromise = function () {
-  return function spyOnPromise(object, key) {
+(function () {
+  self.spyOnPromise = function spyOnPromise(object, key) {
     var spy = spyOn(object, key);
+
+    return spyReturnPromise(spy);
+  };
+  self.spyReturnPromise = function spyReturnPromise(spy) {
     var resolve_value = undefined;
     var reject_value = undefined;
     spy.resolveWith = function () {
@@ -19,8 +23,10 @@ self.spyOnPromise = function () {
 
       reject_value = args;
     };
+    spy.and.callFake(resolveFakePromise);
+    return spy;
 
-    spy.and.callFake(function () {
+    function resolveFakePromise() {
       for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         args[_key3] = arguments[_key3];
       }
@@ -44,9 +50,7 @@ self.spyOnPromise = function () {
           }
         }
       });
-    });
-
-    return spy;
+    }
   };
-}();
+})();
 //# sourceMappingURL=spyOnPromise.js.map

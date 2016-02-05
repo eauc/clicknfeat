@@ -14,20 +14,36 @@
   function contextWrapper(_wrapper, _desc, setup) {
     let wrapper = function(test) {
       return function(done) {
-        // console.log('wrapper', _desc);
-        const context = self.Promise
-                .resolve(R.bind(setup, this)())
-                .catch((error) => {
-                  console.warn('Setup error', _desc, error);
-                  this.catchError = R.thread(this.catchError)(
-                    R.defaultTo([]),
-                    R.append(error)
-                  );
-                });
+        console.log('wrapper', _desc);
+        this.contextExpectError = function() {
+          this._context_expect_error = true;
+        };
+        const context = new self.Promise((resolve, reject) => {
+          try {
+            resolve(R.bind(setup, this)());
+          }
+          catch(e) {
+            reject(e);
+          }
+        }).catch((error) => {
+          console.warn('Setup error', _desc, error);
+          this.contextError = R.thread(this.contextError)(
+            R.defaultTo([]),
+            R.append(error)
+          );
+        });
         return R.threadP(context)(
           (context) => {
             // console.log('context', _desc, context);
             this.context = context;
+          },
+          () => {
+            if(!this._context_expect_error &&
+               R.exists(this.contextError)) {
+              expect('This context').toBe('not rejected');
+              expect(this.contextError)
+                .toBe(undefined);
+            }
           },
           () => {
             return _wrapper(test).apply(this, [done]);

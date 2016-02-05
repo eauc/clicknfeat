@@ -1,6 +1,10 @@
-self.spyOnPromise = (function() {
-  return function spyOnPromise(object, key) {
-    let spy = spyOn(object, key);
+(function() {
+  self.spyOnPromise = function spyOnPromise(object, key) {
+    const spy = spyOn(object, key);
+
+    return spyReturnPromise(spy);
+  };
+  self.spyReturnPromise = function spyReturnPromise(spy) {
     let resolve_value;
     let reject_value;
     spy.resolveWith = (...args) => {
@@ -9,8 +13,10 @@ self.spyOnPromise = (function() {
     spy.rejectWith = (...args) => {
       reject_value = args;
     };
+    spy.and.callFake(resolveFakePromise);
+    return spy;
 
-    spy.and.callFake((...args) => {
+    function resolveFakePromise(...args) {
       return new self.Promise((resolve, reject) => {
         spy.resolve = resolve;
         spy.reject = reject;
@@ -34,8 +40,6 @@ self.spyOnPromise = (function() {
           }
         }
       });
-    });
-
-    return spy;
+    }
   };
 })();

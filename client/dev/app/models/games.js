@@ -14,7 +14,7 @@
     var gamesModel = {
       loadLocalGamesP: gamesLoadLocalGamesP,
       saveLocalGame: gamesSaveLocalGame,
-      // loadLocalGame: gamesLoadLocalGame,
+      loadLocalGameP: gamesLoadLocalGameP,
       newLocalGame: gamesNewLocalGame,
       removeLocalGame: gamesRemoveLocalGame
     };
@@ -36,12 +36,11 @@
       console.warn('Game save', key, game);
       return localStorageService.save(key, game);
     }
-    // function gamesLoadLocalGame(id) {
-    //   let key = LOCAL_GAME_STORAGE_KEY+id;
-    //   console.warn('Game load', key);
-    //   return localStorageService
-    //     .load(key);
-    // }
+    function gamesLoadLocalGameP(id) {
+      var key = LOCAL_GAME_STORAGE_KEY + id;
+      console.warn('Game load', key);
+      return localStorageService.loadP(key);
+    }
     function gamesNewLocalGame(game, games) {
       return R.thread(game)(R.assoc('local_stamp', R.guid()), gamesModel.saveLocalGame, R.flip(R.append)(games));
     }

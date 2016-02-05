@@ -1,84 +1,98 @@
-angular.module('clickApp.services')
-  .factory('commands', [
-    function commandsServiceFactory() {
-      let CMD_REGS = {};
-      let commandsService = {
-        registerCommand: function commandsRegister(name, command) {
-          console.log('register command', name, command);
-          CMD_REGS[name] = command;
-        },
-        execute: function commandsExecute(name, args, state, game) {
-          return R.pipePromise(
-            R.prop(name),
-            R.rejectIf(R.isNil, `execute unknown command "${name}"`),
-            (cmd) => {
-              return cmd.execute.apply(null, [...args, state, game]);
-            },
-            ([ctxt, game]) => {
-              return [ R.assoc('type', name, ctxt),
-                       game
-                     ];
-            }
-          )(CMD_REGS);
-        },
-        undo: function commandsUndo(ctxt, state, game) {
-          return R.pipePromise(
-            R.prop(ctxt.type),
-            R.rejectIf(R.isNil, `undo unknown command "${ctxt.type}"`),
-            (cmd) => {
-              return cmd.undo(ctxt, state, game);
-            }
-          )(CMD_REGS);
-        },
-        replay: function commandsReplay(ctxt, state, game) {
-          return R.pipePromise(
-            R.prop(ctxt.type),
-            R.rejectIf(R.isNil, `replay unknown command ${ctxt.type}`),
-            (cmd) => {
-              return cmd.replay(ctxt, state, game);
-            }
-          )(CMD_REGS);
-        },
-        replayBatch: function commandsReplayBatch(commands, state, game) {
-          return R.pipePromise(
-            () => {
-              if(R.isEmpty(commands)) return game;
+(function() {
+  angular.module('clickApp.services')
+    .factory('commands', commandsModelFactory)
+    .factory('allCommands', [
+      // 'createModelCommand',
+      // 'deconsteModelCommand',
+      // 'setModelSelectionCommand',
+      // 'lockModelsCommand',
+      // 'onModelsCommand',
+      // 'createTemplateCommand',
+      // 'deconsteTemplatesCommand',
+      // 'lockTemplatesCommand',
+      // 'onTemplatesCommand',
+      // 'createTerrainCommand',
+      // 'deconsteTerrainCommand',
+      // 'lockTerrainsCommand',
+      // 'onTerrainsCommand',
+      // 'rollDiceCommand',
+      // 'rollDeviationCommand',
+      // 'setBoardCommand',
+      // 'setLayersCommand',
+      // 'setLosCommand',
+      // 'setRulerCommand',
+      // 'setScenarioCommand',
+      () => ({ })
+    ]);
 
-              return R.pipeP(
-                (game) => {
-                  return commandsService.replay(commands[0], state, game)
-                    .catch(R.always(game));
-                },
-                commandsService.replayBatch$(R.tail(commands), state)
-              )(game);
-            }
-          )();
-        }
-      };
-      R.curryService(commandsService);
-      return commandsService;
+  commandsModelFactory.$inject = [];
+  function commandsModelFactory() {
+    const CMDS_REG = {};
+    const commandsModel = {
+      registerCommand: commandsRegister,
+      // executeP: commandsExecuteP,
+      // undoP: commandsUndoP,
+      replayP: commandsReplayP,
+      replayBatchP: commandsReplayBatchP
+    };
+    R.curryService(commandsModel);
+    return commandsModel;
+
+    function commandsRegister(name, command) {
+      console.log('register command', name, command);
+      CMDS_REG[name] = command;
     }
-  ])
-  .factory('allCommands', [
-    'createModelCommand',
-    'deleteModelCommand',
-    'setModelSelectionCommand',
-    'lockModelsCommand',
-    'onModelsCommand',
-    'createTemplateCommand',
-    'deleteTemplatesCommand',
-    'lockTemplatesCommand',
-    'onTemplatesCommand',
-    'createTerrainCommand',
-    'deleteTerrainCommand',
-    'lockTerrainsCommand',
-    'onTerrainsCommand',
-    'rollDiceCommand',
-    'rollDeviationCommand',
-    'setBoardCommand',
-    'setLayersCommand',
-    'setLosCommand',
-    'setRulerCommand',
-    'setScenarioCommand',
-    () => ({ })
-  ]);
+    // function commandsExecuteP(name, args, state, game) {
+    //   return R.pipePromise(
+    //     R.prop(name),
+    //     R.rejectIf(R.isNil, `execute unknown command "${name}"`),
+    //     (cmd) => {
+    //       return cmd.execute.apply(null, [...args, state, game]);
+    //     },
+    //     ([ctxt, game]) => {
+    //       return [ R.assoc('type', name, ctxt),
+    //                game
+    //              ];
+    //     }
+    //   )(CMD_REGS);
+    // }
+    // function commandsUndoP(ctxt, state, game) {
+    //   return R.pipePromise(
+    //     R.prop(ctxt.type),
+    //     R.rejectIf(R.isNil, `undo unknown command "${ctxt.type}"`),
+    //     (cmd) => {
+    //       return cmd.undo(ctxt, state, game);
+    //     }
+    //   )(CMD_REGS);
+    // }
+    function commandsReplayP(ctxt, state, game) {
+      return R.threadP(findCmdType())(
+        R.rejectIf(R.isNil, `Game: replay unknown command "${ctxt.type}"`),
+        (cmd) => {
+          return cmd.replayP(ctxt, state, game);
+        }
+      );
+
+      function findCmdType() {
+        return R.prop(ctxt.type, CMDS_REG);
+      }
+    }
+    function commandsReplayBatchP(commands, state, game) {
+      if(R.isEmpty(commands)) {
+        return self.Promise.resolve(game);
+      }
+      return R.threadP(game)(
+        replayNextCommand,
+        recurP
+      );
+
+      function replayNextCommand(game) {
+        return commandsModel.replayP(commands[0], state, game)
+          .catch(R.always(game));
+      }
+      function recurP(game) {
+        return commandsReplayBatchP(R.tail(commands), state, game);
+      }
+    }
+  }
+})();

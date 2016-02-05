@@ -7,8 +7,19 @@
 
   self.it.wrapper = function wrapper(test) {
     return function wrappedTest(done) {
-      // console.log('wrapper', 'base');
-      return R.threadP(test.apply(this, [done]))(
+      // console.info('wrapper', 'base');
+      const testP = new self.Promise((resolve, reject) => {
+        try {
+          resolve(test.apply(this, [done]));
+        }
+        catch(e) {
+          reject(e);
+        }
+      }).catch((error) => {
+        expect('This test').toBe('not rejected');
+        expect(error).toBe(null);
+      });
+      return R.threadP(testP)(
         () => {
           if(R.length(test) === 0) {
             // console.log('wrapper', 'base', 'auto done');

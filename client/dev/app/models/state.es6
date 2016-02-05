@@ -8,7 +8,7 @@
     // 'stateExports',
     // 'stateData',
     'stateUser',
-    // 'stateGame',
+    'stateGame',
     'stateGames',
     // 'stateModes',
   ];
@@ -17,7 +17,7 @@
                                // stateExportsService,
                                // stateDataService,
                                stateUserService,
-                               // stateGameService,
+                               stateGameService,
                                stateGamesService) {
     // stateModesService
     // ) {
@@ -36,6 +36,8 @@
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
+        eventP: eventP,
+        changeEventP: changeEventP,
         queueChangeEventP: queueChangeEventP
       }, 'State');
 
@@ -43,7 +45,7 @@
         // starting here State is mutable
         // stateDataService.create,
         stateUserService.create,
-        // stateGameService.create,
+        stateGameService.create,
         stateGamesService.create
         // stateModesService.create,
       );
@@ -63,15 +65,12 @@
           ], state.change_event_queue);
         });
       }
-      // state.event = (...args) => {
-      //   return stateService.event
-      //     .apply(null, [...args, state]);
-      // };
-      // state.changeEventUnbuffered = (...args) => {
-      //   console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
-      //   return pubSubService.publish
-      //     .apply(null, [...args, state.change]);
-      // };
+      function eventP(...args) {
+        return stateEventP(args, state);
+      }
+      function changeEventP(...args) {
+        return stateChangeEventP(args, state);
+      }
     }
     function stateQueueEventP(args, state) {
       return new self.Promise((resolve) => {
@@ -94,7 +93,6 @@
       }
 
       const [ resolve, args ] = R.head(state.event_queue);
-      console.info('State ===> Event', args[0], R.tail(args));
       return R.threadP(stateEventP(args, state))(
         // () => { return stateDataService.save(state); },
         () => { return stateUserService.save(state); },
@@ -118,7 +116,6 @@
       state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)),
                                           state.change_event_queue);
       let [ resolve, args ] = R.head(state.change_event_queue);
-      console.log('StateChange <===', R.head(args), R.tail(args));
       return R.threadP(stateChangeEventP(args, state))(
         () => {
           state.change_event_queue = R.tail(state.change_event_queue);
@@ -128,10 +125,12 @@
       );
     }
     function stateEventP(args, state) {
+      console.info('State ===> Event', args[0], R.tail(args));
       return pubSubService.publishP
         .apply(null, [...args, state]);
     }
     function stateChangeEventP(args, state) {
+      console.log('StateChange <===', R.head(args), R.tail(args));
       return pubSubService.publishP
         .apply(null, [...args, state.change]);
     }

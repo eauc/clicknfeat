@@ -1,5 +1,5 @@
-R.extend =(() => {
-  return (obj, ...extensions) => {
+(function() {
+  R.extend = function extend(obj, ...extensions) {
     // obj = R.clone(obj);
     R.forEach((source) => {
       for(var prop in source) {
@@ -8,11 +8,9 @@ R.extend =(() => {
     }, extensions);
     return obj;
   };
-})();
 
-R.deepExtend =(() => {
-  return (obj, ...extensions) => {
-    var parentRE = /#{\s*?_\s*?}/;
+  R.deepExtend = function deepExtend(obj, ...extensions) {
+    const parentRE = /#{\s*?_\s*?}/;
 
     // obj = R.clone(obj);
     R.forEach((source) => {

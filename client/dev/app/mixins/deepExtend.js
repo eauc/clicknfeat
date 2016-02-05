@@ -1,7 +1,7 @@
 'use strict';
 
-R.extend = function () {
-  return function (obj) {
+(function () {
+  R.extend = function extend(obj) {
     for (var _len = arguments.length, extensions = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       extensions[_key - 1] = arguments[_key];
     }
@@ -14,17 +14,16 @@ R.extend = function () {
     }, extensions);
     return obj;
   };
-}();
 
-R.deepExtend = function () {
-  return function (obj) {
+  R.deepExtend = function deepExtend(obj) {
+    var parentRE = /#{\s*?_\s*?}/;
+
+    // obj = R.clone(obj);
+
     for (var _len2 = arguments.length, extensions = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
       extensions[_key2 - 1] = arguments[_key2];
     }
 
-    var parentRE = /#{\s*?_\s*?}/;
-
-    // obj = R.clone(obj);
     R.forEach(function (source) {
       for (var prop in source) {
         if (R.isNil(obj[prop]) || R.type(obj[prop]) === 'Function' || R.type(source[prop]) === 'Date') {
@@ -54,5 +53,5 @@ R.deepExtend = function () {
     }, extensions);
     return obj;
   };
-}();
+})();
 //# sourceMappingURL=deepExtend.js.map

@@ -18,14 +18,28 @@
       return function (done) {
         var _this = this;
 
-        // console.log('wrapper', _desc);
-        var context = self.Promise.resolve(R.bind(setup, this)()).catch(function (error) {
+        console.log('wrapper', _desc);
+        this.contextExpectError = function () {
+          this._context_expect_error = true;
+        };
+        var context = new self.Promise(function (resolve, reject) {
+          try {
+            resolve(R.bind(setup, _this)());
+          } catch (e) {
+            reject(e);
+          }
+        }).catch(function (error) {
           console.warn('Setup error', _desc, error);
-          _this.catchError = R.thread(_this.catchError)(R.defaultTo([]), R.append(error));
+          _this.contextError = R.thread(_this.contextError)(R.defaultTo([]), R.append(error));
         });
         return R.threadP(context)(function (context) {
           // console.log('context', _desc, context);
           _this.context = context;
+        }, function () {
+          if (!_this._context_expect_error && R.exists(_this.contextError)) {
+            expect('This context').toBe('not rejected');
+            expect(_this.contextError).toBe(undefined);
+          }
         }, function () {
           return _wrapper(test).apply(_this, [done]);
         });

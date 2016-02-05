@@ -11,18 +11,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   // 'fileImport',
   // 'stateExports',
   // 'stateData',
-  'stateUser',
-  // 'stateGame',
-  'stateGames'];
+  'stateUser', 'stateGame', 'stateGames'];
 
   // 'stateModes',
   function stateServiceFactory(pubSubService,
   // fileImportService,
   // stateExportsService,
   // stateDataService,
-  stateUserService,
-  // stateGameService,
-  stateGamesService) {
+  stateUserService, stateGameService, stateGamesService) {
     // stateModesService
     // ) {
     var stateService = {
@@ -40,15 +36,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
+        eventP: eventP,
+        changeEventP: changeEventP,
         queueChangeEventP: queueChangeEventP
       }, 'State');
 
       state = R.thread(state)(
       // starting here State is mutable
       // stateDataService.create,
-      stateUserService.create,
-      // stateGameService.create,
-      stateGamesService.create
+      stateUserService.create, stateGameService.create, stateGamesService.create
       // stateModesService.create,
       );
 
@@ -72,15 +68,20 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           state.change_event_queue = R.append([resolve, args], state.change_event_queue);
         });
       }
-      // state.event = (...args) => {
-      //   return stateService.event
-      //     .apply(null, [...args, state]);
-      // };
-      // state.changeEventUnbuffered = (...args) => {
-      //   console.info('State <---[U] ChangeEvent', args[0], R.tail(args));
-      //   return pubSubService.publish
-      //     .apply(null, [...args, state.change]);
-      // };
+      function eventP() {
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
+        }
+
+        return stateEventP(args, state);
+      }
+      function changeEventP() {
+        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
+        }
+
+        return stateChangeEventP(args, state);
+      }
     }
     function stateQueueEventP(args, state) {
       return new self.Promise(function (resolve) {
@@ -108,7 +109,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var resolve = _R$head2[0];
       var args = _R$head2[1];
 
-      console.info('State ===> Event', args[0], R.tail(args));
       return R.threadP(stateEventP(args, state))(
       // () => { return stateDataService.save(state); },
       function () {
@@ -142,7 +142,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var resolve = _R$head4[0];
       var args = _R$head4[1];
 
-      console.log('StateChange <===', R.head(args), R.tail(args));
       return R.threadP(stateChangeEventP(args, state))(function () {
         state.change_event_queue = R.tail(state.change_event_queue);
         resolve();
@@ -150,9 +149,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
     }
     function stateEventP(args, state) {
+      console.info('State ===> Event', args[0], R.tail(args));
       return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state]));
     }
     function stateChangeEventP(args, state) {
+      console.log('StateChange <===', R.head(args), R.tail(args));
       return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state.change]));
     }
     function stateOnChangeEvent(event, listener, state) {

@@ -1,9 +1,16 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickGamePage', ['$window', function ($window) {
-  return {
-    restrict: 'A',
-    link: function link(scope, element) {
+(function () {
+  angular.module('clickApp.directives').directive('clickGamePage', clickGamePageDirectiveFactory);
+
+  clickGamePageDirectiveFactory.$inject = ['$window'];
+  function clickGamePageDirectiveFactory($window) {
+    return {
+      restrict: 'A',
+      link: link
+    };
+
+    function link(scope, element) {
       var toggleMenuClick = function () {
         var gameview_width_mem = undefined;
         return function () {
@@ -34,6 +41,6 @@ angular.module('clickApp.directives').directive('clickGamePage', ['$window', fun
       var rect = gameview.getBoundingClientRect();
       gameview.style.width = rect.height + 'px';
     }
-  };
-}]);
-//# sourceMappingURL=page.js.map
+  }
+})();
+//# sourceMappingURL=gamePage.js.map

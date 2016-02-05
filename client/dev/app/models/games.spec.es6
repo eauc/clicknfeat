@@ -44,6 +44,23 @@ describe('games model', function() {
     });
   });
 
+  context('loadLocalGame(<games>)', function() {
+    return this.gamesModel.loadLocalGameP('stamp');
+  }, function() {
+    beforeEach(function() {
+      this.game = { local_stamp: 'stamp' };
+      this.localStorageService.loadP
+        .resolveWith(this.game);
+    });
+
+    it('should store game', function() {
+      expect(this.localStorageService.loadP)
+        .toHaveBeenCalledWith('clickApp.game.stamp');
+
+      expect(this.context).toEqual(this.game);
+    });
+  });
+
   context('saveLocalGame(<games>)', function() {
     return this.gamesModel.saveLocalGame(this.game);
   }, function() {
