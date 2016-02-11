@@ -10,7 +10,7 @@
     'stateUser',
     'stateGame',
     'stateGames',
-    // 'stateModes',
+    'stateModes',
   ];
   function stateServiceFactory(pubSubService,
                                // fileImportService,
@@ -18,9 +18,8 @@
                                // stateDataService,
                                stateUserService,
                                stateGameService,
-                               stateGamesService) {
-    // stateModesService
-    // ) {
+                               stateGamesService,
+                               stateModesService) {
     const stateService = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
@@ -46,8 +45,8 @@
         // stateDataService.create,
         stateUserService.create,
         stateGameService.create,
-        stateGamesService.create
-        // stateModesService.create,
+        stateGamesService.create,
+        stateModesService.create
       );
 
       // exportCurrentDumpFile(state);
@@ -98,7 +97,7 @@
         () => { return stateUserService.save(state); },
         // () => { return stateGameService.save(state); },
         () => { return stateGamesService.save(state); },
-        // () => { return stateModesService.save(state); },
+        () => { return stateModesService.save(state); },
         // () => { return exportCurrentDumpFile(state); },
         () => { return processNextChangeEventP(state); }
       ).catch(R.spyAndDiscardError('processNextEvent'))

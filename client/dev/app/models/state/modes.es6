@@ -1,65 +1,81 @@
-angular.module('clickApp.services')
-  .factory('stateModes', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('stateModes', stateModesModelFactory);
+
+  stateModesModelFactory.$inject = [
     'modes',
     'allModes',
-    function stateModesServiceFactory(modesService) {
-      var stateModesService = {
-        init: function stateModesInit(state) {
-          state.modes = {};
+  ];
+  function stateModesModelFactory(modesModel) {
+    const stateModesModel = {
+      create: stateModesCreate,
+      save: stateModesSave,
+      onModesSwitchTo: stateModesOnSwitchTo,
+      onModesCurrentAction: stateModesOnCurrentAction,
+      onModesReset: stateModesOnReset,
+      onModesExit: stateModesOnExit
+    };
 
-          state.onEvent('Modes.switchTo',
-                        stateModesService.onModesSwitchTo$(state));
-          state.onEvent('Modes.current.action',
-                        stateModesService.onModesCurrentAction$(state));
-          state.onEvent('Modes.reset',
-                        stateModesService.onModesReset$(state));
-          state.onEvent('Modes.exit',
-                        stateModesService.onModesExit$(state));
-          return state;
-        },
-        save: function stateModesSave(state) {
-          return state;
-        },
-        onModesSwitchTo: function stateModesOnSwitchTo(state, event, to) {
-          return R.pipePromise(
-            modesService.switchToMode$(to, state),
-            setModes$(state)
-          )(state.modes).catch(gameActionError$(state));
-        },
-        onModesCurrentAction: function stateModesOnCurrentAction(state, e, action, args) {
-          let res = modesService
-                .currentModeAction(action, [state, ...args], state.modes);
-          let event = R.last(args);
-          if(R.exists(R.prop('preventDefault', event))) event.preventDefault();
+    const setModes$ = R.curry(setModes);
+    const gameActionError$ = R.curry(gameActionError);
 
-          return self.Promise.resolve(res)
-            .catch(gameActionError$(state));
-        },
-        onModesReset: function stateModesOnReset(state, event) {
-          event = event;
-          return R.pipePromise(
-            modesService.init,
-            setModes$(state)
-          )(state);
-        },
-        onModesExit: function stateModesOnExit(state, event) {
-          event = event;
-          return R.pipePromise(
-            modesService.exit$(state),
-            setModes$(state)
-          )(state.modes);
-        }
-      };
-      var setModes$ = R.curry((state, modes) => {
-        state.modes = modes;
-        state.changeEvent('Modes.change');
-      });
-      var gameActionError$ = R.curry((state, error) => {
-        state.changeEvent('Game.action.error', error);
-        return null;
-        // return self.Promise.reject(error);
-      });
-      R.curryService(stateModesService);
-      return stateModesService;
+    R.curryService(stateModesModel);
+    return stateModesModel;
+
+    function stateModesCreate(state) {
+      state.modes = {};
+
+      state.onEvent('Modes.switchTo',
+                    stateModesModel.onModesSwitchTo$(state));
+      state.onEvent('Modes.current.action',
+                    stateModesModel.onModesCurrentAction$(state));
+      state.onEvent('Modes.reset',
+                    stateModesModel.onModesReset$(state));
+      state.onEvent('Modes.exit',
+                    stateModesModel.onModesExit$(state));
+      return state;
     }
-  ]);
+    function stateModesSave(state) {
+      return state;
+    }
+    function stateModesOnSwitchTo(state, event, to) {
+      return R.threadP(state.modes)(
+        modesModel.switchToModeP$(to, state),
+        setModes$(state)
+      ).catch(gameActionError$(state));
+    }
+    function stateModesOnCurrentAction(state, e, action, args) {
+      const res = modesModel
+              .currentModeActionP(action, [state, ...args], state.modes);
+      const event = R.last(args);
+      if(R.exists(R.prop('preventDefault', event))) {
+        event.preventDefault();
+      }
+
+      return self.Promise.resolve(res)
+        .catch(gameActionError$(state));
+    }
+    function stateModesOnReset(state, event) {
+      event = event;
+      return R.threadP(state)(
+        modesModel.initP,
+        setModes$(state)
+      );
+    }
+    function stateModesOnExit(state, event) {
+      event = event;
+      return R.threadP(state.modes)(
+        modesModel.exit$(state),
+        setModes$(state)
+      );
+    }
+    function setModes(state, modes) {
+      state.modes = modes;
+      state.queueChangeEventP('Modes.change');
+    }
+    function gameActionError(state, error) {
+      state.queueChangeEventP('Game.action.error', error);
+      return null;
+    }
+  }
+})();

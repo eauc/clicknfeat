@@ -11,16 +11,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   // 'fileImport',
   // 'stateExports',
   // 'stateData',
-  'stateUser', 'stateGame', 'stateGames'];
-
-  // 'stateModes',
+  'stateUser', 'stateGame', 'stateGames', 'stateModes'];
   function stateServiceFactory(pubSubService,
   // fileImportService,
   // stateExportsService,
   // stateDataService,
-  stateUserService, stateGameService, stateGamesService) {
-    // stateModesService
-    // ) {
+  stateUserService, stateGameService, stateGamesService, stateModesService) {
     var stateService = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
@@ -44,9 +40,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       state = R.thread(state)(
       // starting here State is mutable
       // stateDataService.create,
-      stateUserService.create, stateGameService.create, stateGamesService.create
-      // stateModesService.create,
-      );
+      stateUserService.create, stateGameService.create, stateGamesService.create, stateModesService.create);
 
       // exportCurrentDumpFile(state);
       return state;
@@ -117,8 +111,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       // () => { return stateGameService.save(state); },
       function () {
         return stateGamesService.save(state);
+      }, function () {
+        return stateModesService.save(state);
       },
-      // () => { return stateModesService.save(state); },
       // () => { return exportCurrentDumpFile(state); },
       function () {
         return processNextChangeEventP(state);

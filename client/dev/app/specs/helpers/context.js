@@ -19,7 +19,7 @@
         var _this = this;
 
         console.log('wrapper', _desc);
-        this.contextExpectError = function () {
+        this.expectContextError = function () {
           this._context_expect_error = true;
         };
         var context = new self.Promise(function (resolve, reject) {

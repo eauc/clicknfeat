@@ -22,7 +22,7 @@ describe('commandsModel', function() {
   }, function() {
     context('when <ctxt.type> is unknown', function() {
       this.cmd = { type: 'unknown' };
-      this.contextExpectError();
+      this.expectContextError();
     }, function() {
       it('should discard command', function() {
         expect(this.contextError)
@@ -51,7 +51,7 @@ describe('commandsModel', function() {
       spyReturnPromise(this.cmd1.replayP)
         .rejectWith('reason');
       this.cmd = { type: 'cmd1' };
-      this.contextExpectError();
+      this.expectContextError();
     }, function() {
       it('should reject promise', function() {
         expect(this.contextError)

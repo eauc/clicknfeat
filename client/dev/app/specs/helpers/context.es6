@@ -15,7 +15,7 @@
     let wrapper = function(test) {
       return function(done) {
         console.log('wrapper', _desc);
-        this.contextExpectError = function() {
+        this.expectContextError = function() {
           this._context_expect_error = true;
         };
         const context = new self.Promise((resolve, reject) => {
