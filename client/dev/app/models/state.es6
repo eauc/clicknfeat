@@ -36,6 +36,7 @@
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
         eventP: eventP,
+        queueEventP: queueEventP,
         changeEventP: changeEventP,
         queueChangeEventP: queueChangeEventP
       }, 'State');
@@ -55,6 +56,9 @@
       function onEvent(...args) {
         return pubSubService.subscribe
           .apply(null, [...args, state]);
+      }
+      function queueEventP(...args) {
+        return stateQueueEventP(args, state);
       }
       function queueChangeEventP(...args) {
         return new self.Promise((resolve) => {

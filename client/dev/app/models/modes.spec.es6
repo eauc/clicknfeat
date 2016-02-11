@@ -64,7 +64,7 @@ describe('modesModel', function() {
     beforeEach(function() {
       this.event = jasmine.createSpyObj('event', ['preventDefault']);
       this.state = jasmine.createSpyObj('state', [
-        'event','changeEvent'
+        'queueEventP'
       ]);
       return this.modesModel.initP(this.state)
         .then((modes) => {
@@ -79,7 +79,7 @@ describe('modesModel', function() {
       return this.actionBinding(this.event);
     }, function() {
       it('should should call associated mode action', function() {
-        expect(this.state.event)
+        expect(this.state.queueEventP)
           .toHaveBeenCalledWith('Modes.current.action', 'test', [this.event]);
       });
     });

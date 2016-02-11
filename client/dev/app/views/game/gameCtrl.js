@@ -3,12 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('gameCtrl', gameCtrl);
 
-  gameCtrl.$inject = ['$scope', '$stateParams'];
-
-  // 'modes',
-  function gameCtrl($scope, $stateParams) {
-    // modesService
-    // ) {
+  gameCtrl.$inject = ['$scope', '$stateParams', 'modes'];
+  function gameCtrl($scope, $stateParams, modesService) {
     var vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -21,7 +17,7 @@
 
     // vm.currentModeName = currentModeName;
     // vm.currentModeIs = currentModeIs;
-    // vm.doModeAction = doModeAction;
+    vm.doModeAction = doModeAction;
     // vm.doActionButton = doActionButton;
 
     activate();
@@ -41,7 +37,7 @@
       // $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
       // $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);
 
-      // $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
+      $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
       // $scope.onStateChangeEvent('Game.loaded', updateCurrentModeBindings, $scope);
 
       // $scope.$on('$destroy', () => {
@@ -67,19 +63,11 @@
     //   $scope.$digest();
     // }
 
-    // function updateCurrentModeBindings() {
-    //   vm.action_bindings = R.thread($scope)(
-    //     R.path(['state','modes']),
-    //     modesService.currentModeBindings,
-    //     R.clone
-    //   );
-    //   vm.action_buttons = R.thread($scope)(
-    //     R.path(['state','modes']),
-    //     modesService.currentModeButtons,
-    //     R.clone
-    //   );
-    //   $scope.$digest();
-    // }
+    function updateCurrentModeBindings() {
+      vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesService.currentModeBindings, R.clone);
+      vm.action_buttons = R.thread($scope)(R.path(['state', 'modes']), modesService.currentModeButtons, R.clone);
+      $scope.$digest();
+    }
 
     // function currentModeName() {
     //   return R.thread($scope)(
@@ -90,10 +78,13 @@
     // function currentModeIs(mode) {
     //   return currentModeName() === mode;
     // }
-    // function doModeAction(action, ...args) {
-    //   $scope.stateEvent('Modes.current.action',
-    //                     action, [...args, {}]);
-    // }
+    function doModeAction(action) {
+      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      $scope.stateEvent('Modes.current.action', action, [].concat(args, [{}]));
+    }
     // function doActionButton([label, action, group]) {
     //   label = label;
     //   if(action === 'toggle') {

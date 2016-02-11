@@ -2,10 +2,10 @@
      click-game-page>
   <div id="gameview"
        class="resizable">
-    <!-- <div id="zoom-osd" -->
-    <!--      class="btn-group-vertical" -->
-    <!--      ng-include="'app/components/game/zoom_osd/zoomOsd.html'"> -->
-    <!-- </div> -->
+    <div id="zoom-osd"
+         class="btn-group-vertical"
+         ng-include="'app/components/game/zoom_osd/zoom_osd.html'">
+    </div>
     <!-- <div id="cmd-osd" -->
     <!--      ng-include="'app/components/game/cmd_osd/cmdOsd.html'"> -->
     <!-- </div> -->
@@ -41,7 +41,6 @@
     <div id="viewport">
       <svg id="map"
            click-game-map
-           click-game-layers
            viewBox="0 0 480 480">
         <defs>
           <filter id="aura-filter"

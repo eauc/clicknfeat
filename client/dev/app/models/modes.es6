@@ -158,7 +158,7 @@
         return (event, keys) => {
           console.warn('binding', name, keys, event);
 
-          state.event('Modes.current.action', name, [event]);
+          state.queueEventP('Modes.current.action', name, [event]);
         };
       }
     }

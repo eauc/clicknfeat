@@ -28,17 +28,17 @@
       // roll5D6: roll5D6
     };
     const common_bindings = {
+      modeBackToDefault: 'esc',
       // commandUndoLast: 'ctrl+z',
       // commandReplayNext: 'ctrl+y',
-      // modeBackToDefault: 'esc',
-      // viewScrollLeft: 'alt+left',
-      // viewScrollRight: 'alt+right',
-      // viewScrollUp: 'alt+up',
-      // viewScrollDown: 'alt+down',
+      viewScrollLeft: 'alt+left',
+      viewScrollRight: 'alt+right',
+      viewScrollUp: 'alt+up',
+      viewScrollDown: 'alt+down',
       viewZoomIn: 'alt++',
-      // viewZoomOut: 'alt+-',
-      // viewZoomReset: 'alt+z',
-      // flipMap: 'ctrl+shift+f',
+      viewZoomOut: 'alt+-',
+      viewZoomReset: 'alt+z',
+      flipMap: 'ctrl+shift+f',
       toggleMenu: 'ctrl+shift+m'
     };
     const common_mode = {

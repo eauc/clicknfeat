@@ -2,3 +2,5 @@
 node_modules
 **/*.spec.js*
 .sass-cache
+npm-debug.log
+
