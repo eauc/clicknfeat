@@ -18,7 +18,7 @@
       // 'rollDiceCommand',
       // 'rollDeviationCommand',
       // 'setBoardCommand',
-      // 'setLayersCommand',
+      'setLayersCommand',
       // 'setLosCommand',
       // 'setRulerCommand',
       // 'setScenarioCommand',

@@ -11,9 +11,11 @@
     vm.isNavHidden = isNavHidden;
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
+    vm.goToState = goToState;
 
     $rootScope.state = stateService.create();
     $rootScope.stateEvent = stateEvent;
+    $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;
     $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     // $scope.reloadFactions = reloadFactions;
@@ -31,6 +33,13 @@
       }
 
       return stateService.queueEventP(args, $rootScope.state);
+    }
+    function stateChangeEvent() {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return stateService.queueChangeEventP(args, $rootScope.state);
     }
     function onStateChangeEvent(event, listener, scope) {
       var unsubscribe = stateService.onChangeEvent(event, listener, $rootScope.state);
@@ -66,8 +75,8 @@
       return 0 <= $state.current.name.indexOf(match);
     }
     function goToState() {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
       }
 
       self.setTimeout(function () {

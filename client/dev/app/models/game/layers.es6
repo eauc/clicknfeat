@@ -1,31 +1,38 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('gameLayers', gameLayersModelFactory);
 
-angular.module('clickApp.services')
-  .factory('gameLayers', [
-    function gameLayersServiceFactory() {
-      var gameLayersService = {
-        create: function layersCreate() {
-          return ['b','d','s','m','t'];
-        },
-        isDisplayed: function layerIsDisplayed(l, layers = []) {
-          return R.find(R.equals(l), layers);
-        },
-        set: function layersSet(l, layers = []) {
-          return R.uniq(R.append(l, layers));
-        },
-        unset: function layersUnset(l, layers = []) {
-          return R.reject(R.equals(l), layers);
-        },
-        toggle: function layersToggle(l, layers) {
-          if(gameLayersService.isDisplayed(l, layers)) {
-            return gameLayersService.unset(l, layers);
-          }
-          else {
-            return gameLayersService.set(l, layers);
-          }
-        }
-      };
-      R.curryService(gameLayersService);
-      return gameLayersService;
+  gameLayersModelFactory.$inject = [];
+  function gameLayersModelFactory() {
+    const gameLayersModel = {
+      create: layersCreate,
+      isDisplayed: layersIsDisplayed,
+      set: layersSet,
+      unset: layersUnset,
+      toggle: layersToggle
+    };
+    R.curryService(gameLayersModel);
+    return gameLayersModel;
+
+    function layersCreate() {
+      return ['b','d','s','m','t'];
     }
-  ]);
+    function layersIsDisplayed(l, layers = []) {
+      return R.find(R.equals(l), layers);
+    }
+    function layersSet(l, layers = []) {
+      return R.uniq(R.append(l, layers));
+    }
+    function layersUnset(l, layers = []) {
+      return R.reject(R.equals(l), layers);
+    }
+    function layersToggle(l, layers) {
+      if(gameLayersModel.isDisplayed(l, layers)) {
+        return gameLayersModel.unset(l, layers);
+      }
+      else {
+        return gameLayersModel.set(l, layers);
+      }
+    }
+  }
+})();

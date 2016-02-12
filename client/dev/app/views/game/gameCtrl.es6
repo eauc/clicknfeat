@@ -9,7 +9,7 @@
   ];
   function gameCtrl($scope,
                     $stateParams,
-                    modesService) {
+                    modesModel) {
     const vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -20,7 +20,7 @@
     vm.hints = {};
     vm.show_action_group = null;
 
-    // vm.currentModeName = currentModeName;
+    vm.currentModeName = currentModeName;
     // vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     // vm.doActionButton = doActionButton;
@@ -71,23 +71,23 @@
     function updateCurrentModeBindings() {
       vm.action_bindings = R.thread($scope)(
         R.path(['state','modes']),
-        modesService.currentModeBindings,
+        modesModel.currentModeBindings,
         R.clone
       );
       vm.action_buttons = R.thread($scope)(
         R.path(['state','modes']),
-        modesService.currentModeButtons,
+        modesModel.currentModeButtons,
         R.clone
       );
       $scope.$digest();
     }
 
-    // function currentModeName() {
-    //   return R.thread($scope)(
-    //     R.pathOr({}, ['state', 'modes']),
-    //     modesService.currentModeName
-    //   );
-    // }
+    function currentModeName() {
+      return R.thread($scope)(
+        R.pathOr({}, ['state', 'modes']),
+        modesModel.currentModeName
+      );
+    }
     // function currentModeIs(mode) {
     //   return currentModeName() === mode;
     // }

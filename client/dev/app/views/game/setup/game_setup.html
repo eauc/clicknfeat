@@ -1,0 +1,179 @@
+<div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Layers</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="layers">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="game_setup.layers | gameLayers:'isDisplayed':'b'"
+                   ng-click="game_setup.doToggleLayer('b')">
+            Board
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="game_setup.layers | gameLayers:'isDisplayed':'d'"
+                   ng-click="game_setup.doToggleLayer('d')">
+            Deploiement
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="game_setup.layers | gameLayers:'isDisplayed':'s'"
+                   ng-click="game_setup.doToggleLayer('s')">
+            Scenario
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="game_setup.layers | gameLayers:'isDisplayed':'m'"
+                   ng-click="game_setup.doToggleLayer('m')">
+            Models
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"
+                   ng-checked="game_setup.layers | gameLayers:'isDisplayed':'t'"
+                   ng-click="dogame_setup.ToggleLayer('t')">
+            Templates
+          </label>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- <div class="panel panel-info"> -->
+  <!--   <div class="panel-heading"> -->
+  <!--     <strong>Scenario</strong> -->
+  <!--   </div> -->
+  <!--   <div class="panel-content"> -->
+  <!--     <form class="form-inline" -->
+  <!--           name="scenario"> -->
+  <!--       <select class="form-control" -->
+  <!--               ng-options="s as s[0] for s in scenarios" -->
+  <!--               ng-model="scenario_group"> -->
+  <!--       </select> -->
+  <!--       <select class="form-control" -->
+  <!--               ng-options="s.name as s.name for s in scenario_group[1]" -->
+  <!--               ng-model="scenario_name" -->
+  <!--               ng-change="doSetScenario()"> -->
+  <!--       </select> -->
+  <!--       <button class="btn btn-default" -->
+  <!--               ng-click="doSetRandomScenario()"> -->
+  <!--         Random -->
+  <!--       </button> -->
+  <!--       <button class="btn btn-default" -->
+  <!--               ng-click="doGenerateObjectives()"> -->
+  <!--         Generate Objective -->
+  <!--       </button> -->
+  <!--     </form> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  <!-- <div class="panel panel-info"> -->
+  <!--   <div class="panel-heading"> -->
+  <!--     <strong>Import Board File</strong> -->
+  <!--   </div> -->
+  <!--   <div class="panel-content"> -->
+  <!--     <form class="form-inline"> -->
+  <!--       <div class="form-group"> -->
+  <!--         <input type="file" -->
+  <!--                multiple -->
+  <!--                class="form-control" -->
+  <!--                ea-file="doImportBoardFile(file)" /> -->
+  <!--       </div> -->
+  <!--     </form> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  <!-- <div class="panel panel-info"> -->
+  <!--   <div class="panel-heading"> -->
+  <!--     <strong>Board Map</strong> -->
+  <!--   </div> -->
+  <!--   <div class="panel-content"> -->
+  <!--     <form class="form-inline" -->
+  <!--           name="board-map"> -->
+  <!--       <select class="form-control" -->
+  <!--               ng-options="b.name as b.name for b in boards" -->
+  <!--               ng-model="board_name" -->
+  <!--               ng-change="doSetBoard()"> -->
+  <!--       </select> -->
+  <!--       <button class="btn btn-default" -->
+  <!--               ng-click="doSetRandomBoard()"> -->
+  <!--         Random -->
+  <!--       </button> -->
+  <!--       <button class="btn btn-default" -->
+  <!--               ng-click="doResetTerrain()"> -->
+  <!--         Reset Terrain -->
+  <!--       </button> -->
+  <!--     </form> -->
+  <!--   </div> -->
+  <!-- </div> -->
+  <!-- <div class="panel panel-info"> -->
+  <!--   <div class="panel-heading"> -->
+  <!--     <strong>Create Terrain</strong> -->
+  <!--   </div> -->
+  <!--   <div class="panel-content"> -->
+  <!--     <form class="form-inline" -->
+  <!--           name="create-terrain"> -->
+  <!--       <table> -->
+  <!--         <tr> -->
+  <!--           <th>Ambiance</th> -->
+  <!--           <td> -->
+  <!--             <select class="form-control" -->
+  <!--                     ng-options="k as k for (k,f) in terrains" -->
+  <!--                     ng-model="ambiance" -->
+  <!--                     ng-change="onAmbianceChange()"> -->
+  <!--             </select> -->
+  <!--           </td> -->
+  <!--         </tr> -->
+  <!--         <tr> -->
+  <!--           <th>Category</th> -->
+  <!--           <td> -->
+  <!--             <select class="form-control" -->
+  <!--                     ng-options="k as k for (k,s) in terrains[ambiance]" -->
+  <!--                     ng-model="category" -->
+  <!--                     ng-change="onCategoryChange()"> -->
+  <!--             </select> -->
+  <!--           </td> -->
+  <!--         </tr> -->
+  <!--         <tr> -->
+  <!--           <th>Entry</th> -->
+  <!--           <td> -->
+  <!--             <select class="form-control" -->
+  <!--                     ng-options="k as e.name for (k,e) in terrains[ambiance][category]" -->
+  <!--                     ng-model="entry" -->
+  <!--                     ng-change="onEntryChange()"> -->
+  <!--             </select> -->
+  <!--           </td> -->
+  <!--         </tr> -->
+  <!--       </table> -->
+  <!--     </form> -->
+  <!--     <br /> -->
+  <!--     <table> -->
+  <!--       <tr> -->
+  <!--         <th>Image</th> -->
+  <!--         <td> -->
+  <!--           <img ng-width="{{getTerrain().img.width/2}}" -->
+  <!--                ng-height="{{getTerrain().img.height/2}}" -->
+  <!--                ng-src="{{getTerrain().img.link}}" /> -->
+  <!--         </td> -->
+  <!--       </tr> -->
+  <!--     </table> -->
+  <!--   </div> -->
+  <!--   <div class="panel-footer"> -->
+  <!--     <button class="btn btn-default" -->
+  <!--             ng-disabled="!getTerrain() || -->
+  <!--                          currentModeIs('CreateTerrain') -->
+  <!--                          " -->
+  <!--             ng-click="doCreateTerrain()"> -->
+  <!--       Create Terrain -->
+  <!--     </button> -->
+  <!--   </div> -->
+  <!-- </div> -->
+</div>

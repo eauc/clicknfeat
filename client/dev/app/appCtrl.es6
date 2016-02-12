@@ -18,9 +18,11 @@
     vm.isNavHidden = isNavHidden;
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
+    vm.goToState = goToState;
 
     $rootScope.state = stateService.create();
     $rootScope.stateEvent = stateEvent;
+    $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;
     $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     // $scope.reloadFactions = reloadFactions;
@@ -34,6 +36,9 @@
 
     function stateEvent(...args) {
       return stateService.queueEventP(args, $rootScope.state);
+    }
+    function stateChangeEvent(...args) {
+      return stateService.queueChangeEventP(args, $rootScope.state);
     }
     function onStateChangeEvent(event, listener, scope) {
       let unsubscribe = stateService

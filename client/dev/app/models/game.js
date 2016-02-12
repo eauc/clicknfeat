@@ -5,10 +5,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier', 'commands'];
-
+  gameModelFactory.$inject = ['jsonStringifier', 'commands',
   // 'gameConnection',
-  // 'gameLayers',
+  'gameLayers'];
+
   // 'gameLos',
   // 'gameModels',
   // 'gameModelSelection',
@@ -17,17 +17,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   // 'gameTemplateSelection',
   // 'gameTerrains',
   // 'gameTerrainSelection',
-  function gameModelFactory(jsonStringifierService, commandsService) {
-    // gameConnectionService,
-    // gameLayersService,
-    // gameLosService,
-    // gameModelsService,
-    // gameModelSelectionService,
-    // gameRulerService,
-    // gameTemplatesService,
-    // gameTemplateSelectionService,
-    // gameTerrainsService,
-    // gameTerrainSelectionService
+  function gameModelFactory(jsonStringifierService, commandsModel,
+  // gameConnectionModel,
+  gameLayersModel) {
+    // gameLosModel,
+    // gameModelsModel,
+    // gameModelSelectionModel,
+    // gameRulerModel,
+    // gameTemplatesModel,
+    // gameTemplateSelectionModel,
+    // gameTerrainsModel,
+    // gameTerrainSelectionModel
     // ) {
     var gameModel = {
       create: gameCreate,
@@ -66,7 +66,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
     function gameLoadP(state, data) {
       return R.threadP(Object.create(GAME_PROTO))(extendGameDefaultWithData,
-      // gameConnectionService.create,
+      // gameConnectionModel.create,
       gameReplayAllP$(state));
 
       function extendGameDefaultWithData(game) {
@@ -86,18 +86,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         commands_log: [],
         undo: [],
         undo_log: [],
-        dice: []
+        dice: [],
+        // ruler: gameRulerModel.create(),
+        // los: gameLosModel.create(),
+        // models: gameModelsModel.create(),
+        // model_selection: gameModelSelectionModel.create(),
+        // templates: gameTemplatesModel.create(),
+        // template_selection: gameTemplateSelectionModel.create(),
+        // terrains: gameTerrainsModel.create(),
+        // terrain_selection: gameTerrainSelectionModel.create(),
+        layers: gameLayersModel.create()
       };
     }
-    // ruler: gameRulerService.create(),
-    // los: gameLosService.create(),
-    // models: gameModelsService.create(),
-    // model_selection: gameModelSelectionService.create(),
-    // templates: gameTemplatesService.create(),
-    // template_selection: gameTemplateSelectionService.create(),
-    // terrains: gameTerrainsService.create(),
-    // terrain_selection: gameTerrainSelectionService.create(),
-    // layers: gameLayersService.create()
     function gamePickForJson(game) {
       return R.pick(['players', 'commands', 'undo', 'chat', 'local_stamp', 'private_stamp', 'public_stamp'], game);
     }
@@ -179,7 +179,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //                        R.reject(R.propEq('stamp', command.stamp), log),
     //                        game);
     //       }
-    //       return commandsService
+    //       return commandsModel
     //         .undo(command, state, game);
     //     },
     //     (game) => {
@@ -203,7 +203,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //     R.rejectIf(R.isNil, 'Command history empty'),
     //     (command) => {
     //       return R.pipeP(
-    //         commandsService.undo$(command, state),
+    //         commandsModel.undo$(command, state),
     //         (game) => { return [command, game]; }
     //       )(game);
     //     },
@@ -211,8 +211,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //       return R.pipePromise(
     //         R.assoc('commands', R.init(game.commands)),
     //         (game) => {
-    //           if(gameConnectionService.active(game)) {
-    //             return gameConnectionService
+    //           if(gameConnectionModel.active(game)) {
+    //             return gameConnectionModel
     //               .sendUndoCommand(command, game);
     //           }
     //           return R.over(R.lensProp('undo'),
@@ -238,7 +238,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //                       R.reject(R.propEq('stamp', command.stamp)),
     //                       game);
     //       }
-    //       return commandsService
+    //       return commandsModel
     //         .replay(command, state, game);
     //     },
     //     (game) => {
@@ -262,7 +262,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // }
     // function gameReplayCommandsBatch(cmds, state, game) {
     //   return R.pipeP(
-    //     commandsService.replayBatch$(cmds, state),
+    //     commandsModel.replayBatch$(cmds, state),
     //     R.over(R.lensProp('commands'),
     //            R.flip(R.concat)(cmds))
     //   )(game);
@@ -277,7 +277,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //           .reject('Undo history empty');
     //       }
     //       return R.pipeP(
-    //         commandsService.replay$(command, state),
+    //         commandsModel.replay$(command, state),
     //         (game) => { return [command, game]; }
     //       )(game);
     //     },
@@ -285,8 +285,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //       return R.pipePromise(
     //         R.assoc('undo', R.init(game.undo)),
     //         (game) => {
-    //           if(gameConnectionService.active(game)) {
-    //             return gameConnectionService
+    //           if(gameConnectionModel.active(game)) {
+    //             return gameConnectionModel
     //               .sendReplayCommand(command, game);
     //           }
     //           let commands = R.propOr([], 'commands', game);
@@ -301,7 +301,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //   )(game);
     // }
     // function gameSendChat(from, msg, game) {
-    //   return gameConnectionService
+    //   return gameConnectionModel
     //     .sendEvent({
     //       type: 'chat',
     //       chat: {
@@ -316,7 +316,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }
 
       console.log('Game: ReplayBatchs:', batchs);
-      return R.threadP(game)(commandsService.replayBatchP$(batchs[0], state), recurP);
+      return R.threadP(game)(commandsModel.replayBatchP$(batchs[0], state), recurP);
 
       function recurP(game) {
         return new self.Promise(function (resolve) {

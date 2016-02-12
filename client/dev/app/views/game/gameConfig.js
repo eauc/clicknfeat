@@ -24,12 +24,13 @@
     //   controller: 'gameModelCtrl',
     //   data: { hide_nav: true }
     // })
-    // .state('game.setup', {
-    //   url: '/setup',
-    //   templateUrl: 'partials/game/setup.html',
-    //   controller: 'gameSetupCtrl',
-    //   data: { hide_nav: true }
-    // })
+    .state('game.setup', {
+      url: '/setup',
+      templateUrl: 'app/views/game/setup/game_setup.html',
+      controller: 'gameSetupCtrl',
+      controllerAs: 'game_setup',
+      data: { hide_nav: true }
+    })
     // .state('game.save', {
     //   url: '/save',
     //   templateUrl: 'partials/game/save.html',

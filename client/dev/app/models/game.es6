@@ -6,7 +6,7 @@
     'jsonStringifier',
     'commands',
     // 'gameConnection',
-    // 'gameLayers',
+    'gameLayers',
     // 'gameLos',
     // 'gameModels',
     // 'gameModelSelection',
@@ -17,17 +17,17 @@
     // 'gameTerrainSelection',
   ];
   function gameModelFactory(jsonStringifierService,
-                            commandsService) {
-                              // gameConnectionService,
-                              // gameLayersService,
-                              // gameLosService,
-                              // gameModelsService,
-                              // gameModelSelectionService,
-                              // gameRulerService,
-                              // gameTemplatesService,
-                              // gameTemplateSelectionService,
-                              // gameTerrainsService,
-                              // gameTerrainSelectionService
+                            commandsModel,
+                              // gameConnectionModel,
+                            gameLayersModel) {
+                              // gameLosModel,
+                              // gameModelsModel,
+                              // gameModelSelectionModel,
+                              // gameRulerModel,
+                              // gameTemplatesModel,
+                              // gameTemplateSelectionModel,
+                              // gameTerrainsModel,
+                              // gameTerrainSelectionModel
                              // ) {
     const gameModel = {
       create: gameCreate,
@@ -67,7 +67,7 @@
     function gameLoadP(state, data) {
       return R.threadP(Object.create(GAME_PROTO))(
         extendGameDefaultWithData,
-        // gameConnectionService.create,
+        // gameConnectionModel.create,
         gameReplayAllP$(state)
       );
 
@@ -89,15 +89,15 @@
         undo: [],
         undo_log: [],
         dice: [],
-        // ruler: gameRulerService.create(),
-        // los: gameLosService.create(),
-        // models: gameModelsService.create(),
-        // model_selection: gameModelSelectionService.create(),
-        // templates: gameTemplatesService.create(),
-        // template_selection: gameTemplateSelectionService.create(),
-        // terrains: gameTerrainsService.create(),
-        // terrain_selection: gameTerrainSelectionService.create(),
-        // layers: gameLayersService.create()
+        // ruler: gameRulerModel.create(),
+        // los: gameLosModel.create(),
+        // models: gameModelsModel.create(),
+        // model_selection: gameModelSelectionModel.create(),
+        // templates: gameTemplatesModel.create(),
+        // template_selection: gameTemplateSelectionModel.create(),
+        // terrains: gameTerrainsModel.create(),
+        // terrain_selection: gameTerrainSelectionModel.create(),
+        layers: gameLayersModel.create()
       };
     }
     function gamePickForJson(game) {
@@ -180,7 +180,7 @@
     //                        R.reject(R.propEq('stamp', command.stamp), log),
     //                        game);
     //       }
-    //       return commandsService
+    //       return commandsModel
     //         .undo(command, state, game);
     //     },
     //     (game) => {
@@ -204,7 +204,7 @@
     //     R.rejectIf(R.isNil, 'Command history empty'),
     //     (command) => {
     //       return R.pipeP(
-    //         commandsService.undo$(command, state),
+    //         commandsModel.undo$(command, state),
     //         (game) => { return [command, game]; }
     //       )(game);
     //     },
@@ -212,8 +212,8 @@
     //       return R.pipePromise(
     //         R.assoc('commands', R.init(game.commands)),
     //         (game) => {
-    //           if(gameConnectionService.active(game)) {
-    //             return gameConnectionService
+    //           if(gameConnectionModel.active(game)) {
+    //             return gameConnectionModel
     //               .sendUndoCommand(command, game);
     //           }
     //           return R.over(R.lensProp('undo'),
@@ -239,7 +239,7 @@
     //                       R.reject(R.propEq('stamp', command.stamp)),
     //                       game);
     //       }
-    //       return commandsService
+    //       return commandsModel
     //         .replay(command, state, game);
     //     },
     //     (game) => {
@@ -263,7 +263,7 @@
     // }
     // function gameReplayCommandsBatch(cmds, state, game) {
     //   return R.pipeP(
-    //     commandsService.replayBatch$(cmds, state),
+    //     commandsModel.replayBatch$(cmds, state),
     //     R.over(R.lensProp('commands'),
     //            R.flip(R.concat)(cmds))
     //   )(game);
@@ -278,7 +278,7 @@
     //           .reject('Undo history empty');
     //       }
     //       return R.pipeP(
-    //         commandsService.replay$(command, state),
+    //         commandsModel.replay$(command, state),
     //         (game) => { return [command, game]; }
     //       )(game);
     //     },
@@ -286,8 +286,8 @@
     //       return R.pipePromise(
     //         R.assoc('undo', R.init(game.undo)),
     //         (game) => {
-    //           if(gameConnectionService.active(game)) {
-    //             return gameConnectionService
+    //           if(gameConnectionModel.active(game)) {
+    //             return gameConnectionModel
     //               .sendReplayCommand(command, game);
     //           }
     //           let commands = R.propOr([], 'commands', game);
@@ -302,7 +302,7 @@
     //   )(game);
     // }
     // function gameSendChat(from, msg, game) {
-    //   return gameConnectionService
+    //   return gameConnectionModel
     //     .sendEvent({
     //       type: 'chat',
     //       chat: {
@@ -318,7 +318,7 @@
 
       console.log('Game: ReplayBatchs:', batchs);
       return R.threadP(game)(
-        commandsService.replayBatchP$(batchs[0], state),
+        commandsModel.replayBatchP$(batchs[0], state),
         recurP
       );
 

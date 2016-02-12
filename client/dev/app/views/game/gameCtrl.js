@@ -4,7 +4,7 @@
   angular.module('clickApp.controllers').controller('gameCtrl', gameCtrl);
 
   gameCtrl.$inject = ['$scope', '$stateParams', 'modes'];
-  function gameCtrl($scope, $stateParams, modesService) {
+  function gameCtrl($scope, $stateParams, modesModel) {
     var vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -15,7 +15,7 @@
     vm.hints = {};
     vm.show_action_group = null;
 
-    // vm.currentModeName = currentModeName;
+    vm.currentModeName = currentModeName;
     // vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     // vm.doActionButton = doActionButton;
@@ -64,17 +64,14 @@
     // }
 
     function updateCurrentModeBindings() {
-      vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesService.currentModeBindings, R.clone);
-      vm.action_buttons = R.thread($scope)(R.path(['state', 'modes']), modesService.currentModeButtons, R.clone);
+      vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeBindings, R.clone);
+      vm.action_buttons = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeButtons, R.clone);
       $scope.$digest();
     }
 
-    // function currentModeName() {
-    //   return R.thread($scope)(
-    //     R.pathOr({}, ['state', 'modes']),
-    //     modesService.currentModeName
-    //   );
-    // }
+    function currentModeName() {
+      return R.thread($scope)(R.pathOr({}, ['state', 'modes']), modesModel.currentModeName);
+    }
     // function currentModeIs(mode) {
     //   return currentModeName() === mode;
     // }

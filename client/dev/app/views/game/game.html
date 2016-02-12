@@ -123,10 +123,10 @@
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'b'" -->
         <!--    click-game-terrains-list="active"> -->
         <!-- </g> -->
-        <!-- <g id="game-deploiement" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'d'" -->
-        <!--    ng-include="'app/components/game/deploiement.html'"> -->
-        <!-- </g> -->
+        <g id="game-deploiement"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'d'"
+           ng-include="'app/components/game/deploiement/deploiement.html'">
+        </g>
         <!-- <g id="game-scenario" -->
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'s'" -->
         <!--    ng-include="'app/components/game/scenario.html'"> -->
@@ -222,18 +222,18 @@
         <!-- </form> -->
       </p>
       <ul class="nav nav-tabs">
-        <li class="{{stateIs('game.main') ? 'active' : ''}}"
-            ng-click="goToState('^.main')">
+        <li class="{{app.stateIs('game.main') ? 'active' : ''}}"
+            ng-click="app.goToState('^.main')">
           <a class="{{ game.hints.go_to_main ? 'go-to-hint' : ''}}">Main</a>
         </li>
         <!-- <li class="{{stateIs('game.model') ? 'active' : ''}}" -->
         <!--     ng-click="goToState('^.model')"> -->
         <!--   <a>Model</a> -->
         <!-- </li> -->
-        <!-- <li class="{{stateIs('game.setup') ? 'active' : ''}}" -->
-        <!--     ng-click="goToState('^.setup')"> -->
-        <!--   <a>Setup</a> -->
-        <!-- </li> -->
+        <li class="{{app.stateIs('game.setup') ? 'active' : ''}}"
+            ng-click="app.goToState('^.setup')">
+          <a>Setup</a>
+        </li>
         <!-- <li class="{{stateIs('game.log') ? 'active' : ''}}" -->
         <!--     ng-click="goToState('^.log')"> -->
         <!--   <a>Log</a> -->

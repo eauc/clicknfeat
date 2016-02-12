@@ -30,7 +30,7 @@ describe('game model', function() {
       [ { players: { p1: { name: null },
                      p2: { name: 'p2' } } }, 'John Doe vs P2' ],
       [ { players: { p1: { name: 'p1' },
-                       p2: { name: 'p2' } } }, 'P1 vs P2' ],
+                     p2: { name: 'p2' } } }, 'P1 vs P2' ],
     ]);
   });
 
@@ -130,7 +130,7 @@ describe('game model', function() {
           // terrain_selection: { local: [],
           //                      remote: []
           //                    },
-          // layers: ['b','d','s','m','t']
+          layers: ['b','d','s','m','t']
         });
     });
 
