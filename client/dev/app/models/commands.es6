@@ -30,7 +30,7 @@
     const CMDS_REG = {};
     const commandsModel = {
       registerCommand: commandsRegister,
-      // executeP: commandsExecuteP,
+      executeP: commandsExecuteP,
       // undoP: commandsUndoP,
       replayP: commandsReplayP,
       replayBatchP: commandsReplayBatchP
@@ -42,20 +42,23 @@
       console.log('register command', name, command);
       CMDS_REG[name] = command;
     }
-    // function commandsExecuteP(name, args, state, game) {
-    //   return R.pipePromise(
-    //     R.prop(name),
-    //     R.rejectIf(R.isNil, `execute unknown command "${name}"`),
-    //     (cmd) => {
-    //       return cmd.execute.apply(null, [...args, state, game]);
-    //     },
-    //     ([ctxt, game]) => {
-    //       return [ R.assoc('type', name, ctxt),
-    //                game
-    //              ];
-    //     }
-    //   )(CMD_REGS);
-    // }
+    function commandsExecuteP(name, args, state, game) {
+      return R.threadP(CMDS_REG)(
+        R.prop(name),
+        R.rejectIf(R.isNil, `Game: execute unknown command "${name}"`),
+        (cmd) => {
+          return cmd.executeP
+            .apply(null, [...args, state, game]);
+        },
+        updateCommandType
+      );
+
+      function updateCommandType([ctxt, game]) {
+        return [ R.assoc('type', name, ctxt),
+                 game
+               ];
+      }
+    }
     // function commandsUndoP(ctxt, state, game) {
     //   return R.pipePromise(
     //     R.prop(ctxt.type),

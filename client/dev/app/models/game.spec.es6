@@ -140,4 +140,133 @@ describe('game model', function() {
                               this.state, this.context);
     });
   });
+
+  context('executeCommandP(<...args...>, <scope>, <game>)', function() {
+    return this.gameModel
+      .executeCommandP('cmd', ['arg1', 'arg2'], this.state, this.game);
+  }, function() {
+    beforeEach(function() {
+      this.game = { commands: [],
+                    commands_log: [],
+                    dice: []
+                  };
+      this.state = jasmine.createSpyObj('state', [
+        'queueChangeEventP'
+      ]);
+      this.state.user = { state: { name: 'user' } };
+
+      this.commandsModel = spyOnService('commands');
+      this.commandsModel.executeP.resolveWith([
+        { command: 'ctxt' },
+        this.game
+      ]);
+      spyOn(R, 'guid').and.returnValue('stamp');
+    });
+
+    it('should proxy commandsModel.execute', function() {
+      expect(this.commandsModel.executeP)
+        .toHaveBeenCalledWith('cmd', ['arg1', 'arg2'], this.state, this.game);
+    });
+
+    context('when commandsModel.execute fails', function() {
+      this.commandsModel.executeP.rejectWith('reason');
+      this.expectContextError();
+    }, function() {
+      it('should discard command', function() {
+        expect(this.contextError).toEqual([
+          'reason'
+        ]);
+      });
+    });
+
+    // context('when game connection is active', function() {
+    //   this.gameConnectionModel.active
+    //     .and.returnValue(true);
+    // }, function() {
+    //   beforeEach(function() {
+    //     this.gameConnectionModel.sendReplayCommandP
+    //       .resolveWith(this.game);
+    //   });
+
+    //   it('should send replay command', function() {
+    //     expect(this.gameConnectionModel.sendReplayCommandP)
+    //       .toHaveBeenCalledWith({ command: 'ctxt',
+    //                               user: 'user',
+    //                               stamp: 'stamp'
+    //                             }, this.game);
+    //   });
+
+    //   it('should send "Game.command.execute" changeEvent', function() {
+    //     expect(this.state.queueChangeEventP)
+    //       .toHaveBeenCalledWith('Game.command.execute');
+    //   });
+
+    //   it('should not change game', function() {
+    //     expect(this.context.commands).toEqual([]);
+    //   });
+    // });
+
+    context('when command is loggable', function() {
+      this.commandsModel.executeP
+        .resolveWith([
+          { do_not_log: false },
+          this.game
+        ]);
+    }, function() {
+      it('should register command', function() {
+        expect(this.context.commands)
+          .toEqual([
+            { do_not_log: false, user: 'user', stamp: 'stamp' }
+          ]);
+      });
+    });
+
+    example(function(e) {
+      context('when command type is '+e.type, function() {
+        this.commandsModel.executeP
+          .resolveWith([
+            { type: e.type },
+            this.game
+          ]);
+      }, function() {
+        it('should append command to game dice', function() {
+          expect(this.context.dice)
+            .toEqual([
+              { type: e.type, user: 'user', stamp: 'stamp' }
+            ]);
+        });
+      });
+    }, [
+      [ 'type' ],
+      [ 'rollDice' ],
+      [ 'rollDeviation' ],
+    ]);
+
+    context('when command is not loggable', function() {
+      this.commandsModel.executeP
+        .resolveWith([
+          { do_not_log: true },
+          this.game
+        ]);
+    }, function() {
+      it('should not register command', function() {
+        expect(this.context.commands)
+          .toEqual([]);
+      });
+    });
+
+    it('should send "Game.command.execute" changeEvent', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.command.execute');
+    });
+
+    it('should return updated game', function() {
+      expect(this.context)
+        .toEqual({
+          commands: [ { command: 'ctxt', user: 'user', stamp: 'stamp' } ],
+          commands_log: [],
+          dice: []
+        });
+    });
+  });
 });

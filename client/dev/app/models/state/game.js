@@ -5,8 +5,7 @@
 
   stateGameModelFactory.$inject = [
   // '$window',
-  'games', 'game'];
-
+  'games', 'game',
   // 'gameBoard',
   // 'gameConnection',
   // 'gameFactions',
@@ -16,27 +15,29 @@
   // 'gameTerrains',
   // 'fileImport',
   // 'stateExports',
-  // 'allCommands',
+  'allCommands'];
+
   // 'allTemplates',
   function stateGameModelFactory( // $window,
-  gamesService, gameService) {
-    // gameBoardService,
-    // gameConnectionService,
-    // gameFactionsService,
-    // gameModelsService,
-    // gameModelSelectionService,
-    // gameScenarioService,
-    // gameTerrainsService,
-    // fileImportService,
-    // stateExportsService
+  gamesModel, gameModel) {
+    // gameBoardModel,
+    // gameConnectionModel,
+    // gameFactionsModel,
+    // gameModelsModel,
+    // gameModelSelectionModel,
+    // gameScenarioModel,
+    // gameTerrainsModel,
+    // fileImportModel,
+    // stateExportsModel
     // ) {
     var stateGameModel = {
       create: stateGamesCreate,
       save: stateGameSave,
-      onGameLoad: stateGameOnLoad
+      onGameLoad: stateGameOnLoad,
+      // onGameConnectionClose: stateGameOnConnectionClose,
+      onGameCommandExecute: stateGameOnCommandExecute
     };
-    // onGameConnectionClose: stateGameOnConnectionClose,
-    // onGameCommandExecute: stateGameOnCommandExecute,
+
     // onGameCommandUndo: stateGameOnCommandUndo,
     // onGameCommandUndoLast: stateGameOnCommandUndoLast,
     // onGameCommandReplay: stateGameOnCommandReplay,
@@ -59,11 +60,11 @@
     // onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
     // onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
     var setGame$ = R.curry(setGame);
-    // var gameActionError$ = R.curry(gameActionError);
-    // var exportCurrentGame = stateExportsService
+    // var exportCurrentGame = stateExportsModel
     //       .export$('game', R.prop('game'));
-    // var exportCurrentBoard = stateExportsService
+    // var exportCurrentBoard = stateExportsModel
     //       .export$('board', exportBoardData);
+
     R.curryService(stateGameModel);
     return stateGameModel;
 
@@ -73,8 +74,7 @@
       state.onEvent('Game.load', stateGameModel.onGameLoad$(state));
       // state.onEvent('Game.connection.close',
       //               stateGameModel.onGameConnectionClose$(state));
-      // state.onEvent('Game.command.execute',
-      //               stateGameModel.onGameCommandExecute$(state));
+      state.onEvent('Game.command.execute', stateGameModel.onGameCommandExecute$(state));
       // state.onEvent('Game.command.undo',
       //               stateGameModel.onGameCommandUndo$(state));
       // state.onEvent('Game.command.replay',
@@ -132,13 +132,16 @@
       );
     }
     function stateGameOnLoad(state, event, is_online, is_private, id) {
-      return R.threadP(waitForDataReady())(loadStoredGameData, broadcast('Game.loading'), setGame$(state), resetModes, gameService.loadP$(state),
+      return R.threadP(waitForDataReady())(loadStoredGameData, broadcast('Game.loading'), setGame$(state), resetModes, gameModel.loadP$(state),
       // (game) => {
       //   return new self.Promise((resolve, reject) => {
       //     setTimeout(resolve, 3000);
       //   });
       // },
-      broadcast('Game.loaded'),
+      function (game) {
+        state.queueChangeEventP('Game.loaded');
+        return game;
+      },
       // connectOnlineGame,
       setGame$(state), broadcast('Game.load.success')).catch(onError);
 
@@ -146,7 +149,7 @@
         return self.Promise.all([state.data_ready, state.user_ready, state.games_ready]);
       }
       function loadStoredGameData() {
-        return is_online ? gamesService.loadOnlineGame(is_private, id) : gamesService.loadLocalGameP(id, state.local_games);
+        return is_online ? gamesModel.loadOnlineGame(is_private, id) : gamesModel.loadLocalGameP(id, state.local_games);
       }
       function broadcast(event) {
         return function (game) {
@@ -160,7 +163,7 @@
       // function connectOnlineGame(game) {
       //   if(!is_online) return game;
 
-      //   return gameConnectionService
+      //   return gameConnectionModel
       //     .open$(R.path(['user','state','name'], state), state, game);
       // }
       function onError(error) {
@@ -170,45 +173,42 @@
     // function stateGameOnConnectionClose(state, event) {
     //   event = event;
     //   return R.pipe(
-    //     gameConnectionService.cleanup,
+    //     gameConnectionModel.cleanup,
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnCommandExecute(state, event, cmd, args) {
-    //   return R.pipeP(
-    //     gameService.executeCommand$(cmd, args, state),
-    //     setGame$(state)
-    //   )(state.game).catch(gameActionError$(state));
-    // }
+    function stateGameOnCommandExecute(state, event, cmd, args) {
+      return R.threadP(state.game)(gameModel.executeCommandP$(cmd, args, state), setGame$(state)).catch(gameModel.actionError$(state));
+    }
     // function stateGameOnCommandUndo(state, event, cmd) {
     //   return R.pipeP(
-    //     gameService.undoCommand$(cmd, state),
+    //     gameModel.undoCommand$(cmd, state),
     //     setGame$(state)
     //   )(state.game);
     // }
     // function stateGameOnCommandUndoLast(state, event) {
     //   event = event;
     //   return R.pipeP(
-    //     gameService.undoLastCommand$(state),
+    //     gameModel.undoLastCommand$(state),
     //     setGame$(state)
     //   )(state.game).catch(gameActionError$(state));
     // }
     // function stateGameOnCommandReplay(state, event, cmd) {
     //   return R.pipeP(
-    //     gameService.replayCommand$(cmd, state),
+    //     gameModel.replayCommand$(cmd, state),
     //     setGame$(state)
     //   )(state.game);
     // }
     // function stateGameOnCommandReplayBatch(state, event, cmds) {
     //   return R.pipeP(
-    //     gameService.replayCommandsBatch$(cmds, state),
+    //     gameModel.replayCommandsBatch$(cmds, state),
     //     setGame$(state)
     //   )(state.game);
     // }
     // function stateGameOnCommandReplayNext(state, event) {
     //   event = event;
     //   return R.pipeP(
-    //     gameService.replayNextCommand$(state),
+    //     gameModel.replayNextCommand$(state),
     //     setGame$(state)
     //   )(state.game).catch(gameActionError$(state));
     // }
@@ -269,7 +269,7 @@
     //   let user = R.pathOr('Unknown', ['user','state','name'], state);
     //   state.create = R.assoc(
     //     'model',
-    //     gameFactionsService
+    //     gameFactionsModel
     //       .buildModelsList(list, user, state.factions.references),
     //     state.create
     //   );
@@ -278,7 +278,7 @@
     // }
     // function stateGameOnModelImportFile(state, event, file) {
     //   return R.pipeP(
-    //     fileImportService.read$('json'),
+    //     fileImportModel.read$('json'),
     //     (create) => {
     //       state.create = R.assoc('model', create, state.create);
     //       return state.event('Modes.switchTo', 'CreateModel');
@@ -306,7 +306,7 @@
     //   event = event;
     //   return R.pipePromise(
     //     () => {
-    //       return gameTerrainsService.all(state.game.terrains);
+    //       return gameTerrainsModel.all(state.game.terrains);
     //     },
     //     R.pluck('state'),
     //     R.pluck('stamp'),
@@ -317,23 +317,23 @@
     //   )().catch(gameActionError$(state));
     // }
     // function stateGameOnBoardSet(state, event, name) {
-    //   let board = gameBoardService.forName(name, state.boards);
+    //   let board = gameBoardModel.forName(name, state.boards);
     //   return state.event('Game.command.execute',
     //                      'setBoard', [board]);
     // }
     // function stateGameOnBoardSetRandom(state, event) {
     //   event = event;
-    //   let board, name = gameBoardService.name(state.game.board);
-    //   while(name === gameBoardService.name(state.game.board)) {
+    //   let board, name = gameBoardModel.name(state.game.board);
+    //   while(name === gameBoardModel.name(state.game.board)) {
     //     board = state.boards[R.randomRange(0, state.boards.length-1)];
-    //     name = gameBoardService.name(board);
+    //     name = gameBoardModel.name(board);
     //   }
     //   return state.event('Game.command.execute',
     //                      'setBoard', [board]);
     // }
     // function stateGameOnBoardImportFile(state, event, file) {
     //   return R.pipeP(
-    //     fileImportService.read$('json'),
+    //     fileImportModel.read$('json'),
     //     (board_info) => {
     //       return R.pipePromise(
     //         () => {
@@ -358,17 +358,17 @@
     //   )(file).catch(R.always(null));
     // }
     // function stateGameOnScenarioSet(state, event, name, group) {
-    //   let scenario = gameScenarioService.forName(name, group);
+    //   let scenario = gameScenarioModel.forName(name, group);
     //   return state.event('Game.command.execute',
     //                      'setScenario', [scenario]);
     // }
     // function stateGameOnScenarioSetRandom(state, event) {
     //   event = event;
-    //   var group = gameScenarioService.group('SR15', state.scenarios);
-    //   var scenario, name = gameScenarioService.name(state.game.scenario);
-    //   while(name === gameScenarioService.name(state.game.scenario)) {
+    //   var group = gameScenarioModel.group('SR15', state.scenarios);
+    //   var scenario, name = gameScenarioModel.name(state.game.scenario);
+    //   while(name === gameScenarioModel.name(state.game.scenario)) {
     //     scenario = group[1][R.randomRange(0, group[1].length-1)];
-    //     name = gameScenarioService.name(scenario);
+    //     name = gameScenarioModel.name(scenario);
     //   }
     //   return state.event('Game.command.execute',
     //                      'setScenario', [scenario]);
@@ -377,7 +377,7 @@
     //   event = event;
     //   return R.pipePromise(
     //     () => {
-    //       return gameModelsService.all(state.game.models);
+    //       return gameModelsModel.all(state.game.models);
     //     },
     //     R.filter(R.pipe(
     //       R.path(['state','info']),
@@ -390,7 +390,7 @@
     //                          'deleteModel', [stamps]);
     //     },
     //     () => {
-    //       return gameScenarioService
+    //       return gameScenarioModel
     //         .createObjectives(state.game.scenario);
     //     },
     //     (objectives) => {
@@ -406,51 +406,44 @@
       state.queueChangeEventP('Game.change');
       return game;
     }
-    // function gameActionError(state, error) {
-    //   state.changeEvent('Game.action.error', error);
-    //   return null;
-    //   // return self.Promise.reject(error);
-    // }
-    // function saveCurrentGame(state) {
-    //   if(state._game === state.game) return null;
-    //   state._game = state.game;
+    function saveCurrentGame(state) {
+      if (state._game === state.game) return null;
+      state._game = state.game;
 
-    //   if(R.isNil(R.path(['game','local_stamp'], state))) return null;
-    //   return R.pipePromise(
-    //     R.always(state.local_games),
-    //     gamesService.updateLocalGame$(state.game),
-    //     (games) => {
-    //       state.local_games = games;
-    //       console.log('stateSetLocalGames', state.local_games);
-    //       state.changeEvent('Games.local.change');
-    //     }
-    //   )();
-    // }
+      if (R.isNil(R.path(['game', 'local_stamp'], state))) {
+        return null;
+      }
+      return R.thread(state.local_games)(gamesModel.updateLocalGame$(state.game), function (games) {
+        state.local_games = games;
+        console.log('stateSetLocalGames', state.local_games);
+        state.queueChangeEventP('Games.local.change');
+      });
+    }
     // function exportCurrentModelSelection(state) {
-    //   return stateExportsService
+    //   return stateExportsModel
     //     .export('models', R.pipePromise(
     //       R.path(['game','model_selection']),
-    //       stateExportsService.rejectIf$(R.isNil),
-    //       gameModelSelectionService.get$('local'),
-    //       stateExportsService.rejectIf$(R.isEmpty),
+    //       stateExportsModel.rejectIf$(R.isNil),
+    //       gameModelSelectionModel.get$('local'),
+    //       stateExportsModel.rejectIf$(R.isEmpty),
     //       (stamps) => {
-    //         return gameModelsService
+    //         return gameModelsModel
     //           .copyStamps(stamps, R.path(['game', 'models'], state));
     //       },
-    //       stateExportsService.rejectIf$(R.isEmpty)
+    //       stateExportsModel.rejectIf$(R.isEmpty)
     //     ), state);
     // }
     // function exportBoardData(state) {
     //   return R.threadP(state)(
     //     R.prop('game'),
-    //     stateExportsService.rejectIf$(R.isNil),
+    //     stateExportsModel.rejectIf$(R.isNil),
     //     (game) => {
     //       return {
     //         board: game.board,
     //         terrain: {
     //           base: { x: 0, y: 0, r: 0 },
     //           terrains: R.pipe(
-    //             gameTerrainsService.all,
+    //             gameTerrainsModel.all,
     //             R.pluck('state'),
     //             R.map(R.pick(['x','y','r','info','lk']))
     //           )(game.terrains)

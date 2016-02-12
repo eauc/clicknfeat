@@ -20,6 +20,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var stateService = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
+      queueChangeEventP: stateQueueChangeEventP,
       onChangeEvent: stateOnChangeEvent
     };
     // onLoadDumpFile: stateOnLoadDumpFile
@@ -65,10 +66,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           args[_key3] = arguments[_key3];
         }
 
-        return new self.Promise(function (resolve) {
-          console.info('StateChange <---', args[0], R.tail(args));
-          state.change_event_queue = R.append([resolve, args], state.change_event_queue);
-        });
+        return stateQueueChangeEventP(args, state);
       }
       function eventP() {
         for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
@@ -129,6 +127,12 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         state.event_queue = R.tail(state.event_queue);
         resolve();
         return processNextEventP(state);
+      });
+    }
+    function stateQueueChangeEventP(args, state) {
+      return new self.Promise(function (resolve) {
+        console.info('StateChange <---', args[0], R.tail(args));
+        state.change_event_queue = R.append([resolve, args], state.change_event_queue);
       });
     }
     function processNextChangeEventP(state) {

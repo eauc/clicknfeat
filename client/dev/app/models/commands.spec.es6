@@ -2,24 +2,92 @@ describe('commandsModel', function() {
   beforeEach(inject([ 'commands', function(commandsModel) {
     this.commandsModel = commandsModel;
 
+    this.state = { state: 'state' };
+    this.game = { game: 'game' };
     this.game = { game: 'game' };
     this.cmd1 = jasmine.createSpyObj('cmd1', [
       'executeP', 'replayP', 'undoP'
     ]);
-    this.cmd1.replayP.and.returnValue('cmd1.returnValue');
     this.cmd2 = jasmine.createSpyObj('cmd2', [
       'executeP', 'replayP', 'undoP'
     ]);
-    this.cmd2.replayP.and.returnValue('cmd2.returnValue');
 
     this.commandsModel.registerCommand('cmd1',this.cmd1);
     this.commandsModel.registerCommand('cmd2',this.cmd2);
   }]));
 
+  context('execute(<name>, <args>, <state>, <game>)', function() {
+    return this.commandsModel
+      .executeP(this.name, this.args, this.state, this.game);
+  }, function() {
+    beforeEach(function() {
+      this.cmd1.executeP.and.returnValue([
+        { returnValue: 'cmd1' },
+        this.game
+      ]);
+      this.cmd2.executeP.and.returnValue([
+        { 'returnValue': 'cmd2' },
+        this.game
+      ]);
+
+      this.args = ['arg1', 'arg2'];
+    });
+
+    context('when <name> is unknown', function() {
+      this.name = 'unknown';
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual([
+          'Game: execute unknown command "unknown"'
+        ]);
+      });
+    });
+
+    example(function(e, d) {
+      context('when <name> is known, '+d, function() {
+        this.name = e.cmd;
+      }, function() {
+        it('should proxy <name>.execute', function() {
+          expect(this[e.cmd].executeP)
+            .toHaveBeenCalledWith('arg1', 'arg2', this.state, this.game);
+        });
+
+        it('should return context', function() {
+          expect(this.context).toEqual([
+            { type: e.cmd, returnValue: e.cmd },
+            this.game
+          ]);
+        });
+      });
+    }, [
+      [ 'cmd' ],
+      [ 'cmd1' ],
+      [ 'cmd2' ],
+    ]);
+
+    context('when <name>.execute reject promise', function() {
+      spyReturnPromise(this.cmd1.executeP);
+      this.cmd1.executeP.rejectWith('reason');
+      this.name = 'cmd1';
+      this.expectContextError();
+    }, function() {
+      it('should also reject promise', function() {
+        expect(this.contextError)
+          .toEqual(['reason']);
+      });
+    });
+  });
+
   context('replayP(<ctxt>, <scope>, <game>)', function() {
     return this.commandsModel
       .replayP(this.cmd, 'state', 'game');
   }, function() {
+    beforeEach(function() {
+      this.cmd1.replayP.and.returnValue('cmd1.returnValue');
+      this.cmd2.replayP.and.returnValue('cmd2.returnValue');
+    });
+
     context('when <ctxt.type> is unknown', function() {
       this.cmd = { type: 'unknown' };
       this.expectContextError();

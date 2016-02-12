@@ -23,6 +23,7 @@
     const stateService = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
+      queueChangeEventP: stateQueueChangeEventP,
       onChangeEvent: stateOnChangeEvent,
       // onLoadDumpFile: stateOnLoadDumpFile
     };
@@ -61,12 +62,7 @@
         return stateQueueEventP(args, state);
       }
       function queueChangeEventP(...args) {
-        return new self.Promise((resolve) => {
-          console.info('StateChange <---', args[0], R.tail(args));
-          state.change_event_queue = R.append([
-            resolve, args
-          ], state.change_event_queue);
-        });
+        return stateQueueChangeEventP(args, state);
       }
       function eventP(...args) {
         return stateEventP(args, state);
@@ -110,6 +106,14 @@
           resolve();
           return processNextEventP(state);
         });
+    }
+    function stateQueueChangeEventP(args, state) {
+      return new self.Promise((resolve) => {
+        console.info('StateChange <---', args[0], R.tail(args));
+        state.change_event_queue = R.append([
+          resolve, args
+        ], state.change_event_queue);
+      });
     }
     function processNextChangeEventP(state) {
       if(R.isEmpty(state.change_event_queue)) {

@@ -35,7 +35,7 @@
       // pickForJson: gamePickForJson,
       toJson: gameToJson,
       description: gameDescription,
-      // executeCommand: gameExecuteCommand,
+      executeCommandP: gameExecuteCommandP,
       // undoCommand: gameUndoCommand,
       // undoLastCommand: gameUndoLastCommand,
       // replayCommand: gameReplayCommand,
@@ -121,44 +121,53 @@
                s.capitalize(gamePlayerName('p2', game))
              ].join(' ');
     }
-    // function gameExecuteCommand(cmd, args, state, game) {
-    //   return R.pipeP(
-    //     () => {
-    //       return commandsService.execute
-    //         .apply(null, [cmd, args, state, game]);
-    //     },
-    //     ([command, game]) => {
-    //       return [ R.pipe(
-    //         R.assoc('user', R.pathOr('Unknown', ['user','state','name'], state)),
-    //         R.assoc('stamp', R.guid())
-    //       )(command),
-    //                game
-    //              ];
-    //     },
-    //     ([command, game]) => {
-    //       if(gameConnectionService.active(game)) {
-    //         return gameConnectionService
-    //           .sendReplayCommand(command, game);
-    //       }
-    //       if(!command.do_not_log) {
-    //         game = R.over(R.lensProp('commands'),
-    //                       R.append(command),
-    //                       game);
-    //       }
-    //       if(command.type === 'rollDice' ||
-    //          command.type === 'rollDeviation') {
-    //         game = R.over(R.lensProp('dice'),
-    //                       R.append(command),
-    //                       game);
-    //       }
-    //       return game;
-    //     },
-    //     (game) => {
-    //       state.changeEvent('Game.command.execute');
-    //       return game;
-    //     }
-    //   )();
-    // }
+    function gameExecuteCommandP(cmd, args, state, game) {
+      return R.threadP(commandsModel.executeP(cmd, args, state, game))(
+        stampCommand,
+        ([command, game]) => {
+          // if(R.always(gameConnectionModel.active(game))) {
+          //   return gameConnectionModel
+          //     .sendReplayCommand(command, game);
+          // }
+          return logLocalCommand([command, game]);
+        },
+        emitGameEvent
+      );
+
+      function stampCommand([command, game]) {
+        return [ R.thread(command)(
+          R.assoc('user', R.pathOr('Unknown', ['user','state','name'], state)),
+          R.assoc('stamp', R.guid())
+        ), game ];
+      }
+      function logLocalCommand(args) {
+        return R.thread(args)(
+          appendToCommands,
+          updateDice
+        );
+      }
+      function appendToCommands([command, game]) {
+        if(!command.do_not_log) {
+          game = R.over(R.lensProp('commands'),
+                        R.append(command),
+                        game);
+        }
+        return [command, game];
+      }
+      function updateDice([command, game]) {
+        if(command.type === 'rollDice' ||
+           command.type === 'rollDeviation') {
+          game = R.over(R.lensProp('dice'),
+                        R.append(command),
+                        game);
+        }
+        return [command, game];
+      }
+      function emitGameEvent([command, game]) {
+        state.queueChangeEventP('Game.command.execute');
+        return game;
+      }
+    }
     // function gameUndoCommand(command, state, game) {
     //   return R.pipePromise(
     //     R.propOr([], 'undo_log'),
