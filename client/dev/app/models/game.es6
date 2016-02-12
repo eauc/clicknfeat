@@ -41,14 +41,17 @@
       // replayCommand: gameReplayCommand,
       // replayCommandsBatch: gameReplayCommandsBatch,
       // replayNextCommand: gameReplayNextCommand,
-      // sendChat: gameSendChat
+      // sendChat: gameSendChat,
+      actionError: gameActionError
     };
+
     const GAME_PROTO = {
       toJSON: function gameToJson() {
         return gameModel.pickForJson(this);
       }
     };
     const gameReplayAllP$ = R.curry(gameReplayAllP);
+
     R.curryService(gameModel);
     return gameModel;
 
@@ -329,6 +332,10 @@
           resolve(gameReplayBatchsP(batchs, state, game));
         });
       });
+    }
+    function gameActionError(state, error) {
+      state.queueChangeEventP('Game.action.error', error);
+      return null;
     }
   }
 })();

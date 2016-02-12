@@ -5,8 +5,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.services').factory('stateModes', stateModesModelFactory);
 
-  stateModesModelFactory.$inject = ['modes', 'allModes'];
-  function stateModesModelFactory(modesModel) {
+  stateModesModelFactory.$inject = ['modes', 'game', 'allModes'];
+  function stateModesModelFactory(modesModel, gameModel) {
     var stateModesModel = {
       create: stateModesCreate,
       save: stateModesSave,
@@ -17,7 +17,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     };
 
     var setModes$ = R.curry(setModes);
-    var gameActionError$ = R.curry(gameActionError);
 
     R.curryService(stateModesModel);
     return stateModesModel;
@@ -35,7 +34,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return state;
     }
     function stateModesOnSwitchTo(state, event, to) {
-      return R.threadP(state.modes)(modesModel.switchToModeP$(to, state), setModes$(state)).catch(gameActionError$(state));
+      return R.threadP(state.modes)(modesModel.switchToModeP$(to, state), setModes$(state)).catch(gameModel.actionError$(state));
     }
     function stateModesOnCurrentAction(state, e, action, args) {
       var res = modesModel.currentModeActionP(action, [state].concat(_toConsumableArray(args)), state.modes);
@@ -44,7 +43,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         event.preventDefault();
       }
 
-      return self.Promise.resolve(res).catch(gameActionError$(state));
+      return self.Promise.resolve(res).catch(gameModel.actionError$(state));
     }
     function stateModesOnReset(state, event) {
       event = event;
@@ -57,10 +56,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function setModes(state, modes) {
       state.modes = modes;
       state.queueChangeEventP('Modes.change');
-    }
-    function gameActionError(state, error) {
-      state.queueChangeEventP('Game.action.error', error);
-      return null;
     }
   }
 })();

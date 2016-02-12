@@ -4,9 +4,11 @@
 
   stateModesModelFactory.$inject = [
     'modes',
+    'game',
     'allModes',
   ];
-  function stateModesModelFactory(modesModel) {
+  function stateModesModelFactory(modesModel,
+                                  gameModel) {
     const stateModesModel = {
       create: stateModesCreate,
       save: stateModesSave,
@@ -17,7 +19,6 @@
     };
 
     const setModes$ = R.curry(setModes);
-    const gameActionError$ = R.curry(gameActionError);
 
     R.curryService(stateModesModel);
     return stateModesModel;
@@ -42,7 +43,7 @@
       return R.threadP(state.modes)(
         modesModel.switchToModeP$(to, state),
         setModes$(state)
-      ).catch(gameActionError$(state));
+      ).catch(gameModel.actionError$(state));
     }
     function stateModesOnCurrentAction(state, e, action, args) {
       const res = modesModel
@@ -53,7 +54,7 @@
       }
 
       return self.Promise.resolve(res)
-        .catch(gameActionError$(state));
+        .catch(gameModel.actionError$(state));
     }
     function stateModesOnReset(state, event) {
       event = event;
@@ -72,10 +73,6 @@
     function setModes(state, modes) {
       state.modes = modes;
       state.queueChangeEventP('Modes.change');
-    }
-    function gameActionError(state, error) {
-      state.queueChangeEventP('Game.action.error', error);
-      return null;
     }
   }
 })();

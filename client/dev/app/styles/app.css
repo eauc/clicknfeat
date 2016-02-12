@@ -122,7 +122,7 @@ a:not([href]):focus {
   width: 100%;
   font-size: 1.5em;
   opacity: 0.8; }
-#game #game-warn-mode {
+#game #game-action-error {
   z-index: 3000;
   position: absolute;
   top: 50%;
@@ -130,10 +130,10 @@ a:not([href]):focus {
   color: #CCC;
   background-color: #F00;
   opacity: 0.8; }
-  #game #game-warn-mode .warn-mode-name {
+  #game #game-action-error .action-error-mode-name {
     font-size: 3em;
     font-weight: bold; }
-  #game #game-warn-mode .warn-reason {
+  #game #game-action-error .action-error-reason {
     font-size: 2em; }
 #game #selection-osd {
   z-index: 2000;

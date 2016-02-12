@@ -45,20 +45,20 @@
         opacity: 0.8;
     }
 
-    #game-warn-mode {
+    #game-action-error {
         z-index: (3*$osd-zindex);
         position: absolute;
         top: 50%;
         width: 100%;
-        color: $warn-text-color;
-        background-color: $warn-fill-color;
+        color: $action-error-text-color;
+        background-color: $action-error-fill-color;
         opacity: 0.8;
 
-        .warn-mode-name {
+        .action-error-mode-name {
             font-size: 3em;
             font-weight: bold;
         }
-        .warn-reason {
+        .action-error-reason {
             font-size: 2em;
         }
     }

@@ -32,21 +32,23 @@
       loadP: gameLoadP,
       // pickForJson: gamePickForJson,
       toJson: gameToJson,
-      description: gameDescription
+      description: gameDescription,
+      // undoCommand: gameUndoCommand,
+      // undoLastCommand: gameUndoLastCommand,
+      // replayCommand: gameReplayCommand,
+      // replayCommandsBatch: gameReplayCommandsBatch,
+      // replayNextCommand: gameReplayNextCommand,
+      // sendChat: gameSendChat,
+      actionError: gameActionError
     };
-    // executeCommand: gameExecuteCommand,
-    // undoCommand: gameUndoCommand,
-    // undoLastCommand: gameUndoLastCommand,
-    // replayCommand: gameReplayCommand,
-    // replayCommandsBatch: gameReplayCommandsBatch,
-    // replayNextCommand: gameReplayNextCommand,
-    // sendChat: gameSendChat
+
     var GAME_PROTO = {
       toJSON: function gameToJson() {
         return gameModel.pickForJson(this);
       }
     };
     var gameReplayAllP$ = R.curry(gameReplayAllP);
+
     R.curryService(gameModel);
     return gameModel;
 
@@ -313,6 +315,10 @@
           resolve(gameReplayBatchsP(batchs, state, game));
         });
       });
+    }
+    function gameActionError(state, error) {
+      state.queueChangeEventP('Game.action.error', error);
+      return null;
     }
   }
 })();
