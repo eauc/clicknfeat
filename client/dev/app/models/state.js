@@ -115,9 +115,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       // () => { return stateDataService.save(state); },
       function () {
         return stateUserService.save(state);
-      },
-      // () => { return stateGameService.save(state); },
-      function () {
+      }, function () {
+        return stateGameService.save(state);
+      }, function () {
         return stateGamesService.save(state);
       }, function () {
         return stateModesService.save(state);

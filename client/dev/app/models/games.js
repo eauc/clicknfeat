@@ -16,9 +16,9 @@
       saveLocalGame: gamesSaveLocalGame,
       loadLocalGameP: gamesLoadLocalGameP,
       newLocalGame: gamesNewLocalGame,
-      removeLocalGame: gamesRemoveLocalGame
+      removeLocalGame: gamesRemoveLocalGame,
+      updateLocalGame: gamesUpdateLocalGame
     };
-    // updateLocalGame: gamesUpdateLocalGame,
     // newOnlineGame: gamesNewOnlineGame,
     // loadOnlineGame: gamesLoadOnlineGame
     R.curryService(gamesModel);
@@ -47,15 +47,10 @@
     function gamesRemoveLocalGame(id, games) {
       return R.thread(LOCAL_GAME_STORAGE_KEY + id)(localStorageService.removeItem, R.always(games), R.reject(R.propEq('local_stamp', id)));
     }
-    // function gamesUpdateLocalGame(game, games) {
-    //   return R.pipePromise(
-    //     R.always(game),
-    //     gamesModel.saveLocalGame,
-    //     R.always(games),
-    //     R.update(R.findIndex(R.propEq('local_stamp', game.local_stamp), games),
-    //              game)
-    //   )();
-    // }
+    function gamesUpdateLocalGame(game, games) {
+      var game_index = R.findIndex(R.propEq('local_stamp', game.local_stamp), games);
+      return R.thread(game)(gamesModel.saveLocalGame, R.always(games), R.update(game_index, game));
+    }
     // function gamesNewOnlineGame(game) {
     //   return R.pipePromise(
     //     gameService.pickForJson,

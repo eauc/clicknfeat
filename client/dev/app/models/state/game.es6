@@ -127,12 +127,12 @@
       return state;
     }
     function stateGameSave(state) {
-      // return R.threadP()(
-      //   R.always(saveCurrentGame(state)),
+      return R.thread()(
+        R.always(saveCurrentGame(state))
       //   R.always(exportCurrentGame(state)),
       //   R.always(exportCurrentModelSelection(state)),
       //   R.always(exportCurrentBoard(state))
-      // );
+      );
     }
     function stateGameOnLoad(state, event, is_online, is_private, id) {
       return R.threadP(waitForDataReady())(

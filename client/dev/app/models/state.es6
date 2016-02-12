@@ -99,7 +99,7 @@
       return R.threadP(stateEventP(args, state))(
         // () => { return stateDataService.save(state); },
         () => { return stateUserService.save(state); },
-        // () => { return stateGameService.save(state); },
+        () => { return stateGameService.save(state); },
         () => { return stateGamesService.save(state); },
         () => { return stateModesService.save(state); },
         // () => { return exportCurrentDumpFile(state); },

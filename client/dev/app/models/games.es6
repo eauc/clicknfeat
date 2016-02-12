@@ -17,7 +17,7 @@
       loadLocalGameP: gamesLoadLocalGameP,
       newLocalGame: gamesNewLocalGame,
       removeLocalGame: gamesRemoveLocalGame,
-      // updateLocalGame: gamesUpdateLocalGame,
+      updateLocalGame: gamesUpdateLocalGame,
       // newOnlineGame: gamesNewOnlineGame,
       // loadOnlineGame: gamesLoadOnlineGame
     };
@@ -66,15 +66,16 @@
         R.reject(R.propEq('local_stamp', id))
       );
     }
-    // function gamesUpdateLocalGame(game, games) {
-    //   return R.pipePromise(
-    //     R.always(game),
-    //     gamesModel.saveLocalGame,
-    //     R.always(games),
-    //     R.update(R.findIndex(R.propEq('local_stamp', game.local_stamp), games),
-    //              game)
-    //   )();
-    // }
+    function gamesUpdateLocalGame(game, games) {
+      const game_index = R.findIndex(R.propEq('local_stamp',
+                                              game.local_stamp),
+                                     games);
+      return R.thread(game)(
+        gamesModel.saveLocalGame,
+        R.always(games),
+        R.update(game_index, game)
+      );
+    }
     // function gamesNewOnlineGame(game) {
     //   return R.pipePromise(
     //     gameService.pickForJson,

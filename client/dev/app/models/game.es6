@@ -47,7 +47,7 @@
 
     const GAME_PROTO = {
       toJSON: function gameToJson() {
-        return gameModel.pickForJson(this);
+        return gamePickForJson(this);
       }
     };
     const gameReplayAllP$ = R.curry(gameReplayAllP);
