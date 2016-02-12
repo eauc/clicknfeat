@@ -16,7 +16,7 @@ describe('commandsModel', function() {
     this.commandsModel.registerCommand('cmd2',this.cmd2);
   }]));
 
-  context('execute(<name>, <args>, <state>, <game>)', function() {
+  context('executeP(<name>, <args>, <state>, <game>)', function() {
     return this.commandsModel
       .executeP(this.name, this.args, this.state, this.game);
   }, function() {
@@ -39,7 +39,7 @@ describe('commandsModel', function() {
     }, function() {
       it('should reject promise', function() {
         expect(this.contextError).toEqual([
-          'Game: execute unknown command "unknown"'
+          'Game: unknown command "unknown"'
         ]);
       });
     });
@@ -94,7 +94,7 @@ describe('commandsModel', function() {
     }, function() {
       it('should discard command', function() {
         expect(this.contextError)
-          .toEqual(['Game: replay unknown command "unknown"']);
+          .toEqual(['Game: unknown command "unknown"']);
       });
     });
 
@@ -128,7 +128,7 @@ describe('commandsModel', function() {
     });
   });
 
-  context('replayBatch(<cmds>, <scope>, <game>)', function() {
+  context('replayBatchP(<cmds>, <scope>, <game>)', function() {
     return this.commandsModel
       .replayBatchP(this.cmds, 'state', 'game');
   }, function() {
@@ -170,6 +170,61 @@ describe('commandsModel', function() {
           .toHaveBeenCalledWith('cmd2', 'state', 'game');
         expect(this.commandsModel.replayP)
           .toHaveBeenCalledWith('cmd3', 'state', 'game');
+      });
+    });
+  });
+
+  context('undoP(<ctxt>, <state>, <arg>)', function() {
+    return this.commandsModel.undoP({
+      type: this.type
+    }, 'state', 'game');
+  }, function() {
+    beforeEach(function() {
+      this.cmd1.undoP.and.returnValue('cmd1.undoP.returnValue');
+      this.cmd2.undoP.and.returnValue('cmd2.undoP.returnValue');
+    });
+
+    context('when <ctxt.type> is unknown', function() {
+      this.type = 'unknown';
+      this.expectContextError();
+    }, function() {
+      it('should discard command', function() {
+        expect(this.contextError).toEqual([
+          'Game: unknown command "unknown"'
+        ]);
+      });
+    });
+
+    example(function(e, d) {
+      context('when <ctxt.type> is known, '+d, function() {
+        this.type = e.cmd;
+      }, function() {
+        it('should proxy <ctxt.type>.undo', function() {
+          expect(this[e.cmd].undoP)
+            .toHaveBeenCalledWith({
+              type: e.cmd
+            }, 'state', 'game');
+
+          expect(this.context)
+            .toBe(e.cmd+'.undoP.returnValue');
+        });
+      });
+    }, [
+      [ 'cmd' ],
+      [ 'cmd1' ],
+      [ 'cmd2' ],
+    ]);
+
+    context('when undo fails', function() {
+      spyReturnPromise(this.cmd1.undoP);
+      this.cmd1.undoP.rejectWith('reason');
+      this.type = 'cmd1';
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual([
+          'reason'
+        ]);
       });
     });
   });

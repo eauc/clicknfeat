@@ -10,8 +10,8 @@
                                   settingsService) {
     const common_actions = {
       modeBackToDefault: modeBackToDefault,
-      // commandUndoLast: commandUndoLast,
-      // commandReplayNext: commandReplayNext,
+      commandUndoLast: commandUndoLast,
+      commandReplayNext: commandReplayNext,
       viewScrollLeft: viewScrollLeft,
       viewScrollRight: viewScrollRight,
       viewScrollUp: viewScrollUp,
@@ -29,8 +29,8 @@
     };
     const common_bindings = {
       modeBackToDefault: 'esc',
-      // commandUndoLast: 'ctrl+z',
-      // commandReplayNext: 'ctrl+y',
+      commandUndoLast: 'ctrl+z',
+      commandReplayNext: 'ctrl+y',
       viewScrollLeft: 'alt+left',
       viewScrollRight: 'alt+right',
       viewScrollUp: 'alt+up',
@@ -58,12 +58,12 @@
     function modeBackToDefault(state) {
       return state.eventP('Modes.switchTo', 'Default');
     }
-    // function commandUndoLast(state) {
-    //   return state.event('Game.command.undoLast');
-    // }
-    // function commandReplayNext(state) {
-    //   return state.event('Game.command.replayNext');
-    // }
+    function commandUndoLast(state) {
+      return state.eventP('Game.command.undoLast');
+    }
+    function commandReplayNext(state) {
+      return state.eventP('Game.command.replayNext');
+    }
     function viewScrollLeft(state) {
       state.queueChangeEventP('Game.view.scrollLeft');
     }

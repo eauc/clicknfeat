@@ -31,7 +31,7 @@
     const commandsModel = {
       registerCommand: commandsRegister,
       executeP: commandsExecuteP,
-      // undoP: commandsUndoP,
+      undoP: commandsUndoP,
       replayP: commandsReplayP,
       replayBatchP: commandsReplayBatchP
     };
@@ -43,9 +43,8 @@
       CMDS_REG[name] = command;
     }
     function commandsExecuteP(name, args, state, game) {
-      return R.threadP(CMDS_REG)(
-        R.prop(name),
-        R.rejectIf(R.isNil, `Game: execute unknown command "${name}"`),
+      return R.threadP(name)(
+        findTypeP,
         (cmd) => {
           return cmd.executeP
             .apply(null, [...args, state, game]);
@@ -59,26 +58,33 @@
                ];
       }
     }
-    // function commandsUndoP(ctxt, state, game) {
-    //   return R.pipePromise(
-    //     R.prop(ctxt.type),
-    //     R.rejectIf(R.isNil, `undo unknown command "${ctxt.type}"`),
-    //     (cmd) => {
-    //       return cmd.undo(ctxt, state, game);
-    //     }
-    //   )(CMD_REGS);
-    // }
+    function commandsUndoP(ctxt, state, game) {
+      return R.threadP(ctxt)(
+        findCtxtTypeP,
+        (cmd) => {
+          return cmd.undoP(ctxt, state, game);
+        }
+      );
+    }
     function commandsReplayP(ctxt, state, game) {
-      return R.threadP(findCmdType())(
-        R.rejectIf(R.isNil, `Game: replay unknown command "${ctxt.type}"`),
+      return R.threadP(ctxt)(
+        findCtxtTypeP,
         (cmd) => {
           return cmd.replayP(ctxt, state, game);
         }
       );
-
-      function findCmdType() {
-        return R.prop(ctxt.type, CMDS_REG);
-      }
+    }
+    function findCtxtTypeP(ctxt) {
+      return R.threadP(ctxt)(
+        R.prop('type'),
+        findTypeP
+      );
+    }
+    function findTypeP(type) {
+      return R.threadP(CMDS_REG)(
+        R.prop(type),
+        R.rejectIf(R.isNil, `Game: unknown command "${type}"`)
+      );
     }
     function commandsReplayBatchP(commands, state, game) {
       if(R.isEmpty(commands)) {

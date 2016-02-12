@@ -32,7 +32,7 @@
       $scope.digestOnStateChangeEvent('Game.load.success', $scope);
       $scope.onStateChangeEvent('Game.load.error', onGameLoadError, $scope);
 
-      // $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
+      $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
       // $scope.digestOnStateChangeEvent('Game.board.change', $scope);
       // $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
       // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);

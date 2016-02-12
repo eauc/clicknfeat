@@ -38,8 +38,9 @@
       // onGameConnectionClose: stateGameOnConnectionClose,
       onGameCommandExecute: stateGameOnCommandExecute,
       // onGameCommandUndo: stateGameOnCommandUndo,
-      // onGameCommandUndoLast: stateGameOnCommandUndoLast,
+      onGameCommandUndoLast: stateGameOnCommandUndoLast,
       // onGameCommandReplay: stateGameOnCommandReplay,
+      onGameCommandReplayNext: stateGameOnCommandReplayNext,
       // onGameCommandReplayBatch: stateGameOnCommandReplayBatch,
       // onGameSetCmds: stateGameOnSetCmds,
       // onGameSetPlayers: stateGameOnSetPlayers,
@@ -84,10 +85,10 @@
       //               stateGameModel.onGameCommandReplay$(state));
       // state.onEvent('Game.command.replayBatch',
       //               stateGameModel.onGameCommandReplayBatch$(state));
-      // state.onEvent('Game.command.undoLast',
-      //               stateGameModel.onGameCommandUndoLast$(state));
-      // state.onEvent('Game.command.replayNext',
-      //               stateGameModel.onGameCommandReplayNext$(state));
+      state.onEvent('Game.command.undoLast',
+                    stateGameModel.onGameCommandUndoLast$(state));
+      state.onEvent('Game.command.replayNext',
+                    stateGameModel.onGameCommandReplayNext$(state));
       // state.onEvent('Game.setCmds',
       //               stateGameModel.onGameSetCmds$(state));
       // state.onEvent('Game.setPlayers',
@@ -208,13 +209,13 @@
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnCommandUndoLast(state, event) {
-    //   event = event;
-    //   return R.pipeP(
-    //     gameModel.undoLastCommand$(state),
-    //     setGame$(state)
-    //   )(state.game).catch(gameActionError$(state));
-    // }
+    function stateGameOnCommandUndoLast(state, event) {
+      event = event;
+      return R.threadP(state.game)(
+        gameModel.undoLastCommandP$(state),
+        setGame$(state)
+      ).catch(gameModel.actionError$(state));
+    }
     // function stateGameOnCommandReplay(state, event, cmd) {
     //   return R.pipeP(
     //     gameModel.replayCommand$(cmd, state),
@@ -227,13 +228,13 @@
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnCommandReplayNext(state, event) {
-    //   event = event;
-    //   return R.pipeP(
-    //     gameModel.replayNextCommand$(state),
-    //     setGame$(state)
-    //   )(state.game).catch(gameActionError$(state));
-    // }
+    function stateGameOnCommandReplayNext(state, event) {
+      event = event;
+      return R.threadP(state.game)(
+        gameModel.replayNextCommandP$(state),
+        setGame$(state)
+      ).catch(gameModel.actionError$(state));
+    }
     // function stateGameOnSetCmds(state, event, set) {
     //   return R.pipe(
     //     R.assoc(set.where, set.cmds),

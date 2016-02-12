@@ -1,6 +1,10 @@
 describe('game model', function() {
   beforeEach(inject([ 'game', function(gameModel) {
     this.gameModel = gameModel;
+
+    this.state = jasmine.createSpyObj('state', [
+      'queueChangeEventP'
+    ]);
   }]));
 
   context('create(<user>)', function() {
@@ -68,12 +72,8 @@ describe('game model', function() {
         commands: ['cmd1', 'cmd2']
       };
 
-      this.state = jasmine.createSpyObj('state', [
-        'changeEvent'
-      ]);
-
-      this.commandsService = spyOnService('commands');
-      this.commandsService.replayBatchP
+      this.commandsModel = spyOnService('commands');
+      this.commandsModel.replayBatchP
         .resolveWith((c, s, g) => g);
     });
 
@@ -135,7 +135,7 @@ describe('game model', function() {
     });
 
     it('should replay commands', function() {
-      expect(this.commandsService.replayBatchP)
+      expect(this.commandsModel.replayBatchP)
         .toHaveBeenCalledWith(['cmd1', 'cmd2'],
                               this.state, this.context);
     });
@@ -150,9 +150,6 @@ describe('game model', function() {
                     commands_log: [],
                     dice: []
                   };
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP'
-      ]);
       this.state.user = { state: { name: 'user' } };
 
       this.commandsModel = spyOnService('commands');
@@ -267,6 +264,325 @@ describe('game model', function() {
           commands_log: [],
           dice: []
         });
+    });
+  });
+
+  // context('replayCommandP(<cmd>, <state>, <game>)', function() {
+  //   return this.gameModel
+  //     .replayCommand(this.cmd, this.state, this.game);
+  // }, function() {
+  //   beforeEach(function() {
+  //     this.game = { commands: [ { stamp: 'cmd1' }
+  //                             ],
+  //                   commands_log: [ { stamp: 'cmd2' },
+  //                                   { stamp: 'cmd3' }
+  //                                 ],
+  //                   undo: []
+  //                 };
+  //     this.cmd = { stamp: 'stamp' };
+
+  //     this.commandsModel.replayP
+  //       .resolveWith(this.game);
+  //   });
+
+  //   context('when <cmd> is in command log', function() {
+  //     this.cmd = { stamp: 'cmd2' };
+  //   }, function() {
+  //     it('should swith <cmd> to history', function() {
+  //       expect(this.context).toEqual({
+  //         commands: [ { stamp: 'cmd1' },
+  //                     { stamp: 'cmd2' }
+  //                   ],
+  //         commands_log: [ { stamp: 'cmd3' }
+  //                       ],
+  //         undo: []
+  //       });
+  //     });
+  //   });
+
+  //   it('should replay next undo', function() {
+  //     expect(this.commandsModel.replayP)
+  //       .toHaveBeenCalledWith(this.cmd, this.state, this.game);
+  //   });
+
+  //   context('when undo fails', function() {
+  //     this.commandsModel.replayP
+  //       .rejectWith('reason');
+  //     this.expectContextError();
+  //   }, function() {
+  //     it('should reject promise', function() {
+  //       expect(this.contextError).toBe('reason');
+  //     });
+  //   });
+
+  //   it('should swith <cmd> to history', function() {
+  //     expect(this.context).toEqual({
+  //       commands: [ { stamp: 'cmd1' },
+  //                   { stamp: 'stamp' }
+  //                 ],
+  //       commands_log: [ { stamp: 'cmd2' },
+  //                       { stamp: 'cmd3' }
+  //                     ],
+  //       undo: []
+  //     });
+  //   });
+
+  //   it('should send replay event', function() {
+  //     expect(this.state.queueChangeEventP)
+  //       .toHaveBeenCalledWith('Game.command.replay');
+  //   });
+  // });
+
+  // context('replayCommandsBatchP(<cmds>, <state>, <game>)', function() {
+  //   return this.gameModel
+  //     .replayCommandsBatchP(this.cmds, 'state', 'game');
+  // }, function() {
+  //   beforeEach(function() {
+  //     this.cmds = [ 'cmd2', 'cmd3' ];
+  //     this.commandsModel.replayBatchP
+  //       .resolveWith({ commands: ['cmd1'] });
+  //   });
+
+  //   it('should replay command batch', function() {
+  //     expect(this.commandsModel.replayBatchP)
+  //       .toHaveBeenCalledWith(this.cmds, 'state','game');
+  //   });
+
+  //   it('should append batch to game\'s commands', function() {
+  //     expect(this.context.commands)
+  //       .toEqual([ 'cmd1', 'cmd2', 'cmd3' ]);
+  //   });
+  // });
+
+  context('replayNextCommandP(<state>, <game>)', function() {
+    return this.gameModel
+      .replayNextCommandP(this.state, this.game);
+  }, function() {
+    beforeEach(function() {
+      this.game = { commands: [ 'cmd1' ],
+                    undo: ['cmd3', 'cmd2' ]
+                  };
+
+      this.commandsModel = spyOnService('commands');
+      this.commandsModel.replayP
+        .resolveWith(this.game);
+      // this.gameConnectionModel.sendReplayCommandP
+      //   .resolveWith((c,g) => g);
+    });
+
+    context('when undo history is empty', function() {
+      this.game.undo = [];
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual([
+          'Undo history empty'
+        ]);
+      });
+    });
+
+    it('should replay next undo', function() {
+      expect(this.commandsModel.replayP)
+        .toHaveBeenCalledWith('cmd2', this.state, this.game);
+    });
+
+    context('when undo fails', function() {
+      this.commandsModel.replayP
+        .rejectWith('reason');
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual([
+          'reason'
+        ]);
+      });
+    });
+
+    // context('when game connection is active', function() {
+    //   this.gameConnectionModel.active
+    //     .and.returnValue(true);
+    // }, function() {
+    //   it('should send replayCommand event on connection', function() {
+    //     expect(this.gameConnectionModel.sendReplayCommandP)
+    //       .toHaveBeenCalledWith('cmd2', {
+    //         commands: [ 'cmd1' ],
+    //         undo: [ 'cmd3' ]
+    //       });
+    //   });
+
+    //   it('should send replay event', function() {
+    //     expect(this.state.queueChangeEventP)
+    //       .toHaveBeenCalledWith('Game.command.replay');
+    //   });
+
+    //   it('should update game', function() {
+    //     expect(this.context).toEqual({
+    //       commands: [ 'cmd1' ],
+    //       undo: [ 'cmd3' ]
+    //     });
+    //   });
+    // });
+
+    it('should switch undo to cmd queue', function() {
+      expect(this.context)
+        .toEqual({
+          commands: [ 'cmd1', 'cmd2' ],
+          undo: [ 'cmd3' ]
+        });
+    });
+
+    it('should send replay event', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.command.replay');
+    });
+  });
+
+  // context('undoCommand(<cmd>, <state>, <game>)', function() {
+  //   return this.gameModel
+  //     .undoCommand(this.cmd, this.state, this.game);
+  // }, function() {
+  //   beforeEach(function() {
+  //     this.game = { undo: [ { stamp: 'cmd1' }
+  //                         ],
+  //                   undo_log: [ { stamp: 'cmd2' },
+  //                               { stamp: 'cmd3' }
+  //                             ],
+  //                   commands: []
+  //                 };
+  //     this.cmd = { stamp: 'stamp' };
+
+  //     this.commandsModel.undoP
+  //       .resolveWith(this.game);
+  //   });
+
+  //   context('when <cmd> is in undo log', function() {
+  //     this.cmd = { stamp: 'cmd2' };
+  //   }, function() {
+  //     it('should swith <cmd> to undo history', function() {
+  //       expect(this.context).toEqual({
+  //         undo: [ { stamp: 'cmd1' },
+  //                 { stamp: 'cmd2' }
+  //               ],
+  //         undo_log: [ { stamp: 'cmd3' }
+  //                   ],
+  //         commands: []
+  //       });
+  //     });
+  //   });
+
+  //   it('should undo next undo', function() {
+  //     expect(this.commandsModel.undoP)
+  //       .toHaveBeenCalledWith(this.cmd, this.state, this.game);
+  //   });
+
+  //   context('when undo fails', function() {
+  //     this.commandsModel.undoP
+  //       .rejectWith('reason');
+  //     this.expectContextError();
+  //   }, function() {
+  //     it('should reject promise', function() {
+  //       expect(this.contextError).toBe('reason');
+  //     });
+  //   });
+
+  //   it('should swith <cmd> to history', function() {
+  //     expect(this.context).toEqual({
+  //       undo: [ { stamp: 'cmd1' },
+  //               { stamp: 'stamp' }
+  //             ],
+  //       undo_log: [ { stamp: 'cmd2' },
+  //                   { stamp: 'cmd3' }
+  //                 ],
+  //       commands: []
+  //     });
+  //   });
+
+  //   it('should send undo event', function() {
+  //     expect(this.state.queueChangeEventP)
+  //       .toHaveBeenCalledWith('Game.command.undo');
+  //   });
+  // });
+
+  context('undoLastCommandP(<scope>, <game>)', function() {
+    return this.gameModel
+      .undoLastCommandP(this.state, this.game);
+  }, function() {
+    beforeEach(function() {
+      this.game = { commands: ['cmd1','cmd2'],
+                    undo: ['cmd3'],
+                    undo_log: []
+                  };
+      this.commandsModel = spyOnService('commands');
+      this.commandsModel.undoP
+        .resolveWith(this.game);
+    });
+
+    context('when command history is empty', function() {
+      this.game.commands = [];
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual([
+          'Command history empty'
+        ]);
+      });
+    });
+
+    it('should undo last command', function() {
+      expect(this.commandsModel.undoP)
+        .toHaveBeenCalledWith('cmd2', this.state, this.game);
+    });
+
+    context('when undo fails', function() {
+      this.commandsModel.undoP
+        .rejectWith('reason');
+      this.expectContextError();
+    }, function() {
+      it('should reject promise', function() {
+        expect(this.contextError).toEqual(['reason']);
+      });
+    });
+
+    // context('when game connection is active', function() {
+    //   this.gameConnectionModel.active
+    //     .and.returnValue(true);
+    // }, function() {
+    //   it('should send undoCmd event on connection', function() {
+    //     expect(this.gameConnectionModel.sendUndoCommandP)
+    //       .toHaveBeenCalledWith('cmd2', {
+    //         commands: ['cmd1' ],
+    //         undo: ['cmd3'],
+    //         undo_log: []
+    //       });
+    //   });
+
+    //   it('should remove cmd from history', function() {
+    //       expect(this.context)
+    //       .toEqual({
+    //         commands: [ 'cmd1' ],
+    //         undo: [ 'cmd3' ],
+    //         undo_log: [  ]
+    //       });
+    //   });
+
+    //   it('should send undo event', function() {
+    //     expect(this.state.queueChangeEventP)
+    //       .toHaveBeenCalledWith('Game.command.undo');
+    //   });
+    // });
+
+    it('should switch cmd to undo queue', function() {
+      expect(this.context)
+        .toEqual({
+          commands: [ 'cmd1' ],
+          undo: [ 'cmd3', 'cmd2' ],
+          undo_log: [  ]
+        });
+    });
+
+    it('should send undo event', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.command.undo');
     });
   });
 });

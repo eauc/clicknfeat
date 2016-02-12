@@ -10,7 +10,7 @@ input.ng-invalid-required {
   font-style: italic;
   font-size: 90%; }
 
-#lounge .game-list, #lounge .chat-list, #game #cmd-osd .scroll-container, #game #dice-osd .dice-list, #game #chat-osd .chat-list {
+#lounge .game-list, #lounge .chat-list, #game #cmd-osd .scroll-container, #game #dice-osd .dice-list, #game #chat-osd .chat-list, #game .log-replay-list, #game .log-command-list {
   overflow-y: auto; }
 
 input[type='file'].form-control {
@@ -235,7 +235,22 @@ a:not([href]):focus {
       display: none; }
 
 /* @import 'views/game/main/game_main'; */
-/* @import 'views/game/log/game_log'; */
+#game .log-replay-list {
+  max-height: 30vh;
+  border-bottom: 1px solid #EEE;
+  font-style: italic;
+  opacity: 0.8; }
+  #game .log-replay-list.log {
+    max-height: 5em; }
+#game .log-command-list {
+  max-height: 30vh; }
+  #game .log-command-list div:first-child {
+    background-color: #dff0d8; }
+  #game .log-command-list.log {
+    max-height: 5em; }
+    #game .log-command-list.log div:first-child {
+      background-color: #fff0e8; }
+
 /* @import 'components/game/model/damage/modelDamage'; */
 
 /*# sourceMappingURL=app.css.map */

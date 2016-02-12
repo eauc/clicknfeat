@@ -37,10 +37,10 @@
       description: gameDescription,
       executeCommandP: gameExecuteCommandP,
       // undoCommand: gameUndoCommand,
-      // undoLastCommand: gameUndoLastCommand,
+      undoLastCommandP: gameUndoLastCommandP,
       // replayCommand: gameReplayCommand,
       // replayCommandsBatch: gameReplayCommandsBatch,
-      // replayNextCommand: gameReplayNextCommand,
+      replayNextCommandP: gameReplayNextCommandP,
       // sendChat: gameSendChat,
       actionError: gameActionError
     };
@@ -197,37 +197,55 @@
     //     }
     //   )(game);
     // }
-    // function gameUndoLastCommand(state, game) {
-    //   return R.pipePromise(
-    //     R.propOr([],'commands'),
-    //     R.last,
-    //     R.rejectIf(R.isNil, 'Command history empty'),
-    //     (command) => {
-    //       return R.pipeP(
-    //         commandsModel.undo$(command, state),
-    //         (game) => { return [command, game]; }
-    //       )(game);
-    //     },
-    //     ([command, game]) => {
-    //       return R.pipePromise(
-    //         R.assoc('commands', R.init(game.commands)),
-    //         (game) => {
-    //           if(gameConnectionModel.active(game)) {
-    //             return gameConnectionModel
-    //               .sendUndoCommand(command, game);
-    //           }
-    //           return R.over(R.lensProp('undo'),
-    //                         R.append(command),
-    //                         game);
-    //         }
-    //       )(game);
-    //     },
-    //     (game) => {
-    //       state.changeEvent('Game.command.undo');
-    //       return game;
-    //     }
-    //   )(game);
-    // }
+    function gameUndoLastCommandP(state, game) {
+      return R.threadP(game)(
+        getLastCommand,
+        undoCommand,
+        updateLogs,
+        sendChangeEvent
+      );
+
+      function getLastCommand(game) {
+        return R.threadP(game)(
+          R.propOr([],'commands'),
+          R.last,
+          R.rejectIf(R.isNil, 'Command history empty')
+        );
+      }
+      function undoCommand(command) {
+        return R.threadP(game)(
+          commandsModel.undoP$(command, state),
+          (game) => { return [command, game]; }
+        );
+      }
+      function updateLogs([command, game]) {
+        return R.threadP(game)(
+          removeFromCommands,
+          (game) => {
+            // if(gameConnectionModel.active(game)) {
+            //   return gameConnectionModel
+            //     .sendUndoCommand(command, game);
+            // }
+            return addToUndo(game);
+          }
+        );
+
+        function removeFromCommands(game) {
+          return R.over(R.lensProp('commands'),
+                        R.init,
+                        game);
+        }
+        function addToUndo(game) {
+          return R.over(R.lensProp('undo'),
+                        R.append(command),
+                        game);
+        }
+      }
+      function sendChangeEvent(game) {
+        state.queueChangeEventP('Game.command.undo');
+        return game;
+      }
+    }
     // function gameReplayCommand(command, state, game) {
     //   return R.pipePromise(
     //     R.propOr([], 'commands_log'),
@@ -268,39 +286,55 @@
     //            R.flip(R.concat)(cmds))
     //   )(game);
     // }
-    // function gameReplayNextCommand(state, game) {
-    //   return R.pipePromise(
-    //     R.propOr([], 'undo'),
-    //     R.last,
-    //     (command) => {
-    //       if(R.isNil(command)) {
-    //         return self.Promise
-    //           .reject('Undo history empty');
-    //       }
-    //       return R.pipeP(
-    //         commandsModel.replay$(command, state),
-    //         (game) => { return [command, game]; }
-    //       )(game);
-    //     },
-    //     ([command, game]) => {
-    //       return R.pipePromise(
-    //         R.assoc('undo', R.init(game.undo)),
-    //         (game) => {
-    //           if(gameConnectionModel.active(game)) {
-    //             return gameConnectionModel
-    //               .sendReplayCommand(command, game);
-    //           }
-    //           let commands = R.propOr([], 'commands', game);
-    //           return R.assoc('commands', R.append(command, commands), game);
-    //         }
-    //       )(game);
-    //     },
-    //     (game) => {
-    //       state.changeEvent('Game.command.replay');
-    //       return game;
-    //     }
-    //   )(game);
-    // }
+    function gameReplayNextCommandP(state, game) {
+      return R.threadP(game)(
+        getNextUndo,
+        replayCommand,
+        updateLogs,
+        sendChangeEvent
+      );
+
+      function getNextUndo(game) {
+        return R.threadP(game)(
+          R.propOr([], 'undo'),
+          R.last,
+          R.rejectIf(R.isNil, 'Undo history empty')
+        );
+      }
+      function replayCommand(command) {
+        return R.threadP(game)(
+          commandsModel.replayP$(command, state),
+          (game) => { return [command, game]; }
+        );
+      }
+      function updateLogs([command, game]) {
+        return R.threadP(game)(
+          removeFromUndo,
+          (game) => {
+            // if(gameConnectionModel.active(game)) {
+            //   return gameConnectionModel
+            //     .sendReplayCommand(command, game);
+            // }
+            return addToCommands(game);
+          }
+        );
+
+        function removeFromUndo(game) {
+          return R.over(R.lensProp('undo'),
+                        R.init,
+                        game);
+        }
+        function addToCommands(game) {
+          return R.over(R.lensProp('commands'),
+                        R.append(command),
+                        game);
+        }
+      }
+      function sendChangeEvent(game) {
+        state.queueChangeEventP('Game.command.replay');
+        return game;
+      }
+    }
     // function gameSendChat(from, msg, game) {
     //   return gameConnectionModel
     //     .sendEvent({

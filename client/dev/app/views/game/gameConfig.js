@@ -43,12 +43,13 @@
     //   controller: 'gameHelpCtrl',
     //   data: { hide_nav: true }
     // })
-    // .state('game.log', {
-    //   url: '/log',
-    //   templateUrl: 'partials/game/log.html',
-    //   controller: 'gameLogCtrl',
-    //   data: { hide_nav: true }
-    // })
+    .state('game.log', {
+      url: '/log',
+      templateUrl: 'app/views/game/log/game_log.html',
+      controller: 'gameLogCtrl',
+      controllerAs: 'log',
+      data: { hide_nav: true }
+    })
     // .state('game.online', {
     //   url: '/online',
     //   templateUrl: 'partials/game/online.html',
