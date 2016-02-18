@@ -17,7 +17,7 @@
       // 'onTerrainsCommand',
       // 'rollDiceCommand',
       // 'rollDeviationCommand',
-      // 'setBoardCommand',
+      'setBoardCommand',
       'setLayersCommand',
       // 'setLosCommand',
       // 'setRulerCommand',

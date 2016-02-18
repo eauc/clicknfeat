@@ -3,8 +3,7 @@
 (function () {
   angular.module('clickApp.services').factory('stateGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['games', 'game',
-  // 'gameBoard',
+  stateGameModelFactory.$inject = ['games', 'game', 'gameBoard',
   // 'gameConnection',
   // 'gameFactions',
   // 'gameModels',
@@ -15,8 +14,7 @@
   'stateExports', 'allCommands'];
 
   // 'allTemplates',
-  function stateGameModelFactory(gamesModel, gameModel,
-  // gameBoardModel,
+  function stateGameModelFactory(gamesModel, gameModel, gameBoardModel,
   // gameConnectionModel,
   // gameFactionsModel,
   // gameModelsModel,
@@ -34,23 +32,23 @@
       // onGameCommandUndo: stateGameOnCommandUndo,
       onGameCommandUndoLast: stateGameOnCommandUndoLast,
       // onGameCommandReplay: stateGameOnCommandReplay,
-      onGameCommandReplayNext: stateGameOnCommandReplayNext
+      onGameCommandReplayNext: stateGameOnCommandReplayNext,
+      // onGameCommandReplayBatch: stateGameOnCommandReplayBatch,
+      // onGameSetCmds: stateGameOnSetCmds,
+      // onGameSetPlayers: stateGameOnSetPlayers,
+      // onGameNewChatMsg: stateGameOnNewChatMsg,
+      // onGameUpdate: stateGameOnUpdate,
+      // onGameInvitePlayer: stateGameOnInvitePlayer,
+      // onGameModelCreate: stateGameOnModelCreate,
+      // onGameModelImportList: stateGameOnModelImportList,
+      // onGameModelImportFile: stateGameOnModelImportFile,
+      // onGameTemplateCreate: stateGameOnModelCreate,
+      // onGameTerrainCreate: stateGameOnTerrainCreate,
+      // onGameTerrainReset: stateGameOnTerrainReset,
+      onGameBoardSet: stateGameOnBoardSet,
+      onGameBoardSetRandom: stateGameOnBoardSetRandom
     };
 
-    // onGameCommandReplayBatch: stateGameOnCommandReplayBatch,
-    // onGameSetCmds: stateGameOnSetCmds,
-    // onGameSetPlayers: stateGameOnSetPlayers,
-    // onGameNewChatMsg: stateGameOnNewChatMsg,
-    // onGameUpdate: stateGameOnUpdate,
-    // onGameInvitePlayer: stateGameOnInvitePlayer,
-    // onGameModelCreate: stateGameOnModelCreate,
-    // onGameModelImportList: stateGameOnModelImportList,
-    // onGameModelImportFile: stateGameOnModelImportFile,
-    // onGameTemplateCreate: stateGameOnModelCreate,
-    // onGameTerrainCreate: stateGameOnTerrainCreate,
-    // onGameTerrainReset: stateGameOnTerrainReset,
-    // onGameBoardSet: stateGameOnBoardSet,
-    // onGameBoardSetRandom: stateGameOnBoardSetRandom,
     // onGameBoardImportFile: stateGameOnBoardImportFile,
     // onGameScenarioSet: stateGameOnScenarioSet,
     // onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
@@ -102,10 +100,8 @@
       //               stateGameModel.onGameTerrainCreate$(state));
       // state.onEvent('Game.terrain.reset',
       //               stateGameModel.onGameTerrainReset$(state));
-      // state.onEvent('Game.board.set',
-      //               stateGameModel.onGameBoardSet$(state));
-      // state.onEvent('Game.board.setRandom',
-      //               stateGameModel.onGameBoardSetRandom$(state));
+      state.onEvent('Game.board.set', stateGameModel.onGameBoardSet$(state));
+      state.onEvent('Game.board.setRandom', stateGameModel.onGameBoardSetRandom$(state));
       // state.onEvent('Game.board.importFile',
       //               stateGameModel.onGameBoardImportFile$(state));
       // state.onEvent('Game.scenario.set',
@@ -302,21 +298,20 @@
     //     }
     //   )().catch(gameActionError$(state));
     // }
-    // function stateGameOnBoardSet(state, event, name) {
-    //   let board = gameBoardModel.forName(name, state.boards);
-    //   return state.event('Game.command.execute',
-    //                      'setBoard', [board]);
-    // }
-    // function stateGameOnBoardSetRandom(state, event) {
-    //   event = event;
-    //   let board, name = gameBoardModel.name(state.game.board);
-    //   while(name === gameBoardModel.name(state.game.board)) {
-    //     board = state.boards[R.randomRange(0, state.boards.length-1)];
-    //     name = gameBoardModel.name(board);
-    //   }
-    //   return state.event('Game.command.execute',
-    //                      'setBoard', [board]);
-    // }
+    function stateGameOnBoardSet(state, event, name) {
+      var board = gameBoardModel.forName(name, state.boards);
+      return state.eventP('Game.command.execute', 'setBoard', [board]);
+    }
+    function stateGameOnBoardSetRandom(state, event) {
+      event = event;
+      var board = undefined,
+          name = gameBoardModel.name(state.game.board);
+      while (name === gameBoardModel.name(state.game.board)) {
+        board = state.boards[R.randomRange(0, state.boards.length - 1)];
+        name = gameBoardModel.name(board);
+      }
+      return state.eventP('Game.command.execute', 'setBoard', [board]);
+    }
     // function stateGameOnBoardImportFile(state, event, file) {
     //   return R.pipeP(
     //     fileImportModel.read$('json'),

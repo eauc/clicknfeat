@@ -1,21 +1,27 @@
 'use strict';
 
-angular.module('clickApp.services').factory('gameBoard', ['http', function gameBoardServiceFactory(httpService) {
-  var gameBoardService = {
-    init: function gameBoardInit() {
-      return httpService.get('/data/boards.json').catch(function (reason) {
-        console.error('Error getting boards.json', reason);
-        return [];
-      });
-    },
-    name: function gameBoardName(board) {
+(function () {
+  angular.module('clickApp.services').factory('gameBoard', gameBoardModelFactory);
+
+  gameBoardModelFactory.$inject = ['http'];
+  function gameBoardModelFactory(httpService) {
+    var gameBoardModel = {
+      initP: gameBoardInitP,
+      name: gameBoardName,
+      forName: gameBoardForName
+    };
+    R.curryService(gameBoardModel);
+    return gameBoardModel;
+
+    function gameBoardInitP() {
+      return R.thread('/data/boards.json')(httpService.getP, R.condErrorP([[R.T, R.pipe(R.spyError('Error getting boards.json'), R.always([]))]]));
+    }
+    function gameBoardName(board) {
       return R.prop('name', board);
-    },
-    forName: function gameBoardForName(name, boards) {
+    }
+    function gameBoardForName(name, boards) {
       return R.find(R.propEq('name', name), boards);
     }
-  };
-  R.curryService(gameBoardService);
-  return gameBoardService;
-}]);
+  }
+})();
 //# sourceMappingURL=board.js.map

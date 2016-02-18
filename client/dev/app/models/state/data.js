@@ -3,14 +3,12 @@
 (function () {
   angular.module('clickApp.services').factory('stateData', stateDataModelFactory);
 
-  stateDataModelFactory.$inject = ['stateExports', 'fileImport', 'settings'];
+  stateDataModelFactory.$inject = ['stateExports', 'fileImport', 'settings', 'gameBoard'];
 
-  // 'gameBoard',
   // 'gameTerrainInfo',
   // 'gameFactions',
   // 'gameScenario',
-  function stateDataModelFactory(stateExportsService, fileImportService, settingsModel) {
-    // gameBoardService,
+  function stateDataModelFactory(stateExportsService, fileImportService, settingsModel, gameBoardModel) {
     // gameTerrainInfoService,
     // gameFactionsService,
     // gameScenarioService) {
@@ -51,11 +49,10 @@
     }
     function stateDataOnInit(state, resolve, event) {
       event = event;
-      // const boards_ready = gameBoardModel.init()
-      //         .then((boards) => {
-      //           state.boards = boards;
-      //           console.log('board', boards);
-      //         });
+      var boards_ready = gameBoardModel.initP().then(function (boards) {
+        state.boards = boards;
+        console.info('board', boards);
+      });
       // const terrains_ready = gameTerrainInfoModel.init()
       //         .then((terrains) => {
       //           state.terrains = terrains;
@@ -73,8 +70,7 @@
       var settings_ready = settingsModel.initP().then(function (settings) {
         state.settings = settings;
       });
-      self.Promise.all([
-      // boards_ready,
+      self.Promise.all([boards_ready,
       // terrains_ready,
       // factions_ready,
       // scenario_ready,

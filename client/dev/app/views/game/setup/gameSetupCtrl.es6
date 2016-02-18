@@ -13,8 +13,8 @@
     const vm = this;
     console.log('init gameSetupCtrl');
 
-    // vm.doSetBoard = doSetBoard;
-    // vm.doSetRandomBoard = doSetRandomBoard;
+    vm.doSetBoard = doSetBoard;
+    vm.doSetRandomBoard = doSetRandomBoard;
     // vm.doSetScenario = doSetScenario;
     // vm.doSetRandomScenario = doSetRandomScenario;
     // vm.doGenerateObjectives = doGenerateObjectives;
@@ -30,11 +30,10 @@
     activate();
 
     function activate() {
-      // $scope.state.data_ready.then(onDataReady);
+      $scope.state.data_ready.then(onDataReady);
 
-      // $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
-      // // $scope.onStateChangeEvent('Game.load.success', updateBoardName, $scope);
-      // self.requestAnimationFrame(updateBoardName);
+      $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
+      self.requestAnimationFrame(updateBoardName);
 
       // $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
       // // $scope.onStateChangeEvent('Game.load.success', updateScenario, $scope);
@@ -50,25 +49,25 @@
       $scope.stateChangeEvent('Game.scenario.refresh');
     }
 
-    // function onDataReady() {
-    //   vm.boards = $scope.state.boards;
+    function onDataReady() {
+      vm.boards = $scope.state.boards;
     //   vm.terrains = $scope.state.terrains;
     //   vm.scenarios = $scope.state.scenarios;
-    //   vm..ambiance = R.head(R.keys($scope.terrains));
+    //   vm.ambiance = R.head(R.keys(vm.terrains));
     //   vm.onAmbianceChange();
-    //   $scope.$digest();
-    // }
+      $scope.$digest();
+    }
 
-    // function updateBoardName() {
-    //   vm.board_name = R.path(['state','game','board','name'], $scope);
-    //   $scope.$digest();
-    // }
-    // function doSetBoard() {
-    //   $scope.stateEvent('Game.board.set', vm.board_name);
-    // }
-    // function doSetRandomBoard() {
-    //   $scope.stateEvent('Game.board.setRandom');
-    // }
+    function updateBoardName() {
+      vm.board_name = R.path(['game','board','name'], $scope.state);
+      $scope.$digest();
+    }
+    function doSetBoard() {
+      $scope.stateEvent('Game.board.set', vm.board_name);
+    }
+    function doSetRandomBoard() {
+      $scope.stateEvent('Game.board.setRandom');
+    }
 
     // function updateScenario() {
     //   vm.scenario_name = R.path(['state','game','scenario','name'], $scope);

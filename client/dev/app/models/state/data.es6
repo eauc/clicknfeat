@@ -6,15 +6,15 @@
     'stateExports',
     'fileImport',
     'settings',
-    // 'gameBoard',
+    'gameBoard',
     // 'gameTerrainInfo',
     // 'gameFactions',
     // 'gameScenario',
   ];
   function stateDataModelFactory(stateExportsService,
                                  fileImportService,
-                                 settingsModel) {
-                                 // gameBoardService,
+                                 settingsModel,
+                                 gameBoardModel) {
                                  // gameTerrainInfoService,
                                  // gameFactionsService,
                                  // gameScenarioService) {
@@ -59,11 +59,11 @@
     }
     function stateDataOnInit(state, resolve, event) {
       event = event;
-      // const boards_ready = gameBoardModel.init()
-      //         .then((boards) => {
-      //           state.boards = boards;
-      //           console.log('board', boards);
-      //         });
+      const boards_ready = gameBoardModel.initP()
+              .then((boards) => {
+                state.boards = boards;
+                console.info('board', boards);
+              });
       // const terrains_ready = gameTerrainInfoModel.init()
       //         .then((terrains) => {
       //           state.terrains = terrains;
@@ -83,7 +83,7 @@
                 state.settings = settings;
               });
       self.Promise.all([
-        // boards_ready,
+        boards_ready,
         // terrains_ready,
         // factions_ready,
         // scenario_ready,

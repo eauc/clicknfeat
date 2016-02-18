@@ -1,38 +1,45 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('setBoardCommand', setBoardCommandModelFactory);
 
-angular.module('clickApp.services')
-  .factory('setBoardCommand', [
+  setBoardCommandModelFactory.$inject = [
     'commands',
-    function setBoardCommandServiceFactory(commandsService) {
-      var setBoardCommandService = {
-        execute: function setBoardExecute(board, state, game) {
-          var ctxt = {
-            before: game.board,
-            after: board,
-            desc: board.name
-          };
-          game = R.assoc('board', board, game);
+  ];
+  function setBoardCommandModelFactory(commandsService) {
+    const setBoardCommandModel = {
+      executeP: setBoardExecuteP,
+      replayP: setBoardReplayP,
+      undoP: setBoardUndoP
+    };
 
-          state.changeEvent('Game.board.change');
+    commandsService.registerCommand('setBoard', setBoardCommandModel);
+    return setBoardCommandModel;
 
-          return [ctxt, game];
-        },
-        replay: function setBoardRedo(ctxt, state, game) {
-          game = R.assoc('board', ctxt.after, game);
-
-          state.changeEvent('Game.board.change');
-
-          return game;
-        },
-        undo: function setBoardUndo(ctxt, state, game) {
-          game = R.assoc('board', ctxt.before, game);
-          
-          state.changeEvent('Game.board.change');
-
-          return game;
-        }
+    function setBoardExecuteP(board, state, game) {
+      const ctxt = {
+        before: game.board,
+        after: board,
+        desc: board.name
       };
-      commandsService.registerCommand('setBoard', setBoardCommandService);
-      return setBoardCommandService;
+      game = R.assoc('board', board, game);
+
+      state.queueChangeEventP('Game.board.change');
+
+      return [ctxt, game];
     }
-  ]);
+    function setBoardReplayP(ctxt, state, game) {
+      game = R.assoc('board', ctxt.after, game);
+
+      state.queueChangeEventP('Game.board.change');
+
+      return game;
+    }
+    function setBoardUndoP(ctxt, state, game) {
+      game = R.assoc('board', ctxt.before, game);
+
+      state.queueChangeEventP('Game.board.change');
+
+      return game;
+    }
+  }
+})();

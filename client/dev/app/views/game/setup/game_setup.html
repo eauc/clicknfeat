@@ -91,29 +91,29 @@
   <!--     </form> -->
   <!--   </div> -->
   <!-- </div> -->
-  <!-- <div class="panel panel-info"> -->
-  <!--   <div class="panel-heading"> -->
-  <!--     <strong>Board Map</strong> -->
-  <!--   </div> -->
-  <!--   <div class="panel-content"> -->
-  <!--     <form class="form-inline" -->
-  <!--           name="board-map"> -->
-  <!--       <select class="form-control" -->
-  <!--               ng-options="b.name as b.name for b in boards" -->
-  <!--               ng-model="board_name" -->
-  <!--               ng-change="doSetBoard()"> -->
-  <!--       </select> -->
-  <!--       <button class="btn btn-default" -->
-  <!--               ng-click="doSetRandomBoard()"> -->
-  <!--         Random -->
-  <!--       </button> -->
-  <!--       <button class="btn btn-default" -->
-  <!--               ng-click="doResetTerrain()"> -->
-  <!--         Reset Terrain -->
-  <!--       </button> -->
-  <!--     </form> -->
-  <!--   </div> -->
-  <!-- </div> -->
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Board Map</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="board-map">
+        <select class="form-control"
+                ng-options="b.name as b.name for b in game_setup.boards"
+                ng-model="game_setup.board_name"
+                ng-change="game_setup.doSetBoard()">
+        </select>
+        <button class="btn btn-default"
+                ng-click="game_setup.doSetRandomBoard()">
+          Random
+        </button>
+        <!-- <button class="btn btn-default" -->
+        <!--         ng-click="game_setup.doResetTerrain()"> -->
+        <!--   Reset Terrain -->
+        <!-- </button> -->
+      </form>
+    </div>
+  </div>
   <!-- <div class="panel panel-info"> -->
   <!--   <div class="panel-heading"> -->
   <!--     <strong>Create Terrain</strong> -->

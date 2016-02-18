@@ -104,17 +104,17 @@
           <!--   </polygon> -->
           <!-- </clipPath> -->
         </defs>
-        <!-- <g id="game-board" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'b'"> -->
-        <!--   <image id="board-preview" -->
-        <!--          x="0" y="0" width="480" height="480" -->
-        <!--          xlink:href="{{state.game.board.preview || ''}}"> -->
-        <!--   </image> -->
-        <!--   <image id="board-view" -->
-        <!--          x="0" y="0" width="480" height="480" -->
-        <!--          xlink:href="{{state.game.board.img || ''}}"> -->
-        <!--   </image> -->
-        <!-- </g> -->
+        <g id="game-board"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'">
+          <image id="board-preview"
+                 x="0" y="0" width="480" height="480"
+                 xlink:href="{{state.game.board.preview || ''}}">
+          </image>
+          <image id="board-view"
+                 x="0" y="0" width="480" height="480"
+                 xlink:href="{{state.game.board.img || ''}}">
+          </image>
+        </g>
         <!-- <g id="game-terrains-locked" -->
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'b'" -->
         <!--    click-game-terrains-list="locked"> -->

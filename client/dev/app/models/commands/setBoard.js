@@ -1,8 +1,20 @@
 'use strict';
 
-angular.module('clickApp.services').factory('setBoardCommand', ['commands', function setBoardCommandServiceFactory(commandsService) {
-  var setBoardCommandService = {
-    execute: function setBoardExecute(board, state, game) {
+(function () {
+  angular.module('clickApp.services').factory('setBoardCommand', setBoardCommandModelFactory);
+
+  setBoardCommandModelFactory.$inject = ['commands'];
+  function setBoardCommandModelFactory(commandsService) {
+    var setBoardCommandModel = {
+      executeP: setBoardExecuteP,
+      replayP: setBoardReplayP,
+      undoP: setBoardUndoP
+    };
+
+    commandsService.registerCommand('setBoard', setBoardCommandModel);
+    return setBoardCommandModel;
+
+    function setBoardExecuteP(board, state, game) {
       var ctxt = {
         before: game.board,
         after: board,
@@ -10,26 +22,24 @@ angular.module('clickApp.services').factory('setBoardCommand', ['commands', func
       };
       game = R.assoc('board', board, game);
 
-      state.changeEvent('Game.board.change');
+      state.queueChangeEventP('Game.board.change');
 
       return [ctxt, game];
-    },
-    replay: function setBoardRedo(ctxt, state, game) {
+    }
+    function setBoardReplayP(ctxt, state, game) {
       game = R.assoc('board', ctxt.after, game);
 
-      state.changeEvent('Game.board.change');
-
-      return game;
-    },
-    undo: function setBoardUndo(ctxt, state, game) {
-      game = R.assoc('board', ctxt.before, game);
-
-      state.changeEvent('Game.board.change');
+      state.queueChangeEventP('Game.board.change');
 
       return game;
     }
-  };
-  commandsService.registerCommand('setBoard', setBoardCommandService);
-  return setBoardCommandService;
-}]);
+    function setBoardUndoP(ctxt, state, game) {
+      game = R.assoc('board', ctxt.before, game);
+
+      state.queueChangeEventP('Game.board.change');
+
+      return game;
+    }
+  }
+})();
 //# sourceMappingURL=setBoard.js.map
