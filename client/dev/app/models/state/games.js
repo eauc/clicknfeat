@@ -3,18 +3,15 @@
 (function () {
   angular.module('clickApp.services').factory('stateGames', stateGamesModelFactory);
 
-  stateGamesModelFactory.$inject = ['game', 'games'];
-
-  // 'fileImport',
-  function stateGamesModelFactory(gameModel, gamesModel) {
-    // fileImportService) {
+  stateGamesModelFactory.$inject = ['game', 'games', 'fileImport'];
+  function stateGamesModelFactory(gameModel, gamesModel, fileImportService) {
     var stateGamesService = {
       create: stateGamesCreate,
       save: stateGamesSave,
       onStateInit: stateGamesOnInit,
       onGamesLocalCreate: stateGamesOnLocalCreate,
       onGamesLocalLoad: stateOnGamesLocalLoad,
-      // onGamesLocalLoadFile: stateOnGamesLocalLoadFile,
+      onGamesLocalLoadFile: stateOnGamesLocalLoadFile,
       onGamesLocalDelete: stateOnGamesLocalDelete,
       loadNewLocalGame: loadNewLocalGame
     };
@@ -32,8 +29,7 @@
 
       state.onEvent('Games.local.create', stateGamesService.onGamesLocalCreate$(state));
       state.onEvent('Games.local.load', stateGamesService.onGamesLocalLoad$(state));
-      // state.onEvent('Games.local.loadFile',
-      //               stateGamesService.onGamesLocalLoadFile$(state));
+      state.onEvent('Games.local.loadFile', stateGamesService.onGamesLocalLoadFile$(state));
       state.onEvent('Games.local.delete', stateGamesService.onGamesLocalDelete$(state));
 
       return state;
@@ -52,12 +48,9 @@
     function stateOnGamesLocalLoad(state, event, index) {
       state.queueChangeEventP('Games.local.load', index);
     }
-    // function stateOnGamesLocalLoadFile(state, event, file) {
-    //   return R.pipePromise(
-    //     fileImportService.read$('json'),
-    //     stateGamesService.loadNewLocalGame$(state)
-    //   )(file);
-    // }
+    function stateOnGamesLocalLoadFile(state, event, file) {
+      return R.threadP(file)(fileImportService.readP$('json'), stateGamesService.loadNewLocalGame$(state));
+    }
     function stateOnGamesLocalDelete(state, event, id) {
       return R.thread(state.local_games)(gamesModel.removeLocalGame$(id), setLocalGames$(state));
     }

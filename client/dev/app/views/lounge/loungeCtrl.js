@@ -35,7 +35,7 @@
       $scope.stateEvent('Games.local.load', id);
     }
     function doOpenLocalGameFile(files) {
-      //   $scope.stateEvent('Games.local.loadFile', files[0]);
+      $scope.stateEvent('Games.local.loadFile', files[0]);
     }
     function doDeleteLocalGame() {
       var id = R.thread($scope.state.local_games)(R.nth(vm.local_games_selection.list[0]), R.prop('local_stamp'));
