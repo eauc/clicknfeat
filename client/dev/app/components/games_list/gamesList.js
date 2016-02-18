@@ -37,9 +37,6 @@
     function isInSelection(index) {
       return R.exists(R.find(R.equals(index), vm.selection.list));
     }
-    function selectionIsEmpty() {
-      return R.isEmpty(vm.selection.list);
-    }
     function doSetSelection(index) {
       if (R.exists(vm.current) && vm.games[index].public_stamp === vm.current) return;
 

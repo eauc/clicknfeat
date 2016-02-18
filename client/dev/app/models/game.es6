@@ -164,6 +164,7 @@
         return [command, game];
       }
       function emitGameEvent([command, game]) {
+        command = command;
         state.queueChangeEventP('Game.command.execute');
         return game;
       }

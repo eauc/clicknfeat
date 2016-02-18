@@ -1,5 +1,7 @@
 <div id="settings-main">
-  <p class="text-warning"><strong>{{result}}</strong></p>
+  <p class="text-warning">
+    <strong>{{result}}</strong>
+  </p>
   <div class="panel panel-info">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-import"></span>
@@ -7,25 +9,25 @@
     </div>
     <div class="panel-body row">
       <form class="">
-        <div class="form-group {{ hasDesc(f) ? 'bg-info' : '' }}"
-             ng-repeat="(f, faction) in state.factions.base">
+        <div class="form-group {{ settings_models.hasDesc(f) ? 'bg-info' : '' }}"
+             ng-repeat="(f, faction) in settings_models.factions">
           <label class="control-label col-xs-3 text-right">
             <span class="clickable glyphicon glyphicon-trash"
-                  ng-click="doClearFactionDesc(f)">
+                  ng-click="settings_models.doClearFactionDesc(f)">
             </span>
             {{::faction.name}}
           </label>
           <input id="file-{{::f}}"
                  type="file"
                  multiple
-                 ea-file="doOpenFactionFile(f, file)" />
+                 ea-file="settings_models.doOpenFactionFile(f, file)" />
         </div>
       </form>
     </div>
     <div class="panel-footer">
       <button type="button"
               class="btn btn-default"
-              ng-click="doClearAllDesc(f)">
+              ng-click="settings_models.doClearAllDesc(f)">
         Clear All
         <span class="glyphicon glyphicon-trash">
         </span>

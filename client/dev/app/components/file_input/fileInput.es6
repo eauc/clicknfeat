@@ -1,23 +1,33 @@
-angular.module('clickApp.directives')
-  .directive('eaFile', function() {
+(function() {
+  angular.module('clickApp.directives')
+    .directive('clickFile', clickFileDirectiveFactory);
+
+  clickFileDirectiveFactory.$inject = [];
+  function clickFileDirectiveFactory() {
     return {
       restrict: 'A',
       scope: {
-        eaFile: '&'
+        clickFile: '&'
       },
-      controller: [
-        '$scope',
-        () => {}
-      ],
-      link: function(scope, element) {
-        element[0].onclick = function() {
-          this.value = null;
-        };
-        element[0].onchange = function() {
-          var files = element[0].files;
-          scope.eaFile({ file: files });
-          element[0].blur();
-        };
-      }
+      link: link
     };
-  });
+    function link(scope, element) {
+      const input = element[0];
+
+      input.setAttribute('multiple','');
+      input.onclick = onClick;
+      input.onchange = onChange;
+
+      return;
+
+      function onClick() {
+        this.value = null;
+      }
+      function onChange() {
+        var files = input.files;
+        scope.clickFile({ file: files });
+        input.blur();
+      }
+    }
+  }
+})();

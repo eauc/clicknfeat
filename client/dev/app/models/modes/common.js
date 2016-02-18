@@ -3,10 +3,14 @@
 (function () {
   angular.module('clickApp.services').factory('commonMode', commonModeModelFactory);
 
-  commonModeModelFactory.$inject = ['modes'];
-
-  // 'settings',
-  function commonModeModelFactory(modesService, settingsService) {
+  commonModeModelFactory.$inject = ['modes', 'settings'];
+  function commonModeModelFactory(modesService, settingsModel) {
+    var DEFAULT_SETTINGS = {
+      DragEpsilon: 3,
+      ScrollStep: 30,
+      ZoomFactor: 2
+    };
+    var SETTINGS = R.clone(DEFAULT_SETTINGS);
     var common_actions = {
       modeBackToDefault: modeBackToDefault,
       commandUndoLast: commandUndoLast,
@@ -44,14 +48,17 @@
       name: 'Common',
       actions: common_actions,
       buttons: [],
-      bindings: R.clone(common_bindings)
+      bindings: R.clone(common_bindings),
+      settings: function settings() {
+        return SETTINGS;
+      }
     };
-    // settingsService.register('Bindings',
-    //                          common_mode.name,
-    //                          common_bindings,
-    //                          (bs) => {
-    //                            R.extend(common_mode.bindings, bs);
-    //                          });
+    settingsModel.register('Misc', common_mode.name, DEFAULT_SETTINGS, function (settings) {
+      R.extend(SETTINGS, settings);
+    });
+    settingsModel.register('Bindings', common_mode.name, common_bindings, function (bs) {
+      R.extend(common_mode.bindings, bs);
+    });
     return common_mode;
 
     function modeBackToDefault(state) {

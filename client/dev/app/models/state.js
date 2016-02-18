@@ -5,27 +5,20 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 (function () {
-  angular.module('clickApp.services').factory('state', stateServiceFactory);
+  angular.module('clickApp.services').factory('state', stateModelFactory);
 
-  stateServiceFactory.$inject = ['pubSub',
-  // 'fileImport',
-  // 'stateExports',
-  // 'stateData',
-  'stateUser', 'stateGame', 'stateGames', 'stateModes'];
-  function stateServiceFactory(pubSubService,
-  // fileImportService,
-  // stateExportsService,
-  // stateDataService,
-  stateUserService, stateGameService, stateGamesService, stateModesService) {
-    var stateService = {
+  stateModelFactory.$inject = ['pubSub', 'fileImport', 'stateExports', 'stateData', 'stateUser', 'stateGame', 'stateGames', 'stateModes'];
+  function stateModelFactory(pubSubService, fileImportService, stateExportsService, stateDataModel, stateUserModel, stateGameModel, stateGamesModel, stateModesModel) {
+    var stateModel = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
       queueChangeEventP: stateQueueChangeEventP,
-      onChangeEvent: stateOnChangeEvent
+      onChangeEvent: stateOnChangeEvent,
+      onLoadDumpFile: stateOnLoadDumpFile
     };
-    // onLoadDumpFile: stateOnLoadDumpFile
-    R.curryService(stateService);
-    return stateService;
+    var exportCurrentDumpFile = stateExportsService.exportP$('dump', buildDumpData);
+    R.curryService(stateModel);
+    return stateModel;
 
     function stateCreate() {
       var state = pubSubService.init({
@@ -38,13 +31,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         changeEventP: changeEventP,
         queueChangeEventP: queueChangeEventP
       }, 'State');
-
       state = R.thread(state)(
       // starting here State is mutable
-      // stateDataService.create,
-      stateUserService.create, stateGameService.create, stateGamesService.create, stateModesService.create);
-
-      // exportCurrentDumpFile(state);
+      stateDataModel.create, stateUserModel.create, stateGameModel.create, stateGamesModel.create, stateModesModel.create);
       return state;
 
       function onEvent() {
@@ -86,6 +75,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function stateQueueEventP(args, state) {
       return new self.Promise(function (resolve) {
         console.info('State ---> Event', args[0], R.tail(args));
+        console.trace();
         state.event_queue = R.append([resolve, args], state.event_queue);
         startEventQueueProcessing(state);
       });
@@ -109,19 +99,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var resolve = _R$head2[0];
       var args = _R$head2[1];
 
-      return R.threadP(stateEventP(args, state))(
-      // () => { return stateDataService.save(state); },
-      function () {
-        return stateUserService.save(state);
+      return R.threadP(stateEventP(args, state))(function () {
+        return stateDataModel.save(state);
       }, function () {
-        return stateGameService.save(state);
+        return stateUserModel.save(state);
       }, function () {
-        return stateGamesService.save(state);
+        return stateGameModel.save(state);
       }, function () {
-        return stateModesService.save(state);
-      },
-      // () => { return exportCurrentDumpFile(state); },
-      function () {
+        return stateGamesModel.save(state);
+      }, function () {
+        return stateModesModel.save(state);
+      }, function () {
+        return exportCurrentDumpFile(state);
+      }, function () {
         return processNextChangeEventP(state);
       }).catch(R.spyAndDiscardError('processNextEvent')).then(function () {
         state.event_queue = R.tail(state.event_queue);
@@ -132,6 +122,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function stateQueueChangeEventP(args, state) {
       return new self.Promise(function (resolve) {
         console.info('StateChange <---', args[0], R.tail(args));
+        console.trace();
         state.change_event_queue = R.append([resolve, args], state.change_event_queue);
       });
     }
@@ -160,40 +151,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state]));
     }
     function stateChangeEventP(args, state) {
-      console.log('StateChange <===', R.head(args), R.tail(args));
+      console.info('StateChange <===', R.head(args), R.tail(args));
       return pubSubService.publishP.apply(null, [].concat(_toConsumableArray(args), [state.change]));
     }
     function stateOnChangeEvent(event, listener, state) {
       return pubSubService.subscribe(event, listener, state.change);
     }
-    function stateOnLoadDumpFile(state, event, file) {}
-    // return R.pipeP(
-    //   fileImportService.read$('json'),
-    //   (data) => {
-    //     return R.pipeP(
-    //       () => {
-    //         return stateDataService
-    //           .onSettingsReset(state, event, data.settings);
-    //       },
-    //       () => {
-    //         return stateGamesService
-    //           .loadNewLocalGame(state, data.game);
-    //       },
-    //       () => {
-    //         state.changeEvent('State.loadDumpFile', 'File loaded');
-    //       }
-    //     )();
-    //   }
-    // )(file).catch((error) => {
-    //   state.changeEvent('State.loadDumpFile', error);
-    // });
+    function stateOnLoadDumpFile(state, event, file) {
+      return R.threadP(file)(fileImportService.read$('json'), dispatchData, function () {
+        state.queueChangeEventP('State.loadDumpFile', 'File loaded');
+      }).catch(function (error) {
+        state.queueChangeEventP('State.loadDumpFile', error);
+      });
 
-    // const exportCurrentDumpFile = stateExportsService
-    //         .export$('dump', (state) => {
-    //           return { settings: R.pathOr({}, ['settings','current'], state),
-    //                    game: R.propOr({}, 'game', state)
-    //                  };
-    //         });
+      function dispatchData(data) {
+        return R.threadP()(function () {
+          return stateDataModel.onSettingsReset(state, event, data.settings);
+        }, function () {
+          return stateGamesModel.loadNewLocalGame(state, data.game);
+        });
+      }
+    }
+    function buildDumpData(state) {
+      return {
+        settings: R.pathOr({}, ['settings', 'current'], state),
+        game: R.propOr({}, 'game', state)
+      };
+    }
   }
 })();
 //# sourceMappingURL=state.js.map

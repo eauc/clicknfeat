@@ -10,7 +10,7 @@ input.ng-invalid-required {
   font-style: italic;
   font-size: 90%; }
 
-#lounge .game-list, #lounge .chat-list, #game #cmd-osd .scroll-container, #game #dice-osd .dice-list, #game #chat-osd .chat-list, #game .log-replay-list, #game .log-command-list {
+#lounge .game-list, #lounge .chat-list, #settings .error-list, #game #cmd-osd .scroll-container, #game #dice-osd .dice-list, #game #chat-osd .chat-list, #game .log-replay-list, #game .log-command-list {
   overflow-y: auto; }
 
 input[type='file'].form-control {
@@ -59,7 +59,13 @@ a:not([href]):focus {
 #lounge .chat-list {
   max-height: 10em; }
 
-/* @import 'views/settings/settings'; */
+#settings .error-list {
+  max-height: 10em; }
+#settings .modified {
+  font-weight: bold; }
+#settings .vertical-center {
+  vertical-align: middle; }
+
 /* @import 'components/game/selection_osd/selectionOsd'; */
 #game #game-deploiement .extended-deploiement-line, #game #game-deploiement .extended-advance-deploiement-line, #game #game-deploiement .ambush-line, #game #game-deploiement .deploiement-line, #game #game-deploiement .advance-deploiement-line {
   stroke: #000;

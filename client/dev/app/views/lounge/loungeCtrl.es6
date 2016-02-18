@@ -31,7 +31,7 @@
     }
     function doCreateLocalGame() {
       $scope.stateEvent('Games.local.create');
-    };
+    }
     function doLoadLocalGame() {
       let id = R.thread($scope.state.local_games)(
         R.nth(vm.local_games_selection.list[0]),
@@ -40,17 +40,17 @@
       console.log('load', $scope.state.local_games,
                   vm.local_games_selection.list[0], id);
       $scope.stateEvent('Games.local.load', id);
-    };
+    }
     function doOpenLocalGameFile(files) {
     //   $scope.stateEvent('Games.local.loadFile', files[0]);
-    };
+    }
     function doDeleteLocalGame() {
       const id = R.thread($scope.state.local_games)(
         R.nth(vm.local_games_selection.list[0]),
         R.prop('local_stamp')
       );
       $scope.stateEvent('Games.local.delete', id);
-    };
+    }
     function onGamesLocalLoad(event, id) {
       $scope.goToState('game.main', {
         online: 'offline',

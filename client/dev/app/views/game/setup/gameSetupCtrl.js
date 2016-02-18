@@ -93,7 +93,7 @@
     }
     function doToggleLayer(l) {
       $scope.stateEvent('Game.command.execute', 'setLayers', ['toggle', l]);
-    };
+    }
 
     // function onAmbianceChange() {
     //   vm.category = R.head(R.keys(vm.terrains[vm.ambiance]));

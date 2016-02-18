@@ -9,11 +9,12 @@
         <input class="form-control"
                id="import-file"
                type="file"
-               multiple
-               ea-file="doLoadSettingsFile(file)" />
+               click-file="settings_main.doLoadSettingsFile(file)" />
       </form>
       <div class="error-list">
-        <strong class="text-warning">{{load_settings_result}}</strong>
+        <strong class="text-warning">
+          {{settings_main.load_settings_result}}
+        </strong>
       </div>
     </div>
   </div>
@@ -33,7 +34,7 @@
   </div>
   <button type="button"
           class="btn btn-default"
-          ng-click="doResetSettings({})">
+          ng-click="settings_main.doResetSettings({})">
     Reset Settings
   </button>
 </div>

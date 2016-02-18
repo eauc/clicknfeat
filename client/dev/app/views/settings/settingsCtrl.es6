@@ -1,20 +1,38 @@
-angular.module('clickApp.controllers')
-  .controller('settingsCtrl', [
-    '$scope',
-    function($scope) {
-      console.log('init settingsCtrl');
+(function() {
+  angular.module('clickApp.controllers')
+    .controller('settingsCtrl', settingsCtrl);
 
-      function updateEditSettings() {
-        $scope.edit_settings = JSON.parse(JSON.stringify($scope.state.settings.current));
-        $scope.menu = R.concat(['Main', 'Models'],
-                               R.keys($scope.state.settings.default));
-        $scope.$digest();
-      }
+  settingsCtrl.$inject = [
+    '$scope',
+  ];
+  function settingsCtrl($scope) {
+    const vm = this;
+    console.log('init settingsCtrl');
+
+    vm.doUpdateSettings = doUpdateSettings;
+
+    activate();
+
+    function activate() {
       $scope.state.data_ready.then(updateEditSettings);
       $scope.onStateChangeEvent('Settings.change', updateEditSettings, $scope);
-
-      $scope.doUpdateSettings = () => {
-        $scope.stateEvent('Settings.reset', $scope.edit_settings);
-      };
     }
-  ]);
+    function updateEditSettings() {
+      vm.edit = R.thread($scope.state)(
+        R.path(['settings','current']),
+        JSON.stringify,
+        JSON.parse
+      );
+      vm.menu = R.thread($scope.state)(
+        R.path(['settings','default']),
+        R.keys,
+        R.concat(['Main', 'Models'])
+      );
+      $scope.$digest();
+    }
+
+    function doUpdateSettings() {
+      $scope.stateEvent('Settings.reset', vm.edit);
+    }
+  }
+})();

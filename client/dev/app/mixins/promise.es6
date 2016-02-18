@@ -7,4 +7,8 @@
     if(test(obj)) return self.Promise.reject(reason);
     else return obj;
   });
+
+  R.condErrorP = R.curry(function condErrorP(options, promise) {
+    return promise.catch(R.cond(R.append([ R.T, R.reject ], options)));
+  });
 })();

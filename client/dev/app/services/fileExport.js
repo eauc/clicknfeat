@@ -20,7 +20,7 @@
     function fileExportGenerate(type, data) {
       return R.thread(data)(stringifiers[type].stringify, function (string) {
         return new self.Blob([string], { type: 'text/plain' });
-      }, self.URL.createObjectURL)(data);
+      }, self.URL.createObjectURL);
     }
     function fileExportCleanup(url) {
       if (!R.isNil(url)) {

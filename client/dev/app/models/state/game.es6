@@ -3,7 +3,6 @@
     .factory('stateGame', stateGameModelFactory);
 
   stateGameModelFactory.$inject = [
-    // '$window',
     'games',
     'game',
     // 'gameBoard',
@@ -14,23 +13,21 @@
     // 'gameScenario',
     // 'gameTerrains',
     // 'fileImport',
-    // 'stateExports',
+    'stateExports',
     'allCommands',
     // 'allTemplates',
   ];
-  function stateGameModelFactory(// $window,
-    gamesModel,
-    gameModel) {
-    // gameBoardModel,
-    // gameConnectionModel,
-    // gameFactionsModel,
-    // gameModelsModel,
-    // gameModelSelectionModel,
-    // gameScenarioModel,
-    // gameTerrainsModel,
-    // fileImportModel,
-    // stateExportsModel
-    // ) {
+  function stateGameModelFactory(gamesModel,
+                                 gameModel,
+                                 // gameBoardModel,
+                                 // gameConnectionModel,
+                                 // gameFactionsModel,
+                                 // gameModelsModel,
+                                 // gameModelSelectionModel,
+                                 // gameScenarioModel,
+                                 // gameTerrainsModel,
+                                 // fileImportModel,
+                                 stateExportsModel) {
     const stateGameModel = {
       create: stateGamesCreate,
       save: stateGameSave,
@@ -62,8 +59,8 @@
     };
 
     var setGame$ = R.curry(setGame);
-    // var exportCurrentGame = stateExportsModel
-    //       .export$('game', R.prop('game'));
+    var exportCurrentGame = stateExportsModel
+          .exportP$('game', R.prop('game'));
     // var exportCurrentBoard = stateExportsModel
     //       .export$('board', exportBoardData);
 
@@ -130,8 +127,8 @@
     }
     function stateGameSave(state) {
       return R.thread()(
-        R.always(saveCurrentGame(state))
-      //   R.always(exportCurrentGame(state)),
+        R.always(saveCurrentGame(state)),
+        R.always(exportCurrentGame(state))
       //   R.always(exportCurrentModelSelection(state)),
       //   R.always(exportCurrentBoard(state))
       );

@@ -14,7 +14,7 @@
     // 'gameTerrainSelection',
   ];
   function defaultModeModelFactory(modesService,
-                                   // settingsService,
+                                   // settingsModel,
                                    commonModeService) {
     // gameService,
     // templateService,
@@ -22,16 +22,6 @@
     // gameModelsService,
     // gameModelSelectionService,
     // gameTerrainSelectionService) {
-    const DEFAULT_MOVES = {
-      DragEpsilon: 3
-    };
-    const MOVES = R.clone(DEFAULT_MOVES);
-    // settingsService.register('Moves',
-    //                          'Default',
-    //                          DEFAULT_MOVES,
-    //                          (moves) => {
-    //                            R.extend(MOVES, moves);
-    //                          });
     const default_actions = Object.create(commonModeService.actions);
     // default_actions.setModelSelection = setModelSelection;
     // default_actions.toggleModelSelection = toggleModelSelection;
@@ -63,8 +53,7 @@
       onEnter: onEnter,
       actions: default_actions,
       buttons: default_buttons,
-      bindings: default_bindings,
-      moves: () => MOVES
+      bindings: default_bindings
     };
     modesService.registerMode(default_mode);
     // settingsService.register('Bindings',

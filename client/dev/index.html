@@ -32,10 +32,10 @@
                      {{(state.user | user:'isValid') ? '' : 'disabled'}}">
             <a href="#/lounge">Lounge</a>
           </li>
-          <!-- <li class="{{main.stateMatches('settings') ? 'active' : ''}} -->
-          <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
-          <!--   <a href="#/settings/main">Settings</a> -->
-          <!-- </li> -->
+          <li class="{{app.stateMatches('settings') ? 'active' : ''}}
+                     {{(state.user | user:'isValid') ? '' : 'disabled'}}">
+            <a href="#/settings/main">Settings</a>
+          </li>
           <!-- <li class="{{main.stateIs('debug') ? 'active' : ''}} -->
           <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
           <!--   <a href="#/debug">Debug</a> -->
@@ -79,6 +79,12 @@
     <script src="app/views/game/setup/gameSetupCtrl.js"></script>
     <script src="app/views/lounge/loungeConfig.js"></script>
     <script src="app/views/lounge/loungeCtrl.js"></script>
+    <script src="app/views/settings/settingsConfig.js"></script>
+    <script src="app/views/settings/settingsCtrl.js"></script>
+    <script src="app/views/settings/bindings/settingsBindingsCtrl.js"></script>
+    <script src="app/views/settings/main/settingsMainCtrl.js"></script>
+    <script src="app/views/settings/misc/settingsMiscCtrl.js"></script>
+    <script src="app/views/settings/models/settingsModelsCtrl.js"></script>
     <script src="app/views/user/userConfig.js"></script>
     <script src="app/views/user/userCtrl.js"></script>
     <script src="app/models/commands.js"></script>
@@ -90,13 +96,18 @@
     <script src="app/models/modes.js"></script>
     <script src="app/models/modes/common.js"></script>
     <script src="app/models/modes/default.js"></script>
+    <script src="app/models/settings.js"></script>
     <script src="app/models/state.js"></script>
+    <script src="app/models/state/data.js"></script>
+    <script src="app/models/state/exports.js"></script>
     <script src="app/models/state/game.js"></script>
     <script src="app/models/state/games.js"></script>
     <script src="app/models/state/modes.js"></script>
     <script src="app/models/state/user.js"></script>
     <script src="app/models/user.js"></script>
     <script src="app/models/user/connection.js"></script>
+    <script src="app/services/fileExport.js"></script>
+    <script src="app/services/fileImport.js"></script>
     <script src="app/services/gameMap.js"></script>
     <script src="app/services/http.js"></script>
     <script src="app/services/jsonParser.js"></script>
@@ -104,6 +115,7 @@
     <script src="app/services/localStorage.js"></script>
     <script src="app/services/pubSub.js"></script>
     <script src="app/services/websocket.js"></script>
+    <script src="app/components/file_input/fileInput.js"></script>
     <script src="app/components/games_list/gamesList.js"></script>
     <script src="app/components/game/action_error/actionError.js"></script>
     <script src="app/components/game/loading/gameLoading.js"></script>

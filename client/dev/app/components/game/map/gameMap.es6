@@ -5,14 +5,14 @@
   clickGameMapDirectiveFactory.$inject = [
     'gameMap',
     // 'terrain',
-    // 'defaultMode',
+    'commonMode',
   ];
   function clickGameMapDirectiveFactory(gameMapService,
-                                        terrainService,
-                                        defaultModeService) {
-    const log = true
+                                        // terrainModel,
+                                        commonModeModel) {
+    const log = true // eslint-disable-line
             ? R.bind(console.log, console)
-            : function() {}; // eslint-disable-line
+            : function() {};
     return {
       restrict: 'A',
       link: link
@@ -201,13 +201,12 @@
       //                        event
       //                      ]);
       //   }
-      //   function currentDragIsBellowThreshold() {
-      //     return ( ( Math.abs(drag.now.x - drag.start.x) <
-      //                defaultModeService.moves().DragEpsilon ) &&
-      //              ( Math.abs(drag.now.y - drag.start.y) <
-      //                defaultModeService.moves().DragEpsilon )
-      //            );
-      //   }
+      // function currentDragIsBellowThreshold() {
+      //   const epsilon = commonModeService.moves().DragEpsilon;
+      //   return ( Math.abs(drag.now.x - drag.start.x) < epsilon &&
+      //            Math.abs(drag.now.y - drag.start.y) < epsilon
+      //          );
+      // }
       // }
 
       // function buildMoveEvents() {
@@ -260,7 +259,6 @@
       // }
 
       function buildZoomEvents() {
-        const ZOOM_STEP = 1.5;
         return {
           'in': zoomIn,
           out: zoomOut,
@@ -273,28 +271,29 @@
           setMapDimensions(hw-15);
         }
         function zoomIn() {
+          const zoom_factor = commonModeModel.settings().ZoomFactor;
           let [[cx,cy],[vw,vh]] = findViewportCenter();
 
           const rect = map.getBoundingClientRect();
-          cx = (vw > rect.width) ? rect.width / ZOOM_STEP : cx;
-          cy = (vh > rect.height) ? rect.height / ZOOM_STEP : cy;
+          cx = (vw > rect.width) ? rect.width / zoom_factor : cx;
+          cy = (vh > rect.height) ? rect.height / zoom_factor : cy;
 
-          setMapDimensions(rect.width * ZOOM_STEP);
-          setViewportCenter(cx * ZOOM_STEP, cy * ZOOM_STEP, vw, vh);
+          setMapDimensions(rect.width * zoom_factor);
+          setViewportCenter(cx * zoom_factor, cy * zoom_factor, vw, vh);
         }
         function zoomOut() {
+          const zoom_factor = commonModeModel.settings().ZoomFactor;
           const [[cx,cy],[vw,vh]] = findViewportCenter();
           const hw = Math.min(vw, vh);
 
           const rect = map.getBoundingClientRect();
 
-          setMapDimensions(Math.max(hw-15, rect.width / ZOOM_STEP));
-          setViewportCenter(cx / ZOOM_STEP, cy / ZOOM_STEP, vw, vh);
+          setMapDimensions(Math.max(hw-15, rect.width / zoom_factor));
+          setViewportCenter(cx / zoom_factor, cy / zoom_factor, vw, vh);
         }
       }
 
       function buildScrollEvents() {
-        const SCROLL_INDENT = 30;
         return {
           left: scrollLeft,
           right: scrollRight,
@@ -303,27 +302,31 @@
         };
 
         function scrollLeft() {
+          const scroll_step = commonModeModel.settings().ScrollStep;
           const left = viewport.scrollLeft;
           self.window.requestAnimationFrame(() => {
-            viewport.scrollLeft = left - SCROLL_INDENT;
+            viewport.scrollLeft = left - scroll_step;
           });
         }
         function scrollRight() {
+          const scroll_step = commonModeModel.settings().ScrollStep;
           const left = viewport.scrollLeft;
           self.window.requestAnimationFrame(() => {
-            viewport.scrollLeft = left + SCROLL_INDENT;
+            viewport.scrollLeft = left + scroll_step;
           });
         }
         function scrollUp() {
+          const scroll_step = commonModeModel.settings().ScrollStep;
           const top = viewport.scrollTop;
           self.window.requestAnimationFrame(() => {
-            viewport.scrollTop = top - SCROLL_INDENT;
+            viewport.scrollTop = top - scroll_step;
           });
         }
         function scrollDown() {
+          const scroll_step = commonModeModel.settings().ScrollStep;
           const top = viewport.scrollTop;
           self.window.requestAnimationFrame(() => {
-            viewport.scrollTop = top + SCROLL_INDENT;
+            viewport.scrollTop = top + scroll_step;
           });
         }
       }

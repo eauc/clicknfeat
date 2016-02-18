@@ -34,7 +34,7 @@
         if(!menu_hidden) {
           const rect = gameview.getBoundingClientRect();
           gameview_width_mem = rect.width;
-          gameview.style.width = $window.innerWidth+'px';
+          gameview.style.width = self.window.innerWidth+'px';
         }
         else {
           gameview.style.width = gameview_width_mem+'px';

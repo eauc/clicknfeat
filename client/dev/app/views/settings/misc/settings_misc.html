@@ -3,8 +3,8 @@
     <div class="form-group">
       <label>For mode :</label>
       <select class="form-control"
-              ng-options="m as m for m in modes"
-              ng-model="mode">
+              ng-options="m as m for m in settings_misc.modes"
+              ng-model="settings_misc.mode">
       </select>
     </div>
   </form>
@@ -14,10 +14,10 @@
       <th>Default</th>
       <th>Current</th>
     </tr>
-    <tr ng-repeat="(a,b) in state.settings.default.Moves[mode]"
+    <tr ng-repeat="(a,b) in state.settings.default.Misc[settings_misc.mode]"
         class="{{
-               edit_settings.Moves[mode][a] &&
-               edit_settings.Moves[mode][a] !== b ?
+               settings.edit.Misc[settings_misc.mode][a] &&
+               settings.edit.Misc[settings_misc.mode][a] !== b ?
                'modified' : ''
                }}">
       <td class="vertical-center">{{::a}}</td>
@@ -27,7 +27,7 @@
           <input type="number"
                  class="form-control"
                  placeholder="{{::b}}"
-                 ng-model="edit_settings.Moves[mode][a]" />
+                 ng-model="settings.edit.Misc[settings_misc.mode][a]" />
         </div>
       </td>
     </tr>

@@ -1,22 +1,35 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('eaFile', function () {
-  return {
-    restrict: 'A',
-    scope: {
-      eaFile: '&'
-    },
-    controller: ['$scope', function () {}],
-    link: function link(scope, element) {
-      element[0].onclick = function () {
+(function () {
+  angular.module('clickApp.directives').directive('clickFile', clickFileDirectiveFactory);
+
+  clickFileDirectiveFactory.$inject = [];
+  function clickFileDirectiveFactory() {
+    return {
+      restrict: 'A',
+      scope: {
+        clickFile: '&'
+      },
+      link: link
+    };
+    function link(scope, element) {
+      var input = element[0];
+
+      input.setAttribute('multiple', '');
+      input.onclick = onClick;
+      input.onchange = onChange;
+
+      return;
+
+      function onClick() {
         this.value = null;
-      };
-      element[0].onchange = function () {
-        var files = element[0].files;
-        scope.eaFile({ file: files });
-        element[0].blur();
-      };
+      }
+      function onChange() {
+        var files = input.files;
+        scope.clickFile({ file: files });
+        input.blur();
+      }
     }
-  };
-});
+  }
+})();
 //# sourceMappingURL=fileInput.js.map

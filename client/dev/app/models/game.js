@@ -163,6 +163,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var command = _ref10[0];
         var game = _ref10[1];
 
+        command = command;
         state.queueChangeEventP('Game.command.execute');
         return game;
       }

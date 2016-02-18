@@ -1,0 +1,53 @@
+<div id="settings-bindings">
+  <form>
+    <div class="form-group">
+      <label>For mode :</label>
+      <select class="form-control"
+              ng-options="m as m for m in settings_bindings.modes"
+              ng-model="settings_bindings.mode">
+      </select>
+    </div>
+  </form>
+  <table class="table">
+    <tr>
+      <th>Action</th>
+      <th>Default</th>
+      <th>Current</th>
+    </tr>
+    <tr ng-repeat="a in settings_bindings.getBindingsKeysForMode()"
+        class="{{
+               settings.edit.Bindings[settings_bindings.mode][a] &&
+               settings.edit.Bindings[settings_bindings.mode][a] !==
+               state.settings.default.Bindings[settings_bindings.mode][a] ?
+               'modified' : ''
+               }}">
+      <td class="vertical-center">
+        {{::a}}
+      </td>
+      <td class="vertical-center">
+        {{::state.settings.default.Bindings[settings_bindings.mode][a]}}
+      </td>
+      <td>
+        <div class="input-group">
+          <input type="text"
+                 class="form-control"
+                 placeholder="{{::state.settings.default.Bindings[settings_bindings.mode][a]}}"
+                 ng-model="settings.edit.Bindings[settings_bindings.mode][a]" />
+          <span class="input-group-btn">
+            <button class="btn btn-default"
+                    type="button"
+                    ng-click="settings_bindings.doRecordBinding(a)"
+                    ng-disabled="settings_bindings.recording">
+              <span class="glyphicon glyphicon-record">
+              </span>
+            </button>
+          </span>
+        </div>
+        <span class="hint"
+              ng-show="settings_bindings.recording === a">
+          Recording...
+        </span>
+      </td>
+    </tr>
+  </table>
+</div>

@@ -1,9 +1,9 @@
 <div id="settings"
      class="container">
   <ul class="nav nav-tabs">
-    <li ng-repeat="m in menu"
-        class="{{stateIs('settings.'+m) ? 'active' : ''}}"
-        ng-click="goToState('^.'+m)">
+    <li ng-repeat="m in settings.menu"
+        class="{{app.stateIs('settings.'+m) ? 'active' : ''}}"
+        ng-click="app.goToState('^.'+m)">
       <a>{{::m}}</a>
     </li>
   </ul>

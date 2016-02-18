@@ -2,7 +2,7 @@
   self.spyOnPromise = function spyOnPromise(object, key) {
     const spy = spyOn(object, key);
 
-    return spyReturnPromise(spy);
+    return self.spyReturnPromise(spy);
   };
   self.spyReturnPromise = function spyReturnPromise(spy) {
     let resolve_value;

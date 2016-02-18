@@ -1,92 +1,151 @@
 'use strict';
 
-angular.module('clickApp.services').factory('stateData', ['pubSub', 'stateExports', 'fileImport', 'settings', 'gameBoard', 'gameTerrainInfo', 'gameFactions', 'gameScenario', function stateDataServiceFactory(pubSubService, stateExportsService, fileImportService, settingsService, gameBoardService, gameTerrainInfoService, gameFactionsService, gameScenarioService) {
-  var stateDataService = {
-    init: function stateDataInit(state) {
-      var boards_ready = gameBoardService.init().then(function (boards) {
-        state.boards = boards;
-        console.log('board', boards);
-      });
-      var terrains_ready = gameTerrainInfoService.init().then(function (terrains) {
-        state.terrains = terrains;
-        console.log('terrains', terrains);
-      });
-      var factions_ready = gameFactionsService.init().then(function (factions) {
-        state.factions = factions;
-      });
-      var scenario_ready = gameScenarioService.init().then(function (scenarios) {
-        state.scenarios = scenarios;
-        console.log('scenarios', scenarios);
-      });
-      var settings_ready = settingsService.init().then(function (settings) {
-        state.settings = settings;
-        exportCurrentSettings(state);
-      });
-      state.data_ready = self.Promise.all([boards_ready, terrains_ready, factions_ready, scenario_ready, settings_ready]).then(function () {
-        console.log('data ready');
+(function () {
+  angular.module('clickApp.services').factory('stateData', stateDataModelFactory);
+
+  stateDataModelFactory.$inject = ['stateExports', 'fileImport', 'settings'];
+
+  // 'gameBoard',
+  // 'gameTerrainInfo',
+  // 'gameFactions',
+  // 'gameScenario',
+  function stateDataModelFactory(stateExportsService, fileImportService, settingsModel) {
+    // gameBoardService,
+    // gameTerrainInfoService,
+    // gameFactionsService,
+    // gameScenarioService) {
+    var stateDataModel = {
+      create: stateDataCreate,
+      save: stateDataSave,
+      onStateInit: stateDataOnInit,
+      onSettingsLoadFile: stateDataOnSettingsLoadFile,
+      onSettingsReset: stateDataOnSettingsReset
+    };
+    // onFactionsLoadDescFile: stateDataOnFactionsLoadDescFile,
+    // onFactionsClearDesc: stateDataOnFactionsClearDesc,
+    // onFactionsClearAllDesc: stateDataOnFactionsClearAllDesc
+    var setSettings$ = R.curry(setSettings);
+    // const setFactions$ = R.curry(setFactions);
+    var exportCurrentSettings = stateExportsService.exportP$('settings', R.path(['settings', 'current']));
+
+    R.curryService(stateDataModel);
+    return stateDataModel;
+
+    function stateDataCreate(state) {
+      state.data_ready = new self.Promise(function (resolve) {
+        state.onEvent('State.init', stateDataModel.onStateInit$(state, resolve));
       });
 
-      state.onEvent('Settings.loadFile', stateDataService.onSettingsLoadFile$(state));
-      state.onEvent('Settings.reset', stateDataService.onSettingsReset$(state));
-      state.onEvent('Factions.loadDescFile', stateDataService.onFactionsLoadDescFile$(state));
-      state.onEvent('Factions.clearDesc', stateDataService.onFactionsClearDesc$(state));
-      state.onEvent('Factions.clearAllDesc', stateDataService.onFactionsClearAllDesc$(state));
+      state.onEvent('Settings.loadFile', stateDataModel.onSettingsLoadFile$(state));
+      state.onEvent('Settings.reset', stateDataModel.onSettingsReset$(state));
+      // state.onEvent('Factions.loadDescFile',
+      //               stateDataModel.onFactionsLoadDescFile$(state));
+      // state.onEvent('Factions.clearDesc',
+      //               stateDataModel.onFactionsClearDesc$(state));
+      // state.onEvent('Factions.clearAllDesc',
+      //               stateDataModel.onFactionsClearAllDesc$(state));
       // state.onEvent('Factions.reload',
-      //               stateDataService.onReloadFactions$(state));
+      //               stateDataModel.onReloadFactions$(state));
 
       return state;
-    },
-    save: function stateDataSave(state) {
-      return R.pipeP(R.always(exportCurrentSettings(state)), R.always(storeCurrentSettings(state)), R.always(storeCurrentFactions(state)))();
-    },
-    onSettingsLoadFile: function stateOnSettingsLoadFile(state, event, file) {
-      return R.pipeP(fileImportService.read$('json'), settingsService.bind, settingsService.update, setSettings$(state), function () {
-        state.changeEvent('Settings.loadFile', 'Settings loaded');
-      })(file).catch(function (error) {
-        state.changeEvent('Settings.loadFile', error);
-      });
-    },
-    onSettingsReset: function stateOnSettingsReset(state, event, data) {
-      return R.pipePromise(settingsService.bind, settingsService.update, setSettings$(state))(data);
-    },
-    onFactionsLoadDescFile: function stateOnFactionsLoadDescFile(state, event, faction, file) {
-      return R.pipeP(fileImportService.read$('json'), function (faction_desc) {
-        return R.assocPath(['desc', faction], faction_desc, state.factions);
-      }, gameFactionsService.updateDesc, setFactions$(state), function () {
-        state.changeEvent('Factions.loadDescFile', 'File loaded');
-      })(file).catch(function (error) {
-        state.changeEvent('Factions.loadDescFile', error);
-      });
-    },
-    onFactionsClearDesc: function stateOnFactionsClearDesc(state, event, faction) {
-      return R.pipePromise(R.dissocPath(['desc', faction]), gameFactionsService.updateDesc, setFactions$(state))(state.factions);
-    },
-    onFactionsClearAllDesc: function stateOnFactionsClearAllDesc(state, event) {
-      event = event;
-      return R.pipePromise(R.assoc('desc', {}), gameFactionsService.updateDesc, setFactions$(state))(state.factions);
     }
-  };
-  var setSettings$ = R.curry(function (state, settings) {
-    state.settings = settings;
-    state.changeEvent('Settings.change');
-  });
-  var setFactions$ = R.curry(function (state, factions) {
-    state.factions = factions;
-    state.changeEvent('Factions.change');
-  });
-  var exportCurrentSettings = stateExportsService.export$('settings', R.path(['settings', 'current']));
-  var storeCurrentSettings = function storeCurrentSettings(state) {
-    if (state._settings === state.settings) return null;
-    state._settings = state.settings;
-    return settingsService.store(state.settings);
-  };
-  var storeCurrentFactions = function storeCurrentFactions(state) {
-    if (state._factions === state.factions) return null;
-    state._factions = state.factions;
-    return gameFactionsService.storeDesc(state.factions);
-  };
-
-  R.curryService(stateDataService);
-  return stateDataService;
-}]);
+    function stateDataOnInit(state, resolve, event) {
+      event = event;
+      // const boards_ready = gameBoardModel.init()
+      //         .then((boards) => {
+      //           state.boards = boards;
+      //           console.log('board', boards);
+      //         });
+      // const terrains_ready = gameTerrainInfoModel.init()
+      //         .then((terrains) => {
+      //           state.terrains = terrains;
+      //           console.log('terrains', terrains);
+      //         });
+      // const factions_ready = gameFactionsModel.init()
+      //         .then((factions) => {
+      //           state.factions = factions;
+      //         });
+      // const scenario_ready = gameScenarioModel.init()
+      //         .then((scenarios) => {
+      //           state.scenarios = scenarios;
+      //           console.log('scenarios', scenarios);
+      //         });
+      var settings_ready = settingsModel.initP().then(function (settings) {
+        state.settings = settings;
+      });
+      self.Promise.all([
+      // boards_ready,
+      // terrains_ready,
+      // factions_ready,
+      // scenario_ready,
+      settings_ready]).then(function () {
+        console.log('data ready');
+        resolve();
+      });
+    }
+    function stateDataSave(state) {
+      return R.threadP()(R.always(exportCurrentSettings(state)), R.always(storeCurrentSettings(state))
+      // R.always(storeCurrentFactions(state))
+      );
+    }
+    function stateDataOnSettingsLoadFile(state, event, file) {
+      return R.threadP(file)(fileImportService.readP$('json'), settingsModel.bind, settingsModel.update, setSettings$(state), function () {
+        state.queueChangeEventP('Settings.loadFile', 'Settings loaded');
+      }).catch(function (error) {
+        state.queueChangeEventP('Settings.loadFile', error);
+      });
+    }
+    function stateDataOnSettingsReset(state, event, data) {
+      return R.threadP(data)(settingsModel.bind, settingsModel.update, setSettings$(state));
+    }
+    // function stateDataOnFactionsLoadDescFile(state, event, faction, file) {
+    //   return R.threadP(file)(
+    //     fileImportService.read$('json'),
+    //     (faction_desc) => {
+    //       return R.assocPath(['desc', faction], faction_desc, state.factions);
+    //     },
+    //     gameFactionsModel.updateDesc,
+    //     setFactions$(state),
+    //     () => {
+    //       state.queueChangeEventP('Factions.loadDescFile', 'File loaded');
+    //     }
+    //   ).catch((error) => {
+    //     state.queueChangeEventP('Factions.loadDescFile', error);
+    //   });
+    // }
+    // function stateDataOnFactionsClearDesc(state, event, faction) {
+    //   return R.threadP(state.factions)(
+    //     R.dissocPath(['desc', faction]),
+    //     gameFactionsModel.updateDesc,
+    //     setFactions$(state)
+    //   );
+    // }
+    // function stateDataOnFactionsClearAllDesc(state, event) {
+    //   event = event;
+    //   return R.threadP(state.factions)(
+    //     R.assoc('desc', {}),
+    //     gameFactionsModel.updateDesc,
+    //     setFactions$(state)
+    //   );
+    // }
+    function setSettings(state, settings) {
+      state.settings = settings;
+      state.queueChangeEventP('Settings.change');
+    }
+    // function setFactions(state, factions) {
+    //   state.factions = factions;
+    //   state.changeEvent('Factions.change');
+    // }
+    function storeCurrentSettings(state) {
+      if (state._settings === state.settings) return null;
+      state._settings = state.settings;
+      return settingsModel.store(state.settings);
+    }
+    // function storeCurrentFactions(state) {
+    //   if(state._factions === state.factions) return null;
+    //   state._factions = state.factions;
+    //   return gameFactionsModel.storeDesc(state.factions);
+    // }
+  }
+})();
 //# sourceMappingURL=data.js.map

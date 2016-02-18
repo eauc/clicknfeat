@@ -25,7 +25,7 @@
           return new self.Blob([string], {type: 'text/plain'});
         },
         self.URL.createObjectURL
-      )(data);
+      );
     }
     function fileExportCleanup(url) {
       if(!R.isNil(url)) {

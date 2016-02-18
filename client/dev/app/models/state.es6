@@ -1,34 +1,36 @@
 (function() {
   angular.module('clickApp.services')
-    .factory('state', stateServiceFactory);
+    .factory('state', stateModelFactory);
 
-  stateServiceFactory.$inject = [
+  stateModelFactory.$inject = [
     'pubSub',
-    // 'fileImport',
-    // 'stateExports',
-    // 'stateData',
+    'fileImport',
+    'stateExports',
+    'stateData',
     'stateUser',
     'stateGame',
     'stateGames',
     'stateModes',
   ];
-  function stateServiceFactory(pubSubService,
-                               // fileImportService,
-                               // stateExportsService,
-                               // stateDataService,
-                               stateUserService,
-                               stateGameService,
-                               stateGamesService,
-                               stateModesService) {
-    const stateService = {
+  function stateModelFactory(pubSubService,
+                             fileImportService,
+                             stateExportsService,
+                             stateDataModel,
+                             stateUserModel,
+                             stateGameModel,
+                             stateGamesModel,
+                             stateModesModel) {
+    const stateModel = {
       create: stateCreate,
       queueEventP: stateQueueEventP,
       queueChangeEventP: stateQueueChangeEventP,
       onChangeEvent: stateOnChangeEvent,
-      // onLoadDumpFile: stateOnLoadDumpFile
+      onLoadDumpFile: stateOnLoadDumpFile
     };
-    R.curryService(stateService);
-    return stateService;
+    const exportCurrentDumpFile = stateExportsService
+            .exportP$('dump', buildDumpData);
+    R.curryService(stateModel);
+    return stateModel;
 
     function stateCreate() {
       let state = pubSubService.init({
@@ -41,17 +43,14 @@
         changeEventP: changeEventP,
         queueChangeEventP: queueChangeEventP
       }, 'State');
-
       state = R.thread(state)(
         // starting here State is mutable
-        // stateDataService.create,
-        stateUserService.create,
-        stateGameService.create,
-        stateGamesService.create,
-        stateModesService.create
+        stateDataModel.create,
+        stateUserModel.create,
+        stateGameModel.create,
+        stateGamesModel.create,
+        stateModesModel.create
       );
-
-      // exportCurrentDumpFile(state);
       return state;
 
       function onEvent(...args) {
@@ -74,6 +73,7 @@
     function stateQueueEventP(args, state) {
       return new self.Promise((resolve) => {
         console.info('State ---> Event', args[0], R.tail(args));
+        console.trace();
         state.event_queue = R.append([
           resolve, args
         ], state.event_queue);
@@ -93,12 +93,12 @@
 
       const [ resolve, args ] = R.head(state.event_queue);
       return R.threadP(stateEventP(args, state))(
-        // () => { return stateDataService.save(state); },
-        () => { return stateUserService.save(state); },
-        () => { return stateGameService.save(state); },
-        () => { return stateGamesService.save(state); },
-        () => { return stateModesService.save(state); },
-        // () => { return exportCurrentDumpFile(state); },
+        () => { return stateDataModel.save(state); },
+        () => { return stateUserModel.save(state); },
+        () => { return stateGameModel.save(state); },
+        () => { return stateGamesModel.save(state); },
+        () => { return stateModesModel.save(state); },
+        () => { return exportCurrentDumpFile(state); },
         () => { return processNextChangeEventP(state); }
       ).catch(R.spyAndDiscardError('processNextEvent'))
         .then(() => {
@@ -110,6 +110,7 @@
     function stateQueueChangeEventP(args, state) {
       return new self.Promise((resolve) => {
         console.info('StateChange <---', args[0], R.tail(args));
+        console.trace();
         state.change_event_queue = R.append([
           resolve, args
         ], state.change_event_queue);
@@ -137,7 +138,7 @@
         .apply(null, [...args, state]);
     }
     function stateChangeEventP(args, state) {
-      console.log('StateChange <===', R.head(args), R.tail(args));
+      console.info('StateChange <===', R.head(args), R.tail(args));
       return pubSubService.publishP
         .apply(null, [...args, state.change]);
     }
@@ -146,32 +147,34 @@
         .subscribe(event, listener, state.change);
     }
     function stateOnLoadDumpFile(state, event, file) {
-        // return R.pipeP(
-        //   fileImportService.read$('json'),
-        //   (data) => {
-        //     return R.pipeP(
-        //       () => {
-        //         return stateDataService
-        //           .onSettingsReset(state, event, data.settings);
-        //       },
-        //       () => {
-        //         return stateGamesService
-        //           .loadNewLocalGame(state, data.game);
-        //       },
-        //       () => {
-        //         state.changeEvent('State.loadDumpFile', 'File loaded');
-        //       }
-        //     )();
-        //   }
-        // )(file).catch((error) => {
-        //   state.changeEvent('State.loadDumpFile', error);
-        // });
+      return R.threadP(file)(
+        fileImportService.read$('json'),
+        dispatchData,
+        () => {
+          state.queueChangeEventP('State.loadDumpFile', 'File loaded');
+        }
+      ).catch((error) => {
+        state.queueChangeEventP('State.loadDumpFile', error);
+      });
+
+      function dispatchData(data) {
+        return R.threadP()(
+          () => {
+            return stateDataModel
+              .onSettingsReset(state, event, data.settings);
+          },
+          () => {
+            return stateGamesModel
+              .loadNewLocalGame(state, data.game);
+          }
+        );
+      }
     }
-    // const exportCurrentDumpFile = stateExportsService
-    //         .export$('dump', (state) => {
-    //           return { settings: R.pathOr({}, ['settings','current'], state),
-    //                    game: R.propOr({}, 'game', state)
-    //                  };
-    //         });
+    function buildDumpData(state) {
+      return {
+        settings: R.pathOr({}, ['settings','current'], state),
+        game: R.propOr({}, 'game', state)
+      };
+    }
   }
 })();

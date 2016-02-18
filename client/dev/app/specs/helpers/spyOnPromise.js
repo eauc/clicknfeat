@@ -4,7 +4,7 @@
   self.spyOnPromise = function spyOnPromise(object, key) {
     var spy = spyOn(object, key);
 
-    return spyReturnPromise(spy);
+    return self.spyReturnPromise(spy);
   };
   self.spyReturnPromise = function spyReturnPromise(spy) {
     var resolve_value = undefined;

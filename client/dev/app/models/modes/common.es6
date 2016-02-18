@@ -4,10 +4,16 @@
 
   commonModeModelFactory.$inject = [
     'modes',
-    // 'settings',
+    'settings',
   ];
   function commonModeModelFactory(modesService,
-                                  settingsService) {
+                                  settingsModel) {
+    const DEFAULT_SETTINGS = {
+      DragEpsilon: 3,
+      ScrollStep: 30,
+      ZoomFactor: 2
+    };
+    const SETTINGS = R.clone(DEFAULT_SETTINGS);
     const common_actions = {
       modeBackToDefault: modeBackToDefault,
       commandUndoLast: commandUndoLast,
@@ -45,14 +51,21 @@
       name: 'Common',
       actions: common_actions,
       buttons: [],
-      bindings: R.clone(common_bindings)
+      bindings: R.clone(common_bindings),
+      settings: () => SETTINGS
     };
-    // settingsService.register('Bindings',
-    //                          common_mode.name,
-    //                          common_bindings,
-    //                          (bs) => {
-    //                            R.extend(common_mode.bindings, bs);
-    //                          });
+    settingsModel.register('Misc',
+                           common_mode.name,
+                           DEFAULT_SETTINGS,
+                           (settings) => {
+                             R.extend(SETTINGS, settings);
+                           });
+    settingsModel.register('Bindings',
+                           common_mode.name,
+                           common_bindings,
+                           (bs) => {
+                             R.extend(common_mode.bindings, bs);
+                           });
     return common_mode;
 
     function modeBackToDefault(state) {

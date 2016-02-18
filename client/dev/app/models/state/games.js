@@ -15,7 +15,8 @@
       onGamesLocalCreate: stateGamesOnLocalCreate,
       onGamesLocalLoad: stateOnGamesLocalLoad,
       // onGamesLocalLoadFile: stateOnGamesLocalLoadFile,
-      onGamesLocalDelete: stateOnGamesLocalDelete
+      onGamesLocalDelete: stateOnGamesLocalDelete,
+      loadNewLocalGame: loadNewLocalGame
     };
     var setLocalGames$ = R.curry(setLocalGames);
     var loadNewLocalGame$ = R.curry(loadNewLocalGame);

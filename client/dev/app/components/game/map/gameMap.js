@@ -5,12 +5,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.directives').directive('clickGameMap', clickGameMapDirectiveFactory);
 
-  clickGameMapDirectiveFactory.$inject = ['gameMap'];
-
+  clickGameMapDirectiveFactory.$inject = ['gameMap',
   // 'terrain',
-  // 'defaultMode',
-  function clickGameMapDirectiveFactory(gameMapService, terrainService, defaultModeService) {
-    var log = true ? R.bind(console.log, console) : function () {}; // eslint-disable-line
+  'commonMode'];
+  function clickGameMapDirectiveFactory(gameMapService,
+  // terrainModel,
+  commonModeModel) {
+    var log = true // eslint-disable-line
+    ? R.bind(console.log, console) : function () {};
     return {
       restrict: 'A',
       link: link
@@ -199,13 +201,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       //                        event
       //                      ]);
       //   }
-      //   function currentDragIsBellowThreshold() {
-      //     return ( ( Math.abs(drag.now.x - drag.start.x) <
-      //                defaultModeService.moves().DragEpsilon ) &&
-      //              ( Math.abs(drag.now.y - drag.start.y) <
-      //                defaultModeService.moves().DragEpsilon )
-      //            );
-      //   }
+      // function currentDragIsBellowThreshold() {
+      //   const epsilon = commonModeService.moves().DragEpsilon;
+      //   return ( Math.abs(drag.now.x - drag.start.x) < epsilon &&
+      //            Math.abs(drag.now.y - drag.start.y) < epsilon
+      //          );
+      // }
       // }
 
       // function buildMoveEvents() {
@@ -258,7 +259,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // }
 
       function buildZoomEvents() {
-        var ZOOM_STEP = 1.5;
         return {
           'in': zoomIn,
           out: zoomOut,
@@ -271,6 +271,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           setMapDimensions(hw - 15);
         }
         function zoomIn() {
+          var zoom_factor = commonModeModel.settings().ZoomFactor;
+
           var _findViewportCenter = findViewportCenter();
 
           var _findViewportCenter2 = _slicedToArray(_findViewportCenter, 2);
@@ -286,13 +288,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           var vh = _findViewportCenter2$2[1];
 
           var rect = map.getBoundingClientRect();
-          cx = vw > rect.width ? rect.width / ZOOM_STEP : cx;
-          cy = vh > rect.height ? rect.height / ZOOM_STEP : cy;
+          cx = vw > rect.width ? rect.width / zoom_factor : cx;
+          cy = vh > rect.height ? rect.height / zoom_factor : cy;
 
-          setMapDimensions(rect.width * ZOOM_STEP);
-          setViewportCenter(cx * ZOOM_STEP, cy * ZOOM_STEP, vw, vh);
+          setMapDimensions(rect.width * zoom_factor);
+          setViewportCenter(cx * zoom_factor, cy * zoom_factor, vw, vh);
         }
         function zoomOut() {
+          var zoom_factor = commonModeModel.settings().ZoomFactor;
+
           var _findViewportCenter3 = findViewportCenter();
 
           var _findViewportCenter4 = _slicedToArray(_findViewportCenter3, 2);
@@ -311,13 +315,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
           var rect = map.getBoundingClientRect();
 
-          setMapDimensions(Math.max(hw - 15, rect.width / ZOOM_STEP));
-          setViewportCenter(cx / ZOOM_STEP, cy / ZOOM_STEP, vw, vh);
+          setMapDimensions(Math.max(hw - 15, rect.width / zoom_factor));
+          setViewportCenter(cx / zoom_factor, cy / zoom_factor, vw, vh);
         }
       }
 
       function buildScrollEvents() {
-        var SCROLL_INDENT = 30;
         return {
           left: scrollLeft,
           right: scrollRight,
@@ -326,27 +329,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         };
 
         function scrollLeft() {
+          var scroll_step = commonModeModel.settings().ScrollStep;
           var left = viewport.scrollLeft;
           self.window.requestAnimationFrame(function () {
-            viewport.scrollLeft = left - SCROLL_INDENT;
+            viewport.scrollLeft = left - scroll_step;
           });
         }
         function scrollRight() {
+          var scroll_step = commonModeModel.settings().ScrollStep;
           var left = viewport.scrollLeft;
           self.window.requestAnimationFrame(function () {
-            viewport.scrollLeft = left + SCROLL_INDENT;
+            viewport.scrollLeft = left + scroll_step;
           });
         }
         function scrollUp() {
+          var scroll_step = commonModeModel.settings().ScrollStep;
           var top = viewport.scrollTop;
           self.window.requestAnimationFrame(function () {
-            viewport.scrollTop = top - SCROLL_INDENT;
+            viewport.scrollTop = top - scroll_step;
           });
         }
         function scrollDown() {
+          var scroll_step = commonModeModel.settings().ScrollStep;
           var top = viewport.scrollTop;
           self.window.requestAnimationFrame(function () {
-            viewport.scrollTop = top + SCROLL_INDENT;
+            viewport.scrollTop = top + scroll_step;
           });
         }
       }

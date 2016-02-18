@@ -1,62 +1,84 @@
-angular.module('clickApp.services')
-  .factory('stateExports', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('stateExports', stateExportsServiceFactory);
+
+  stateExportsServiceFactory.$inject = [
     'fileExport',
-    function stateExportsServiceFactory(fileExportService) {
-      let cleanupExport$ = R.curry((path, exports) => {
-        return R.pipe(
-          R.path([...path,'url']),
-          fileExportService.cleanup,
-          R.always(exports),
-          R.assocPath([...path,'url'], null)
-        )(exports);
-      });
-      let stateExportsService = {
-        init: function stateExportsInit(state) {
-          state.exports = {};
-          return state;
-        },
-        rejectIf: function stateExportsRejectIf(test, obj) {
-          if(test(obj)) return self.Promise.reject();
-          return obj;
-        },
-        export: function stateExportsExportData(name, buildData, state) {
-          return R.pipePromise(
-            buildData,
-            R.rejectIf(R.equals(R.path(['exports',`_${name}`], state)),
-                       'unchanged'),
-            (data) => {
-              state.exports = R.assoc(`_${name}`, data, state.exports);
-              return data;
-            },
-            R.rejectIf(R.isNil, 'nil'),
-            fileExportService.generate$('json')
-          )(state)
-            .catch((error) => {
-              switch(error) {
-              case 'nil': return null;
-              case 'unchanged': return self.Promise.reject();
-              default: {
-                console.warn('Exports: error', name, error);
-                return null;
-              }
-              }
-            })
-            .then((url) => {
-              state.exports = R.pipe(
-                R.defaultTo({}),
-                cleanupExport$([name]),
-                R.assocPath([name], {
-                  name: `clicknfeat_${name}.json`,
-                  url: url
-                })
-              )(state.exports);
-              console.warn('Exports', state.exports);
-              state.changeEvent(`Exports.${name}`);
-            })
-            .catch(R.always(null));
-        }
-      };
-      R.curryService(stateExportsService);
-      return stateExportsService;
+  ];
+  function stateExportsServiceFactory(fileExportService) {
+    const stateExportsService = {
+      create: stateExportsCreate,
+      exportP: stateExportsExportDataP
+    };
+
+    const cleanupExport$ = R.curry(cleanupExport);
+
+    R.curryService(stateExportsService);
+    return stateExportsService;
+
+    function stateExportsCreate(state) {
+      state.exports = {};
+      return state;
     }
-  ]);
+    function stateExportsExportDataP(name, buildData, state) {
+      return R.thread(state)(
+        generateDataUrlP,
+        R.condErrorP([
+          [ R.equals('nil'), R.always(null) ],
+          [ R.equals('unchanged'), R.reject ],
+          [ R.T, (error) => {
+            console.warn('Exports: error', name, error);
+            return null;
+          } ]
+        ]),
+        updateExportsP,
+        R.condErrorP([ R.T, R.always(null) ])
+      );
+
+      function generateDataUrlP(state) {
+        return R.threadP(state)(
+          buildData,
+          R.rejectIf(dataUnchanged, 'unchanged'),
+          memoizeData,
+          R.rejectIf(R.isNil, 'nil'),
+          fileExportService.generate$('json')
+        );
+      }
+      function dataUnchanged(data) {
+        return R.equals(R.path(['exports',`_${name}`], state), data);
+      }
+      function memoizeData(data) {
+        state.exports = R.assoc(`_${name}`, data, state.exports);
+        return data;
+      }
+      function updateExportsP(url) {
+        return R.threadP(url)(
+          updateExports,
+          emitExportsEvent
+        );
+      }
+      function updateExports(url) {
+        state.exports = R.thread(state.exports)(
+          R.defaultTo({}),
+          cleanupExport$([name]),
+          R.assocPath([name], {
+            name: `clicknfeat_${name}.json`,
+            url: url
+          })
+        );
+      }
+      function emitExportsEvent() {
+        console.warn('Exports', state.exports);
+        state.queueChangeEventP(`Exports.${name}`);
+      }
+    }
+    function cleanupExport(path, exports) {
+      return R.thread(exports)(
+        R.path([ ...path, 'url' ]),
+        fileExportService.cleanup,
+        R.always(exports),
+        R.assocPath([ ...path, 'url' ], null)
+      );
+    }
+  }
+})();

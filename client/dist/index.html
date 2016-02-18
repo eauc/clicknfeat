@@ -30,10 +30,10 @@
                      {{(state.user | user:'isValid') ? '' : 'disabled'}}">
             <a href="#/lounge">Lounge</a>
           </li>
-          <!-- <li class="{{main.stateMatches('settings') ? 'active' : ''}} -->
-          <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
-          <!--   <a href="#/settings/main">Settings</a> -->
-          <!-- </li> -->
+          <li class="{{app.stateMatches('settings') ? 'active' : ''}}
+                     {{(state.user | user:'isValid') ? '' : 'disabled'}}">
+            <a href="#/settings/main">Settings</a>
+          </li>
           <!-- <li class="{{main.stateIs('debug') ? 'active' : ''}} -->
           <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
           <!--   <a href="#/debug">Debug</a> -->
