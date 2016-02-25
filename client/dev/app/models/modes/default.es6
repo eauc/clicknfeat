@@ -4,31 +4,31 @@
 
   defaultModeModelFactory.$inject = [
     'modes',
-    // 'settings',
+    'settings',
     'commonMode',
     // 'game',
     // 'template',
     // 'gameTemplateSelection',
     // 'gameModels',
     // 'gameModelSelection',
-    // 'gameTerrainSelection',
+    'gameTerrainSelection',
   ];
   function defaultModeModelFactory(modesService,
-                                   // settingsModel,
-                                   commonModeService) {
-    // gameService,
-    // templateService,
-    // gameTemplateSelectionService,
-    // gameModelsService,
-    // gameModelSelectionService,
-    // gameTerrainSelectionService) {
-    const default_actions = Object.create(commonModeService.actions);
+                                   settingsModel,
+                                   commonModeModel,
+                                   // gameService,
+                                   // templateService,
+                                   // gameTemplateSelectionService,
+                                   // gameModelsService,
+                                   // gameModelSelectionService,
+                                   gameTerrainSelectionModel) {
+    const default_actions = Object.create(commonModeModel.actions);
     // default_actions.setModelSelection = setModelSelection;
     // default_actions.toggleModelSelection = toggleModelSelection;
     // default_actions.modelSelectionDetail = modelSelectionDetail;
     // default_actions.selectTemplate = selectTemplate;
     // default_actions.templateSelectionDetail = templateSelectionDetail;
-    // default_actions.selectTerrain = selectTerrain;
+    default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     // default_actions.dragStartMap = dragStartMap;
@@ -36,16 +36,16 @@
     // default_actions.dragEndMap = dragEndMap;
 
     const default_default_bindings = {
-      enterRulerMode: 'ctrl+r',
-      enterLosMode: 'ctrl+l',
-      setModelSelection: 'clickModel',
-      toggleModelSelection: 'ctrl+clickModel',
-      modelSelectionDetail: 'rightClickModel',
-      selectTemplate: 'clickTemplate',
-      templateSelectionDetail: 'rightClickTemplate',
+      // enterRulerMode: 'ctrl+r',
+      // enterLosMode: 'ctrl+l',
+      // setModelSelection: 'clickModel',
+      // toggleModelSelection: 'ctrl+clickModel',
+      // modelSelectionDetail: 'rightClickModel',
+      // selectTemplate: 'clickTemplate',
+      // templateSelectionDetail: 'rightClickTemplate',
       selectTerrain: 'clickTerrain'
     };
-    const default_bindings = R.extend(Object.create(commonModeService.bindings),
+    const default_bindings = R.extend(Object.create(commonModeModel.bindings),
                                       default_default_bindings);
     const default_buttons = [];
     const default_mode = {
@@ -56,12 +56,12 @@
       bindings: default_bindings
     };
     modesService.registerMode(default_mode);
-    // settingsService.register('Bindings',
-    //                          default_mode.name,
-    //                          default_default_bindings,
-    //                          (bs) => {
-    //                            R.extend(default_mode.bindings, bs);
-    //                          });
+    settingsModel.register('Bindings',
+                           default_mode.name,
+                           default_default_bindings,
+                           (bs) => {
+                             R.extend(default_mode.bindings, bs);
+                           });
     return default_mode;
 
     // function clearTemplateSelection$(state) {
@@ -143,18 +143,21 @@
     //                                      'template', event['click#'].target); }
     //   )();
     // }
-    // function selectTerrain(state, event) {
-    //   return R.pipePromise(
-    //     clearTemplateSelection$(state),
-    //     () => {
-    //       return state
-    //         .event('Game.update', R.lensProp('terrain_selection'),
-    //                gameTerrainSelectionService.set$('local',
-    //                                                 [event['click#'].target.state.stamp],
-    //                                                 state));
-    //     }
-    //   )();
-    // }
+    function selectTerrain(state, event) {
+      return R.threadP()(
+        // clearTemplateSelection$(state),
+        () => {
+          return state.eventP(
+            'Game.update', R.lensProp('terrain_selection'),
+            gameTerrainSelectionModel.set$(
+              'local',
+              [event['click#'].target.state.stamp],
+              state
+            )
+          );
+        }
+      );
+    }
     // function enterRulerMode(state) {
     //   return state.event('Modes.switchTo', 'Ruler');
     // }
@@ -189,17 +192,26 @@
     //   )(state.game.models);
     // }
     function onEnter(state) {
-      // gameTemplateSelectionService
-      //   .checkMode(state, state.game.template_selection)
-      //   .catch(() => {
-      //     return gameTerrainSelectionService
-      //       .checkMode(state, state.game.terrain_selection);
-      //   })
-      //   .catch(() => {
-      //     return gameModelSelectionService
-      //       .checkMode(state, state.game.model_selection);
-      //   })
-      //   .catch(R.always(null));
+      if(R.isNil(state.game.terrain_selection)) {
+        return null;
+      }
+      return R.thread()(
+        () => gameTerrainSelectionModel
+          .checkModeP(state, state.game.terrain_selection),
+        // () => gameTemplateSelectionService
+        //   .checkModeP(state, state.game.template_selection),
+        // R.condErrorP([
+        //   [ R.T, () => gameTerrainSelectionModel
+        //     .checkModeP(state, state.game.terrain_selection) ]
+        // ]),
+        // R.condErrorP([
+        //   [ R.T, () => gameModelSelectionService
+        //     .checkModeP(state, state.game.model_selection) ]
+        // ]),
+        R.condErrorP([
+          [ R.T, R.always(null) ]
+        ])
+      );
     }
   }
 })();

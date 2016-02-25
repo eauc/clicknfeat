@@ -126,10 +126,8 @@ describe('game model', function() {
           // template_selection: { local: [],
           //                       remote: []
           //                     },
-          // terrains: { active: [], locked: [] },
-          // terrain_selection: { local: [],
-          //                      remote: []
-          //                    },
+          terrains: { active: [], locked: [] },
+          terrain_selection: { local: [], remote: [] },
           layers: ['b','d','s','m','t']
         });
     });

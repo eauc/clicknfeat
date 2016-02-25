@@ -1,38 +1,38 @@
 <div class="scroll-container">
   <div class="mode-title">
-    <strong>{{currentModeName()}}</strong>
+    <strong>{{game.currentModeName()}}</strong>
   </div>
   <div class="btn-group-vertical">
     <button class="btn btn-default"
-            title="{{action_bindings['modeBackToDefault'] || ''}}"
-            ng-click="doModeAction('modeBackToDefault')">
+            title="{{game.action_bindings['modeBackToDefault'] || ''}}"
+            ng-click="game.doModeAction('modeBackToDefault')">
       Back To Default
     </button>
     <button class="btn btn-default"
-            title="{{action_bindings['flipMap'] || ''}}"
-            ng-click="doModeAction('flipMap')">
+            title="{{game.action_bindings['flipMap'] || ''}}"
+            ng-click="game.doModeAction('flipMap')">
       Flip Map
     </button>
-    <button ng-repeat="action in action_buttons"
-            class="
-            btn
-            {{::(action.length === 3 && action[1] !== 'toggle') ? 'btn-info' : 'btn-default'}}
-            "
-            title="{{::action_bindings[action[1]] || ''}}"
-            ng-click="doActionButton(action)"
-            ng-show="
-            action[1] === 'toggle' ||
-            action.length === 2 ||
-            show_action_group === action[2]
-            ">
-      {{action[0]}}
-      <span class="
-            glyphicon
-            {{action[1] === 'toggle' ? (show_action_group === action[2] ?
-            'glyphicon-chevron-up' :
-            'glyphicon-chevron-down') :
-            '' }}
-            "></span>
-    </button>
+    <!-- <button ng-repeat="action in action_buttons" -->
+    <!--         class=" -->
+    <!--         btn -->
+    <!--         {{::(action.length === 3 && action[1] !== 'toggle') ? 'btn-info' : 'btn-default'}} -->
+    <!--         " -->
+    <!--         title="{{::action_bindings[action[1]] || ''}}" -->
+    <!--         ng-click="doActionButton(action)" -->
+    <!--         ng-show=" -->
+    <!--         action[1] === 'toggle' || -->
+    <!--         action.length === 2 || -->
+    <!--         show_action_group === action[2] -->
+    <!--         "> -->
+    <!--   {{action[0]}} -->
+    <!--   <span class=" -->
+    <!--         glyphicon -->
+    <!--         {{action[1] === 'toggle' ? (show_action_group === action[2] ? -->
+    <!--         'glyphicon-chevron-up' : -->
+    <!--         'glyphicon-chevron-down') : -->
+    <!--         '' }} -->
+    <!--         "></span> -->
+    <!-- </button> -->
   </div>
 </div>

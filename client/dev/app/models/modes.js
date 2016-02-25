@@ -13,9 +13,7 @@
   // 'aoeTemplateMode',
   // 'sprayTemplateMode',
   // 'wallTemplateMode',
-  // 'createTerrainMode',
-  // 'terrainMode',
-  function () {
+  'createTerrainMode', 'terrainMode', function () {
     return {};
   }]);
 

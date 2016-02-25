@@ -1,69 +1,78 @@
 'use strict';
 
-angular.module('clickApp.services').factory('deleteTerrainCommand', ['commands', 'terrain', 'gameTerrains', 'gameTerrainSelection', function deleteTerrainCommandServiceFactory(commandsService, terrainService, gameTerrainsService, gameTerrainSelectionService) {
-  var deleteTerrainCommandService = {
-    execute: function deleteTerrainExecute(stamps, state, game) {
-      return R.pipeP(function (stamps) {
-        return gameTerrainsService.findAnyStamps(stamps, game.terrains);
-      }, R.reject(R.isNil), R.map(terrainService.saveState), function (states) {
+(function () {
+  angular.module('clickApp.models').factory('deleteTerrainCommand', deleteTerrainCommandModelFactory);
+
+  deleteTerrainCommandModelFactory.$inject = ['commands', 'terrain', 'gameTerrains', 'gameTerrainSelection'];
+  function deleteTerrainCommandModelFactory(commandsModel, terrainModel, gameTerrainsModel, gameTerrainSelectionModel) {
+    var deleteTerrainCommandModel = {
+      executeP: deleteTerrainExecuteP,
+      replayP: deleteTerrainReplayP,
+      undoP: deleteTerrainUndoP
+    };
+
+    var onDeletedStates$ = R.curry(onDeletedStates);
+    var emitCreateEvent$ = R.curry(emitCreateEvent);
+
+    commandsModel.registerCommand('deleteTerrain', deleteTerrainCommandModel);
+    return deleteTerrainCommandModel;
+
+    function deleteTerrainExecuteP(stamps, state, game) {
+      return R.threadP(game.terrains)(gameTerrainsModel.findAnyStampsP$(stamps), R.reject(R.isNil), R.map(terrainModel.saveState), onNewDeletedStates);
+
+      function onNewDeletedStates(states) {
         var ctxt = {
           terrains: states,
           desc: ''
         };
-        return R.pipe(gameTerrainsService.removeStamps$(stamps), function (game_terrains) {
-          game = R.assoc('terrains', game_terrains, game);
-
-          return gameTerrainSelectionService.removeFrom('local', stamps, state, game.terrain_selection);
-        }, gameTerrainSelectionService.removeFrom$('remote', stamps, state), function (selection) {
-          game = R.assoc('terrain_selection', selection, game);
-
-          state.changeEvent('Game.terrain.create');
-
+        return R.thread(states)(onDeletedStates$(state, game), function (game) {
           return [ctxt, game];
-        })(game.terrains);
-      })(stamps);
-    },
-    replay: function deleteTerrainReplay(ctxt, state, game) {
-      return R.pipe(R.pluck('stamp'), function (stamps) {
-        return R.pipe(function () {
-          return gameTerrainsService.removeStamps(stamps, game.terrains);
-        }, function (game_terrains) {
-          game = R.assoc('terrains', game_terrains, game);
-
-          return gameTerrainSelectionService.removeFrom('local', stamps, state, game.terrain_selection);
-        }, gameTerrainSelectionService.removeFrom$('remote', stamps, state), function (selection) {
-          game = R.assoc('terrain_selection', selection, game);
-
-          state.changeEvent('Game.terrain.create');
-
-          return game;
-        })();
-      })(ctxt.terrains);
-    },
-    undo: function deleteTerrainUndo(ctxt, state, game) {
-      return R.pipePromise(R.map(function (terrain) {
-        return self.Promise.resolve(terrainService.create(terrain)).catch(R.always(null));
-      }), R.promiseAll, R.reject(R.isNil), function (terrains) {
-        if (R.isEmpty(terrains)) {
-          return self.Promise.reject('No valid terrain definition');
-        }
-
-        return R.pipe(gameTerrainsService.add$(terrains), function (game_terrains) {
-          game = R.assoc('terrains', game_terrains, game);
-
-          var stamps = R.map(R.path(['state', 'stamp']), terrains);
-          return gameTerrainSelectionService.set('remote', stamps, state, game.terrain_selection);
-        }, function (selection) {
-          game = R.assoc('terrain_selection', selection, game);
-
-          state.changeEvent('Game.terrain.create');
-
-          return game;
-        })(game.terrains);
-      })(ctxt.terrains);
+        });
+      }
     }
-  };
-  commandsService.registerCommand('deleteTerrain', deleteTerrainCommandService);
-  return deleteTerrainCommandService;
-}]);
+    function deleteTerrainReplayP(ctxt, state, game) {
+      return onDeletedStates(state, game, ctxt.terrains);
+    }
+    function deleteTerrainUndoP(ctxt, state, game) {
+      return R.threadP(ctxt.terrains)(R.map(tryToCreateTerrain), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid terrain definition'), onNewCreatedTerrains);
+
+      function tryToCreateTerrain(terrain) {
+        return self.Promise.resolve(terrainModel.create(terrain)).catch(R.always(null));
+      }
+      function onNewCreatedTerrains(terrains) {
+        var stamps = R.map(R.path(['state', 'stamp']), terrains);
+        return R.thread(game)(addToGameTerrains, addToGameTerrainSelection, emitCreateEvent$(state));
+
+        function addToGameTerrains(game) {
+          return R.thread(game.terrains)(gameTerrainsModel.add$(terrains), function (game_terrains) {
+            return R.assoc('terrains', game_terrains, game);
+          });
+        }
+        function addToGameTerrainSelection(game) {
+          return R.thread(game.terrain_selection)(gameTerrainSelectionModel.set$('remote', stamps, state), function (selection) {
+            return R.assoc('terrain_selection', selection, game);
+          });
+        }
+      }
+    }
+    function onDeletedStates(state, game, states) {
+      var stamps = R.pluck('stamp', states);
+      return R.thread(game)(removeFromGameTerrains, removeFromGameTerrainSelection, emitCreateEvent$(state));
+      function removeFromGameTerrains(game) {
+        return R.thread(game.terrains)(gameTerrainsModel.removeStamps$(stamps), function (game_terrains) {
+          return R.assoc('terrains', game_terrains, game);
+        });
+      }
+      function removeFromGameTerrainSelection(game) {
+        return R.thread(game.terrain_selection)(gameTerrainSelectionModel.removeFrom$('local', stamps, state), gameTerrainSelectionModel.removeFrom$('remote', stamps, state), function (selection) {
+          return R.assoc('terrain_selection', selection, game);
+        });
+      }
+    }
+    function emitCreateEvent(state, game) {
+      state.queueChangeEventP('Game.terrain.create');
+      return game;
+    }
+  }
+})();
 //# sourceMappingURL=deleteTerrain.js.map

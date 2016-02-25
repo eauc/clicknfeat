@@ -182,7 +182,27 @@ a:not([href]):focus {
 /* @import 'components/game/los/los'; */
 /* @import 'components/game/scenario/scenario'; */
 /* @import 'components/game/template/template'; */
-/* @import 'components/game/terrain/terrain'; */
+#game .create-terrain {
+  fill: #F11;
+  opacity: 0.8;
+  pointer-events: none; }
+#game .terrain-edge {
+  stroke-width: 0;
+  fill: transparent;
+  pointer-events: none; }
+#game .remote-selection .terrain-edge {
+  stroke-width: 0.75px;
+  stroke: white; }
+#game .local-selection .terrain-edge {
+  stroke-width: 0.75px;
+  stroke: #0F0; }
+#game #game-terrains-locked .terrain-edge {
+  stroke-dasharray: 4 10; }
+#game #game-terrains-locked .remote-selection .terrain-edge {
+  stroke-width: 0; }
+#game #game-terrains-locked .local-selection .terrain-edge {
+  stroke-width: 0.75px; }
+
 #game #gameview {
   position: relative;
   background-color: blue;

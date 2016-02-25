@@ -7,28 +7,24 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
   gameModelFactory.$inject = ['jsonStringifier', 'commands',
   // 'gameConnection',
-  'gameLayers'];
-
+  'gameLayers',
   // 'gameLos',
   // 'gameModels',
   // 'gameModelSelection',
   // 'gameRuler',
   // 'gameTemplates',
   // 'gameTemplateSelection',
-  // 'gameTerrains',
-  // 'gameTerrainSelection',
+  'gameTerrains', 'gameTerrainSelection'];
   function gameModelFactory(jsonStringifierService, commandsModel,
   // gameConnectionModel,
-  gameLayersModel) {
-    // gameLosModel,
-    // gameModelsModel,
-    // gameModelSelectionModel,
-    // gameRulerModel,
-    // gameTemplatesModel,
-    // gameTemplateSelectionModel,
-    // gameTerrainsModel,
-    // gameTerrainSelectionModel
-    // ) {
+  gameLayersModel,
+  // gameLosModel,
+  // gameModelsModel,
+  // gameModelSelectionModel,
+  // gameRulerModel,
+  // gameTemplatesModel,
+  // gameTemplateSelectionModel,
+  gameTerrainsModel, gameTerrainSelectionModel) {
     var gameModel = {
       create: gameCreate,
       loadP: gameLoadP,
@@ -93,8 +89,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         // model_selection: gameModelSelectionModel.create(),
         // templates: gameTemplatesModel.create(),
         // template_selection: gameTemplateSelectionModel.create(),
-        // terrains: gameTerrainsModel.create(),
-        // terrain_selection: gameTerrainSelectionModel.create(),
+        terrains: gameTerrainsModel.create(),
+        terrain_selection: gameTerrainSelectionModel.create(),
         layers: gameLayersModel.create()
       };
     }

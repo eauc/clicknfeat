@@ -1,62 +1,65 @@
-angular.module('clickApp.services')
-  .factory('lockTerrainsCommand', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('lockTerrainsCommand', lockTerrainsCommandModelFactory);
+
+  lockTerrainsCommandModelFactory.$inject = [
     'commands',
     'gameTerrains',
-    function lockTerrainsCommandServiceFactory(commandsService,
-                                               gameTerrainsService) {
-      var lockTerrainsCommandService = {
-        execute: function lockTerrainsExecute(lock, stamps, state, game) {
-          var ctxt = {
-            desc: lock,
-            stamps: stamps
-          };
+  ];
+  function lockTerrainsCommandModelFactory(commandsModel,
+                                           gameTerrainsModel) {
+    const lockTerrainsCommandModel = {
+      executeP: lockTerrainsExecuteP,
+      replayP: lockTerrainsRedoP,
+      undoP: lockTerrainsUndoP
+    };
 
-          return R.pipeP(
-            gameTerrainsService.lockStamps$(lock, stamps),
-            function(game_terrains) {
-              game = R.assoc('terrains', game_terrains, game);
+    const lockStampsP$ = R.curry(lockStampsP);
+    const emitChangeEvents$ = R.curry(emitChangeEvents);
 
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, stamps);
-              state.changeEvent('Game.terrain.create');
-              
-              return [ctxt, game];
-            }
-          )(game.terrains);
-        },
-        replay: function lockTerrainsRedo(ctxt, state, game) {
-          return R.pipeP(
-            gameTerrainsService.lockStamps$(ctxt.desc, ctxt.stamps),
-            function(game_terrains) {
-              game = R.assoc('terrains', game_terrains, game);
-              
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, ctxt.stamps);
-              state.changeEvent('Game.terrain.create');
+    commandsModel.registerCommand('lockTerrains', lockTerrainsCommandModel);
+    return lockTerrainsCommandModel;
 
-              return game;
-            }
-          )(game.terrains);
-        },
-        undo: function lockTerrainsUndo(ctxt, state, game) {
-          return R.pipeP(
-            gameTerrainsService.lockStamps$(!ctxt.desc, ctxt.stamps),
-            function(game_terrains) {
-              game = R.assoc('terrains', game_terrains, game);
-              
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, ctxt.stamps);
-              state.changeEvent('Game.terrain.create');
-
-              return game;
-            }
-          )(game.terrains);
-        }
+    function lockTerrainsExecuteP(lock, stamps, state, game) {
+      const ctxt = {
+        desc: lock,
+        stamps: stamps
       };
-      commandsService.registerCommand('lockTerrains', lockTerrainsCommandService);
-      return lockTerrainsCommandService;
+
+      return R.threadP(game)(
+        lockStampsP$(lock, stamps),
+        emitChangeEvents$(stamps, state),
+        (game) => {
+          return [ctxt, game];
+        }
+      );
     }
-  ]);
+    function lockTerrainsRedoP(ctxt, state, game) {
+      return R.threadP(game)(
+        lockStampsP$(ctxt.desc, ctxt.stamps),
+        emitChangeEvents$(ctxt.stamps, state)
+      );
+    }
+    function lockTerrainsUndoP(ctxt, state, game) {
+      return R.threadP(game)(
+        lockStampsP$(!ctxt.desc, ctxt.stamps),
+        emitChangeEvents$(ctxt.stamps, state)
+      );
+    }
+    function lockStampsP(lock, stamps, game) {
+      return R.threadP(game.terrains)(
+        gameTerrainsModel.lockStampsP$(lock, stamps),
+        (game_terrains) => {
+          return R.assoc('terrains', game_terrains, game);
+        }
+      );
+    }
+    function emitChangeEvents(stamps, state, game) {
+      R.forEach((stamp) => {
+        state.queueChangeEventP(`Game.terrain.change.${stamp}`);
+      }, stamps);
+      state.queueChangeEventP('Game.terrain.create');
+      return game;
+    }
+  }
+})();

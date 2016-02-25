@@ -1,108 +1,118 @@
-angular.module('clickApp.services')
-  .factory('createTerrainCommand', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('createTerrainCommand', createTerrainCommandModelFactory);
+
+  createTerrainCommandModelFactory.$inject = [
     'commands',
     'point',
     'terrain',
     'gameTerrains',
     'gameTerrainSelection',
-    function createTerrainCommandServiceFactory(commandsService,
-                                                pointService,
-                                                terrainService,
-                                                gameTerrainsService,
-                                                gameTerrainSelectionService) {
-      var createTerrainCommandService = {
-        execute: function createTerrainExecute(create, is_flipped, state, game) {
-          var add$ = pointService.addToWithFlip$(is_flipped);
-          return R.pipePromise(
-            R.prop('terrains'),
-            R.map((terrain) => {
-              return R.pipe(
-                add$(create.base),
-                R.omit(['stamp']),
-                R.spyError('terrain', create, is_flipped),
-                (terrain) => {
-                  return self.Promise
-                    .resolve(terrainService.create(terrain))
-                    .catch(R.always(null));
-                }
-              )(terrain);
-            }),
-            R.promiseAll,
-            R.reject(R.isNil),
-            R.rejectIf(R.isEmpty, 'No valid terrain definition'),
-            R.spyError('terrains'),
-            (terrains) => {
-              var ctxt = {
-                terrains: R.map(terrainService.saveState, terrains),
-                desc: terrains[0].state.info.join('.')
-              };
-              return R.pipe(
-                gameTerrainsService.add$(terrains),
-                (game_terrains) => {
-                  game = R.assoc('terrains', game_terrains, game);
-              
-                  return gameTerrainSelectionService
-                    .set('local', R.map(R.path(['state','stamp']), terrains),
-                         state, game.terrain_selection);
-                },
-                (selection) => {
-                  game = R.assoc('terrain_selection', selection, game);
+  ];
+  function createTerrainCommandModelFactory(commandsModel,
+                                            pointModel,
+                                            terrainModel,
+                                            gameTerrainsModel,
+                                            gameTerrainSelectionModel) {
+    const createTerrainCommandModel = {
+      executeP: createTerrainExecuteP,
+      replayP: createTerrainReplayP,
+      undoP: createTerrainUndoP
+    };
 
-                  state.changeEvent('Game.terrain.create');
-                  
-                  return [ctxt, game];
-                }
-              )(game.terrains);
-            }
-          )(create);
-        },
-        replay: function createTerrainReplay(ctxt, state, game) {
-          return R.pipePromise(
-            R.prop('terrains'),
-            R.map((terrain) => {
-              return self.Promise
-                .resolve(terrainService.create(terrain))
-                .catch(R.always(null));
-            }),
-            R.promiseAll,
-            R.reject(R.isNil),
-            R.rejectIf(R.isEmpty, 'No valid terrain definition'),
-            (terrains) => {
-              return R.pipe(
-                gameTerrainsService.add$(terrains),
-                (game_terrains) => {
-                  game = R.assoc('terrains', game_terrains, game);
-                  
-                  return gameTerrainSelectionService
-                    .set('remote', R.map(R.path(['state','stamp']), terrains),
-                         state, game.terrain_selection);
-                },
-                (selection) => {
-                  game = R.assoc('terrain_selection', selection, game);
-                  
-                  state.changeEvent('Game.terrain.create');
+    const emitCreateEvent$ = R.curry(emitCreateEvent);
+    const onCreatedTerrains$ = R.curry(onCreatedTerrains);
 
-                  return game;
-                }
-              )(game.terrains);
-            }
-          )(ctxt);
-        },
-        undo: function createTerrainUndo(ctxt, state, game) {
-          var stamps = R.pluck('stamp', ctxt.terrains);
-          game = R.pipe(
-            R.over(R.lensProp('terrains'),
-                   gameTerrainsService.removeStamps$(stamps)),
-            R.over(R.lensProp('terrain_selection'),
-                    gameTerrainSelectionService.removeFrom$('local', stamps, state)),
-            R.over(R.lensProp('terrain_selection'),
-                   gameTerrainSelectionService.removeFrom$('remote', stamps, state))
-          )(game);
-          state.changeEvent('Game.terrain.create');
-          return game;
-        }
-      };
-      commandsService.registerCommand('createTerrain', createTerrainCommandService);
-      return createTerrainCommandService;
+    commandsModel.registerCommand('createTerrain', createTerrainCommandModel);
+    return createTerrainCommandModel;
+
+    function createTerrainExecuteP(create, is_flipped, state, game) {
+      const add$ = pointModel.addToWithFlip$(is_flipped);
+      return R.threadP(create)(
+        R.prop('terrains'),
+        R.map(addTerrainP),
+        R.promiseAll,
+        R.reject(R.isNil),
+        R.rejectIf(R.isEmpty, 'No valid terrain definition'),
+        onNewTerrains
+      );
+
+      function addTerrainP(terrain) {
+        return R.thread(terrain)(
+          add$(create.base),
+          R.omit(['stamp']),
+          tryToCreateTerrainP
+        );
+      }
+      function onNewTerrains(terrains) {
+        const ctxt = {
+          terrains: R.map(terrainModel.saveState, terrains),
+          desc: terrains[0].state.info.join('.')
+        };
+        return R.thread(terrains)(
+          onCreatedTerrains$('local', state, game),
+          (game) => {
+            return [ctxt, game];
+          }
+        );
+      }
     }
-  ]);
+    function createTerrainReplayP(ctxt, state, game) {
+      return R.threadP(ctxt)(
+        R.prop('terrains'),
+        R.map(tryToCreateTerrainP),
+        R.promiseAll,
+        R.reject(R.isNil),
+        R.rejectIf(R.isEmpty, 'No valid terrain definition'),
+        onCreatedTerrains$('remote', state, game)
+      );
+    }
+    function createTerrainUndoP(ctxt, state, game) {
+      const stamps = R.pluck('stamp', ctxt.terrains);
+      return R.thread(game)(
+        R.over(R.lensProp('terrains'),
+               gameTerrainsModel.removeStamps$(stamps)),
+        R.over(R.lensProp('terrain_selection'),
+               gameTerrainSelectionModel.removeFrom$('local', stamps, state)),
+        R.over(R.lensProp('terrain_selection'),
+               gameTerrainSelectionModel.removeFrom$('remote', stamps, state)),
+        emitCreateEvent$(state)
+      );
+    }
+    function tryToCreateTerrainP(terrain) {
+      return self.Promise
+        .resolve(terrainModel.create(terrain))
+        .catch(R.always(null));
+    }
+    function onCreatedTerrains(selection, state, game, terrains) {
+      return R.thread(game)(
+        addToGameTerrains,
+        addToGameTerrainSelection,
+        emitCreateEvent$(state)
+      );
+
+      function addToGameTerrains(game) {
+        return R.thread(game.terrains)(
+          gameTerrainsModel.add$(terrains),
+          (game_terrains) => {
+            return R.assoc('terrains', game_terrains, game);
+          }
+        );
+      }
+      function addToGameTerrainSelection(game) {
+        const stamps = R.map(R.path(['state','stamp']), terrains);
+        return R.thread(game.terrain_selection)(
+          gameTerrainSelectionModel
+            .set$(selection, stamps, state),
+          (selection) => {
+            return R.assoc('terrain_selection', selection, game);
+          }
+        );
+      }
+    }
+    function emitCreateEvent(state, game) {
+      state.queueChangeEventP('Game.terrain.create');
+      return game;
+    }
+  }
+})();

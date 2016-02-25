@@ -11,7 +11,8 @@
     // 'gameModels',
     // 'gameModelSelection',
     // 'gameScenario',
-    // 'gameTerrains',
+    'gameTerrainInfo',
+    'gameTerrains',
     // 'fileImport',
     'stateExports',
     'allCommands',
@@ -25,7 +26,8 @@
                                  // gameModelsModel,
                                  // gameModelSelectionModel,
                                  // gameScenarioModel,
-                                 // gameTerrainsModel,
+                                 gameTerrainInfoModel,
+                                 gameTerrainsModel,
                                  // fileImportModel,
                                  stateExportsModel) {
     const stateGameModel = {
@@ -42,14 +44,14 @@
       // onGameSetCmds: stateGameOnSetCmds,
       // onGameSetPlayers: stateGameOnSetPlayers,
       // onGameNewChatMsg: stateGameOnNewChatMsg,
-      // onGameUpdate: stateGameOnUpdate,
+      onGameUpdate: stateGameOnUpdate,
       // onGameInvitePlayer: stateGameOnInvitePlayer,
       // onGameModelCreate: stateGameOnModelCreate,
       // onGameModelImportList: stateGameOnModelImportList,
       // onGameModelImportFile: stateGameOnModelImportFile,
       // onGameTemplateCreate: stateGameOnModelCreate,
-      // onGameTerrainCreate: stateGameOnTerrainCreate,
-      // onGameTerrainReset: stateGameOnTerrainReset,
+      onGameTerrainCreate: stateGameOnTerrainCreate,
+      onGameTerrainReset: stateGameOnTerrainReset,
       onGameBoardSet: stateGameOnBoardSet,
       onGameBoardSetRandom: stateGameOnBoardSetRandom,
       // onGameBoardImportFile: stateGameOnBoardImportFile,
@@ -92,8 +94,8 @@
       //               stateGameModel.onGameSetPlayers$(state));
       // state.onEvent('Game.newChatMsg',
       //               stateGameModel.onGameNewChatMsg$(state));
-      // state.onEvent('Game.update',
-      //               stateGameModel.onGameUpdate$(state));
+      state.onEvent('Game.update',
+                    stateGameModel.onGameUpdate$(state));
       // state.onEvent('Game.invitePlayer',
       //               stateGameModel.onGameInvitePlayer$(state));
       // state.onEvent('Game.model.create',
@@ -106,10 +108,10 @@
       //               stateGameModel.onGameModelImportFile$(state));
       // state.onEvent('Game.template.create',
       //               stateGameModel.onGameTemplateCreate$(state));
-      // state.onEvent('Game.terrain.create',
-      //               stateGameModel.onGameTerrainCreate$(state));
-      // state.onEvent('Game.terrain.reset',
-      //               stateGameModel.onGameTerrainReset$(state));
+      state.onEvent('Game.terrain.create',
+                    stateGameModel.onGameTerrainCreate$(state));
+      state.onEvent('Game.terrain.reset',
+                    stateGameModel.onGameTerrainReset$(state));
       state.onEvent('Game.board.set',
                     stateGameModel.onGameBoardSet$(state));
       state.onEvent('Game.board.setRandom',
@@ -207,7 +209,6 @@
     //   )(state.game);
     // }
     function stateGameOnCommandUndoLast(state, event) {
-      event = event;
       return R.threadP(state.game)(
         gameModel.undoLastCommandP$(state),
         setGame$(state)
@@ -226,7 +227,6 @@
     //   )(state.game);
     // }
     function stateGameOnCommandReplayNext(state, event) {
-      event = event;
       return R.threadP(state.game)(
         gameModel.replayNextCommandP$(state),
         setGame$(state)
@@ -252,12 +252,12 @@
     //     () => { state.changeEvent('Game.chat'); }
     //   )(state.game);
     // }
-    // function stateGameOnUpdate(state, event, lens, update) {
-    //   return R.pipe(
-    //     R.over(lens, update),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
+    function stateGameOnUpdate(state, event, lens, update) {
+      return R.thread(state.game)(
+        R.over(lens, update),
+        setGame$(state)
+      );
+    }
     // function stateGameOnInvitePlayer(state, event, to) {
     //   var msg = [
     //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
@@ -312,37 +312,32 @@
     //   }, R.defaultTo({}, state.create));
     //   return state.event('Modes.switchTo', 'CreateTemplate');
     // }
-    // function stateGameOnTerrainCreate(state, event, path) {
-    //   state.create = R.assoc('terrain', {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     terrains: [ {
-    //       info: path,
-    //       x: 0, y: 0, r: 0
-    //     } ]
-    //   }, R.defaultTo({}, state.create));
-    //   return state.event('Modes.switchTo', 'CreateTerrain');
-    // }
-    // function stateGameOnTerrainReset(state, event) {
-    //   event = event;
-    //   return R.pipePromise(
-    //     () => {
-    //       return gameTerrainsModel.all(state.game.terrains);
-    //     },
-    //     R.pluck('state'),
-    //     R.pluck('stamp'),
-    //     (stamps) => {
-    //       return state.event('Game.command.execute',
-    //                          'deleteTerrain', [stamps]);
-    //     }
-    //   )().catch(gameActionError$(state));
-    // }
+    function stateGameOnTerrainCreate(state, event, path) {
+      state.create = {
+        base: { x: 240, y: 240, r: 0 },
+        terrains: [ {
+          info: path,
+          x: 0, y: 0, r: 0
+        } ]
+      };
+      return state.eventP('Modes.switchTo', 'CreateTerrain');
+    }
+    function stateGameOnTerrainReset(state, event) {
+      return R.threadP(state.game)(
+        R.prop('terrains'),
+        gameTerrainsModel.all,
+        R.pluck('state'),
+        R.pluck('stamp'),
+        (stamps) => state.eventP('Game.command.execute',
+                                 'deleteTerrain', [stamps])
+      ).catch(gameModel.actionError$(state));
+    }
     function stateGameOnBoardSet(state, event, name) {
       let board = gameBoardModel.forName(name, state.boards);
       return state.eventP('Game.command.execute',
                           'setBoard', [board]);
     }
     function stateGameOnBoardSetRandom(state, event) {
-      event = event;
       let board, name = gameBoardModel.name(state.game.board);
       while(name === gameBoardModel.name(state.game.board)) {
         board = state.boards[R.randomRange(0, state.boards.length-1)];

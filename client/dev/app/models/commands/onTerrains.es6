@@ -1,94 +1,112 @@
-angular.module('clickApp.services')
-  .factory('onTerrainsCommand', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('onTerrainsCommand', onTerrainsCommandModelFactory);
+
+  onTerrainsCommandModelFactory.$inject = [
     'commands',
     'terrain',
     'gameTerrains',
     'gameTerrainSelection',
-    function onTerrainsCommandServiceFactory(commandsService,
-                                             terrainService,
-                                             gameTerrainsService,
-                                             gameTerrainSelectionService) {
-      var onTerrainsCommandService = {
-        execute: function onTerrainsExecute(method, args, stamps, state, game) {
-          if('Function' !== R.type(terrainService[method])) {
-            return self.Promise.reject(`Unknown method "${method}" on terrain`);
-          }
-          
-          var ctxt = {
+  ];
+  function onTerrainsCommandModelFactory(commandsModel,
+                                         terrainModel,
+                                         gameTerrainsModel,
+                                         gameTerrainSelectionModel) {
+    const onTerrainsCommandModel = {
+      executeP: onTerrainsExecuteP,
+      replayP: onTerrainsReplayP,
+      undoP: onTerrainsUndoP
+    };
+
+    const applyMethodOnGameTerrainsP$ = R.curry(applyMethodOnGameTerrainsP);
+    const setStates$ = R.curry(setStates);
+    const saveStatesP$ = R.curry(saveStatesP);
+    const setRemoteSelection$ = R.curry(setRemoteSelection);
+    const emitChangeEvents$ = R.curry(emitChangeEvents);
+
+    commandsModel.registerCommand('onTerrains', onTerrainsCommandModel);
+    return onTerrainsCommandModel;
+
+    function onTerrainsExecuteP(method, args, stamps, state, game) {
+      return R.threadP(terrainModel)(
+        R.prop(method),
+        R.type,
+        R.rejectIf(R.complement(R.equals('Function')),
+                   `Unknown method "${method}" on terrain`),
+        () => {
+          const ctxt = {
             before: [],
             after: [],
             desc: method
           };
 
-          return R.pipeP(
-            gameTerrainsService.fromStamps$('saveState', [], stamps),
-            (before) => {
-              ctxt.before = before;
-              
-              return gameTerrainsService
-                .onStamps(method, args, stamps, game.terrains);
-            },
-            (terrains) => {
-              game = R.assoc('terrains', terrains, game);
-
-              return gameTerrainsService
-                .fromStamps('saveState', [], stamps, game.terrains);
-            },
-            (after) => {
-              ctxt.after = after;
-
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, stamps);
-              
+          return R.threadP(game)(
+            saveStatesP$(ctxt, 'before', stamps),
+            applyMethodOnGameTerrainsP$(method, args, stamps),
+            saveStatesP$(ctxt, 'after', stamps),
+            emitChangeEvents$(stamps, state),
+            (game) => {
               return [ctxt, game];
             }
-          )(game.terrains);
-        },
-        replay: function onTerrainsRedo(ctxt, state, game) {
-          var stamps = R.pluck('stamp', ctxt.after);
-          return R.pipeP(
-            gameTerrainsService.setStateStamps$(ctxt.after, stamps),
-            (terrains) => {
-              game = R.assoc('terrains', terrains, game);
-              
-              return gameTerrainSelectionService
-                .set('remote', stamps, state, game.terrain_selection);
-            },
-            (selection) => {
-              game = R.assoc('terrain_selection', selection, game);
-
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, stamps);
-              
-              return game;
-            }
-          )(game.terrains);
-        },
-        undo: function onTerrainsUndo(ctxt, state, game) {
-          var stamps = R.pluck('stamp', ctxt.before);
-          return R.pipeP(
-            gameTerrainsService.setStateStamps$(ctxt.before, stamps),
-            (terrains) => {
-              game = R.assoc('terrains', terrains, game);
-              
-              return gameTerrainSelectionService
-                .set('remote', stamps, state, game.terrain_selection);
-            },
-            (selection) => {
-              game = R.assoc('terrain_selection', selection, game);
-
-              R.forEach((stamp) => {
-                state.changeEvent(`Game.terrain.change.${stamp}`);
-              }, stamps);
-              
-              return game;
-            }
-          )(game.terrains);
+          );
         }
-      };
-      commandsService.registerCommand('onTerrains', onTerrainsCommandService);
-      return onTerrainsCommandService;
+      );
     }
-  ]);
+    function onTerrainsReplayP(ctxt, state, game) {
+      const stamps = R.pluck('stamp', ctxt.after);
+      return R.threadP(game)(
+        setStates$(ctxt.after, stamps),
+        setRemoteSelection$(stamps, state),
+        emitChangeEvents$(stamps, state)
+      );
+    }
+    function onTerrainsUndoP(ctxt, state, game) {
+      const stamps = R.pluck('stamp', ctxt.before);
+      return R.threadP(game)(
+        setStates$(ctxt.before, stamps),
+        setRemoteSelection$(stamps, state),
+        emitChangeEvents$(stamps, state)
+      );
+    }
+
+    function applyMethodOnGameTerrainsP(method, args, stamps, game) {
+      return R.threadP(game.terrains)(
+        gameTerrainsModel.onStampsP$(method, args, stamps),
+        (terrains) => {
+          return R.assoc('terrains', terrains, game);
+        }
+      );
+    }
+    function setStates(states, stamps, game) {
+      return R.threadP(game.terrains)(
+        gameTerrainsModel.setStateStampsP$(states, stamps),
+        (terrains) => {
+          return R.assoc('terrains', terrains, game);
+        }
+      );
+    }
+    function saveStatesP(ctxt, prop, stamps, game) {
+      return R.threadP(game.terrains)(
+        gameTerrainsModel.fromStampsP$('saveState', [], stamps),
+        (states) => {
+          ctxt[prop] = states;
+          return game;
+        }
+      );
+    }
+    function setRemoteSelection(stamps, state, game) {
+      return R.thread(game.terrain_selection)(
+        gameTerrainSelectionModel.set$('remote', stamps, state),
+        (selection) => {
+          return R.assoc('terrain_selection', selection, game);
+        }
+      );
+    }
+    function emitChangeEvents(stamps, state, game) {
+      R.forEach((stamp) => {
+        state.queueChangeEventP(`Game.terrain.change.${stamp}`);
+      }, stamps);
+      return game;
+    }
+  }
+})();

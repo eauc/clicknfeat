@@ -19,13 +19,13 @@
             stroke: $selection-remote-stroke-color;
         }
     }
-    
+
     .local-selection {
         .terrain-edge {
             stroke-width: 0.75px;
             stroke: $selection-local-stroke-color;
         }
-    }    
+    }
 
     #game-terrains-locked {
         .terrain-edge {
@@ -40,6 +40,6 @@
             .terrain-edge {
                 stroke-width: 0.75px;
             }
-        }    
+        }
     }
 }

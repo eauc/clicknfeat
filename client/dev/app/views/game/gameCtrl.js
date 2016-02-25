@@ -32,7 +32,7 @@
       // $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
       // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
       // $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
-      // $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
+      $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
 
       // $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
       // $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);

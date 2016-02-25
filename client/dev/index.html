@@ -89,16 +89,26 @@
     <script src="app/views/user/userConfig.js"></script>
     <script src="app/views/user/userCtrl.js"></script>
     <script src="app/models/commands.js"></script>
+    <script src="app/models/commands/createTerrain.js"></script>
+    <script src="app/models/commands/deleteTerrain.js"></script>
+    <script src="app/models/commands/lockTerrains.js"></script>
+    <script src="app/models/commands/onTerrains.js"></script>
     <script src="app/models/commands/setBoard.js"></script>
     <script src="app/models/commands/setLayers.js"></script>
     <script src="app/models/game.js"></script>
-    <script src="app/models/game/layers.js"></script>
     <script src="app/models/game/board.js"></script>
+    <script src="app/models/game/layers.js"></script>
+    <script src="app/models/game/terrainInfo.js"></script>
+    <script src="app/models/game/terrains.js"></script>
+    <script src="app/models/game/terrainSelection.js"></script>
     <script src="app/models/games.js"></script>
     <script src="app/models/games.js"></script>
+    <script src="app/models/geom.js"></script>
     <script src="app/models/modes.js"></script>
     <script src="app/models/modes/common.js"></script>
+    <script src="app/models/modes/createTerrain.js"></script>
     <script src="app/models/modes/default.js"></script>
+    <script src="app/models/modes/terrain.js"></script>
     <script src="app/models/settings.js"></script>
     <script src="app/models/state.js"></script>
     <script src="app/models/state/data.js"></script>
@@ -107,6 +117,7 @@
     <script src="app/models/state/games.js"></script>
     <script src="app/models/state/modes.js"></script>
     <script src="app/models/state/user.js"></script>
+    <script src="app/models/terrain.js"></script>
     <script src="app/models/user.js"></script>
     <script src="app/models/user/connection.js"></script>
     <script src="app/services/fileExport.js"></script>
@@ -121,10 +132,12 @@
     <script src="app/components/file_input/fileInput.js"></script>
     <script src="app/components/games_list/gamesList.js"></script>
     <script src="app/components/game/action_error/actionError.js"></script>
+    <script src="app/components/game/create_terrain/createTerrain.js"></script>
     <script src="app/components/game/loading/gameLoading.js"></script>
     <script src="app/components/game/log_list/gameLogList.js"></script>
     <script src="app/components/game/page/gamePage.js"></script>
     <script src="app/components/game/map/gameMap.js"></script>
+    <script src="app/components/game/terrain/terrain.js"></script>
     <!-- endbuild -->
   </body>
 </html>

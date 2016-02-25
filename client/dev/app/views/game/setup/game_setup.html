@@ -114,66 +114,68 @@
       </form>
     </div>
   </div>
-  <!-- <div class="panel panel-info"> -->
-  <!--   <div class="panel-heading"> -->
-  <!--     <strong>Create Terrain</strong> -->
-  <!--   </div> -->
-  <!--   <div class="panel-content"> -->
-  <!--     <form class="form-inline" -->
-  <!--           name="create-terrain"> -->
-  <!--       <table> -->
-  <!--         <tr> -->
-  <!--           <th>Ambiance</th> -->
-  <!--           <td> -->
-  <!--             <select class="form-control" -->
-  <!--                     ng-options="k as k for (k,f) in terrains" -->
-  <!--                     ng-model="ambiance" -->
-  <!--                     ng-change="onAmbianceChange()"> -->
-  <!--             </select> -->
-  <!--           </td> -->
-  <!--         </tr> -->
-  <!--         <tr> -->
-  <!--           <th>Category</th> -->
-  <!--           <td> -->
-  <!--             <select class="form-control" -->
-  <!--                     ng-options="k as k for (k,s) in terrains[ambiance]" -->
-  <!--                     ng-model="category" -->
-  <!--                     ng-change="onCategoryChange()"> -->
-  <!--             </select> -->
-  <!--           </td> -->
-  <!--         </tr> -->
-  <!--         <tr> -->
-  <!--           <th>Entry</th> -->
-  <!--           <td> -->
-  <!--             <select class="form-control" -->
-  <!--                     ng-options="k as e.name for (k,e) in terrains[ambiance][category]" -->
-  <!--                     ng-model="entry" -->
-  <!--                     ng-change="onEntryChange()"> -->
-  <!--             </select> -->
-  <!--           </td> -->
-  <!--         </tr> -->
-  <!--       </table> -->
-  <!--     </form> -->
-  <!--     <br /> -->
-  <!--     <table> -->
-  <!--       <tr> -->
-  <!--         <th>Image</th> -->
-  <!--         <td> -->
-  <!--           <img ng-width="{{getTerrain().img.width/2}}" -->
-  <!--                ng-height="{{getTerrain().img.height/2}}" -->
-  <!--                ng-src="{{getTerrain().img.link}}" /> -->
-  <!--         </td> -->
-  <!--       </tr> -->
-  <!--     </table> -->
-  <!--   </div> -->
-  <!--   <div class="panel-footer"> -->
-  <!--     <button class="btn btn-default" -->
-  <!--             ng-disabled="!getTerrain() || -->
-  <!--                          currentModeIs('CreateTerrain') -->
-  <!--                          " -->
-  <!--             ng-click="doCreateTerrain()"> -->
-  <!--       Create Terrain -->
-  <!--     </button> -->
-  <!--   </div> -->
-  <!-- </div> -->
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Create Terrain</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="create-terrain">
+        <table>
+          <tr>
+            <th>Ambiance</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as k for (k,f) in game_setup.terrains"
+                      ng-model="game_setup.ambiance"
+                      ng-change="game_setup.onAmbianceChange()">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Category</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as k for (k,s) in
+                                  game_setup.terrains[game_setup.ambiance]"
+                      ng-model="game_setup.category"
+                      ng-change="game_setup.onCategoryChange()">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Entry</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as e.name for (k,e) in
+                                  game_setup.terrains[game_setup.ambiance][game_setup.category]"
+                      ng-model="game_setup.entry"
+                      ng-change="game_setup.onEntryChange()">
+              </select>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <br />
+      <table>
+        <tr>
+          <th>Image</th>
+          <td>
+            <img ng-width="{{game_setup.getTerrain().img.width/2}}"
+                 ng-height="{{game_setup.getTerrain().img.height/2}}"
+                 ng-src="{{game_setup.getTerrain().img.link}}" />
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-default"
+              ng-disabled="!game_setup.getTerrain() ||
+                           game.currentModeIs('CreateTerrain')
+                           "
+              ng-click="game_setup.doCreateTerrain()">
+        Create Terrain
+      </button>
+    </div>
+  </div>
 </div>

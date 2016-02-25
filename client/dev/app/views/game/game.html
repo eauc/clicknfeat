@@ -6,9 +6,9 @@
          class="btn-group-vertical"
          ng-include="'app/components/game/zoom_osd/zoom_osd.html'">
     </div>
-    <!-- <div id="cmd-osd" -->
-    <!--      ng-include="'app/components/game/cmd_osd/cmdOsd.html'"> -->
-    <!-- </div> -->
+    <div id="cmd-osd"
+         ng-include="'app/components/game/cmd_osd/cmd_osd.html'">
+    </div>
     <div id="game-loading"
          class="text-center bg-primary"
          click-game-loading>
@@ -115,14 +115,14 @@
                  xlink:href="{{state.game.board.img || ''}}">
           </image>
         </g>
-        <!-- <g id="game-terrains-locked" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'b'" -->
-        <!--    click-game-terrains-list="locked"> -->
-        <!-- </g> -->
-        <!-- <g id="game-terrains" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'b'" -->
-        <!--    click-game-terrains-list="active"> -->
-        <!-- </g> -->
+        <g id="game-terrains-locked"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'"
+           click-game-terrains-list="locked">
+        </g>
+        <g id="game-terrains"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'b'"
+           click-game-terrains-list="active">
+        </g>
         <g id="game-deploiement"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'d'"
            ng-include="'app/components/game/deploiement/deploiement.html'">
@@ -170,11 +170,11 @@
         <!-- <g id="game-los" -->
         <!--    click-game-los> -->
         <!-- </g> -->
-        <!-- <g id="game-create-terrains"> -->
-        <!--   <g ng-repeat="(index, terrain) in state.create.terrain.terrains" -->
-        <!--      click-game-create-terrain> -->
-        <!--   </g> -->
-        <!-- </g> -->
+        <g id="game-create-terrains">
+          <g ng-repeat="(index, terrain) in state.create.terrains"
+             click-game-create-terrain>
+          </g>
+        </g>
         <!-- <g id="game-create-models"> -->
         <!--   <g ng-repeat="(index, model) in state.create.model.models" -->
         <!--      click-game-create-model> -->

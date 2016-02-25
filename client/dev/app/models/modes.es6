@@ -14,8 +14,8 @@
       // 'aoeTemplateMode',
       // 'sprayTemplateMode',
       // 'wallTemplateMode',
-      // 'createTerrainMode',
-      // 'terrainMode',
+      'createTerrainMode',
+      'terrainMode',
       () => ({})
     ]);
 
