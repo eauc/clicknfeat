@@ -1,20 +1,22 @@
-describe('lockTerrainsCommand model', function() {
+describe('lockElementsCommand model', function() {
   beforeEach(inject([
-    'lockTerrainsCommand',
-    function(lockTerrainsCommandModel) {
-      this.lockTerrainsCommandModel = lockTerrainsCommandModel;
+    'lockElementsCommand',
+    function(lockElementsCommandModel) {
+      this.gameElementsModel = spyOnService('gameTerrains');
 
-      this.gameTerrainsModel = spyOnService('gameTerrains');
+      this.lockElementsCommandModel =
+        lockElementsCommandModel('type',
+                                 this.gameElementsModel);
 
       this.state = jasmine.createSpyObj('state', [
         'queueChangeEventP'
       ]);
-      this.game = { terrains: 'terrains' };
+      this.game = { types: 'elements' };
     }
   ]));
 
   context('executeP(<lock>, <stamps>, <state>, <game>)', function() {
-    return this.lockTerrainsCommandModel
+    return this.lockElementsCommandModel
       .executeP('lock', this.stamps, this.state, this.game);
   }, function() {
     beforeEach(function() {
@@ -22,7 +24,7 @@ describe('lockTerrainsCommand model', function() {
     });
 
     context('lockStamps fails', function() {
-      this.gameTerrainsModel.lockStampsP
+      this.gameElementsModel.lockStampsP
         .rejectWith('reason');
       this.expectContextError();
     }, function() {
@@ -34,17 +36,17 @@ describe('lockTerrainsCommand model', function() {
     });
 
     it('should apply <lock> on <stamps>', function() {
-        expect(this.gameTerrainsModel.lockStampsP)
-          .toHaveBeenCalledWith('lock', this.stamps, 'terrains');
-        expect(this.context[1].terrains)
+        expect(this.gameElementsModel.lockStampsP)
+          .toHaveBeenCalledWith('lock', this.stamps, 'elements');
+        expect(this.context[1].types)
           .toBe('gameTerrains.lockStampsP.returnValue');
     });
 
-    it('should emit changeTerrain changeEvents', function() {
+    it('should emit changeElement changeEvents', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+        .toHaveBeenCalledWith('Game.type.change.stamp1');
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+        .toHaveBeenCalledWith('Game.type.change.stamp2');
     });
 
     it('should return context', function() {
@@ -57,7 +59,7 @@ describe('lockTerrainsCommand model', function() {
   });
 
   context('replayP(<ctxt>, <state>, <game>)', function() {
-    return this.lockTerrainsCommandModel
+    return this.lockElementsCommandModel
       .replayP(this.ctxt, this.state, this.game);
   }, function() {
     beforeEach(function() {
@@ -68,7 +70,7 @@ describe('lockTerrainsCommand model', function() {
     });
 
     context('lockStamps fails', function() {
-      this.gameTerrainsModel.lockStampsP
+      this.gameElementsModel.lockStampsP
         .rejectWith('reason');
       this.expectContextError();
     }, function() {
@@ -80,22 +82,22 @@ describe('lockTerrainsCommand model', function() {
     });
 
     it('should apply <lock> on <stamps>', function() {
-      expect(this.gameTerrainsModel.lockStampsP)
-        .toHaveBeenCalledWith('lock', this.ctxt.stamps, 'terrains');
-      expect(this.context.terrains)
+      expect(this.gameElementsModel.lockStampsP)
+        .toHaveBeenCalledWith('lock', this.ctxt.stamps, 'elements');
+      expect(this.context.types)
         .toBe('gameTerrains.lockStampsP.returnValue');
     });
 
-    it('should emit changeTerrain changeEvents', function() {
+    it('should emit changeElement changeEvents', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+        .toHaveBeenCalledWith('Game.type.change.stamp1');
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+        .toHaveBeenCalledWith('Game.type.change.stamp2');
     });
   });
 
   context('undoP(<ctxt>, <state>, <game>)', function() {
-    return this.lockTerrainsCommandModel
+    return this.lockElementsCommandModel
       .undoP(this.ctxt, this.state, this.game);
   }, function() {
     beforeEach(function() {
@@ -106,7 +108,7 @@ describe('lockTerrainsCommand model', function() {
     });
 
     context('lockStamps fails', function() {
-      this.gameTerrainsModel.lockStampsP
+      this.gameElementsModel.lockStampsP
         .rejectWith('reason');
       this.expectContextError();
     }, function() {
@@ -118,17 +120,17 @@ describe('lockTerrainsCommand model', function() {
     });
 
     it('should apply !<lock> on <stamps>', function() {
-      expect(this.gameTerrainsModel.lockStampsP)
-        .toHaveBeenCalledWith(false, this.ctxt.stamps, 'terrains');
-      expect(this.context.terrains)
+      expect(this.gameElementsModel.lockStampsP)
+        .toHaveBeenCalledWith(false, this.ctxt.stamps, 'elements');
+      expect(this.context.types)
         .toBe('gameTerrains.lockStampsP.returnValue');
     });
 
-    it('should emit changeTerrain changeEvents', function() {
+    it('should emit changeElement changeEvents', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+        .toHaveBeenCalledWith('Game.type.change.stamp1');
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+        .toHaveBeenCalledWith('Game.type.change.stamp2');
     });
   });
 });

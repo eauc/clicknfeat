@@ -1,99 +1,103 @@
-describe('terrainMode model', function() {
+describe('elementMode model', function() {
   beforeEach(inject([
-    'terrainMode',
-    function(terrainModeModel) {
-      this.terrainModeModel = terrainModeModel;
+    'elementMode',
+    function(elementModeModel) {
+      this.elementModel = spyOnService('terrain');
+      this.gameElementsModel = spyOnService('gameTerrains');
+      this.gameElementSelectionModel = spyOnService('gameTerrainSelection');
 
-      this.terrainModel = spyOnService('terrain');
-      this.gameTerrainsModel = spyOnService('gameTerrains');
-      this.gameTerrainSelectionModel = spyOnService('gameTerrainSelection');
+      this.elementModeModel =
+        elementModeModel('type',
+                         this.elementModel,
+                         this.gameElementsModel,
+                         this.gameElementSelectionModel);
 
       this.state = {
         create: {},
-        game: { terrains: 'terrains',
-                terrain_selection: 'selection' },
+        game: { types: 'elements',
+                type_selection: 'selection' },
         eventP: jasmine.createSpy('eventP')
       };
     }
   ]));
 
-  context('when use copies terrain', function() {
-    return this.terrainModeModel.actions
+  context('when use copies element', function() {
+    return this.elementModeModel.actions
       .copySelection(this.state);
   }, function() {
     it('should copy current selection', function() {
-      expect(this.gameTerrainSelectionModel.get)
+      expect(this.gameElementSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameTerrainsModel.copyStampsP)
-        .toHaveBeenCalledWith('gameTerrainSelection.get.returnValue', 'terrains');
+      expect(this.gameElementsModel.copyStampsP)
+        .toHaveBeenCalledWith('gameTerrainSelection.get.returnValue', 'elements');
     });
 
-    it('should enter createTerrain mode', function() {
+    it('should enter createElement mode', function() {
       expect(this.state.create)
         .toBe('gameTerrains.copyStampsP.returnValue');
       expect(this.state.eventP)
-        .toHaveBeenCalledWith('Modes.switchTo','CreateTerrain');
+        .toHaveBeenCalledWith('Modes.switchTo','CreateType');
     });
   });
 
-  context('when user deletes terrain', function() {
-    return this.terrainModeModel.actions
+  context('when user deletes element', function() {
+    return this.elementModeModel.actions
       .delete(this.state);
   }, function() {
     beforeEach(function() {
-      this.gameTerrainSelectionModel.get
+      this.gameElementSelectionModel.get
         .and.returnValue('stamps');
     });
 
-    it('should execute deleteTerrainCommand', function() {
-      expect(this.gameTerrainSelectionModel.get)
+    it('should execute deleteElementCommand', function() {
+      expect(this.gameElementSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
-                              'deleteTerrain', ['stamps']);
+                              'deleteType', ['stamps']);
     });
   });
 
   example(function(e) {
-    context('when user '+e.action+' terrain selection', function() {
-      return this.terrainModeModel
+    context('when user '+e.action+' element selection', function() {
+      return this.elementModeModel
         .actions[e.action](this.state);
     }, function() {
       beforeEach(function() {
-        this.gameTerrainSelectionModel.get
+        this.gameElementSelectionModel.get
           .and.returnValue('stamps');
       });
 
       it('should get current selection', function() {
-        expect(this.gameTerrainSelectionModel.get)
+        expect(this.gameElementSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onTerrains/'+e.action+' command', function() {
+      it('should execute onElements/'+e.action+' command', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTerrains', [ `${e.action}P`, [false], 'stamps' ]);
+                                'onTypes', [ `${e.action}P`, [false], 'stamps' ]);
       });
     });
 
-    context('when user '+e.action+'Small terrain selection', function() {
-      return this.terrainModeModel
+    context('when user '+e.action+'Small element selection', function() {
+      return this.elementModeModel
         .actions[e.action+'Small'](this.state);
     }, function() {
       beforeEach(function() {
-        this.gameTerrainSelectionModel.get
+        this.gameElementSelectionModel.get
           .and.returnValue('stamps');
       });
 
       it('should get current selection', function() {
-        expect(this.gameTerrainSelectionModel.get)
+        expect(this.gameElementSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onTerrains/'+e.action+'Small command', function() {
+      it('should execute onElements/'+e.action+'Small command', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTerrains', [ `${e.action}P`, [true], 'stamps' ]);
+                                'onTypes', [ `${e.action}P`, [true], 'stamps' ]);
       });
     });
   }, [
@@ -105,67 +109,67 @@ describe('terrainMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user '+e.action+' terrain selection', function() {
-      return this.terrainModeModel
+    context('when user '+e.action+' element selection', function() {
+      return this.elementModeModel
         .actions[e.action](this.state);
     }, function() {
       beforeEach(function() {
-        this.gameTerrainSelectionModel.get
+        this.gameElementSelectionModel.get
           .and.returnValue('stamps');
       });
 
       it('should get current selection', function() {
-        expect(this.gameTerrainSelectionModel.get)
+        expect(this.gameElementSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onTerrains/'+e.action+' command', function() {
+      it('should execute onElements/'+e.action+' command', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTerrains',
+                                'onTypes',
                                 [ `${e.action}P`, [false], 'stamps' ]);
       });
 
       context('when map is flipped', function() {
         this.state.ui_state = { flip_map: true };
       }, function() {
-        it('should execute onTerrains/'+e.flipped_action+' command', function() {
+        it('should execute onElements/'+e.flipped_action+' command', function() {
           expect(this.state.eventP)
             .toHaveBeenCalledWith('Game.command.execute',
-                                  'onTerrains',
+                                  'onTypes',
                                   [ `${e.flipped_action}P`, [false], 'stamps' ]);
         });
       });
     });
 
-    context('when user '+e.action+'Small terrain selection', function() {
-      return this.terrainModeModel
+    context('when user '+e.action+'Small element selection', function() {
+      return this.elementModeModel
         .actions[e.action+'Small'](this.state);
     }, function() {
       beforeEach(function() {
-        this.gameTerrainSelectionModel.get
+        this.gameElementSelectionModel.get
           .and.returnValue('stamps');
       });
 
       it('should get current selection', function() {
-        expect(this.gameTerrainSelectionModel.get)
+        expect(this.gameElementSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onTerrains/'+e.action+'Small command', function() {
+      it('should execute onElements/'+e.action+'Small command', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTerrains',
+                                'onTypes',
                                 [ `${e.action}P`, [true], 'stamps' ]);
       });
 
       context('when map is flipped', function() {
         this.state.ui_state = { flip_map: true };
       }, function() {
-        it('should execute onTerrains/'+e.flipped_action+'Small command', function() {
+        it('should execute onElements/'+e.flipped_action+'Small command', function() {
           expect(this.state.eventP)
             .toHaveBeenCalledWith('Game.command.execute',
-                                  'onTerrains',
+                                  'onTypes',
                                   [ `${e.flipped_action}P`, [true], 'stamps' ]);
         });
       });
@@ -180,13 +184,13 @@ describe('terrainMode model', function() {
 
   describe('drag', function() {
     beforeEach(function() {
-      this.terrainModel.saveState.and.callThrough();
-      this.terrainModel.eventName.and.callThrough();
+      this.elementModel.saveState.and.callThrough();
+      this.elementModel.eventName.and.callThrough();
 
       this.state = R.extend(this.state, {
-        game: { terrain_selection: 'selection',
-                terrains: [ { state: { stamp: 'stamp1', x: 240, y: 240, r: 180 } },
-                            { state: { stamp: 'stamp2', x: 200, y: 300, r:  90 } } ]
+        game: { type_selection: 'selection',
+                types: [ { state: { stamp: 'stamp1', x: 240, y: 240, r: 180 } },
+                         { state: { stamp: 'stamp2', x: 200, y: 300, r:  90 } } ]
               },
         queueChangeEventP: jasmine.createSpy('queueChangeEventP')
       });
@@ -203,34 +207,34 @@ describe('terrainMode model', function() {
         now: { x: 210, y: 201 }
       };
 
-      this.terrainModel.isLocked
+      this.elementModel.isLocked
         .and.returnValue(false);
-      this.terrainModel.setPositionP
+      this.elementModel.setPositionP
         .resolveWith((f, t, p, m) => {
           return m;
         });
 
-      this.gameTerrainsModel.findAnyStampsP
+      this.gameElementsModel.findAnyStampsP
         .resolveWith((ss, ms) => {
           return R.map(function(s) {
             return R.find(R.pathEq(['state','stamp'], s), ms);
           }, ss);
         });
 
-      this.gameTerrainSelectionModel.get
+      this.gameElementSelectionModel.get
         .and.returnValue(['stamp1']);
-      this.gameTerrainSelectionModel.in
+      this.gameElementSelectionModel.in
         .and.returnValue(true);
     });
 
-    context('when user starts dragging terrain', function() {
-      return this.terrainModeModel.actions
-        .dragStartTerrain(this.state, this.event);
+    context('when user starts dragging element', function() {
+      return this.elementModeModel.actions
+        .dragStartType(this.state, this.event);
     }, function() {
-      shouldRejectDragWhenTerrainIsLocked();
+      shouldRejectDragWhenElementIsLocked();
 
       it('should set current selection', function() {
-        expect(this.gameTerrainSelectionModel.set)
+        expect(this.gameElementSelectionModel.set)
           .toHaveBeenCalledWith('local', ['stamp'],
                                 this.state, 'selection');
       });
@@ -240,18 +244,18 @@ describe('terrainMode model', function() {
             .toEqual({ x: 250, y: 241 });
       });
 
-      shouldEmitChangeTerrainEvent();
+      shouldEmitChangeElementEvent();
     });
 
-    context('when user drags terrain', function() {
-      return this.terrainModeModel.actions
-        .dragTerrain(this.state, this.event);
+    context('when user drags element', function() {
+      return this.elementModeModel.actions
+        .dragType(this.state, this.event);
     }, function() {
       beforeEach(function() {
-        this.terrainModeModel.actions
-          .dragStartTerrain(this.state, this.event);
+        this.elementModeModel.actions
+          .dragStartType(this.state, this.event);
 
-        this.terrainModel.setPositionP.calls.reset();
+        this.elementModel.setPositionP.calls.reset();
         this.state.queueChangeEventP.calls.reset();
 
         this.event = {
@@ -261,26 +265,26 @@ describe('terrainMode model', function() {
         };
       });
 
-      shouldRejectDragWhenTerrainIsLocked();
+      shouldRejectDragWhenElementIsLocked();
 
       it('should update target position', function() {
         expect(R.pick(['x','y'], this.event.target.state))
             .toEqual({ x: 270, y: 230 });
       });
 
-      shouldEmitChangeTerrainEvent();
+      shouldEmitChangeElementEvent();
     });
 
-    context('when user ends draging terrain', function() {
-      return this.terrainModeModel.actions
-        .dragEndTerrain(this.state, this.event);
+    context('when user ends draging element', function() {
+      return this.elementModeModel.actions
+        .dragEndType(this.state, this.event);
     }, function() {
       beforeEach(function() {
-        this.terrainModeModel.actions
-          .dragStartTerrain(this.state, this.event);
+        this.elementModeModel.actions
+          .dragStartType(this.state, this.event);
 
         this.state.queueChangeEventP.calls.reset();
-        this.terrainModel.setPositionP.calls.reset();
+        this.elementModel.setPositionP.calls.reset();
 
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -289,17 +293,17 @@ describe('terrainMode model', function() {
         };
       });
 
-      shouldRejectDragWhenTerrainIsLocked();
+      shouldRejectDragWhenElementIsLocked();
 
-      it('should restore dragStart terrain position', function() {
+      it('should restore dragStart element position', function() {
         expect(R.pick(['x','y'], this.event.target.state))
             .toEqual({ x: 240, y: 240 });
       });
 
-      it('should execute onTerrains/setPosition command', function() {
+      it('should execute onElements/setPosition command', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTerrains', [
+                                'onTypes', [
                                   'setPositionP',
                                   [ { stamp: 'stamp', x: 270, y: 230, r: 180 } ],
                                   ['stamp']
@@ -307,53 +311,53 @@ describe('terrainMode model', function() {
       });
     });
 
-    function shouldRejectDragWhenTerrainIsLocked() {
-      context('when terrain is locked', function() {
-        this.terrainModel.isLocked
+    function shouldRejectDragWhenElementIsLocked() {
+      context('when element is locked', function() {
+        this.elementModel.isLocked
           .and.returnValue(true);
         this.expectContextError();
       }, function() {
         it('should reject drag', function() {
           expect(this.contextError).toEqual([
-            'Terrain is locked'
+            'Type is locked'
           ]);
         });
       });
     }
-    function shouldEmitChangeTerrainEvent() {
-      it('should emit changeTerrain event', function() {
+    function shouldEmitChangeElementEvent() {
+      it('should emit changeElement event', function() {
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp');
+          .toHaveBeenCalledWith('Game.type.change.stamp');
       });
     }
   });
 
-  context('when user toggles lock on terrains', function() {
-    return this.terrainModeModel.actions
+  context('when user toggles lock on elements', function() {
+    return this.elementModeModel.actions
       .toggleLock(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected terrain\'s isLocked === '+e.first, function() {
-        this.terrainModel.isLocked
+      context('when first selected element\'s isLocked === '+e.first, function() {
+        this.elementModel.isLocked
           .and.returnValue(e.first);
       }, function() {
         beforeEach(function() {
-          this.gameTerrainSelectionModel.get
+          this.gameElementSelectionModel.get
             .and.returnValue(['stamp1','stamp2']);
         });
 
         it('should toggle lock on local selection, '+d, function() {
-          expect(this.gameTerrainSelectionModel.get)
+          expect(this.gameElementSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameTerrainsModel.findStampP)
-            .toHaveBeenCalledWith('stamp1', 'terrains');
+          expect(this.gameElementsModel.findStampP)
+            .toHaveBeenCalledWith('stamp1', 'elements');
 
-          expect(this.terrainModel.isLocked)
+          expect(this.elementModel.isLocked)
             .toHaveBeenCalledWith('gameTerrains.findStampP.returnValue');
           expect(this.state.eventP)
             .toHaveBeenCalledWith(
               'Game.command.execute',
-              'lockTerrains',
+              'lockTypes',
               [ e.set, ['stamp1','stamp2'] ]
             );
         });
@@ -367,7 +371,7 @@ describe('terrainMode model', function() {
 
   example(function(e) {
     context('when user '+e.action, function() {
-      return this.terrainModeModel
+      return this.elementModeModel
         .actions[e.action](this.state, 'event');
     }, function() {
       beforeEach(function() {
@@ -379,10 +383,10 @@ describe('terrainMode model', function() {
         });
       });
 
-      it('should clear local terrain selection', function() {
-        expect(this.gameTerrainSelectionModel.clear)
+      it('should clear local element selection', function() {
+        expect(this.gameElementSelectionModel.clear)
           .toHaveBeenCalledWith('local', this.state, 'selection');
-        expect(this.state.game.terrain_selection)
+        expect(this.state.game.type_selection)
           .toBe('gameTerrainSelection.clear.returnValue');
       });
     });

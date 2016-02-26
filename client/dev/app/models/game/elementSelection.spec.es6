@@ -1,25 +1,22 @@
-describe('gameTerrainSelection model', function() {
+describe('gameElementSelection model', function() {
   beforeEach(inject([
-    'gameTerrainSelection',
-    function(gameTerrainSelectionModel) {
-      this.gameTerrainSelectionModel = gameTerrainSelectionModel;
+    'gameElementSelection',
+    function(gameElementSelectionModel) {
+      this.gameElementSelectionModel = gameElementSelectionModel('type');
 
-      this.gameTerrainsModel = spyOnService('gameTerrains');
-      this.terrainModel = spyOnService('terrain');
-
-      spyOn(this.gameTerrainSelectionModel, 'checkModeP');
+      spyOn(this.gameElementSelectionModel, 'checkModeP');
 
       this.state = jasmine.createSpyObj('state', [
         'queueChangeEventP', 'queueEventP'
       ]);
-      this.state.game = { terrains: 'terrains' };
+      this.state.game = { elements: 'elements' };
       this.state.modes = 'modes';
     }
   ]));
 
   example(function(e) {
     context('set('+e.where+', <stamps>, <state>)', function() {
-      return this.gameTerrainSelectionModel
+      return this.gameElementSelectionModel
         .set(e.where, this.after, this.state, this.selection);
     }, function() {
       beforeEach(function() {
@@ -30,25 +27,25 @@ describe('gameTerrainSelection model', function() {
       });
 
       it('should set <where> selection', function() {
-        expect(this.gameTerrainSelectionModel.in(e.where, 'after1', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'after1', this.context))
           .toBeTruthy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'after2', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'after2', this.context))
           .toBeTruthy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'before1', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'before1', this.context))
           .toBeFalsy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'before2', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'before2', this.context))
           .toBeFalsy();
       });
 
-      it('should emit changeTerrain event', function() {
+      it('should emit changeElement event', function() {
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.after1');
+          .toHaveBeenCalledWith('Game.type.change.after1');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.after2');
+          .toHaveBeenCalledWith('Game.type.change.after2');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.before1');
+          .toHaveBeenCalledWith('Game.type.change.before1');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.before2');
+          .toHaveBeenCalledWith('Game.type.change.before2');
       });
 
       if(e.where === 'local') {
@@ -57,7 +54,7 @@ describe('gameTerrainSelection model', function() {
     });
 
     context('removeFrom('+e.where+', <stamps>, <state>)', function() {
-      return this.gameTerrainSelectionModel
+      return this.gameElementSelectionModel
         .removeFrom(e.where, this.remove, this.state, this.selection);
     }, function() {
       beforeEach(function() {
@@ -68,22 +65,22 @@ describe('gameTerrainSelection model', function() {
       });
 
       it('should remove stamps from <where> selection', function() {
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp1', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp1', this.context))
           .toBeTruthy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp2', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp2', this.context))
           .toBeFalsy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp3', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp3', this.context))
           .toBeFalsy();
       });
 
-      it('should emit changeTerrain event', function() {
+      it('should emit changeElement event', function() {
         // also emit stamp1 to update single selection styles
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          .toHaveBeenCalledWith('Game.type.change.stamp1');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+          .toHaveBeenCalledWith('Game.type.change.stamp2');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp3');
+          .toHaveBeenCalledWith('Game.type.change.stamp3');
       });
 
       if(e.where === 'local') {
@@ -92,7 +89,7 @@ describe('gameTerrainSelection model', function() {
     });
 
     context('addTo('+e.where+', <stamps>, <state>)', function() {
-      return this.gameTerrainSelectionModel
+      return this.gameElementSelectionModel
         .addTo(e.where, this.add, this.state, this.selection);
     }, function() {
       beforeEach(function() {
@@ -103,20 +100,20 @@ describe('gameTerrainSelection model', function() {
       });
 
       it('should add stamps to <where> selection', function() {
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp2', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp2', this.context))
           .toBeTruthy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp3', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp3', this.context))
           .toBeTruthy();
       });
 
-      it('should emit changeTerrain event', function() {
+      it('should emit changeElement event', function() {
         // also emit stamp1 to update single selection styles
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          .toHaveBeenCalledWith('Game.type.change.stamp1');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+          .toHaveBeenCalledWith('Game.type.change.stamp2');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp3');
+          .toHaveBeenCalledWith('Game.type.change.stamp3');
       });
 
       if(e.where === 'local') {
@@ -125,7 +122,7 @@ describe('gameTerrainSelection model', function() {
     });
 
     context('clear('+e.where+', <stamps>, <state>)', function() {
-      return this.gameTerrainSelectionModel
+      return this.gameElementSelectionModel
         .clear(e.where, this.state, this.selection);
     }, function() {
       beforeEach(function() {
@@ -135,17 +132,17 @@ describe('gameTerrainSelection model', function() {
       });
 
       it('should clear <where> selection', function() {
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp1', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp1', this.context))
           .toBeFalsy();
-        expect(this.gameTerrainSelectionModel.in(e.where, 'stamp2', this.context))
+        expect(this.gameElementSelectionModel.in(e.where, 'stamp2', this.context))
           .toBeFalsy();
       });
 
-      it('should emit changeTerrain event', function() {
+      it('should emit changeElement event', function() {
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp1');
+          .toHaveBeenCalledWith('Game.type.change.stamp1');
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.change.stamp2');
+          .toHaveBeenCalledWith('Game.type.change.stamp2');
       });
     });
   }, [
@@ -155,14 +152,14 @@ describe('gameTerrainSelection model', function() {
   ]);
 
   context('checkModeP(<state>)', function() {
-    return this.gameTerrainSelectionModel
+    return this.gameElementSelectionModel
       .checkModeP(this.state, this.selection);
   }, function() {
     beforeEach(function() {
-      this.gameTerrainSelectionModel.checkModeP
+      this.gameElementSelectionModel.checkModeP
         .and.callThrough();
       this.state = { modes: 'modes',
-                     game: { terrains: 'terrains' },
+                     game: { elements: 'elements' },
                      queueEventP: jasmine.createSpy('queueEventP')
                    };
       this.selection = { local: [ 'stamp' ] };
@@ -174,21 +171,21 @@ describe('gameTerrainSelection model', function() {
     }, function() {
       it('should reject check', function() {
         expect(this.contextError).toEqual([
-          'No terrain selection'
+          'No type selection'
         ]);
       });
     });
 
-    it('should switch to mode for terrain', function() {
+    it('should switch to mode for element', function() {
       expect(this.state.queueEventP)
-        .toHaveBeenCalledWith('Modes.switchTo','Terrain');
+        .toHaveBeenCalledWith('Modes.switchTo','Type');
     });
   });
 
   function testChangeLocalSelection() {
     it('should emit change event', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.selection.local.change');
+        .toHaveBeenCalledWith('Game.type.selection.local.change');
     });
   }
 });

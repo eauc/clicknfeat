@@ -1,19 +1,19 @@
-describe('createTerrainMode model', function() {
+describe('createElementMode model', function() {
   beforeEach(inject([
-    'createTerrainMode',
-    function(createTerrainModeModel) {
-      this.createTerrainModeModel = createTerrainModeModel;
+    'createElementMode',
+    function(createElementModeModel) {
+      this.createElementModeModel = createElementModeModel('type');
 
       this.state = jasmine.createSpyObj('state', [
         'queueChangeEventP', 'eventP'
       ]);
-      this.state.create = { base: {}, terrains: [] };
+      this.state.create = { base: {}, types: [] };
       this.game = 'game';
     }
   ]));
 
   context('onEnter()', function() {
-    return this.createTerrainModeModel
+    return this.createElementModeModel
       .onEnter(this.state);
   }, function() {
     example(function(e) {
@@ -22,20 +22,20 @@ describe('createTerrainMode model', function() {
           .toHaveBeenCalledWith(e.event);
       });
     }, [
-      [ 'event'                      ],
-      [ 'Game.terrain.create.enable' ],
-      [ 'Game.moveMap.enable'        ],
+      [ 'event'                   ],
+      [ 'Game.type.create.enable' ],
+      [ 'Game.moveMap.enable'     ],
     ]);
   });
 
   context('onLeave()', function() {
-    return this.createTerrainModeModel
+    return this.createElementModeModel
       .onLeave(this.state);
   }, function() {
     it('should reset state\'s create object', function() {
       expect(this.state.create)
         .toEqual({ base: {},
-                   terrains: null
+                   types: null
                  });
     });
 
@@ -45,14 +45,14 @@ describe('createTerrainMode model', function() {
           .toHaveBeenCalledWith(e.event);
       });
     }, [
-      [ 'event'                       ],
-      [ 'Game.terrain.create.disable' ],
-      [ 'Game.moveMap.disable'        ],
+      [ 'event'                    ],
+      [ 'Game.type.create.disable' ],
+      [ 'Game.moveMap.disable'     ],
     ]);
   });
 
   context('user move mouse over map', function() {
-    return this.createTerrainModeModel.actions
+    return this.createElementModeModel.actions
       .moveMap(this.state, { x: 42, y: 71 });
   }, function() {
     it('should update state\'s create object', function() {
@@ -62,14 +62,14 @@ describe('createTerrainMode model', function() {
         });
     });
 
-    it('should emit moveCreateTerrain event', function() {
+    it('should emit moveCreateElement event', function() {
       expect(this.state.queueChangeEventP)
         .toHaveBeenCalledWith('Game.create.update');
     });
   });
 
-  context('user create terrain', function() {
-    return this.createTerrainModeModel.actions
+  context('user create element', function() {
+    return this.createElementModeModel.actions
       .create(this.state, { 'click#': { x: 42, y: 71 } });
   }, function() {
     it('should update state\'s create object', function() {
@@ -83,10 +83,10 @@ describe('createTerrainMode model', function() {
       context('map is '+(e.flip_map ? '' : 'not ')+'flipped', function() {
         this.state.ui_state = { flip_map: e.flip_map };
       }, function() {
-        it('should execute createTerrainCommand', function() {
+        it('should execute createElementCommand', function() {
           expect(this.state.eventP)
             .toHaveBeenCalledWith('Game.command.execute',
-                                  'createTerrain',
+                                  'createType',
                                   [ this.state.create, e.flip_map ]);
         });
       });

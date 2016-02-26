@@ -1,24 +1,32 @@
-describe('terrain model', function() {
+describe('element model', function() {
   beforeEach(inject([
-    'terrain',
-    function(terrainModel) {
-      this.terrainModel = terrainModel;
+    'element',
+    function(elementModel) {
+      this.MOVES = {
+        Move: 10,
+        MoveSmall: 1,
+        Rotate: 15,
+        RotateSmall: 5,
+        Shift: 10,
+        ShiftSmall: 1
+      };
+      this.elementModel = elementModel('type', this.MOVES);
     }
   ]));
 
   context('checkState(<factions>, <target>)', function() {
-    return this.terrainModel
-      .checkState(this.terrain);
+    return this.elementModel
+      .checkState(this.element);
   }, function() {
     beforeEach(function() {
-      this.terrain = { state: { info: 'info' } };
+      this.element = { state: { info: 'info' } };
     });
 
     example(function(e, d) {
       context(d, function() {
-        this.terrain.state = R.merge(e.pos, this.terrain.state);
+        this.element.state = R.merge(e.pos, this.element.state);
       }, function() {
-        it('should keep terrain on board, '+d, function() {
+        it('should keep element on board, '+d, function() {
           expect(R.pick(['x','y'], this.context.state))
             .toEqual(e.res);
         });
@@ -33,7 +41,7 @@ describe('terrain model', function() {
   });
 
   context('create(<state>)', function() {
-    return this.terrainModel.create(this.state);
+    return this.elementModel.create(this.state);
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'],
@@ -42,13 +50,13 @@ describe('terrain model', function() {
                      stamp: 'stamp'
                    };
 
-      spyOn(this.terrainModel, 'checkState')
-        .and.returnValue('terrain.checkState.returnValue');
+      spyOn(this.elementModel, 'checkState')
+        .and.returnValue('element.checkState.returnValue');
       spyOn(R, 'guid').and.returnValue('newGuid');
     });
 
     it('should check <state>', function() {
-      expect(this.terrainModel.checkState)
+      expect(this.elementModel.checkState)
         .toHaveBeenCalledWith({
           state: { x: 240, y: 0, r: 0,
                    lk: true,
@@ -56,150 +64,150 @@ describe('terrain model', function() {
                    info: [ 'info' ]
                  }
         });
-      expect(this.context).toBe('terrain.checkState.returnValue');
+      expect(this.context).toBe('element.checkState.returnValue');
     });
   });
 
   context('setPositionP(<pos>)', function() {
-    return this.terrainModel
-      .setPositionP({ x: 15, y: 42 }, this.terrain);
+    return this.elementModel
+      .setPositionP({ x: 15, y: 42 }, this.element);
   }, function() {
     beforeEach(function() {
-      this.terrain = {
+      this.element = {
         state: { stamp: 'stamp', info: 'info',
                  x: 240, y: 240, r: 180, dsp:[] }
       };
-      spyOn(this.terrainModel, 'checkState')
+      spyOn(this.elementModel, 'checkState')
         .and.callFake(R.identity);
     });
 
-    it('should set terrain position', function() {
+    it('should set element position', function() {
       expect(R.pick(['x','y','r'], this.context.state))
         .toEqual({ x: 15, y: 42, r: 180 });
     });
 
     it('should check state', function() {
-      expect(this.terrainModel.checkState)
+      expect(this.elementModel.checkState)
         .toHaveBeenCalledWith(this.context);
     });
 
-    context('when terrain is locked', function() {
-      this.terrain = this.terrainModel
-        .setLock(true, this.terrain);
+    context('when element is locked', function() {
+      this.element = this.elementModel
+        .setLock(true, this.element);
       this.expectContextError();
     }, function() {
       it('should reject move', function() {
         expect(this.contextError).toEqual([
-          'Terrain is locked'
+          'Type is locked'
         ]);
       });
     });
   });
 
   context('shiftPositionP(<pos>)', function() {
-    return this.terrainModel
-      .shiftPositionP({ x: 15, y: 20 }, this.terrain);
+    return this.elementModel
+      .shiftPositionP({ x: 15, y: 20 }, this.element);
   }, function() {
     beforeEach(function() {
-      this.terrain = {
+      this.element = {
         state: { stamp: 'stamp', info: 'info',
                  x: 440, y: 440, r: 180, dsp:[] }
       };
       this.target = 'target';
 
-      spyOn(this.terrainModel, 'checkState')
+      spyOn(this.elementModel, 'checkState')
         .and.callFake(R.identity);
     });
 
-    it('should set terrain position', function() {
+    it('should set element position', function() {
       expect(R.pick(['x','y','r'], this.context.state))
         .toEqual({ x: 455, y: 460, r: 180 });
     });
 
     it('should check state', function() {
-      expect(this.terrainModel.checkState)
+      expect(this.elementModel.checkState)
         .toHaveBeenCalledWith(this.context);
     });
 
-    context('when terrain is locked', function() {
-      this.terrain = this.terrainModel
-        .setLock(true, this.terrain);
+    context('when element is locked', function() {
+      this.element = this.elementModel
+        .setLock(true, this.element);
       this.expectContextError();
     }, function() {
       it('should reject move', function() {
         expect(this.contextError).toEqual([
-          'Terrain is locked'
+          'Type is locked'
         ]);
       });
     });
   });
 
   describe('setLock(<set>)', function() {
-    it('should set lock for <terrain>', function() {
-      this.terrain = { state: { dsp: [] } };
+    it('should set lock for <element>', function() {
+      this.element = { state: { dsp: [] } };
 
-      this.terrain = this.terrainModel.setLock(true, this.terrain);
-      expect(this.terrainModel.isLocked(this.terrain))
+      this.element = this.elementModel.setLock(true, this.element);
+      expect(this.elementModel.isLocked(this.element))
         .toBeTruthy();
 
-      this.terrain = this.terrainModel.setLock(false, this.terrain);
-      expect(this.terrainModel.isLocked(this.terrain))
+      this.element = this.elementModel.setLock(false, this.element);
+      expect(this.elementModel.isLocked(this.element))
         .toBeFalsy();
     });
   });
   describe('saveState()', function() {
-    it('should return a copy of terrain\'s state', function() {
-      const terrain = { state: { stamp: 'stamp' } };
-      const ret = this.terrainModel.saveState(terrain);
+    it('should return a copy of element\'s state', function() {
+      const element = { state: { stamp: 'stamp' } };
+      const ret = this.elementModel.saveState(element);
       expect(ret).toEqual({ stamp: 'stamp' });
-      expect(ret).not.toBe(terrain.state);
+      expect(ret).not.toBe(element.state);
     });
   });
 
   describe('setState(<state>)', function() {
-    it('should set a copy of <state> as terrain\'s state', function() {
-      let terrain = { state: null };
+    it('should set a copy of <state> as element\'s state', function() {
+      let element = { state: null };
       const state = { stamp: 'stamp' };
-      terrain = this.terrainModel.setState(state, terrain);
-      expect(terrain.state).toEqual(state);
-      expect(terrain.state).not.toBe(state);
+      element = this.elementModel.setState(state, element);
+      expect(element.state).toEqual(state);
+      expect(element.state).not.toBe(state);
     });
   });
 
   example(function(e) {
     example(function(ee, dd) {
       context(e.move+'(<small>)', function() {
-        return this.terrainModel[`${e.move}P`](ee.small, this.terrain);
+        return this.elementModel[`${e.move}P`](ee.small, this.element);
       }, function() {
         beforeEach(function() {
-          this.terrain = {
+          this.element = {
             state: { stamp: 'stamp',
                      info: 'info',
                      x: 240, y: 240, r: 180,
                      dsp:[] }
           };
-          spyOn(this.terrainModel, 'checkState')
+          spyOn(this.elementModel, 'checkState')
             .and.callFake(R.identity);
         });
 
-        it('should '+e.move+' terrain, '+dd, function() {
+        it('should '+e.move+' element, '+dd, function() {
           expect(R.pick(['x','y','r'], this.context.state))
             .toEqual(ee.result);
         });
 
         it('should check state', function() {
-          expect(this.terrainModel.checkState)
+          expect(this.elementModel.checkState)
             .toHaveBeenCalledWith(this.context);
         });
 
-        context('when terrain is locked', function() {
-          this.terrain = this.terrainModel
-            .setLock(true, this.terrain);
+        context('when element is locked', function() {
+          this.element = this.elementModel
+            .setLock(true, this.element);
           this.expectContextError();
         }, function() {
           it('should reject move', function() {
             expect(this.contextError).toEqual([
-              'Terrain is locked'
+              'Type is locked'
             ]);
           });
         });

@@ -1,35 +1,39 @@
-describe('createTerrainCommand model', function() {
+describe('createElementCommand model', function() {
   beforeEach(inject([
-    'createTerrainCommand',
-    function(createTerrainCommandModel) {
-      this.createTerrainCommandModel = createTerrainCommandModel;
+    'createElementCommand',
+    function(createElementCommandModel) {
+      this.elementModel = spyOnService('terrain');
+      this.gameElementsModel = spyOnService('gameTerrains');
+      this.gameElementSelectionModel = spyOnService('gameTerrainSelection');
 
-      this.terrainModel = spyOnService('terrain');
-      this.gameTerrainsModel = spyOnService('gameTerrains');
-      this.gameTerrainSelectionModel = spyOnService('gameTerrainSelection');
+      this.createElementCommandModel =
+        createElementCommandModel('type',
+                                  this.elementModel,
+                                  this.gameElementsModel,
+                                  this.gameElementSelectionModel);
 
       this.state = {
         factions: 'factions',
         queueChangeEventP: jasmine.createSpy('queueChangeEventP')
       };
-      this.game = { terrains: 'terrains',
-                    terrain_selection: 'selection' };
+      this.game = { types: 'elements',
+                    type_selection: 'selection' };
 
       let stamp_index = 1;
-      this.terrainModel.create.and.callFake((m) => {
+      this.elementModel.create.and.callFake((m) => {
         return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
       });
     }
   ]));
 
   context('executeP(<create>, <flip>, <state>, <game>)', function() {
-    return this.createTerrainCommandModel
+    return this.createElementCommandModel
       .executeP(this.create, this.flip, this.state, this.game);
   }, function() {
     beforeEach(function() {
       this.create = {
         base: { x: 240, y: 240, r: 180 },
-        terrains: [ {
+        types: [ {
           info: ['snow','hill','hill1'],
           x: 0, y: 0, r: 45,
           lk: true
@@ -45,19 +49,19 @@ describe('createTerrainCommand model', function() {
       this.flip = false;
     });
 
-    it('should create new terrains from <create>', function() {
-      expect(this.terrainModel.create)
+    it('should create new elements from <create>', function() {
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['snow','hill','hill1'],
           x: 240, y: 240, r: 225,
           lk: true
         });
-      expect(this.terrainModel.create)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['snow','hill','hill2'],
           x: 260, y: 240, r: 180
         });
-      expect(this.terrainModel.create)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['grass','wall','wall1'],
           x: 280, y: 240, r: 135,
@@ -68,19 +72,19 @@ describe('createTerrainCommand model', function() {
     context('when map is flipped', function() {
       this.flip = true;
     }, function() {
-      it('should flip new terrains positions', function() {
-        expect(this.terrainModel.create)
+      it('should flip new elements positions', function() {
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['snow','hill','hill1'],
             x: 240, y: 240, r: 405,
             lk: true
           });
-        expect(this.terrainModel.create)
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['snow','hill','hill2'],
             x: 220, y: 240, r: 360
           });
-        expect(this.terrainModel.create)
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['grass','wall','wall1'],
             x: 200, y: 240, r: 315,
@@ -89,9 +93,9 @@ describe('createTerrainCommand model', function() {
       });
     });
 
-    it('should add new terrain to <game> terrains', function() {
+    it('should add new element to <game> elements', function() {
       const game = R.last(this.context);
-      expect(this.gameTerrainsModel.add)
+      expect(this.gameElementsModel.add)
         .toHaveBeenCalledWith([
           { state: { info: ['snow','hill','hill1'],
                      x: 240, y: 240, r: 225,
@@ -110,25 +114,25 @@ describe('createTerrainCommand model', function() {
                      stamp: 'stamp3'
                    }
           }
-        ], 'terrains');
-      expect(game.terrains)
+        ], 'elements');
+      expect(game.types)
         .toBe('gameTerrains.add.returnValue');
     });
 
-    it('should set local terrainSelection to new terrain', function() {
-      expect(this.gameTerrainSelectionModel.set)
+    it('should set local elementSelection to new element', function() {
+      expect(this.gameElementSelectionModel.set)
         .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
                               this.state, 'selection');
     });
 
-    it('should emit createTerrain event', function() {
+    it('should emit createElement event', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.create');
+        .toHaveBeenCalledWith('Game.type.create');
     });
 
     it('should return context', function() {
       const [ctxt] = this.context;
-      expect(this.terrainModel.saveState)
+      expect(this.elementModel.saveState)
         .toHaveBeenCalledWith({
           state: { info: ['snow','hill','hill1'],
                    x: 240, y: 240, r: 225,
@@ -136,14 +140,14 @@ describe('createTerrainCommand model', function() {
                    stamp: 'stamp1'
                  }
         });
-      expect(this.terrainModel.saveState)
+      expect(this.elementModel.saveState)
         .toHaveBeenCalledWith({
           state: { info: ['snow','hill','hill2'],
                    x: 260, y: 240, r: 180,
                    stamp: 'stamp2'
                  }
         });
-      expect(this.terrainModel.saveState)
+      expect(this.elementModel.saveState)
         .toHaveBeenCalledWith({
           state: { info: ['grass','wall','wall1'],
                    x: 280, y: 240, r: 135,
@@ -154,21 +158,21 @@ describe('createTerrainCommand model', function() {
 
       expect(ctxt)
         .toEqual({
-          terrains: [ 'terrain.saveState.returnValue',
-                      'terrain.saveState.returnValue',
-                      'terrain.saveState.returnValue' ],
+          types: [ 'terrain.saveState.returnValue',
+                   'terrain.saveState.returnValue',
+                   'terrain.saveState.returnValue' ],
           desc: 'snow.hill.hill1'
         });
     });
   });
 
   context('replayP(<ctxt>, <state>, <game>)', function() {
-    return this.createTerrainCommandModel
+    return this.createElementCommandModel
       .replayP(this.ctxt, this.state, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
-        terrains: [
+        types: [
           { info: [ 'snow', 'hill', 'hill1' ],
             x: 240, y: 240,
             lk: true,
@@ -188,21 +192,21 @@ describe('createTerrainCommand model', function() {
       };
     });
 
-    it('should create new terrains from <ctxt.terrains>', function() {
-      expect(this.terrainModel.create)
+    it('should create new elements from <ctxt.elements>', function() {
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill1' ],
             x: 240, y: 240,
           lk: true,
           stamp: 'stamp'
         });
-      expect(this.terrainModel.create)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill2' ],
           x: 260, y: 240,
           stamp: 'stamp'
         });
-      expect(this.terrainModel.create)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'wall', 'wall1' ],
           x: 280, y: 240,
@@ -211,8 +215,8 @@ describe('createTerrainCommand model', function() {
         });
     });
 
-    it('should add new terrain to <game> terrains', function() {
-      expect(this.gameTerrainsModel.add)
+    it('should add new element to <game> elements', function() {
+      expect(this.gameElementsModel.add)
         .toHaveBeenCalledWith([
           { state: { info: [ 'snow', 'hill', 'hill1' ],
                      x: 240, y: 240,
@@ -231,30 +235,30 @@ describe('createTerrainCommand model', function() {
                      stamp: 'stamp3'
                    }
           }
-        ], 'terrains');
-      expect(this.context.terrains)
+        ], 'elements');
+      expect(this.context.types)
         .toBe('gameTerrains.add.returnValue');
     });
 
-    it('should set remote terrainSelection to new terrain', function() {
-      expect(this.gameTerrainSelectionModel.set)
+    it('should set remote elementSelection to new element', function() {
+      expect(this.gameElementSelectionModel.set)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
                               this.state, 'selection');
     });
 
-    it('should emit createTerrain event', function() {
+    it('should emit createElement event', function() {
         expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.terrain.create');
+          .toHaveBeenCalledWith('Game.type.create');
     });
   });
 
   context('undoP(<ctxt>, <state>, <game>)', function() {
-    return this.createTerrainCommandModel
+    return this.createElementCommandModel
       .undoP(this.ctxt, this.state, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
-        terrains: [
+        types: [
           { info: [ 'snow', 'hill', 'hill1' ],
             x: 240, y: 240,
             lk: true,
@@ -274,25 +278,25 @@ describe('createTerrainCommand model', function() {
       };
     });
 
-    it('should remove <ctxt.terrain> from <game> terrains', function() {
-      expect(this.gameTerrainsModel.removeStamps)
-        .toHaveBeenCalledWith(['stamp1','stamp2','stamp3'], 'terrains');
-      expect(this.context.terrains)
+    it('should remove <ctxt.element> from <game> elements', function() {
+      expect(this.gameElementsModel.removeStamps)
+        .toHaveBeenCalledWith(['stamp1','stamp2','stamp3'], 'elements');
+      expect(this.context.types)
         .toBe('gameTerrains.removeStamps.returnValue');
     });
 
-    it('should remove <ctxt.terrain> from terrainSelection', function() {
-      expect(this.gameTerrainSelectionModel.removeFrom)
+    it('should remove <ctxt.element> from elementSelection', function() {
+      expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
                               this.state, 'selection');
-      expect(this.gameTerrainSelectionModel.removeFrom)
+      expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
                               this.state, 'gameTerrainSelection.removeFrom.returnValue');
     });
 
-    it('should emit createTerrain event', function() {
+    it('should emit createElement event', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.terrain.create');
+        .toHaveBeenCalledWith('Game.type.create');
     });
   });
 });
