@@ -3,9 +3,9 @@
     <div class="panel-heading">Debug dump file</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!dump.url"
-         ng-href="{{dump.url}}"
-         download="{{dump.name}}">
+         ng-disabled="!game_help.exports.dump.url"
+         ng-href="{{game_help.exports.dump.url}}"
+         download="{{game_help.exports.dump.name}}">
         Download Dump File
       </a>
     </div>
@@ -13,10 +13,10 @@
   <div class="panel panel-info">
     <div class="panel-heading">Current Mode Bindings</div>
     <table class="table">
-      <tr ng-repeat="bind in bindings track by bind[0]">
+      <tr ng-repeat="bind in game_help.bindings_pairs track by bind[0]">
         <td>
           <button class="btn btn-default"
-                  ng-click="doModeAction(bind[0])">
+                  ng-click="game.doModeAction(bind[0])">
             {{::bind[0]}}
           </button>
         </td>

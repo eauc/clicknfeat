@@ -242,10 +242,10 @@
             ng-click="app.goToState('^.save')">
           <a>Save</a>
         </li>
-        <!-- <li class="{{stateIs('game.help') ? 'active' : ''}}" -->
-        <!--     ng-click="goToState('^.help')"> -->
-        <!--   <a>Help</a> -->
-        <!-- </li> -->
+        <li class="{{app.stateIs('game.help') ? 'active' : ''}}"
+            ng-click="app.goToState('^.help')">
+          <a>Help</a>
+        </li>
         <!-- <li ng-show="user | user:'online'" -->
         <!--     class="{{stateIs('game.online') ? 'active' : ''}}" -->
         <!--     ng-click="goToState('^.online')"> -->

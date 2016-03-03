@@ -41,12 +41,13 @@
         controllerAs: 'game_save',
         data: { hide_nav: true }
       })
-      // .state('game.help', {
-      //   url: '/help',
-      //   templateUrl: 'partials/game/help.html',
-      //   controller: 'gameHelpCtrl',
-      //   data: { hide_nav: true }
-      // })
+      .state('game.help', {
+        url: '/help',
+        templateUrl: 'app/views/game/help/game_help.html',
+        controller: 'gameHelpCtrl',
+        controllerAs: 'game_help',
+        data: { hide_nav: true }
+      })
       .state('game.log', {
         url: '/log',
         templateUrl: 'app/views/game/log/game_log.html',

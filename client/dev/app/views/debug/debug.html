@@ -4,13 +4,13 @@
       <h4 class="panel-title">Import dump file</h4>
     </div>
     <div class="panel-body">
-      <p class="text-warning">{{result}}</p>
+      <p class="text-warning">{{debug.result}}</p>
       <form>
         <input class="form-control"
                id="import-file"
                type="file"
                multiple
-               ea-file="doLoadDumpFile(file)" />
+               click-file="debug.doLoadDumpFile(file)" />
       </form>
     </div>
   </div>

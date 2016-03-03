@@ -36,10 +36,10 @@
                      {{(state.user | user:'isValid') ? '' : 'disabled'}}">
             <a href="#/settings/main">Settings</a>
           </li>
-          <!-- <li class="{{main.stateIs('debug') ? 'active' : ''}} -->
-          <!--            {{main.userIsValid() ? '' : 'disabled'}}"> -->
-          <!--   <a href="#/debug">Debug</a> -->
-          <!-- </li> -->
+          <li class="{{app.stateIs('debug') ? 'active' : ''}}
+                     {{(state.user | user:'isValid') ? '' : 'disabled'}}">
+            <a href="#/debug">Debug</a>
+          </li>
           <!-- <li class="{{main.stateIs('info') ? 'active' : ''}}"> -->
           <!--   <a href="#/info">Info</a> -->
           <!-- </li> -->
@@ -72,8 +72,11 @@
     <script src="app/appConfig.js"></script>
     <script src="app/appCtrl.js"></script>
     <script src="app/filters/serviceFilters.js"></script>
+    <script src="app/views/debug/debugConfig.js"></script>
+    <script src="app/views/debug/debugCtrl.js"></script>
     <script src="app/views/game/gameConfig.js"></script>
     <script src="app/views/game/gameCtrl.js"></script>
+    <script src="app/views/game/help/gameHelpCtrl.js"></script>
     <script src="app/views/game/log/gameLogCtrl.js"></script>
     <script src="app/views/game/main/gameMainCtrl.js"></script>
     <script src="app/views/game/save/gameSaveCtrl.js"></script>

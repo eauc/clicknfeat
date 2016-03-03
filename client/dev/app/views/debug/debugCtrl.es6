@@ -1,22 +1,31 @@
-angular.module('clickApp.controllers')
-  .controller('debugCtrl', [
-    '$scope',
-    function($scope) {
-      console.log('init debugCtrl');
+(function() {
+  angular.module('clickApp.controllers')
+    .controller('debugCtrl', debugCtrl);
 
-      $scope.onStateChangeEvent('State.loadDumpFile', (event, result) => {
-        $scope.result = result;
-        $scope.$digest();
-      }, $scope);
-      $scope.onStateChangeEvent('Games.local.load', (event, id) => {
-        $scope.goToState('game', {
-          where: 'offline',
-          id: id
-        });
-      }, $scope);
-      
-      $scope.doLoadDumpFile = function doLoadDumpFile(files) {
-        $scope.stateEvent('State.loadDumpFile', files[0]);
-      };
+  debugCtrl.$inject = [
+    '$scope',
+  ];
+  function debugCtrl($scope) {
+    const vm = this;
+    console.log('init debugCtrl');
+
+    $scope.onStateChangeEvent('State.loadDumpFile', onLoadDumpFile, $scope);
+    $scope.onStateChangeEvent('Games.local.load', onLocalLoad, $scope);
+    vm.doLoadDumpFile = doLoadDumpFile;
+
+    function onLoadDumpFile(event, result) {
+      vm.result = result;
+      $scope.$digest();
     }
-  ]);
+    function onLocalLoad(event, id) {
+      $scope.app.goToState('game.main', {
+        online: 'offline',
+        private: 'private',
+        id: id
+      });
+    }
+    function doLoadDumpFile(files) {
+      $scope.stateEvent('State.loadDumpFile', files[0]);
+    }
+  }
+})();

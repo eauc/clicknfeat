@@ -34,6 +34,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       state = R.thread(state)(
       // starting here State is mutable
       stateDataModel.create, stateUserModel.create, stateGameModel.create, stateGamesModel.create, stateModesModel.create);
+      state.onEvent('State.loadDumpFile', stateModel.onLoadDumpFile$(state));
       return state;
 
       function onEvent() {
@@ -158,7 +159,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return pubSubService.subscribe(event, listener, state.change);
     }
     function stateOnLoadDumpFile(state, event, file) {
-      return R.threadP(file)(fileImportService.read$('json'), dispatchData, function () {
+      return R.threadP(file)(fileImportService.readP$('json'), dispatchData, function () {
         state.queueChangeEventP('State.loadDumpFile', 'File loaded');
       }).catch(function (error) {
         state.queueChangeEventP('State.loadDumpFile', error);

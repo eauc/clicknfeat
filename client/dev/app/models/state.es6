@@ -51,6 +51,8 @@
         stateGamesModel.create,
         stateModesModel.create
       );
+      state.onEvent('State.loadDumpFile',
+                    stateModel.onLoadDumpFile$(state));
       return state;
 
       function onEvent(...args) {
@@ -148,7 +150,7 @@
     }
     function stateOnLoadDumpFile(state, event, file) {
       return R.threadP(file)(
-        fileImportService.read$('json'),
+        fileImportService.readP$('json'),
         dispatchData,
         () => {
           state.queueChangeEventP('State.loadDumpFile', 'File loaded');
