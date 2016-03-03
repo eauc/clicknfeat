@@ -12,7 +12,10 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
 
 
   $templateCache.put('app/components/game/cmd_osd/cmd_osd.html',
-    "<div class=scroll-container><div class=mode-title><strong>{{game.currentModeName()}}</strong></div><div class=btn-group-vertical><button class=\"btn btn-default\" title=\"{{game.action_bindings['modeBackToDefault'] || ''}}\" ng-click=\"game.doModeAction('modeBackToDefault')\">Back To Default</button> <button class=\"btn btn-default\" title=\"{{game.action_bindings['flipMap'] || ''}}\" ng-click=\"game.doModeAction('flipMap')\">Flip Map</button></div></div>"
+    "<div class=scroll-container><div class=mode-title><strong>{{game.currentModeName()}}</strong></div><div class=btn-group-vertical><button class=\"btn btn-default\" title=\"{{game.action_bindings['modeBackToDefault'] || ''}}\" ng-click=\"game.doModeAction('modeBackToDefault')\">Back To Default</button> <button class=\"btn btn-default\" title=\"{{game.action_bindings['flipMap'] || ''}}\" ng-click=\"game.doModeAction('flipMap')\">Flip Map</button> <button ng-repeat=\"action in game.action_buttons\" class=\"btn {{:: (action.length === 3 && action[1] !== 'toggle') ? 'btn-info' : 'btn-default' }}\" title=\"{{::game.action_bindings[action[1]] || ''}}\" ng-click=game.doActionButton(action) ng-show=\"action[1] === 'toggle' ||\n" +
+    "                     action.length === 2 ||\n" +
+    "                     game.show_action_group === action[2]\n" +
+    "                     \">{{action[0]}} <span class=\"glyphicon {{ action[1] === 'toggle' ? (game.show_action_group === action[2] ? 'glyphicon-chevron-up' : 'glyphicon-chevron-down') : '' }}\"></span></button></div></div>"
   );
 
 

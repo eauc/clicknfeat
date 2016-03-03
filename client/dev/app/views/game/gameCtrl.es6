@@ -23,7 +23,7 @@
     vm.currentModeName = currentModeName;
     // vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
-    // vm.doActionButton = doActionButton;
+    vm.doActionButton = doActionButton;
 
     activate();
 
@@ -95,19 +95,17 @@
       $scope.stateEvent('Modes.current.action',
                         action, [...args, {}]);
     }
-    // function doActionButton([label, action, group]) {
-    //   label = label;
-    //   if(action === 'toggle') {
-    //     vm.show_action_group = ( $scope.show_action_group === group
-    //                              ? null
-    //                              : group
-    //                            );
-    //     return;
-    //   }
-    //   $scope.stateEvent('Modes.current.action',
-    //                     action, [{}]);
-    // }
-
+    function doActionButton([label, action, group]) {
+      if(action === 'toggle') {
+        vm.show_action_group = ( $scope.show_action_group === group
+                                 ? null
+                                 : group
+                               );
+        return;
+      }
+      $scope.stateEvent('Modes.current.action',
+                        action, [{}]);
+    }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {
