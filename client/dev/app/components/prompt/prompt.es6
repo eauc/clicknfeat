@@ -1,105 +1,136 @@
-angular.module('clickApp.directives')
-  .factory('prompt', [
-    function() {
-      var state;
-      var state_resolves = [];
-      function getState() {
-        if(R.exists(state)) return state;
-        return new self.Promise((resolve) => {
-          state_resolves.push(resolve);
+(function() {
+  angular.module('clickApp.directives')
+    .factory('prompt', promptServiceFactory)
+    .directive('prompt', promptDirectiveFactory);
+
+  promptServiceFactory.$inject = [];
+  function promptServiceFactory() {
+    let state;
+    const state_resolves = [];
+    let prompt_resolve;
+
+    const promptService =  {
+      register: promptRegister,
+      promptP: promptPromptP
+    };
+    R.curryService(promptService);
+    return promptService;
+
+    function promptRegister(st) {
+      state = st;
+      state.doValidate = stateDoValidate;
+      state.doCancel = stateDoCancel;
+
+      resolveStateClients();
+
+      return state;
+    }
+    function promptPromptP(prompt_type, msg, input_value) {
+      return R.threadP()(
+        getState,
+        openPrompt,
+        registerPromptResolve
+      );
+
+      function openPrompt(state) {
+        state.open({
+          prompt_type: prompt_type,
+          message: R.type(msg) === 'String' ? [msg] : msg,
+          input_type: R.type(input_value) === 'Number' ? 'number' : 'text',
+          input_value: input_value
         });
       }
-      var prompt_resolve;
-      return {
-        register: function promptRegister(st) {
-          state = st;
-          state.doValidate = () => {
-            var value = state.close();
-            prompt_resolve.resolve(value);
-            prompt_resolve = null;
-          };
-          state.doCancel = () => {
-            state.close();
-            prompt_resolve.reject('canceled');
-            prompt_resolve = null;
-          };
-
-          R.forEach((resolve) => {
-            resolve(state);
-          }, state_resolves);
-          state_resolves = [];
-
-          return state;
-        },
-        prompt: function promptPrompt(prompt_type, msg, input_value) {
-          return R.pipePromise(
-            getState,
-            (state) => {
-              state.open({
-                prompt_type: prompt_type,
-                message: R.type(msg) === 'String' ? [msg] : msg,
-                input_type: R.type(input_value) === 'Number' ? 'number' : 'text',
-                input_value: input_value
-              });
-              return new self.Promise((resolve, reject) => {
-                prompt_resolve = {
-                  resolve: resolve,
-                  reject: reject,
-                };
-              });
-            }
-          )();
-        }
-      };
     }
-  ])
-  .directive('prompt', [
-    '$window',
+    function registerPromptResolve() {
+      return new self.Promise((resolve, reject) => {
+        prompt_resolve = {
+          resolve: resolve,
+          reject: reject
+        };
+      });
+    }
+    function getState() {
+      return ( R.exists(state)
+               ? state
+               : registerStateClient()
+             );
+    }
+    function registerStateClient() {
+      return new self.Promise((resolve) => {
+        state_resolves.push(resolve);
+      });
+    }
+    function resolveStateClients() {
+      R.forEach((resolve) => {
+        resolve(state);
+      }, state_resolves);
+      state_resolves.length = 0;
+    }
+    function stateDoValidate() {
+      const value = state.close();
+      prompt_resolve.resolve(value);
+      prompt_resolve = null;
+    }
+    function  stateDoCancel() {
+      state.close();
+      prompt_resolve.reject('canceled');
+      prompt_resolve = null;
+    }
+  }
+
+  promptDirectiveFactory.$inject = [
     'prompt',
-    function($window,
-             promptService) {
-      return {
-        restrict: 'E',
-        templateUrl: 'partials/directives/prompt.html',
-        scope: true,
-        link: function(scope, element) {
-          var form = element[0].querySelector('form');
-          var msg_container = element[0].querySelector('p');
-          var input = element[0].querySelector('input');
-          var cancel = element[0].querySelector('button.btn-default');
+  ];
+  function promptDirectiveFactory(promptService) {
+    const promptDirective = {
+      restrict: 'E',
+      templateUrl: 'app/components/prompt/prompt.html',
+      scope: true,
+      link: link
+    };
+    return promptDirective;
 
-          element[0].style.display = 'none';
+    function link(scope, element) {
+      element = element[0];
+      const form = element.querySelector('form');
+      const msg_container = element.querySelector('p');
+      const input = element.querySelector('input');
+      const cancel = element.querySelector('button.btn-default');
 
-          var state = promptService.register({
-            open: function promptOpen(options = {}) {
-              let { message,
-                    input_type,
-                    prompt_type,
-                    input_value
-                  } = options;
-              $window.requestAnimationFrame(() => {
-                msg_container.innerHTML = R.defaultTo([], message).join('<br />');
-                input.setAttribute('type', R.defaultTo('text', input_type));
-                input.style.display = (prompt_type === 'prompt') ? 'initial' : 'none';
-                cancel.style.display = (prompt_type !== 'alert') ? 'initial' : 'none';
-                element[0].style.display = 'initial';
-                input.focus();
-                input.value = R.defaultTo(null, input_value);
-              });
-            },
-            close: function promptClose() {
-              var value = input.value;
-              if(input.getAttribute('type') === 'number') {
-                value = (R.length(value) === 0) ? null : parseFloat(value);
-              }
-              element[0].style.display = 'none';
-              return value;
-            }
-          });
+      element.style.display = 'none';
 
-          form.addEventListener('submit', state.doValidate);
-          cancel.addEventListener('click', state.doCancel);
+      const state = promptService.register({
+        open: promptOpen,
+        close: promptClose
+      });
+
+      form.addEventListener('submit', state.doValidate);
+      cancel.addEventListener('click', state.doCancel);
+
+      function promptOpen(options = {}) {
+        let { message,
+              input_type,
+              prompt_type,
+              input_value
+            } = options;
+        self.window.requestAnimationFrame(() => {
+          msg_container.innerHTML = R.defaultTo([], message).join('<br />');
+          input.setAttribute('type', R.defaultTo('text', input_type));
+          input.style.display = (prompt_type === 'prompt') ? 'initial' : 'none';
+          cancel.style.display = (prompt_type !== 'alert') ? 'initial' : 'none';
+          element.style.display = 'initial';
+          input.focus();
+          input.value = R.defaultTo(null, input_value);
+        });
+      }
+      function promptClose() {
+        let value = input.value;
+        if(input.getAttribute('type') === 'number') {
+          value = (R.length(value) === 0) ? null : parseFloat(value);
         }
-      };
+        element.style.display = 'none';
+        return value;
+      }
     }
-  ]);
+  }
+})();

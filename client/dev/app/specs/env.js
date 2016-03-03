@@ -10,6 +10,13 @@ beforeEach(function () {
     fn();
   });
 
+  this.promptService = jasmine.createSpyObj('prompt', ['promptP']);
+  spyReturnPromise(this.promptService.promptP);
+  this.promptService.promptP.resolveWith('prompt.promptP.returnValue');
+  module({
+    'prompt': this.promptService
+  });
+
   module('clickApp.services');
   module('clickApp.models');
 });

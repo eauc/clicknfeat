@@ -1,6 +1,6 @@
 .grunt
 node_modules
-**/*.spec.js*
+*.spec.js*
 .sass-cache
 npm-debug.log
 

@@ -66,7 +66,6 @@ a:not([href]):focus {
 #settings .vertical-center {
   vertical-align: middle; }
 
-/* @import 'components/game/selection_osd/selectionOsd'; */
 #game #game-deploiement .extended-deploiement-line, #game #game-deploiement .extended-advance-deploiement-line, #game #game-deploiement .ambush-line, #game #game-deploiement .deploiement-line, #game #game-deploiement .advance-deploiement-line {
   stroke: #000;
   stroke-width: 1px; }
@@ -90,7 +89,39 @@ a:not([href]):focus {
   stroke: none; }
 
 /* @import 'components/game/drag_box/dragBox'; */
-/* @import 'components/game/label/label'; */
+#game text {
+  fill: white;
+  -webkit-user-select: none;
+  -moz-user-select: none; }
+#game g.label {
+  pointer-events: none; }
+  #game g.label rect {
+    fill: #333;
+    fill-opacity: 0.7; }
+  #game g.label text {
+    text-anchor: middle;
+    font-size: 6px;
+    font-family: monospace; }
+#game g.counter {
+  pointer-events: none; }
+  #game g.counter text {
+    font-size: 9px;
+    font-weight: bold;
+    font-family: Verdana, sans-serif; }
+#game .edit-label {
+  z-index: 2000;
+  position: absolute; }
+  #game .edit-label input {
+    font-size: 12px;
+    line-height: 1em;
+    height: 14px;
+    padding: 0;
+    border: 1px solid grey;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.75);
+    min-width: 2em;
+    text-align: center; }
+
 #game #map.flipped {
   transform: scaleX(-1) scaleY(-1); }
 
@@ -181,7 +212,49 @@ a:not([href]):focus {
 /* @import 'components/game/ruler/ruler'; */
 /* @import 'components/game/los/los'; */
 /* @import 'components/game/scenario/scenario'; */
-/* @import 'components/game/template/template'; */
+#game .create-template-aoe,
+#game .create-template-wall,
+#game .create-template-spray {
+  fill: #F11;
+  opacity: 0.8;
+  pointer-events: none; }
+#game .template {
+  fill: #FC3;
+  stroke: #C60;
+  stroke-width: 0.5px;
+  pointer-events: visible; }
+#game .wall {
+  fill: #CCC;
+  fill-opacity: 0.6;
+  stroke: #999;
+  stroke-width: 0.5px; }
+#game .template-aoe-direction {
+  stroke-width: 0.75px;
+  pointer-events: none;
+  stroke: #0F0;
+  visibility: hidden; }
+#game #game-templates .template {
+  fill-opacity: 0.5; }
+#game #game-templates-locked .template {
+  fill-opacity: 0.4; }
+#game #game-templates-locked .wall {
+  fill-opacity: 1.0; }
+#game #game-templates-locked .template-aoe-direction {
+  stroke-width: 0px; }
+#game .selection.remote .template.aoe,
+#game .selection.remote .template.wall {
+  stroke: white; }
+#game .selection.local .template.aoe,
+#game .selection.local .template.wall {
+  stroke: #0F0; }
+#game .selection.local .template-aoe-direction {
+  visibility: visible; }
+#game .spray-origin {
+  stroke-width: 1.25px;
+  fill: none;
+  pointer-events: none;
+  stroke: #F90; }
+
 #game .create-terrain {
   fill: #F11;
   opacity: 0.8;

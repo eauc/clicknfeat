@@ -1,155 +1,212 @@
-angular.module('clickApp.directives')
-  .controller('clickGameSelectionDetailCtrl', [
+(function() {
+  angular.module('clickApp.directives')
+    .controller('clickGameSelectionDetailCtrl', gameSelectionDetailCtrl)
+    .directive('clickGameSelectionDetail', gameSelectionDetailDirectiveFactory);
+
+  gameSelectionDetailCtrl.$inject = [
     '$scope',
-    'game',
-    'gameFactions',
-    function($scope,
-             gameService,
-             gameFactionsService) {
-      console.log('init clickGameSelectionDetailCtrl');
-      let state = $scope.state;
+    'gameTemplates',
+    // 'gameFactions',
+  ];
+  function gameSelectionDetailCtrl($scope,
+                                   gameTemplatesModel) {
+                                   // gameFactionsModel) {
+    const vm = this;
+    const state = $scope.state;
+    console.log('init clickGameSelectionDetailCtrl');
 
-      $scope.edit = { label: '',
-                      max_deviation: 0
-                    };
-      var updateOnOpenType = {
-        template: () => {
-          $scope.edit.max_deviation = R.pathOr(0, ['state','m'], $scope.selection);
-        },
-        model: () => {
-          gameFactionsService
-            .getModelInfo($scope.selection.state.info, state.factions)
-            .then((info) => {
-              $scope.info = info;
-              $scope.$digest();
-            });
-        }
-      };
-      $scope.show = { info: false };
-      $scope.updateOnOpen = () => {
-        $scope.show.info = false;
-        updateOnOpenType[$scope.type]();
-      };
-      $scope.labelDisplay = (l) => {
-        return s.truncate(l, 12);
-      };
+    vm.edit = { label: '',
+                max_deviation: 0
+              };
+    vm.show = { info: false };
+    vm.onOpen = onOpen;
+    vm.updateElement = updateElement;
+    vm.labelDisplay = labelDisplay;
 
-      $scope.doSetMaxDeviation = () => {
-        var max = ($scope.edit.max_deviation > 0) ? $scope.edit.max_deviation : null;
-        $scope.stateEvent('Game.command.execute',
-                          'onTemplates', [ 'setMaxDeviation', [max],
-                                           [$scope.selection.state.stamp]
-                                         ]);
-      };
-      $scope.doAddLabel = () => {
-        var cmd = ($scope.type === 'template') ? 'onTemplates' : 'onModels';
-        var new_label = s.trim($scope.edit.label);
-        if(R.length(new_label) === 0) return;
+    vm.doSetMaxDeviation = doSetMaxDeviation;
+    vm.doAddLabel = doAddLabel;
+    vm.doRemoveLabel = doRemoveLabel;
 
-        $scope.stateEvent('Game.command.execute',
-                          cmd, [ 'addLabel', [new_label],
-                                 [$scope.selection.state.stamp]
-                               ])
-          .then(() => { $scope.$digest(); });
-        $scope.edit.label = '';
-      };
-      $scope.doRemoveLabel = (label) => {
-        var cmd = ($scope.type === 'template') ? 'onTemplates' : 'onModels';
-        $scope.stateEvent('Game.command.execute',
-                          cmd, [ 'removeLabel', [label],
-                                 [$scope.selection.state.stamp]
-                               ])
-          .then(() => { $scope.$digest(); });
-      };
+    const updateOnOpenType = {
+      template: updateTemplateElement,
+      model: updateModelElement
+    };
+    function onOpen() {
+      vm.show.info = false;
+      return updateElement();
     }
-  ])
-  .directive('clickGameSelectionDetail', [
-    '$window',
+    function updateElement() {
+      return R.threadP()(
+        () => updateOnOpenType[vm.type](),
+        () => { $scope.$digest(); }
+      );
+    }
+    function updateTemplateElement() {
+      return R.threadP(state.game)(
+        R.prop('templates'),
+        gameTemplatesModel.findStampP$(vm.element.stamp),
+        (template) => {
+          vm.element = template.state;
+          vm.edit.max_deviation = R.propOr(0, 'm', vm.element);
+        }
+      );
+    }
+    function updateModelElement() {
+      // R.threadP(state.factions)(
+      //   () => gameFactionsModel
+      //     .getModelInfoP$(vm.element.state.info),
+      //   (info) => {
+      //     vm.info = info;
+      //     $scope.$digest();
+      //   }
+      // );
+    }
+    function labelDisplay(l) {
+      return s.truncate(l, 12);
+    }
+    function doSetMaxDeviation() {
+      const max = ( vm.edit.max_deviation > 0
+                    ? vm.edit.max_deviation
+                    : null
+                  );
+      $scope
+        .stateEvent('Game.command.execute',
+                    'onTemplates',
+                    [ 'setMaxDeviation', [max],
+                      [vm.element.stamp]
+                    ])
+        .then(updateElement);
+    }
+    function doAddLabel() {
+      const cmd = ( vm.type === 'template'
+                    ? 'onTemplates'
+                    : 'onModels'
+                  );
+      const new_label = s.trim(vm.edit.label);
+      if(R.length(new_label) === 0) return;
+
+      $scope
+        .stateEvent('Game.command.execute',
+                    cmd,
+                    [ 'addLabel', [new_label],
+                      [vm.element.stamp]
+                    ])
+        .then(updateElement);
+      vm.edit.label = '';
+    }
+    function doRemoveLabel(label) {
+      const cmd = ( vm.type === 'template'
+                    ? 'onTemplates'
+                    : 'onModels'
+                  );
+      $scope
+        .stateEvent('Game.command.execute',
+                    cmd,
+                    [ 'removeLabel', [label],
+                      [vm.element.stamp]
+                    ])
+        .then(updateElement);
+    }
+  }
+
+  gameSelectionDetailDirectiveFactory.$inject = [
     'game',
     'gameMap',
-    function($window,
-             gameService,
-             gameMapService) {
-      return {
-        restrict: 'A',
-        scope: true,
-        controller: 'clickGameSelectionDetailCtrl',
-        link: function(scope, element) {
-          console.log('gameSelectionDetail');
-          var viewport = document.getElementById('viewport');
-          var map = document.getElementById('map');
+  ];
+  function gameSelectionDetailDirectiveFactory(gameService,
+                                               gameMapService) {
+    const gameSelectionDetailDirective = {
+      restrict: 'A',
+      scope: true,
+      controller: 'clickGameSelectionDetailCtrl',
+      controllerAs: 'selection',
+      link: link
+    };
+    return gameSelectionDetailDirective;
 
-          scope.type = 'model';
-          closeSelectionDetail();
+    function link(scope, element) {
+      console.log('gameSelectionDetail');
+      element = element[0];
+      const viewport = document.getElementById('viewport');
+      const map = document.getElementById('map');
+      const vm = scope.selection;
 
-          function openSelectionDetail($event, type, selection) {
-            // console.log('openSelectionDetail');
-            scope.type = type;
-            scope.selection = selection;
-            scope.edit = { label: '',
-                           max_deviation: 0
-                         };
-            scope.updateOnOpen();
-            $window.requestAnimationFrame(displaySelectionDetail);
-          }
-          function closeSelectionDetail() {
-            // console.log('closeSelectionDetail');
-            scope.selection = {};
-            element[0].style.display = 'none';
-            element[0].style.visibility = 'hidden';
-            element[0].style.left = 0+'px';
-            element[0].style.top = 0+'px';
-          }
-          function displaySelectionDetail() {
-            scope.$digest();
-            element[0].style.display = 'initial';
-            element[0].style.visibility = 'hidden';
-            $window.requestAnimationFrame(showSelectionDetail);
-          }
-          function showSelectionDetail() {
-            placeSelectionDetail();
-            element[0].style.visibility = 'visible';
-          }
-          function placeSelectionDetail() {
-            var detail_rect = element[0].getBoundingClientRect();
-            var screen_pos = gameMapService.mapToScreenCoordinates(map, scope.selection.state);
-            var viewport_rect = viewport.getBoundingClientRect();
-            if(detailCanFitRight(viewport_rect, detail_rect, screen_pos)) {
-              element[0].style.left = alignRight(detail_rect, screen_pos);
-            }
-            else {
-              element[0].style.left = alignLeft(detail_rect, screen_pos);
-            }
-            if(detailCanFitBottom(viewport_rect, detail_rect, screen_pos)) {
-              element[0].style.top = alignBottom(detail_rect, screen_pos);
-            }
-            else {
-              element[0].style.top = alignTop(detail_rect, screen_pos);
-            }
-          }
-          function detailCanFitRight(viewport_rect, detail_rect, screen_pos) {
-            return screen_pos.x + detail_rect.width <= viewport_rect.right;
-          }
-          function alignRight(detail_rect, screen_pos) {
-            return screen_pos.x+'px';
-          }
-          function alignLeft(detail_rect, screen_pos) {
-            return Math.max(0, screen_pos.x-detail_rect.width)+'px';
-          }
-          function detailCanFitBottom(viewport_rect, detail_rect, screen_pos) {
-            return screen_pos.y + detail_rect.height <= viewport_rect.bottom;
-          }
-          function alignBottom(detail_rect, screen_pos) {
-            return screen_pos.y+'px';
-          }
-          function alignTop(detail_rect, screen_pos) {
-            return Math.max(0, screen_pos.y-detail_rect.height)+'px';
-          }
+      vm.type = 'model';
+      closeSelectionDetail();
+      scope.onStateChangeEvent('Game.selectionDetail.open',
+                               openSelectionDetail, scope);
+      scope.onStateChangeEvent('Game.selectionDetail.close',
+                               closeSelectionDetail, scope);
+      vm.doClose = closeSelectionDetail;
 
-          scope.onStateChangeEvent('Game.selectionDetail.open', openSelectionDetail, scope);
-          scope.onStateChangeEvent('Game.selectionDetail.close', closeSelectionDetail, scope);
-          scope.doClose = closeSelectionDetail;
+      function openSelectionDetail($event, type, element) {
+        // console.log('openSelectionDetail');
+        vm.type = type;
+        vm.element = element.state;
+        vm.edit = { label: '',
+                    max_deviation: 0
+                  };
+        vm.onOpen().then(() => {
+          self.window.requestAnimationFrame(displaySelectionDetail);
+        });
+      }
+      function closeSelectionDetail() {
+        // console.log('closeSelectionDetail');
+        vm.element = {};
+        element.style.display = 'none';
+        element.style.visibility = 'hidden';
+        element.style.left = 0+'px';
+        element.style.top = 0+'px';
+      }
+      function displaySelectionDetail() {
+        // console.log('displaySelectionDetail');
+        scope.$digest();
+        element.style.display = 'initial';
+        element.style.visibility = 'hidden';
+        self.window.requestAnimationFrame(showSelectionDetail);
+      }
+      function showSelectionDetail() {
+        // console.log('showSelectionDetail');
+        placeSelectionDetail();
+        element.style.visibility = 'visible';
+      }
+      function placeSelectionDetail() {
+        // console.log('placeSelectionDetail');
+        const detail_rect = element.getBoundingClientRect();
+        const screen_pos = gameMapService
+                .mapToScreenCoordinates(map, vm.element);
+        const viewport_rect = viewport.getBoundingClientRect();
+        if(detailCanFitRight(viewport_rect, detail_rect, screen_pos)) {
+          element.style.left = alignRight(detail_rect, screen_pos);
         }
-      };
+        else {
+          element.style.left = alignLeft(detail_rect, screen_pos);
+        }
+        if(detailCanFitBottom(viewport_rect, detail_rect, screen_pos)) {
+          element.style.top = alignBottom(detail_rect, screen_pos);
+        }
+        else {
+          element.style.top = alignTop(detail_rect, screen_pos);
+        }
+      }
+      function detailCanFitRight(viewport_rect, detail_rect, screen_pos) {
+        return screen_pos.x + detail_rect.width <= viewport_rect.right;
+      }
+      function alignRight(detail_rect, screen_pos) {
+        return screen_pos.x+'px';
+      }
+      function alignLeft(detail_rect, screen_pos) {
+        return Math.max(0, screen_pos.x-detail_rect.width)+'px';
+      }
+      function detailCanFitBottom(viewport_rect, detail_rect, screen_pos) {
+        return screen_pos.y + detail_rect.height <= viewport_rect.bottom;
+      }
+      function alignBottom(detail_rect, screen_pos) {
+        return screen_pos.y+'px';
+      }
+      function alignTop(detail_rect, screen_pos) {
+        return Math.max(0, screen_pos.y-detail_rect.height)+'px';
+      }
     }
-  ]);
+  }
+})();

@@ -20,10 +20,10 @@
       <div class="action-error-mode-name">Mode</div>
       <div class="action-error-reason">Reason</div>
     </div>
-    <!-- <div id="selection-osd" -->
-    <!--      ng-include="'app/components/game/selection_osd/selection_osd.html'" -->
-    <!--      click-game-selection-detail> -->
-    <!-- </div> -->
+    <div id="selection-osd"
+         ng-include="'app/components/game/selection_osd/selection_osd.html'"
+         click-game-selection-detail>
+    </div>
     <!-- <div id="dice-osd"> -->
     <!--   <click-game-dice-box> -->
     <!--   </click-game-dice-box> -->
@@ -131,12 +131,12 @@
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'s'" -->
         <!--    ng-include="'app/components/game/scenario.html'"> -->
         <!-- </g> -->
-        <!-- <g id="game-templates-locked" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'t'" -->
-        <!--    click-game-templates-list="locked"> -->
-        <!-- </g> -->
-        <!-- <g id="game-under-models" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'m'"> -->
+        <g id="game-templates-locked"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"
+           click-game-templates-list="locked">
+        </g>
+        <g id="game-under-models"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
         <!--   <g click-game-los-refresh -->
         <!--      style="clip-path: url(#los-clip);"> -->
         <!--     <polygon ng-repeat="envelope in state.game.los.computed.shadow" -->
@@ -148,7 +148,7 @@
         <!--              class="los-darkness"> -->
         <!--     </polygon> -->
         <!--   </g> -->
-        <!-- </g> -->
+        </g>
         <!-- <g id="game-models-locked" -->
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'m'" -->
         <!--    click-game-models-list="locked"> -->
@@ -157,13 +157,13 @@
         <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'m'" -->
         <!--    click-game-models-list="active"> -->
         <!-- </g> -->
-        <!-- <g id="game-over-models" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'m'"> -->
-        <!-- </g> -->
-        <!-- <g id="game-templates" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'t'" -->
-        <!--    click-game-templates-list="active"> -->
-        <!-- </g> -->
+        <g id="game-over-models"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
+        </g>
+        <g id="game-templates"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"
+           click-game-templates-list="active">
+        </g>
         <!-- <g id="game-ruler" -->
         <!--    click-game-ruler> -->
         <!-- </g> -->
@@ -180,11 +180,11 @@
         <!--      click-game-create-model> -->
         <!--   </g> -->
         <!-- </g> -->
-        <!-- <g id="game-create-templates"> -->
-        <!--   <g ng-repeat="(index, terrain) in state.create.template.templates" -->
-        <!--      click-game-create-template> -->
-        <!--   </g> -->
-        <!-- </g> -->
+        <g id="game-create-templates">
+          <g ng-repeat="(index, terrain) in state.create.templates"
+             click-game-create-template>
+          </g>
+        </g>
         <!-- <rect id="game-dragbox" -->
         <!--       click-game-dragbox> -->
         <!-- </rect> -->

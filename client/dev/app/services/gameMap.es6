@@ -4,11 +4,11 @@
 
   gameMapServiceFactory.$inject = [
     // 'gameModels',
-    // 'gameTemplates',
+    'gameTemplates',
     'gameTerrains',
   ];
   function gameMapServiceFactory(// gameModelsModel,
-    // gameTemplatesModel,
+    gameTemplatesModel,
     gameTerrainsModel) {
     const gameMapService = {
       isFlipped: mapIsFlipped,
@@ -55,43 +55,32 @@
         type: 'Map',
         target: null
       };
-      // if(event.target.classList.contains('template') &&
-      //    event.target.hasAttribute('data-stamp')) {
-      //   stamp = event.target.getAttribute('data-stamp');
-      //   return R.pipeP(
-      //     gameTemplatesService.findStamp$(stamp),
-      //     (template) => {
-      //       return { type: 'Template',
-      //                target: template
-      //              };
-      //     }
-      //   )(game.templates).catch(R.always(not_found));
+      if(eventTargetTypeIs('template')) {
+        return emitTypeEvent(gameTemplatesModel, 'template');
+      }
+      // if(eventTargetTypeIs('model-base')) {
+        // return emitTypeEvent(gameModelsModel, 'model');
       // }
-      // if(event.target.classList.contains('model-base') &&
-      //    event.target.hasAttribute('data-stamp')) {
-      //   stamp = event.target.getAttribute('data-stamp');
-      //   return R.pipeP(
-      //     gameModelsService.findStamp$(stamp),
-      //     (model) => {
-      //       return { type: 'Model',
-      //                target: model
-      //              };
-      //     }
-      //   )(game.models).catch(R.always(not_found));
-      // }
-      if(event.target.classList.contains('terrain-image') &&
-         event.target.hasAttribute('data-stamp')) {
-        const stamp = event.target.getAttribute('data-stamp');
-        return R.threadP(game.terrains)(
-          gameTerrainsModel.findStampP$(stamp),
-          (terrain) => {
-            return { type: 'Terrain',
-                     target: terrain
-                   };
-          }
-        ).catch(R.always(not_found));
+      if(eventTargetTypeIs('terrain-image')) {
+        return emitTypeEvent(gameTerrainsModel, 'terrain');
       }
       return R.resolveP(not_found);
+
+      function eventTargetTypeIs(type) {
+        return ( event.target.classList.contains(type) &&
+                 event.target.hasAttribute('data-stamp')
+               );
+      }
+      function emitTypeEvent(model, type) {
+        const stamp = event.target.getAttribute('data-stamp');
+        return R.threadP(game)(
+          R.prop(`${type}s`),
+          model.findStampP$(stamp),
+          (element) => ({ type: s.capitalize(type),
+                          target: element
+                        })
+        ).catch(R.always(not_found));
+      }
     }
   }
 })();

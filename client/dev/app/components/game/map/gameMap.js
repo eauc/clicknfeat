@@ -33,7 +33,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       map.addEventListener('dragstart', function (event) {
         event.preventDefault();
       });
-      // map.addEventListener('contextmenu', mouseEvents.rightClick);
+      map.addEventListener('contextmenu', mouseEvents.rightClick);
 
       // scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
       scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
@@ -64,7 +64,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           drag: dragMap,
           leave: mouseLeaveMap,
           click: clickMap,
-          //     rightClick: rightClickMap,
+          rightClick: rightClickMap,
           move: moveMap
         };
 
@@ -126,14 +126,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           }
         }
 
-        //   function rightClickMap(event) {
-        //     log('rightClickMap', event);
-        //     event.preventDefault();
+        function rightClickMap(event) {
+          log('rightClickMap', event);
+          event.preventDefault();
 
-        //     const now = gameMapService.eventToMapCoordinates(map, event);
-        //     gameMapService.findEventTarget(state.game, event)
-        //       .then(emitClickEvent$('rightClick', event, now));
-        //   }
+          var now = gameMapService.eventToMapCoordinates(map, event);
+          gameMapService.findEventTarget(state.game, event).then(emitClickEvent$('rightClick', event, now));
+        }
 
         function moveMap(event) {
           log('moveMap', event);

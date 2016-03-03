@@ -8,26 +8,26 @@
     'commonMode',
     // 'game',
     // 'template',
-    // 'gameTemplateSelection',
+    'gameTemplateSelection',
     // 'gameModels',
     // 'gameModelSelection',
     'gameTerrainSelection',
   ];
-  function defaultModeModelFactory(modesService,
+  function defaultModeModelFactory(modesModel,
                                    settingsModel,
                                    commonModeModel,
-                                   // gameService,
-                                   // templateService,
-                                   // gameTemplateSelectionService,
-                                   // gameModelsService,
-                                   // gameModelSelectionService,
+                                   // gameModel,
+                                   // templateModel,
+                                   gameTemplateSelectionModel,
+                                   // gameModelsModel,
+                                   // gameModelSelectionModel,
                                    gameTerrainSelectionModel) {
     const default_actions = Object.create(commonModeModel.actions);
     // default_actions.setModelSelection = setModelSelection;
     // default_actions.toggleModelSelection = toggleModelSelection;
     // default_actions.modelSelectionDetail = modelSelectionDetail;
-    // default_actions.selectTemplate = selectTemplate;
-    // default_actions.templateSelectionDetail = templateSelectionDetail;
+    default_actions.selectTemplate = selectTemplate;
+    default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
@@ -41,8 +41,8 @@
       // setModelSelection: 'clickModel',
       // toggleModelSelection: 'ctrl+clickModel',
       // modelSelectionDetail: 'rightClickModel',
-      // selectTemplate: 'clickTemplate',
-      // templateSelectionDetail: 'rightClickTemplate',
+      selectTemplate: 'clickTemplate',
+      templateSelectionDetail: 'rightClickTemplate',
       selectTerrain: 'clickTerrain'
     };
     const default_bindings = R.extend(Object.create(commonModeModel.bindings),
@@ -55,7 +55,7 @@
       buttons: default_buttons,
       bindings: default_bindings
     };
-    modesService.registerMode(default_mode);
+    modesModel.registerMode(default_mode);
     settingsModel.register('Bindings',
                            default_mode.name,
                            default_default_bindings,
@@ -64,18 +64,6 @@
                            });
     return default_mode;
 
-    // function clearTemplateSelection$(state) {
-    //   return () => {
-    //     return state.event('Game.update', R.lensProp('template_selection'),
-    //                        gameTemplateSelectionService.clear$('local', state));
-    //   };
-    // }
-    // function clearTerrainSelection$(state) {
-    //   return () => {
-    //     return state.event('Game.update', R.lensProp('terrain_selection'),
-    //                        gameTerrainSelectionService.clear$('local', state));
-    //   };
-    // }
     // function setModelSelection(state, event) {
     //   return R.pipePromise(
     //     clearTemplateSelection$(state),
@@ -93,7 +81,7 @@
     //     clearTerrainSelection$(state),
     //     () => {
     //       const stamp = event['click#'].target.state.stamp;
-    //       if(gameModelSelectionService.in('local', stamp, state.game.model_selection)) {
+    //       if(gameModelSelectionModel.in('local', stamp, state.game.model_selection)) {
     //         return state.event('Game.command.execute',
     //                            'setModelSelection', ['removeFrom', [stamp]]);
     //       }
@@ -117,45 +105,49 @@
     //     }
     //   )();
     // }
-    // function selectTemplate(state, event) {
-    //   return R.pipePromise(
-    //     clearTerrainSelection$(state),
-    //     () => {
-    //       return state
-    //         .event('Game.update', R.lensProp('template_selection'),
-    //                gameTemplateSelectionService.set$('local',
-    //                                                  [event['click#'].target.state.stamp],
-    //                                                  state));
-    //     }
-    //   )();
-    // }
-    // function templateSelectionDetail(state, event) {
-    //   return R.pipePromise(
-    //     clearTerrainSelection$(state),
-    //     () => {
-    //       return state
-    //         .event('Game.update', R.lensProp('template_selection'),
-    //                gameTemplateSelectionService.set$('local',
-    //                                                  [event['click#'].target.state.stamp],
-    //                                                  state));
-    //     },
-    //     () => { return state.changeEvent('Game.selectionDetail.open',
-    //                                      'template', event['click#'].target); }
-    //   )();
-    // }
-    function selectTerrain(state, event) {
+    function selectTemplate(state, event) {
       return R.threadP()(
-        // clearTemplateSelection$(state),
+        clearTerrainSelection$(state),
+        () => state.eventP(
+          'Game.update', R.lensProp('template_selection'),
+          gameTemplateSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp],
+            state
+          )
+        )
+      );
+    }
+    function templateSelectionDetail(state, event) {
+      return R.threadP()(
+        clearTerrainSelection$(state),
+        () => state.eventP(
+          'Game.update', R.lensProp('template_selection'),
+          gameTemplateSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp],
+            state
+          )
+        ),
         () => {
-          return state.eventP(
-            'Game.update', R.lensProp('terrain_selection'),
-            gameTerrainSelectionModel.set$(
-              'local',
-              [event['click#'].target.state.stamp],
-              state
-            )
+          state.queueChangeEventP(
+            'Game.selectionDetail.open',
+            'template', event['click#'].target
           );
         }
+      );
+    }
+    function selectTerrain(state, event) {
+      return R.threadP()(
+        clearTemplateSelection$(state),
+        () => state.eventP(
+          'Game.update', R.lensProp('terrain_selection'),
+          gameTerrainSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp],
+            state
+          )
+        )
       );
     }
     // function enterRulerMode(state) {
@@ -181,7 +173,7 @@
     //     y: Math.max(event.now.y, event.start.y)
     //   };
     //   return R.pipeP(
-    //     gameModelsService.findStampsBetweenPoints$(top_left, bottom_right),
+    //     gameModelsModel.findStampsBetweenPoints$(top_left, bottom_right),
     //     function(stamps) {
     //       if(R.isEmpty(stamps)) {
     //         return null;
@@ -196,21 +188,31 @@
         return null;
       }
       return R.thread()(
-        () => gameTerrainSelectionModel
-          .checkModeP(state, state.game.terrain_selection),
-        // () => gameTemplateSelectionService
-        //   .checkModeP(state, state.game.template_selection),
+        () => gameTemplateSelectionModel
+          .checkModeP(state, state.game.template_selection),
+        R.condErrorP([
+          [ R.T, () => gameTerrainSelectionModel
+            .checkModeP(state, state.game.terrain_selection) ]
+        ]),
         // R.condErrorP([
-        //   [ R.T, () => gameTerrainSelectionModel
-        //     .checkModeP(state, state.game.terrain_selection) ]
-        // ]),
-        // R.condErrorP([
-        //   [ R.T, () => gameModelSelectionService
+        //   [ R.T, () => gameModelSelectionModel
         //     .checkModeP(state, state.game.model_selection) ]
         // ]),
         R.condErrorP([
           [ R.T, R.always(null) ]
         ])
+      );
+    }
+    function clearTemplateSelection$(state) {
+      return () => state.eventP(
+        'Game.update', R.lensProp('template_selection'),
+        gameTemplateSelectionModel.clear$('local', state)
+      );
+    }
+    function clearTerrainSelection$(state) {
+      return () => state.eventP(
+        'Game.update', R.lensProp('terrain_selection'),
+        gameTerrainSelectionModel.clear$('local', state)
       );
     }
   }

@@ -16,7 +16,7 @@
     // 'fileImport',
     'stateExports',
     'allCommands',
-    // 'allTemplates',
+    'allTemplates',
   ];
   function stateGameModelFactory(gamesModel,
                                  gameModel,
@@ -49,7 +49,7 @@
       // onGameModelCreate: stateGameOnModelCreate,
       // onGameModelImportList: stateGameOnModelImportList,
       // onGameModelImportFile: stateGameOnModelImportFile,
-      // onGameTemplateCreate: stateGameOnModelCreate,
+      onGameTemplateCreate: stateGameOnTemplateCreate,
       onGameTerrainCreate: stateGameOnTerrainCreate,
       onGameTerrainReset: stateGameOnTerrainReset,
       onGameBoardSet: stateGameOnBoardSet,
@@ -106,8 +106,8 @@
       //               stateGameModel.onGameModelImportList$(state));
       // state.onEvent('Game.model.importFile',
       //               stateGameModel.onGameModelImportFile$(state));
-      // state.onEvent('Game.template.create',
-      //               stateGameModel.onGameTemplateCreate$(state));
+      state.onEvent('Game.template.create',
+                    stateGameModel.onGameTemplateCreate$(state));
       state.onEvent('Game.terrain.create',
                     stateGameModel.onGameTerrainCreate$(state));
       state.onEvent('Game.terrain.reset',
@@ -305,13 +305,13 @@
     //     }
     //   )(file).catch(gameActionError$(state));
     // }
-    // function stateGameOnModelCreate(state, event, type) {
-    //   state.create = R.assoc('template', {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     templates: [ { type: type, x: 0, y: 0, r: 0 } ]
-    //   }, R.defaultTo({}, state.create));
-    //   return state.event('Modes.switchTo', 'CreateTemplate');
-    // }
+    function stateGameOnTemplateCreate(state, event, type) {
+      state.create = {
+        base: { x: 240, y: 240, r: 0 },
+        templates: [ { type: type, x: 0, y: 0, r: 0 } ]
+      };
+      return state.eventP('Modes.switchTo', 'CreateTemplate');
+    }
     function stateGameOnTerrainCreate(state, event, path) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },

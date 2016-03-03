@@ -1,71 +1,26 @@
 'use strict';
 
-angular.module('clickApp.services').factory('gameTemplateSelection', ['modes', 'gameTemplates', function gameTemplateSelectionServiceFactory(modesService, gameTemplatesService) {
-  function checkSelection(where, state) {
-    if ('local' === where) {
-      state.event('Modes.switchTo', 'Default');
-      state.changeEvent('Game.template.selection.local.change');
+(function () {
+  angular.module('clickApp.models').factory('gameTemplateSelection', gameTemplateSelectionModelFactory);
+
+  gameTemplateSelectionModelFactory.$inject = ['gameElementSelection', 'gameTemplates'];
+  function gameTemplateSelectionModelFactory(gameElementSelectionModel, gameTemplatesModel) {
+    var base = gameElementSelectionModel('template');
+    var gameTemplateSelectionModel = Object.create(base);
+    R.deepExtend(gameTemplateSelectionModel, {
+      checkModeP: templateSelectionCheckModeP
+    });
+    R.curryService(gameTemplateSelectionModel);
+    return gameTemplateSelectionModel;
+
+    function templateSelectionCheckModeP(state, selection) {
+      return R.threadP(selection)(gameTemplateSelectionModel.get$('local'), R.head, R.rejectIf(R.isNil, 'No template selection'), R.spyError('stamp'), function (stamp) {
+        return gameTemplatesModel.findStampP(stamp, state.game.templates);
+      }, function (template) {
+        console.error(template);
+        state.queueEventP('Modes.switchTo', template.state.type + 'Template');
+      });
     }
   }
-  var gameTemplateSelectionService = {
-    create: function templateSelectionCreate() {
-      return {
-        local: [],
-        remote: []
-      };
-    },
-    'in': function templateSelectionIn(where, stamp, selection) {
-      var stamps = R.prop(where, selection);
-      return R.find(R.equals(stamp), stamps);
-    },
-    get: function templateSelectionGet(where, selection) {
-      return R.propOr([], where, selection);
-    },
-    checkMode: function templateSelectionCheckMode(state, selection) {
-      return R.pipePromise(gameTemplateSelectionService.get$('local'), R.head, function (stamp) {
-        if (R.isNil(stamp)) {
-          return self.Promise.reject('No template selection');
-        }
-
-        return R.pipeP(gameTemplatesService.modeForStamp$(stamp), function (mode) {
-          return state.event('Modes.switchTo', mode);
-        })(state.game.templates);
-      })(selection);
-    },
-    set: function templateSelectionSet(where, stamps, state, selection) {
-      var previous = gameTemplateSelectionService.get(where, selection);
-      var ret = R.assoc(where, stamps, selection);
-
-      checkSelection(where, state);
-
-      R.forEach(function (stamp) {
-        state.changeEvent('Game.template.change.' + stamp);
-      }, stamps);
-      R.forEach(function (stamp) {
-        state.changeEvent('Game.template.change.' + stamp);
-      }, previous);
-
-      return ret;
-    },
-    removeFrom: function templateSelectionRemoveFrom(where, stamps, state, selection) {
-      var previous = R.prop(where, selection);
-      var new_selection = R.difference(previous, stamps);
-      var ret = R.assoc(where, new_selection, selection);
-
-      checkSelection(where, state);
-
-      R.forEach(function (stamp) {
-        state.changeEvent('Game.template.change.' + stamp);
-      }, R.uniq(R.concat(previous, stamps)));
-
-      return ret;
-    },
-    clear: function templateSelectionClear(where, state, selection) {
-      var previous = R.prop(where, selection);
-      return gameTemplateSelectionService.removeFrom(where, previous, state, selection);
-    }
-  };
-  R.curryService(gameTemplateSelectionService);
-  return gameTemplateSelectionService;
-}]);
+})();
 //# sourceMappingURL=templateSelection.js.map

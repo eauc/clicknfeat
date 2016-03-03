@@ -1,17 +1,17 @@
 <div class="panel panel-info">
   <div class="panel-heading"
-       ng-click="doClose()">
+       ng-click="selection.doClose()">
     <button class="close">
       <span>&times;</span>
     </button>
     <h4 class="panel-title">
-      {{selection.state.type}} Template
+      {{selection.element.type}} Template
     </h4>
   </div>
   <div class="panel-content">
     <form name="selection-label"
-          ng-submit="doSetMaxDeviation()"
-          ng-show="selection.state.type === 'aoe'">
+          ng-submit="selection.doSetMaxDeviation()"
+          ng-show="selection.element.type === 'aoe'">
       <div class="form-group">
         <label for="new-deviation">
           Max Deviation
@@ -21,11 +21,11 @@
                type="number"
                step="any"
                min="0"
-               ng-model="edit.max_deviation"
+               ng-model="selection.edit.max_deviation"
                placeholder="0" />
       </div>
     </form>
-    <form ng-submit="doAddLabel()">
+    <form ng-submit="selection.doAddLabel()">
       <div class="form-group">
         <label for="new-label">
           Label
@@ -33,14 +33,14 @@
         <input id="new-label"
                class="form-control"
                type="text"
-               ng-model="edit.label"
+               ng-model="selection.edit.label"
                placeholder="New Label" />
       </div>
       <button type="button"
               class="btn btn-default"
-              ng-repeat="l in selection.state.l"
-              ng-click="doRemoveLabel(l)">
-        {{::labelDisplay(l)}} <span>&times;</span>
+              ng-repeat="l in selection.element.l"
+              ng-click="selection.doRemoveLabel(l)">
+        {{::selection.labelDisplay(l)}} <span>&times;</span>
       </button>
     </form>
   </div>

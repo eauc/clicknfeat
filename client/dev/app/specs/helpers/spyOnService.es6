@@ -4,7 +4,7 @@ self.spyOnService = (function() {
     angular.mock.inject([ name, (service) => {
       _service = service;
       R.thread(service)(
-        R.keys,
+        R.keysIn,
         R.filter(R.compose(R.equals('Function'), R.type, R.flip(R.prop)(service))),
         R.reject(R.compose(R.equals('$'), R.last)),
         R.forEach((key) => {

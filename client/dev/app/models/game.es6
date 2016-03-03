@@ -11,8 +11,8 @@
     // 'gameModels',
     // 'gameModelSelection',
     // 'gameRuler',
-    // 'gameTemplates',
-    // 'gameTemplateSelection',
+    'gameTemplates',
+    'gameTemplateSelection',
     'gameTerrains',
     'gameTerrainSelection',
   ];
@@ -24,8 +24,8 @@
                               // gameModelsModel,
                               // gameModelSelectionModel,
                               // gameRulerModel,
-                              // gameTemplatesModel,
-                              // gameTemplateSelectionModel,
+                              gameTemplatesModel,
+                              gameTemplateSelectionModel,
                               gameTerrainsModel,
                               gameTerrainSelectionModel) {
     const gameModel = {
@@ -92,8 +92,8 @@
         // los: gameLosModel.create(),
         // models: gameModelsModel.create(),
         // model_selection: gameModelSelectionModel.create(),
-        // templates: gameTemplatesModel.create(),
-        // template_selection: gameTemplateSelectionModel.create(),
+        templates: gameTemplatesModel.create(),
+        template_selection: gameTemplateSelectionModel.create(),
         terrains: gameTerrainsModel.create(),
         terrain_selection: gameTerrainSelectionModel.create(),
         layers: gameLayersModel.create()

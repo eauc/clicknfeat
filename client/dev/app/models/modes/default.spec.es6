@@ -39,11 +39,55 @@ describe('defaultMode model', function() {
         .toBe('gameTerrainSelection.set.returnValue');
     });
 
-    xit('should clear gameTemplateSelection', function() {
+    it('should clear gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.clear)
         .toHaveBeenCalledWith('local', this.state, 'template_selection');
       expect(this.state.game.template_selection)
         .toBe('gameTemplateSelection.clear.returnValue');
+    });
+  });
+
+  context('when user set template selection', function() {
+    return this.defaultModeModel.actions
+      .selectTemplate(this.state, this.event);
+  }, function() {
+    it('should set gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.set)
+        .toHaveBeenCalledWith('local', ['stamp'], this.state, 'template_selection');
+      expect(this.state.game.template_selection)
+        .toBe('gameTemplateSelection.set.returnValue');
+    });
+
+    it('should clear gameTerrainSelection', function() {
+      expect(this.gameTerrainSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+      expect(this.state.game.terrain_selection)
+        .toBe('gameTerrainSelection.clear.returnValue');
+    });
+  });
+
+  context('when user right-click on template', function() {
+    return this.defaultModeModel.actions
+      .templateSelectionDetail(this.state, this.event);
+  }, function() {
+    it('should open template selection detail', function() {
+        expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.selectionDetail.open', 'template',
+                              { state: { stamp: 'stamp' } });
+    });
+
+    it('should set gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.set)
+        .toHaveBeenCalledWith('local', ['stamp'], this.state, 'template_selection');
+      expect(this.state.game.template_selection)
+        .toBe('gameTemplateSelection.set.returnValue');
+    });
+
+    it('should clear gameTerrainSelection', function() {
+      expect(this.gameTerrainSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+      expect(this.state.game.terrain_selection)
+        .toBe('gameTerrainSelection.clear.returnValue');
     });
   });
 });

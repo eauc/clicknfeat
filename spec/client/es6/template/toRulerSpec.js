@@ -1,69 +1,4 @@
 describe('set aoe to ruler', function() {
-  describe('aoeTemplateMode service', function() {
-    beforeEach(inject([
-      'aoeTemplateMode',
-      function(aoeTemplateModeService) {
-        this.aoeTemplateModeService = aoeTemplateModeService;
-
-        this.gameRulerService = spyOnService('gameRuler');
-        mockReturnPromise(this.gameRulerService.targetAoEPosition);
-        this.gameRulerService.targetAoEPosition
-          .resolveWith = 'gameRuler.targetAoEPosition.returnValue';
-        this.gameTemplateSelectionService = spyOnService('gameTemplateSelection');
-
-        this.state = {
-          game: { template_selection: 'selection',
-                  ruler:'ruler',
-                  models: 'models' },
-          event: jasmine.createSpy('event')
-        };
-      }
-    ]));
-
-    when('user set aoe to ruler target', function() {
-      this.ret = this.aoeTemplateModeService.actions.
-        setToRulerTarget(this.state);
-    }, function() {
-      beforeEach(function() {
-        this.gameTemplateSelectionService.get._retVal = ['stamp'];
-      });
-
-      when('ruler is not displayed', function() {
-        this.gameRulerService.isDisplayed._retVal = false;
-      }, function() {
-        it('should not execute command', function() {
-          expect(this.state.event)
-            .not.toHaveBeenCalled();
-        });
-      });
-
-      when('ruler is displayed', function() {
-        this.gameRulerService.isDisplayed._retVal = true;
-      }, function() {
-        it('should get current selection', function() {
-          expect(this.gameTemplateSelectionService.get)
-            .toHaveBeenCalledWith('local', 'selection');
-        });
-      
-        it('should get ruler target position', function() {
-          expect(this.gameRulerService.targetAoEPosition)
-            .toHaveBeenCalledWith('models', 'ruler');
-        });
-
-        it('should execute onTemplates/setToRuler command', function() {
-          this.thenExpect(this.ret, function() {
-            expect(this.state.event)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onTemplates', [ 'setToRuler',
-                                                     ['gameRuler.targetAoEPosition.returnValue'],
-                                                     ['stamp']
-                                                   ]);
-          });
-        });
-      });
-    });
-  });
-
   describe('rulerMode service', function() {
     beforeEach(inject([
       'rulerMode',
@@ -172,37 +107,6 @@ describe('set aoe to ruler', function() {
             expect(result).toEqual({
               x: 320, y: 320, r: 135, m: 2.25
             });
-          });
-        });
-      });
-    });
-  });
-
-  describe('aoeTemplate service', function() {
-    beforeEach(inject([
-      'aoeTemplate',
-      function(aoeTemplateService) {
-        this.aoeTemplateService = aoeTemplateService;
-      }
-    ]));
-
-    when('setToRuler(<position>)', function() {
-      this.ret = this.aoeTemplateService.setToRuler({
-        x: 42, y: 71, r: 83, m: 32
-      }, this.template);
-    }, function() {
-      beforeEach(function() {
-        this.template = {
-          state: { stamp: 'stamp', x: 240, y: 240, r: 180, m: null }
-        };
-      });
-      
-      when('aoe is locked', function() {
-        this.template.state.lk = true;
-      }, function() {
-        it('should reject set to ruler', function() {
-          this.thenExpectError(this.ret, function(reason) {
-            expect(reason).toBe('Template is locked');
           });
         });
       });

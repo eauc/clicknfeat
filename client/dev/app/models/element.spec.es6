@@ -40,8 +40,9 @@ describe('element model', function() {
     ]);
   });
 
-  context('create(<state>)', function() {
-    return this.elementModel.create(this.state);
+  context('createP(<state>)', function() {
+    return this.elementModel
+      .createP(this.state);
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'],
@@ -59,6 +60,7 @@ describe('element model', function() {
       expect(this.elementModel.checkState)
         .toHaveBeenCalledWith({
           state: { x: 240, y: 0, r: 0,
+                   l: [],
                    lk: true,
                    stamp: 'stamp',
                    info: [ 'info' ]
@@ -244,4 +246,73 @@ describe('element model', function() {
       { x: 240      , y: 250 , r: 180 },
       { x: 240      , y: 241 , r: 180 } ],
   ]);
+
+  context('fullLabel()', function() {
+    return this.elementModel
+      .fullLabel(this.element);
+  }, function() {
+    beforeEach(function() {
+      this.element = {
+        state: { l:  ['label1', 'label2'] }
+      };
+    });
+
+    it('should return element\'s full label', function() {
+      expect(this.context)
+        .toEqual('label1 label2');
+    });
+  });
+
+  context('addLabel(<label>)', function() {
+    return this.elementModel
+      .addLabel(this.label, this.element);
+  }, function() {
+    beforeEach(function() {
+      this.element = {
+        state: { l:  ['label1', 'label2'] }
+      };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.label = e.label;
+      }, function() {
+        it('should add <label> to element\'s labels, '+d, function() {
+          expect(this.context.state.l)
+            .toEqual(e.result);
+        });
+      });
+    }, [
+      [ 'label'  , 'result'                        ],
+      [ 'new'    , ['label1' , 'label2' , 'new' ]  ],
+      // no duplicates
+      [ 'label2' , ['label1' , 'label2']           ],
+    ]);
+  });
+
+  context('removeLabel(<label>)', function() {
+    return this.elementModel
+      .removeLabel(this.label, this.element);
+  }, function() {
+    beforeEach(function() {
+      this.element = {
+        state: { l:  ['label1', 'label2'] }
+      };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.label = e.label;
+      }, function() {
+        it('should remove <label> from element\'s labels, '+d, function() {
+          expect(this.context.state.l)
+            .toEqual(e.result);
+        });
+      });
+    }, [
+      [ 'label'   , 'result'   ],
+      [ 'label1'  , ['label2'] ],
+      [ 'unknown' , ['label1'  , 'label2'] ],
+    ]);
+  });
 });

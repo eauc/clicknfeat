@@ -9,7 +9,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   function elementModelFactory(pointModel) {
     return function buildElementModel(type, MOVES) {
       var elementModel = {
-        create: elementCreate,
+        createDefaultP: elementCreateDefaultP,
+        createP: elementCreateP,
         stamp: elementStamp,
         eventName: elementEventName,
         state: elementState,
@@ -18,6 +19,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         checkState: elementCheckState,
         isLocked: elementIsLocked,
         setLock: elementSetLock,
+        addLabel: elementAddLabel,
+        removeLabel: elementRemoveLabel,
+        fullLabel: elementFullLabel,
         setPositionP: moveElementP(elementSetPosition),
         shiftPositionP: moveElementP(elementShiftPosition),
         setOrientationP: moveElementP(elementSetOrientation),
@@ -34,16 +38,21 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       R.curryService(elementModel);
       return elementModel;
 
-      function elementCreate(temp) {
-        var element = {
+      function elementCreateDefaultP() {
+        return R.resolveP({
           state: {
             x: 0, y: 0, r: 0,
+            l: [],
             lk: false,
             stamp: R.guid()
           }
-        };
-        element.state = R.deepExtend(element.state, temp);
-        return elementModel.checkState(element);
+        });
+      }
+      function elementCreateP(temp) {
+        return R.threadP(temp)(this.createDefaultP, function (element) {
+          R.deepExtend(element.state, temp);
+          return element;
+        }, this.checkState);
       }
       function elementStamp(element) {
         return R.path(['state', 'stamp'], element);
@@ -77,9 +86,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           var element = R.last(args);
           var params = R.init(args);
-          return R.threadP(element)(R.rejectIf(elementModel.isLocked, s.capitalize(type) + ' is locked'), function (element) {
+          return R.threadP(element)(R.spyWarn('move'), R.rejectIf(this.isLocked, s.capitalize(type) + ' is locked'), R.spyWarn('move'), function (element) {
             return move.apply(null, [].concat(_toConsumableArray(params), [element]));
-          }, elementModel.checkState);
+          }, R.spyWarn('move'), this.checkState, R.spyWarn('move'));
         };
       }
       function elementSetPosition(pos, element) {
@@ -122,6 +131,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       function elementShiftDown(small, element) {
         var dist = MOVES[small ? 'MoveSmall' : 'Move'];
         return R.threadP(element)(R.over(R.lensProp('state'), pointModel.shiftDown$(dist)));
+      }
+      function elementAddLabel(label, element) {
+        return R.over(R.lensPath(['state', 'l']), R.compose(R.uniq, R.append(label)), element);
+      }
+      function elementRemoveLabel(label, element) {
+        return R.over(R.lensPath(['state', 'l']), R.reject(R.equals(label)), element);
+      }
+      function elementFullLabel(element) {
+        return R.pathOr([], ['state', 'l'], element).join(' ');
       }
     };
   }

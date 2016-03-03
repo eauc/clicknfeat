@@ -12,7 +12,7 @@
     // vm.doToggleShowRuler = doToggleShowRuler;
     // vm.doUseLos = doUseLos;
     // vm.doToggleShowLos = doToggleShowLos;
-    // vm.doCreateTemplate = doCreateTemplate;
+    vm.doCreateTemplate = doCreateTemplate;
 
     activate();
 
@@ -48,8 +48,8 @@
     //                     'setLos', ['toggleDisplay', []]);
     // }
 
-    // function doCreateTemplate(type) {
-    //   $scope.stateEvent('Game.template.create', type);
-    // }
+    function doCreateTemplate(type) {
+      $scope.stateEvent('Game.template.create', type);
+    }
   }
 })();
