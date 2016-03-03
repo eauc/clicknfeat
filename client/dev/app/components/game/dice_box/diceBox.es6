@@ -1,30 +1,38 @@
-angular.module('clickApp.directives')
-  .controller('gameDiceBoxCtrl', [
+(function() {
+  angular.module('clickApp.directives')
+    .controller('gameDiceBoxCtrl', diceBoxCtrl)
+    .directive('clickGameDiceBox', gameDiceBoxDirectiveFactory);
+
+  diceBoxCtrl.$inject = [
     '$scope',
-    function userConnectionCtrl($scope) {
-      console.log('gameDiceBoxCtrl');
+  ];
+  function diceBoxCtrl($scope) {
+    const vm = this;
+    console.log('gameDiceBoxCtrl');
 
-      function updateList() {
-        $scope.dice = R.clone(R.path(['state','game','dice'], $scope));
-        $scope.$digest();
-      }
-      $scope.onStateChangeEvent('Game.dice.roll', updateList, $scope);
-      self.requestAnimationFrame(updateList);
+    vm.doRollDice = doRollDice;
+    $scope.onStateChangeEvent('Game.dice.roll', updateList, $scope);
+    self.requestAnimationFrame(updateList);
 
-      $scope.doRollDice = function doRoll(sides, nb_dice) {
-        $scope.stateEvent('Game.command.execute',
-                          'rollDice', [sides, nb_dice]);
-      };
+    function updateList() {
+      vm.dice = R.clone(R.path(['state','game','dice'], $scope));
+      $scope.$digest();
     }
-  ])
-  .directive('clickGameDiceBox', [
-    function() {
-      return {
-        restrict: 'E',
-        controller: 'gameDiceBoxCtrl',
-        templateUrl: 'partials/directives/game_dice_box.html',
-        scope: true,
-        link: () => { }
-      };
+    function doRollDice(sides, nb_dice) {
+      $scope.stateEvent('Game.command.execute',
+                        'rollDice', [sides, nb_dice]);
     }
-  ]);
+  }
+
+  gameDiceBoxDirectiveFactory.$inject = [];
+  function gameDiceBoxDirectiveFactory() {
+    return {
+      restrict: 'E',
+      controller: 'gameDiceBoxCtrl',
+      controllerAs: 'dice_box',
+      templateUrl: 'app/components/game/dice_box/dice_box.html',
+      scope: true,
+      link: () => {}
+    };
+  }
+})();

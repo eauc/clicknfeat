@@ -10,14 +10,15 @@
     };
 
     function link(scope, element) {
-      const menuToggle = buildMenuToggle();
+      element = element[0];
+      const menuToggle = buildMenuToggle(element);
 
-      element[0]
+      element
         .querySelector('#menu-toggle')
         .addEventListener('click', menuToggle);
       scope.onStateChangeEvent('Game.toggleMenu', menuToggle, scope);
 
-      const gameview = element[0].querySelector('#gameview');
+      const gameview = element.querySelector('#gameview');
       const rect = gameview.getBoundingClientRect();
       gameview.style.width = (rect.height)+'px';
     }
@@ -28,7 +29,7 @@
         const gameview = element.querySelector('#gameview');
         const menu = element.querySelector('#menu');
         const dice_osd = element.querySelector('#dice-osd');
-        const chat_osd = element.querySelector('#chat-osd');
+        // const chat_osd = element.querySelector('#chat-osd');
 
         const menu_hidden = menu.classList.contains('hidden');
         if(!menu_hidden) {
@@ -42,7 +43,7 @@
         gameview.classList.toggle('resizable');
         menu.classList.toggle('hidden');
         dice_osd.classList.toggle('show');
-        chat_osd.classList.toggle('show');
+        // chat_osd.classList.toggle('show');
       };
     }
   }

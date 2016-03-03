@@ -15,7 +15,7 @@
       'deleteTerrainCommand',
       'lockTerrainsCommand',
       'onTerrainsCommand',
-      // 'rollDiceCommand',
+      'rollDiceCommand',
       'rollDeviationCommand',
       'setBoardCommand',
       'setLayersCommand',
