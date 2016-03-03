@@ -10,7 +10,7 @@
   });
 
   R.condErrorP = R.curry(function condErrorP(options, promise) {
-    return promise.catch(R.cond(R.append([R.T, R.reject], options)));
+    return promise.catch(R.cond(R.append([R.T, R.rejectP], options)));
   });
 })();
 //# sourceMappingURL=promise.js.map

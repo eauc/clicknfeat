@@ -125,7 +125,7 @@
 
       state.change_event_queue = R.uniqBy(R.compose(R.head, R.nth(1)),
                                           state.change_event_queue);
-      let [ resolve, args ] = R.head(state.change_event_queue);
+      const [ resolve, args ] = R.head(state.change_event_queue);
       return R.threadP(stateChangeEventP(args, state))(
         () => {
           state.change_event_queue = R.tail(state.change_event_queue);

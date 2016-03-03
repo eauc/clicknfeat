@@ -76,21 +76,21 @@
   <!--     </form> -->
   <!--   </div> -->
   <!-- </div> -->
-  <!-- <div class="panel panel-info"> -->
-  <!--   <div class="panel-heading"> -->
-  <!--     <strong>Import Board File</strong> -->
-  <!--   </div> -->
-  <!--   <div class="panel-content"> -->
-  <!--     <form class="form-inline"> -->
-  <!--       <div class="form-group"> -->
-  <!--         <input type="file" -->
-  <!--                multiple -->
-  <!--                class="form-control" -->
-  <!--                ea-file="doImportBoardFile(file)" /> -->
-  <!--       </div> -->
-  <!--     </form> -->
-  <!--   </div> -->
-  <!-- </div> -->
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Import Board File</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline">
+        <div class="form-group">
+          <input type="file"
+                 multiple
+                 class="form-control"
+                 click-file="game_setup.doImportBoardFile(file)" />
+        </div>
+      </form>
+    </div>
+  </div>
   <div class="panel panel-info">
     <div class="panel-heading">
       <strong>Board Map</strong>
@@ -107,10 +107,10 @@
                 ng-click="game_setup.doSetRandomBoard()">
           Random
         </button>
-        <!-- <button class="btn btn-default" -->
-        <!--         ng-click="game_setup.doResetTerrain()"> -->
-        <!--   Reset Terrain -->
-        <!-- </button> -->
+        <button class="btn btn-default"
+                ng-click="game_setup.doResetTerrain()">
+          Reset Terrain
+        </button>
       </form>
     </div>
   </div>

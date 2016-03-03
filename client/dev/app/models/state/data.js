@@ -76,7 +76,11 @@
       });
     }
     function stateDataSave(state) {
-      return R.threadP()(R.always(exportCurrentSettings(state)), R.always(storeCurrentSettings(state))
+      return R.threadP()(function () {
+        return exportCurrentSettings(state);
+      }, function () {
+        return storeCurrentSettings(state);
+      }
       // R.always(storeCurrentFactions(state))
       );
     }

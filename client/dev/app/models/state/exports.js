@@ -22,10 +22,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return state;
     }
     function stateExportsExportDataP(name, buildData, state) {
-      return R.thread(state)(generateDataUrlP, R.condErrorP([[R.equals('nil'), R.always(null)], [R.equals('unchanged'), R.reject], [R.T, function (error) {
+      return R.thread(state)(generateDataUrlP, R.condErrorP([[R.equals('nil'), R.always(null)], [R.equals('unchanged'), R.rejectP], [R.T, function (error) {
         console.warn('Exports: error', name, error);
         return null;
-      }]]), updateExportsP, R.condErrorP([R.T, R.always(null)]));
+      }]]), updateExportsP, R.condErrorP([[R.T, R.always(null)]]));
 
       function generateDataUrlP(state) {
         return R.threadP(state)(buildData, R.rejectIf(dataUnchanged, 'unchanged'), memoizeData, R.rejectIf(R.isNil, 'nil'), fileExportService.generate$('json'));

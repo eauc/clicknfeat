@@ -95,8 +95,8 @@
     }
     function stateDataSave(state) {
       return R.threadP()(
-        R.always(exportCurrentSettings(state)),
-        R.always(storeCurrentSettings(state))
+        () => exportCurrentSettings(state),
+        () => storeCurrentSettings(state)
         // R.always(storeCurrentFactions(state))
       );
     }

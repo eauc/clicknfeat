@@ -13,7 +13,7 @@
     // 'gameScenario',
     'gameTerrainInfo',
     'gameTerrains',
-    // 'fileImport',
+    'fileImport',
     'stateExports',
     'allCommands',
     'allTemplates',
@@ -28,7 +28,7 @@
                                  // gameScenarioModel,
                                  gameTerrainInfoModel,
                                  gameTerrainsModel,
-                                 // fileImportModel,
+                                 fileImportService,
                                  stateExportsModel) {
     const stateGameModel = {
       create: stateGamesCreate,
@@ -54,17 +54,17 @@
       onGameTerrainReset: stateGameOnTerrainReset,
       onGameBoardSet: stateGameOnBoardSet,
       onGameBoardSetRandom: stateGameOnBoardSetRandom,
-      // onGameBoardImportFile: stateGameOnBoardImportFile,
+      onGameBoardImportFile: stateGameOnBoardImportFile,
       // onGameScenarioSet: stateGameOnScenarioSet,
       // onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
     };
 
-    var setGame$ = R.curry(setGame);
-    var exportCurrentGame = stateExportsModel
-          .exportP$('game', R.prop('game'));
-    // var exportCurrentBoard = stateExportsModel
-    //       .export$('board', exportBoardData);
+    const setGame$ = R.curry(setGame);
+    const exportCurrentGame = stateExportsModel
+            .exportP$('game', R.prop('game'));
+    const exportCurrentBoard = stateExportsModel
+            .exportP$('board', exportBoardData);
 
     R.curryService(stateGameModel);
     return stateGameModel;
@@ -116,8 +116,8 @@
                     stateGameModel.onGameBoardSet$(state));
       state.onEvent('Game.board.setRandom',
                     stateGameModel.onGameBoardSetRandom$(state));
-      // state.onEvent('Game.board.importFile',
-      //               stateGameModel.onGameBoardImportFile$(state));
+      state.onEvent('Game.board.importFile',
+                    stateGameModel.onGameBoardImportFile$(state));
       // state.onEvent('Game.scenario.set',
       //               stateGameModel.onGameScenarioSet$(state));
       // state.onEvent('Game.scenario.setRandom',
@@ -129,10 +129,10 @@
     }
     function stateGameSave(state) {
       return R.thread()(
-        R.always(saveCurrentGame(state)),
-        R.always(exportCurrentGame(state))
+        () => saveCurrentGame(state),
+        () => exportCurrentGame(state),
       //   R.always(exportCurrentModelSelection(state)),
-      //   R.always(exportCurrentBoard(state))
+        () => exportCurrentBoard(state)
       );
     }
     function stateGameOnLoad(state, event, is_online, is_private, id) {
@@ -346,32 +346,23 @@
       return state.eventP('Game.command.execute',
                           'setBoard', [board]);
     }
-    // function stateGameOnBoardImportFile(state, event, file) {
-    //   return R.pipeP(
-    //     fileImportModel.read$('json'),
-    //     (board_info) => {
-    //       return R.pipePromise(
-    //         () => {
-    //           if(!board_info.board) return self.Promise.reject();
-
-    //           return state.event('Game.command.execute',
-    //                              'setBoard', [board_info.board]);
-    //         },
-    //         () => {
-    //           if(R.isEmpty(R.pathOr([], ['terrain','terrains'], board_info))) {
-    //             return self.Promise.reject();
-    //           }
-
-    //           return state.event('Game.terrain.reset');
-    //         },
-    //         () => {
-    //           return state.event('Game.command.execute',
-    //                              'createTerrain', [board_info.terrain, false]);
-    //         }
-    //       )();
-    //     }
-    //   )(file).catch(R.always(null));
-    // }
+    function stateGameOnBoardImportFile(state, event, file) {
+      return R.threadP(file)(
+        fileImportService.readP$('json'),
+        (data) => R.threadP(data)(
+          R.prop('board'),
+          R.rejectIf(R.isNil, 'No board'),
+          () => state.eventP('Game.command.execute',
+                             'setBoard', [data.board]),
+          R.always(data),
+          R.path(['terrain', 'terrains']),
+          R.rejectIf(R.isEmpty, 'No terrain'),
+          () => state.eventP('Game.terrain.reset'),
+          () => state.eventP('Game.command.execute',
+                             'createTerrain', [data.terrain, false])
+        )
+      ).catch(R.spyAndDiscardError('Import board file'));
+    }
     // function stateGameOnScenarioSet(state, event, name, group) {
     //   let scenario = gameScenarioModel.forName(name, group);
     //   return state.event('Game.command.execute',
@@ -451,24 +442,21 @@
     //       stateExportsModel.rejectIf$(R.isEmpty)
     //     ), state);
     // }
-    // function exportBoardData(state) {
-    //   return R.threadP(state)(
-    //     R.prop('game'),
-    //     stateExportsModel.rejectIf$(R.isNil),
-    //     (game) => {
-    //       return {
-    //         board: game.board,
-    //         terrain: {
-    //           base: { x: 0, y: 0, r: 0 },
-    //           terrains: R.pipe(
-    //             gameTerrainsModel.all,
-    //             R.pluck('state'),
-    //             R.map(R.pick(['x','y','r','info','lk']))
-    //           )(game.terrains)
-    //         }
-    //       };
-    //     }
-    //   );
-    // }
+    function exportBoardData(state) {
+      return R.thread(state)(
+        R.prop('game'),
+        (game) => ({
+          board: game.board,
+          terrain: {
+            base: { x: 0, y: 0, r: 0 },
+            terrains: R.thread(game.terrains)(
+              gameTerrainsModel.all,
+              R.pluck('state'),
+              R.map(R.pick(['x','y','r','info','lk']))
+            )
+          }
+        })
+      );
+    }
   }
 })();

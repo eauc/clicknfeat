@@ -25,14 +25,16 @@
         generateDataUrlP,
         R.condErrorP([
           [ R.equals('nil'), R.always(null) ],
-          [ R.equals('unchanged'), R.reject ],
+          [ R.equals('unchanged'), R.rejectP ],
           [ R.T, (error) => {
             console.warn('Exports: error', name, error);
             return null;
           } ]
         ]),
         updateExportsP,
-        R.condErrorP([ R.T, R.always(null) ])
+        R.condErrorP([
+          [ R.T, R.always(null) ]
+        ])
       );
 
       function generateDataUrlP(state) {
