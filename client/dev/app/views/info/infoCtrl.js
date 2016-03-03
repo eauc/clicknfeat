@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('infoCtrl', [function () {
-  console.log('init infoCtrl');
-}]);
+(function () {
+  angular.module('clickApp.controllers').controller('infoCtrl', infoCtrl);
+
+  infoCtrl.$inject = [];
+  function infoCtrl() {
+    console.log('init infoCtrl');
+  }
+})();
 //# sourceMappingURL=infoCtrl.js.map
