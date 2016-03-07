@@ -20,7 +20,7 @@ describe('setBoardCommand model', function() {
     });
 
     it('should set game board', function() {
-      const [ ctxt, game ] = this.context;
+      const game = this.context[1];
       expect(game.board)
         .toEqual({ name: 'after_name' });
     });
@@ -31,7 +31,7 @@ describe('setBoardCommand model', function() {
     });
 
     it('should return context', function() {
-      const [ ctxt, game ] = this.context;
+      const [ ctxt ] = this.context;
       expect(ctxt).toEqual({
         before: 'before',
         after: { name: 'after_name' },

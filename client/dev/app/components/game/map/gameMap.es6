@@ -25,7 +25,7 @@
 
       const mouseEvents = buildMouseEvents();
       const moveEvents = buildMoveEvents();
-      // const flipMap = buildFlipMap();
+      const flipMap = buildFlipMap();
       const zoomEvents = buildZoomEvents();
       const scrollEvents = buildScrollEvents();
 
@@ -37,7 +37,7 @@
       });
       map.addEventListener('contextmenu', mouseEvents.rightClick);
 
-      // scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
+      scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
       scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
       scope.onStateChangeEvent('Game.moveMap.disable', moveEvents.disable, scope);
       scope.onStateChangeEvent('Game.view.zoomIn', zoomEvents.in, scope);
@@ -229,34 +229,34 @@
         }
       }
 
-      // function buildFlipMap() {
-      //   let deploiement_labels;
-      //   init();
-      //   return onFlipMap;
+      function buildFlipMap() {
+        let deploiement_labels;
+        init();
+        return onFlipMap;
 
-      //   function init() {
-      //     state.ui_state = R.thread(state)(
-      //       R.propOr({}, 'ui_state'),
-      //       R.assoc('flip_map', false)
-      //     );
-      //     map.classList.remove('flipped');
-      //   }
+        function init() {
+          state.ui_state = R.thread(state)(
+            R.propOr({}, 'ui_state'),
+            R.assoc('flip_map', false)
+          );
+          map.classList.remove('flipped');
+        }
 
-      //   function onFlipMap() {
-      //     deploiement_labels = document.querySelector('#deploiement-labels');
-      //     state.ui_state.flip_map = !map.classList.contains('flipped');
-      //     map.classList.toggle('flipped');
-      //     if(state.ui_state.flip_map) {
-      //       deploiement_labels
-      //         .setAttribute('transform','rotate(180,240,240)');
-      //     }
-      //     else {
-      //       deploiement_labels
-      //         .setAttribute('transform','');
-      //     }
-      //     state.changeEvent('Game.map.flipped');
-      //   };
-      // }
+        function onFlipMap() {
+          deploiement_labels = document.querySelector('#deploiement-labels');
+          state.ui_state.flip_map = !map.classList.contains('flipped');
+          map.classList.toggle('flipped');
+          if(state.ui_state.flip_map) {
+            deploiement_labels
+              .setAttribute('transform','rotate(180,240,240)');
+          }
+          else {
+            deploiement_labels
+              .setAttribute('transform','');
+          }
+          state.queueChangeEventP('Game.map.flipped');
+        }
+      }
 
       function buildZoomEvents() {
         return {
