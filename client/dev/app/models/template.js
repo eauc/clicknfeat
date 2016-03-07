@@ -19,7 +19,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       ShiftSmall: 1
     };
     var MOVES = R.clone(DEFAULT_MOVES);
-    settingsModel.register('Moves', 'Template', DEFAULT_MOVES, function (moves) {
+    settingsModel.register('Misc', 'Template', DEFAULT_MOVES, function (moves) {
       R.extend(MOVES, moves);
     });
 

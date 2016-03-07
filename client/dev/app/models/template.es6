@@ -24,7 +24,7 @@
       ShiftSmall: 1
     };
     const MOVES = R.clone(DEFAULT_MOVES);
-    settingsModel.register('Moves',
+    settingsModel.register('Misc',
                            'Template',
                            DEFAULT_MOVES,
                            (moves) => {
