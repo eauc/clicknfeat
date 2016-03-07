@@ -127,10 +127,10 @@
            ng-show="state.game.layers | gameLayers:'isDisplayed':'d'"
            ng-include="'app/components/game/deploiement/deploiement.html'">
         </g>
-        <!-- <g id="game-scenario" -->
-        <!--    ng-show="state.game.layers | gameLayers:'isDisplayed':'s'" -->
-        <!--    ng-include="'app/components/game/scenario.html'"> -->
-        <!-- </g> -->
+        <g id="game-scenario"
+           ng-show="state.game.layers | gameLayers:'isDisplayed':'s'"
+           ng-include="'app/components/game/scenario/scenario.html'">
+        </g>
         <g id="game-templates-locked"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"
            click-game-templates-list="locked">

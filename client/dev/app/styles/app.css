@@ -211,7 +211,17 @@ a:not([href]):focus {
 
 /* @import 'components/game/ruler/ruler'; */
 /* @import 'components/game/los/los'; */
-/* @import 'components/game/scenario/scenario'; */
+#game #game-scenario .zone, #game #game-scenario .objective, #game #game-scenario .area {
+  fill: #CC0;
+  stroke: #990;
+  stroke-width: 0.5px; }
+#game #game-scenario .zone {
+  fill-opacity: 0.3; }
+#game #game-scenario .objective {
+  fill-opacity: 0.8; }
+#game #game-scenario .area {
+  fill: none; }
+
 #game .create-template-aoe,
 #game .create-template-wall,
 #game .create-template-spray {

@@ -14,8 +14,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   'createTemplateCommand', 'deleteTemplateCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand',
   // 'setLosCommand',
   // 'setRulerCommand',
-  // 'setScenarioCommand',
-  function () {
+  'setScenarioCommand', function () {
     return {};
   }]);
 

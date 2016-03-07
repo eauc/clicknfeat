@@ -9,15 +9,15 @@
     'gameBoard',
     'gameTerrainInfo',
     // 'gameFactions',
-    // 'gameScenario',
+    'gameScenario',
   ];
   function stateDataModelFactory(stateExportsService,
                                  fileImportService,
                                  settingsModel,
                                  gameBoardModel,
-                                 gameTerrainInfoModel) {
-                                 // gameFactionsService,
-                                 // gameScenarioService) {
+                                 gameTerrainInfoModel,
+                                 // gameFactionsModel,
+                                 gameScenarioModel) {
     const stateDataModel = {
       create: stateDataCreate,
       save: stateDataSave,
@@ -73,11 +73,11 @@
       //         .then((factions) => {
       //           state.factions = factions;
       //         });
-      // const scenario_ready = gameScenarioModel.init()
-      //         .then((scenarios) => {
-      //           state.scenarios = scenarios;
-      //           console.log('scenarios', scenarios);
-      //         });
+      const scenario_ready = gameScenarioModel.initP()
+              .then((scenarios) => {
+                state.scenarios = scenarios;
+                console.log('scenarios', scenarios);
+              });
       const settings_ready = settingsModel.initP()
               .then((settings) => {
                 state.settings = settings;
@@ -86,7 +86,7 @@
         boards_ready,
         terrains_ready,
         // factions_ready,
-        // scenario_ready,
+        scenario_ready,
         settings_ready,
       ]).then(() => {
         console.log('data ready');

@@ -1,8 +1,19 @@
 'use strict';
 
-angular.module('clickApp.services').factory('setScenarioCommand', ['commands', function setScenarioCommandServiceFactory(commandsService) {
-  var setScenarioCommandService = {
-    execute: function setScenarioExecute(scenario, state, game) {
+(function () {
+  angular.module('clickApp.services').factory('setScenarioCommand', setScenarioCommandModelFactory);
+
+  setScenarioCommandModelFactory.$inject = ['commands'];
+  function setScenarioCommandModelFactory(commandsModel) {
+    var setScenarioCommandModel = {
+      executeP: setScenarioExecuteP,
+      replayP: setScenarioReplayP,
+      undoP: setScenarioUndoP
+    };
+    commandsModel.registerCommand('setScenario', setScenarioCommandModel);
+    return setScenarioCommandModel;
+
+    function setScenarioExecuteP(scenario, state, game) {
       var ctxt = {
         before: game.scenario,
         after: scenario,
@@ -10,26 +21,24 @@ angular.module('clickApp.services').factory('setScenarioCommand', ['commands', f
       };
       game = R.assoc('scenario', scenario, game);
 
-      state.changeEvent('Game.scenario.change');
+      state.queueChangeEventP('Game.scenario.change');
 
       return [ctxt, game];
-    },
-    replay: function setScenarioRedo(ctxt, state, game) {
+    }
+    function setScenarioReplayP(ctxt, state, game) {
       game = R.assoc('scenario', ctxt.after, game);
 
-      state.changeEvent('Game.scenario.change');
-
-      return game;
-    },
-    undo: function setScenarioUndo(ctxt, state, game) {
-      game = R.assoc('scenario', ctxt.before, game);
-
-      state.changeEvent('Game.scenario.change');
+      state.queueChangeEventP('Game.scenario.change');
 
       return game;
     }
-  };
-  commandsService.registerCommand('setScenario', setScenarioCommandService);
-  return setScenarioCommandService;
-}]);
+    function setScenarioUndoP(ctxt, state, game) {
+      game = R.assoc('scenario', ctxt.before, game);
+
+      state.queueChangeEventP('Game.scenario.change');
+
+      return game;
+    }
+  }
+})();
 //# sourceMappingURL=scenario.js.map

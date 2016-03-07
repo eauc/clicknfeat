@@ -3,13 +3,12 @@
 (function () {
   angular.module('clickApp.services').factory('stateData', stateDataModelFactory);
 
-  stateDataModelFactory.$inject = ['stateExports', 'fileImport', 'settings', 'gameBoard', 'gameTerrainInfo'];
-
+  stateDataModelFactory.$inject = ['stateExports', 'fileImport', 'settings', 'gameBoard', 'gameTerrainInfo',
   // 'gameFactions',
-  // 'gameScenario',
-  function stateDataModelFactory(stateExportsService, fileImportService, settingsModel, gameBoardModel, gameTerrainInfoModel) {
-    // gameFactionsService,
-    // gameScenarioService) {
+  'gameScenario'];
+  function stateDataModelFactory(stateExportsService, fileImportService, settingsModel, gameBoardModel, gameTerrainInfoModel,
+  // gameFactionsModel,
+  gameScenarioModel) {
     var stateDataModel = {
       create: stateDataCreate,
       save: stateDataSave,
@@ -59,18 +58,16 @@
       //         .then((factions) => {
       //           state.factions = factions;
       //         });
-      // const scenario_ready = gameScenarioModel.init()
-      //         .then((scenarios) => {
-      //           state.scenarios = scenarios;
-      //           console.log('scenarios', scenarios);
-      //         });
+      var scenario_ready = gameScenarioModel.initP().then(function (scenarios) {
+        state.scenarios = scenarios;
+        console.log('scenarios', scenarios);
+      });
       var settings_ready = settingsModel.initP().then(function (settings) {
         state.settings = settings;
       });
       self.Promise.all([boards_ready, terrains_ready,
       // factions_ready,
-      // scenario_ready,
-      settings_ready]).then(function () {
+      scenario_ready, settings_ready]).then(function () {
         console.log('data ready');
         resolve();
       });

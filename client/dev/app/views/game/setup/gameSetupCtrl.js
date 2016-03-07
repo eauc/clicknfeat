@@ -3,20 +3,15 @@
 (function () {
   angular.module('clickApp.controllers').controller('gameSetupCtrl', gameSetupCtrl);
 
-  gameSetupCtrl.$inject = ['$scope'];
-
-  // 'gameBoard',
-  // 'gameScenario',
-  function gameSetupCtrl($scope) {
-    // gameBoardService,
-    // gameScenarioService) {
+  gameSetupCtrl.$inject = ['$scope', 'gameScenario'];
+  function gameSetupCtrl($scope, gameScenarioService) {
     var vm = this;
     console.log('init gameSetupCtrl');
 
     vm.doSetBoard = doSetBoard;
     vm.doSetRandomBoard = doSetRandomBoard;
-    // vm.doSetScenario = doSetScenario;
-    // vm.doSetRandomScenario = doSetRandomScenario;
+    vm.doSetScenario = doSetScenario;
+    vm.doSetRandomScenario = doSetRandomScenario;
     // vm.doGenerateObjectives = doGenerateObjectives;
     vm.doToggleLayer = doToggleLayer;
     vm.onAmbianceChange = onAmbianceChange;
@@ -35,9 +30,8 @@
       $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
       self.requestAnimationFrame(updateBoardName);
 
-      // $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
-      // // $scope.onStateChangeEvent('Game.load.success', updateScenario, $scope);
-      // self.requestAnimationFrame(updateScenario);
+      $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
+      self.requestAnimationFrame(updateScenario);
 
       $scope.onStateChangeEvent('Game.layers.change', updateLayers, $scope);
       $scope.onStateChangeEvent('Game.load.success', updateLayers, $scope);
@@ -54,7 +48,7 @@
       vm.terrains = $scope.state.terrains;
       vm.ambiance = R.head(R.keys(vm.terrains));
       vm.onAmbianceChange();
-      //   vm.scenarios = $scope.state.scenarios;
+      vm.scenarios = $scope.state.scenarios;
       $scope.$digest();
     }
 
@@ -69,19 +63,17 @@
       $scope.stateEvent('Game.board.setRandom');
     }
 
-    // function updateScenario() {
-    //   vm.scenario_name = R.path(['state','game','scenario','name'], $scope);
-    //   vm.scenario_group = gameScenarioService
-    //     .groupForName(vm.scenario_name, vm.scenarios);
-    //   $scope.$digest();
-    // }
-    // function doSetScenario() {
-    //   $scope.stateEvent('Game.scenario.set',
-    //                     vm.scenario_name, vm.scenario_group);
-    // }
-    // function doSetRandomScenario() {
-    //   $scope.stateEvent('Game.scenario.setRandom');
-    // }
+    function updateScenario() {
+      vm.scenario_name = R.path(['state', 'game', 'scenario', 'name'], $scope);
+      vm.scenario_group = gameScenarioService.groupForName(vm.scenario_name, vm.scenarios);
+      $scope.$digest();
+    }
+    function doSetScenario() {
+      $scope.stateEvent('Game.scenario.set', vm.scenario_name, vm.scenario_group);
+    }
+    function doSetRandomScenario() {
+      $scope.stateEvent('Game.scenario.setRandom');
+    }
     // function doGenerateObjectives() {
     //   $scope.stateEvent('Game.scenario.generateObjectives');
     // }

@@ -21,7 +21,7 @@
       'setLayersCommand',
       // 'setLosCommand',
       // 'setRulerCommand',
-      // 'setScenarioCommand',
+      'setScenarioCommand',
       () => ({ })
     ]);
 

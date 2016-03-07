@@ -31,9 +31,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
       $scope.digestOnStateChangeEvent('Game.board.change', $scope);
-      // $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
+      $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
       // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
-      // $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
+      $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
       $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
 
       // $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
@@ -42,9 +42,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
       // $scope.onStateChangeEvent('Game.loaded', updateCurrentModeBindings, $scope);
 
-      // $scope.$on('$destroy', () => {
-      //   $scope.stateEvent('Modes.exit');
-      // });
+      $scope.$on('$destroy', function () {
+        $scope.stateEvent('Modes.exit');
+      });
     }
 
     function onGameLoadError() {

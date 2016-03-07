@@ -10,7 +10,7 @@
     // 'gameFactions',
     // 'gameModels',
     // 'gameModelSelection',
-    // 'gameScenario',
+    'gameScenario',
     'gameTerrainInfo',
     'gameTerrains',
     'fileImport',
@@ -25,7 +25,7 @@
                                  // gameFactionsModel,
                                  // gameModelsModel,
                                  // gameModelSelectionModel,
-                                 // gameScenarioModel,
+                                 gameScenarioModel,
                                  gameTerrainInfoModel,
                                  gameTerrainsModel,
                                  fileImportService,
@@ -55,8 +55,8 @@
       onGameBoardSet: stateGameOnBoardSet,
       onGameBoardSetRandom: stateGameOnBoardSetRandom,
       onGameBoardImportFile: stateGameOnBoardImportFile,
-      // onGameScenarioSet: stateGameOnScenarioSet,
-      // onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
+      onGameScenarioSet: stateGameOnScenarioSet,
+      onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
     };
 
@@ -118,10 +118,10 @@
                     stateGameModel.onGameBoardSetRandom$(state));
       state.onEvent('Game.board.importFile',
                     stateGameModel.onGameBoardImportFile$(state));
-      // state.onEvent('Game.scenario.set',
-      //               stateGameModel.onGameScenarioSet$(state));
-      // state.onEvent('Game.scenario.setRandom',
-      //               stateGameModel.onGameScenarioSetRandom$(state));
+      state.onEvent('Game.scenario.set',
+                    stateGameModel.onGameScenarioSet$(state));
+      state.onEvent('Game.scenario.setRandom',
+                    stateGameModel.onGameScenarioSetRandom$(state));
       // state.onEvent('Game.scenario.generateObjectives',
       //               stateGameModel.onGameScenarioGenerateObjectives$(state));
 
@@ -363,22 +363,21 @@
         )
       ).catch(R.spyAndDiscardError('Import board file'));
     }
-    // function stateGameOnScenarioSet(state, event, name, group) {
-    //   let scenario = gameScenarioModel.forName(name, group);
-    //   return state.event('Game.command.execute',
-    //                      'setScenario', [scenario]);
-    // }
-    // function stateGameOnScenarioSetRandom(state, event) {
-    //   event = event;
-    //   var group = gameScenarioModel.group('SR15', state.scenarios);
-    //   var scenario, name = gameScenarioModel.name(state.game.scenario);
-    //   while(name === gameScenarioModel.name(state.game.scenario)) {
-    //     scenario = group[1][R.randomRange(0, group[1].length-1)];
-    //     name = gameScenarioModel.name(scenario);
-    //   }
-    //   return state.event('Game.command.execute',
-    //                      'setScenario', [scenario]);
-    // }
+    function stateGameOnScenarioSet(state, event, name, group) {
+      const scenario = gameScenarioModel.forName(name, group);
+      return state.eventP('Game.command.execute',
+                          'setScenario', [scenario]);
+    }
+    function stateGameOnScenarioSetRandom(state, event) {
+      const group = gameScenarioModel.group('SR15', state.scenarios);
+      let scenario, name = gameScenarioModel.name(state.game.scenario);
+      while(name === gameScenarioModel.name(state.game.scenario)) {
+        scenario = group[1][R.randomRange(0, group[1].length-1)];
+        name = gameScenarioModel.name(scenario);
+      }
+      return state.eventP('Game.command.execute',
+                          'setScenario', [scenario]);
+    }
     // function stateGameOnScenarioGenerateObjectives(state, event) {
     //   event = event;
     //   return R.pipePromise(
