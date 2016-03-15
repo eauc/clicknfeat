@@ -31,7 +31,7 @@
 
       scope.onStateChangeEvent('Game.model.selection.local.updateSingle', onUpdateSingleModelSelection(state.factions, model, element), scope);
 
-      scope.onStateChangeEvent('Game.template.selection.local.updateSingle', onUpdateSingconstemplateSelection(state.factions, model, element), scope);
+      scope.onStateChangeEvent('Game.template.selection.local.updateSingle', onUpdateSingleTemplateSelection(state.factions, model, element), scope);
 
       var onUpdateScenarioAura = withModel(scope, function (model) {
         updateScenarioAura(state, info, model, scope, element);
@@ -122,11 +122,11 @@
         });
       };
     }
-    function onUpdateSingconstemplateSelection(factions, model, element) {
+    function onUpdateSingleTemplateSelection(factions, model, element) {
       return function (event, sel_stamp, sel_temp) {
         // console.log('onUpdateSingleAoTemplateSelection',
         //             sel_stamp, model.state.stamp);
-        if (R.isNil(sel_temp)) {
+        if (R.isNil(sel_temp) || 'aoe' !== sel_temp.state.type) {
           element.container.classList.remove('under-aoe');
           return;
         }

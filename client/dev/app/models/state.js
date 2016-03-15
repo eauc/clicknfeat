@@ -26,6 +26,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
+        onChangeEvent: onChangeEvent,
         eventP: eventP,
         queueEventP: queueEventP,
         changeEventP: changeEventP,
@@ -44,30 +45,37 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         return pubSubService.subscribe.apply(null, [].concat(args, [state]));
       }
-      function queueEventP() {
+      function onChangeEvent() {
         for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
           args[_key2] = arguments[_key2];
+        }
+
+        return pubSubService.subscribe.apply(null, [].concat(args, [state.change]));
+      }
+      function queueEventP() {
+        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+          args[_key3] = arguments[_key3];
         }
 
         return stateQueueEventP(args, state);
       }
       function queueChangeEventP() {
-        for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-          args[_key3] = arguments[_key3];
+        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+          args[_key4] = arguments[_key4];
         }
 
         return stateQueueChangeEventP(args, state);
       }
       function eventP() {
-        for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-          args[_key4] = arguments[_key4];
+        for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+          args[_key5] = arguments[_key5];
         }
 
         return stateEventP(args, state);
       }
       function changeEventP() {
-        for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-          args[_key5] = arguments[_key5];
+        for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+          args[_key6] = arguments[_key6];
         }
 
         return stateChangeEventP(args, state);

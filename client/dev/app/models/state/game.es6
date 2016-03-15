@@ -13,6 +13,8 @@
     'gameScenario',
     'gameTerrainInfo',
     'gameTerrains',
+    'gameTemplates',
+    'gameTemplateSelection',
     'fileImport',
     'stateExports',
     'allCommands',
@@ -28,6 +30,8 @@
                                  gameScenarioModel,
                                  gameTerrainInfoModel,
                                  gameTerrainsModel,
+                                 gameTemplatesModel,
+                                 gameTemplateSelectionModel,
                                  fileImportService,
                                  stateExportsModel) {
     const stateGameModel = {
@@ -50,7 +54,9 @@
       onGameModelCopy: stateGameOnModelCopy,
       onGameModelImportList: stateGameOnModelImportList,
       onGameModelImportFile: stateGameOnModelImportFile,
+      onGameModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
       onGameTemplateCreate: stateGameOnTemplateCreate,
+      onGameTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
       onGameTerrainCreate: stateGameOnTerrainCreate,
       onGameTerrainReset: stateGameOnTerrainReset,
       onGameBoardSet: stateGameOnBoardSet,
@@ -108,8 +114,12 @@
                     stateGameModel.onGameModelImportList$(state));
       state.onEvent('Game.model.importFile',
                     stateGameModel.onGameModelImportFile$(state));
+      state.onChangeEvent('Game.model.selection.local.change',
+                          stateGameModel.onGameModelSelectionLocalChange$(state));
       state.onEvent('Game.template.create',
                     stateGameModel.onGameTemplateCreate$(state));
+      state.onChangeEvent('Game.template.selection.local.change',
+                          stateGameModel.onGameTemplateSelectionLocalChange$(state));
       state.onEvent('Game.terrain.create',
                     stateGameModel.onGameTerrainCreate$(state));
       state.onEvent('Game.terrain.reset',
@@ -303,12 +313,113 @@
         }
       ).catch(gameModel.actionError$(state));
     }
+    function stateGameOnModelSelectionLocalChange(state, event) {
+      // console.warn('onModelSelectionLocalChange', arguments);
+      const local_model_selection = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      const length = R.length(local_model_selection);
+      const previous_selection = R.path(['_model_selection_listener','stamp'], state);
+      if(length === 1 &&
+         local_model_selection[0] === previous_selection) {
+        return;
+      }
+      cleanupModelSelectionListener(state);
+      if(length === 1) {
+        setupModelSelectionListener(local_model_selection[0], state);
+      }
+      else {
+        state.queueChangeEventP('Game.model.selection.local.updateSingle',
+                                null, null);
+      }
+    }
+    function setupModelSelectionListener(stamp, state) {
+      // console.warn('setupModelSelectionListener', arguments);
+      state._model_selection_listener = {
+        stamp: stamp,
+        unsubscribe: state
+          .onChangeEvent(`Game.model.change.${stamp}`,
+                         onModelSelectionChange(stamp, state))
+      };
+    }
+    function onModelSelectionChange(stamp, state) {
+      return () => {
+        // console.warn('onModelSelectionChange', arguments);
+        return R.threadP(state.game)(
+          R.prop('models'),
+          gameModelsModel.findStampP$(stamp),
+          (model) => {
+            state.queueChangeEventP('Game.model.selection.local.updateSingle',
+                                    stamp, model);
+          }
+        );
+      };
+    }
+    function cleanupModelSelectionListener(state) {
+      // console.warn('cleanupModelSelectionListener', arguments);
+      const unsubscribe = R.thread(state)(
+        R.path(['_model_selection_listener','unsubscribe']),
+        R.defaultTo(() => {})
+      );
+      unsubscribe();
+      state._model_selection_listener = {};
+    }
     function stateGameOnTemplateCreate(state, event, type) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
         templates: [ { type: type, x: 0, y: 0, r: 0 } ]
       };
       return state.eventP('Modes.switchTo', 'CreateTemplate');
+    }
+    function stateGameOnTemplateSelectionLocalChange(state, event) {
+      console.warn('onTemplateSelectionLocalChange', arguments);
+      const local_template_selection = gameTemplateSelectionModel
+              .get('local', state.game.template_selection);
+      const length = R.length(local_template_selection);
+      const previous_selection =
+              R.path(['_template_selection_listener','stamp'], state);
+      if(length === 1 &&
+         local_template_selection[0] === previous_selection) {
+        return;
+      }
+      cleanupTemplateSelectionListener(state);
+      if(length === 1) {
+        setupTemplateSelectionListener(local_template_selection[0], state);
+      }
+      else {
+        state.queueChangeEventP('Game.template.selection.local.updateSingle',
+                                null, null);
+      }
+    }
+    function setupTemplateSelectionListener(stamp, state) {
+      console.warn('setupTemplateSelectionListener', arguments);
+      state._template_selection_listener = {
+        stamp: stamp,
+        unsubscribe: state
+          .onChangeEvent(`Game.template.change.${stamp}`,
+                         onTemplateSelectionChange(stamp, state))
+      };
+    }
+    function onTemplateSelectionChange(stamp, state) {
+      return () => {
+        console.warn('onTemplateSelectionChange', arguments);
+        return R.threadP(state.game)(
+          R.prop('templates'),
+          gameTemplatesModel.findStampP$(stamp),
+          (template) => {
+            state.queueChangeEventP('Game.template.selection.local.updateSingle',
+                                    stamp, template);
+          }
+        );
+      };
+    }
+    function cleanupTemplateSelectionListener(state) {
+      console.warn('cleanupTemplateSelectionListener', arguments);
+      const unsubscribe = R.thread(state)(
+        R.path(['_template_selection_listener','unsubscribe']),
+        R.defaultTo(() => {})
+      );
+      unsubscribe();
+      state._template_selection_listener = {};
     }
     function stateGameOnTerrainCreate(state, event, path) {
       state.create = {

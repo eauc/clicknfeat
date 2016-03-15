@@ -38,6 +38,7 @@
         onEvent: onEvent,
         change: pubSubService.init({}, 'State.Change'),
         change_event_queue: [],
+        onChangeEvent: onChangeEvent,
         eventP: eventP,
         queueEventP: queueEventP,
         changeEventP: changeEventP,
@@ -58,6 +59,10 @@
       function onEvent(...args) {
         return pubSubService.subscribe
           .apply(null, [...args, state]);
+      }
+      function onChangeEvent(...args) {
+        return pubSubService.subscribe
+          .apply(null, [...args, state.change]);
       }
       function queueEventP(...args) {
         return stateQueueEventP(args, state);
