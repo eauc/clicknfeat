@@ -45,6 +45,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return element_mode;
 
       function clearElementSelection(state) {
+        state.queueChangeEventP('Game.selectionDetail.close');
+        state.queueChangeEventP('Game.editDamage.close');
+        state.queueChangeEventP('Game.editLabel.close');
         return state.eventP('Game.update', R.lensProp(type + '_selection'), gameElementSelectionModel.clear$('local', state));
       }
       function copySelection(state) {

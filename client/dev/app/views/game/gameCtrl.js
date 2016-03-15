@@ -32,7 +32,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
       $scope.digestOnStateChangeEvent('Game.board.change', $scope);
       $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
-      // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
+      $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
       $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
       $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
 

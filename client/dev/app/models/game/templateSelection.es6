@@ -21,11 +21,9 @@
         gameTemplateSelectionModel.get$('local'),
         R.head,
         R.rejectIf(R.isNil, 'No template selection'),
-        R.spyError('stamp'),
         (stamp) => gameTemplatesModel
           .findStampP(stamp, state.game.templates),
         (template) => {
-          console.error(template);
           state.queueEventP('Modes.switchTo',
                             `${template.state.type}Template`);
         }

@@ -8,7 +8,7 @@ describe('sprayTemplateMode model', function() {
       this.sprayTemplateModel = spyOnService('sprayTemplate');
       this.gameTemplatesModel = spyOnService('gameTemplates');
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
-      // this.gameModelsModel = spyOnService('gameModels');
+      this.gameModelsModel = spyOnService('gameModels');
 
       this.state = {
         factions: 'factions',
@@ -38,14 +38,14 @@ describe('sprayTemplateMode model', function() {
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onTemplates',
-                              [ 'setOrigin',
+                              [ 'setOriginP',
                                 ['factions', this.target],
                                 ['stamp']
                               ]);
     });
   });
 
-  xcontext('when user set target model', function() {
+  context('when user set target model', function() {
     return this.sprayTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -64,7 +64,7 @@ describe('sprayTemplateMode model', function() {
       expect(this.gameTemplatesModel.findStampP)
         .toHaveBeenCalledWith('stamp', 'templates');
       expect(this.sprayTemplateModel.origin)
-        .toHaveBeenCalledWith('gameTemplates.findStamp.returnValue');
+        .toHaveBeenCalledWith('gameTemplates.findStampP.returnValue');
     });
 
     context('when spray does not have an origin', function() {
@@ -87,9 +87,9 @@ describe('sprayTemplateMode model', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
-                                [ 'setTarget',
+                                [ 'setTargetP',
                                   ['factions',
-                                   'gameModels.findStamp.returnValue',
+                                   'gameModels.findStampP.returnValue',
                                    this.target],
                                   ['stamp']
                                 ]);
@@ -98,7 +98,7 @@ describe('sprayTemplateMode model', function() {
   });
 
   example(function(e, d) {
-    xcontext('when user rotate left, '+d, function() {
+    context('when user rotate left, '+d, function() {
       return this.sprayTemplateModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -118,15 +118,15 @@ describe('sprayTemplateMode model', function() {
           .toHaveBeenCalledWith('stamp', 'templates');
 
         expect(this.sprayTemplateModel.origin)
-          .toHaveBeenCalledWith('gameTemplates.findStamp.returnValue');
+          .toHaveBeenCalledWith('gameTemplates.findStampP.returnValue');
         expect(this.gameModelsModel.findStampP)
           .toHaveBeenCalledWith('origin', 'models');
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
-                                [ 'rotateLeft',
+                                [ 'rotateLeftP',
                                   ['factions',
-                                   'gameModels.findStamp.returnValue',
+                                   'gameModels.findStampP.returnValue',
                                    e.small],
                                   ['stamp']
                                 ]);

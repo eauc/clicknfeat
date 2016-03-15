@@ -60,7 +60,7 @@
     }
     function setTargetModel(state, event) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      return state.eventP('Game.command.execute', 'onTemplates', ['setTarget', [state.factions, null, event['click#'].target], stamps]);
+      return state.eventP('Game.command.execute', 'onTemplates', ['setTargetP', [state.factions, null, event['click#'].target], stamps]);
     }
     function setMaxDeviation(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);

@@ -6,8 +6,8 @@
     'template',
     'sprayTemplate',
     'gameTemplateSelection',
-    // 'gameModels',
-    // 'gameFactions',
+    'gameModels',
+    'gameFactions',
     'gameMap',
     'labelElement',
   ];
@@ -19,8 +19,8 @@
   function sprayTemplateElementModelFactory(templateModel,
                                             sprayTemplateModel,
                                             gameTemplateSelectionModel,
-                                            // gameModelsModel,
-                                            // gameFactionsModel,
+                                            gameModelsModel,
+                                            gameFactionsModel,
                                             gameMapService,
                                             labelElementModel) {
     const sprayTemplateElementModel = {
@@ -86,19 +86,19 @@
                                label_text,
                                spray.label);
 
-      // R.threadP(template)(
-      //   sprayTemplateModel.origin,
-      //   findOriginModel,
-      //   (origin_model) => updateOrigin(state.factions, local,
-      //                                  origin_model, spray.origin)
-      // );
+      R.threadP(template)(
+        sprayTemplateModel.origin,
+        findOriginModel,
+        (origin_model) => updateOrigin(state.factions, local,
+                                       origin_model, spray.origin)
+      );
 
-      // function findOriginModel(origin) {
-      //   if(R.isNil(origin)) return null;
+      function findOriginModel(origin) {
+        if(R.isNil(origin)) return null;
 
-      //   return gameModelsModel
-      //     .findStampP(origin, state.game.models);
-      // }
+        return gameModelsModel
+          .findStampP(origin, state.game.models);
+      }
     }
     function updateContainer(template, container) {
       container.setAttribute('transform', [
@@ -122,21 +122,21 @@
       spray.setAttribute('points', POINTS[template.state.s+'']);
       spray.style.stroke = stroke_color;
     }
-    // function updateOrigin(factions, local, model, origin) {
-    //   if(!local ||
-    //      R.isNil(model)) {
-    //     origin.style.visibility = 'hidden';
-    //     return;
-    //   }
-    //   R.threadP(factions)(
-    //     gameFactionsModel.getModelInfoP$(model.state.info),
-    //     (info) => {
-    //       origin.setAttribute('cx', model.state.x+'');
-    //       origin.setAttribute('cy', model.state.y+'');
-    //       origin.setAttribute('r', info.base_radius+'');
-    //       origin.style.visibility = 'visible';
-    //     }
-    //   );
-    // }
+    function updateOrigin(factions, local, model, origin) {
+      if(!local ||
+         R.isNil(model)) {
+        origin.style.visibility = 'hidden';
+        return;
+      }
+      R.threadP(factions)(
+        gameFactionsModel.getModelInfoP$(model.state.info),
+        (info) => {
+          origin.setAttribute('cx', model.state.x+'');
+          origin.setAttribute('cy', model.state.y+'');
+          origin.setAttribute('r', info.base_radius+'');
+          origin.style.visibility = 'visible';
+        }
+      );
+    }
   }
 })();

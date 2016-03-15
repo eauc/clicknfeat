@@ -1,26 +1,32 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('modelAura', modelAuraModelFactory);
 
-angular.module('clickApp.services')
-  .factory('modelAura', [
-    function modelAuraServiceFactory() {
-      return function(/*modelService*/) {
-        var modelAuraService = {
-          isAuraDisplayed: function modelIsAuraDisplayed(model) {
-            return R.exists(model.state.aur);
-          },
-          auraDisplay: function modelAuraDisplay(model) {
-            return model.state.aur;
-          },
-          setAuraDisplay: function modelSetAuraDisplay(aura, model) {
-            return R.assocPath(['state','aur'], aura, model);
-          },
-          toggleAuraDisplay: function modelToggleAuraDisplay(aura, model) {
-            return R.over(R.lensPath(['state','aur']),
-                          (aur) => { return (aura === aur) ? null : aura; },
-                          model);
-          }
-        };
-        return modelAuraService;
+  modelAuraModelFactory.$inject = [];
+  function modelAuraModelFactory() {
+    return () => {
+      const modelAuraModel = {
+        isAuraDisplayed: modelIsAuraDisplayed,
+        auraDisplay: modelAuraDisplay,
+        setAuraDisplay: modelSetAuraDisplay,
+        toggleAuraDisplay: modelToggleAuraDisplay
       };
-    }
-  ]);
+      return modelAuraModel;
+
+      function modelIsAuraDisplayed(model) {
+        return R.exists(model.state.aur);
+      }
+      function modelAuraDisplay(model) {
+        return model.state.aur;
+      }
+      function modelSetAuraDisplay(aura, model) {
+        return R.assocPath(['state','aur'], aura, model);
+      }
+      function modelToggleAuraDisplay(aura, model) {
+        return R.over(R.lensPath(['state','aur']),
+                      (aur) => { return (aura === aur) ? null : aura; },
+                      model);
+      }
+    };
+  }
+})();

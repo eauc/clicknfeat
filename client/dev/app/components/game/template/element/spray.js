@@ -3,19 +3,13 @@
 (function () {
   angular.module('clickApp.directives').factory('sprayTemplateElement', sprayTemplateElementModelFactory);
 
-  sprayTemplateElementModelFactory.$inject = ['template', 'sprayTemplate', 'gameTemplateSelection',
-  // 'gameModels',
-  // 'gameFactions',
-  'gameMap', 'labelElement'];
+  sprayTemplateElementModelFactory.$inject = ['template', 'sprayTemplate', 'gameTemplateSelection', 'gameModels', 'gameFactions', 'gameMap', 'labelElement'];
   var POINTS = {
     6: '8.75,0 5.125,-59 10,-60 14.875,-59 11.25,0',
     8: '8.75,0 3.5,-78.672 10,-80 16.5,-78.672 11.25,0',
     10: '8.75,0 1.875,-98.34 10,-100 18.125,-98.34 11.25,0'
   };
-  function sprayTemplateElementModelFactory(templateModel, sprayTemplateModel, gameTemplateSelectionModel,
-  // gameModelsModel,
-  // gameFactionsModel,
-  gameMapService, labelElementModel) {
+  function sprayTemplateElementModelFactory(templateModel, sprayTemplateModel, gameTemplateSelectionModel, gameModelsModel, gameFactionsModel, gameMapService, labelElementModel) {
     var sprayTemplateElementModel = {
       create: sprayTemplateElementModelCreate,
       update: sprayTemplateElementModelUpdate
@@ -69,19 +63,15 @@
       updateSpray(stroke_color, template, spray.spray);
       labelElementModel.update(map_flipped, zoom_factor, label_flip_center, label_text_center, label_text, spray.label);
 
-      // R.threadP(template)(
-      //   sprayTemplateModel.origin,
-      //   findOriginModel,
-      //   (origin_model) => updateOrigin(state.factions, local,
-      //                                  origin_model, spray.origin)
-      // );
+      R.threadP(template)(sprayTemplateModel.origin, findOriginModel, function (origin_model) {
+        return updateOrigin(state.factions, local, origin_model, spray.origin);
+      });
 
-      // function findOriginModel(origin) {
-      //   if(R.isNil(origin)) return null;
+      function findOriginModel(origin) {
+        if (R.isNil(origin)) return null;
 
-      //   return gameModelsModel
-      //     .findStampP(origin, state.game.models);
-      // }
+        return gameModelsModel.findStampP(origin, state.game.models);
+      }
     }
     function updateContainer(template, container) {
       container.setAttribute('transform', ['rotate(', template.state.r, ',', template.state.x, ',', template.state.y, ')'].join(''));
@@ -91,22 +81,18 @@
       spray.setAttribute('points', POINTS[template.state.s + '']);
       spray.style.stroke = stroke_color;
     }
-    // function updateOrigin(factions, local, model, origin) {
-    //   if(!local ||
-    //      R.isNil(model)) {
-    //     origin.style.visibility = 'hidden';
-    //     return;
-    //   }
-    //   R.threadP(factions)(
-    //     gameFactionsModel.getModelInfoP$(model.state.info),
-    //     (info) => {
-    //       origin.setAttribute('cx', model.state.x+'');
-    //       origin.setAttribute('cy', model.state.y+'');
-    //       origin.setAttribute('r', info.base_radius+'');
-    //       origin.style.visibility = 'visible';
-    //     }
-    //   );
-    // }
+    function updateOrigin(factions, local, model, origin) {
+      if (!local || R.isNil(model)) {
+        origin.style.visibility = 'hidden';
+        return;
+      }
+      R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        origin.setAttribute('cx', model.state.x + '');
+        origin.setAttribute('cy', model.state.y + '');
+        origin.setAttribute('r', info.base_radius + '');
+        origin.style.visibility = 'visible';
+      });
+    }
   }
 })();
 //# sourceMappingURL=spray.js.map

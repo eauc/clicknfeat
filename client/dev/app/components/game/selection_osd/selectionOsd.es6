@@ -5,12 +5,14 @@
 
   gameSelectionDetailCtrl.$inject = [
     '$scope',
+    'gameFactions',
+    'gameModels',
     'gameTemplates',
-    // 'gameFactions',
   ];
   function gameSelectionDetailCtrl($scope,
+                                   gameFactionsModel,
+                                   gameModelsModel,
                                    gameTemplatesModel) {
-                                   // gameFactionsModel) {
     const vm = this;
     const state = $scope.state;
     console.log('init clickGameSelectionDetailCtrl');
@@ -52,14 +54,17 @@
       );
     }
     function updateModelElement() {
-      // R.threadP(state.factions)(
-      //   () => gameFactionsModel
-      //     .getModelInfoP$(vm.element.state.info),
-      //   (info) => {
-      //     vm.info = info;
-      //     $scope.$digest();
-      //   }
-      // );
+      return R.threadP(state.game)(
+        R.prop('models'),
+        gameModelsModel.findStampP$(vm.element.stamp),
+        (model) => {
+          vm.element = model.state;
+        },
+        () => gameFactionsModel.getModelInfoP(vm.element.info, state.factions),
+        (info) => {
+          vm.info = info;
+        }
+      );
     }
     function labelDisplay(l) {
       return s.truncate(l, 12);
@@ -160,7 +165,6 @@
       }
       function displaySelectionDetail() {
         // console.log('displaySelectionDetail');
-        scope.$digest();
         element.style.display = 'initial';
         element.style.visibility = 'hidden';
         self.window.requestAnimationFrame(showSelectionDetail);

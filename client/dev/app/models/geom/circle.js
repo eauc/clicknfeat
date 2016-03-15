@@ -61,7 +61,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function circleIsInBox(box, circle) {
       var dx = undefined;
       var dy = undefined;
-      if (circle.x >= box.low.x && circle.x <= box.high.x && circle.y >= box.low.y && circle.y <= box.high.x) return true;
+      if (circle.x >= box.low.x && circle.x <= box.high.x && circle.y >= box.low.y && circle.y <= box.high.y) return true;
       if (circle.x >= box.low.x - circle.radius && circle.x < box.low.x) {
         dx = box.low.x - circle.x;
         dy = Math.sqrt(circle.radius * circle.radius - dx * dx);

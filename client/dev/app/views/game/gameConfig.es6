@@ -21,12 +21,13 @@
         controllerAs: 'game_main',
         data: { hide_nav: true }
       })
-      // .state('game.model', {
-      //   url: '/model',
-      //   templateUrl: 'partials/game/model.html',
-      //   controller: 'gameModelCtrl',
-      //   data: { hide_nav: true }
-      // })
+      .state('game.model', {
+        url: '/model',
+        templateUrl: 'app/views/game/model/game_model.html',
+        controller: 'gameModelCtrl',
+        controllerAs: 'game_model',
+        data: { hide_nav: true }
+      })
       .state('game.setup', {
         url: '/setup',
         templateUrl: 'app/views/game/setup/game_setup.html',

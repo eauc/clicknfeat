@@ -57,14 +57,12 @@
         .catch(gameModel.actionError$(state));
     }
     function stateModesOnReset(state, event) {
-      event = event;
       return R.threadP(state)(
         modesModel.initP,
         setModes$(state)
       );
     }
     function stateModesOnExit(state, event) {
-      event = event;
       return R.threadP(state.modes)(
         modesModel.exit$(state),
         setModes$(state)

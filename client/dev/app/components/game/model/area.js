@@ -2,9 +2,17 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-angular.module('clickApp.directives').factory('clickGameModelArea', ['model', function (modelService) {
-  return {
-    create: function clickGameModelAreaCreate(svgNS, parent) {
+(function () {
+  angular.module('clickApp.directives').factory('clickGameModelArea', gameModelAreaModelFactory);
+
+  gameModelAreaModelFactory.$inject = ['model'];
+  function gameModelAreaModelFactory(modelService) {
+    return {
+      create: gameModelAreaCreate,
+      update: gameModelAreaUpdate
+    };
+
+    function gameModelAreaCreate(svgNS, parent) {
       var ctrl_area = document.createElementNS(svgNS, 'circle');
       ctrl_area.classList.add('model-ctrl-area');
       ctrl_area.setAttribute('cx', '0');
@@ -22,8 +30,8 @@ angular.module('clickApp.directives').factory('clickGameModelArea', ['model', fu
       parent.appendChild(area);
 
       return [area, ctrl_area];
-    },
-    update: function clickGameModelAreaUpdate(factions, info, model, img, element) {
+    }
+    function gameModelAreaUpdate(factions, info, model, img, element) {
       var _element = _slicedToArray(element, 2);
 
       var area = _element[0];
@@ -31,7 +39,7 @@ angular.module('clickApp.directives').factory('clickGameModelArea', ['model', fu
 
       ctrl_area.setAttribute('cx', img.width / 2 + '');
       ctrl_area.setAttribute('cy', img.height / 2 + '');
-      modelService.isCtrlAreaDisplayed(factions, model).then(function (is_displayed) {
+      modelService.isCtrlAreaDisplayedP(factions, model).then(function (is_displayed) {
         if (is_displayed) {
           var radius = (info.focus || info.fury) * 20 + info.base_radius;
           ctrl_area.setAttribute('r', radius + '');
@@ -50,6 +58,6 @@ angular.module('clickApp.directives').factory('clickGameModelArea', ['model', fu
         area.style.visibility = 'hidden';
       }
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=area.js.map

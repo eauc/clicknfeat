@@ -1,0 +1,167 @@
+<div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Create Model</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline"
+            name="create-model">
+        <table>
+          <tr>
+            <th>Faction</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as f.name for (k,f) in game_model.factions"
+                      ng-model="game_model.faction"
+                      ng-change="game_model.onFactionChange()">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Section</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as k for (k,s) in
+                                  game_model.factions[game_model.faction].models"
+                      ng-model="game_model.section"
+                      ng-change="game_model.onSectionChange()">
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Entry</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as e.name for (k,e) in
+                                  game_model.factions[game_model.faction].models[game_model.section]"
+                      ng-model="game_model.entry"
+                      ng-change="game_model.onEntryChange()">
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries">
+            <th>Type</th>
+            <td>
+              <select class="form-control"
+                      ng-options="k as k for (k,t) in
+                                  game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries
+                                  "
+                      ng-model="game_model.type"
+                      ng-change="game_model.onTypeChange()">
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries">
+            <th>Model</th>
+            <td>
+              <select class="form-control"
+                      ng-options="
+                                  k as m.name for (k,m) in
+                                  game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries[game_model.type]
+                                  "
+                      ng-model="game_model.model"
+                      ng-change="game_model.onModelChange()">
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="game_model.getModel().ranges">
+            <th>Size</th>
+            <td>
+              <select class="form-control"
+                      ng-options="
+                                  s as s for (k,s) in
+                                  game_model.getModel().ranges
+                                  "
+                      ng-model="game_model.repeat">
+              </select>
+            </td>
+          </tr>
+        </table>
+      </form>
+      <br />
+      <table ng-show="game_model.getModel()">
+        <tr ng-show="game_model.getModel() !==
+                     game_model.factions[game_model.faction].models[game_model.section][game_model.entry]">
+          <th>Unit</th>
+          <td>{{game_model.factions[game_model.faction].models[game_model.section][game_model.entry].name}}</td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td>{{game_model.getModel().name}}</td>
+        </tr>
+        <tr>
+          <th>Type</th>
+          <td>{{game_model.getModel().type}}</td>
+        </tr>
+        <tr ng-show="game_model.getModel().fury">
+          <th>Fury</th>
+          <td>{{game_model.getModel().fury}}</td>
+        </tr>
+        <tr>
+          <th>Base</th>
+          <td>{{game_model.getModel().base}}</td>
+        </tr>
+        <tr>
+          <th>Damage</th>
+          <td>
+            <click-game-model-damage info="game_model.getModel().damage">
+            </click-game-model-damage>
+          </td>
+        </tr>
+        <tr ng-show="game_model.getModel().img[0].link">
+          <th>Image</th>
+          <td><img width="150"
+                   height="150"
+                   ng-src="{{game_model.getModel().img[0].link}}" /></td>
+        </tr>
+      </table>
+    </div>
+    <div class="panel-footer">
+      <button class="btn btn-default"
+              ng-disabled="
+                           !game_model.getModel() ||
+                           app.currentModeIs('CreateModel')
+                           "
+              ng-click="game_model.doCreateModel()">
+        Create Model
+      </button>
+    </div>
+  </div>
+  <div class="panel panel-info">
+    <form name="import-list"
+          ng-submit="game_model.doImportList()">
+      <div class="panel-heading">
+        <strong>Import List</strong>
+      </div>
+      <div class="panel-content">
+        <textarea class="form-control"
+                  style="width:100%;
+                         height: 8em;"
+                  ng-model="game_model.import_list"
+                  placeholder="Forward Kommander list...">
+        </textarea>
+      </div>
+      <div class="panel-footer">
+        <button class="btn btn-default"
+                type="submit">
+          Import List
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <strong>Import Models File</strong>
+    </div>
+    <div class="panel-content">
+      <form class="form-inline">
+        <div class="form-group">
+          <input type="file"
+                 multiple
+                 class="form-control"
+                 click-file="game_model.doImportModelsFile(file)" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

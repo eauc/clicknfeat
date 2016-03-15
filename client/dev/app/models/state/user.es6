@@ -56,7 +56,6 @@
       return userModel.save(state.user);
     }
     function stateUserOnInit(state, ready, event) {
-      event = event;
       return R.threadP(state)(
         userModel.initP,
         setUser$(state),

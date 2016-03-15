@@ -315,4 +315,18 @@ describe('element model', function() {
       [ 'unknown' , ['label1'  , 'label2'] ],
     ]);
   });
+
+  describe('clearLabel(<label>)', function() {
+    beforeEach(function() {
+      this.element = {
+        state: { l:  ['label1', 'label2'] }
+      };
+    });
+
+    it('should remove all labels from element', function() {
+      this.ret = this.elementModel.clearLabel(this.element);
+      expect(this.ret.state.l)
+        .toEqual([]);
+    });
+  });
 });

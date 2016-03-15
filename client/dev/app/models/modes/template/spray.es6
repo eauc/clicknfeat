@@ -10,7 +10,7 @@
     'game',
     'gameTemplates',
     'gameTemplateSelection',
-    // 'gameModels',
+    'gameModels',
   ];
   function sprayTemplateModeModelFactory(modesModel,
                                          settingsModel,
@@ -18,8 +18,8 @@
                                          sprayTemplateModel,
                                          gameModel,
                                          gameTemplatesModel,
-                                         gameTemplateSelectionModel) {
-                                         // gameModelsModel) {
+                                         gameTemplateSelectionModel,
+                                         gameModelsModel) {
     const template_actions = Object.create(templateModeModel.actions);
     template_actions.spraySize6 = spraySize6;
     template_actions.spraySize8 = spraySize8;
@@ -68,6 +68,7 @@
                              (bs) => {
                                R.extend(template_mode.bindings, bs);
                              });
+    const findOriginModel$ = R.curry(findOriginModel);
     return template_mode;
 
     function spraySize6(state) {
@@ -96,7 +97,7 @@
             .get('local', state.game.template_selection);
       return state.eventP('Game.command.execute',
                           'onTemplates',
-                          [ 'setOrigin',
+                          [ 'setOriginP',
                             [state.factions, event['click#'].target],
                             stamps
                           ]);
@@ -108,13 +109,13 @@
         R.prop('templates'),
         gameTemplatesModel.findStampP$(stamps[0]),
         sprayTemplateModel.origin,
-        // findOriginModel,
+        findOriginModel$(state),
         (origin_model) => {
           if(R.isNil(origin_model)) return null;
 
           return state.eventP('Game.command.execute',
                               'onTemplates',
-                              [ 'setTarget',
+                              [ 'setTargetP',
                                 [state.factions, origin_model, event['click#'].target],
                                 stamps
                               ]);
@@ -126,24 +127,23 @@
               .get('local', state.game.template_selection);
       return R.threadP(state.game)(
         R.prop('templates'),
-        () => gameTemplatesModel
-          .findStampP$(stamps[0]),
+        gameTemplatesModel.findStampP$(stamps[0]),
         sprayTemplateModel.origin,
-        // findOriginModel,
+        findOriginModel$(state),
         (origin_model) => state
           .eventP('Game.command.execute',
                   'onTemplates',
-                  [ move,
+                  [ move+'P',
                     [state.factions, origin_model, small],
                     stamps
                   ])
       );
     }
-    // function findOriginModel(stamp) {
-    //   if(R.isNil(stamp)) return null;
+    function findOriginModel(state, stamp) {
+      if(R.isNil(stamp)) return null;
 
-    //   return gameModelsModel
-    //       .findStampP(stamp, state.game.models);
-    // }
+      return gameModelsModel
+          .findStampP(stamp, state.game.models);
+    }
   }
 })();

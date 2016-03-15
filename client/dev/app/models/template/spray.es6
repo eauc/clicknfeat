@@ -4,22 +4,22 @@
 
   sprayTemplateModelFactory.$inject = [
     'template',
-    // 'model',
+    'model',
     'point',
   ];
   function sprayTemplateModelFactory(templateModel,
-                                     // modelModel,
+                                     modelModel,
                                      pointModel) {
     const sprayTemplateModel = Object.create(templateModel);
     R.deepExtend(sprayTemplateModel, {
       _create: sprayTemplateCreate,
       setSizeP: sprayTemplateSetSizeP,
       size: sprayTemplateSize,
-      // origin: sprayTemplateOrigin,
-      // setOriginP: sprayTemplateSetOriginP,
-      // setTargetP: sprayTemplateSetTargetP,
-      // rotateLeftP: sprayTemplateRotateLeft,
-      // rotateRightP: sprayTemplateRotateRight
+      origin: sprayTemplateOrigin,
+      setOriginP: sprayTemplateSetOriginP,
+      setTargetP: sprayTemplateSetTargetP,
+      rotateLeftP: sprayTemplateRotateLeft,
+      rotateRightP: sprayTemplateRotateRight
     });
     const FORWARD_MOVES = [
       'moveFrontP',
@@ -49,32 +49,32 @@
     function sprayTemplateSize(temp) {
       return R.path(['state','s'], temp);
     }
-    // function sprayTemplateOrigin(temp) {
-    //   return R.path(['state','o'], temp);
-    // }
-    // function sprayTemplateSetOriginP(factions, origin, temp) {
-    //   return R.threadP(temp)(
-    //     R.rejectIf(templateModel.isLocked, 'Template is locked'),
-    //     () => modelModel.baseEdgeInDirection$(factions, temp.state.r, origin),
-    //     (position) => R.thread(temp)(
-    //       R.assocPath(['state','o'], origin.state.stamp),
-    //       templateModel.setPosition$(position)
-    //     )
-    //   );
-    // }
-    // function sprayTemplateSetTargetP(factions, origin, target, temp) {
-    //   return R.threadP(temp)(
-    //     R.rejectIf(templateModel.isLocked, 'Template is locked'),
-    //     () => pointModel.directionTo(target.state, origin.state),
-    //     (direction) => R.threadP(origin)(
-    //       modelModel.baseEdgeInDirection$(factions, direction),
-    //       (position) => R.thread(temp)(
-    //         R.assocPath(['state','r'], direction),
-    //         templateModel.setPosition$(position)
-    //       )
-    //     )
-    //   );
-    // }
+    function sprayTemplateOrigin(temp) {
+      return R.path(['state','o'], temp);
+    }
+    function sprayTemplateSetOriginP(factions, origin, temp) {
+      return R.threadP(temp)(
+        R.rejectIf(templateModel.isLocked, 'Template is locked'),
+        () => modelModel.baseEdgeInDirectionP$(factions, temp.state.r, origin),
+        (position) => R.thread(temp)(
+          R.assocPath(['state','o'], origin.state.stamp),
+          (temp) => templateModel.setPositionP(position, temp)
+        )
+      );
+    }
+    function sprayTemplateSetTargetP(factions, origin, target, temp) {
+      return R.threadP(temp)(
+        R.rejectIf(templateModel.isLocked, 'Template is locked'),
+        () => pointModel.directionTo(target.state, origin.state),
+        (direction) => R.threadP(origin)(
+          modelModel.baseEdgeInDirectionP$(factions, direction),
+          (position) => R.thread(temp)(
+            R.assocPath(['state','r'], direction),
+            (temp) => templateModel.setPositionP(position, temp)
+          )
+        )
+      );
+    }
     function buildSprayMove(move) {
       sprayTemplateModel[move] = sprayTemplateForwardMove;
 
@@ -87,37 +87,37 @@
         );
       }
     }
-    // function sprayTemplateRotateLeft(factions, origin,
-    //                                  small, template) {
-    //   return R.threadP(template)(
-    //     templateModel.rotateLeftP$(small),
-    //     handleOrigin
-    //   );
+    function sprayTemplateRotateLeft(factions, origin,
+                                     small, template) {
+      return R.threadP(template)(
+        (temp) => templateModel.rotateLeftP(small, temp),
+        handleOrigin
+      );
 
-    //   function handleOrigin(template) {
-    //     if(R.isNil(origin)) return template;
+      function handleOrigin(template) {
+        if(R.isNil(origin)) return template;
 
-    //     return R.threadP(origin)(
-    //       modelModel.baseEdgeInDirection$(factions, template.state.r),
-    //       (base_edge) => templateModel.setPositionP(base_edge, template)
-    //     );
-    //   }
-    // }
-    // function sprayTemplateRotateRight(factions, origin,
-    //                                   small, template) {
-    //   return R.threadP(template)(
-    //     templateModel.rotateRightP$(small),
-    //     handleOrigin
-    //   );
+        return R.threadP(origin)(
+          modelModel.baseEdgeInDirectionP$(factions, template.state.r),
+          (base_edge) => templateModel.setPositionP(base_edge, template)
+        );
+      }
+    }
+    function sprayTemplateRotateRight(factions, origin,
+                                      small, template) {
+      return R.threadP(template)(
+        (temp) => templateModel.rotateRightP(small, temp),
+        handleOrigin
+      );
 
-    //   function handleOrigin(template) {
-    //     if(R.isNil(origin)) return template;
+      function handleOrigin(template) {
+        if(R.isNil(origin)) return template;
 
-    //     return R.threadP(origin)(
-    //       modelModel.baseEdgeInDirection$(factions, template.state.r),
-    //       (base_edge) => templateModel.setPositionP(base_edge, template)
-    //     );
-    //   }
-    // }
+        return R.threadP(origin)(
+          modelModel.baseEdgeInDirectionP$(factions, template.state.r),
+          (base_edge) => templateModel.setPositionP(base_edge, template)
+        );
+      }
+    }
   }
 })();

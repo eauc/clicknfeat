@@ -267,4 +267,56 @@ describe('point model', function() {
       [ { x: 340, y: -140 } , 0        ],
     ]);
   });
+
+  context('differenceFrom(<other>)', function() {
+    return this.pointModel
+      .differenceFrom(this.other, this.point);
+  }, function() {
+    beforeEach(function() {
+      this.point = { x: 120, y: 360, r: 45, other: 'other' };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.other = e.other;
+      }, function() {
+        it('should return point with <other> substracted', function() {
+          expect(this.context).toEqual(e.result);
+        });
+      });
+    }, [
+      [ 'other', 'result' ],
+      [ { x: 0, y: 0, r: 0 }, { x: 120, y: 360, r: 45, other: 'other' } ],
+      [ { x: 120, y: 360, r: 45 }, { x: 0, y: 0, r: 0, other: 'other' } ],
+      [ { x: 240, y: 240, r: 90 }, { x: -120, y: 120, r: -45, other: 'other' } ],
+    ]);
+  });
+
+  context('differenceFrom(<other>)', function() {
+    return this.pointModel
+      .addToWithFlip(this.flip, this.other, this.point);
+  }, function() {
+    beforeEach(function() {
+      this.point = { x: 120, y: 60, r: 45, other: 'other' };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.other = e.other;
+        this.flip = e.flip;
+      }, function() {
+        it('should return point with <other> substracted', function() {
+          expect(this.context).toEqual(e.result);
+        });
+      });
+    }, [
+      [ 'other', 'flip', 'result' ],
+      [ { x: 0, y: 0, r: 0 }     , false, { x: 120, y: 60, r: 45, other: 'other' } ],
+      [ { x: 120, y: 360, r: 45 }, false, { x: 240, y: 420, r: 90, other: 'other' } ],
+      [ { x: 240, y: 240, r: 90 }, false, { x: 360, y: 300, r: 135, other: 'other' } ],
+      [ { x: 0, y: 0, r: 0 }     , true, { x: -120, y: -60, r: 225, other: 'other' } ],
+      [ { x: 120, y: 360, r: 45 }, true, { x: 0, y: 300, r: 270, other: 'other' } ],
+      [ { x: 240, y: 240, r: 90 }, true, { x: 120, y: 180, r: 315, other: 'other' } ],
+    ]);
+  });
 });

@@ -5,11 +5,14 @@ describe('defaultMode model', function() {
       this.defaultModeModel = defaultModeModel;
 
       this.gameModel = spyOnService('game');
+      this.gameModelsModel = spyOnService('gameModels');
+      this.gameModelSelectionModel = spyOnService('gameModelSelection');
       this.gameTerrainsModel = spyOnService('gameTerrains');
       this.gameTerrainSelectionModel = spyOnService('gameTerrainSelection');
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
 
       this.state = { game: { terrains: 'terrains',
+                             models: 'models',
                              model_selection: 'selection',
                              template_selection: 'template_selection',
                              terrain_selection: 'terrain_selection'
@@ -71,7 +74,7 @@ describe('defaultMode model', function() {
       .templateSelectionDetail(this.state, this.event);
   }, function() {
     it('should open template selection detail', function() {
-        expect(this.state.queueChangeEventP)
+      expect(this.state.queueChangeEventP)
         .toHaveBeenCalledWith('Game.selectionDetail.open', 'template',
                               { state: { stamp: 'stamp' } });
     });
@@ -81,6 +84,173 @@ describe('defaultMode model', function() {
         .toHaveBeenCalledWith('local', ['stamp'], this.state, 'template_selection');
       expect(this.state.game.template_selection)
         .toBe('gameTemplateSelection.set.returnValue');
+    });
+
+    it('should clear gameTerrainSelection', function() {
+      expect(this.gameTerrainSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+      expect(this.state.game.terrain_selection)
+        .toBe('gameTerrainSelection.clear.returnValue');
+    });
+  });
+
+  context('when user set model selection', function() {
+    return this.defaultModeModel.actions
+      .setModelSelection(this.state, this.event);
+  }, function() {
+    it('should set gameModelSelection', function() {
+      expect(this.state.eventP)
+        .toHaveBeenCalledWith('Game.command.execute',
+                              'setModelSelection',
+                              ['set', ['stamp']]);
+    });
+
+    it('should clear gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'template_selection');
+      expect(this.state.game.template_selection)
+        .toBe('gameTemplateSelection.clear.returnValue');
+    });
+
+    it('should clear gameTerrainSelection', function() {
+      expect(this.gameTerrainSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+      expect(this.state.game.terrain_selection)
+        .toBe('gameTerrainSelection.clear.returnValue');
+    });
+  });
+
+  context('when user toggle model selection', function() {
+    return this.defaultModeModel.actions
+      .toggleModelSelection(this.state, this.event);
+  }, function() {
+    it('should check if the model is already in local selection', function() {
+      expect(this.gameModelSelectionModel.in)
+        .toHaveBeenCalledWith('local', 'stamp', 'selection');
+    });
+
+    context('when model is not in selection', function() {
+      this.gameModelSelectionModel.in
+        .and.returnValue(false);
+    }, function() {
+      it('should add model to selection', function() {
+        expect(this.state.eventP)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setModelSelection',
+                                [ 'addTo', ['stamp'] ]);
+      });
+    });
+
+    context('when model is already in selection', function() {
+      this.gameModelSelectionModel.in
+        .and.returnValue(true);
+    }, function() {
+      it('should remove model from selection', function() {
+        expect(this.state.eventP)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setModelSelection',
+                                ['removeFrom', ['stamp']]);
+      });
+    });
+
+    it('should clear gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'template_selection');
+      expect(this.state.game.template_selection)
+        .toBe('gameTemplateSelection.clear.returnValue');
+    });
+
+    it('should clear gameTerrainSelection', function() {
+      expect(this.gameTerrainSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
+      expect(this.state.game.terrain_selection)
+        .toBe('gameTerrainSelection.clear.returnValue');
+    });
+  });
+
+  context('when user starts dragging on map', function() {
+    return this.defaultModeModel.actions
+      .dragStartMap(this.state, { start: 'start', now: 'now' });
+  }, function() {
+    it('should enable dragbox', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
+    });
+  });
+
+  context('when user drags on map', function() {
+    this.defaultModeModel.actions
+      .dragMap(this.state, { start: 'start', now: 'now' });
+  }, function() {
+    it('should update dragbox', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
+    });
+  });
+
+  context('when user select box', function() {
+    return this.defaultModeModel.actions
+      .dragEndMap(this.state, {
+        start: { x: 180, y: 150 },
+        now: { x: 240, y:120 }
+      });
+  }, function() {
+    it('should disable dragbox', function() {
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.dragBox.disable');
+    });
+
+    it('should lookup models inside the dragbox', function() {
+      expect(this.gameModelsModel.findStampsBetweenPointsP)
+        .toHaveBeenCalledWith({ x: 180, y: 120 },
+                              { x: 240, y: 150 },
+                              'models');
+    });
+
+    context('when there is no model in the dragbox', function() {
+      this.gameModelsModel.findStampsBetweenPointsP
+        .rejectWith('reason');
+    }, function() {
+      it('should do nothing', function() {
+        expect(this.state.eventP)
+          .not.toHaveBeenCalled();
+      });
+    });
+
+    context('when there are models in the dragbox', function() {
+      this.gameModelsModel.findStampsBetweenPointsP
+        .resolveWith(['stamp1', 'stamp2']);
+    }, function() {
+      it('should set selection to those models', function() {
+        expect(this.state.eventP)
+          .toHaveBeenCalledWith('Game.command.execute',
+                                'setModelSelection',
+                                [ 'set', [ 'stamp1', 'stamp2' ] ]);
+      });
+    });
+  });
+
+  context('when user right-click on model', function() {
+    return this.defaultModeModel.actions
+      .modelSelectionDetail(this.state, this.event);
+  }, function() {
+    it('should open model selection detail', function() {
+        expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.selectionDetail.open', 'model',
+                              { state: { stamp: 'stamp' } });
+    });
+
+    it('should set gameModelSelection', function() {
+      expect(this.state.eventP)
+        .toHaveBeenCalledWith('Game.command.execute',
+                              'setModelSelection', ['set', ['stamp']]);
+    });
+
+    it('should clear gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.clear)
+        .toHaveBeenCalledWith('local', this.state, 'template_selection');
+      expect(this.state.game.template_selection)
+        .toBe('gameTemplateSelection.clear.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {

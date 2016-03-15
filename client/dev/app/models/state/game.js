@@ -5,16 +5,10 @@
 
   stateGameModelFactory.$inject = ['games', 'game', 'gameBoard',
   // 'gameConnection',
-  // 'gameFactions',
-  // 'gameModels',
-  // 'gameModelSelection',
-  'gameScenario', 'gameTerrainInfo', 'gameTerrains', 'fileImport', 'stateExports', 'allCommands', 'allTemplates'];
+  'gameFactions', 'gameModels', 'gameModelSelection', 'gameScenario', 'gameTerrainInfo', 'gameTerrains', 'fileImport', 'stateExports', 'allCommands', 'allTemplates'];
   function stateGameModelFactory(gamesModel, gameModel, gameBoardModel,
   // gameConnectionModel,
-  // gameFactionsModel,
-  // gameModelsModel,
-  // gameModelSelectionModel,
-  gameScenarioModel, gameTerrainInfoModel, gameTerrainsModel, fileImportService, stateExportsModel) {
+  gameFactionsModel, gameModelsModel, gameModelSelectionModel, gameScenarioModel, gameTerrainInfoModel, gameTerrainsModel, fileImportService, stateExportsModel) {
     var stateGameModel = {
       create: stateGamesCreate,
       save: stateGameSave,
@@ -31,9 +25,10 @@
       // onGameNewChatMsg: stateGameOnNewChatMsg,
       onGameUpdate: stateGameOnUpdate,
       // onGameInvitePlayer: stateGameOnInvitePlayer,
-      // onGameModelCreate: stateGameOnModelCreate,
-      // onGameModelImportList: stateGameOnModelImportList,
-      // onGameModelImportFile: stateGameOnModelImportFile,
+      onGameModelCreate: stateGameOnModelCreate,
+      onGameModelCopy: stateGameOnModelCopy,
+      onGameModelImportList: stateGameOnModelImportList,
+      onGameModelImportFile: stateGameOnModelImportFile,
       onGameTemplateCreate: stateGameOnTemplateCreate,
       onGameTerrainCreate: stateGameOnTerrainCreate,
       onGameTerrainReset: stateGameOnTerrainReset,
@@ -41,7 +36,8 @@
       onGameBoardSetRandom: stateGameOnBoardSetRandom,
       onGameBoardImportFile: stateGameOnBoardImportFile,
       onGameScenarioSet: stateGameOnScenarioSet,
-      onGameScenarioSetRandom: stateGameOnScenarioSetRandom
+      onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
+      onGameScenarioRefresh: stateGameOnScenarioRefresh
     };
 
     // onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
@@ -76,14 +72,10 @@
       state.onEvent('Game.update', stateGameModel.onGameUpdate$(state));
       // state.onEvent('Game.invitePlayer',
       //               stateGameModel.onGameInvitePlayer$(state));
-      // state.onEvent('Game.model.create',
-      //               stateGameModel.onGameModelCreate$(state));
-      // state.onEvent('Game.model.copy',
-      //               stateGameModel.onGameModelCopy$(state));
-      // state.onEvent('Game.model.importList',
-      //               stateGameModel.onGameModelImportList$(state));
-      // state.onEvent('Game.model.importFile',
-      //               stateGameModel.onGameModelImportFile$(state));
+      state.onEvent('Game.model.create', stateGameModel.onGameModelCreate$(state));
+      state.onEvent('Game.model.copy', stateGameModel.onGameModelCopy$(state));
+      state.onEvent('Game.model.importList', stateGameModel.onGameModelImportList$(state));
+      state.onEvent('Game.model.importFile', stateGameModel.onGameModelImportFile$(state));
       state.onEvent('Game.template.create', stateGameModel.onGameTemplateCreate$(state));
       state.onEvent('Game.terrain.create', stateGameModel.onGameTerrainCreate$(state));
       state.onEvent('Game.terrain.reset', stateGameModel.onGameTerrainReset$(state));
@@ -92,6 +84,7 @@
       state.onEvent('Game.board.importFile', stateGameModel.onGameBoardImportFile$(state));
       state.onEvent('Game.scenario.set', stateGameModel.onGameScenarioSet$(state));
       state.onEvent('Game.scenario.setRandom', stateGameModel.onGameScenarioSetRandom$(state));
+      state.onEvent('Game.scenario.refresh', stateGameModel.onGameScenarioRefresh$(state));
       // state.onEvent('Game.scenario.generateObjectives',
       //               stateGameModel.onGameScenarioGenerateObjectives$(state));
 
@@ -102,9 +95,9 @@
         return saveCurrentGame(state);
       }, function () {
         return exportCurrentGame(state);
-      },
-      //   R.always(exportCurrentModelSelection(state)),
-      function () {
+      }, function () {
+        return exportCurrentModelSelectionP(state);
+      }, function () {
         return exportCurrentBoard(state);
       });
     }
@@ -215,42 +208,36 @@
     //   return state.event('User.sendChatMsg',
     //                      { to: to, msg: msg, link: link });
     // }
-    // function stateGameOnModelCreate(state, event, model_path, repeat = 1) {
-    //   state.create = R.assoc('model', {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     models: R.times((i) => {
-    //       return {
-    //         info: model_path,
-    //         x: 20*i, y: 0, r: 0
-    //       };
-    //     }, repeat)
-    //   }, R.defaultTo({}, state.create));
-    //   return state.event('Modes.switchTo', 'CreateModel');
-    // }
-    // function stateGameOnModelCopy(state, event, create) {
-    //   state.create = R.assoc('model', create, state.create);
-    //   return state.event('Modes.switchTo', 'CreateModel');
-    // }
-    // function stateGameOnModelImportList(state, event, list) {
-    //   let user = R.pathOr('Unknown', ['user','state','name'], state);
-    //   state.create = R.assoc(
-    //     'model',
-    //     gameFactionsModel
-    //       .buildModelsList(list, user, state.factions.references),
-    //     state.create
-    //   );
-    //   console.info('doImportList', list, state.create.model);
-    //   return state.event('Modes.switchTo', 'CreateModel');
-    // }
-    // function stateGameOnModelImportFile(state, event, file) {
-    //   return R.pipeP(
-    //     fileImportModel.read$('json'),
-    //     (create) => {
-    //       state.create = R.assoc('model', create, state.create);
-    //       return state.event('Modes.switchTo', 'CreateModel');
-    //     }
-    //   )(file).catch(gameActionError$(state));
-    // }
+    function stateGameOnModelCreate(state, event, model_path) {
+      var repeat = arguments.length <= 3 || arguments[3] === undefined ? 1 : arguments[3];
+
+      state.create = {
+        base: { x: 240, y: 240, r: 0 },
+        models: R.times(function (i) {
+          return {
+            info: model_path,
+            x: 20 * i, y: 0, r: 0
+          };
+        }, repeat)
+      };
+      return state.eventP('Modes.switchTo', 'CreateModel');
+    }
+    function stateGameOnModelCopy(state, event, create) {
+      state.create = create;
+      return state.eventP('Modes.switchTo', 'CreateModel');
+    }
+    function stateGameOnModelImportList(state, event, list) {
+      var user = R.pathOr('Unknown', ['user', 'state', 'name'], state);
+      state.create = gameFactionsModel.buildModelsList(list, user, state.factions.references);
+      console.info('doImportList', list, state.create);
+      return state.eventP('Modes.switchTo', 'CreateModel');
+    }
+    function stateGameOnModelImportFile(state, event, file) {
+      return R.threadP(file)(fileImportService.readP$('json'), function (create) {
+        state.create = create;
+        return state.eventP('Modes.switchTo', 'CreateModel');
+      }).catch(gameModel.actionError$(state));
+    }
     function stateGameOnTemplateCreate(state, event, type) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
@@ -311,6 +298,9 @@
       }
       return state.eventP('Game.command.execute', 'setScenario', [scenario]);
     }
+    function stateGameOnScenarioRefresh(state, event) {
+      state.queueChangeEventP('Game.scenario.refresh');
+    }
     // function stateGameOnScenarioGenerateObjectives(state, event) {
     //   event = event;
     //   return R.pipePromise(
@@ -357,20 +347,13 @@
         state.queueChangeEventP('Games.local.change');
       });
     }
-    // function exportCurrentModelSelection(state) {
-    //   return stateExportsModel
-    //     .export('models', R.pipePromise(
-    //       R.path(['game','model_selection']),
-    //       stateExportsModel.rejectIf$(R.isNil),
-    //       gameModelSelectionModel.get$('local'),
-    //       stateExportsModel.rejectIf$(R.isEmpty),
-    //       (stamps) => {
-    //         return gameModelsModel
-    //           .copyStamps(stamps, R.path(['game', 'models'], state));
-    //       },
-    //       stateExportsModel.rejectIf$(R.isEmpty)
-    //     ), state);
-    // }
+    function exportCurrentModelSelectionP(state) {
+      return stateExportsModel.exportP('models', function (state) {
+        return R.threadP(state)(R.path(['game', 'model_selection']), R.rejectIf(R.isNil, 'selection is nil'), gameModelSelectionModel.get$('local'), R.rejectIf(R.isEmpty, 'selection is empty'), function (stamps) {
+          return gameModelsModel.copyStampsP(stamps, R.path(['game', 'models'], state));
+        }, R.rejectIf(R.isEmpty, 'selection models not found'));
+      }, state);
+    }
     function exportBoardData(state) {
       return R.thread(state)(R.prop('game'), function (game) {
         return {

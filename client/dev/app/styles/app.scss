@@ -10,10 +10,10 @@ $scrollbar-width: 15px;
 
 @import 'components/game/selection_osd/selectionOsd';
 @import 'components/game/deploiement/gameDeploiement';
-/* @import 'components/game/drag_box/dragBox'; */
+@import 'components/game/drag_box/dragBox';
 @import 'components/game/label/label';
 @import 'components/game/map/gameMap';
-/* @import 'components/game/model/model'; */
+@import 'components/game/model/model';
 @import 'components/game/gameOsd';
 /* @import 'components/game/ruler/ruler'; */
 /* @import 'components/game/los/los'; */
@@ -24,4 +24,4 @@ $scrollbar-width: 15px;
 @import 'views/game/gameMenu';
 /* @import 'views/game/main/game_main'; */
 @import 'views/game/log/game_log';
-/* @import 'components/game/model/damage/modelDamage'; */
+@import 'components/game/model/damage/modelDamage';

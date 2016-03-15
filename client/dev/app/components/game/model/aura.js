@@ -2,9 +2,17 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-angular.module('clickApp.directives').factory('clickGameModelAura', ['model', function (modelService) {
-  return {
-    create: function clickGameModelAuraCreate(svgNS, parent) {
+(function () {
+  angular.module('clickApp.directives').factory('clickGameModelAura', gameModelAuraModelFactory);
+
+  gameModelAuraModelFactory.$inject = ['model'];
+  function gameModelAuraModelFactory(modelService) {
+    return {
+      create: gameModelAuraCreate,
+      update: gameModeAuraUpdate
+    };
+
+    function gameModelAuraCreate(svgNS, parent) {
       var aura = document.createElementNS(svgNS, 'circle');
       aura.classList.add('color-aura');
       aura.style.filter = 'url(#aura-filter)';
@@ -17,8 +25,8 @@ angular.module('clickApp.directives').factory('clickGameModelAura', ['model', fu
       parent.appendChild(state_aura);
 
       return [aura, state_aura];
-    },
-    update: function clickGameModeAuraUpdate(info, model, img, element) {
+    }
+    function gameModeAuraUpdate(info, model, img, element) {
       var _element = _slicedToArray(element, 2);
 
       var aura = _element[0];
@@ -38,6 +46,6 @@ angular.module('clickApp.directives').factory('clickGameModelAura', ['model', fu
         aura.style.visibility = 'hidden';
       }
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=aura.js.map

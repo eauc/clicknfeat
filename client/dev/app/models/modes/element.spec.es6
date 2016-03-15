@@ -16,7 +16,8 @@ describe('elementMode model', function() {
         create: {},
         game: { types: 'elements',
                 type_selection: 'selection' },
-        eventP: jasmine.createSpy('eventP')
+        eventP: jasmine.createSpy('eventP'),
+        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
       };
     }
   ]));
@@ -381,6 +382,15 @@ describe('elementMode model', function() {
           }
           return 'state.event.returnValue';
         });
+      });
+
+      it('should close edit OSD', function() {
+        expect(this.state.queueChangeEventP)
+          .toHaveBeenCalledWith('Game.selectionDetail.close');
+        expect(this.state.queueChangeEventP)
+          .toHaveBeenCalledWith('Game.editDamage.close');
+        expect(this.state.queueChangeEventP)
+          .toHaveBeenCalledWith('Game.editLabel.close');
       });
 
       it('should clear local element selection', function() {

@@ -1,22 +1,38 @@
 'use strict';
 
-angular.module('clickApp.controllers').controller('clickGameEditDamageCtrl', ['$scope', function () {
-  console.log('init clickGameEditDamageCtrl');
-}]);
+(function () {
+  angular.module('clickApp.directives').controller('clickGameEditDamageCtrl', gameEditDamageCtrl).directive('clickGameEditDamage', gameEditDamageDirectiveFactory);
 
-angular.module('clickApp.directives').directive('clickGameEditDamage', ['$window', 'game', 'gameFactions', 'gameMap', function ($window, gameService, gameFactionsService, gameMapService) {
-  return {
-    restrict: 'A',
-    template: ['<click-game-model-damage info="info.damage"', '  state="selection.state"', '  on-error="gameEvent(\'modeActionError\', reason)">', '</click-game-model-damage>'].join(''),
-    scope: true,
-    controller: 'clickGameEditDamageCtrl',
-    link: function link(scope, element) {
+  gameEditDamageCtrl.$inject = ['$scope'];
+  function gameEditDamageCtrl() {
+    console.log('init clickGameEditDamageCtrl');
+  }
+
+  gameEditDamageDirectiveFactory.$inject = ['game', 'gameFactions', 'gameMap'];
+  function gameEditDamageDirectiveFactory(gameService, gameFactionsService, gameMapService) {
+    return {
+      restrict: 'A',
+      templateUrl: 'app/components/game/edit_damage/edit_damage.html',
+      scope: true,
+      controller: 'clickGameEditDamageCtrl',
+      controllerAs: 'edit_damage',
+      link: link
+    };
+
+    function link(scope, element) {
       console.log('gameEditDamage');
       var viewport = document.getElementById('viewport');
       var map = document.getElementById('map');
       var state = scope.state;
+      var container = element[0];
 
       var opened = false;
+      closeEditDamage();
+      scope.onStateChangeEvent('Game.editDamage.toggle', toggleEditDamage, scope);
+      scope.onStateChangeEvent('Game.editDamage.open', openEditDamage, scope);
+      scope.onStateChangeEvent('Game.editDamage.close', closeEditDamage, scope);
+      scope.doClose = closeEditDamage;
+
       function toggleEditDamage(event, selection) {
         console.log('toggleEditDamage');
         if (opened) {
@@ -25,43 +41,39 @@ angular.module('clickApp.directives').directive('clickGameEditDamage', ['$window
           openEditDamage(event, selection);
         }
       }
-
-      closeEditDamage();
       function closeEditDamage() {
         // console.log('closeEditDamage');
-
         opened = false;
         scope.selection = {};
 
-        element[0].style.display = 'none';
-        element[0].style.visibility = 'hidden';
-        element[0].style.left = 0 + 'px';
-        element[0].style.top = 0 + 'px';
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.left = 0 + 'px';
+        container.style.top = 0 + 'px';
       }
       function openEditDamage($event, selection) {
         // console.log('openEditDamage');
-
         opened = true;
         scope.selection = selection;
-        gameFactionsService.getModelInfo(scope.selection.state.info, state.factions).then(function (info) {
+        gameFactionsService.getModelInfoP(scope.selection.state.info, state.factions).then(function (info) {
           scope.info = info;
           scope.$digest();
         });
 
-        $window.requestAnimationFrame(displayEditDamage);
+        self.window.requestAnimationFrame(displayEditDamage);
       }
       function displayEditDamage() {
-        element[0].style.display = 'initial';
-        element[0].style.visibility = 'hidden';
+        container.style.display = 'initial';
+        container.style.visibility = 'hidden';
 
-        $window.requestAnimationFrame(showEditDamage);
+        self.window.requestAnimationFrame(showEditDamage);
       }
       function showEditDamage() {
         placeEditDamage();
-        element[0].style.visibility = 'visible';
+        container.style.visibility = 'visible';
       }
       function placeEditDamage() {
-        var detail_rect = element[0].getBoundingClientRect();
+        var detail_rect = container.getBoundingClientRect();
         var screen_pos = gameMapService.mapToScreenCoordinates(map, scope.selection.state);
         var viewport_rect = viewport.getBoundingClientRect();
 
@@ -71,15 +83,10 @@ angular.module('clickApp.directives').directive('clickGameEditDamage', ['$window
         var top = Math.max(0, Math.min(max_top, screen_pos.y - detail_rect.height / 2));
         var left = Math.max(0, Math.min(max_left, screen_pos.x - detail_rect.width / 2));
 
-        element[0].style.top = top + 'px';
-        element[0].style.left = left + 'px';
+        container.style.top = top + 'px';
+        container.style.left = left + 'px';
       }
-
-      scope.onStateChangeEvent('Game.editDamage.toggle', toggleEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.open', openEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.close', closeEditDamage, scope);
-      scope.doClose = closeEditDamage;
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=editDamage.js.map

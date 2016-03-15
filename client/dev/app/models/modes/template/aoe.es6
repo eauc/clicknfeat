@@ -92,7 +92,7 @@
             .get('local', state.game.template_selection);
       return state.eventP('Game.command.execute',
                           'onTemplates',
-                          [ 'setTarget',
+                          [ 'setTargetP',
                             [state.factions, null, event['click#'].target],
                             stamps
                           ]);

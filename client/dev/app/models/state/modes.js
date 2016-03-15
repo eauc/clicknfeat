@@ -46,11 +46,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return self.Promise.resolve(res).catch(gameModel.actionError$(state));
     }
     function stateModesOnReset(state, event) {
-      event = event;
       return R.threadP(state)(modesModel.initP, setModes$(state));
     }
     function stateModesOnExit(state, event) {
-      event = event;
       return R.threadP(state.modes)(modesModel.exit$(state), setModes$(state));
     }
     function setModes(state, modes) {

@@ -1,8 +1,16 @@
 'use strict';
 
-angular.module('clickApp.directives').factory('clickGameModelLoS', [function () {
-  return {
-    create: function clickGameModelLoSCreate(svgNS, info, parent) {
+(function () {
+  angular.module('clickApp.directives').factory('clickGameModelLoS', gameModelLosModelFactory);
+
+  gameModelLosModelFactory.$inject = [];
+  function gameModelLosModelFactory() {
+    return {
+      create: gameModelLoSCreate,
+      update: gameModelLoSUpdate
+    };
+
+    function gameModelLoSCreate(svgNS, info, parent) {
       var direction_los = document.createElementNS(svgNS, 'line');
       direction_los.classList.add('model-los-selection');
       direction_los.setAttribute('x1', info.img[0].width / 2 + '');
@@ -20,8 +28,8 @@ angular.module('clickApp.directives').factory('clickGameModelLoS', [function () 
       parent.appendChild(front_arc_los);
 
       return [direction_los, front_arc_los];
-    },
-    update: function clickGameModelLoSUpdate() {}
-  };
-}]);
+    }
+    function gameModelLoSUpdate() {}
+  }
+})();
 //# sourceMappingURL=los.js.map

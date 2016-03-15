@@ -155,7 +155,7 @@ describe('aoeTemplateMode model', function() {
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onTemplates',
-                              [ 'setTarget',
+                              [ 'setTargetP',
                                 ['factions', null, this.target],
                                 ['stamp']
                               ]);

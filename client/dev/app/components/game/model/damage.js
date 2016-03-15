@@ -2,9 +2,17 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', function (modelService) {
-  return {
-    create: function clickGameModelDamageCreate(svgNS, info, parent) {
+(function () {
+  angular.module('clickApp.directives').factory('clickGameModelDamage', gameModelDamageModelFactory);
+
+  gameModelDamageModelFactory.$inject = ['model'];
+  function gameModelDamageModelFactory(modelModel) {
+    return {
+      create: gameModelDamageCreate,
+      update: gameModelDamageUpdate
+    };
+
+    function gameModelDamageCreate(svgNS, info, parent) {
       var damage_bar_red = undefined;
       var damage_bar_green = undefined;
       if (!(info.damage.type === 'warrior' && info.damage.n === 1)) {
@@ -50,8 +58,8 @@ angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', 
       }
 
       return [damage_bar_red, damage_bar_green, field_bar_red, field_bar_green];
-    },
-    update: function clickGameModelDamageUpdate(info, model, img, element) {
+    }
+    function gameModelDamageUpdate(info, model, img, element) {
       var _element = _slicedToArray(element, 4);
 
       var damage_bar_red = _element[0];
@@ -61,7 +69,7 @@ angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', 
 
       if (R.isNil(damage_bar_red)) return;
 
-      if (info.damage.type === 'none' || modelService.isWreckDisplayed(model)) {
+      if (info.damage.type === 'none' || modelModel.isWreckDisplayed(model)) {
         damage_bar_red.style.visibility = 'hidden';
         damage_bar_green.style.visibility = 'hidden';
 
@@ -108,6 +116,6 @@ angular.module('clickApp.directives').factory('clickGameModelDamage', ['model', 
       field_bar_green.setAttribute('y2', y + 1 + '');
       field_bar_green.style.visibility = 'visible';
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=damage.js.map

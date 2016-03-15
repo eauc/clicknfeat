@@ -1,41 +1,55 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('setModelSelectionCommand', setModelSelectionCommandModelFactory);
 
-angular.module('clickApp.services')
-  .factory('setModelSelectionCommand', [
+  setModelSelectionCommandModelFactory.$inject = [
     'commands',
     'gameModelSelection',
-    function setModelSelectionCommandServiceFactory(commandsService,
-                                                    gameModelSelectionService) {
-      var setModelSelectionCommandService = {
-        execute: function setModelSelectionExecute(method, stamps, state, game) {
-          if('Function' !== R.type(gameModelSelectionService[method])) {
-            return self.Promise
-              .reject(`SetModelSelection unknown method ${method}`);
-          }
+  ];
+  function setModelSelectionCommandModelFactory(commandsModel,
+                                                gameModelSelectionModel) {
+    const setModelSelectionCommandModel = {
+      executeP: setModelSelectionExecuteP,
+      replayP: setModelSelectionReplayP,
+      undoP: setModelSelectionUndoP
+    };
+    commandsModel.registerCommand('setModelSelection',
+                                  setModelSelectionCommandModel);
+    return setModelSelectionCommandModel;
 
-          let selection = gameModelSelectionService[method]('local', stamps,
-                                                            state, game.model_selection);
-          game = R.assoc('model_selection', selection, game);
-
-          var ctxt = {
-            after: gameModelSelectionService.get('local', game.model_selection),
+    function setModelSelectionExecuteP(method, stamps, state, game) {
+      return R.threadP(gameModelSelectionModel)(
+        R.prop(method),
+        R.type,
+        R.rejectIf(R.complement(R.equals('Function')),
+                   `SetModelSelection unknown method ${method}`),
+        () => {
+          const args = ( R.isNil(stamps)
+                         ? [ 'local', state, game.model_selection ]
+                         : [ 'local', stamps, state, game.model_selection ]
+                       );
+          return gameModelSelectionModel[method]
+            .apply(gameModelSelectionModel, args);
+        },
+        (selection) => R.assoc('model_selection', selection, game),
+        (game) => {
+          const ctxt = {
+            after: gameModelSelectionModel.get('local', game.model_selection),
             desc: '',
             do_not_log: true
           };
           return [ctxt, game];
-        },
-        replay: function setModelSelectionReplay(ctxt, state, game) {
-          let selection = gameModelSelectionService
-                .set('remote', ctxt.after, state, game.model_selection);
-          game = R.assoc('model_selection', selection, game);
-          return game;
-        },
-        undo: function setModelSelectionUndo() {
-          return self.Promise
-            .reject('!!! ERROR : WE SHOULD NOT BE HERE !!!');
         }
-      };
-      commandsService.registerCommand('setModelSelection', setModelSelectionCommandService);
-      return setModelSelectionCommandService;
+      );
     }
-  ]);
+    function setModelSelectionReplayP(ctxt, state, game) {
+      const selection = gameModelSelectionModel
+              .set('remote', ctxt.after, state, game.model_selection);
+      game = R.assoc('model_selection', selection, game);
+      return game;
+    }
+    function setModelSelectionUndoP() {
+      return R.rejectP('!!! ERROR : WE SHOULD NOT BE HERE !!!');
+    }
+  }
+})();

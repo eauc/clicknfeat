@@ -58,7 +58,6 @@
       return state;
     }
     function stateDataOnInit(state, resolve, event) {
-      event = event;
       const boards_ready = gameBoardModel.initP()
               .then((boards) => {
                 state.boards = boards;

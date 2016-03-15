@@ -41,9 +41,9 @@
       self.requestAnimationFrame(updateLayers);
 
       $scope.$on('$destroy', () => {
-        $scope.stateChangeEvent('Game.scenario.refresh');
+        $scope.stateEvent('Game.scenario.refresh');
       });
-      $scope.stateChangeEvent('Game.scenario.refresh');
+      $scope.stateEvent('Game.scenario.refresh');
     }
 
     function onDataReady() {

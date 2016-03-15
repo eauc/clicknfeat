@@ -1,18 +1,22 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('modelRuler', modelRulerServiceFactory);
 
-angular.module('clickApp.services')
-  .factory('modelRuler', [
-    function modelRulerServiceFactory() {
-      return function(/*modelService*/) {
-        var modelRulerService = {
-          rulerMaxLength: function modelRulerMaxLength(model) {
-            return R.path(['state', 'rml'], model);
-          },
-          setRulerMaxLength: function modelSetRulerMaxLength(value, model) {
-            return R.assocPath(['state','rml'], value, model);
-          }
-        };
-        return modelRulerService;
+  modelRulerServiceFactory.$inject = [];
+  function modelRulerServiceFactory() {
+    return () => {
+      const modelRulerService = {
+        rulerMaxLength: modelRulerMaxLength,
+        setRulerMaxLength: modelSetRulerMaxLength
       };
-    }
-  ]);
+      return modelRulerService;
+
+      function modelRulerMaxLength(model) {
+        return R.path(['state', 'rml'], model);
+      }
+      function modelSetRulerMaxLength(value, model) {
+        return R.assocPath(['state','rml'], value, model);
+      }
+    };
+  }
+})();

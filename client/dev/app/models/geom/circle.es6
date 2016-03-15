@@ -63,7 +63,7 @@
       if(circle.x >= box.low.x &&
          circle.x <= box.high.x &&
          circle.y >= box.low.y &&
-         circle.y <= box.high.x) return true;
+         circle.y <= box.high.y) return true;
       if(circle.x >= box.low.x - circle.radius &&
          circle.x <  box.low.x) {
         dx = box.low.x - circle.x;

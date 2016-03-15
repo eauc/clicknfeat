@@ -9,7 +9,8 @@
     return function buildCreateElementCommandModel(type,
                                                    elementModel,
                                                    gameElementsModel,
-                                                   gameElementSelectionModel) {
+                                                   gameElementSelectionModel,
+                                                   createElementFnP) {
       const createElementCommandModel = {
         executeP: createElementExecuteP,
         replayP: createElementReplayP,
@@ -17,7 +18,12 @@
       };
 
       const emitCreateEvent$ = R.curry(emitCreateEvent);
+      const emitDeleteEvent$ = R.curry(emitDeleteEvent);
       const onCreatedElements$ = R.curry(onCreatedElements);
+      createElementFnP = R.thread(createElementFnP)(
+        R.defaultTo(tryToCreateElementP),
+        R.curry
+      );
 
       return createElementCommandModel;
 
@@ -36,7 +42,7 @@
           return R.thread(element)(
             add$(create.base),
             R.omit(['stamp']),
-            tryToCreateElementP
+            createElementFnP(state)
           );
         }
         function onNewElements(elements) {
@@ -59,7 +65,7 @@
       function createElementReplayP(ctxt, state, game) {
         return R.threadP(ctxt)(
           R.prop(`${type}s`),
-          R.map(tryToCreateElementP),
+          R.map(createElementFnP(state)),
           R.promiseAll,
           R.reject(R.isNil),
           R.rejectIf(R.isEmpty, `No valid ${type} definition`),
@@ -75,10 +81,14 @@
                  gameElementSelectionModel.removeFrom$('local', stamps, state)),
           R.over(R.lensProp(`${type}_selection`),
                  gameElementSelectionModel.removeFrom$('remote', stamps, state)),
+          (game) => {
+            R.forEach(emitDeleteEvent$(state), stamps);
+            return game;
+          },
           emitCreateEvent$(state)
         );
       }
-      function tryToCreateElementP(element) {
+      function tryToCreateElementP(state, element) {
         return elementModel
           .createP(element)
           .catch(R.always(null));
@@ -114,6 +124,9 @@
       function emitCreateEvent(state, game) {
         state.queueChangeEventP(`Game.${type}.create`);
         return game;
+      }
+      function emitDeleteEvent(state, stamp) {
+        state.queueChangeEventP(`Game.model.delete.${stamp}`);
       }
     };
   }

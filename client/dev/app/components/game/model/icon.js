@@ -2,11 +2,19 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', function (modelService) {
-  var EFFECTS = [['b', '/data/icons/Blind.png'], ['c', '/data/icons/Corrosion.png'], ['d', '/data/icons/BoltBlue.png'], ['f', '/data/icons/Fire.png'], ['e', '/data/icons/BoltYellow.png'], ['k', '/data/icons/KD.png'], ['t', '/data/icons/Stationary.png']];
+(function () {
+  angular.module('clickApp.directives').factory('clickGameModelIcon', gameModelIconModelFactory);
 
-  return {
-    create: function clickGameModelInconsCreate(svgNS, parent) {
+  gameModelIconModelFactory.$inject = ['model'];
+  function gameModelIconModelFactory(modelService) {
+    var EFFECTS = [['b', '/data/icons/Blind.png'], ['c', '/data/icons/Corrosion.png'], ['d', '/data/icons/BoltBlue.png'], ['f', '/data/icons/Fire.png'], ['e', '/data/icons/BoltYellow.png'], ['k', '/data/icons/KD.png'], ['t', '/data/icons/Stationary.png']];
+
+    return {
+      create: gameModelIconsCreate,
+      update: gameModelIconsUpdate
+    };
+
+    function gameModelIconsCreate(svgNS, parent) {
       var effects = R.reduce(function (mem, effect) {
         var image = document.createElementNS(svgNS, 'image');
         image.classList.add('model-image');
@@ -40,15 +48,15 @@ angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', fu
       parent.appendChild(lock);
 
       return [effects, leader, lock];
-    },
-    update: function clickGameModelIconsUpdate(info, model, img, element) {
+    }
+    function gameModelIconsUpdate(info, model, img, element) {
       var _element = _slicedToArray(element, 3);
 
       var effects = _element[0];
       var leader = _element[1];
       var lock = _element[2];
 
-      R.pipe(R.keys, R.filter(function (effect) {
+      R.thread(effects)(R.keys, R.filter(function (effect) {
         return modelService.isEffectDisplayed(effect, model);
       }), function (actives) {
         var base_x = img.width / 2 - R.length(actives) * 10 / 2;
@@ -58,12 +66,12 @@ angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', fu
           effects[effect].setAttribute('y', base_y + '');
           effects[effect].style.visibility = 'visible';
         }, actives);
-      })(effects);
-      R.pipe(R.keys, R.reject(function (effect) {
+      });
+      R.thread(effects)(R.keys, R.reject(function (effect) {
         return modelService.isEffectDisplayed(effect, model);
       }), R.forEach(function (effect) {
         effects[effect].style.visibility = 'hidden';
-      }))(effects);
+      }));
 
       leader.setAttribute('x', img.width / 2 - 0.7 * info.base_radius - 5 + '');
       leader.setAttribute('y', img.height / 2 - 0.7 * info.base_radius - 5 + '');
@@ -81,6 +89,6 @@ angular.module('clickApp.directives').factory('clickGameModelIcon', ['model', fu
       lock.setAttribute('y', img.height / 2 - 5 + '');
       lock.style.visibility = 'visible';
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=icon.js.map

@@ -1,9 +1,10 @@
-'use strict';
+(function() {
+  angular.module('clickApp.services')
+    .factory('model', modelModelFactory);
 
-angular.module('clickApp.services')
-  .factory('model', [
+  modelModelFactory.$inject = [
     'settings',
-    'point',
+    'element',
     'gameFactions',
     'modelArea',
     'modelAura',
@@ -22,204 +23,174 @@ angular.module('clickApp.services')
     'modelRuler',
     'modelUnit',
     'modelWreck',
-    function modelServiceFactory(settingsService,
-                                 pointService,
-                                 gameFactionsService,
-                                 modelAreaService,  
-                                 modelAuraService,  
-                                 modelChargeService,  
-                                 modelCounterService,  
-                                 modelDamageService, 
-                                 modelEffectService,  
-                                 modelGeomService,  
-                                 modelImageService,
-                                 modelIncorporealService,
-                                 modelLabelService,
-                                 modelLeaderService,
-                                 modelMeleeService,
-                                 modelMoveService,
-                                 modelPlaceService,
-                                 modelRulerService,
-                                 modelUnitService,
-                                 modelWreckService) {
-      let DEFAULT_MOVES = {
-        Move: 10,
-        MoveSmall: 5,
-        Rotate: 15,
-        RotateSmall: 5,
-        Shift: 10,
-        ShiftSmall: 1,
-        RotateCharge: 10,
-        RotateChargeSmall: 2
-      };
-      let MOVES = R.clone(DEFAULT_MOVES);
-      settingsService.register('Moves',
-                               'Model',
-                               DEFAULT_MOVES,
-                               (moves) => {
-                                 R.extend(MOVES, moves);
-                               });
-      var modelService = {
-        create: function modelCreate(factions, temp) {
-          return R.pipeP(
-            gameFactionsService.getModelInfo$(temp.info),
-            (info) => {
-              let model = {
-                state: {
-                  x: 0, y: 0, r: 0,
-                  img: 0,
-                  dsp: ['i'],
-                  eff: [],
-                  l: [],
-                  c: 0, s: 0,
-                  u: null,
-                  aur: null,
-                  are: null,
-                  rml: null,
-                  cml: null,
-                  pml: [null,false],
-                  cha: null,
-                  pla: null,
-                  dmg: initDamage(info.damage),
-                  stamp: R.guid()
-                }
-              };
-              if(info.type === 'wardude' ||
-                 info.type === 'beast' ||
-                 info.type === 'jack') {
-                model.state.dsp = R.append('c', model.state.dsp);
-              }
-              if(info.immovable) {
-                model.state.dsp = R.append('lk', model.state.dsp);
-              }
-              model.state = R.deepExtend(model.state, temp);
-              return modelService.checkState(factions, null, model);
-            }
-          )(factions);
-        },
-        stamp: function modelStamp(model) {
-          return R.path(['state','stamp'], model);
-        },
-        eventName: function modelEventName(model) {
-          return R.path(['state','stamp'], model);
-        },
-        user: function modelUser(model) {
-          return R.path(['state', 'user'], model);
-        },
-        userIs: function modelUser(user, model) {
-          return R.pathEq(['state', 'user'], user, model);
-        },
-        state: function modelState(model) {
-          return R.prop('state', model);
-        },
-        saveState: function modelSaveState(model) {
-          return R.clone(R.prop('state', model));
-        },
-        setState: function modelSetState(state, model) {
-          return R.assoc('state', R.clone(state), model);
-        },
+  ];
+  function modelModelFactory(settingsModel,
+                             elementModel,
+                             gameFactionsModel,
+                             modelAreaModel,
+                             modelAuraModel,
+                             modelChargeModel,
+                             modelCounterModel,
+                             modelDamageModel,
+                             modelEffectModel,
+                             modelGeomModel,
+                             modelImageModel,
+                             modelIncorporealModel,
+                             modelLabelModel,
+                             modelLeaderModel,
+                             modelMeleeModel,
+                             modelMoveModel,
+                             modelPlaceModel,
+                             modelUnitModel,
+                             modelWreckModel,
+                             modelRulerModel) {
+    const DEFAULT_MOVES = {
+      Move: 10,
+      MoveSmall: 5,
+      Rotate: 15,
+      RotateSmall: 5,
+      Shift: 10,
+      ShiftSmall: 1,
+      RotateCharge: 10,
+      RotateChargeSmall: 2
+    };
+    const MOVES = R.clone(DEFAULT_MOVES);
+    settingsModel.register('Misc',
+                           'Model',
+                           DEFAULT_MOVES,
+                           (moves) => {
+                             R.extend(MOVES, moves);
+                           });
+
+    const base = elementModel('model', MOVES);
+    const modelModel = Object.create(base);
+    R.deepExtend(
+      modelModel, {
+        createP: modelCreateP,
         state_checkers: [],
         state_updaters: [],
-        checkState: function modelCheckState(factions, target, model) {
-          return R.pipeP(
-            gameFactionsService.getModelInfo$(model.state.info),
-            (info) => {
-              var radius = info.base_radius;
-              return R.pipe(
-                R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
-                R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
-                (state) => {
-                  return R.reduce((state, checker) => {
-                    return checker(info, target, state);
-                  }, state, modelService.state_checkers);
-                },
-                (state) => {
-                  return R.reduce(function(state, updater) {
-                    return updater(state);
-                  }, state, modelService.state_updaters);
-                }
-              )(model.state);
-            },
-            (state) => {
-              return R.assoc('state', state, model);
+        checkStateP: modelCheckStateP,
+        descriptionFromInfo: modelDescriptionFromInfo,
+        user: modelUser,
+        userIs: modelUserIs,
+        modeFor: modelModeFor
+      },
+      modelAreaModel(modelModel),
+      modelAuraModel(modelModel),
+      modelChargeModel(MOVES, modelModel),
+      modelCounterModel(modelModel),
+      modelDamageModel(modelModel),
+      modelEffectModel(modelModel),
+      modelGeomModel(modelModel),
+      modelImageModel(modelModel),
+      modelIncorporealModel(modelModel),
+      modelLeaderModel(modelModel),
+      modelMeleeModel(modelModel),
+      modelMoveModel(MOVES, modelModel),
+      modelPlaceModel(MOVES, modelModel),
+      modelRulerModel(modelModel),
+      modelUnitModel(modelModel),
+      modelWreckModel(modelModel)
+    );
+
+    R.curryService(modelModel);
+    return modelModel;
+
+    function modelCreateP(factions, temp) {
+      return R.threadP(factions)(
+        gameFactionsModel.getModelInfoP$(temp.info),
+        (info) => {
+          const model = {
+            state: {
+              x: 0, y: 0, r: 0,
+              img: 0,
+              dsp: ['i'],
+              eff: [],
+              l: [],
+              c: 0, s: 0,
+              u: null,
+              aur: null,
+              are: null,
+              rml: null,
+              cml: null,
+              pml: [null,false],
+              cha: null,
+              pla: null,
+              dmg: initDamage(info.damage),
+              stamp: R.guid()
             }
-          )(factions);
-        },
-        isLocked: function modelIsLocked(model) {
-          return R.pipe(
-            R.pathOr([], ['state', 'dsp']),
-            R.find(R.equals('lk')),
-            R.exists
-          )(model);
-        },
-        setLock: function modelSetLock(set, model) {
-          if(set) {
-            return R.over(R.lensPath(['state','dsp']),
-                          R.compose(R.uniq, R.append('lk')),
-                          model);
+          };
+          if(info.type === 'wardude' ||
+             info.type === 'beast' ||
+             info.type === 'jack') {
+            model.state.dsp = R.append('c', model.state.dsp);
           }
-          else {
-            return R.over(R.lensPath(['state','dsp']),
-                          R.reject(R.equals('lk')),
-                          model);
+          if(info.immovable) {
+            model.state.lk = true;
           }
-        },
-        modeFor: function modelModeFor(model) {
-          if(modelService.isCharging(model)) {
-            return 'ModelCharge';
-          }
-          if(modelService.isPlacing(model)) {
-            return 'ModelPlace';
-          }
-          return 'Model';
-        },
-        descriptionFromInfo: function modelDescriptionFromInfo(info, model) {
-          return R.pipe(
-            R.props(['unit_name', 'name']),
-            R.prepend(modelService.user(model)),
-            R.reject(R.isNil),
-            R.join('/')
-          )(info);
+          model.state = R.deepExtend(model.state, temp);
+          return modelModel.checkStateP(factions, null, model);
         }
-      };
-      function initDamage(info) {
-        if(info.type === 'warrior') {
-          return { n: 0, t: 0 };
-        }
-        return R.pipe(
-          R.keys,
-          R.reject(R.equals('type')),
-          R.reject(R.equals('field')),
-          R.reject(R.equals('total')),
-          R.reject(R.equals('depth')),
-          R.reduce(function(mem, key) {
-            return R.assoc(key, R.map(R.always(0), info[key]), mem);
-          }, {}),
-          R.assoc('f', 0),
-          R.assoc('t', 0)
-        )(info);
-      }
-      R.extend(
-        modelService,
-        modelAreaService(modelService),
-        modelAuraService(modelService),
-        modelChargeService(MOVES, modelService),
-        modelCounterService(modelService),
-        modelDamageService(modelService),
-        modelEffectService(modelService),
-        modelGeomService(modelService),
-        modelImageService(modelService),
-        modelIncorporealService(modelService),
-        modelLabelService(modelService),
-        modelLeaderService(modelService),
-        modelPlaceService(MOVES, modelService),
-        modelMeleeService(modelService),
-        modelMoveService(MOVES, modelService),
-        modelRulerService(modelService),
-        modelUnitService(modelService),
-        modelWreckService(modelService)
       );
-      R.curryService(modelService);
-      return modelService;
     }
-  ]);
+    function modelUser(model) {
+      return R.path(['state', 'user'], model);
+    }
+    function modelUserIs(user, model) {
+      return R.pathEq(['state', 'user'], user, model);
+    }
+    function modelCheckStateP(factions, target, model) {
+      return R.threadP(factions)(
+        gameFactionsModel.getModelInfoP$(model.state.info),
+        (info) => {
+          const radius = info.base_radius;
+          return R.thread(model.state)(
+            R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
+            R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
+            (state) => R.reduce((state, checker) => {
+              return checker(info, target, state);
+            }, state, modelModel.state_checkers),
+            (state) => R.reduce(function(state, updater) {
+              return updater(state);
+            }, state, modelModel.state_updaters)
+          );
+        },
+        (state) => R.assoc('state', state, model)
+      );
+    }
+    function modelModeFor(model) {
+      if(modelModel.isCharging(model)) {
+        return 'ModelCharge';
+      }
+      if(modelModel.isPlacing(model)) {
+        return 'ModelPlace';
+      }
+      return 'Model';
+    }
+    function modelDescriptionFromInfo(info, model) {
+      return R.thread(info)(
+        R.props(['unit_name', 'name']),
+        R.prepend(modelModel.user(model)),
+        R.reject(R.isNil),
+        R.join('/')
+      );
+    }
+    function initDamage(info) {
+      if(info.type === 'warrior') {
+        return { n: 0, t: 0 };
+      }
+      return R.thread(info)(
+        R.keys,
+        R.reject(R.equals('type')),
+        R.reject(R.equals('field')),
+        R.reject(R.equals('total')),
+        R.reject(R.equals('depth')),
+        R.reduce((mem, key) => {
+          return R.assoc(key, R.map(R.always(0), info[key]), mem);
+        }, {}),
+        R.assoc('f', 0),
+        R.assoc('t', 0)
+      );
+    }
+  }
+})();

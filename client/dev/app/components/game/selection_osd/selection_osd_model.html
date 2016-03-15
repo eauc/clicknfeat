@@ -1,51 +1,51 @@
 <div class="panel panel-info">
   <div class="panel-heading"
-       ng-click="doClose()">
+       ng-click="selection.doClose()">
     <button class="close">
       <span>&times;</span>
     </button>
     <h4 class="panel-title">
-      {{info.name}}
+      {{selection.info.name}}
     </h4>
   </div>
   <div class="panel-content">
-    <div ng-if="info.unit_name">
+    <div ng-if="selection.info.unit_name">
       <strong>Unit :</strong>
-      {{info.unit_name}}
+      {{selection.info.unit_name}}
     </div>
     <div>
       <strong>Name :</strong>
-      {{info.name}}
+      {{selection.info.name}}
     </div>
     <div>
       <strong>Created By :</strong>
-      {{selection.state.user}}
+      {{selection.element.user}}
     </div>
     <div>
       <strong>Class :</strong>
-      {{info.type}} - {{info.base}}
+      {{selection.info.type}} - {{selection.info.base}}
     </div>
-    <div ng-show="info.fury">
+    <div ng-show="selection.info.fury">
       <strong>Fury :</strong>
-      {{info.fury}}
+      {{selection.info.fury}}
     </div>
-    <div ng-show="info.focus">
+    <div ng-show="selection.info.focus">
       <strong>Focus :</strong>
-      {{info.focus}}
+      {{selection.info.focus}}
     </div>
     <div class="hint clickable"
-         ng-hide="show.info"
-         ng-click="show.info = true">
+         ng-hide="selection.show.info"
+         ng-click="selection.show.info = true">
       Show Info...
     </div>
     <div class="bg-info"
-         ng-show="show.info">
-      <div ng-repeat="d in info.desc">
+         ng-show="selection.show.info">
+      <div ng-repeat="d in selection.info.desc">
         <strong>{{d[0]}}</strong>
         {{d[1]}}
       </div>
     </div>
-    <form ng-submit="doAddLabel()">
+    <form ng-submit="selection.doAddLabel()">
       <div class="form-group">
         <label for="new-label">
           Label
@@ -53,21 +53,20 @@
         <input id="new-label"
                class="form-control"
                type="text"
-               ng-model="edit.label"
+               ng-model="selection.edit.label"
                placeholder="New Label" />
       </div>
       <button type="button"
               class="btn btn-default"
-              ng-repeat="l in selection.state.l"
-              ng-click="doRemoveLabel(l)">
-        {{::labelDisplay(l)}} <span>&times;</span>
+              ng-repeat="l in selection.element.l"
+              ng-click="selection.doRemoveLabel(l)">
+        {{::selection.labelDisplay(l)}} <span>&times;</span>
       </button>
     </form>
     <div>
       <strong>Damage :</strong>
-      <click-game-model-damage info="info.damage"
-                               state="selection.state"
-                               on-error="gameEvent('modeActionError', reason)">
+      <click-game-model-damage info="selection.info.damage"
+                               state="selection.element">
       </click-game-model-damage>
     </div>
   </div>

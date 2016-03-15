@@ -88,7 +88,12 @@ a:not([href]):focus {
   fill-opacity: 0.5;
   stroke: none; }
 
-/* @import 'components/game/drag_box/dragBox'; */
+#game #game-dragbox {
+  stroke-width: 1.25px;
+  fill: none;
+  pointer-events: none;
+  stroke: #00F; }
+
 #game text {
   fill: white;
   -webkit-user-select: none;
@@ -125,7 +130,100 @@ a:not([href]):focus {
 #game #map.flipped {
   transform: scaleX(-1) scaleY(-1); }
 
-/* @import 'components/game/model/model'; */
+#game .create-model {
+  fill: #F11;
+  opacity: 0.8;
+  pointer-events: none; }
+#game .model-base, #game .model-edge, #game .model-los, #game .model-los-selection {
+  stroke: black;
+  stroke-width: 0.5px;
+  pointer-events: none; }
+#game .model-base {
+  fill-opacity: 1.0;
+  pointer-events: visible; }
+#game .model-edge {
+  fill: transparent; }
+#game .model-los-selection {
+  visibility: hidden; }
+#game .model-image {
+  pointer-events: none; }
+#game .remote-selection .model-edge {
+  stroke-width: 0.75px;
+  stroke: white; }
+#game .remote-selection.single-remote .model-los-selection {
+  stroke-width: 0.75px;
+  stroke: white;
+  visibility: visible; }
+#game .local-selection .model-edge {
+  stroke-width: 0.75px;
+  stroke: #0F0; }
+#game .local-selection.single-local .model-los-selection {
+  stroke-width: 0.75px;
+  stroke: #0F0;
+  visibility: visible; }
+#game .model-damage-bar {
+  stroke-width: 1px;
+  pointer-events: none; }
+#game .model-ctrl-area {
+  fill: #0FF;
+  fill-opacity: 0.15;
+  stroke: #099;
+  stroke-width: 1px;
+  pointer-events: none; }
+#game .model-area {
+  fill: #9F9;
+  fill-opacity: 0.15;
+  stroke: #6F6;
+  stroke-width: 0.5px;
+  pointer-events: none; }
+#game .model-melee {
+  fill: black;
+  fill-opacity: 0.3;
+  stroke: black;
+  stroke-width: 0.5px;
+  pointer-events: none; }
+#game .model-charge-path {
+  fill: #CCC;
+  fill-opacity: 0.3;
+  stroke: #666;
+  stroke-width: 0.5px; }
+#game .model-charge-target {
+  stroke-width: 1.25px;
+  fill: none;
+  pointer-events: none;
+  stroke: #F00; }
+#game .model-charge-target.reached {
+  stroke: #0FF; }
+#game .state-aura {
+  fill: transparent;
+  pointer-events: none;
+  visibility: hidden; }
+#game .b2b .color-aura {
+  visibility: hidden !important; }
+#game .b2b .state-aura {
+  fill: #FF0;
+  visibility: visible; }
+#game .overlap .color-aura {
+  visibility: hidden !important; }
+#game .overlap .state-aura {
+  fill: #F30;
+  visibility: visible; }
+#game .under-aoe .color-aura {
+  visibility: hidden !important; }
+#game .under-aoe .state-aura {
+  fill: white;
+  visibility: visible; }
+#game .contesting .color-aura {
+  visibility: hidden !important; }
+#game .contesting .state-aura {
+  fill: white;
+  visibility: visible; }
+#game .killboxing .color-aura {
+  visibility: hidden !important; }
+#game .killboxing .state-aura {
+  fill: red;
+  visibility: visible; }
+
 #game #zoom-osd {
   z-index: 1000;
   position: absolute;
@@ -360,6 +458,45 @@ a:not([href]):focus {
     #game .log-command-list.log div:first-child {
       background-color: #fff0e8; }
 
-/* @import 'components/game/model/damage/modelDamage'; */
+#game .damage-box {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid black;
+  margin: 0;
+  text-align: center;
+  background-color: white; }
+  #game .damage-box.mark {
+    background-color: #999; }
+  #game .damage-box.none {
+    background-color: black; }
+#game div.damage-box {
+  display: inline-block; }
+#game .damage-warrior .damage-box:nth-child(5n) {
+  width: 25px;
+  border-right: 5px solid black; }
+#game .damage-warrior .damage-box:last-child {
+  width: 20px;
+  border-right: 1px solid black; }
+#game .damage-grid {
+  border-collapse: collapse;
+  text-align: center; }
+  #game .damage-grid .damage-box:nth-child(6n) {
+    border-right: 5px solid black; }
+  #game .damage-grid .damage-box:nth-child(6n+1) {
+    width: 25px; }
+  #game .damage-grid .damage-box:first-child {
+    width: 20px; }
+  #game .damage-grid .damage-box:last-child {
+    border-right: 1px solid black; }
+#game .damage-col-header {
+  width: 20px;
+  height: 20px; }
+#game .edit-damage {
+  z-index: 2000;
+  position: absolute;
+  border: 1px solid grey;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.75); }
 
 /*# sourceMappingURL=app.css.map */

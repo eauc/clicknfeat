@@ -48,7 +48,7 @@
             stroke: $selection-remote-stroke-color;
         }
     }
-    
+
     .selection.local {
         .template.aoe,
         .template.wall {
@@ -58,7 +58,7 @@
             visibility: visible;
         }
     }
-    
+
     .spray-origin {
         @include selection-box;
         stroke: $model-origin-stroke-color;

@@ -82,9 +82,9 @@
     function isInRectangle(circle, r) {
       var box = {
         low: { x: r.x - r.width / 2,
-          y: r.y - r.height / 2 },
+               y: r.y - r.height / 2 },
         high: { x: r.x + r.width / 2,
-          y: r.y + r.height / 2 }
+                y: r.y + r.height / 2 }
       };
       return circleModel.isInBox(box, circle);
     }
