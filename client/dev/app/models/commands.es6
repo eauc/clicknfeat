@@ -19,7 +19,7 @@
       'rollDeviationCommand',
       'setBoardCommand',
       'setLayersCommand',
-      // 'setLosCommand',
+      'setLosCommand',
       // 'setRulerCommand',
       'setScenarioCommand',
       () => ({ })

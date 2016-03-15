@@ -27,23 +27,23 @@
       <!--     Show<br />Ruler -->
       <!--   </button> -->
       <!-- </div> -->
-      <!-- <div class="btn-group"> -->
-      <!--   <button class="btn {{ -->
-      <!--                  currentModeIs('LoS') ? -->
-      <!--                  'btn-primary' : 'btn-default' -->
-      <!--                  }}" -->
-      <!--           title="{{action_bindings['enterLosMode'] || ''}}" -->
-      <!--           ng-click="doUseLos()"> -->
-      <!--     Use<br />LoS -->
-      <!--   </button> -->
-      <!--   <button class="btn {{ -->
-      <!--                  (state.game.los | gameLos:'isDisplayed') ? -->
-      <!--                  'btn-primary' : 'btn-default' -->
-      <!--                  }}" -->
-      <!--           ng-click="doToggleShowLos()"> -->
-      <!--     Show<br />LoS -->
-      <!--   </button> -->
-      <!-- </div> -->
+      <div class="btn-group">
+        <button class="btn {{
+                       game.currentModeIs('Los') ?
+                       'btn-primary' : 'btn-default'
+                       }}"
+                title="{{game.action_bindings['enterLosMode'] || ''}}"
+                ng-click="game_main.doUseLos()">
+          Use<br />LoS
+        </button>
+        <button class="btn {{
+                       (state.game.los | gameLos:'isDisplayed') ?
+                       'btn-primary' : 'btn-default'
+                       }}"
+                ng-click="game_main.doToggleShowLos()">
+          Show<br />LoS
+        </button>
+      </div>
       <div class="btn-group">
         <button class="btn btn-default"
                 ng-click="game_main.doCreateTemplate('aoe')">

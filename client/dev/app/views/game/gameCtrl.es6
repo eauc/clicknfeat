@@ -21,7 +21,7 @@
     vm.show_action_group = null;
 
     vm.currentModeName = currentModeName;
-    // vm.currentModeIs = currentModeIs;
+    vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
 
@@ -88,9 +88,9 @@
         modesModel.currentModeName
       );
     }
-    // function currentModeIs(mode) {
-    //   return currentModeName() === mode;
-    // }
+    function currentModeIs(mode) {
+      return currentModeName() === mode;
+    }
     function doModeAction(action, ...args) {
       $scope.stateEvent('Modes.current.action',
                         action, [...args, {}]);

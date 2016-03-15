@@ -13,14 +13,14 @@
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
-    // default_actions.enterLosMode = enterLosMode;
+    default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragStartMap;
     default_actions.dragMap = dragMap;
     default_actions.dragEndMap = dragEndMap;
 
     var default_default_bindings = {
       // enterRulerMode: 'ctrl+r',
-      // enterLosMode: 'ctrl+l',
+      enterLosMode: 'ctrl+l',
       setModelSelection: 'clickModel',
       toggleModelSelection: 'ctrl+clickModel',
       modelSelectionDetail: 'rightClickModel',
@@ -87,11 +87,11 @@
       });
     }
     // function enterRulerMode(state) {
-    //   return state.event('Modes.switchTo', 'Ruler');
+    //   return state.eventP('Modes.switchTo', 'Ruler');
     // }
-    // function enterLosMode(state) {
-    //   return state.event('Modes.switchTo', 'LoS');
-    // }
+    function enterLosMode(state) {
+      return state.eventP('Modes.switchTo', 'Los');
+    }
     function dragStartMap(state, event) {
       state.queueChangeEventP('Game.dragBox.enable', event.start, event.now);
     }

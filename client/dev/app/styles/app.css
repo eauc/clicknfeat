@@ -308,7 +308,33 @@ a:not([href]):focus {
     max-height: 4.2em; }
 
 /* @import 'components/game/ruler/ruler'; */
-/* @import 'components/game/los/los'; */
+#game #game-los {
+  pointer-events: none; }
+  #game #game-los line {
+    stroke-width: 0.5px;
+    stroke: #0F0; }
+#game .los-origin,
+#game .los-target {
+  stroke-width: 1.25px;
+  fill: none;
+  pointer-events: none; }
+#game .los-origin {
+  stroke: #F90; }
+#game .los-target {
+  stroke: #0FF; }
+#game .los-envelope, #game .los-darkness, #game .los-shadow {
+  fill-opacity: 0.5;
+  stroke-width: 0.5px; }
+#game .los-envelope {
+  fill: #9F9;
+  stroke: #3F3; }
+#game .los-darkness {
+  fill: #030;
+  stroke: #020; }
+#game .los-shadow {
+  fill: #999;
+  stroke: #666; }
+
 #game #game-scenario .zone, #game #game-scenario .objective, #game #game-scenario .area {
   fill: #CC0;
   stroke: #990;

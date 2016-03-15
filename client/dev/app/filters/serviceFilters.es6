@@ -3,6 +3,7 @@
     .filter('capitalize', capitalizeFilterFactory)
     .filter('game', gameFilterFactory)
     .filter('gameLayers', gameLayersFilterFactory)
+    .filter('gameLos', gameLosFilterFactory)
     .filter('user', userFilterFactory)
     .filter('userConnection', userConnectionFilterFactory);
 
@@ -34,6 +35,18 @@
         return null;
       }
       return gameLayersModel[method].apply(null, R.append(input, args));
+    };
+  }
+  gameLosFilterFactory.$inject = [
+    'gameLos',
+  ];
+  function gameLosFilterFactory(gameLosModel) {
+    return function gameLosFilter(input, method, ...args) {
+      if(R.isNil(gameLosModel[method])) {
+        console.error('GameLos Filter: method "'+method+'" does not exist');
+        return null;
+      }
+      return gameLosModel[method].apply(null, R.append(input, args));
     };
   }
   userFilterFactory.$inject = [

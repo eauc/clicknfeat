@@ -16,7 +16,7 @@ $scrollbar-width: 15px;
 @import 'components/game/model/model';
 @import 'components/game/gameOsd';
 /* @import 'components/game/ruler/ruler'; */
-/* @import 'components/game/los/los'; */
+@import 'components/game/los/gameLos';
 @import 'components/game/scenario/scenario';
 @import 'components/game/template/template';
 @import 'components/game/terrain/terrain';

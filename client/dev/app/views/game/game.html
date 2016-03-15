@@ -99,10 +99,10 @@
                          "
             />
           </marker>
-          <!-- <clipPath id="los-clip"> -->
-          <!--   <polygon click-game-los-clip> -->
-          <!--   </polygon> -->
-          <!-- </clipPath> -->
+          <clipPath id="los-clip">
+            <polygon click-game-los-clip>
+            </polygon>
+          </clipPath>
         </defs>
         <g id="game-board"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'b'">
@@ -137,17 +137,17 @@
         </g>
         <g id="game-under-models"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
-        <!--   <g click-game-los-refresh -->
-        <!--      style="clip-path: url(#los-clip);"> -->
-        <!--     <polygon ng-repeat="envelope in state.game.los.computed.shadow" -->
-        <!--              click-game-los-darkness -->
-        <!--              class="los-shadow"> -->
-        <!--     </polygon> -->
-        <!--     <polygon ng-repeat="envelope in state.game.los.computed.darkness" -->
-        <!--              click-game-los-darkness -->
-        <!--              class="los-darkness"> -->
-        <!--     </polygon> -->
-        <!--   </g> -->
+          <g click-game-los-refresh
+             style="clip-path: url(#los-clip);">
+            <polygon ng-repeat="envelope in state.game.los.computed.shadow"
+                     click-game-los-darkness
+                     class="los-shadow">
+            </polygon>
+            <polygon ng-repeat="envelope in state.game.los.computed.darkness"
+                     click-game-los-darkness
+                     class="los-darkness">
+            </polygon>
+          </g>
         </g>
         <g id="game-models-locked"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'"
@@ -167,9 +167,9 @@
         <!-- <g id="game-ruler" -->
         <!--    click-game-ruler> -->
         <!-- </g> -->
-        <!-- <g id="game-los" -->
-        <!--    click-game-los> -->
-        <!-- </g> -->
+        <g id="game-los"
+           click-game-los>
+        </g>
         <g id="game-create-terrains">
           <g ng-repeat="(index, terrain) in state.create.terrains"
              click-game-create-terrain>

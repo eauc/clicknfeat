@@ -260,4 +260,14 @@ describe('defaultMode model', function() {
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });
+
+  context('when user uses los', function() {
+    return this.defaultModeModel
+      .actions.enterLosMode(this.state);
+  }, function() {
+    it('should switch to los mode', function() {
+      expect(this.state.eventP)
+        .toHaveBeenCalledWith('Modes.switchTo', 'Los');
+    });
+  });
 });
