@@ -1,12 +1,21 @@
 'use strict';
 
-angular.module('clickApp.directives').directive('clickBadDiceNotification', [function () {
-  return {
-    restrict: 'E',
-    template: ['<audio src="/data/sound/naindows-hahaha02.wav">', '</audio>'].join(''),
-    link: function link(scope, element) {
+(function () {
+  angular.module('clickApp.directives').directive('clickBadDiceNotification', badDiceNotificationDirectiveFactory);
+
+  badDiceNotificationDirectiveFactory.$inject = [];
+  function badDiceNotificationDirectiveFactory() {
+    return {
+      restrict: 'E',
+      templateUrl: 'app/components/game/bad_dice_notification/bad_dice_notification.html',
+      link: link
+    };
+
+    function link(scope, element) {
       var audio = element[0].querySelector('audio');
-      scope.onStateChangeEvent('Game.dice.roll', function () {
+      scope.onStateChangeEvent('Game.dice.roll', onDiceRoll, scope);
+
+      function onDiceRoll() {
         var ctxt = R.last(R.pathOr([], ['state', 'game', 'dice'], scope));
         if (ctxt.type === 'rollDeviation') return;
 
@@ -18,8 +27,8 @@ angular.module('clickApp.directives').directive('clickBadDiceNotification', [fun
 
         audio.currentTime = 0;
         audio.play();
-      }, scope);
+      }
     }
-  };
-}]);
+  }
+})();
 //# sourceMappingURL=badDiceNotification.js.map
