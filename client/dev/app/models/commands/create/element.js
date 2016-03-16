@@ -47,7 +47,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return game;
         }, emitCreateEvent$(state));
       }
-      function tryToCreateElementP(state, element) {
+      function tryToCreateElementP(_state_, element) {
         return elementModel.createP(element).catch(R.always(null));
       }
       function onCreatedElements(selection, state, game, elements) {

@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('segmentMode', segmentModeModelFactory);
 
-  segmentModeModelFactory.$inject = ['modes', 'settings', 'commonMode', 'game', 'gameModels', 'gameModelSelection'];
-  function segmentModeModelFactory(modesModel, settingsModel, commonModeModel, gameModel, gameModelsModel, gameModelSelectionModel) {
+  segmentModeModelFactory.$inject = ['modes', 'settings', 'commonMode', 'gameModels', 'gameModelSelection'];
+  function segmentModeModelFactory(modesModel, settingsModel, commonModeModel, gameModelsModel, gameModelSelectionModel) {
     return function buildSegmentModeModel(type, gameSegmentModel, default_bindings) {
       var segment_actions = Object.create(commonModeModel.actions);
       segment_actions['exit' + s.capitalize(type) + 'Mode'] = commonModeModel.actions.modeBackToDefault;

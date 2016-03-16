@@ -56,11 +56,11 @@
       }
       function modelSetGridColDamageP(factions, col, model) {
         return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
-          var full = R.thread(model.state.dmg[col])(R.addIndex(R.filter)(function (val, line) {
+          var full = R.thread(model.state.dmg[col])(R.addIndex(R.filter)(function (_val_, line) {
             return R.exists(info.damage[col][line]);
           }), R.reject(R.equals(1)), R.isEmpty);
           var value = full ? 0 : 1;
-          return R.over(R.lensPath(['state', 'dmg']), R.pipe(R.over(R.lensProp(col), R.addIndex(R.map)(function (val, line) {
+          return R.over(R.lensPath(['state', 'dmg']), R.pipe(R.over(R.lensProp(col), R.addIndex(R.map)(function (_val_, line) {
             return R.exists(info.damage[col][line]) ? value : 0;
           })), function (dmg) {
             return R.assoc('t', computeTotalGridDamage(dmg), dmg);

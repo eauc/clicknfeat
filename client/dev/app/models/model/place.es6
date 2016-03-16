@@ -206,7 +206,7 @@
           modelModel.checkStateP$(factions, null)
         );
       }
-      function ensurePlaceLength(info, target, state) {
+      function ensurePlaceLength(info, _target_, state) {
         if(R.exists(state.pla) &&
            R.exists(state.pml) &&
            state.pml[0] > 0) {

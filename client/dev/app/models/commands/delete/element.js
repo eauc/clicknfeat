@@ -72,7 +72,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           });
         }
       }
-      function tryToCreateElementP(state, element) {
+      function tryToCreateElementP(_state_, element) {
         return elementModel.createP(element).catch(R.always(null));
       }
       function emitDeleteEvent(state, stamp) {

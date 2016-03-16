@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelChargeMode', modelChargeModeModelFactory);
 
-  modelChargeModeModelFactory.$inject = ['modes', 'settings', 'modelsMode', 'modelBaseMode', 'model', 'game', 'gameModels', 'gameModelSelection'];
-  function modelChargeModeModelFactory(modesModel, settingsModel, modelsModeModel, modelBaseModeModel, modelModel, gameModel, gameModelsModel, gameModelSelectionModel) {
+  modelChargeModeModelFactory.$inject = ['modes', 'settings', 'modelsMode', 'modelBaseMode', 'model', 'gameModels', 'gameModelSelection'];
+  function modelChargeModeModelFactory(modesModel, settingsModel, modelsModeModel, modelBaseModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
     var charge_actions = Object.create(modelBaseModeModel.actions);
     charge_actions.endCharge = chargeModelEnd;
     charge_actions.setTargetModel = chargeModelSetTarget;
@@ -73,7 +73,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var _ref2 = _slicedToArray(_ref, 3);
 
       var move = _ref2[0];
-      var keys = _ref2[1];
+      var _keys_ = _ref2[1];
       var flip_move = _ref2[2];
 
       charge_actions[move] = chargeModelMove$(move, flip_move, false);

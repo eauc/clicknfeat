@@ -274,7 +274,7 @@ describe('gameModels model', function() {
     beforeEach(function() {
       this.stamps = ['stamp2', 'stamp3'];
 
-      this.modelModel.setState.and.callFake((a1, a2, m) => {
+      this.modelModel.setState.and.callFake((_a1_, _a2_, m) => {
         return 'model.setState.returnValue('+m.state.stamp+')';
       });
     });
@@ -311,7 +311,7 @@ describe('gameModels model', function() {
           this.modelModel.isLocked.and.callFake((m) => {
             return m.state.stamp === 'stamp2';
           });
-          this.modelModel.setState.and.callFake((f,s,m) => {
+          this.modelModel.setState.and.callFake((_f_,_s_,m) => {
             return R.assocPath(['state','set'],'set', m);
           });
         });
@@ -334,7 +334,7 @@ describe('gameModels model', function() {
         });
 
         context('when some calls to <method> fail', function() {
-          this.modelModel.setState.and.callFake((f,s,m) => {
+          this.modelModel.setState.and.callFake((_f_,_s_,m) => {
             return ( m.state.stamp === 'stamp2' ?
                      R.assocPath(['state','set'],'set', m) :
                      self.Promise.reject('reason')
@@ -362,7 +362,7 @@ describe('gameModels model', function() {
     beforeEach(function() {
       this.stamps = ['stamp2', 'stamp3'];
 
-      this.modelModel.setState.and.callFake((a1, a2, m) => {
+      this.modelModel.setState.and.callFake((_a1_, _a2_, m) => {
         return 'model.setState.returnValue('+m.state.stamp+')';
       });
     });
@@ -410,7 +410,7 @@ describe('gameModels model', function() {
         });
 
         context('when some calls to <method> fail', function() {
-          this.modelModel.setState.and.callFake((f,s,m) => {
+          this.modelModel.setState.and.callFake((_f_,_s_,m) => {
             return ( m.state.stamp === 'stamp2' ?
                      'model.setState.returnValue('+m.state.stamp+')' :
                      self.Promise.reject('reason')
@@ -453,7 +453,7 @@ describe('gameModels model', function() {
                                 this.models);
   }, function() {
     beforeEach(function() {
-      this.modelModel.isBetweenPoints.and.callFake((s,e,m) => {
+      this.modelModel.isBetweenPoints.and.callFake((_s_,_e_,m) => {
         return ( m.state.stamp === 'stamp2' ||
                  m.state.stamp === 'stamp3'
                );

@@ -2,11 +2,8 @@
   angular.module('clickApp.services')
     .factory('setSegmentCommand', setSegmentCommandModelFactory);
 
-  setSegmentCommandModelFactory.$inject =[
-    'commands',
-  ];
-  function setSegmentCommandModelFactory(commandsModel) {
-
+  setSegmentCommandModelFactory.$inject =[];
+  function setSegmentCommandModelFactory() {
     return function buildSetSegmentCommandModel(type,
                                                 gameSegmentModel) {
       const setSegmentCommandModel = {

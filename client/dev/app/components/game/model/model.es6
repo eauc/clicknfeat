@@ -163,7 +163,7 @@
       });
     }
     function onUpdateSingleModelSelection(factions, model, element) {
-      return (event, sel_stamp, sel_model) => {
+      return (_event_, sel_stamp, sel_model) => {
         if(R.isNil(sel_model) ||
            sel_stamp === model.state.stamp) {
           element.container.classList.remove('overlap');
@@ -192,7 +192,7 @@
       };
     }
     function onUpdateSingleTemplateSelection(factions, model, element) {
-      return (event, sel_stamp, sel_temp) => {
+      return (_event_, _sel_stamp_, sel_temp) => {
         // console.log('onUpdateSingleAoTemplateSelection',
         //             sel_stamp, model.state.stamp);
         if(R.isNil(sel_temp) ||

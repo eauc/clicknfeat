@@ -9,7 +9,7 @@
     self.it.wrapper = _wrapper;
   };
 
-  self.xcontext = function xcontext(desc, setup, body) {
+  self.xcontext = function xcontext(desc, _setup_, body) {
     self.xdescribe(desc, body);
   };
 

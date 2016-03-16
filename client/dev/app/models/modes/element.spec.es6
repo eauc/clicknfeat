@@ -211,7 +211,7 @@ describe('elementMode model', function() {
       this.elementModel.isLocked
         .and.returnValue(false);
       this.elementModel.setPositionP
-        .resolveWith((f, t, p, m) => {
+        .resolveWith((_f_, _t_, _p_, m) => {
           return m;
         });
 

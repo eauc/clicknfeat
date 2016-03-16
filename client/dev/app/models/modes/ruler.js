@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('rulerMode', rulerModeModelFactory);
 
-  rulerModeModelFactory.$inject = ['segmentMode', 'modes', 'settings', 'commonMode', 'game', 'gameRuler', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
-  function rulerModeModelFactory(segmentModeModel, modesModel, settingsModel, commonModeModel, gameModel, gameRulerModel, modelModel, gameModelsModel, gameModelSelectionModel, promptModel) {
+  rulerModeModelFactory.$inject = ['segmentMode', 'gameRuler', 'prompt'];
+  function rulerModeModelFactory(segmentModeModel, gameRulerModel, promptModel) {
     var ruler_default_bindings = {
       exitRulerMode: 'ctrl+r',
       setMaxLength: 'shift+r',

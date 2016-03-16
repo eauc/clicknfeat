@@ -4,11 +4,9 @@
 
   wallTemplateModeModelFactory.$inject = [
     'modes',
-    'settings',
     'templateMode',
   ];
   function wallTemplateModeModelFactory(modesModel,
-                                        settingsModel,
                                         templateModeModel) {
     const template_actions = Object.create(templateModeModel.actions);
     const template_default_bindings = { };

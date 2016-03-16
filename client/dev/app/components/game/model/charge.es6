@@ -49,7 +49,7 @@
       under_models_container.removeChild(charge_path);
     }
     function gameModelChargeUpdate(map_flipped, zoom_factor,
-                                   state, info, model, img, element) {
+                                   state, info, model, _img_, element) {
       const [ charge_path, charge_target, charge_label ] = element;
 
       if(!modelModel.isCharging(model)  &&

@@ -100,7 +100,7 @@
       });
     }
     function onUpdateSingleModelSelection(factions, model, element) {
-      return function (event, sel_stamp, sel_model) {
+      return function (_event_, sel_stamp, sel_model) {
         if (R.isNil(sel_model) || sel_stamp === model.state.stamp) {
           element.container.classList.remove('overlap');
           element.container.classList.remove('b2b');
@@ -123,7 +123,7 @@
       };
     }
     function onUpdateSingleTemplateSelection(factions, model, element) {
-      return function (event, sel_stamp, sel_temp) {
+      return function (_event_, _sel_stamp_, sel_temp) {
         // console.log('onUpdateSingleAoTemplateSelection',
         //             sel_stamp, model.state.stamp);
         if (R.isNil(sel_temp) || 'aoe' !== sel_temp.state.type) {

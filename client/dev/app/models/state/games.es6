@@ -47,31 +47,29 @@
     function stateGamesSave(state) {
       return state;
     }
-    function stateGamesOnInit(state, ready, event) {
-      event = event;
+    function stateGamesOnInit(state, ready, _event_) {
       return R.threadP()(
         gamesModel.loadLocalGamesP,
         setLocalGames$(state),
         ready
       );
     }
-    function stateGamesOnLocalCreate(state, event) {
-      event = event;
+    function stateGamesOnLocalCreate(state, _event_) {
       return R.thread(state.user.state)(
         gameModel.create,
         loadNewLocalGame$(state)
       );
     }
-    function stateOnGamesLocalLoad(state, event, index) {
+    function stateOnGamesLocalLoad(state, _event_, index) {
       state.queueChangeEventP('Games.local.load', index);
     }
-    function stateOnGamesLocalLoadFile(state, event, file) {
+    function stateOnGamesLocalLoadFile(state, _event_, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
         stateGamesService.loadNewLocalGame$(state)
       );
     }
-    function stateOnGamesLocalDelete(state, event, id) {
+    function stateOnGamesLocalDelete(state, _event_, id) {
       return R.thread(state.local_games)(
         gamesModel.removeLocalGame$(id),
         setLocalGames$(state)

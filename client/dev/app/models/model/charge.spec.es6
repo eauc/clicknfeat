@@ -4,7 +4,7 @@ describe('model charge model', function() {
     function(modelModel) {
       this.modelModel = modelModel;
       spyOn(this.modelModel, 'checkStateP')
-        .and.callFake((f,t,m) => m);
+        .and.callFake((_f_,_t_,m) => m);
       this.modelModel.checkStateP$ = R.curryN(3, this.modelModel.checkStateP);
     }
   ]));

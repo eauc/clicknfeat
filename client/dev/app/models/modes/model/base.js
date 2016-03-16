@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('modelBaseMode', modelBaseModeModelFactory);
 
-  modelBaseModeModelFactory.$inject = ['modes', 'settings', 'modelsMode', 'sprayTemplateMode', 'model', 'game', 'gameModels', 'gameModelSelection'];
-  function modelBaseModeModelFactory(modesModel, settingsModel, modelsModeModel, sprayTemplateModeModel, modelModel, gameModel, gameModelsModel, gameModelSelectionModel) {
+  modelBaseModeModelFactory.$inject = ['settings', 'modelsMode', 'sprayTemplateMode', 'model', 'gameModels', 'gameModelSelection'];
+  function modelBaseModeModelFactory(settingsModel, modelsModeModel, sprayTemplateModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
     var model_actions = Object.create(modelsModeModel.actions);
     model_actions.createAoEOnModel = modelCreateAoEOnModel;
     model_actions.createSprayOnModel = modelCreateSprayOnModel;

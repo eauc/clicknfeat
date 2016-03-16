@@ -122,7 +122,7 @@
           return R.over(R.lensProp('state'), pointModel.shiftDown$(dist), model);
         }, modelModel.checkStateP$(factions, target));
       }
-      function ensureChargeLength(info, target, state) {
+      function ensureChargeLength(_info_, _target_, state) {
         if (R.exists(state.cha) && R.exists(state.cml) && state.cml > 0) {
           var distance = pointModel.distanceTo(state, state.cha.s);
           if (distance > state.cml * 10) {
@@ -133,7 +133,7 @@
         }
         return state;
       }
-      function ensureChargeOrientation(info, target, state) {
+      function ensureChargeOrientation(_info_, target, state) {
         if (R.exists(state.cha)) {
           if (R.exists(target)) {
             return R.assoc('r', pointModel.directionTo(target.state, state), state);

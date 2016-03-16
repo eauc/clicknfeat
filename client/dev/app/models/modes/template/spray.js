@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('sprayTemplateMode', sprayTemplateModeModelFactory);
 
-  sprayTemplateModeModelFactory.$inject = ['modes', 'settings', 'templateMode', 'sprayTemplate', 'game', 'gameTemplates', 'gameTemplateSelection', 'gameModels'];
-  function sprayTemplateModeModelFactory(modesModel, settingsModel, templateModeModel, sprayTemplateModel, gameModel, gameTemplatesModel, gameTemplateSelectionModel, gameModelsModel) {
+  sprayTemplateModeModelFactory.$inject = ['modes', 'settings', 'templateMode', 'sprayTemplate', 'gameTemplates', 'gameTemplateSelection', 'gameModels'];
+  function sprayTemplateModeModelFactory(modesModel, settingsModel, templateModeModel, sprayTemplateModel, gameTemplatesModel, gameTemplateSelectionModel, gameModelsModel) {
     var template_actions = Object.create(templateModeModel.actions);
     template_actions.spraySize6 = spraySize6;
     template_actions.spraySize8 = spraySize8;

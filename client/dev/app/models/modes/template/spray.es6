@@ -7,7 +7,6 @@
     'settings',
     'templateMode',
     'sprayTemplate',
-    'game',
     'gameTemplates',
     'gameTemplateSelection',
     'gameModels',
@@ -16,7 +15,6 @@
                                          settingsModel,
                                          templateModeModel,
                                          sprayTemplateModel,
-                                         gameModel,
                                          gameTemplatesModel,
                                          gameTemplateSelectionModel,
                                          gameModelsModel) {

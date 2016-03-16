@@ -133,7 +133,7 @@
         R.assoc('current', null)
       );
     }
-    function cleanupCurrentModeBindings(state, modes) {
+    function cleanupCurrentModeBindings(_state_, modes) {
       Mousetrap.reset();
       return modes;
     }

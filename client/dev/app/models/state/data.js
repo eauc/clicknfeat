@@ -37,7 +37,7 @@
 
       return state;
     }
-    function stateDataOnInit(state, resolve, event) {
+    function stateDataOnInit(state, resolve, _event_) {
       var boards_ready = gameBoardModel.initP().then(function (boards) {
         state.boards = boards;
         console.info('board', boards);
@@ -70,17 +70,17 @@
         return storeCurrentFactions(state);
       });
     }
-    function stateDataOnSettingsLoadFile(state, event, file) {
+    function stateDataOnSettingsLoadFile(state, _event_, file) {
       return R.threadP(file)(fileImportService.readP$('json'), settingsModel.bind, settingsModel.update, setSettings$(state), function () {
         state.queueChangeEventP('Settings.loadFile', 'Settings loaded');
       }).catch(function (error) {
         state.queueChangeEventP('Settings.loadFile', error);
       });
     }
-    function stateDataOnSettingsReset(state, event, data) {
+    function stateDataOnSettingsReset(state, _event_, data) {
       return R.threadP(data)(settingsModel.bind, settingsModel.update, setSettings$(state));
     }
-    function stateDataOnFactionsLoadDescFile(state, event, faction, file) {
+    function stateDataOnFactionsLoadDescFile(state, _event_, faction, file) {
       return R.threadP(file)(fileImportService.readP$('json'), function (faction_desc) {
         return R.assocPath(['desc', faction], faction_desc, state.factions);
       }, gameFactionsModel.updateDesc, setFactions$(state), function () {
@@ -89,10 +89,10 @@
         state.queueChangeEventP('Factions.loadDescFile', error);
       });
     }
-    function stateDataOnFactionsClearDesc(state, event, faction) {
+    function stateDataOnFactionsClearDesc(state, _event_, faction) {
       return R.threadP(state.factions)(R.dissocPath(['desc', faction]), gameFactionsModel.updateDesc, setFactions$(state));
     }
-    function stateDataOnFactionsClearAllDesc(state, event) {
+    function stateDataOnFactionsClearAllDesc(state, _event_) {
       return R.threadP(state.factions)(R.assoc('desc', {}), gameFactionsModel.updateDesc, setFactions$(state));
     }
     function setSettings(state, settings) {

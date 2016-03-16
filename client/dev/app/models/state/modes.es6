@@ -39,13 +39,13 @@
     function stateModesSave(state) {
       return state;
     }
-    function stateModesOnSwitchTo(state, event, to) {
+    function stateModesOnSwitchTo(state, _event_, to) {
       return R.threadP(state.modes)(
         modesModel.switchToModeP$(to, state),
         setModes$(state)
       ).catch(gameModel.actionError$(state));
     }
-    function stateModesOnCurrentAction(state, e, action, args) {
+    function stateModesOnCurrentAction(state, _event_, action, args) {
       const res = modesModel
               .currentModeActionP(action, [state, ...args], state.modes);
       const event = R.last(args);
@@ -56,13 +56,13 @@
       return self.Promise.resolve(res)
         .catch(gameModel.actionError$(state));
     }
-    function stateModesOnReset(state, event) {
+    function stateModesOnReset(state, _event_) {
       return R.threadP(state)(
         modesModel.initP,
         setModes$(state)
       );
     }
-    function stateModesOnExit(state, event) {
+    function stateModesOnExit(state, _event_) {
       return R.threadP(state.modes)(
         modesModel.exit$(state),
         setModes$(state)

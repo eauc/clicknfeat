@@ -31,12 +31,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       return [counter, souls_image, souls_label];
     }
-    function gameModelCounterCleanup(under_models_container, over_models_container, element) {
+    function gameModelCounterCleanup(_under_models_container_, over_models_container, element) {
       var _element = _slicedToArray(element, 3);
 
       var counter = _element[0];
-      var souls_image = _element[1];
-      var souls_label = _element[2];
+      var _souls_image_ = _element[1];
+      var _souls_label_ = _element[2];
 
       over_models_container.removeChild(counter.label);
     }

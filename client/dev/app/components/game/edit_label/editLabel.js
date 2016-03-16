@@ -62,7 +62,7 @@
         container.style.left = 0 + 'px';
         container.style.top = 0 + 'px';
       }
-      function openEditLabel(event, selection) {
+      function openEditLabel(_event_, selection) {
         // console.log('openEditLabel');
         scope.edit_label.selection = selection;
         scope.edit_label.new_label = '';

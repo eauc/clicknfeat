@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('gameLos', gameLosModelFactory);
 
-  gameLosModelFactory.$inject = ['gameSegment', 'point', 'circle', 'gameFactions', 'gameModels'];
-  function gameLosModelFactory(gameSegmentModel, pointModel, circleModel, gameFactionsModel, gameModelsModel) {
+  gameLosModelFactory.$inject = ['gameSegment', 'circle', 'gameFactions', 'gameModels'];
+  function gameLosModelFactory(gameSegmentModel, circleModel, gameFactionsModel, gameModelsModel) {
     var base = gameSegmentModel('los');
     var gameLosModel = Object.create(base);
     R.deepExtend(gameLosModel, {

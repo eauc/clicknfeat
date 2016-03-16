@@ -18,7 +18,7 @@
       $scope.digestOnStateChangeEvent('Exports.settings', $scope);
       $scope.onStateChangeEvent('Settings.loadFile', updateLoadResult, $scope);
     }
-    function updateLoadResult(event, result) {
+    function updateLoadResult(_event_, result) {
       vm.load_settings_result = result;
       $scope.$digest();
     }

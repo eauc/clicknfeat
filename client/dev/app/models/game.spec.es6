@@ -74,7 +74,7 @@ describe('game model', function() {
 
       this.commandsModel = spyOnService('commands');
       this.commandsModel.replayBatchP
-        .resolveWith((c, s, g) => g);
+        .resolveWith((_c_, _s_, g) => g);
     });
 
     it('should extend game with default values', function() {

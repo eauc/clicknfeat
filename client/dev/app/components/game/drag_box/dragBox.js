@@ -22,7 +22,7 @@
       function hideDragbox() {
         box.style.visibility = 'hidden';
       }
-      function updateDragbox(event, start, end) {
+      function updateDragbox(_event_, start, end) {
         var x = Math.min(start.x, end.x);
         var y = Math.min(start.y, end.y);
         var width = Math.abs(start.x - end.x);

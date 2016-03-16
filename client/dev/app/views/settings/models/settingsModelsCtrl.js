@@ -24,7 +24,7 @@
       vm.factions = R.path(['factions', 'base'], $scope.state);
       $scope.$digest();
     }
-    function updateLoadResult(event, result) {
+    function updateLoadResult(_event_, result) {
       $scope.result = result;
       $scope.$digest();
     }

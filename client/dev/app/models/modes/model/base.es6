@@ -3,21 +3,17 @@
     .factory('modelBaseMode', modelBaseModeModelFactory);
 
   modelBaseModeModelFactory.$inject = [
-    'modes',
     'settings',
     'modelsMode',
     'sprayTemplateMode',
     'model',
-    'game',
     'gameModels',
     'gameModelSelection',
   ];
-  function modelBaseModeModelFactory(modesModel,
-                                     settingsModel,
+  function modelBaseModeModelFactory(settingsModel,
                                      modelsModeModel,
                                      sprayTemplateModeModel,
                                      modelModel,
-                                     gameModel,
                                      gameModelsModel,
                                      gameModelSelectionModel) {
     const model_actions = Object.create(modelsModeModel.actions);

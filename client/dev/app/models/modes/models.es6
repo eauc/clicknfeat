@@ -7,21 +7,17 @@
     'settings',
     'defaultMode',
     'model',
-    'game',
     'gameModels',
     'gameModelSelection',
-    'point',
     'prompt',
   ];
   function modelsModeModelFactory(modesModel,
-                                    settingsModel,
-                                    defaultModeModel,
-                                    modelModel,
-                                    gameModel,
-                                    gameModelsModel,
-                                    gameModelSelectionModel,
-                                    pointModel,
-                                    promptModel) {
+                                  settingsModel,
+                                  defaultModeModel,
+                                  modelModel,
+                                  gameModelsModel,
+                                  gameModelSelectionModel,
+                                  promptService) {
     const models_actions = Object.create(defaultModeModel.actions);
     models_actions.clickMap = modelsClearSelection;
     models_actions.rightClickMap = modelsClearSelection;
@@ -229,7 +225,7 @@
         R.prop('models'),
         gameModelsModel.findStampP$(stamps[0]),
         (model) => R.defaultTo(0, modelModel.unit(model)),
-        (value) => promptModel
+        (value) => promptService
           .promptP('prompt', 'Set unit number :', value)
           .catch(R.always(null)),
         (value) => state.eventP('Game.command.execute',
@@ -333,7 +329,7 @@
         gameModelsModel.findStampP$(stamps[0]),
         modelModel.rulerMaxLength,
         R.defaultTo(0),
-        (value) => promptModel
+        (value) => promptService
           .promptP('prompt', 'Set ruler max length :', value)
           .catch(R.always(null)),
         (value) => (value === 0) ? null : value,
@@ -349,7 +345,7 @@
         R.prop('models'),
         gameModelsModel.findStampP$(stamps[0]),
         modelModel.chargeMaxLength,
-        (value) => promptModel
+        (value) => promptService
           .promptP('prompt', 'Set charge max length :', value)
           .catch(R.always(null)),
         (value) => (value === 0) ? null : value,
@@ -369,7 +365,7 @@
         gameModelsModel.findStampP$(stamps[0]),
         modelModel.placeMaxLength,
         R.defaultTo(0),
-        (value) => promptModel
+        (value) => promptService
           .promptP('prompt','Set place max length :', value)
           .catch(R.always(null)),
         (value) => (value === 0) ? null : value,
@@ -499,7 +495,7 @@
         };
       }
     }
-    function modelsMove([move, key]) {
+    function modelsMove([move, _key_]) {
       models_actions[move] = modelsMove_(false);
       models_actions[move+'Small'] = modelsMove_(true);
 
@@ -513,7 +509,7 @@
         };
       }
     }
-    function modelsShift([shift, key, flip_shift]) {
+    function modelsShift([shift, _key_, flip_shift]) {
       models_actions[shift] = modelsShift_(false);
       models_actions[shift+'Small'] = modelsShift_(true);
 

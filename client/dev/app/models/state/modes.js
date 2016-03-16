@@ -33,10 +33,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function stateModesSave(state) {
       return state;
     }
-    function stateModesOnSwitchTo(state, event, to) {
+    function stateModesOnSwitchTo(state, _event_, to) {
       return R.threadP(state.modes)(modesModel.switchToModeP$(to, state), setModes$(state)).catch(gameModel.actionError$(state));
     }
-    function stateModesOnCurrentAction(state, e, action, args) {
+    function stateModesOnCurrentAction(state, _event_, action, args) {
       var res = modesModel.currentModeActionP(action, [state].concat(_toConsumableArray(args)), state.modes);
       var event = R.last(args);
       if (R.exists(R.prop('preventDefault', event))) {
@@ -45,10 +45,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       return self.Promise.resolve(res).catch(gameModel.actionError$(state));
     }
-    function stateModesOnReset(state, event) {
+    function stateModesOnReset(state, _event_) {
       return R.threadP(state)(modesModel.initP, setModes$(state));
     }
-    function stateModesOnExit(state, event) {
+    function stateModesOnExit(state, _event_) {
       return R.threadP(state.modes)(modesModel.exit$(state), setModes$(state));
     }
     function setModes(state, modes) {

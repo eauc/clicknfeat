@@ -4,13 +4,11 @@
     .directive('clickGameTerrainsList', clickGameTerrainsListDirectiveFactory);
 
   clickGameTerrainDirectiveFactory.$inject = [
-    'gameMap',
     'gameTerrains',
     'gameTerrainInfo',
     'gameTerrainSelection',
   ];
-  function clickGameTerrainDirectiveFactory(gameMapModel,
-                                            gameTerrainsModel,
+  function clickGameTerrainDirectiveFactory(gameTerrainsModel,
                                             gameTerrainInfoModel,
                                             gameTerrainSelectionModel) {
     return {

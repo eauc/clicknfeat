@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelsMode', modelsModeModelFactory);
 
-  modelsModeModelFactory.$inject = ['modes', 'settings', 'defaultMode', 'model', 'game', 'gameModels', 'gameModelSelection', 'point', 'prompt'];
-  function modelsModeModelFactory(modesModel, settingsModel, defaultModeModel, modelModel, gameModel, gameModelsModel, gameModelSelectionModel, pointModel, promptModel) {
+  modelsModeModelFactory.$inject = ['modes', 'settings', 'defaultMode', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
+  function modelsModeModelFactory(modesModel, settingsModel, defaultModeModel, modelModel, gameModelsModel, gameModelSelectionModel, promptService) {
     var models_actions = Object.create(defaultModeModel.actions);
     models_actions.clickMap = modelsClearSelection;
     models_actions.rightClickMap = modelsClearSelection;
@@ -153,7 +153,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
         return R.defaultTo(0, modelModel.unit(model));
       }, function (value) {
-        return promptModel.promptP('prompt', 'Set unit number :', value).catch(R.always(null));
+        return promptService.promptP('prompt', 'Set unit number :', value).catch(R.always(null));
       }, function (value) {
         return state.eventP('Game.command.execute', 'onModels', ['setUnit', [value], stamps]);
       });
@@ -207,7 +207,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function modelsSetRulerMaxLength(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.rulerMaxLength, R.defaultTo(0), function (value) {
-        return promptModel.promptP('prompt', 'Set ruler max length :', value).catch(R.always(null));
+        return promptService.promptP('prompt', 'Set ruler max length :', value).catch(R.always(null));
       }, function (value) {
         return value === 0 ? null : value;
       }, function (value) {
@@ -217,7 +217,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function modelsSetChargeMaxLength(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.chargeMaxLength, function (value) {
-        return promptModel.promptP('prompt', 'Set charge max length :', value).catch(R.always(null));
+        return promptService.promptP('prompt', 'Set charge max length :', value).catch(R.always(null));
       }, function (value) {
         return value === 0 ? null : value;
       }, function (value) {
@@ -227,7 +227,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function modelsSetPlaceMaxLength(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.placeMaxLength, R.defaultTo(0), function (value) {
-        return promptModel.promptP('prompt', 'Set place max length :', value).catch(R.always(null));
+        return promptService.promptP('prompt', 'Set place max length :', value).catch(R.always(null));
       }, function (value) {
         return value === 0 ? null : value;
       }, function (value) {
@@ -309,7 +309,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var _ref6 = _slicedToArray(_ref5, 2);
 
       var move = _ref6[0];
-      var key = _ref6[1];
+      var _key_ = _ref6[1];
 
       models_actions[move] = modelsMove_(false);
       models_actions[move + 'Small'] = modelsMove_(true);
@@ -325,7 +325,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var _ref8 = _slicedToArray(_ref7, 3);
 
       var shift = _ref8[0];
-      var key = _ref8[1];
+      var _key_ = _ref8[1];
       var flip_shift = _ref8[2];
 
       models_actions[shift] = modelsShift_(false);

@@ -67,7 +67,7 @@ describe('games model', function() {
     beforeEach(function() {
       this.game = { local_stamp: 'stamp' };
       this.localStorageService.save
-        .and.callFake((k,g) => g);
+        .and.callFake((_k_,g) => g);
     });
 
     it('should store game', function() {
@@ -93,7 +93,7 @@ describe('games model', function() {
         { local_stamp: 'other1' }
       ];
       this.localStorageService.save
-        .and.callFake((k,g) => g);
+        .and.callFake((_k_,g) => g);
     });
 
     it('should update game in storage', function() {
@@ -125,7 +125,7 @@ describe('games model', function() {
 
       spyOn(R, 'guid').and.returnValue('stamp');
       this.localStorageService.save
-        .and.callFake((k,g) => g);
+        .and.callFake((_k_,g) => g);
     });
 
     it('should store new game', function() {

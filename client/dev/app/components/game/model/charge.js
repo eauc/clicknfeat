@@ -39,7 +39,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       over_models_container.removeChild(charge_target);
       under_models_container.removeChild(charge_path);
     }
-    function gameModelChargeUpdate(map_flipped, zoom_factor, state, info, model, img, element) {
+    function gameModelChargeUpdate(map_flipped, zoom_factor, state, info, model, _img_, element) {
       var _element2 = _slicedToArray(element, 3);
 
       var charge_path = _element2[0];

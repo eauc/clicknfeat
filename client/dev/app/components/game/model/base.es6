@@ -59,8 +59,8 @@
 
       return [ base, direction, front_arc, image, edge ];
     }
-    function gameModelBaseUpdate(info, model, img, element) {
-      const [ base, direction, front_arc, image, edge ] = element;
+    function gameModelBaseUpdate(_info_, _model_, img, element) {
+      const [ _base_, _direction_, _front_arc_, image, _edge_ ] = element;
 
       image.setAttribute('width', img.width+'');
       image.setAttribute('height', img.height+'');

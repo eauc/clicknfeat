@@ -77,14 +77,14 @@
           gameFactionsModel.getModelInfoP$(model.state.info),
           (info) => {
             const full = R.thread(model.state.dmg[col])(
-              R.addIndex(R.filter)((val, line) => R.exists(info.damage[col][line])),
+              R.addIndex(R.filter)((_val_, line) => R.exists(info.damage[col][line])),
               R.reject(R.equals(1)),
               R.isEmpty
             );
             const value = full ? 0 : 1;
             return R.over(R.lensPath(['state','dmg']), R.pipe(
               R.over(R.lensProp(col),
-                     R.addIndex(R.map)((val, line) => {
+                     R.addIndex(R.map)((_val_, line) => {
                        return R.exists(info.damage[col][line]) ? value : 0;
                      })
                     ),

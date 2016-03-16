@@ -4,25 +4,11 @@
 
   rulerModeModelFactory.$inject = [
     'segmentMode',
-    'modes',
-    'settings',
-    'commonMode',
-    'game',
     'gameRuler',
-    'model',
-    'gameModels',
-    'gameModelSelection',
     'prompt',
   ];
   function rulerModeModelFactory(segmentModeModel,
-                                 modesModel,
-                                 settingsModel,
-                                 commonModeModel,
-                                 gameModel,
                                  gameRulerModel,
-                                 modelModel,
-                                 gameModelsModel,
-                                 gameModelSelectionModel,
                                  promptModel) {
     const ruler_default_bindings = {
       exitRulerMode: 'ctrl+r',

@@ -7,7 +7,6 @@
     'settings',
     'modelsMode',
     'modelBaseMode',
-    'game',
     'gameModels',
     'gameModelSelection',
   ];
@@ -15,7 +14,6 @@
                                       settingsModel,
                                       modelsModeModel,
                                       modelBaseModeModel,
-                                      gameModel,
                                       gameModelsModel,
                                       gameModelSelectionModel) {
     const model_actions = Object.create(modelBaseModeModel.actions);
@@ -127,7 +125,7 @@
                             stamps
                           ]);
     }
-    function buildPlaceMove([move, keys, flip_move]) {
+    function buildPlaceMove([move, _keys_, flip_move]) {
       model_actions[move] = placeModelMove$(move, flip_move, false);
       model_actions[move+'Small'] = placeModelMove$(move, flip_move, true);
     }

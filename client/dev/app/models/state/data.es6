@@ -57,7 +57,7 @@
 
       return state;
     }
-    function stateDataOnInit(state, resolve, event) {
+    function stateDataOnInit(state, resolve, _event_) {
       const boards_ready = gameBoardModel.initP()
               .then((boards) => {
                 state.boards = boards;
@@ -99,7 +99,7 @@
         () => storeCurrentFactions(state)
       );
     }
-    function stateDataOnSettingsLoadFile(state, event, file) {
+    function stateDataOnSettingsLoadFile(state, _event_, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
         settingsModel.bind,
@@ -112,14 +112,14 @@
         state.queueChangeEventP('Settings.loadFile', error);
       });
     }
-    function stateDataOnSettingsReset(state, event, data) {
+    function stateDataOnSettingsReset(state, _event_, data) {
       return R.threadP(data)(
         settingsModel.bind,
         settingsModel.update,
         setSettings$(state)
       );
     }
-    function stateDataOnFactionsLoadDescFile(state, event, faction, file) {
+    function stateDataOnFactionsLoadDescFile(state, _event_, faction, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
         (faction_desc) => {
@@ -132,14 +132,14 @@
         state.queueChangeEventP('Factions.loadDescFile', error);
       });
     }
-    function stateDataOnFactionsClearDesc(state, event, faction) {
+    function stateDataOnFactionsClearDesc(state, _event_, faction) {
       return R.threadP(state.factions)(
         R.dissocPath(['desc', faction]),
         gameFactionsModel.updateDesc,
         setFactions$(state)
       );
     }
-    function stateDataOnFactionsClearAllDesc(state, event) {
+    function stateDataOnFactionsClearAllDesc(state, _event_) {
       return R.threadP(state.factions)(
         R.assoc('desc', {}),
         gameFactionsModel.updateDesc,

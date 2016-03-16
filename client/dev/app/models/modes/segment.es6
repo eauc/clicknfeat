@@ -6,14 +6,12 @@
     'modes',
     'settings',
     'commonMode',
-    'game',
     'gameModels',
     'gameModelSelection',
   ];
   function segmentModeModelFactory(modesModel,
                                    settingsModel,
                                    commonModeModel,
-                                   gameModel,
                                    gameModelsModel,
                                    gameModelSelectionModel) {
     return function buildSegmentModeModel(type, gameSegmentModel, default_bindings) {

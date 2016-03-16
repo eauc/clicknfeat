@@ -11,7 +11,6 @@
     'gameModels',
     'gameModelSelection',
     'gameScenario',
-    'gameTerrainInfo',
     'gameTerrains',
     'gameTemplates',
     'gameTemplateSelection',
@@ -28,7 +27,6 @@
                                  gameModelsModel,
                                  gameModelSelectionModel,
                                  gameScenarioModel,
-                                 gameTerrainInfoModel,
                                  gameTerrainsModel,
                                  gameTemplatesModel,
                                  gameTemplateSelectionModel,
@@ -149,7 +147,7 @@
         () => exportCurrentBoard(state)
       );
     }
-    function stateGameOnLoad(state, event, is_online, is_private, id) {
+    function stateGameOnLoad(state, _event_, is_online, is_private, id) {
       return R.threadP(waitForDataReady())(
         loadStoredGameData,
         broadcast('Game.loading'),
@@ -210,55 +208,55 @@
     //     setGame$(state)
     //   )(state.game);
     // }
-    function stateGameOnCommandExecute(state, event, cmd, args) {
+    function stateGameOnCommandExecute(state, _event_, cmd, args) {
       return R.threadP(state.game)(
         gameModel.executeCommandP$(cmd, args, state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnCommandUndo(state, event, cmd) {
+    // function stateGameOnCommandUndo(state, _event_, cmd) {
     //   return R.pipeP(
     //     gameModel.undoCommand$(cmd, state),
     //     setGame$(state)
     //   )(state.game);
     // }
-    function stateGameOnCommandUndoLast(state, event) {
+    function stateGameOnCommandUndoLast(state, _event_) {
       return R.threadP(state.game)(
         gameModel.undoLastCommandP$(state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnCommandReplay(state, event, cmd) {
+    // function stateGameOnCommandReplay(state, _event_, cmd) {
     //   return R.pipeP(
     //     gameModel.replayCommand$(cmd, state),
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnCommandReplayBatch(state, event, cmds) {
+    // function stateGameOnCommandReplayBatch(state, _event_, cmds) {
     //   return R.pipeP(
     //     gameModel.replayCommandsBatch$(cmds, state),
     //     setGame$(state)
     //   )(state.game);
     // }
-    function stateGameOnCommandReplayNext(state, event) {
+    function stateGameOnCommandReplayNext(state, _event_) {
       return R.threadP(state.game)(
         gameModel.replayNextCommandP$(state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnSetCmds(state, event, set) {
+    // function stateGameOnSetCmds(state, _event_, set) {
     //   return R.pipe(
     //     R.assoc(set.where, set.cmds),
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnSetPlayers(state, event, players) {
+    // function stateGameOnSetPlayers(state, _event_, players) {
     //   return R.pipe(
     //     R.assoc('players', players),
     //     setGame$(state)
     //   )(state.game);
     // }
-    // function stateGameOnNewChatMsg(state, event, msg) {
+    // function stateGameOnNewChatMsg(state, _event_, msg) {
     //   return R.pipe(
     //     R.over(R.lensProp('chat'),
     //            R.compose(R.append(msg.chat), R.defaultTo([]))),
@@ -266,13 +264,13 @@
     //     () => { state.changeEvent('Game.chat'); }
     //   )(state.game);
     // }
-    function stateGameOnUpdate(state, event, lens, update) {
+    function stateGameOnUpdate(state, _event_, lens, update) {
       return R.thread(state.game)(
         R.over(lens, update),
         setGame$(state)
       );
     }
-    // function stateGameOnInvitePlayer(state, event, to) {
+    // function stateGameOnInvitePlayer(state, _event_, to) {
     //   var msg = [
     //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
     //     'has invited you to join a game'
@@ -283,7 +281,7 @@
     //   return state.event('User.sendChatMsg',
     //                      { to: to, msg: msg, link: link });
     // }
-    function stateGameOnModelCreate(state, event, model_path, repeat = 1) {
+    function stateGameOnModelCreate(state, _event_, model_path, repeat = 1) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
         models: R.times((i) => ({
@@ -293,18 +291,18 @@
       };
       return state.eventP('Modes.switchTo', 'CreateModel');
     }
-    function stateGameOnModelCopy(state, event, create) {
+    function stateGameOnModelCopy(state, _event_, create) {
       state.create = create;
       return state.eventP('Modes.switchTo', 'CreateModel');
     }
-    function stateGameOnModelImportList(state, event, list) {
+    function stateGameOnModelImportList(state, _event_, list) {
       const user = R.pathOr('Unknown', ['user','state','name'], state);
       state.create = gameFactionsModel
         .buildModelsList(list, user, state.factions.references);
       console.info('doImportList', list, state.create);
       return state.eventP('Modes.switchTo', 'CreateModel');
     }
-    function stateGameOnModelImportFile(state, event, file) {
+    function stateGameOnModelImportFile(state, _event_, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
         (create) => {
@@ -313,7 +311,7 @@
         }
       ).catch(gameModel.actionError$(state));
     }
-    function stateGameOnModelSelectionLocalChange(state, event) {
+    function stateGameOnModelSelectionLocalChange(state, _event_) {
       // console.warn('onModelSelectionLocalChange', arguments);
       const local_model_selection = gameModelSelectionModel
               .get('local', state.game.model_selection);
@@ -363,14 +361,14 @@
       unsubscribe();
       state._model_selection_listener = {};
     }
-    function stateGameOnTemplateCreate(state, event, type) {
+    function stateGameOnTemplateCreate(state, _event_, type) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
         templates: [ { type: type, x: 0, y: 0, r: 0 } ]
       };
       return state.eventP('Modes.switchTo', 'CreateTemplate');
     }
-    function stateGameOnTemplateSelectionLocalChange(state, event) {
+    function stateGameOnTemplateSelectionLocalChange(state, _event_) {
       console.warn('onTemplateSelectionLocalChange', arguments);
       const local_template_selection = gameTemplateSelectionModel
               .get('local', state.game.template_selection);
@@ -421,7 +419,7 @@
       unsubscribe();
       state._template_selection_listener = {};
     }
-    function stateGameOnTerrainCreate(state, event, path) {
+    function stateGameOnTerrainCreate(state, _event_, path) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
         terrains: [ {
@@ -431,7 +429,7 @@
       };
       return state.eventP('Modes.switchTo', 'CreateTerrain');
     }
-    function stateGameOnTerrainReset(state, event) {
+    function stateGameOnTerrainReset(state, _event_) {
       return R.threadP(state.game)(
         R.prop('terrains'),
         gameTerrainsModel.all,
@@ -441,12 +439,12 @@
                                  'deleteTerrain', [stamps])
       ).catch(gameModel.actionError$(state));
     }
-    function stateGameOnBoardSet(state, event, name) {
+    function stateGameOnBoardSet(state, _event_, name) {
       let board = gameBoardModel.forName(name, state.boards);
       return state.eventP('Game.command.execute',
                           'setBoard', [board]);
     }
-    function stateGameOnBoardSetRandom(state, event) {
+    function stateGameOnBoardSetRandom(state, _event_) {
       let board, name = gameBoardModel.name(state.game.board);
       while(name === gameBoardModel.name(state.game.board)) {
         board = state.boards[R.randomRange(0, state.boards.length-1)];
@@ -455,7 +453,7 @@
       return state.eventP('Game.command.execute',
                           'setBoard', [board]);
     }
-    function stateGameOnBoardImportFile(state, event, file) {
+    function stateGameOnBoardImportFile(state, _event_, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
         (data) => R.threadP(data)(
@@ -472,12 +470,12 @@
         )
       ).catch(R.spyAndDiscardError('Import board file'));
     }
-    function stateGameOnScenarioSet(state, event, name, group) {
+    function stateGameOnScenarioSet(state, _event_, name, group) {
       const scenario = gameScenarioModel.forName(name, group);
       return state.eventP('Game.command.execute',
                           'setScenario', [scenario]);
     }
-    function stateGameOnScenarioSetRandom(state, event) {
+    function stateGameOnScenarioSetRandom(state, _event_) {
       const group = gameScenarioModel.group('SR15', state.scenarios);
       let scenario, name = gameScenarioModel.name(state.game.scenario);
       while(name === gameScenarioModel.name(state.game.scenario)) {
@@ -487,10 +485,10 @@
       return state.eventP('Game.command.execute',
                           'setScenario', [scenario]);
     }
-    function stateGameOnScenarioRefresh(state, event) {
+    function stateGameOnScenarioRefresh(state, _event_) {
       state.queueChangeEventP('Game.scenario.refresh');
     }
-    // function stateGameOnScenarioGenerateObjectives(state, event) {
+    // function stateGameOnScenarioGenerateObjectives(state, _event_) {
     //   event = event;
     //   return R.pipePromise(
     //     () => {

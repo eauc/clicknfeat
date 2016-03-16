@@ -58,14 +58,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       return [base, direction, front_arc, image, edge];
     }
-    function gameModelBaseUpdate(info, model, img, element) {
+    function gameModelBaseUpdate(_info_, _model_, img, element) {
       var _element = _slicedToArray(element, 5);
 
-      var base = _element[0];
-      var direction = _element[1];
-      var front_arc = _element[2];
+      var _base_ = _element[0];
+      var _direction_ = _element[1];
+      var _front_arc_ = _element[2];
       var image = _element[3];
-      var edge = _element[4];
+      var _edge_ = _element[4];
 
       image.setAttribute('width', img.width + '');
       image.setAttribute('height', img.height + '');

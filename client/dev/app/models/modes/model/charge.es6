@@ -8,7 +8,6 @@
     'modelsMode',
     'modelBaseMode',
     'model',
-    'game',
     'gameModels',
     'gameModelSelection',
   ];
@@ -17,7 +16,6 @@
                                        modelsModeModel,
                                        modelBaseModeModel,
                                        modelModel,
-                                       gameModel,
                                        gameModelsModel,
                                        gameModelSelectionModel) {
     const charge_actions = Object.create(modelBaseModeModel.actions);
@@ -130,7 +128,7 @@
                   ])
       );
     }
-    function buildChargeMove([move, keys, flip_move]) {
+    function buildChargeMove([move, _keys_, flip_move]) {
       charge_actions[move] = chargeModelMove$(move, flip_move, false);
       charge_actions[move+'Small'] = chargeModelMove$(move, flip_move, true);
     }

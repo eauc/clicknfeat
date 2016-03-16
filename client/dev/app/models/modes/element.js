@@ -86,7 +86,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var _ref4 = _slicedToArray(_ref3, 3);
 
         var shift = _ref4[0];
-        var key = _ref4[1];
+        var _key_ = _ref4[1];
         var flip_shift = _ref4[2];
 
         element_actions[shift] = function (state) {

@@ -12,11 +12,11 @@
     $scope.onStateChangeEvent('Games.local.load', onLocalLoad, $scope);
     vm.doLoadDumpFile = doLoadDumpFile;
 
-    function onLoadDumpFile(event, result) {
+    function onLoadDumpFile(_event_, result) {
       vm.result = result;
       $scope.$digest();
     }
-    function onLocalLoad(event, id) {
+    function onLocalLoad(_event_, id) {
       $scope.app.goToState('game.main', {
         online: 'offline',
         private: 'private',

@@ -210,7 +210,7 @@ describe('deleteModelCommand model', function() {
       };
 
       let stamp_index = 1;
-      this.modelModel.createP.resolveWith((f,m) => {
+      this.modelModel.createP.resolveWith((_f_,m) => {
         return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
       });
     });

@@ -114,7 +114,7 @@
                               [ `${move}P`, [true], stamps ]);
         };
       }
-      function buildShift([shift, key, flip_shift]) {
+      function buildShift([shift, _key_, flip_shift]) {
         element_actions[shift] = (state) => {
           const stamps = gameElementSelectionModel
                   .get('local', state.game[`${type}_selection`]);

@@ -45,7 +45,7 @@
     function gameRulerMaxLength(ruler) {
       return R.pathOr(0, ['remote','max'], ruler);
     }
-    function gameRulerSetMaxLength(length, state, game, ruler) {
+    function gameRulerSetMaxLength(length, state, _game_, ruler) {
       return R.thread(ruler)(
         R.assocPath(['local', 'max'], length),
         R.assocPath(['remote', 'max'], length),
@@ -55,11 +55,11 @@
     function gameRulerOrigin(ruler) {
       return R.path(['remote', 'origin'], ruler);
     }
-    function gameRulerClearOrigin(state, game, ruler) {
+    function gameRulerClearOrigin(state, _game_, ruler) {
       return setOriginTarget({ origin: null },
                              state, ruler);
     }
-    function gameRulerSetOrigin(origin_model, state, game, ruler) {
+    function gameRulerSetOrigin(origin_model, state, _game_, ruler) {
       const origin = origin_model.state.stamp;
       let target = gameRulerModel.target(ruler);
       target = (target === origin) ? null : target;
@@ -70,7 +70,7 @@
                                max_length: max_length
                              }, state, ruler);
     }
-    function gameRulerSetOriginResetTarget(origin_model, state, game, ruler) {
+    function gameRulerSetOriginResetTarget(origin_model, state, _game_, ruler) {
       const origin = origin_model.state.stamp;
       const max_length = R.defaultTo(R.path(['remote', 'max'], ruler),
                                      modelModel.rulerMaxLength(origin_model));
@@ -85,11 +85,11 @@
     function gameRulerTargetReached(ruler) {
       return R.path(['remote', 'reached'], ruler);
     }
-    function gameRulerClearTarget(state, game, ruler) {
+    function gameRulerClearTarget(state, _game_, ruler) {
       return setOriginTarget({ target: null
                              }, state, ruler);
     }
-    function gameRulerSetTarget(target_model, state, game, ruler) {
+    function gameRulerSetTarget(target_model, state, _game_, ruler) {
       let origin = gameRulerModel.origin(ruler);
       const target = target_model.state.stamp;
       origin = (origin === target) ? null : origin;
@@ -97,10 +97,10 @@
                                target: target
                              }, state, ruler);
     }
-    function gameRulerUpdateOriginTarget(state, game, ruler) {
+    function gameRulerUpdateOriginTarget(state, _game_, ruler) {
       return setupRemoteRuler(state, ruler);
     }
-    function gameRulerSetLocal(start, end, state, game, ruler) {
+    function gameRulerSetLocal(start, end, state, _game_, ruler) {
       return R.over(R.lensProp('local'), R.pipe(
         R.assoc('start', R.clone(start)),
         enforceEndToMaxLength$(end),
@@ -112,7 +112,7 @@
         }
       ), ruler);
     }
-    function gameRulerSetRemote(start, end, state, game, ruler) {
+    function gameRulerSetRemote(start, end, state, _game_, ruler) {
       return R.thread(ruler)(
         R.over(R.lensProp('local'), R.pipe(
           R.assoc('display', false),

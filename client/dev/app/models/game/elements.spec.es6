@@ -265,7 +265,7 @@ describe('gameElements model', function() {
           this.terrainModel.isLocked.and.callFake((m) => {
             return m.state.stamp === 'stamp2';
           });
-          this.terrainModel.setState.and.callFake((f,s,m) => {
+          this.terrainModel.setState.and.callFake((_f_,_s_,m) => {
             return R.assocPath(['state','set'],'set', m);
           });
         });
@@ -288,7 +288,7 @@ describe('gameElements model', function() {
         });
 
         context('when some calls to <method> fail', function() {
-          this.terrainModel.setState.and.callFake((a1,a2,m) => {
+          this.terrainModel.setState.and.callFake((_a1_,_a2_,m) => {
             return ( m.state.stamp === 'stamp2' ?
                      R.assocPath(['state','set'],'set', m) :
                      self.Promise.reject('reason')
@@ -316,7 +316,7 @@ describe('gameElements model', function() {
     beforeEach(function() {
       this.stamps = ['stamp2', 'stamp3'];
 
-      this.terrainModel.setState.and.callFake((a1, a2, m) => {
+      this.terrainModel.setState.and.callFake((_a1_, _a2_, m) => {
         return 'element.setState.returnValue('+m.state.stamp+')';
       });
     });
@@ -364,7 +364,7 @@ describe('gameElements model', function() {
         });
 
         context('when some calls to <method> fail', function() {
-          this.terrainModel.setState.and.callFake((f,s,m) => {
+          this.terrainModel.setState.and.callFake((_f_,_s_,m) => {
             return ( m.state.stamp === 'stamp2' ?
                      'element.setState.returnValue('+m.state.stamp+')' :
                      self.Promise.reject('reason')

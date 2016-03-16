@@ -88,7 +88,7 @@
           emitCreateEvent$(state)
         );
       }
-      function tryToCreateElementP(state, element) {
+      function tryToCreateElementP(_state_, element) {
         return elementModel
           .createP(element)
           .catch(R.always(null));

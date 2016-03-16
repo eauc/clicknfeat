@@ -82,7 +82,7 @@ describe('sprayTemplate model', function() {
         this.templateModel.isLocked
           .and.returnValue(false);
         this.templateModel[e.move]
-          .resolveWith((s,t) => t);
+          .resolveWith((_s_,t) => t);
       });
 
       it('should reset template origin', function() {

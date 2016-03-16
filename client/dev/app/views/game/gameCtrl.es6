@@ -100,7 +100,7 @@
       $scope.stateEvent('Modes.current.action',
                         action, [...args, {}]);
     }
-    function doActionButton([label, action, group]) {
+    function doActionButton([_label_, action, group]) {
       if(action === 'toggle') {
         vm.show_action_group = ( $scope.show_action_group === group
                                  ? null

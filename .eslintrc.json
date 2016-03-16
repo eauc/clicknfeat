@@ -37,6 +37,12 @@
       2,
       "unix"
     ],
+    "no-unused-vars": [
+      2,
+      { "args": "all",
+        "varsIgnorePattern": "^_.*_$",
+        "argsIgnorePattern": "^_.*_$" }
+    ],
     "semi": [
       2,
       "always"

@@ -81,7 +81,7 @@
     };
     return promptDirective;
 
-    function link(scope, element) {
+    function link(_scope_, element) {
       element = element[0];
       var form = element.querySelector('form');
       var msg_container = element.querySelector('p');

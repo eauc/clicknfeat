@@ -32,10 +32,10 @@
 
       return [ counter, souls_image, souls_label ];
     }
-    function gameModelCounterCleanup(under_models_container,
+    function gameModelCounterCleanup(_under_models_container_,
                                      over_models_container,
                                      element) {
-      const [ counter, souls_image, souls_label ] = element;
+      const [ counter, _souls_image_, _souls_label_ ] = element;
 
       over_models_container.removeChild(counter.label);
     }

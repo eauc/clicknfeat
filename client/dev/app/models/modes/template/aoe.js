@@ -3,10 +3,10 @@
 (function () {
   angular.module('clickApp.services').factory('aoeTemplateMode', aoeTemplateModeModelFactory);
 
-  aoeTemplateModeModelFactory.$inject = ['modes', 'settings', 'templateMode', 'game', 'gameTemplates', 'gameTemplateSelection',
+  aoeTemplateModeModelFactory.$inject = ['modes', 'settings', 'templateMode', 'gameTemplates', 'gameTemplateSelection',
   // 'gameRuler',
   'prompt'];
-  function aoeTemplateModeModelFactory(modesModel, settingsModel, templateModeModel, gameModel, gameTemplatesModel, gameTemplateSelectionModel,
+  function aoeTemplateModeModelFactory(modesModel, settingsModel, templateModeModel, gameTemplatesModel, gameTemplateSelectionModel,
   // gameRulerModel,
   promptService) {
     var template_actions = Object.create(templateModeModel.actions);

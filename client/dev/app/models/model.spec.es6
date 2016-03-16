@@ -4,7 +4,7 @@ describe('model model', function() {
     function(modelModel) {
       this.modelModel = modelModel;
       spyOn(this.modelModel, 'checkStateP')
-        .and.callFake(function(f,t,m) { return m; });
+        .and.callFake(function(_f_,_t_,m) { return m; });
       this.gameFactionsModel = spyOnService('gameFactions');
       spyOn(R, 'guid').and.returnValue('newGuid');
     }

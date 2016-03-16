@@ -8,8 +8,8 @@
     console.log('init clickGameEditDamageCtrl');
   }
 
-  gameEditDamageDirectiveFactory.$inject = ['game', 'gameFactions', 'gameMap'];
-  function gameEditDamageDirectiveFactory(gameService, gameFactionsService, gameMapService) {
+  gameEditDamageDirectiveFactory.$inject = ['gameFactions', 'gameMap'];
+  function gameEditDamageDirectiveFactory(gameFactionsModel, gameMapService) {
     return {
       restrict: 'A',
       templateUrl: 'app/components/game/edit_damage/edit_damage.html',
@@ -51,11 +51,11 @@
         container.style.left = 0 + 'px';
         container.style.top = 0 + 'px';
       }
-      function openEditDamage($event, selection) {
+      function openEditDamage(_event_, selection) {
         // console.log('openEditDamage');
         opened = true;
         scope.selection = selection;
-        gameFactionsService.getModelInfoP(scope.selection.state.info, state.factions).then(function (info) {
+        gameFactionsModel.getModelInfoP(scope.selection.state.info, state.factions).then(function (info) {
           scope.info = info;
           scope.$digest();
         });

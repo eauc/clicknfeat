@@ -327,11 +327,11 @@ describe('modelsMode model', function() {
         }, ss);
       });
 
-      this.modelModel.setPositionP.resolveWith((f, t, p, m) => {
+      this.modelModel.setPositionP.resolveWith((_f_, _t_, _p_, m) => {
         return m;
       });
       spyReturnPromise(this.modelModel.setPosition_);
-      this.modelModel.setPosition_.resolveWith((f, t, p, m) => {
+      this.modelModel.setPosition_.resolveWith((_f_, _t_, _p_, m) => {
         return m;
       });
     });

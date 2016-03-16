@@ -52,7 +52,7 @@
       );
       $scope.stateEvent('Games.local.delete', id);
     }
-    function onGamesLocalLoad(event, id) {
+    function onGamesLocalLoad(_event_, id) {
       $scope.goToState('game.main', {
         online: 'offline',
         private: 'private',

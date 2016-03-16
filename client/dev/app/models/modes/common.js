@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('commonMode', commonModeModelFactory);
 
-  commonModeModelFactory.$inject = ['modes', 'settings'];
-  function commonModeModelFactory(modesService, settingsModel) {
+  commonModeModelFactory.$inject = ['settings'];
+  function commonModeModelFactory(settingsModel) {
     var DEFAULT_SETTINGS = {
       DragEpsilon: 3,
       ScrollStep: 30,

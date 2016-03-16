@@ -3,11 +3,9 @@
     .factory('commonMode', commonModeModelFactory);
 
   commonModeModelFactory.$inject = [
-    'modes',
     'settings',
   ];
-  function commonModeModelFactory(modesService,
-                                  settingsModel) {
+  function commonModeModelFactory(settingsModel) {
     const DEFAULT_SETTINGS = {
       DragEpsilon: 3,
       ScrollStep: 30,

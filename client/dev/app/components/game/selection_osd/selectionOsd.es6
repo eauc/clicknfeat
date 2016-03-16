@@ -115,11 +115,9 @@
   }
 
   gameSelectionDetailDirectiveFactory.$inject = [
-    'game',
     'gameMap',
   ];
-  function gameSelectionDetailDirectiveFactory(gameService,
-                                               gameMapService) {
+  function gameSelectionDetailDirectiveFactory(gameMapService) {
     const gameSelectionDetailDirective = {
       restrict: 'A',
       scope: true,
@@ -144,7 +142,7 @@
                                closeSelectionDetail, scope);
       vm.doClose = closeSelectionDetail;
 
-      function openSelectionDetail($event, type, element) {
+      function openSelectionDetail(_event_, type, element) {
         // console.log('openSelectionDetail');
         vm.type = type;
         vm.element = element.state;
@@ -196,7 +194,7 @@
       function detailCanFitRight(viewport_rect, detail_rect, screen_pos) {
         return screen_pos.x + detail_rect.width <= viewport_rect.right;
       }
-      function alignRight(detail_rect, screen_pos) {
+      function alignRight(_detail_rect_, screen_pos) {
         return screen_pos.x+'px';
       }
       function alignLeft(detail_rect, screen_pos) {
@@ -205,7 +203,7 @@
       function detailCanFitBottom(viewport_rect, detail_rect, screen_pos) {
         return screen_pos.y + detail_rect.height <= viewport_rect.bottom;
       }
-      function alignBottom(detail_rect, screen_pos) {
+      function alignBottom(_detail_rect_, screen_pos) {
         return screen_pos.y+'px';
       }
       function alignTop(detail_rect, screen_pos) {

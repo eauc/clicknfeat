@@ -22,7 +22,7 @@
       scope.onStateChangeEvent('Game.action.error', onActionError, scope);
 
       var timeout = undefined;
-      function onActionError(event, error) {
+      function onActionError(_event_, error) {
         if (R.exists(timeout)) self.clearTimeout(timeout);
 
         mode_span.innerHTML = scope.game.currentModeName();

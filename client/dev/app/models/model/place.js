@@ -119,7 +119,7 @@
           return R.over(R.lensProp('state'), pointModel.shiftDown$(dist), model);
         }, modelModel.checkStateP$(factions, null));
       }
-      function ensurePlaceLength(info, target, state) {
+      function ensurePlaceLength(info, _target_, state) {
         if (R.exists(state.pla) && R.exists(state.pml) && state.pml[0] > 0) {
           var distance = pointModel.distanceTo(state, state.pla.s);
           var max_dist = state.pml[0] * 10 + (state.pml[1] ? info.base_radius * 2 : 0);

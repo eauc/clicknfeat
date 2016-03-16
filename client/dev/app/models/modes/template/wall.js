@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('wallTemplateMode', wallTemplateModeModelFactory);
 
-  wallTemplateModeModelFactory.$inject = ['modes', 'settings', 'templateMode'];
-  function wallTemplateModeModelFactory(modesModel, settingsModel, templateModeModel) {
+  wallTemplateModeModelFactory.$inject = ['modes', 'templateMode'];
+  function wallTemplateModeModelFactory(modesModel, templateModeModel) {
     var template_actions = Object.create(templateModeModel.actions);
     var template_default_bindings = {};
     var template_bindings = R.extend(Object.create(templateModeModel.bindings), template_default_bindings);

@@ -88,7 +88,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function doActionButton(_ref) {
       var _ref2 = _slicedToArray(_ref, 3);
 
-      var label = _ref2[0];
+      var _label_ = _ref2[0];
       var action = _ref2[1];
       var group = _ref2[2];
 

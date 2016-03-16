@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.models').factory('userConnection', userConnectionServiceFactory);
 
-  userConnectionServiceFactory.$inject = ['http', 'pubSub', 'websocket'];
-  function userConnectionServiceFactory(httpService, pubSubService, websocketService) {
+  userConnectionServiceFactory.$inject = ['websocket'];
+  function userConnectionServiceFactory(websocketService) {
     var userConnectionService = {
       init: userConnectionInit,
       openP: userConnectionOpenP,

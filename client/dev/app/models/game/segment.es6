@@ -35,7 +35,7 @@
       function gameSegmentIsDisplayed(segment) {
         return R.path(['remote','display'], segment);
       }
-      function gameSegmentToggleDisplay(state, game, segment) {
+      function gameSegmentToggleDisplay(state, _game_, segment) {
         return R.thread(segment)(
           R.over(R.lensPath(['remote','display']), R.not),
           (segment) => {
@@ -44,7 +44,7 @@
           }
         );
       }
-      function gameSegmentSetLocal(start, end, state, game, segment) {
+      function gameSegmentSetLocal(start, end, state, _game_, segment) {
         return R.over(R.lensProp('local'), R.pipe(
           R.assoc('start', R.clone(start)),
           R.assoc('end', R.clone(end)),
@@ -55,7 +55,7 @@
           }
         ), segment);
       }
-      function gameSegmentSetRemote(start, end, state, game, segment) {
+      function gameSegmentSetRemote(start, end, state, _game_, segment) {
         return R.thread(segment)(
           R.assocPath(['local','display'], false),
           R.assocPath(['remote','start'], R.clone(start)),
@@ -71,7 +71,7 @@
       function gameSegmentSaveRemoteState(segment) {
         return R.clone(R.prop('remote', segment));
       }
-      function gameSegmentResetRemote(remote, state, game, segment) {
+      function gameSegmentResetRemote(remote, state, _game_, segment) {
         return R.thread(segment)(
           R.assoc('remote', R.clone(remote)),
           (segment) => {

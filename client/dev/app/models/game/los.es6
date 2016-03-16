@@ -4,13 +4,11 @@
 
   gameLosModelFactory.$inject = [
     'gameSegment',
-    'point',
     'circle',
     'gameFactions',
     'gameModels',
   ];
   function gameLosModelFactory(gameSegmentModel,
-                               pointModel,
                                circleModel,
                                gameFactionsModel,
                                gameModelsModel) {

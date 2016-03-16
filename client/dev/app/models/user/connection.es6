@@ -3,13 +3,9 @@
     .factory('userConnection', userConnectionServiceFactory);
 
   userConnectionServiceFactory.$inject = [
-    'http',
-    'pubSub',
     'websocket',
   ];
-  function userConnectionServiceFactory(httpService,
-                                        pubSubService,
-                                        websocketService) {
+  function userConnectionServiceFactory(websocketService) {
     const userConnectionService = {
       init: userConnectionInit,
       openP: userConnectionOpenP,

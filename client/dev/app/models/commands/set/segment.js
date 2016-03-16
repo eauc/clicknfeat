@@ -5,9 +5,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.services').factory('setSegmentCommand', setSegmentCommandModelFactory);
 
-  setSegmentCommandModelFactory.$inject = ['commands'];
-  function setSegmentCommandModelFactory(commandsModel) {
-
+  setSegmentCommandModelFactory.$inject = [];
+  function setSegmentCommandModelFactory() {
     return function buildSetSegmentCommandModel(type, gameSegmentModel) {
       var setSegmentCommandModel = {
         executeP: setSegmentExecuteP,

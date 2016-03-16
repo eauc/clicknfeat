@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.directives').directive('clickGameTerrain', clickGameTerrainDirectiveFactory).directive('clickGameTerrainsList', clickGameTerrainsListDirectiveFactory);
 
-  clickGameTerrainDirectiveFactory.$inject = ['gameMap', 'gameTerrains', 'gameTerrainInfo', 'gameTerrainSelection'];
-  function clickGameTerrainDirectiveFactory(gameMapModel, gameTerrainsModel, gameTerrainInfoModel, gameTerrainSelectionModel) {
+  clickGameTerrainDirectiveFactory.$inject = ['gameTerrains', 'gameTerrainInfo', 'gameTerrainSelection'];
+  function clickGameTerrainDirectiveFactory(gameTerrainsModel, gameTerrainInfoModel, gameTerrainSelectionModel) {
     return {
       restrict: 'A',
       link: link
