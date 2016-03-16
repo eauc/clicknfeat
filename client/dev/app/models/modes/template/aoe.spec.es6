@@ -11,6 +11,8 @@ describe('aoeTemplateMode model', function() {
         factions: 'factions',
         game: { template_selection: 'selection',
                 templates: 'templates',
+                models: 'models',
+                ruler: 'ruler',
                 dice: [ { r: 4, d: 2 } ]},
         queueChangeEventP: jasmine.createSpy('queueChangeEventP'),
         eventP: jasmine.createSpy('eventP')
@@ -162,12 +164,12 @@ describe('aoeTemplateMode model', function() {
     });
   });
 
-  xcontext('when user set aoe to ruler target', function() {
+  context('when user set aoe to ruler target', function() {
     return this.aoeTemplateModeModel.actions
       .setToRulerTarget(this.state);
   }, function() {
     beforeEach(function() {
-      this.gameRulerService = spyOnService('gameRuler');
+      this.gameRulerModel = spyOnService('gameRuler');
 
       this.gameTemplateSelectionModel.get
         .and.returnValue(['stamp']);
@@ -193,7 +195,7 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should get ruler target position', function() {
-        expect(this.gameRulerModel.targetAoEPosition)
+        expect(this.gameRulerModel.targetAoEPositionP)
           .toHaveBeenCalledWith('models', 'ruler');
       });
 
@@ -201,8 +203,8 @@ describe('aoeTemplateMode model', function() {
         expect(this.state.eventP)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
-                                [ 'setToRuler',
-                                  ['gameRuler.targetAoEPosition.returnValue'],
+                                [ 'setToRulerP',
+                                  ['gameRuler.targetAoEPositionP.returnValue'],
                                   ['stamp']
                                 ]);
       });

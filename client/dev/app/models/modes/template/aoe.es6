@@ -8,7 +8,7 @@
     'templateMode',
     'gameTemplates',
     'gameTemplateSelection',
-    // 'gameRuler',
+    'gameRuler',
     'prompt',
   ];
   function aoeTemplateModeModelFactory(modesModel,
@@ -16,7 +16,7 @@
                                        templateModeModel,
                                        gameTemplatesModel,
                                        gameTemplateSelectionModel,
-                                       // gameRulerModel,
+                                       gameRulerModel,
                                        promptService) {
     const template_actions = Object.create(templateModeModel.actions);
     template_actions.aoeSize3 = aoeSize3;
@@ -25,7 +25,7 @@
     template_actions.setTargetModel = setTargetModel;
     template_actions.setMaxDeviation = setMaxDeviation;
     template_actions.deviate = deviate;
-    // template_actions.setToRulerTarget = setToRulerTarget;
+    template_actions.setToRulerTarget = setToRulerTarget;
 
     const template_default_bindings = {
       setTargetModel: 'shift+clickModel',
@@ -34,7 +34,7 @@
       aoeSize5: '5',
       deviate: 'd',
       setMaxDeviation: 'shift+d',
-      // setToRulerTarget: 'shift+r'
+      setToRulerTarget: 'shift+r'
     };
     const template_bindings = R.extend(Object.create(templateModeModel.bindings),
                                      template_default_bindings);
@@ -44,7 +44,7 @@
       [ 'Aoe4'         , 'aoeSize4'         , 'size' ],
       [ 'Aoe5'         , 'aoeSize5'         , 'size' ],
       [ 'Deviate'      , 'deviate'          ],
-      // [ 'Set to Ruler' , 'setToRulerTarget' ],
+      [ 'Set to Ruler' , 'setToRulerTarget' ],
     ], templateModeModel.buttons);
 
     const template_mode = {
@@ -132,21 +132,21 @@
                                     ])
       );
     }
-    // function setToRulerTarget(state) {
-    //   if(!gameRulerModel.isDisplayed(state.game.ruler)) return null;
+    function setToRulerTarget(state) {
+      if(!gameRulerModel.isDisplayed(state.game.ruler)) return null;
 
-    //   const stamps = gameTemplateSelectionModel
-    //         .get('local', state.game.template_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('ruler'),
-    //     gameRulerModel.targetAoEPosition$(state.game.models),
-    //     (position) => state.eventP('Game.command.execute',
-    //                                'onTemplates',
-    //                                [ 'setToRuler',
-    //                                  [position],
-    //                                  stamps
-    //                                ])
-    //   );
-    // }
+      const stamps = gameTemplateSelectionModel
+            .get('local', state.game.template_selection);
+      return R.threadP(state.game)(
+        R.prop('ruler'),
+        gameRulerModel.targetAoEPositionP$(state.game.models),
+        (position) => state.eventP('Game.command.execute',
+                                   'onTemplates',
+                                   [ 'setToRulerP',
+                                     [position],
+                                     stamps
+                                   ])
+      );
+    }
   }
 })();
