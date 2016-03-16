@@ -1,43 +1,30 @@
-angular.module('clickApp.directives')
-  .directive('clickUserMailNotification', [
-    function() {
-      return {
-        restrict: 'E',
-        template: [
-          '<audio src="/data/sound/you_got_mail.wav">',
-          '</audio>',
-        ].join(''),
-        link: function(scope, element) {
-          let audio = element[0].querySelector('audio');
-          scope.onStateChangeEvent('User.chat', (event, chat) => {
-            console.log('userMailNotification', event, chat);
-            if(chat.from === scope.state.user.state.stamp) return;
+(function() {
+  angular.module('clickApp.directives')
+    .directive('clickMailNotification', mailNotificationDirectiveFactory);
 
-            audio.currentTime = 0;
-            audio.play();
-          }, scope);
-        }
-      };
-    }
-  ])
-  .directive('clickGameMailNotification', [
-    function() {
-      return {
-        restrict: 'E',
-        template: [
-          '<audio src="/data/sound/you_got_mail.wav">',
-          '</audio>',
-        ].join(''),
-        link: function(scope, element) {
-          let audio = element[0].querySelector('audio');
-          scope.onStateChangeEvent('Game.chat', (event, chat) => {
-            console.log('gameMailNotification', event, chat);
-            if(chat.from === scope.state.user.state.name) return;
+  mailNotificationDirectiveFactory.$inject = [
+    '$rootScope'
+  ];
+  function mailNotificationDirectiveFactory($rootScope) {
+    return {
+      restrict: 'E',
+      scope: { type: '@' },
+      templateUrl: 'app/components/mail_notification/mail_notification.html',
+      link: link
+    };
 
-            audio.currentTime = 0;
-            audio.play();
-          }, scope);
-        }
-      };
+    function link(scope, element) {
+      const audio = element[0].querySelector('audio');
+      $rootScope.onStateChangeEvent(`${s.capitalize(scope.type)}.chat`,
+                                    onChat, scope);
+
+      function onChat(event, chat) {
+        console.log(`${scope.type}MailNotification`, event, chat);
+        if(chat.from === $rootScope.state.user.state.stamp) return;
+
+        audio.currentTime = 0;
+        audio.play();
+      }
     }
-  ]);
+  }
+})();

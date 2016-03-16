@@ -97,6 +97,11 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
   );
 
 
+  $templateCache.put('app/components/mail_notification/mail_notification.html',
+    "<audio src=/data/sound/you_got_mail.wav></audio>"
+  );
+
+
   $templateCache.put('app/components/prompt/prompt.html',
     "<div><div class=prompt-mask></div><div class=\"prompt-container text-center\"><div class=\"prompt-panel panel panel-default\"><form name=prompt><div class=panel-body><p></p><input step=any min=0 class=\"form-control\"></div><div class=panel-footer><button class=\"btn btn-default\" type=button style=width:45%>Cancel</button> <button class=\"btn btn-primary\" type=submit style=width:45%>Ok</button></div></form></div></div></div>"
   );
