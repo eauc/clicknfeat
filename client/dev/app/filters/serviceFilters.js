@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  angular.module('clickApp.filters').filter('capitalize', capitalizeFilterFactory).filter('game', gameFilterFactory).filter('gameLayers', gameLayersFilterFactory).filter('gameLos', gameLosFilterFactory).filter('user', userFilterFactory).filter('userConnection', userConnectionFilterFactory);
+  angular.module('clickApp.filters').filter('capitalize', capitalizeFilterFactory).filter('game', gameFilterFactory).filter('gameLayers', gameLayersFilterFactory).filter('gameLos', gameLosFilterFactory).filter('gameRuler', gameRulerFilterFactory).filter('user', userFilterFactory).filter('userConnection', userConnectionFilterFactory);
 
   capitalizeFilterFactory.$inject = [];
   function capitalizeFilterFactory() {
@@ -54,6 +54,21 @@
       return gameLosModel[method].apply(null, R.append(input, args));
     };
   }
+  gameRulerFilterFactory.$inject = ['gameRuler'];
+  function gameRulerFilterFactory(gameRulerModel) {
+    return function gameRulerFilter(input, method) {
+      if (R.isNil(gameRulerModel[method])) {
+        console.error('GameRuler Filter: method "' + method + '" does not exist');
+        return null;
+      }
+
+      for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+        args[_key4 - 2] = arguments[_key4];
+      }
+
+      return gameRulerModel[method].apply(null, R.append(input, args));
+    };
+  }
   userFilterFactory.$inject = ['user'];
   function userFilterFactory(userModel) {
     return function userFilter(input, method) {
@@ -62,8 +77,8 @@
         return null;
       }
 
-      for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-        args[_key4 - 2] = arguments[_key4];
+      for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+        args[_key5 - 2] = arguments[_key5];
       }
 
       return userModel[method].apply(null, R.append(input, args));
@@ -77,8 +92,8 @@
         return null;
       }
 
-      for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
-        args[_key5 - 2] = arguments[_key5];
+      for (var _len6 = arguments.length, args = Array(_len6 > 2 ? _len6 - 2 : 0), _key6 = 2; _key6 < _len6; _key6++) {
+        args[_key6 - 2] = arguments[_key6];
       }
 
       return userConnectionModel[method].apply(null, R.append(input, args));

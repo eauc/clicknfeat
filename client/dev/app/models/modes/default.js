@@ -12,14 +12,14 @@
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
-    // default_actions.enterRulerMode = enterRulerMode;
+    default_actions.enterRulerMode = enterRulerMode;
     default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragStartMap;
     default_actions.dragMap = dragMap;
     default_actions.dragEndMap = dragEndMap;
 
     var default_default_bindings = {
-      // enterRulerMode: 'ctrl+r',
+      enterRulerMode: 'ctrl+r',
       enterLosMode: 'ctrl+l',
       setModelSelection: 'clickModel',
       toggleModelSelection: 'ctrl+clickModel',
@@ -86,9 +86,9 @@
         return state.eventP('Game.update', R.lensProp('terrain_selection'), gameTerrainSelectionModel.set$('local', [event['click#'].target.state.stamp], state));
       });
     }
-    // function enterRulerMode(state) {
-    //   return state.eventP('Modes.switchTo', 'Ruler');
-    // }
+    function enterRulerMode(state) {
+      return state.eventP('Modes.switchTo', 'Ruler');
+    }
     function enterLosMode(state) {
       return state.eventP('Modes.switchTo', 'Los');
     }

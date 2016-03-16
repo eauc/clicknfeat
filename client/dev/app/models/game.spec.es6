@@ -91,20 +91,20 @@ describe('game model', function() {
           commands_log: [ ],
           undo_log: [],
           dice: [],
-          // ruler: {
-          //   local: {
-          //     display: false,
-          //     start: { x:0, y: 0 },
-          //     end: { x:0, y: 0 },
-          //     length: null
-          //   },
-          //   remote: {
-          //     display: false,
-          //     start: { x:0, y: 0 },
-          //     end: { x:0, y: 0 },
-          //     length: null
-          //   }
-          // },
+          ruler: {
+            local: {
+              display: false,
+              start: { x:0, y: 0 },
+              end: { x:0, y: 0 },
+              length: null
+            },
+            remote: {
+              display: false,
+              start: { x:0, y: 0 },
+              end: { x:0, y: 0 },
+              length: null
+            }
+          },
           los: {
             local: {
               display: false,

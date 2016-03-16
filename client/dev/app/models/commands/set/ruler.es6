@@ -1,59 +1,19 @@
-angular.module('clickApp.services')
-  .factory('setRulerCommand', [
+(function() {
+  angular.module('clickApp.services')
+    .factory('setRulerCommand', setRulerCommandModelFactory);
+
+  setRulerCommandModelFactory.$inject = [
+    'setSegmentCommand',
     'commands',
     'gameRuler',
-    function setRulerCommandServiceFactory(commandsService,
-                                           gameRulerService) {
-      var setRulerCommandService = {
-        execute: function setRulerExecute(method, args, state, game) {
-          if('Function' !== R.type(gameRulerService[method])) {
-            return self.Promise.reject(`Ruler unknown method ${method}`);
-          }
+  ];
+  function setRulerCommandModelFactory(setSegmentCommandModel,
+                                       commandsModel,
+                                       gameRulerModel) {
+    const base = setSegmentCommandModel('ruler', gameRulerModel);
+    const setRulerCommandModel = Object.create(base);
 
-          var ctxt = {
-            before: [],
-            after: [],
-            desc: method
-          };
-
-          return R.pipePromise(
-            gameRulerService.saveRemoteState,
-            (before) => {
-              ctxt.before = before;
-              
-              return gameRulerService[method]
-                .apply(null, [...args, state, game.ruler]);
-            },
-            (ruler) => {
-              game = R.assoc('ruler', ruler, game);
-              
-              return gameRulerService.saveRemoteState(game.ruler);
-            },
-            (after) => {
-              ctxt.after = after;
-
-              state.changeEvent('Game.ruler.remote.change');
-              
-              return [ctxt, game];
-            }
-          )(game.ruler);
-        },
-        replay: function setRulerRedo(ctxt, state, game) {
-          game = R.over(R.lensProp('ruler'),
-                        gameRulerService.resetRemote$(ctxt.after, state),
-                        game);
-          state.changeEvent('Game.ruler.remote.change');
-          return game;
-        },
-        undo: function setRulerUndo(ctxt, state, game) {
-          game = R.over(R.lensProp('ruler'),
-                        gameRulerService.resetRemote$(ctxt.before, state),
-                        game);
-          state.changeEvent('Game.ruler.remote.change');
-          return game;
-        }
-      };
-      commandsService.registerCommand('setRuler', setRulerCommandService);
-      return setRulerCommandService;
-    }
-  ]);
+    commandsModel.registerCommand('setRuler', setRulerCommandModel);
+    return setRulerCommandModel;
+  }
+})();

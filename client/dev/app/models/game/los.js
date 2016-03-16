@@ -10,6 +10,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var base = gameSegmentModel('los');
     var gameLosModel = Object.create(base);
     R.deepExtend(gameLosModel, {
+      create: gameLosCreate,
       toggleDisplay: gameLosToggleDisplay,
       setRemote: gameLosSetRemote,
       resetRemote: gameLosResetRemote,
@@ -29,6 +30,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     R.curryService(gameLosModel);
     return gameLosModel;
 
+    function gameLosCreate() {
+      return R.deepExtend(base.create(), {
+        computed: {}
+      });
+    }
     function gameLosToggleDisplay(state, game, los) {
       return R.thread(los)(base.toggleDisplay$(state, game), setOriginTarget$({}, state, game));
     }

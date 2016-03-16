@@ -4,6 +4,7 @@
     .filter('game', gameFilterFactory)
     .filter('gameLayers', gameLayersFilterFactory)
     .filter('gameLos', gameLosFilterFactory)
+    .filter('gameRuler', gameRulerFilterFactory)
     .filter('user', userFilterFactory)
     .filter('userConnection', userConnectionFilterFactory);
 
@@ -47,6 +48,18 @@
         return null;
       }
       return gameLosModel[method].apply(null, R.append(input, args));
+    };
+  }
+  gameRulerFilterFactory.$inject = [
+    'gameRuler',
+  ];
+  function gameRulerFilterFactory(gameRulerModel) {
+    return function gameRulerFilter(input, method, ...args) {
+      if(R.isNil(gameRulerModel[method])) {
+        console.error('GameRuler Filter: method "'+method+'" does not exist');
+        return null;
+      }
+      return gameRulerModel[method].apply(null, R.append(input, args));
     };
   }
   userFilterFactory.$inject = [

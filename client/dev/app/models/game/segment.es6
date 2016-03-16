@@ -29,8 +29,7 @@
             display: false,
             start: { x: 0, y: 0 },
             end: { x: 0, y: 0 }
-          },
-          computed: {}
+          }
         };
       }
       function gameSegmentIsDisplayed(segment) {

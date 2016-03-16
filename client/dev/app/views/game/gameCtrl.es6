@@ -42,7 +42,12 @@
       // $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
       // $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);
 
-      $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
+      $scope.onStateChangeEvent('Modes.change',
+                                updateCurrentModeBindings,
+                                $scope);
+      $scope.onStateChangeEvent('Modes.buttons.update',
+                                updateCurrentModeBindings,
+                                $scope);
       // $scope.onStateChangeEvent('Game.loaded', updateCurrentModeBindings, $scope);
 
       $scope.$on('$destroy', () => {

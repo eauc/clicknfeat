@@ -307,7 +307,25 @@ a:not([href]):focus {
     overflow-x: hidden;
     max-height: 4.2em; }
 
-/* @import 'components/game/ruler/ruler'; */
+#game #game-ruler {
+  pointer-events: none; }
+  #game #game-ruler line {
+    stroke-width: 1px;
+    marker-start: url(#ruler-start);
+    marker-end: url(#ruler-end);
+    stroke: #0EE; }
+#game .ruler-origin,
+#game .ruler-target {
+  stroke-width: 1.25px;
+  fill: none;
+  pointer-events: none; }
+#game .ruler-origin {
+  stroke: #F90; }
+#game .ruler-target {
+  stroke: #F00; }
+#game .ruler-target.reached {
+  stroke: #0FF; }
+
 #game #game-los {
   pointer-events: none; }
   #game #game-los line {

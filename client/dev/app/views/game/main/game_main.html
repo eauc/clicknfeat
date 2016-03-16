@@ -10,23 +10,23 @@
   <div class="panel panel-info">
     <div class="panel-heading">Tools</div>
     <div class="panel-content">
-      <!-- <div class="btn-group"> -->
-      <!--   <button class="btn {{ -->
-      <!--                  currentModeIs('Ruler') ? -->
-      <!--                  'btn-primary' : 'btn-default' -->
-      <!--                  }}" -->
-      <!--           title="{{action_bindings['enterRulerMode'] || ''}}" -->
-      <!--           ng-click="doUseRuler()"> -->
-      <!--     Use<br />Ruler -->
-      <!--   </button> -->
-      <!--   <button class="btn {{ -->
-      <!--                  (state.game.ruler | gameRuler:'isDisplayed') ? -->
-      <!--                  'btn-primary' : 'btn-default' -->
-      <!--                  }}" -->
-      <!--           ng-click="doToggleShowRuler()"> -->
-      <!--     Show<br />Ruler -->
-      <!--   </button> -->
-      <!-- </div> -->
+      <div class="btn-group">
+        <button class="btn {{
+                       game.currentModeIs('Ruler') ?
+                       'btn-primary' : 'btn-default'
+                       }}"
+                title="{{game.action_bindings['enterRulerMode'] || ''}}"
+                ng-click="game_main.doUseRuler()">
+          Use<br />Ruler
+        </button>
+        <button class="btn {{
+                       (state.game.ruler | gameRuler:'isDisplayed') ?
+                       'btn-primary' : 'btn-default'
+                       }}"
+                ng-click="game_main.doToggleShowRuler()">
+          Show<br />Ruler
+        </button>
+      </div>
       <div class="btn-group">
         <button class="btn {{
                        game.currentModeIs('Los') ?
