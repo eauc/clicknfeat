@@ -44,8 +44,8 @@
         return R.pick(['x', 'y'], model.state);
       }, R.assoc('type', 'aoe'), function (position) {
         return {
-          base: { x: 0, y: 0 },
-          templates: [position]
+          base: { x: 0, y: 0, r: 0 },
+          templates: [R.assoc('r', 0, position)]
         };
       }, function (create) {
         var is_flipped = R.path(['ui_state', 'flip_map'], state);
@@ -57,8 +57,8 @@
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
         return R.threadP(model)(R.prop('state'), R.pick(['x', 'y']), R.assoc('type', 'spray'), function (position) {
           return {
-            base: { x: 0, y: 0 },
-            templates: [position]
+            base: { x: 0, y: 0, r: 0 },
+            templates: [R.assoc('r', 0, position)]
           };
         }, function (create) {
           var is_flipped = R.path(['ui_state', 'flip_map'], state);

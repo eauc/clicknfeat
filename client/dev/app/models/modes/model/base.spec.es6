@@ -78,8 +78,8 @@ describe('modelBaseMode model', function() {
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
                               'createTemplate', [
-                                { base: { x: 0, y: 0 },
-                                  templates: [ { x: 42, y: 71, type: 'aoe' } ]
+                                { base: { x: 0, y: 0, r: 0 },
+                                  templates: [ { x: 42, y: 71, r: 0, type: 'aoe' } ]
                                 },
                                 'flip'
                               ]);
@@ -112,8 +112,8 @@ describe('modelBaseMode model', function() {
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
                               'createTemplate', [
-                                { base: { x: 0, y: 0 },
-                                  templates: [ { x: 42, y: 71, type: 'spray' } ]
+                                { base: { x: 0, y: 0, r: 0 },
+                                  templates: [ { x: 42, y: 71, r: 0, type: 'spray' } ]
                                 },
                                 'flip'
                               ]);

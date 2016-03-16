@@ -66,8 +66,8 @@
         (model) => R.pick(['x','y'], model.state),
         R.assoc('type', 'aoe'),
         (position) => ({
-          base: { x: 0, y: 0 },
-          templates: [position]
+          base: { x: 0, y: 0, r: 0 },
+          templates: [ R.assoc('r', 0, position) ]
         }),
         (create) => {
           const is_flipped = R.path(['ui_state','flip_map'], state);
@@ -88,8 +88,8 @@
           R.pick(['x','y']),
           R.assoc('type', 'spray'),
           (position) => ({
-            base: { x: 0, y: 0 },
-            templates: [position]
+            base: { x: 0, y: 0, r: 0 },
+            templates: [ R.assoc('r', 0 , position) ]
           }),
           (create) => {
             const is_flipped = R.path(['ui_state','flip_map'], state);
