@@ -8,18 +8,18 @@
         <!-- ( {{ state.user.state.stamp }} ) -->
       </h4>
     </div>
-    <!-- <div class="panel-body" -->
-    <!--      ng-show="state.user | user:'online'"> -->
-    <!--   <click-user-connection> -->
-    <!--   </click-user-connection> -->
-    <!-- </div> -->
-    <!-- <div class="panel-footer"> -->
-      <!-- <button type="button" -->
-      <!--         class="btn btn-default" -->
-      <!--         ng-click="lounge.doUserToggleOnline()"> -->
-      <!--   Go {{ (state.user | user:'online') ? 'Offline' : 'Online' }} -->
-      <!-- </button> -->
-    <!-- </div> -->
+    <div class="panel-body"
+         ng-show="state.user | user:'online'">
+      <click-user-chat>
+      </click-user-chat>
+    </div>
+    <div class="panel-footer">
+      <button type="button"
+              class="btn btn-default"
+              ng-click="lounge.doUserToggleOnline()">
+        Go {{ (state.user | user:'online') ? 'Offline' : 'Online' }}
+      </button>
+    </div>
   </div>
   <!-- <div class="panel panel-info" -->
   <!--      ng-show="state.user | userConnection:'active'"> -->

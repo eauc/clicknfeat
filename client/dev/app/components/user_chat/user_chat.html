@@ -1,40 +1,44 @@
-<div ng-repeat="u in state.user.connection.users track by u.stamp"
+<div ng-repeat="u in user_chat.user.connection.users track by u.stamp"
      class="user clickable
-            {{ userIsInTo(u.stamp) ? 'bg-info' : '' }}
-            {{ (state.user.state.stamp === u.stamp) ? 'bg-primary' : '' }}
+            {{ user_chat.userIsInRecipients(u.stamp) ? 'bg-info' : '' }}
+            {{ (user_chat.user.state.stamp === u.stamp) ? 'bg-primary' : '' }}
             "
-     ng-click="doToggleUserTo(u.stamp)">
+     ng-click="user_chat.doToggleRecipient(u.stamp)">
   {{ u | user:'stateDescription' }}
-  ( {{:: u.stamp }} )
+  <!-- ( {{:: u.stamp }} ) -->
 </div>
 <h4>Chat</h4>
-<form ng-submit="doSendChatMessage()">
+<form ng-submit="user_chat.doSendChatMsg()">
   <div class="form-group">
     <label>
       To :
     </label>
     <em>
-      {{ (state.user | userConnection:'usersNamesForStamps':chat.to).join(',') }}
+      {{
+      (user_chat.user |
+       userConnection:'usersNamesForStamps':user_chat.chat.to)
+      .join(',')
+      }}
     </em>
     <div class="input-group">
       <span class="input-group-btn">
         <button type="button"
                 class="btn btn-default"
-                ng-click="doSendChatMessageToAll()">
+                ng-click="user_chat.doBroadcastChatMsg()">
           ToAll
         </button>
       </span>
       <input type="text"
              class="form-control"
              placeholder="Msg..."
-             ng-model="chat.msg" />
+             ng-model="user_chat.chat.msg" />
     </div>
   </div>
 </form>
 <div class="chat-list">
   <div class="chat"
-       ng-repeat="c in state.user.connection.chat.slice().reverse() track by c.stamp">
-    <em ng-click="doSetToChat(c)"
+       ng-repeat="c in user_chat.user.connection.chat.slice().reverse() track by c.stamp">
+    <em ng-click="user_chat.doSetRecipientsFromChat(c)"
         class="clickable">
       {{ state.user | userConnection:'userNameForStamp':c.from }}
       ➝

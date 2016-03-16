@@ -51,7 +51,7 @@
               return;
             }
             handlers[msg.type](msg);
-          })(event.data);
+          });
         }
         function defaultErrorHandler(reason, event) {
           console.error('WebSocket error', name, reason, event);
@@ -62,7 +62,9 @@
       });
     }
     function websocketSend(event, socket) {
-      return R.thread(event)(jsonStringifierService.stringify, socket.send, R.always(socket));
+      return R.thread(event)(jsonStringifierService.stringify, function (msg) {
+        return socket.send(msg);
+      }, R.always(socket));
     }
     function websocketClose(socket) {
       socket.close();

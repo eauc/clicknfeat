@@ -24,10 +24,10 @@
           R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler))
         );
 
-        var scheme = 'ws://';
-        var uri = scheme + self.document.location.host + url;
-        var socket = new self.WebSocket(uri);
-        var resolved = false;
+        const scheme = 'ws://';
+        const uri = scheme + self.document.location.host + url;
+        const socket = new self.WebSocket(uri);
+        let resolved = false;
         socket.onopen = websocketOnOpen;
         socket.onerror = websocketOnError;
         socket.onclose = websocketOnClose;
@@ -60,7 +60,7 @@
               }
               handlers[msg.type](msg);
             }
-          )(event.data);
+          );
         }
         function defaultErrorHandler(reason, event) {
           console.error('WebSocket error', name, reason, event);
@@ -73,7 +73,7 @@
     function websocketSend(event, socket) {
       return R.thread(event)(
         jsonStringifierService.stringify,
-        socket.send,
+        (msg) => socket.send(msg),
         R.always(socket)
       );
     }

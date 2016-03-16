@@ -59,11 +59,13 @@
     // function userIsValid() {
     //   return userService.isValid($scope.state.user);
     // }
-    // function checkUser() {
-    //   if(!$scope.userIsValid()) {
-    //     $state.go('user');
-    //   }
-    // }
+    function checkUser() {
+      if (!userModel.isValid($rootScope.state.user)) {
+        $state.go('user');
+      }
+      console.warn('checkUser ok');
+      $rootScope.$digest();
+    }
 
     function isNavHidden() {
       return R.path(['current', 'data', 'hide_nav'], $state);
@@ -90,8 +92,7 @@
     function activate() {
       $rootScope.stateEvent('State.init');
       $rootScope.state.user_ready.then(checkUserOnInit);
-      //   $scope.onStateChangeEvent('User.change', $scope.checkUser, $scope);
-      //   $scope.digestOnStateChangeEvent('User.change', $scope);
+      $rootScope.onStateChangeEvent('User.change', checkUser, $rootScope);
     }
     function checkUserOnInit() {
       console.log('Checking user on init');

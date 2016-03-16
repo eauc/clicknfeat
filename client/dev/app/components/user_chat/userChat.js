@@ -1,61 +1,90 @@
 'use strict';
 
-angular.module('clickApp.directives').controller('userChatCtrl', ['$scope', function userChatCtrl($scope) {
-  console.log('userChatCtrl', $scope.user);
+(function () {
+  angular.module('clickApp.directives').controller('userChatCtrl', userChatCtrl).directive('clickUserChat', userChatDirectiveFactory);
 
-  var state = $scope.state;
-
-  $scope.chat = {
-    msg: '',
-    to: []
-  };
-  function setChatTo(to) {
-    $scope.chat.to = R.reject(R.equals(state.user.state.stamp), to);
+  userChatDirectiveFactory.$inject = [];
+  function userChatDirectiveFactory() {
+    return {
+      restrict: 'E',
+      templateUrl: 'app/components/user_chat/user_chat.html',
+      scope: true,
+      controller: 'userChatCtrl',
+      controllerAs: 'user_chat',
+      link: function link() {}
+    };
   }
-  $scope.userIsInTo = function (stamp) {
-    return R.find(R.equals(stamp), $scope.chat.to);
-  };
-  $scope.doToggleUserTo = function (stamp) {
-    if ($scope.userIsInTo(stamp)) {
-      setChatTo(R.reject(R.equals(stamp), $scope.chat.to));
-    } else {
-      setChatTo(R.append(stamp, $scope.chat.to));
+
+  userChatCtrl.$inject = ['$scope'];
+  function userChatCtrl($scope) {
+    var vm = this;
+    var state = $scope.state;
+    console.log('userChatCtrl', $scope.state.user);
+
+    vm.userIsInRecipients = userIsInRecipients;
+    vm.doToggleRecipient = doToggleRecipient;
+    vm.doSetAllRecipients = doSetAllRecipients;
+    vm.doSetRecipientsFromChat = doSetRecipientsFromChat;
+
+    vm.canSendChatMsg = canSendChatMsg;
+    vm.doSendChatMsg = doSendChatMsg;
+    vm.doBroadcastChatMsg = doBroadcastChatMsg;
+
+    activate();
+
+    function activate() {
+      vm.chat = {
+        msg: '',
+        to: []
+      };
+      $scope.onStateChangeEvent('User.change', updateUser, $scope);
+      self.window.requestAnimationFrame(updateUser);
     }
-  };
-  $scope.doSetAllUsersTo = function () {
-    setChatTo(R.pluck('stamp', state.user.connection.users));
-  };
-  $scope.doSetToChat = function (chat) {
-    setChatTo(R.pipe(R.prop('to'), R.append(R.prop('from', chat)), R.uniq)(chat));
-  };
-
-  function chatMsgIsValid() {
-    return R.length(s.strip($scope.chat.msg)) > 0;
-  }
-  $scope.canSendChatMsg = function () {
-    return !R.isEmpty($scope.chat.to) && chatMsgIsValid();
-  };
-  $scope.doSendChatMessage = function () {
-    if (!$scope.canSendChatMsg()) return null;
-
-    return R.pipePromise(function () {
-      return $scope.stateEvent('User.sendChatMsg', $scope.chat);
-    }, function () {
-      $scope.chat.msg = '';
+    function updateUser() {
+      vm.user = R.clone(state.user);
+      console.warn('updateUser', vm.user, state.user);
       $scope.$digest();
-    })($scope.user);
-  };
-  $scope.doSendChatMessageToAll = function () {
-    setChatTo(R.pluck('stamp', state.user.connection.users));
-    $scope.doSendChatMessage();
-  };
-}]).directive('clickUserConnection', [function () {
-  return {
-    restrict: 'E',
-    controller: 'userChatCtrl',
-    templateUrl: 'partials/directives/user_chat.html',
-    scope: true,
-    link: function link() {}
-  };
-}]);
+    }
+    function setChatRecipients(to) {
+      vm.chat.to = R.reject(R.equals(state.user.state.stamp), to);
+    }
+    function userIsInRecipients(stamp) {
+      return R.find(R.equals(stamp), vm.chat.to);
+    }
+    function doToggleRecipient(stamp) {
+      if (vm.userIsInRecipients(stamp)) {
+        setChatRecipients(R.reject(R.equals(stamp), vm.chat.to));
+      } else {
+        setChatRecipients(R.append(stamp, vm.chat.to));
+      }
+    }
+    function doSetAllRecipients() {
+      setChatRecipients(R.pluck('stamp', state.user.connection.users));
+    }
+    function doSetRecipientsFromChat(chat) {
+      setChatRecipients(R.thread(chat)(R.prop('to'), R.append(R.prop('from', chat)), R.uniq));
+    }
+
+    function chatMsgIsValid() {
+      return R.length(s.strip(vm.chat.msg)) > 0;
+    }
+    function canSendChatMsg() {
+      return !R.isEmpty(vm.chat.to) && chatMsgIsValid();
+    }
+    function doSendChatMsg() {
+      if (!vm.canSendChatMsg()) return;
+
+      R.threadP()(function () {
+        return $scope.stateEvent('User.sendChatMsg', vm.chat);
+      }, function () {
+        vm.chat.msg = '';
+        $scope.$digest();
+      });
+    }
+    function doBroadcastChatMsg() {
+      setChatRecipients(R.pluck('stamp', state.user.connection.users));
+      vm.doSendChatMsg();
+    }
+  }
+})();
 //# sourceMappingURL=userChat.js.map

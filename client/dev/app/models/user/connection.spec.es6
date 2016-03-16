@@ -1,0 +1,292 @@
+describe('userConnection model', function() {
+  beforeEach(inject([ 'userConnection', function(userConnectionModel) {
+    this.userConnectionModel = userConnectionModel;
+
+    this.websocketService = spyOnService('websocket');
+
+    this.state = jasmine.createSpyObj('state', [
+      'queueEventP'
+    ]);
+  }]));
+
+  context('init()', function() {
+    return this.userConnectionModel.init({});
+  }, function() {
+    it('should initialize a connection state', function() {
+      expect(this.context.connection)
+        .toBeAn('Object');
+    });
+  });
+
+  context('openP()', function() {
+    return this.userConnectionModel
+      .openP(this.state, this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = this.userConnectionModel.init({
+        state: { stamp: 'stamp' }
+      });
+    });
+
+    it('should open websocket', function() {
+      expect(this.websocketService.createP)
+        .toHaveBeenCalledWith('/api/users/stamp', 'user', jasmine.any(Object));
+    });
+
+    context('when websocket creation fails', function() {
+      this.websocketService.createP
+        .rejectWith('reason');
+      this.expectContextError();
+    }, function() {
+      it('should reject creation', function() {
+        expect(this.contextError).toEqual([
+          'reason'
+        ]);
+        expect(this.userConnectionModel.active(this.user))
+          .toBeFalsy();
+      });
+    });
+
+    it('should activate connection', function() {
+      expect(this.context.connection.state.socket)
+        .toBe('websocket.createP.returnValue');
+      expect(this.userConnectionModel.active(this.context))
+        .toBeTruthy();
+    });
+  });
+
+  context('close()', function() {
+    return this.userConnectionModel
+      .close(this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = this.userConnectionModel.init({
+        state: { stamp: 'stamp' }
+      });
+      return this.userConnectionModel
+        .openP(this.state, this.user)
+        .then((user) => {
+          this.user = user;
+        });
+    });
+
+    it('should close websocket', function() {
+      expect(this.websocketService.close)
+        .toHaveBeenCalledWith('websocket.createP.returnValue');
+    });
+
+    it('should disactivate connection', function() {
+      expect(this.context.connection.state.socket)
+        .toBe(null);
+      expect(this.context.connection.users)
+        .toEqual([]);
+      expect(this.userConnectionModel.active(this.context))
+        .toBeFalsy();
+    });
+  });
+
+  context('sendChat(<to>, <msg>)', function() {
+    return this.userConnectionModel
+      .sendChatP({ to: this.to, msg: this.msg}, this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = this.userConnectionModel.init({
+        state: { stamp: 'stamp' }
+      });
+      this.to = [ 'stamp1', 'stamp2' ];
+      this.msg = 'hello';
+      return this.userConnectionModel
+        .openP(this.state, this.user)
+        .then((user) => {
+          this.user = user;
+        });
+    });
+
+    it('should send chat msg on websocket', function() {
+      expect(this.websocketService.send)
+        .toHaveBeenCalledWith({
+          type: 'chat',
+          from: 'stamp',
+          to: [ 'stamp1', 'stamp2' ],
+          msg: 'hello'
+        }, 'websocket.createP.returnValue');
+      expect(this.context)
+        .toBe('websocket.send.returnValue');
+    });
+  });
+
+  context('sendChat(<to>, <msg>, <link>)', function() {
+    return this.userConnectionModel
+      .sendChatP({ to: this.to, msg: this.msg, link: this.link}, this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = this.userConnectionModel.init({
+        state: { stamp: 'stamp' }
+      });
+      this.to = [ 'stamp1', 'stamp2' ];
+      this.msg = 'hello';
+      this.link = '#link';
+      return this.userConnectionModel
+        .openP(this.state, this.user)
+        .then((user) => {
+          this.user = user;
+        });
+    });
+
+    it('should send chat msg on websocket', function() {
+      expect(this.websocketService.send)
+        .toHaveBeenCalledWith({
+          type: 'chat',
+          from: 'stamp',
+          to: [ 'stamp1', 'stamp2' ],
+          msg: 'hello',
+          link: '#link'
+        }, 'websocket.createP.returnValue');
+      expect(this.context)
+        .toBe('websocket.send.returnValue');
+    });
+  });
+
+  context('userNameForStamp(<stamp>)', function() {
+    return this.userConnectionModel
+      .userNameForStamp(this.stamp, this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = {
+        connection: {
+          users: [
+            { stamp: 'stamp1', name: 'ToTo' },
+            { stamp: 'stamp2', name: 'Manu' },
+            { stamp: 'stamp3', name: 'wood' }
+          ]
+        }
+      };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.stamp = e.stamp;
+      }, function() {
+        it('should return user name for <stamp>', function() {
+          expect(this.context)
+            .toBe(e.result);
+        });
+      });
+    }, [
+      [ 'stamp'  , 'result'  ],
+      [ null     , 'Unknown' ],
+      [ 'stamp4' , 'Unknown' ],
+      [ 'stamp1' , 'ToTo'    ],
+      [ 'stamp2' , 'Manu'    ],
+      [ 'stamp3' , 'Wood'    ],
+    ]);
+  });
+
+  context('usersNamesForStamps(<stamps>)', function() {
+    return this.userConnectionModel
+      .usersNamesForStamps(this.stamps, this.user);
+  }, function() {
+    beforeEach(function() {
+      this.user = {
+        connection: {
+          users: [
+            { stamp: 'stamp1', name: 'ToTo' },
+            { stamp: 'stamp2', name: 'Manu' },
+            { stamp: 'stamp3', name: 'wood' }
+          ]
+        }
+      };
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.stamps = e.stamps;
+      }, function() {
+        it('should return users names for <stamps>', function() {
+          expect(this.context)
+            .toEqual(e.result);
+        });
+      });
+    }, [
+      [ 'stamps'                    , 'result'                ],
+      [ null                        , ['Unknown']             ],
+      [ ['stamp4'                   ], ['Unknown']            ],
+      [ ['stamp4','stamp1'          ], ['ToTo']               ],
+      [ ['stamp2','stamp4','stamp1' ], ['Manu','ToTo']        ],
+      [ ['stamp1','stamp2','stamp3' ], ['ToTo','Manu','Wood'] ],
+    ]);
+  });
+
+  describe('socket event handlers', function() {
+    beforeEach(function() {
+      this.user = this.userConnectionModel.init({
+        state: { stamp: 'stamp' }
+      });
+      return this.userConnectionModel
+        .openP(this.state, this.user)
+        .then((user) => {
+          this.handlers = this.websocketService.createP
+            .calls.first().args[2];
+          this.user = user;
+        });
+    });
+
+    context('on users list message', function() {
+      this.handlers.users(this.msg);
+    }, function() {
+      beforeEach(function() {
+        this.msg = { users: [ { name: 'ToTo' },
+                              { name: 'Manu' },
+                              { name: 'wood' }
+                            ] };
+      });
+
+      it('should emit "setOnlineUsers" event', function() {
+        expect(this.state.queueEventP)
+          .toHaveBeenCalledWith('User.setOnlineUsers', [
+            { name: 'Manu' },
+            { name: 'ToTo' },
+            { name: 'wood' }
+          ]);
+      });
+    });
+
+    context('on games list message', function() {
+      this.handlers.games(this.msg);
+    }, function() {
+      beforeEach(function() {
+        this.msg = { games: 'games' };
+      });
+
+      it('should emit "User.setOnlineGames" event', function() {
+        expect(this.state.queueEventP)
+          .toHaveBeenCalledWith('User.setOnlineGames',
+                                this.msg.games);
+      });
+    });
+
+    context('on chat message', function() {
+      this.handlers.chat(this.msg);
+    }, function() {
+      beforeEach(function() {
+        this.msg = { msg: 'hello' };
+      });
+
+      it('should emit "User.newChatMsg" event', function() {
+        expect(this.state.queueEventP)
+          .toHaveBeenCalledWith('User.newChatMsg',
+                                this.msg);
+      });
+    });
+
+    context('close', function() {
+      this.handlers.close();
+    }, function() {
+      it('should emit "User.connection.close" event', function() {
+        expect(this.state.queueEventP)
+          .toHaveBeenCalledWith('User.connection.close');
+      });
+    });
+  });
+});
+

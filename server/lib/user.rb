@@ -18,6 +18,10 @@ class User
     @info
   end
 
+  def active?
+    not @listeners.empty?
+  end
+
   def addListener listener
     @listeners << listener
   end
@@ -31,7 +35,7 @@ class User
       User.signalListener event, l
     end
   end
-  
+
   def self.signalListener event, listener
     listener.send event.to_json
   end

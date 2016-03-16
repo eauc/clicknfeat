@@ -12,7 +12,7 @@ class Server < Sinatra::Base
     @users = UserCollection.new
     @games = GameCollection.new
   end
-  
+
   set :server, 'thin'
   set :public_folder, File.join(File.dirname(__FILE__), '..', 'client')
   set :views, File.join(File.dirname(__FILE__), '..', 'client')
@@ -42,12 +42,12 @@ class Server < Sinatra::Base
   get '/api/users/:stamp' do
     user = @users.user params['stamp']
     return status 404 if user.nil?
-    
+
     if not request.websocket?
       content_type 'text/json'
       return user.info.to_json
     end
-    
+
     request.websocket do |ws|
       timer = nil
       ws.onopen do |event|
@@ -56,20 +56,23 @@ class Server < Sinatra::Base
           ws.ping('hello')
           p ["Sent ping", user.info['name'], ws.object_id]
         }
+        user_already_active = user.active?
         @users.addUserListener user, ws
         User.signalListener @games.gamesListEvent, ws
+        @users.signalAllUsers @users.usersListEvent unless user_already_active
       end
-      
+
       ws.onmessage do |data|
         msg = JSON.parse data
         p [:message_user, user.info['name'], msg]
         @users.onMessage msg
       end
-      
+
       ws.onclose do
         p [:close_user, user.info['name'], ws.object_id]
         EM.cancel_timer(timer)
         user.dropListener ws
+        @users.signalAllUsers @users.usersListEvent unless user.active?
       end
     end
   end
@@ -77,10 +80,10 @@ class Server < Sinatra::Base
   put '/api/users/:stamp' do
     user = @users.user params['stamp']
     return status 404 if user.nil?
-    
+
     data = JSON.parse request.body.read
     @users.updateUser data, user
-    
+
     content_type 'text/json'
     user.info.to_json
   end
@@ -105,7 +108,7 @@ class Server < Sinatra::Base
 
   post '/api/games' do
     data = JSON.parse request.body.read
-    
+
     game = @games.createGame data
     @users.signalAllUsers @games.gamesListEvent
 
@@ -118,12 +121,12 @@ class Server < Sinatra::Base
     name = params['name']
     game = @games.public_game params['stamp']
     return status 404 if game.nil?
-    
+
     if not request.websocket?
       content_type 'text/json'
       return game.public_info.to_json
     end
-    
+
     request.websocket do |ws|
       timer = nil
       ws.onopen do |event|
@@ -134,13 +137,13 @@ class Server < Sinatra::Base
         }
         game.addWatcher ws, name
       end
-      
+
       ws.onmessage do |data|
         msg = JSON.parse data
         p [:message_watcher, msg]
         game.onPublicMessage msg
       end
-      
+
       ws.onclose do
         p [:close_watcher, ws.object_id]
         EM.cancel_timer(timer)
@@ -153,12 +156,12 @@ class Server < Sinatra::Base
     name = params['name']
     game = @games.private_game params['stamp']
     return status 404 if game.nil?
-    
+
     if not request.websocket?
       content_type 'text/json'
       return game.private_info.to_json
     end
-    
+
     request.websocket do |ws|
       timer = nil
       ws.onopen do |event|
@@ -170,13 +173,13 @@ class Server < Sinatra::Base
         game.addPlayer ws, name
         @users.signalAllUsers @games.gamesListEvent
       end
-      
+
       ws.onmessage do |data|
         msg = JSON.parse data
         p [:message_player, msg]
         game.onPrivateMessage msg
       end
-      
+
       ws.onclose do
         p [:close_player, ws.object_id]
         EM.cancel_timer(timer)

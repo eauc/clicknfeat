@@ -15,6 +15,7 @@
     vm.doLoadLocalGame = doLoadLocalGame;
     vm.doOpenLocalGameFile = doOpenLocalGameFile;
     vm.doDeleteLocalGame = doDeleteLocalGame;
+    vm.doUserToggleOnline = doUserToggleOnline;
 
     activate();
 
@@ -58,6 +59,10 @@
         id: id
       });
       $scope.$digest();
+    }
+
+    function doUserToggleOnline() {
+      $scope.stateEvent('User.toggleOnline');
     }
 
     // $scope.online_games_selection = {};

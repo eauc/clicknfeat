@@ -4,17 +4,20 @@ require_relative './user'
 class UserCollection
   def initialize
     @users = []
-    @listeners = []
   end
 
-  def all
-    @users.map do |u| u.info end
+  def allActive
+    @users.select do |u|
+      u.active?
+    end.map do |u|
+      u.info
+    end
   end
 
   def createUser data
     user = User.new data
     @users << user
-    self.signalAllUsers self.usersListEvent
+    # self.signalAllUsers self.usersListEvent
     user.info
   end
 
@@ -26,17 +29,17 @@ class UserCollection
     user.updateInfo data
     self.signalAllUsers self.usersListEvent
   end
-  
+
   def dropUser stamp
     @users.delete_if { |u| u.info['stamp'] == stamp }
-    self.signalAllUsers self.usersListEvent
+    # self.signalAllUsers self.usersListEvent
   end
 
   def addUserListener user, listener
     user.addListener listener
     User.signalListener self.usersListEvent, listener
   end
-  
+
   def signalAllUsers event
     @users.each do |u|
       u.signalAllListeners event
@@ -52,10 +55,10 @@ class UserCollection
       u.signalAllListeners event
     end
   end
-  
+
   def usersListEvent
     { 'type'  => 'users',
-      'users' => self.all,
+      'users' => self.allActive,
     }
   end
 

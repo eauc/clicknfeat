@@ -4,7 +4,7 @@
   angular.module('clickApp.models').factory('user', userModelFactory);
 
   userModelFactory.$inject = ['http', 'localStorage', 'userConnection'];
-  function userModelFactory(httpService, localStorageService, userConnectionService) {
+  function userModelFactory(httpService, localStorageService, userConnectionModel) {
     var STORAGE_KEY = 'clickApp.user';
     var userModel = {
       isValid: userIsValid,
@@ -13,11 +13,11 @@
       initP: userInitP,
       description: userDescription,
       stateDescription: userStateDescription,
-      online: userOnline
+      online: userOnline,
+      toggleOnlineP: userToggleOnlineP,
+      checkOnlineP: userCheckOnlineP
     };
-    // const userOnlineStart$ = R.curry(userOnlineStart);
-    // toggleOnline: userToggleOnline,
-    // checkOnline: userCheckOnline
+
     R.curryService(userModel);
     return userModel;
 
@@ -30,13 +30,10 @@
     function userLoadP() {
       return R.threadP(STORAGE_KEY)(localStorageService.loadP, R.defaultTo({}), R.spyWarn('User load'), function (state) {
         return { state: state };
-      }, userConnectionService.init);
+      }, userConnectionModel.init);
     }
     function userInitP(state) {
-      return R.pipeP(userLoadP
-      // ,
-      // userModel.checkOnline$(state)
-      )();
+      return R.threadP()(userLoadP, userModel.checkOnlineP$(state));
     }
     function userDescription(user) {
       if (R.type(R.prop('state', user)) !== 'Object') return '';
@@ -65,7 +62,7 @@
         lang_chat.push(s(chat).trim().value());
       }
       if (!R.isEmpty(lang_chat)) {
-        ret += '[' + lang_chat.join(' ') + ']';
+        ret += ' [' + lang_chat.join(' ') + ']';
       }
       if (R.exists(faction) && !R.isEmpty(faction)) {
         ret += ' - ' + R.map(s.capitalize, faction).join(',');
@@ -81,77 +78,45 @@
     function userOnline(user) {
       return R.path(['state', 'online'], user);
     }
-    // function userToggleOnline(state, user) {
-    //   return ( userModel.online(user) ?
-    //            userGoOffline(user) :
-    //            userGoOnline(state, user)
-    //          );
-    // }
-    // function userCheckOnline(state, user) {
-    //   return R.pipePromise(
-    //     (user) => {
-    //       if(!userModel.online(user)) {
-    //         return self.Promise.reject('No online flag');
-    //       }
-    //       return user;
-    //     },
-    //     (user) => {
-    //       return userUpdateOnline(user)
-    //         .catch(() => {
-    //           return userCreateOnline(user);
-    //         });
-    //     },
-    //     userOnlineStart$(state)
-    //   )(user)
-    //     .catch((reason) => {
-    //       console.error('User: checkOnline error', reason);
-    //       return userOnlineStop(user);
-    //     });
-    // }
-    // function userGoOnline(state, user) {
-    //   return R.pipePromise(
-    //     R.assocPath(['state','online'], true),
-    //     userModel.checkOnline$(state)
-    //   )(user);
-    // }
-    // function userGoOffline(user) {
-    //   return userOnlineStop(user);
-    // }
-    // function userCreateOnline(user) {
-    //   return R.pipePromise(
-    //     R.prop('state'),
-    //     httpService.post$('/api/users'),
-    //     (state) => {
-    //       return R.assoc('state', state, user);
-    //     }
-    //   )(user);
-    // }
-    // function userUpdateOnline(user) {
-    //   if(R.isNil(user.state.stamp)) {
-    //     return self.Promise.reject('No valid stamp');
-    //   }
-
-    //   return R.pipePromise(
-    //     R.prop('state'),
-    //     httpService.put$('/api/users/'+user.state.stamp),
-    //     (state) => {
-    //       return R.assoc('state', state, user);
-    //     }
-    //   )(user);
-    // }
-    // function userOnlineStart(state, user) {
-    //   return R.pipePromise(
-    //     userConnectionService.open$(state),
-    //     R.assocPath(['state','online'], true)
-    //   )(user);
-    // }
-    // function userOnlineStop(user) {
-    //   return R.pipePromise(
-    //     R.assocPath(['state','online'], false),
-    //     R.assocPath(['state','stamp'], null),
-    //     userConnectionService.close
-    //   )(user);
-    // }
+    function userToggleOnlineP(state, user) {
+      return userModel.online(user) ? userGoOffline(user) : userGoOnlineP(state, user);
+    }
+    function userCheckOnlineP(state, user) {
+      return R.threadP(user)(R.rejectIf(R.complement(userModel.online), 'No online flag'), function (user) {
+        return userUpdateOnlineP(user).catch(function () {
+          return userCreateOnlineP(user);
+        });
+      }, function (user) {
+        return userOnlineStartP(state, user);
+      }).catch(function (reason) {
+        console.error('User: checkOnline error', reason);
+        return userOnlineStop(user);
+      });
+    }
+    function userGoOnlineP(state, user) {
+      return R.threadP(user)(R.assocPath(['state', 'online'], true), userModel.checkOnlineP$(state));
+    }
+    function userGoOffline(user) {
+      return userOnlineStop(user);
+    }
+    function userCreateOnlineP(user) {
+      return R.threadP(user)(R.prop('state'), httpService.postP$('/api/users'), function (state) {
+        return R.assoc('state', state, user);
+      });
+    }
+    function userUpdateOnlineP(user) {
+      return R.threadP(user)(R.rejectIf(R.compose(R.isNil, R.path(['state', 'stamp'])), 'No valid stamp'), R.prop('state'), httpService.putP$('/api/users/' + user.state.stamp), function (state) {
+        return R.assoc('state', state, user);
+      });
+    }
+    function userOnlineStartP(state, user) {
+      return R.threadP(user)(userConnectionModel.openP$(state), R.assocPath(['state', 'online'], true));
+    }
+    function userOnlineStop(user) {
+      return R.thread(user)(R.assocPath(['state', 'online'], false),
+      // R.assocPath(['state','stamp'], null),
+      userConnectionModel.close);
+    }
   }
 })();
 //# sourceMappingURL=user.js.map
