@@ -17,17 +17,19 @@
     const is_private = R.propEq('private', 'private', $stateParams);
     const id = R.prop('id', $stateParams);
 
-    vm.hints = {};
-    vm.show_action_group = null;
-
     vm.currentModeName = currentModeName;
     vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
+    vm.doInvitePlayer = doInvitePlayer;
 
     activate();
 
     function activate() {
+      vm.hints = {};
+      vm.show_action_group = null;
+      vm.invite_player = null;
+
       $scope.stateEvent('Game.load', is_online, is_private, id);
       $scope.digestOnStateChangeEvent('Game.load.success', $scope);
       $scope.onStateChangeEvent('Game.load.error', onGameLoadError, $scope);
@@ -112,7 +114,11 @@
       $scope.stateEvent('Modes.current.action',
                         action, [{}]);
     }
+    function doInvitePlayer() {
+      if(R.isNil(vm.invite_player)) return;
 
+      $scope.stateEvent('Game.invitePlayer', vm.invite_player);
+    }
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {
     //   let game_los = {

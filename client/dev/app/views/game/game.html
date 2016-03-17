@@ -201,25 +201,26 @@
     <div id="menu-content">
       <p>
         <strong>{{state.game | game:'description'}}</strong>
-        <!-- <form class="form-inline" -->
-        <!--       ng-show="state.game | gameConnection:'active'" -->
-        <!--       ng-submit="doInvitePlayer()"> -->
-        <!--   <div class="form-group"> -->
-        <!--     <div class="input-group"> -->
-        <!--       <span class="input-group-btn"> -->
-        <!--         <button type="submit" -->
-        <!--                 class="btn btn-default"> -->
-        <!--           Invite Player -->
-        <!--         </button> -->
-        <!--       </span> -->
-        <!--       <select class="form-control" -->
-        <!--               ng-options="u.stamp as (u.name | capitalize) for u in user.connection.users" -->
-        <!--               ng-model="invite.player" -->
-        <!--               required="required"> -->
-        <!--       </select> -->
-        <!--     </div> -->
-        <!--   </div> -->
-        <!-- </form> -->
+        <form class="form-inline"
+              ng-show="state.game | gameConnection:'active'"
+              ng-submit="game.doInvitePlayer()">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-btn">
+                <button type="submit"
+                        class="btn btn-default">
+                  Invite Player
+                </button>
+              </span>
+              <select class="form-control"
+                      ng-options="u.stamp as (u.name | capitalize)
+                                  for u in state.user.connection.users"
+                      ng-model="game.invite_player"
+                      required="required">
+              </select>
+            </div>
+          </div>
+        </form>
       </p>
       <ul class="nav nav-tabs">
         <li class="{{app.stateIs('game.main') ? 'active' : ''}}"

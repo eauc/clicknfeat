@@ -20,7 +20,7 @@
       onGameSetPlayers: stateGameOnSetPlayers,
       onGameNewChatMsg: stateGameOnNewChatMsg,
       onGameUpdate: stateGameOnUpdate,
-      // onGameInvitePlayer: stateGameOnInvitePlayer,
+      onGameInvitePlayer: stateGameOnInvitePlayer,
       onGameModelCreate: stateGameOnModelCreate,
       onGameModelCopy: stateGameOnModelCopy,
       onGameModelImportList: stateGameOnModelImportList,
@@ -61,8 +61,7 @@
       state.onEvent('Game.setPlayers', stateGameModel.onGameSetPlayers$(state));
       state.onEvent('Game.newChatMsg', stateGameModel.onGameNewChatMsg$(state));
       state.onEvent('Game.update', stateGameModel.onGameUpdate$(state));
-      // state.onEvent('Game.invitePlayer',
-      //               stateGameModel.onGameInvitePlayer$(state));
+      state.onEvent('Game.invitePlayer', stateGameModel.onGameInvitePlayer$(state));
       state.onEvent('Game.model.create', stateGameModel.onGameModelCreate$(state));
       state.onEvent('Game.model.copy', stateGameModel.onGameModelCopy$(state));
       state.onEvent('Game.model.importList', stateGameModel.onGameModelImportList$(state));
@@ -165,17 +164,13 @@
     function stateGameOnUpdate(state, _event_, lens, update) {
       return R.thread(state.game)(R.over(lens, update), setGame$(state));
     }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   var msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   var link = $window.location.hash;
-    //   console.log('Invite player', to, msg, link);
+    function stateGameOnInvitePlayer(state, _event_, to) {
+      var msg = [s.capitalize(R.pathOr('Unknown', ['user', 'state', 'name'], state)), 'has invited you to join a game'].join(' ');
+      var link = self.window.location.hash;
+      console.log('Invite player', to, msg, link);
 
-    //   return state.event('User.sendChatMsg',
-    //                      { to: to, msg: msg, link: link });
-    // }
+      return state.eventP('User.sendChatMsg', { to: [to], msg: msg, link: link });
+    }
     function stateGameOnModelCreate(state, _event_, model_path) {
       var repeat = arguments.length <= 3 || arguments[3] === undefined ? 1 : arguments[3];
 

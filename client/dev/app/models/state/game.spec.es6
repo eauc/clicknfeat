@@ -8,10 +8,29 @@ describe('stateGame model', function() {
 
       this.state = {
         game: 'game',
+        eventP: jasmine.createSpy('eventP'),
         queueChangeEventP: jasmine.createSpy('queueChangeEventP')
       };
     }
   ]));
+
+  context('onInvitePlayer(<cmd>, <args>)', function() {
+    return this.stateGameModel
+      .onGameInvitePlayer(this.state, 'event', 'player');
+  }, function() {
+    beforeEach(function() {
+      this.state.user = { state: { name: 'user' } };
+    });
+
+    it('should send chat msg', function() {
+      expect(this.state.eventP)
+        .toHaveBeenCalledWith('User.sendChatMsg', {
+          to: [ 'player' ],
+          msg: 'User has invited you to join a game',
+          link: self.window.location.hash
+        });
+    });
+  });
 
   context('onGameCommandExecute(<cmd>, <args>)', function() {
     return this.stateGameModel

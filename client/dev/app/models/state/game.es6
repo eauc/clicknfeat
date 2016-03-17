@@ -47,7 +47,7 @@
       onGameSetPlayers: stateGameOnSetPlayers,
       onGameNewChatMsg: stateGameOnNewChatMsg,
       onGameUpdate: stateGameOnUpdate,
-      // onGameInvitePlayer: stateGameOnInvitePlayer,
+      onGameInvitePlayer: stateGameOnInvitePlayer,
       onGameModelCreate: stateGameOnModelCreate,
       onGameModelCopy: stateGameOnModelCopy,
       onGameModelImportList: stateGameOnModelImportList,
@@ -102,8 +102,8 @@
                     stateGameModel.onGameNewChatMsg$(state));
       state.onEvent('Game.update',
                     stateGameModel.onGameUpdate$(state));
-      // state.onEvent('Game.invitePlayer',
-      //               stateGameModel.onGameInvitePlayer$(state));
+      state.onEvent('Game.invitePlayer',
+                    stateGameModel.onGameInvitePlayer$(state));
       state.onEvent('Game.model.create',
                     stateGameModel.onGameModelCreate$(state));
       state.onEvent('Game.model.copy',
@@ -268,17 +268,17 @@
         setGame$(state)
       );
     }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   var msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   var link = $window.location.hash;
-    //   console.log('Invite player', to, msg, link);
+    function stateGameOnInvitePlayer(state, _event_, to) {
+      const msg = [
+        s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
+        'has invited you to join a game'
+      ].join(' ');
+      const link = self.window.location.hash;
+      console.log('Invite player', to, msg, link);
 
-    //   return state.event('User.sendChatMsg',
-    //                      { to: to, msg: msg, link: link });
-    // }
+      return state.eventP('User.sendChatMsg',
+                          { to: [to], msg: msg, link: link });
+    }
     function stateGameOnModelCreate(state, _event_, model_path, repeat = 1) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
