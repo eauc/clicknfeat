@@ -35,10 +35,10 @@
       onGameBoardImportFile: stateGameOnBoardImportFile,
       onGameScenarioSet: stateGameOnScenarioSet,
       onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
-      onGameScenarioRefresh: stateGameOnScenarioRefresh
+      onGameScenarioRefresh: stateGameOnScenarioRefresh,
+      onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives
     };
 
-    // onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
     var setGame$ = R.curry(setGame);
     var exportCurrentGame = stateExportsModel.exportP$('game', R.prop('game'));
     var exportCurrentBoard = stateExportsModel.exportP$('board', exportBoardData);
@@ -77,8 +77,7 @@
       state.onEvent('Game.scenario.set', stateGameModel.onGameScenarioSet$(state));
       state.onEvent('Game.scenario.setRandom', stateGameModel.onGameScenarioSetRandom$(state));
       state.onEvent('Game.scenario.refresh', stateGameModel.onGameScenarioRefresh$(state));
-      // state.onEvent('Game.scenario.generateObjectives',
-      //               stateGameModel.onGameScenarioGenerateObjectives$(state));
+      state.onEvent('Game.scenario.generateObjectives', stateGameModel.onGameScenarioGenerateObjectives$(state));
 
       return state;
     }
@@ -342,33 +341,20 @@
     function stateGameOnScenarioRefresh(state, _event_) {
       state.queueChangeEventP('Game.scenario.refresh');
     }
-    // function stateGameOnScenarioGenerateObjectives(state, _event_) {
-    //   event = event;
-    //   return R.pipePromise(
-    //     () => {
-    //       return gameModelsModel.all(state.game.models);
-    //     },
-    //     R.filter(R.pipe(
-    //       R.path(['state','info']),
-    //       R.head,
-    //       R.equals('scenario')
-    //     )),
-    //     R.map(R.path(['state','stamp'])),
-    //     (stamps) => {
-    //       return state.event('Game.command.execute',
-    //                          'deleteModel', [stamps]);
-    //     },
-    //     () => {
-    //       return gameScenarioModel
-    //         .createObjectives(state.game.scenario);
-    //     },
-    //     (objectives) => {
-    //       var is_flipped = R.path(['ui_state','flip_map'], state);
-    //       return state.event('Game.command.execute',
-    //                          'createModel', [objectives, is_flipped]);
-    //     }
-    //   )();
-    // }
+    function stateGameOnScenarioGenerateObjectives(state, _event_) {
+      return R.threadP(state.game)(deleteCurrentObjectivesP, function () {
+        return gameScenarioModel.createObjectivesP(state.game.scenario);
+      }, function (objectives) {
+        var is_flipped = R.path(['ui_state', 'flip_map'], state);
+        return state.eventP('Game.command.execute', 'createModel', [objectives, is_flipped]);
+      }).catch(gameModel.actionError$(state));
+
+      function deleteCurrentObjectivesP(game) {
+        return R.threadP(game)(R.prop('models'), gameModelsModel.all, R.filter(R.pipe(R.path(['state', 'info']), R.head, R.equals('scenario'))), R.map(R.path(['state', 'stamp'])), R.unless(R.isEmpty, function (stamps) {
+          return state.eventP('Game.command.execute', 'deleteModel', [stamps]);
+        }));
+      }
+    }
     function setGame(state, game) {
       state.game = game;
       console.log('stateGame', state.game);
