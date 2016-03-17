@@ -8,19 +8,25 @@
     var vm = this;
     console.log('init loungeCtrl');
 
-    vm.local_games_selection = {};
     vm.localGamesIsEmpty = localGamesIsEmpty;
     vm.doCreateLocalGame = doCreateLocalGame;
     vm.doLoadLocalGame = doLoadLocalGame;
     vm.doOpenLocalGameFile = doOpenLocalGameFile;
     vm.doDeleteLocalGame = doDeleteLocalGame;
+
     vm.doUserToggleOnline = doUserToggleOnline;
+    vm.doCreateOnlineGame = doCreateOnlineGame;
+    vm.doLoadOnlineGame = doLoadOnlineGame;
+    vm.doOpenOnlineGameFile = doOpenOnlineGameFile;
 
     activate();
 
     function activate() {
+      vm.local_games_selection = {};
+      vm.online_games_selection = {};
       $scope.digestOnStateChangeEvent('Games.local.change', $scope);
       $scope.onStateChangeEvent('Games.local.load', onGamesLocalLoad, $scope);
+      $scope.onStateChangeEvent('Games.online.load', onGamesOnlineLoad, $scope);
     }
 
     function localGamesIsEmpty() {
@@ -54,46 +60,25 @@
     function doUserToggleOnline() {
       $scope.stateEvent('User.toggleOnline');
     }
-
-    // $scope.online_games_selection = {};
-    // function loadNewOnlineGame(game) {
-    //   return R.pipeP(
-    //     gamesService.newOnlineGame,
-    //     function(game) {
-    //       $scope.goToState('game', {
-    //         online: 'online',
-    //         private: 'private',
-    //         id: game.private_stamp,
-    //       });
-    //     }
-    //   )(game);
-    // }
-    // $scope.doCreateOnlineGame = function() {
-    //   var game = gameService.create($scope.user.state);
-    //   return loadNewOnlineGame(game);
-    // };
-    // $scope.doOpenOnlineGameFile = function(files) {
-    //   return R.pipeP(
-    //     fileImportService.read$('json'),
-    //     loadNewOnlineGame
-    //   )(files[0])
-    //     .catch(function() {
-    //       console.log('Failed to open online game file');
-    //     });
-    // };
-    // $scope.doLoadOnlineGame = function() {
-    //   var game_index = $scope.online_games_selection.list[0];
-    //   var stamp = R.propOr('null', 'public_stamp', $scope.user.connection.games[game_index]);
-    //   $scope.goToState('game', {
-    //     online: 'online',
-    //     private: 'public',
-    //     id: stamp
-    //   });
-    // };
-
-    // $scope.doUserToggleOnline = function() {
-    //   $scope.stateEvent('User.toggleOnline');
-    // };
+    function doCreateOnlineGame() {
+      $scope.stateEvent('Games.online.create');
+    }
+    function doLoadOnlineGame() {
+      R.thread($scope.state)(R.pathOr([], ['user', 'connection', 'games']), R.nth(vm.online_games_selection.list[0]), R.defaultTo({}), R.propOr('null', 'public_stamp'), function (id) {
+        $scope.stateEvent('Games.online.load', id);
+      });
+    }
+    function doOpenOnlineGameFile(files) {
+      $scope.stateEvent('Games.online.loadFile', files[0]);
+    }
+    function onGamesOnlineLoad(_event_, isPrivate, id) {
+      $scope.goToState('game.main', {
+        online: 'online',
+        private: isPrivate,
+        id: id
+      });
+      $scope.$digest();
+    }
   }
 })();
 //# sourceMappingURL=loungeCtrl.js.map

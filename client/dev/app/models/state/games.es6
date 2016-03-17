@@ -10,37 +10,46 @@
   function stateGamesModelFactory(gameModel,
                                   gamesModel,
                                   fileImportService) {
-    const stateGamesService = {
+    const stateGamesModel = {
       create: stateGamesCreate,
       save: stateGamesSave,
       onStateInit: stateGamesOnInit,
       onGamesLocalCreate: stateGamesOnLocalCreate,
-      onGamesLocalLoad: stateOnGamesLocalLoad,
-      onGamesLocalLoadFile: stateOnGamesLocalLoadFile,
-      onGamesLocalDelete: stateOnGamesLocalDelete,
-      loadNewLocalGame: loadNewLocalGame
+      onGamesLocalLoad: stateGamesOnLocalLoad,
+      onGamesLocalLoadFile: stateGamesOnLocalLoadFile,
+      onGamesLocalDelete: stateGamesOnLocalDelete,
+      loadNewLocalGame: loadNewLocalGame,
+      onGamesOnlineCreate: stateGamesOnOnlineCreate,
+      onGamesOnlineLoad: stateGamesOnOnlineLoad,
+      onGamesOnlineLoadFile: stateGamesOnOnlineLoadFile,
+      loadNewOnlineGame: loadNewOnlineGame
     };
     const setLocalGames$ = R.curry(setLocalGames);
-    const loadNewLocalGame$ = R.curry(loadNewLocalGame);
 
-    R.curryService(stateGamesService);
-    return stateGamesService;
+    R.curryService(stateGamesModel);
+    return stateGamesModel;
 
     function stateGamesCreate(state) {
       state.local_games = {};
       state.games_ready = new self.Promise((resolve) => {
         state.onEvent('State.init',
-                      stateGamesService.onStateInit$(state, resolve));
+                      stateGamesModel.onStateInit$(state, resolve));
       });
 
       state.onEvent('Games.local.create',
-                    stateGamesService.onGamesLocalCreate$(state));
+                    stateGamesModel.onGamesLocalCreate$(state));
       state.onEvent('Games.local.load',
-                    stateGamesService.onGamesLocalLoad$(state));
+                    stateGamesModel.onGamesLocalLoad$(state));
       state.onEvent('Games.local.loadFile',
-                    stateGamesService.onGamesLocalLoadFile$(state));
+                    stateGamesModel.onGamesLocalLoadFile$(state));
       state.onEvent('Games.local.delete',
-                    stateGamesService.onGamesLocalDelete$(state));
+                    stateGamesModel.onGamesLocalDelete$(state));
+      state.onEvent('Games.online.create',
+                    stateGamesModel.onGamesOnlineCreate$(state));
+      state.onEvent('Games.online.load',
+                    stateGamesModel.onGamesOnlineLoad$(state));
+      state.onEvent('Games.online.loadFile',
+                    stateGamesModel.onGamesOnlineLoadFile$(state));
 
       return state;
     }
@@ -57,19 +66,19 @@
     function stateGamesOnLocalCreate(state, _event_) {
       return R.thread(state.user.state)(
         gameModel.create,
-        loadNewLocalGame$(state)
+        stateGamesModel.loadNewLocalGame$(state)
       );
     }
-    function stateOnGamesLocalLoad(state, _event_, index) {
+    function stateGamesOnLocalLoad(state, _event_, index) {
       state.queueChangeEventP('Games.local.load', index);
     }
-    function stateOnGamesLocalLoadFile(state, _event_, file) {
+    function stateGamesOnLocalLoadFile(state, _event_, file) {
       return R.threadP(file)(
         fileImportService.readP$('json'),
-        stateGamesService.loadNewLocalGame$(state)
+        stateGamesModel.loadNewLocalGame$(state)
       );
     }
-    function stateOnGamesLocalDelete(state, _event_, id) {
+    function stateGamesOnLocalDelete(state, _event_, id) {
       return R.thread(state.local_games)(
         gamesModel.removeLocalGame$(id),
         setLocalGames$(state)
@@ -89,6 +98,31 @@
             'Games.local.load',
             R.prop('local_stamp', R.last(state.local_games))
           );
+        }
+      );
+    }
+    function stateGamesOnOnlineCreate(state, _event_) {
+      return R.thread(state)(
+        R.pathOr({}, ['user','state']),
+        gameModel.create,
+        stateGamesModel.loadNewOnlineGame$(state)
+      );
+    }
+    function stateGamesOnOnlineLoad(state, _event_, id) {
+      state.queueChangeEventP('Games.online.load', 'public', id);
+    }
+    function stateGamesOnOnlineLoadFile(state, _event_, file) {
+      return R.threadP(file)(
+        fileImportService.readP$('json'),
+        stateGamesModel.loadNewOnlineGame$(state)
+      ).catch(R.spyAndDiscardError('Failed to open online game file'));
+    }
+    function loadNewOnlineGame(state, game) {
+      return R.threadP(game)(
+        gamesModel.newOnlineGameP,
+        R.prop('private_stamp'),
+        (stamp) => {
+          state.queueChangeEventP('Games.online.load', 'private', stamp);
         }
       );
     }

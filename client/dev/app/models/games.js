@@ -3,13 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('games', gamesModelFactory);
 
-  gamesModelFactory.$inject = ['localStorage'];
-
-  // 'http',
-  // 'game',
-  function gamesModelFactory(localStorageService) {
-    // httpService,
-    // gameService) {
+  gamesModelFactory.$inject = ['localStorage', 'http', 'game'];
+  function gamesModelFactory(localStorageService, httpService, gameModel) {
     var LOCAL_GAME_STORAGE_KEY = 'clickApp.game.';
     var gamesModel = {
       loadLocalGamesP: gamesLoadLocalGamesP,
@@ -17,10 +12,10 @@
       loadLocalGameP: gamesLoadLocalGameP,
       newLocalGame: gamesNewLocalGame,
       removeLocalGame: gamesRemoveLocalGame,
-      updateLocalGame: gamesUpdateLocalGame
+      updateLocalGame: gamesUpdateLocalGame,
+      newOnlineGameP: gamesNewOnlineGameP,
+      loadOnlineGameP: gamesLoadOnlineGameP
     };
-    // newOnlineGame: gamesNewOnlineGame,
-    // loadOnlineGame: gamesLoadOnlineGame
     R.curryService(gamesModel);
     return gamesModel;
 
@@ -51,25 +46,13 @@
       var game_index = R.findIndex(R.propEq('local_stamp', game.local_stamp), games);
       return R.thread(game)(gamesModel.saveLocalGame, R.always(games), R.update(game_index, game));
     }
-    // function gamesNewOnlineGame(game) {
-    //   return R.pipePromise(
-    //     gameService.pickForJson,
-    //     R.spyWarn('upload game'),
-    //     httpService.post$('/api/games'),
-    //     R.spyWarn('upload game response')
-    //   )(game);
-    // }
-    // function gamesLoadOnlineGame(is_private, id) {
-    //   var url = [
-    //     '/api/games',
-    //     (is_private ? 'private' : 'public'),
-    //     id
-    //   ].join('/');
-    //   return R.pipeP(
-    //     httpService.get,
-    //     R.spyError('Games: load online game')
-    //   )(url);
-    // }
+    function gamesNewOnlineGameP(game) {
+      return R.threadP(game)(gameModel.pickForJson, R.spyWarn('upload game'), httpService.postP$('/api/games'), R.spyWarn('upload game response'));
+    }
+    function gamesLoadOnlineGameP(is_private, id) {
+      var url = ['/api/games', is_private ? 'private' : 'public', id].join('/');
+      return R.threadP(url)(httpService.getP, R.spyError('Games: load online game'));
+    }
   }
 })();
 //# sourceMappingURL=games.js.map

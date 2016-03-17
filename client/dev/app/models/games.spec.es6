@@ -5,6 +5,7 @@ describe('games model', function() {
       this.gamesModel = gamesModel;
 
       this.localStorageService = spyOnService('localStorage');
+      this.httpService = spyOnService('http');
     }
   ]));
 
@@ -172,5 +173,57 @@ describe('games model', function() {
           { local_stamp: 'other1' }
         ]);
     });
+  });
+
+  context('newOnlineGame(<game>)', function() {
+    return this.gamesModel
+      .newOnlineGameP(this.game);
+  }, function() {
+    beforeEach(function() {
+      this.game = {
+        players: 'players',
+        commands: 'commands',
+        undo: 'undo',
+        chat: 'chat',
+        other: 'other'
+      };
+    });
+
+    it('should create game online', function() {
+      expect(this.httpService.postP)
+        .toHaveBeenCalledWith('/api/games', {
+          players: 'players',
+          commands: 'commands',
+          undo: 'undo',
+          chat: 'chat'
+        });
+
+      expect(this.context).toBe('http.postP.returnValue');
+    });
+  });
+
+  context('loadOnlineGameP(<is_private>, <id>)', function() {
+    return this.gamesModel
+      .loadOnlineGameP(this.is_private, this.id);
+  }, function() {
+    beforeEach(function() {
+      this.id = 'id';
+    });
+
+    example(function(e, d) {
+      context(d, function() {
+        this.is_private = e.is_private;
+      }, function() {
+        it('should get game online', function() {
+          expect(this.httpService.getP)
+            .toHaveBeenCalledWith(e.url);
+          expect(this.context).toBe('http.getP.returnValue');
+        });
+      });
+    }, [
+      [ 'is_private' , 'url'                   ],
+      [ true         , '/api/games/private/id' ],
+      [ false        , '/api/games/public/id'  ],
+    ]);
   });
 });

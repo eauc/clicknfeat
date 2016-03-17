@@ -5,25 +5,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier', 'commands',
-  // 'gameConnection',
-  'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
-  function gameModelFactory(jsonStringifierService, commandsModel,
-  // gameConnectionModel,
-  gameLayersModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
+  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
+  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var gameModel = {
       create: gameCreate,
       loadP: gameLoadP,
-      // pickForJson: gamePickForJson,
+      pickForJson: gamePickForJson,
       toJson: gameToJson,
       description: gameDescription,
       executeCommandP: gameExecuteCommandP,
-      // undoCommand: gameUndoCommand,
+      undoCommandP: gameUndoCommandP,
       undoLastCommandP: gameUndoLastCommandP,
-      // replayCommand: gameReplayCommand,
-      // replayCommandsBatch: gameReplayCommandsBatch,
+      replayCommandP: gameReplayCommandP,
+      replayCommandsBatchP: gameReplayCommandsBatchP,
       replayNextCommandP: gameReplayNextCommandP,
-      // sendChat: gameSendChat,
+      sendChatP: gameSendChatP,
       actionError: gameActionError
     };
 
@@ -47,9 +43,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return new_game;
     }
     function gameLoadP(state, data) {
-      return R.threadP(Object.create(GAME_PROTO))(extendGameDefaultWithData,
-      // gameConnectionModel.create,
-      gameReplayAllP$(state));
+      return R.threadP(Object.create(GAME_PROTO))(extendGameDefaultWithData, gameConnectionModel.create, gameReplayAllP$(state));
 
       function extendGameDefaultWithData(game) {
         return R.deepExtend(game, defaultGameState(), data);
@@ -93,94 +87,72 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return [s.capitalize(gamePlayerName('p1', game)), 'vs', s.capitalize(gamePlayerName('p2', game))].join(' ');
     }
     function gameExecuteCommandP(cmd, args, state, game) {
-      return R.threadP(commandsModel.executeP(cmd, args, state, game))(stampCommand, function (_ref) {
+      return R.threadP(commandsModel.executeP(cmd, args, state, game))(stampCommand, R.ifElse(function (_ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
-        var command = _ref2[0];
+        var _c_ = _ref2[0];
         var game = _ref2[1];
-
-        // if(R.always(gameConnectionModel.active(game))) {
-        //   return gameConnectionModel
-        //     .sendReplayCommand(command, game);
-        // }
-        return logLocalCommand([command, game]);
-      }, emitGameEvent);
-
-      function stampCommand(_ref3) {
+        return gameConnectionModel.active(game);
+      }, sendReplayCommandP, logLocalCommand), function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2);
 
         var command = _ref4[0];
         var game = _ref4[1];
+        return R.when(function () {
+          return command.type === 'rollDice' || command.type === 'rollDeviation';
+        }, R.over(R.lensProp('dice'), R.append(command)), game);
+      }, R.tap(function () {
+        state.queueChangeEventP('Game.command.execute');
+      }));
 
-        return [R.thread(command)(R.assoc('user', R.pathOr('Unknown', ['user', 'state', 'name'], state)), R.assoc('stamp', R.guid())), game];
-      }
-      function logLocalCommand(args) {
-        return R.thread(args)(appendToCommands, updateDice);
-      }
-      function appendToCommands(_ref5) {
+      function stampCommand(_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2);
 
         var command = _ref6[0];
         var game = _ref6[1];
 
-        if (!command.do_not_log) {
-          game = R.over(R.lensProp('commands'), R.append(command), game);
-        }
-        return [command, game];
+        return [R.thread(command)(R.assoc('user', R.pathOr('Unknown', ['user', 'state', 'name'], state)), R.assoc('stamp', R.guid())), game];
       }
-      function updateDice(_ref7) {
+      function sendReplayCommandP(_ref7) {
         var _ref8 = _slicedToArray(_ref7, 2);
 
         var command = _ref8[0];
         var game = _ref8[1];
 
-        if (command.type === 'rollDice' || command.type === 'rollDeviation') {
-          game = R.over(R.lensProp('dice'), R.append(command), game);
-        }
-        return [command, game];
+        return R.threadP(game)(gameConnectionModel.sendReplayCommandP$(command), function (game) {
+          return [command, game];
+        });
       }
-      function emitGameEvent(_ref9) {
+      function logLocalCommand(_ref9) {
         var _ref10 = _slicedToArray(_ref9, 2);
 
         var command = _ref10[0];
         var game = _ref10[1];
 
-        command = command;
-        state.queueChangeEventP('Game.command.execute');
-        return game;
+        return [command, R.unless(function () {
+          return command.do_not_log;
+        }, R.over(R.lensProp('commands'), R.append(command)), game)];
       }
     }
-    // function gameUndoCommand(command, state, game) {
-    //   return R.pipePromise(
-    //     R.propOr([], 'undo_log'),
-    //     R.find(R.propEq('stamp', command.stamp)),
-    //     (log) => {
-    //       if(R.exists(log)) {
-    //         console.log('Game : undoCmd log', command);
-    //         let log = R.propOr([], 'undo_log', game);
-    //         return R.assoc('undo_log',
-    //                        R.reject(R.propEq('stamp', command.stamp), log),
-    //                        game);
-    //       }
-    //       return commandsModel
-    //         .undo(command, state, game);
-    //     },
-    //     (game) => {
-    //       let commands = R.propOr([], 'commands', game);
-    //       let undo = R.propOr([], 'undo', game);
-    //       return R.pipe(
-    //         R.assoc('commands', R.reject(R.propEq('stamp', command.stamp), commands)),
-    //         R.assoc('undo', R.append(command, undo))
-    //       )(game);
-    //     },
-    //     (game) => {
-    //       state.changeEvent('Game.command.undo');
-    //       return game;
-    //     }
-    //   )(game);
-    // }
+    function gameUndoCommandP(command, state, game) {
+      return R.threadP(game)(R.ifElse(isInUndoLog, removeFromUndoLog, commandsModel.undoP$(command, state)), updateLogs, R.tap(function () {
+        state.queueChangeEventP('Game.command.undo');
+      }));
+
+      function isInUndoLog(game) {
+        return R.thread(game)(R.propOr([], 'undo_log'), R.find(R.propEq('stamp', command.stamp)));
+      }
+      function removeFromUndoLog(game) {
+        return R.over(R.lensProp('undo_log'), R.compose(R.reject(R.propEq('stamp', command.stamp)), R.defaultTo([])), game);
+      }
+      function updateLogs(game) {
+        return R.thread(game)(R.over(R.lensProp('commands'), R.reject(R.propEq('stamp', command.stamp))), R.over(R.lensProp('undo'), R.append(command)));
+      }
+    }
     function gameUndoLastCommandP(state, game) {
-      return R.threadP(game)(getLastCommand, undoCommand, updateLogs, sendChangeEvent);
+      return R.threadP(game)(getLastCommand, undoCommand, updateLogs, R.tap(function () {
+        state.queueChangeEventP('Game.command.undo');
+      }));
 
       function getLastCommand(game) {
         return R.threadP(game)(R.propOr([], 'commands'), R.last, R.rejectIf(R.isNil, 'Command history empty'));
@@ -196,68 +168,33 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var command = _ref12[0];
         var game = _ref12[1];
 
-        return R.threadP(game)(removeFromCommands, function (game) {
-          // if(gameConnectionModel.active(game)) {
-          //   return gameConnectionModel
-          //     .sendUndoCommand(command, game);
-          // }
-          return addToUndo(game);
-        });
-
-        function removeFromCommands(game) {
-          return R.over(R.lensProp('commands'), R.init, game);
-        }
-        function addToUndo(game) {
-          return R.over(R.lensProp('undo'), R.append(command), game);
-        }
-      }
-      function sendChangeEvent(game) {
-        state.queueChangeEventP('Game.command.undo');
-        return game;
+        return R.threadP(game)(R.over(R.lensProp('commands'), R.init), R.ifElse(gameConnectionModel.active, gameConnectionModel.sendUndoCommandP$(command), R.over(R.lensProp('undo'), R.append(command))));
       }
     }
-    // function gameReplayCommand(command, state, game) {
-    //   return R.pipePromise(
-    //     R.propOr([], 'commands_log'),
-    //     R.find(R.propEq('stamp', command.stamp)),
-    //     (log) => {
-    //       if(R.exists(log)) {
-    //         console.log('Game: replayCmd log', command);
-    //         return R.over(R.lensProp('commands_log'),
-    //                       R.reject(R.propEq('stamp', command.stamp)),
-    //                       game);
-    //       }
-    //       return commandsModel
-    //         .replay(command, state, game);
-    //     },
-    //     (game) => {
-    //       return R.pipe(
-    //         R.over(R.lensProp('undo'),
-    //                R.reject(R.propEq('stamp', command.stamp))),
-    //         (game) => {
-    //           if(command.do_not_log) return game;
+    function gameReplayCommandP(command, state, game) {
+      return R.threadP(game)(R.ifElse(isInCommandsLog, removeFromCommandsLog, commandsModel.replayP$(command, state)), updateLogs, R.tap(function () {
+        state.queueChangeEventP('Game.command.replay');
+      }));
 
-    //           return R.over(R.lensProp('commands'),
-    //                         R.append(command),
-    //                         game);
-    //         }
-    //       )(game);
-    //     },
-    //     (game) => {
-    //       state.changeEvent('Game.command.replay');
-    //       return game;
-    //     }
-    //   )(game);
-    // }
-    // function gameReplayCommandsBatch(cmds, state, game) {
-    //   return R.pipeP(
-    //     commandsModel.replayBatch$(cmds, state),
-    //     R.over(R.lensProp('commands'),
-    //            R.flip(R.concat)(cmds))
-    //   )(game);
-    // }
+      function isInCommandsLog(game) {
+        return R.thread(game)(R.propOr([], 'commands_log'), R.find(R.propEq('stamp', command.stamp)));
+      }
+      function removeFromCommandsLog(game) {
+        return R.over(R.lensProp('commands_log'), R.reject(R.propEq('stamp', command.stamp)), game);
+      }
+      function updateLogs(game) {
+        return R.thread(game)(R.over(R.lensProp('undo'), R.reject(R.propEq('stamp', command.stamp))), R.unless(function () {
+          return command.do_not_log;
+        }, R.over(R.lensProp('commands'), R.append(command))));
+      }
+    }
+    function gameReplayCommandsBatchP(cmds, state, game) {
+      return R.threadP(game)(commandsModel.replayBatchP$(cmds, state), R.over(R.lensProp('commands'), R.flip(R.concat)(cmds)));
+    }
     function gameReplayNextCommandP(state, game) {
-      return R.threadP(game)(getNextUndo, replayCommand, updateLogs, sendChangeEvent);
+      return R.threadP(game)(getNextUndo, replayCommand, updateLogs, R.tap(function () {
+        state.queueChangeEventP('Game.command.replay');
+      }));
 
       function getNextUndo(game) {
         return R.threadP(game)(R.propOr([], 'undo'), R.last, R.rejectIf(R.isNil, 'Undo history empty'));
@@ -273,36 +210,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var command = _ref14[0];
         var game = _ref14[1];
 
-        return R.threadP(game)(removeFromUndo, function (game) {
-          // if(gameConnectionModel.active(game)) {
-          //   return gameConnectionModel
-          //     .sendReplayCommand(command, game);
-          // }
-          return addToCommands(game);
-        });
-
-        function removeFromUndo(game) {
-          return R.over(R.lensProp('undo'), R.init, game);
-        }
-        function addToCommands(game) {
-          return R.over(R.lensProp('commands'), R.append(command), game);
-        }
-      }
-      function sendChangeEvent(game) {
-        state.queueChangeEventP('Game.command.replay');
-        return game;
+        return R.threadP(game)(R.over(R.lensProp('undo'), R.init), R.ifElse(gameConnectionModel.active, gameConnectionModel.sendReplayCommandP$(command), R.over(R.lensProp('commands'), R.append(command))));
       }
     }
-    // function gameSendChat(from, msg, game) {
-    //   return gameConnectionModel
-    //     .sendEvent({
-    //       type: 'chat',
-    //       chat: {
-    //         from: from,
-    //         msg: msg
-    //       }
-    //     }, game);
-    // }
+    function gameSendChatP(from, msg, game) {
+      return gameConnectionModel.sendEventP({
+        type: 'chat',
+        chat: {
+          from: from,
+          msg: msg
+        }
+      }, game);
+    }
     function gameReplayBatchsP(batchs, state, game) {
       if (R.isEmpty(batchs)) {
         return self.Promise.resolve(game);

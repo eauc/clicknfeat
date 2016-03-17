@@ -1,19 +1,41 @@
 'use strict';
 
-angular.module('clickApp.services').factory('gameConnection', ['websocket', function gameConnectionServiceFactory(websocketService) {
-  var gameConnectionService = {
-    create: function gameConnectionInit(game) {
+(function () {
+  angular.module('clickApp.services').factory('gameConnection', gameConnectionModelFactory);
+
+  gameConnectionModelFactory.$inject = ['websocket'];
+  function gameConnectionModelFactory(websocketModel) {
+    var gameConnectionModel = {
+      create: gameConnectionCreate,
+      openP: gameConnectionOpenP,
+      close: gameConnectionClose,
+      cleanup: gameConnectionCleanup,
+      active: gameConnectionActive,
+      sendReplayCommandP: gameConnectionSendReplayCommandP,
+      sendUndoCommandP: gameConnectionSendUndoCommandP,
+      sendEventP: gameConnectionSendEventP
+    };
+    var replayCmdHandler$ = R.curry(replayCmdHandler);
+    var undoCmdHandler$ = R.curry(undoCmdHandler);
+    var cmdBatchHandler$ = R.curry(cmdBatchHandler);
+    var chatHandler$ = R.curry(chatHandler);
+    var setCmdsHandler$ = R.curry(setCmdsHandler);
+    var playersHandler$ = R.curry(playersHandler);
+
+    R.curryService(gameConnectionModel);
+    return gameConnectionModel;
+
+    function gameConnectionCreate(game) {
       var connection = {
         state: { socket: null }
       };
       return R.assoc('connection', connection, game);
-    },
-    open: function gameConnectionOpen(user_name, state, game) {
-      if (R.exists(game.connection.state.socket)) {
-        return self.Promise.resolve(game);
+    }
+    function gameConnectionOpenP(user_name, state, game) {
+      if (gameConnectionModel.active(game)) {
+        return R.resolveP(game);
       }
       user_name = s.trim(user_name);
-
       var handlers = {
         close: closeHandler$(state),
         chat: chatHandler$(state),
@@ -25,85 +47,74 @@ angular.module('clickApp.services').factory('gameConnection', ['websocket', func
       };
 
       game = R.assocPath(['connection', 'state', 'socket'], null, game);
-
       var url = ['/api/games', R.prop('private_stamp', game) ? 'private' : 'public', R.prop('private_stamp', game) ? R.prop('private_stamp', game) : R.prop('public_stamp', game)].join('/');
       url += '?name=' + user_name;
 
-      return R.pipeP(function () {
-        return websocketService.create(url, 'game', handlers);
+      return R.threadP()(function () {
+        return websocketModel.createP(url, 'game', handlers);
       }, function (socket) {
         return R.assocPath(['connection', 'state', 'socket'], socket, game);
-      })();
-    },
-    close: function gameConnectionClose(game) {
-      return R.pipePromise(R.path(['connection', 'state', 'socket']), function (socket) {
-        if (R.isNil(game)) return null;
-
-        return websocketService.close(socket);
-      }, R.always(game), gameConnectionService.cleanup)(game);
-    },
-    cleanup: function gameConnectionCleanup(game) {
+      });
+    }
+    function gameConnectionClose(game) {
+      if (gameConnectionModel.active(game)) {
+        websocketModel.close(game.connection.state.socket);
+      }
+      return gameConnectionModel.cleanup(game);
+    }
+    function gameConnectionCleanup(game) {
       return R.assocPath(['connection', 'state', 'socket'], null, game);
-    },
-    active: function gameConnectionActive(game) {
-      return R.pipe(R.path(['connection', 'state', 'socket']), R.exists)(game);
-    },
-    sendReplayCommand: function gameConnectionSendReplayCommand(command, game) {
-      return R.pipeP(gameConnectionService.sendEvent$({
+    }
+    function gameConnectionActive(game) {
+      return R.thread(game)(R.path(['connection', 'state', 'socket']), R.exists);
+    }
+    function gameConnectionSendReplayCommandP(command, game) {
+      return R.threadP(game)(gameConnectionModel.sendEventP$({
         type: 'replayCmd',
         cmd: command
-      }), function (game) {
-        return R.over(R.lensProp('commands_log'), R.compose(R.append(command), R.defaultTo([])), game);
-      })(game);
-    },
-    sendUndoCommand: function gameConnectionSendUndoCommand(command, game) {
-      return R.pipeP(gameConnectionService.sendEvent$({
+      }), R.over(R.lensProp('commands_log'), R.compose(R.append(command), R.defaultTo([]))));
+    }
+    function gameConnectionSendUndoCommandP(command, game) {
+      return R.threadP(game)(gameConnectionModel.sendEventP$({
         type: 'undoCmd',
         cmd: command
-      }), function (game) {
-        return R.over(R.lensProp('undo_log'), R.compose(R.append(command), R.defaultTo([])), game);
-      })(game);
-    },
-    sendEvent: function gameConnectionSendEvent(event, game) {
-      return R.pipePromise(function () {
-        if (!gameConnectionService.active(game)) {
-          return self.Promise.reject('Not active');
-        }
-        return websocketService.send(event, game.connection.state.socket);
-      }, R.always(game))();
+      }), R.over(R.lensProp('undo_log'), R.compose(R.append(command), R.defaultTo([]))));
     }
-  };
-  function closeHandler$(state) {
-    return function () {
-      console.error('Game connection: close');
-      state.event('Game.connection.close');
-    };
+    function gameConnectionSendEventP(event, game) {
+      return R.threadP(game)(R.rejectIf(R.complement(gameConnectionModel.active), 'Not active'), function () {
+        return websocketModel.send(event, game.connection.state.socket);
+      }, R.always(game));
+    }
+    function closeHandler$(state) {
+      return function () {
+        console.error('Game connection: close');
+        state.queueEventP('Game.connection.close');
+      };
+    }
+    function replayCmdHandler(state, msg) {
+      console.log('Game connection: replayCmd', msg);
+      state.queueEventP('Game.command.replay', msg.cmd);
+    }
+    function undoCmdHandler(state, msg) {
+      console.log('Game connection: undoCmd', msg);
+      state.queueEventP('Game.command.undo', msg.cmd);
+    }
+    function cmdBatchHandler(state, msg) {
+      console.log('Game connection: cmdBatch', msg);
+      state.queueEventP('Game.command.replayBatch', msg.cmds);
+    }
+    function chatHandler(state, msg) {
+      console.log('Game connection: chat msg', msg);
+      state.queueEventP('Game.newChatMsg', msg);
+    }
+    function setCmdsHandler(state, msg) {
+      console.log('Game connection: setCmds', msg);
+      state.queueEventP('Game.setCmds', msg);
+    }
+    function playersHandler(state, msg) {
+      console.log('Game connection: players', msg);
+      state.queueEventP('Game.setPlayers', msg.players);
+    }
   }
-  var replayCmdHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: replayCmd', msg);
-    state.event('Game.command.replay', msg.cmd);
-  });
-  var undoCmdHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: undoCmd', msg);
-    state.event('Game.command.undo', msg.cmd);
-  });
-  var cmdBatchHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: cmdBatch', msg);
-    state.event('Game.command.replayBatch', msg.cmds);
-  });
-  var chatHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: chat msg', msg);
-    state.event('Game.newChatMsg', msg);
-  });
-  var setCmdsHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: setCmds', msg);
-    state.event('Game.setCmds', msg);
-  });
-  var playersHandler$ = R.curry(function (state, msg) {
-    console.log('Game connection: players', msg);
-    state.event('Game.setPlayers', msg.players);
-  });
-  R.curryService(gameConnectionService);
-  return gameConnectionService;
-}]);
+})();
 //# sourceMappingURL=connection.js.map

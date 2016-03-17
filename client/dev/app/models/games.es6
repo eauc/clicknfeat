@@ -4,12 +4,12 @@
 
   gamesModelFactory.$inject = [
     'localStorage',
-    // 'http',
-    // 'game',
+    'http',
+    'game',
   ];
-  function gamesModelFactory(localStorageService) {
-                             // httpService,
-                             // gameService) {
+  function gamesModelFactory(localStorageService,
+                             httpService,
+                             gameModel) {
     const LOCAL_GAME_STORAGE_KEY = 'clickApp.game.';
     const gamesModel = {
       loadLocalGamesP: gamesLoadLocalGamesP,
@@ -18,8 +18,8 @@
       newLocalGame: gamesNewLocalGame,
       removeLocalGame: gamesRemoveLocalGame,
       updateLocalGame: gamesUpdateLocalGame,
-      // newOnlineGame: gamesNewOnlineGame,
-      // loadOnlineGame: gamesLoadOnlineGame
+      newOnlineGameP: gamesNewOnlineGameP,
+      loadOnlineGameP: gamesLoadOnlineGameP
     };
     R.curryService(gamesModel);
     return gamesModel;
@@ -76,24 +76,24 @@
         R.update(game_index, game)
       );
     }
-    // function gamesNewOnlineGame(game) {
-    //   return R.pipePromise(
-    //     gameService.pickForJson,
-    //     R.spyWarn('upload game'),
-    //     httpService.post$('/api/games'),
-    //     R.spyWarn('upload game response')
-    //   )(game);
-    // }
-    // function gamesLoadOnlineGame(is_private, id) {
-    //   var url = [
-    //     '/api/games',
-    //     (is_private ? 'private' : 'public'),
-    //     id
-    //   ].join('/');
-    //   return R.pipeP(
-    //     httpService.get,
-    //     R.spyError('Games: load online game')
-    //   )(url);
-    // }
+    function gamesNewOnlineGameP(game) {
+      return R.threadP(game)(
+        gameModel.pickForJson,
+        R.spyWarn('upload game'),
+        httpService.postP$('/api/games'),
+        R.spyWarn('upload game response')
+      );
+    }
+    function gamesLoadOnlineGameP(is_private, id) {
+      const url = [
+        '/api/games',
+        (is_private ? 'private' : 'public'),
+        id
+      ].join('/');
+      return R.threadP(url)(
+        httpService.getP,
+        R.spyError('Games: load online game')
+      );
+    }
   }
 })();

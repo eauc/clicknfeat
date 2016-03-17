@@ -6,7 +6,7 @@
     'games',
     'game',
     'gameBoard',
-    // 'gameConnection',
+    'gameConnection',
     'gameFactions',
     'gameModels',
     'gameModelSelection',
@@ -22,7 +22,7 @@
   function stateGameModelFactory(gamesModel,
                                  gameModel,
                                  gameBoardModel,
-                                 // gameConnectionModel,
+                                 gameConnectionModel,
                                  gameFactionsModel,
                                  gameModelsModel,
                                  gameModelSelectionModel,
@@ -36,16 +36,16 @@
       create: stateGamesCreate,
       save: stateGameSave,
       onGameLoad: stateGameOnLoad,
-      // onGameConnectionClose: stateGameOnConnectionClose,
+      onGameConnectionClose: stateGameOnConnectionClose,
       onGameCommandExecute: stateGameOnCommandExecute,
-      // onGameCommandUndo: stateGameOnCommandUndo,
+      onGameCommandUndo: stateGameOnCommandUndo,
       onGameCommandUndoLast: stateGameOnCommandUndoLast,
-      // onGameCommandReplay: stateGameOnCommandReplay,
+      onGameCommandReplay: stateGameOnCommandReplay,
       onGameCommandReplayNext: stateGameOnCommandReplayNext,
-      // onGameCommandReplayBatch: stateGameOnCommandReplayBatch,
-      // onGameSetCmds: stateGameOnSetCmds,
-      // onGameSetPlayers: stateGameOnSetPlayers,
-      // onGameNewChatMsg: stateGameOnNewChatMsg,
+      onGameCommandReplayBatch: stateGameOnCommandReplayBatch,
+      onGameSetCmds: stateGameOnSetCmds,
+      onGameSetPlayers: stateGameOnSetPlayers,
+      onGameNewChatMsg: stateGameOnNewChatMsg,
       onGameUpdate: stateGameOnUpdate,
       // onGameInvitePlayer: stateGameOnInvitePlayer,
       onGameModelCreate: stateGameOnModelCreate,
@@ -80,26 +80,26 @@
 
       state.onEvent('Game.load',
                     stateGameModel.onGameLoad$(state));
-      // state.onEvent('Game.connection.close',
-      //               stateGameModel.onGameConnectionClose$(state));
+      state.onEvent('Game.connection.close',
+                    stateGameModel.onGameConnectionClose$(state));
       state.onEvent('Game.command.execute',
                     stateGameModel.onGameCommandExecute$(state));
-      // state.onEvent('Game.command.undo',
-      //               stateGameModel.onGameCommandUndo$(state));
-      // state.onEvent('Game.command.replay',
-      //               stateGameModel.onGameCommandReplay$(state));
-      // state.onEvent('Game.command.replayBatch',
-      //               stateGameModel.onGameCommandReplayBatch$(state));
+      state.onEvent('Game.command.undo',
+                    stateGameModel.onGameCommandUndo$(state));
+      state.onEvent('Game.command.replay',
+                    stateGameModel.onGameCommandReplay$(state));
+      state.onEvent('Game.command.replayBatch',
+                    stateGameModel.onGameCommandReplayBatch$(state));
       state.onEvent('Game.command.undoLast',
                     stateGameModel.onGameCommandUndoLast$(state));
       state.onEvent('Game.command.replayNext',
                     stateGameModel.onGameCommandReplayNext$(state));
-      // state.onEvent('Game.setCmds',
-      //               stateGameModel.onGameSetCmds$(state));
-      // state.onEvent('Game.setPlayers',
-      //               stateGameModel.onGameSetPlayers$(state));
-      // state.onEvent('Game.newChatMsg',
-      //               stateGameModel.onGameNewChatMsg$(state));
+      state.onEvent('Game.setCmds',
+                    stateGameModel.onGameSetCmds$(state));
+      state.onEvent('Game.setPlayers',
+                    stateGameModel.onGameSetPlayers$(state));
+      state.onEvent('Game.newChatMsg',
+                    stateGameModel.onGameNewChatMsg$(state));
       state.onEvent('Game.update',
                     stateGameModel.onGameUpdate$(state));
       // state.onEvent('Game.invitePlayer',
@@ -149,7 +149,7 @@
     }
     function stateGameOnLoad(state, _event_, is_online, is_private, id) {
       return R.threadP(waitForDataReady())(
-        loadStoredGameData,
+        loadStoredGameDataP,
         broadcast('Game.loading'),
         setGame$(state),
         resetModes,
@@ -159,111 +159,109 @@
         //     setTimeout(resolve, 3000);
         //   });
         // },
-        (game) => {
-          state.queueChangeEventP('Game.loaded');
-          return game;
-        },
-        // connectOnlineGame,
+        R.tap(() => { state.queueChangeEventP('Game.loaded'); }),
+        connectOnlineGame,
         setGame$(state),
         broadcast('Game.load.success')
       ).catch(onError);
 
       function waitForDataReady() {
-        return self.Promise.all([
+        return R.promiseAll([
           state.data_ready,
           state.user_ready,
           state.games_ready
         ]);
       }
-      function loadStoredGameData() {
+      function loadStoredGameDataP() {
         return ( is_online
-                 ? gamesModel.loadOnlineGame(is_private, id)
+                 ? gamesModel.loadOnlineGameP(is_private, id)
                  : gamesModel.loadLocalGameP(id, state.local_games)
                );
       }
       function broadcast(event) {
-        return (game) => {
+        return R.tap(() => {
           state.changeEventP(event);
-          return game;
-        };
+        });
       }
       function resetModes(game) {
         return state.eventP('Modes.reset')
           .then(R.always(game));
       }
-      // function connectOnlineGame(game) {
-      //   if(!is_online) return game;
-
-      //   return gameConnectionModel
-      //     .open$(R.path(['user','state','name'], state), state, game);
-      // }
+      function connectOnlineGame(game) {
+        return R.when(
+          () => is_online,
+          gameConnectionModel
+            .openP$(R.path(['user','state','name'], state), state),
+          game
+        );
+      }
       function onError(error) {
         state.changeEventP('Game.load.error', error);
       }
     }
-    // function stateGameOnConnectionClose(state, event) {
-    //   event = event;
-    //   return R.pipe(
-    //     gameConnectionModel.cleanup,
-    //     setGame$(state)
-    //   )(state.game);
-    // }
+    function stateGameOnConnectionClose(state, _event_) {
+      return R.thread(state.game)(
+        gameConnectionModel.cleanup,
+        setGame$(state)
+      );
+    }
     function stateGameOnCommandExecute(state, _event_, cmd, args) {
       return R.threadP(state.game)(
         gameModel.executeCommandP$(cmd, args, state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnCommandUndo(state, _event_, cmd) {
-    //   return R.pipeP(
-    //     gameModel.undoCommand$(cmd, state),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
+    function stateGameOnCommandUndo(state, _event_, cmd) {
+      return R.threadP(state.game)(
+        gameModel.undoCommandP$(cmd, state),
+        setGame$(state)
+      ).catch(gameModel.actionError$(state));
+    }
     function stateGameOnCommandUndoLast(state, _event_) {
       return R.threadP(state.game)(
         gameModel.undoLastCommandP$(state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnCommandReplay(state, _event_, cmd) {
-    //   return R.pipeP(
-    //     gameModel.replayCommand$(cmd, state),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
-    // function stateGameOnCommandReplayBatch(state, _event_, cmds) {
-    //   return R.pipeP(
-    //     gameModel.replayCommandsBatch$(cmds, state),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
+    function stateGameOnCommandReplay(state, _event_, cmd) {
+      return R.threadP(state.game)(
+        gameModel.replayCommandP$(cmd, state),
+        setGame$(state)
+      ).catch(gameModel.actionError$(state));
+    }
+    function stateGameOnCommandReplayBatch(state, _event_, cmds) {
+      return R.threadP(state.game)(
+        gameModel.replayCommandsBatchP$(cmds, state),
+        setGame$(state)
+      ).catch(gameModel.actionError$(state));
+    }
     function stateGameOnCommandReplayNext(state, _event_) {
       return R.threadP(state.game)(
         gameModel.replayNextCommandP$(state),
         setGame$(state)
       ).catch(gameModel.actionError$(state));
     }
-    // function stateGameOnSetCmds(state, _event_, set) {
-    //   return R.pipe(
-    //     R.assoc(set.where, set.cmds),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
-    // function stateGameOnSetPlayers(state, _event_, players) {
-    //   return R.pipe(
-    //     R.assoc('players', players),
-    //     setGame$(state)
-    //   )(state.game);
-    // }
-    // function stateGameOnNewChatMsg(state, _event_, msg) {
-    //   return R.pipe(
-    //     R.over(R.lensProp('chat'),
-    //            R.compose(R.append(msg.chat), R.defaultTo([]))),
-    //     setGame$(state),
-    //     () => { state.changeEvent('Game.chat'); }
-    //   )(state.game);
-    // }
+    function stateGameOnSetCmds(state, _event_, set) {
+      return R.thread(state.game)(
+        R.assoc(set.where, set.cmds),
+        setGame$(state)
+      );
+    }
+    function stateGameOnSetPlayers(state, _event_, players) {
+      return R.thread(state.game)(
+        R.assoc('players', players),
+        R.tap(() => { state.queueChangeEventP('Game.players.change'); }),
+        setGame$(state)
+      );
+    }
+    function stateGameOnNewChatMsg(state, _event_, msg) {
+      return R.thread(state.game)(
+        R.over(R.lensProp('chat'),
+               R.compose(R.append(msg.chat), R.defaultTo([]))),
+        setGame$(state),
+        () => { state.queueChangeEventP('Game.chat'); }
+      );
+    }
     function stateGameOnUpdate(state, _event_, lens, update) {
       return R.thread(state.game)(
         R.over(lens, update),
