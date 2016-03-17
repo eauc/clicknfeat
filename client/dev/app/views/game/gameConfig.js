@@ -47,14 +47,13 @@
       controller: 'gameLogCtrl',
       controllerAs: 'log',
       data: { hide_nav: true }
-    })
-    // .state('game.online', {
-    //   url: '/online',
-    //   templateUrl: 'partials/game/online.html',
-    //   controller: 'gameOnlineCtrl',
-    //   data: { hide_nav: true }
-    // })
-    ;
+    }).state('game.online', {
+      url: '/online',
+      templateUrl: 'app/views/game/online/game_online.html',
+      controller: 'gameOnlineCtrl',
+      controllerAs: 'game_online',
+      data: { hide_nav: true }
+    });
   }
 })();
 //# sourceMappingURL=gameConfig.js.map

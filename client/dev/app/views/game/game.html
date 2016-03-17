@@ -247,11 +247,11 @@
             ng-click="app.goToState('^.help')">
           <a>Help</a>
         </li>
-        <!-- <li ng-show="user | user:'online'" -->
-        <!--     class="{{stateIs('game.online') ? 'active' : ''}}" -->
-        <!--     ng-click="goToState('^.online')"> -->
-        <!--   <a class="{{ hints.go_to_online ? 'go-to-hint' : ''}}">Online</a> -->
-        <!-- </li> -->
+        <li ng-show="state.user | user:'online'"
+            class="{{app.stateIs('game.online') ? 'active' : ''}}"
+            ng-click="app.goToState('^.online')">
+          <a class="{{ game.hints.go_to_online ? 'go-to-hint' : ''}}">Online</a>
+        </li>
         <li ng-click="app.goToState('lounge')">
           <a>Lounge</a>
         </li>

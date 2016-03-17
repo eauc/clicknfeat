@@ -42,8 +42,8 @@
       $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
       $scope.digestOnStateChangeEvent('Game.players.change', $scope);
 
-      // $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
-      // $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);
+      $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
+      $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);
 
       $scope.onStateChangeEvent('Modes.change',
                                 updateCurrentModeBindings,
@@ -62,19 +62,19 @@
       $scope.goToState('lounge');
     }
 
-    // function hintOnGameChat(event, msg) {
-    //   if(msg.from === $scope.state.user.state.name) return;
+    function hintOnGameChat(_event_, msg) {
+      if(R.isNil(msg) || R.isNil(msg.from) ||
+         msg.from === $scope.state.user.state.name) return;
 
-    //   vm.hints.go_to_main = !$scope.stateIs('game.main');
-    //   $scope.$digest();
-    // }
-    // function hintOnUserChat(event, msg) {
-    //   console.log('gameCtrl: userMailHint', event, msg);
-    //   if(msg.from === $scope.user.state.stamp) return;
+      vm.hints.go_to_main = !$scope.app.stateIs('game.main');
+      $scope.$digest();
+    }
+    function hintOnUserChat(_event_, msg) {
+      if(msg.from === $scope.state.user.state.stamp) return;
 
-    //   $scope.hints.go_to_online = !$scope.stateIs('game.online');
-    //   $scope.$digest();
-    // }
+      vm.hints.go_to_online = !$scope.app.stateIs('game.online');
+      $scope.$digest();
+    }
 
     function updateCurrentModeBindings() {
       vm.action_bindings = R.thread($scope)(

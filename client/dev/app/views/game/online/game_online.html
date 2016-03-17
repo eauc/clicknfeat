@@ -1,0 +1,40 @@
+<div>
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        {{ state.user | user:'description' }} /
+        {{ (state.user | user:'online') ? 'Online' : 'Offline' }}
+        <!-- ( {{ user.state.stamp }} ) -->
+      </h4>
+    </div>
+    <div class="panel-body"
+         ng-show="state.user | user:'online'">
+      <click-user-chat>
+      </click-user-chat>
+    </div>
+  </div>
+  <div class="panel panel-info"
+       ng-show="state.user | user:'online'">
+    <div class="panel-heading">
+      <h4 class="panel-title">Online Games</h4>
+    </div>
+    <div class="game-list panel-body">
+      <click-games-list games="state.user.connection.games"
+                        selection="game_online.games_selection"
+                        current="state.game.public_stamp">
+      </click-games-list>
+    </div>
+    <div class="panel-footer">
+      <form>
+        <div class="btn-group">
+          <button type="button"
+                  class="btn btn-default"
+                  ng-click="game_online.doLoadOnlineGame()"
+                  ng-disabled="game_online.games_selection.list.length <= 0">
+            Watch Game
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
