@@ -2,6 +2,7 @@
   angular.module('clickApp.filters')
     .filter('capitalize', capitalizeFilterFactory)
     .filter('game', gameFilterFactory)
+    .filter('gameConnection', gameConnectionFilterFactory)
     .filter('gameLayers', gameLayersFilterFactory)
     .filter('gameLos', gameLosFilterFactory)
     .filter('gameRuler', gameRulerFilterFactory)
@@ -24,6 +25,18 @@
         return null;
       }
       return gameModel[method].apply(null, R.append(input, args));
+    };
+  }
+  gameConnectionFilterFactory.$inject = [
+    'gameConnection',
+  ];
+  function gameConnectionFilterFactory(gameConnectionModel) {
+    return function gameConnectionFilter(input, method, ...args) {
+      if(R.isNil(gameConnectionModel[method])) {
+        console.error('GameConnection Filter: method "'+method+'" does not exist');
+        return null;
+      }
+      return gameConnectionModel[method].apply(null, R.append(input, args));
     };
   }
   gameLayersFilterFactory.$inject = [

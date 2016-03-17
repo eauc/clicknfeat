@@ -244,6 +244,10 @@
     function stateGameOnSetCmds(state, _event_, set) {
       return R.thread(state.game)(
         R.assoc(set.where, set.cmds),
+        R.when(
+          () => (set.where = 'chat'),
+          R.tap(() => { state.queueChangeEventP('Game.chat'); })
+        ),
         setGame$(state)
       );
     }
@@ -259,7 +263,7 @@
         R.over(R.lensProp('chat'),
                R.compose(R.append(msg.chat), R.defaultTo([]))),
         setGame$(state),
-        () => { state.queueChangeEventP('Game.chat'); }
+        () => { state.queueChangeEventP('Game.chat', msg.chat); }
       );
     }
     function stateGameOnUpdate(state, _event_, lens, update) {

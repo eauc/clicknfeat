@@ -28,7 +28,7 @@
         var gameview = element.querySelector('#gameview');
         var menu = element.querySelector('#menu');
         var dice_osd = element.querySelector('#dice-osd');
-        // const chat_osd = element.querySelector('#chat-osd');
+        var chat_osd = element.querySelector('#chat-osd');
 
         var menu_hidden = menu.classList.contains('hidden');
         if (!menu_hidden) {
@@ -41,7 +41,7 @@
         gameview.classList.toggle('resizable');
         menu.classList.toggle('hidden');
         dice_osd.classList.toggle('show');
-        // chat_osd.classList.toggle('show');
+        chat_osd.classList.toggle('show');
       };
     }
   }

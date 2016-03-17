@@ -1,5 +1,5 @@
 <div>
-  <form ng-submit="doSendChatMessage()">
+  <form ng-submit="game_chat.doSendChatMessage()">
       <div class="input-group">
         <span class="input-group-btn">
           <button type="submit"
@@ -10,12 +10,12 @@
         <input type="text"
                class="form-control"
                placeholder="Msg..."
-               ng-model="chat.msg" />
+               ng-model="game_chat.msg" />
       </div>
   </form>
   <div class="chat-list">
     <div class="chat"
-         ng-repeat="c in game.chat.slice(-10).reverse() track by c.stamp">
+         ng-repeat="c in game_chat.chat.slice(-10).reverse() track by c.stamp">
       {{ c.from }}
       ➝
       {{c.msg}}

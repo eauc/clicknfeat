@@ -149,7 +149,11 @@
       return R.threadP(state.game)(gameModel.replayNextCommandP$(state), setGame$(state)).catch(gameModel.actionError$(state));
     }
     function stateGameOnSetCmds(state, _event_, set) {
-      return R.thread(state.game)(R.assoc(set.where, set.cmds), setGame$(state));
+      return R.thread(state.game)(R.assoc(set.where, set.cmds), R.when(function () {
+        return set.where = 'chat';
+      }, R.tap(function () {
+        state.queueChangeEventP('Game.chat');
+      })), setGame$(state));
     }
     function stateGameOnSetPlayers(state, _event_, players) {
       return R.thread(state.game)(R.assoc('players', players), R.tap(function () {
@@ -158,7 +162,7 @@
     }
     function stateGameOnNewChatMsg(state, _event_, msg) {
       return R.thread(state.game)(R.over(R.lensProp('chat'), R.compose(R.append(msg.chat), R.defaultTo([]))), setGame$(state), function () {
-        state.queueChangeEventP('Game.chat');
+        state.queueChangeEventP('Game.chat', msg.chat);
       });
     }
     function stateGameOnUpdate(state, _event_, lens, update) {

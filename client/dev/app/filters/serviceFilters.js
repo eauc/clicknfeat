@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  angular.module('clickApp.filters').filter('capitalize', capitalizeFilterFactory).filter('game', gameFilterFactory).filter('gameLayers', gameLayersFilterFactory).filter('gameLos', gameLosFilterFactory).filter('gameRuler', gameRulerFilterFactory).filter('user', userFilterFactory).filter('userConnection', userConnectionFilterFactory);
+  angular.module('clickApp.filters').filter('capitalize', capitalizeFilterFactory).filter('game', gameFilterFactory).filter('gameConnection', gameConnectionFilterFactory).filter('gameLayers', gameLayersFilterFactory).filter('gameLos', gameLosFilterFactory).filter('gameRuler', gameRulerFilterFactory).filter('user', userFilterFactory).filter('userConnection', userConnectionFilterFactory);
 
   capitalizeFilterFactory.$inject = [];
   function capitalizeFilterFactory() {
@@ -24,6 +24,21 @@
       return gameModel[method].apply(null, R.append(input, args));
     };
   }
+  gameConnectionFilterFactory.$inject = ['gameConnection'];
+  function gameConnectionFilterFactory(gameConnectionModel) {
+    return function gameConnectionFilter(input, method) {
+      if (R.isNil(gameConnectionModel[method])) {
+        console.error('GameConnection Filter: method "' + method + '" does not exist');
+        return null;
+      }
+
+      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+        args[_key2 - 2] = arguments[_key2];
+      }
+
+      return gameConnectionModel[method].apply(null, R.append(input, args));
+    };
+  }
   gameLayersFilterFactory.$inject = ['gameLayers'];
   function gameLayersFilterFactory(gameLayersModel) {
     return function gameLayersFilter(input, method) {
@@ -32,8 +47,8 @@
         return null;
       }
 
-      for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
-        args[_key2 - 2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+        args[_key3 - 2] = arguments[_key3];
       }
 
       return gameLayersModel[method].apply(null, R.append(input, args));
@@ -47,8 +62,8 @@
         return null;
       }
 
-      for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
-        args[_key3 - 2] = arguments[_key3];
+      for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+        args[_key4 - 2] = arguments[_key4];
       }
 
       return gameLosModel[method].apply(null, R.append(input, args));
@@ -62,8 +77,8 @@
         return null;
       }
 
-      for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-        args[_key4 - 2] = arguments[_key4];
+      for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
+        args[_key5 - 2] = arguments[_key5];
       }
 
       return gameRulerModel[method].apply(null, R.append(input, args));
@@ -77,8 +92,8 @@
         return null;
       }
 
-      for (var _len5 = arguments.length, args = Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
-        args[_key5 - 2] = arguments[_key5];
+      for (var _len6 = arguments.length, args = Array(_len6 > 2 ? _len6 - 2 : 0), _key6 = 2; _key6 < _len6; _key6++) {
+        args[_key6 - 2] = arguments[_key6];
       }
 
       return userModel[method].apply(null, R.append(input, args));
@@ -92,8 +107,8 @@
         return null;
       }
 
-      for (var _len6 = arguments.length, args = Array(_len6 > 2 ? _len6 - 2 : 0), _key6 = 2; _key6 < _len6; _key6++) {
-        args[_key6 - 2] = arguments[_key6];
+      for (var _len7 = arguments.length, args = Array(_len7 > 2 ? _len7 - 2 : 0), _key7 = 2; _key7 < _len7; _key7++) {
+        args[_key7 - 2] = arguments[_key7];
       }
 
       return userConnectionModel[method].apply(null, R.append(input, args));
