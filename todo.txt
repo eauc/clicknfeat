@@ -13,5 +13,4 @@ game:
 templates:
 - editLabel osd
 =================================
-- scenario > change sr15 to sr14 > action error
 - b2b aura

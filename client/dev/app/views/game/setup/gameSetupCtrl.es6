@@ -73,6 +73,8 @@
       $scope.$digest();
     }
     function doSetScenario() {
+      if(R.isNil(vm.scenario_name)) return;
+
       $scope.stateEvent('Game.scenario.set',
                         vm.scenario_name, vm.scenario_group);
     }
