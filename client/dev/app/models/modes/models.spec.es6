@@ -727,7 +727,7 @@ describe('modelsMode model', function() {
       expect(this.state.eventP)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels', [
-                                'setNextImage',
+                                'setNextImageP',
                                 ['factions'],
                                 ['stamp1','stamp2']
                               ]);

@@ -8,6 +8,7 @@
   function wallTemplateElementModelFactory(templateModel, gameTemplateSelectionModel, gameMapService, labelElementModel) {
     var wallTemplateElementModel = {
       create: wallTemplateElementModelCreate,
+      cleanup: function cleanup() {},
       update: wallTemplateElementModelUpdate
     };
     return wallTemplateElementModel;

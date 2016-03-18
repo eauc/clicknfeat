@@ -24,7 +24,7 @@
         updateCreateModel();
 
         scope.onStateChangeEvent('Game.create.update', updateCreateModel, scope);
-      })(state.factions);
+      });
 
       function updateCreateModel() {
         if (R.isNil(R.path(['create', 'models'], state))) return;

@@ -25,6 +25,7 @@
                                             labelElementModel) {
     const sprayTemplateElementModel = {
       create: sprayTemplateElementModelCreate,
+      cleanup: sprayTemplateElementModelCleanup,
       update: sprayTemplateElementModelUpdate
     };
     return sprayTemplateElementModel;
@@ -56,6 +57,10 @@
                label: label,
                origin: origin
              };
+    }
+    function sprayTemplateElementModelCleanup(_parent_, spray) {
+      const over_models = document.getElementById('game-over-models');
+      over_models.removeChild(spray.origin);
     }
     function sprayTemplateElementModelUpdate(map, state, template, spray) {
       const selection = state.game.template_selection;

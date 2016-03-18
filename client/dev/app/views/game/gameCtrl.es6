@@ -106,7 +106,7 @@
     }
     function doActionButton([_label_, action, group]) {
       if(action === 'toggle') {
-        vm.show_action_group = ( $scope.show_action_group === group
+        vm.show_action_group = ( vm.show_action_group === group
                                  ? null
                                  : group
                                );

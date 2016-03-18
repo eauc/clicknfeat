@@ -96,7 +96,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var group = _ref2[2];
 
       if (action === 'toggle') {
-        vm.show_action_group = $scope.show_action_group === group ? null : group;
+        vm.show_action_group = vm.show_action_group === group ? null : group;
         return;
       }
       $scope.stateEvent('Modes.current.action', action, [{}]);

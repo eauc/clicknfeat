@@ -101,7 +101,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return R.threadP(model)(R.prop(method), R.type, R.rejectIf(R.complement(R.equals('Function')), 'Unknown method "' + method + '" on ' + type + 's'));
         }
         function callMethodOnElementP(element) {
-          return self.Promise.resolve(model[method].apply(null, [].concat(_toConsumableArray(args), [element]))).catch(onError(element));
+          return self.Promise.resolve(model[method].apply(model, [].concat(_toConsumableArray(args), [element]))).catch(onError(element));
         }
       }
       function updateElements(elements, news) {

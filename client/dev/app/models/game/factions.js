@@ -338,7 +338,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
     function updateWreck(wreck) {
       return R.thread(wreck)(R.defaultTo({}), function (wreck) {
-        return R.pipe(R.keys, R.reduce(function (mem, key) {
+        return R.thread(wreck)(R.keys, R.reduce(function (mem, key) {
           return R.assoc(key, updateImage(R.assoc('type', 'wreck', wreck[key])), mem);
         }, {}));
       });

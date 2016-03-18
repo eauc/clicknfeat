@@ -7,6 +7,7 @@
   function aoeTemplateElementModelFactory(templateModel, gameTemplateSelectionModel, gameMapService, labelElementModel) {
     var aoeTemplateElementModel = {
       create: aoeTemplateElementModelCreate,
+      cleanup: function cleanup() {},
       update: aoeTemplateElementModelUpdate
     };
     R.curryService(aoeTemplateElementModel);

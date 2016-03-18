@@ -12,6 +12,7 @@
   function sprayTemplateElementModelFactory(templateModel, sprayTemplateModel, gameTemplateSelectionModel, gameModelsModel, gameFactionsModel, gameMapService, labelElementModel) {
     var sprayTemplateElementModel = {
       create: sprayTemplateElementModelCreate,
+      cleanup: sprayTemplateElementModelCleanup,
       update: sprayTemplateElementModelUpdate
     };
     return sprayTemplateElementModel;
@@ -43,6 +44,10 @@
         label: label,
         origin: origin
       };
+    }
+    function sprayTemplateElementModelCleanup(_parent_, spray) {
+      var over_models = document.getElementById('game-over-models');
+      over_models.removeChild(spray.origin);
     }
     function sprayTemplateElementModelUpdate(map, state, template, spray) {
       var selection = state.game.template_selection;

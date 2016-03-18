@@ -125,7 +125,7 @@
           .catch(R.always(null));
       }
       function emitDeleteEvent(state, stamp) {
-        state.queueChangeEventP(`Game.model.delete.${stamp}`);
+        state.queueChangeEventP(`Game.${type}.delete.${stamp}`);
       }
       function emitCreateEvent(state, game) {
         state.queueChangeEventP(`Game.${type}.create`);

@@ -134,7 +134,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
     function modelsSetNextImage(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['setNextImage', [state.factions], stamps]);
+      return state.eventP('Game.command.execute', 'onModels', ['setNextImageP', [state.factions], stamps]);
     }
     function modelsToggleWreckDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);

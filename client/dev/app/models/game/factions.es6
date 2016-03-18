@@ -373,7 +373,7 @@
     function updateWreck(wreck) {
       return R.thread(wreck)(
         R.defaultTo({}),
-        (wreck) => R.pipe(
+        (wreck) => R.thread(wreck)(
           R.keys,
           R.reduce((mem, key) => {
             return R.assoc(key, updateImage(R.assoc('type','wreck',wreck[key])), mem);

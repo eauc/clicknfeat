@@ -192,7 +192,7 @@
             .get('local', state.game.model_selection);
       return state.eventP('Game.command.execute',
                           'onModels',
-                          [ 'setNextImage', [state.factions], stamps]);
+                          [ 'setNextImageP', [state.factions], stamps]);
     }
     function modelsToggleWreckDisplay(state) {
       const stamps = gameModelSelectionModel

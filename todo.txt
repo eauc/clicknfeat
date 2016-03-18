@@ -6,11 +6,13 @@ model
 online:
 - save online game in cache
 - load local game online & reverse
-- server : remove unused users after 30s
-load:
-- fucking bug with loading banner
 game:
 - put msg hints in directives
+templates:
+- editLabel osd
 =================================
-- singleSelection/refreshTargetOrigin
-- game online
++ setNextImage
++ delete spray hide origin circle on model
++ action button toggle list show/hide
++ mode terrain -> cannot read isLocked of null
+- wreck

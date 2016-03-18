@@ -14,6 +14,7 @@
                                           labelElementModel) {
     const aoeTemplateElementModel = {
       create: aoeTemplateElementModelCreate,
+      cleanup: () => {},
       update: aoeTemplateElementModelUpdate
     };
     R.curryService(aoeTemplateElementModel);

@@ -148,7 +148,7 @@
         }
         function callMethodOnElementP(element) {
           return self.Promise
-            .resolve(model[method].apply(null, [...args, element]))
+            .resolve(model[method].apply(model, [...args, element]))
             .catch(onError(element));
         }
       }

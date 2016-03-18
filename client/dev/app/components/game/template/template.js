@@ -12,6 +12,7 @@
     };
     var gameTemplateDirective = {
       restrict: 'A',
+      scope: true,
       link: link
     };
     return gameTemplateDirective;
@@ -25,6 +26,9 @@
       if (R.isNil(template)) return;
 
       var element = templates[template.state.type].create(svgNS, parent[0], template);
+      scope.$on('$destroy', function () {
+        templates[template.state.type].cleanup(parent, element);
+      });
       element.container = parent[0];
 
       scope.onStateChangeEvent('Game.map.flipped', function () {

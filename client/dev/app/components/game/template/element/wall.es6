@@ -15,6 +15,7 @@
                                            labelElementModel) {
     const wallTemplateElementModel = {
       create: wallTemplateElementModelCreate,
+      cleanup: () => {},
       update: wallTemplateElementModelUpdate
     };
     return wallTemplateElementModel;

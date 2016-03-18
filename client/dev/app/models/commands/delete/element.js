@@ -76,7 +76,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return elementModel.createP(element).catch(R.always(null));
       }
       function emitDeleteEvent(state, stamp) {
-        state.queueChangeEventP('Game.model.delete.' + stamp);
+        state.queueChangeEventP('Game.' + type + '.delete.' + stamp);
       }
       function emitCreateEvent(state, game) {
         state.queueChangeEventP('Game.' + type + '.create');
