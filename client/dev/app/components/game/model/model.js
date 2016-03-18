@@ -29,9 +29,9 @@
       scope.onStateChangeEvent('Game.model.change.' + model.state.stamp, updateModel, scope);
       updateModel();
 
-      scope.onStateChangeEvent('Game.model.selection.local.updateSingle', onUpdateSingleModelSelection(state.factions, model, element), scope);
+      scope.onStateChangeEvent('Game.model.selection.local.updateSingle', onUpdateSingleModelSelection(scope, element), scope);
 
-      scope.onStateChangeEvent('Game.template.selection.local.updateSingle', onUpdateSingleTemplateSelection(state.factions, model, element), scope);
+      scope.onStateChangeEvent('Game.template.selection.local.updateSingle', onUpdateSingleTemplateSelection(scope, element), scope);
 
       var onUpdateScenarioAura = withModel(scope, function (model) {
         updateScenarioAura(state, info, model, scope, element);
@@ -84,7 +84,13 @@
     }
     function withModel(scope, fn) {
       return function () {
-        R.threadP(scope.state.game.models)(gameModelsModel.findStampP$(scope.model.state.stamp), fn);
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        R.threadP(scope.state.game.models)(gameModelsModel.findStampP$(scope.model.state.stamp), function (model) {
+          return fn.apply(null, [model].concat(args));
+        });
       };
     }
     function gameModelOnMapFlipped(info, scope, element) {
@@ -99,14 +105,14 @@
         }
       });
     }
-    function onUpdateSingleModelSelection(factions, model, element) {
-      return function (_event_, sel_stamp, sel_model) {
+    function onUpdateSingleModelSelection(scope, element) {
+      return withModel(scope, function (model, _event_, sel_stamp, sel_model) {
         if (R.isNil(sel_model) || sel_stamp === model.state.stamp) {
           element.container.classList.remove('overlap');
           element.container.classList.remove('b2b');
           return;
         }
-        R.threadP(model)(modelModel.distanceToP$(factions, sel_model), function (dist) {
+        R.threadP(model)(modelModel.distanceToP$(scope.state.factions, sel_model), function (dist) {
           if (dist < -0.1) {
             element.container.classList.add('overlap');
             element.container.classList.remove('b2b');
@@ -120,24 +126,24 @@
             element.container.classList.remove('b2b');
           }
         });
-      };
+      });
     }
-    function onUpdateSingleTemplateSelection(factions, model, element) {
-      return function (_event_, _sel_stamp_, sel_temp) {
+    function onUpdateSingleTemplateSelection(scope, element) {
+      return withModel(scope, function (model, _event_, _sel_stamp_, sel_temp) {
         // console.log('onUpdateSingleAoTemplateSelection',
         //             sel_stamp, model.state.stamp);
         if (R.isNil(sel_temp) || 'aoe' !== sel_temp.state.type) {
           element.container.classList.remove('under-aoe');
           return;
         }
-        R.threadP(model)(modelModel.distanceToAoEP$(factions, sel_temp), function (dist) {
+        R.threadP(model)(modelModel.distanceToAoEP$(scope.state.factions, sel_temp), function (dist) {
           if (dist <= 0) {
             element.container.classList.add('under-aoe');
           } else {
             element.container.classList.remove('under-aoe');
           }
         });
-      };
+      });
     }
     function gameModelOnUpdate(state, info, scope, element) {
       return withModel(scope, function (model) {
