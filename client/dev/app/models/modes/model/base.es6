@@ -167,7 +167,7 @@
         R.prop('models'),
         gameModelsModel.findStampP$(stamps[0]),
         (model) => {
-          state.queueChangeEventP('Game.editLabel.open', model);
+          state.queueChangeEventP('Game.editLabel.open', 'onModels', model);
         }
       );
     }

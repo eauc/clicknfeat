@@ -19,7 +19,7 @@
 
       $scope
         .stateEvent('Game.command.execute',
-                    'onModels', [
+                    vm.cmd, [
                       'addLabel',
                       [new_label],
                       [vm.selection.state.stamp]
@@ -72,8 +72,9 @@
         container.style.left = 0+'px';
         container.style.top = 0+'px';
       }
-      function openEditLabel(_event_, selection) {
+      function openEditLabel(_event_, cmd, selection) {
         // console.log('openEditLabel');
+        scope.edit_label.cmd = cmd;
         scope.edit_label.selection = selection;
         scope.edit_label.new_label = '';
         scope.$digest();

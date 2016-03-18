@@ -101,7 +101,7 @@
     function modelOpenEditLabel(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        state.queueChangeEventP('Game.editLabel.open', model);
+        state.queueChangeEventP('Game.editLabel.open', 'onModels', model);
       });
     }
     function modelOpenEditDamage(state) {

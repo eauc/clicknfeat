@@ -10,7 +10,4 @@ online:
 - ping
 game:
 - put msg hints in directives
-templates:
-- editLabel osd
 =================================
-- b2b aura

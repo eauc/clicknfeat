@@ -146,7 +146,7 @@ describe('modelBaseMode model', function() {
   }, function() {
     it('should emit openEditLabel event', function() {
       expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.editLabel.open',
+        .toHaveBeenCalledWith('Game.editLabel.open', 'onModels',
                               'gameModels.findStampP.returnValue');
     });
   });
