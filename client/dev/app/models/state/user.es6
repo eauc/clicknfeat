@@ -2,13 +2,16 @@
   angular.module('clickApp.services')
     .factory('stateUser', stateUserServiceFactory);
 
+  const KEEP_ALIVE_INTERVAL_SECONDS = 60;
   stateUserServiceFactory.$inject = [
     'user',
     'userConnection',
+    'http',
     'prompt',
   ];
   function stateUserServiceFactory(userModel,
                                    userConnectionModel,
+                                   httpService,
                                    promptService) {
     const stateUserModel = {
       create: stateUserCreate,
@@ -20,7 +23,8 @@
       onUserConnectionClose: stateOnUserConnectionClose,
       onUserSetOnlineUsers: stateOnUserSetOnlineUsers,
       onUserSetOnlineGames: stateOnUserSetOnlineGames,
-      onUserNewChatMsg: stateOnUserNewChatMsg
+      onUserNewChatMsg: stateOnUserNewChatMsg,
+      onUserChange: stateUserOnChange
     };
     const setUser$ = R.curry(setUser);
     R.curryService(stateUserModel);
@@ -47,6 +51,8 @@
                     stateUserModel.onUserSetOnlineGames$(state));
       state.onEvent('User.newChatMsg',
                     stateUserModel.onUserNewChatMsg$(state));
+      state.onChangeEvent('User.change',
+                          stateUserModel.onUserChange$(state));
 
       return state;
     }
@@ -112,6 +118,34 @@
         )),
         setUser$(state)
       );
+    }
+    function stateUserOnChange(state, _event_) {
+      if(userModel.online(state.user)) {
+        registerKeepAliveInterval(state);
+      }
+      else {
+        clearKeepAliveInterval(state);
+      }
+    }
+    function registerKeepAliveInterval(state) {
+      if(R.exists(state._keep_alive_interval)) return;
+
+      state._keep_alive_interval =
+        self.window.setInterval(keepAliveRequest(state),
+                                KEEP_ALIVE_INTERVAL_SECONDS * 1000);
+    }
+    function clearKeepAliveInterval(state) {
+      if(R.isNil(state._keep_alive_interval)) return;
+
+      self.window.clearInterval(state._keep_alive_interval);
+      state._keep_alive_interval = null;
+    }
+    function keepAliveRequest(state) {
+      return () => {
+        httpService
+          .getP(`/api/users/${state.user.state.stamp}`)
+          .then(R.spyInfo('** keepAlive'));
+      };
     }
     function setUser(state, user) {
       state.user = user;

@@ -3,8 +3,9 @@
 (function () {
   angular.module('clickApp.services').factory('stateUser', stateUserServiceFactory);
 
-  stateUserServiceFactory.$inject = ['user', 'userConnection', 'prompt'];
-  function stateUserServiceFactory(userModel, userConnectionModel, promptService) {
+  var KEEP_ALIVE_INTERVAL_SECONDS = 60;
+  stateUserServiceFactory.$inject = ['user', 'userConnection', 'http', 'prompt'];
+  function stateUserServiceFactory(userModel, userConnectionModel, httpService, promptService) {
     var stateUserModel = {
       create: stateUserCreate,
       save: stateUserSave,
@@ -15,7 +16,8 @@
       onUserConnectionClose: stateOnUserConnectionClose,
       onUserSetOnlineUsers: stateOnUserSetOnlineUsers,
       onUserSetOnlineGames: stateOnUserSetOnlineGames,
-      onUserNewChatMsg: stateOnUserNewChatMsg
+      onUserNewChatMsg: stateOnUserNewChatMsg,
+      onUserChange: stateUserOnChange
     };
     var setUser$ = R.curry(setUser);
     R.curryService(stateUserModel);
@@ -34,6 +36,7 @@
       state.onEvent('User.setOnlineUsers', stateUserModel.onUserSetOnlineUsers$(state));
       state.onEvent('User.setOnlineGames', stateUserModel.onUserSetOnlineGames$(state));
       state.onEvent('User.newChatMsg', stateUserModel.onUserNewChatMsg$(state));
+      state.onChangeEvent('User.change', stateUserModel.onUserChange$(state));
 
       return state;
     }
@@ -72,6 +75,29 @@
     function stateOnUserNewChatMsg(state, _event_, msg) {
       state.queueChangeEventP('User.chat', msg);
       return R.thread(state.user)(R.over(R.lensPath(['connection', 'chat']), R.pipe(R.defaultTo([]), R.append(msg))), setUser$(state));
+    }
+    function stateUserOnChange(state, _event_) {
+      if (userModel.online(state.user)) {
+        registerKeepAliveInterval(state);
+      } else {
+        clearKeepAliveInterval(state);
+      }
+    }
+    function registerKeepAliveInterval(state) {
+      if (R.exists(state._keep_alive_interval)) return;
+
+      state._keep_alive_interval = self.window.setInterval(keepAliveRequest(state), KEEP_ALIVE_INTERVAL_SECONDS * 1000);
+    }
+    function clearKeepAliveInterval(state) {
+      if (R.isNil(state._keep_alive_interval)) return;
+
+      self.window.clearInterval(state._keep_alive_interval);
+      state._keep_alive_interval = null;
+    }
+    function keepAliveRequest(state) {
+      return function () {
+        httpService.getP('/api/users/' + state.user.state.stamp).then(R.spyInfo('** keepAlive'));
+      };
     }
     function setUser(state, user) {
       state.user = user;
