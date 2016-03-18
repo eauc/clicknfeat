@@ -13,7 +13,6 @@
     activate();
 
     function activate() {
-      $scope.game.hints.go_to_online = false;
       vm.games_selection = {};
 
       $scope.onStateChangeEvent('Games.online.load', onGamesOnlineLoad, $scope);

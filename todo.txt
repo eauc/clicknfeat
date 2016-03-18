@@ -7,7 +7,6 @@ model
 online:
 - save online game in cache
 - load local game online & reverse
-- ping
 game:
 - put msg hints in directives
 =================================

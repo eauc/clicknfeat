@@ -225,7 +225,10 @@
       <ul class="nav nav-tabs">
         <li class="{{app.stateIs('game.main') ? 'active' : ''}}"
             ng-click="app.goToState('^.main')">
-          <a class="{{ game.hints.go_to_main ? 'go-to-hint' : ''}}">Main</a>
+          <a click-chat-hint="game"
+             hint-state="game.main">
+            Main
+          </a>
         </li>
         <li class="{{app.stateIs('game.model') ? 'active' : ''}}"
             ng-click="app.goToState('^.model')">
@@ -250,7 +253,10 @@
         <li ng-show="state.user | user:'online'"
             class="{{app.stateIs('game.online') ? 'active' : ''}}"
             ng-click="app.goToState('^.online')">
-          <a class="{{ game.hints.go_to_online ? 'go-to-hint' : ''}}">Online</a>
+          <a click-chat-hint="user"
+             hint-state="game.online">
+            Online
+          </a>
         </li>
         <li ng-click="app.goToState('lounge')">
           <a>Lounge</a>

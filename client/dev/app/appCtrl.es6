@@ -21,6 +21,7 @@
     vm.goToState = goToState;
 
     $rootScope.state = stateService.create();
+    $rootScope.stateIs = stateIs;
     $rootScope.stateEvent = stateEvent;
     $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;

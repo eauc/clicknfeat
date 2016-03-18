@@ -16,7 +16,6 @@
     activate();
 
     function activate() {
-      $scope.game.hints.go_to_main = false;
       $scope.digestOnStateChangeEvent('Game.ruler.remote.change', $scope);
       $scope.digestOnStateChangeEvent('Game.los.remote.change', $scope);
     }

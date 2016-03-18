@@ -23,7 +23,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     activate();
 
     function activate() {
-      vm.hints = {};
       vm.show_action_group = null;
       vm.invite_player = null;
 
@@ -40,9 +39,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       $scope.digestOnStateChangeEvent('Game.players.change', $scope);
       $scope.digestOnStateChangeEvent('User.change', $scope);
 
-      $scope.onStateChangeEvent('Game.chat', hintOnGameChat, $scope);
-      $scope.onStateChangeEvent('User.chat', hintOnUserChat, $scope);
-
       $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
       $scope.onStateChangeEvent('Modes.buttons.update', updateCurrentModeBindings, $scope);
       // $scope.onStateChangeEvent('Game.loaded', updateCurrentModeBindings, $scope);
@@ -54,19 +50,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function onGameLoadError() {
       $scope.goToState('lounge');
-    }
-
-    function hintOnGameChat(_event_, msg) {
-      if (R.isNil(msg) || R.isNil(msg.from) || msg.from === $scope.state.user.state.name) return;
-
-      vm.hints.go_to_main = !$scope.app.stateIs('game.main');
-      $scope.$digest();
-    }
-    function hintOnUserChat(_event_, msg) {
-      if (msg.from === $scope.state.user.state.stamp) return;
-
-      vm.hints.go_to_online = !$scope.app.stateIs('game.online');
-      $scope.$digest();
     }
 
     function updateCurrentModeBindings() {
@@ -201,114 +184,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // }
     // updateGameRulerOriginTarget('origin');
     // updateGameRulerOriginTarget('target');
-
-    // function updateGameModelSelection() {
-    //   let game_model = {
-    //     stamp: null,
-    //     unsubscribe: null
-    //   };
-    //   function cleanupModelListener(stamp) {
-    //     if(game_model.stamp === stamp ||
-    //        R.isNil(game_model.unsubscribe)) return;
-
-    //     console.info('unsubscribe Game Model listener', game_model.stamp);
-    //     game_model.unsubscribe();
-    //     game_model.unsubscribe = null;
-    //     game_model.stamp = null;
-    //   }
-    //   function updateSingleModelSelection(stamp) {
-    //     R.pipePromise(
-    //       (stamp) => {
-    //         if(R.isNil(stamp)) return null;
-
-    //         return gameModelsService
-    //           .findStamp(stamp, $scope.game.models);
-    //       },
-    //       (model) => {
-    //         $scope.gameEvent('updateSingleModelSelection', stamp, model);
-    //       }
-    //     )(stamp);
-    //   }
-    //   $scope.onGameEvent('changeLocalModelSelection', (event, selection) => {
-    //     let stamps = gameModelSelectionService.get('local', selection);
-    //     let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
-    //     cleanupModelListener(stamp);
-
-    //     if( R.isNil(stamp) ||
-    //         game_model.stamp === stamp ) return;
-
-    //     let event_name = 'changeModel-'+stamp;
-    //     console.info('subscribe Game Model listener', event_name);
-    //     game_model.unsubscribe = pubSubService.subscribe(event_name, () => {
-    //       let stamps = gameModelSelectionService.get('local', $scope.game.model_selection);
-    //       let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
-    //       updateSingleModelSelection(stamp);
-    //     }, game_event_channel);
-    //     game_model.stamp = stamp;
-    //     updateSingleModelSelection(stamp);
-    //   }, $scope);
-    //   $scope.$on('$destroy', () => {
-    //     cleanupModelListener();
-    //   });
-    // }
-    // updateGameModelSelection();
-
-    // function updateGameTemplateSelection() {
-    //   let game_template = {
-    //     stamp: null,
-    //     unsubscribe: null
-    //   };
-    //   function cleanupTemplateListener(stamp) {
-    //     if(game_template.stamp === stamp ||
-    //        R.isNil(game_template.unsubscribe)) return;
-
-    //     console.info('unsubscribe Game Template listener', game_template.stamp);
-    //     game_template.unsubscribe();
-    //     game_template.unsubscribe = null;
-    //     game_template.stamp = null;
-    //   }
-    //   function updateSingleTemplateSelection(stamp) {
-    //     R.pipePromise(
-    //       (stamp) => {
-    //         if(R.isNil(stamp)) return null;
-
-    //         return gameTemplatesService
-    //           .findStamp(stamp, $scope.game.templates);
-    //       },
-    //       (template) => {
-    //         if(R.exists(template) &&
-    //            'aoe' !== template.state.type) {
-    //           stamp = null;
-    //           template = null;
-    //         }
-
-    //         $scope.gameEvent('updateSingleTemplateSelection', stamp, template);
-    //       }
-    //     )(stamp);
-    //   }
-    //   $scope.onGameEvent('changeLocalTemplateSelection', (event, selection) => {
-    //     let stamps = gameTemplateSelectionService.get('local', selection);
-    //     let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
-    //     cleanupTemplateListener(stamp);
-
-    //     if( R.isNil(stamp) ||
-    //         game_template.stamp === stamp ) return;
-
-    //     let event_name = 'changeTemplate-'+stamp;
-    //     console.info('subscribe Game Template listener', event_name);
-    //     game_template.unsubscribe = pubSubService.subscribe(event_name, () => {
-    //       let stamps = gameTemplateSelectionService.get('local', $scope.game.template_selection);
-    //       let stamp = R.length(stamps) === 1 ? R.head(stamps) : null;
-    //       updateSingleTemplateSelection(stamp);
-    //     }, game_event_channel);
-    //     game_template.stamp = stamp;
-    //     updateSingleTemplateSelection(stamp);
-    //   }, $scope);
-    //   $scope.$on('$destroy', () => {
-    //     cleanupTemplateListener();
-    //   });
-    // }
-    // updateGameTemplateSelection();
   }
 })();
 //# sourceMappingURL=gameCtrl.js.map
