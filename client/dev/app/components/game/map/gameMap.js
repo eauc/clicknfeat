@@ -56,7 +56,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           now: null
         };
 
-        var dragStart$ = R.curry(dragStart);
         var emitClickEvent$ = R.curry(emitClickEvent);
 
         return {
@@ -74,9 +73,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           event.preventDefault();
           if (event.which !== 1) return;
 
-          map.addEventListener('mousemove', dragMap);
           var start = gameMapService.eventToMapCoordinates(map, event);
-          gameMapService.findEventTarget(state.game, event).then(dragStart$(start));
+          gameMapService.findEventTarget(state.game, event).then(function (target) {
+            dragStart(start, target);
+            map.addEventListener('mousemove', dragMap);
+          });
         }
 
         function dragMap(event) {
@@ -170,11 +171,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           };
         }
         function dragEnd(event) {
-          drag.active = false;
           scope.stateEvent('Modes.current.action', 'dragEnd' + drag.target.type, [{ target: drag.target.target,
             start: drag.start,
             now: drag.now
           }, event]);
+          drag = {
+            active: false,
+            start: null,
+            target: null,
+            now: null
+          };
         }
         function currentDragIsBellowThreshold() {
           var epsilon = commonModeModel.settings().DragEpsilon;

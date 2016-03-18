@@ -15,4 +15,3 @@ templates:
 =================================
 - scenario > change sr15 to sr14 > action error
 - b2b aura
-- bug drag

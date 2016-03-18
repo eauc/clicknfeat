@@ -58,7 +58,6 @@
           now: null
         };
 
-        const dragStart$ = R.curry(dragStart);
         const emitClickEvent$ = R.curry(emitClickEvent);
 
         return {
@@ -76,10 +75,13 @@
           event.preventDefault();
           if(event.which !== 1) return;
 
-          map.addEventListener('mousemove', dragMap);
           const start = gameMapService.eventToMapCoordinates(map, event);
-          gameMapService.findEventTarget(state.game, event)
-            .then(dragStart$(start));
+          gameMapService
+            .findEventTarget(state.game, event)
+            .then((target) => {
+              dragStart(start, target);
+              map.addEventListener('mousemove', dragMap);
+            });
 
         }
 
@@ -191,7 +193,6 @@
           };
         }
         function dragEnd(event) {
-          drag.active = false;
           scope.stateEvent('Modes.current.action',
                            'dragEnd'+drag.target.type,
                            [ { target: drag.target.target,
@@ -200,6 +201,12 @@
                              },
                              event
                            ]);
+          drag = {
+            active: false,
+            start: null,
+            target: null,
+            now: null
+          };
         }
         function currentDragIsBellowThreshold() {
           const epsilon = commonModeModel.settings().DragEpsilon;
