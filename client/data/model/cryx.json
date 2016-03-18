@@ -92,10 +92,10 @@
         "damage": {
           "n": 16
         }
-      },        
+      },
       "Deneghra2": {
         "name": "Deneghra2 (Wraithwitch Deneghra)",
-        "fk_name": "Wraithwitch Deneghra",
+        "fk_name": "Wraith ?[Ww]itch Deneghra",
         "type": "wardude",
         "focus": 7,
         "base": "small",
@@ -111,7 +111,7 @@
         "damage": {
           "n": 16
         }
-      },                
+      },
       "Deneghra3": {
         "name": "Deneghra3 (Deneghra, The Soul Weaver)",
         "fk_name": "Dene?ghra, The Soul Weaver",

@@ -3,16 +3,16 @@ model
 - replace (within base)
 - highlight models in melee
 - wreck: hide effects/icons/souls/counters
+- import skarlock commander x2
 online:
 - save online game in cache
 - load local game online & reverse
+- ping
 game:
 - put msg hints in directives
 templates:
 - editLabel osd
 =================================
-+ setNextImage
-+ delete spray hide origin circle on model
-+ action button toggle list show/hide
-+ mode terrain -> cannot read isLocked of null
-- wreck
+- scenario > change sr15 to sr14 > action error
+- b2b aura
+- bug drag

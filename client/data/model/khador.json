@@ -219,7 +219,7 @@
         "name": "Sorscha2 (Forward Kommander Sorscha)",
         "fk_name": "Forward Kommander Sorscha",
         "type": "wardude",
-        "focus": 7,
+        "focus": 6,
         "base": "small",
         "img": [
           {

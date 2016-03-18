@@ -237,7 +237,7 @@
           "R1": [  "b",  "b",  "b",  "c",  "c",  "m" ],
           "R2": [  "b",  "b",  "b",  "c",  "c",  "m" ],
           "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
-          "R4": [ null, null,  "b",  "b",  "r",  "m" ],
+          "R4": [ null,  "b",  "b",  "b",  "r",  "m" ],
           "R5": [ null, null,  "b",  "b",  "r",  "r" ],
           "R6": [ null, null,  "b",  "b",  "b",  "r" ]
         }
@@ -274,18 +274,18 @@
         ],
         "damage": {
           "type": "colossal",
-          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
-          "L2": [ null, null,  "b",  "l",  "l",  "c" ],
-          "L3": [ null, null,  "b",  "l",  "c",  "m" ],
+          "L1": [ null, null,  "b",  "b",  "b",  "l" ],
+          "L2": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L3": [ null, null,  "b",  "b",  "l",  "m" ],
           "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
-          "L5": [ null,  "b",  "s",  "s",  "c",  "m" ],
-          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
-          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
-          "R2": [ null,  "b",  "s",  "s",  "c",  "m" ],
+          "L5": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "L6": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "b",  "c",  "c",  "m" ],
           "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
-          "R4": [ null, null,  "b",  "r",  "c",  "m" ],
-          "R5": [ null, null,  "b",  "r",  "r",  "c" ],
-          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
+          "R4": [ null, null,  "b",  "b",  "r",  "m" ],
+          "R5": [ null, null,  "b",  "b",  "r",  "r" ],
+          "R6": [ null, null,  "b",  "b",  "b",  "r" ]
         }
       },
       "ghordson_avalancher": {
