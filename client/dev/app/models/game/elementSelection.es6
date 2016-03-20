@@ -84,7 +84,7 @@
       }
       function checkSelection(where, state) {
         if('local' === where) {
-          state.queueEventP('Modes.switchTo', 'Default');
+          state.queueChangeEventP(`Game.selection.local.change`);
           state.queueChangeEventP(`Game.${type}.selection.local.change`);
         }
       }

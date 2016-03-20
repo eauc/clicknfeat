@@ -63,7 +63,8 @@
       onGameScenarioSet: stateGameOnScenarioSet,
       onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
       onGameScenarioRefresh: stateGameOnScenarioRefresh,
-      onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives
+      onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
+      onGameSelectionLocalChange: stateGameOnSelectionLocalChange
     };
 
     const setGame$ = R.curry(setGame);
@@ -136,6 +137,8 @@
                     stateGameModel.onGameScenarioRefresh$(state));
       state.onEvent('Game.scenario.generateObjectives',
                     stateGameModel.onGameScenarioGenerateObjectives$(state));
+      state.onChangeEvent('Game.selection.local.change',
+                          stateGameModel.onGameSelectionLocalChange$(state));
 
       return state;
     }
@@ -520,6 +523,9 @@
           )
         );
       }
+    }
+    function stateGameOnSelectionLocalChange(state, _event_) {
+      state.queueEventP('Modes.switchTo', 'Default');
     }
     function setGame(state, game) {
       state.game = game;

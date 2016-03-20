@@ -36,7 +36,8 @@
       onGameScenarioSet: stateGameOnScenarioSet,
       onGameScenarioSetRandom: stateGameOnScenarioSetRandom,
       onGameScenarioRefresh: stateGameOnScenarioRefresh,
-      onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives
+      onGameScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
+      onGameSelectionLocalChange: stateGameOnSelectionLocalChange
     };
 
     var setGame$ = R.curry(setGame);
@@ -78,6 +79,7 @@
       state.onEvent('Game.scenario.setRandom', stateGameModel.onGameScenarioSetRandom$(state));
       state.onEvent('Game.scenario.refresh', stateGameModel.onGameScenarioRefresh$(state));
       state.onEvent('Game.scenario.generateObjectives', stateGameModel.onGameScenarioGenerateObjectives$(state));
+      state.onChangeEvent('Game.selection.local.change', stateGameModel.onGameSelectionLocalChange$(state));
 
       return state;
     }
@@ -354,6 +356,9 @@
           return state.eventP('Game.command.execute', 'deleteModel', [stamps]);
         }));
       }
+    }
+    function stateGameOnSelectionLocalChange(state, _event_) {
+      state.queueEventP('Modes.switchTo', 'Default');
     }
     function setGame(state, game) {
       state.game = game;
