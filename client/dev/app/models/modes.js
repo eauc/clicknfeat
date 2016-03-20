@@ -107,6 +107,7 @@
           console.warn('binding', name, keys, event);
 
           state.queueEventP('Modes.current.action', name, [event]);
+          return false;
         };
       }
     }

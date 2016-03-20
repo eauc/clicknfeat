@@ -10,3 +10,6 @@ online:
 game:
 - put msg hints in directives
 =================================
+- page trop grande en bas
+- mouseup pas vu en FF
+- tools au dessus dice en OSD
