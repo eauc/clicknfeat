@@ -13,4 +13,3 @@ los:
 - origin/target live update
 =================================
 - page trop grande en bas
-- tools au dessus dice en OSD

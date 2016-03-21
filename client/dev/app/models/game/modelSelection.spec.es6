@@ -228,8 +228,8 @@ describe('gameModelSelection model', function() {
 
   function testChangeLocalSelection() {
     it('should emit changeLocalModelSelection', function() {
-      expect(this.state.queueEventP)
-        .toHaveBeenCalledWith('Modes.switchTo', 'Default');
+      expect(this.state.queueChangeEventP)
+        .toHaveBeenCalledWith('Game.selection.local.change');
       expect(this.state.queueChangeEventP)
         .toHaveBeenCalledWith('Game.model.selection.local.change');
     });
