@@ -28,7 +28,7 @@
       return () => {
         const gameview = element.querySelector('#gameview');
         const menu = element.querySelector('#menu');
-        const dice_osd = element.querySelector('#dice-osd');
+        const tool_osd = element.querySelector('#tool-osd');
         const chat_osd = element.querySelector('#chat-osd');
 
         const menu_hidden = menu.classList.contains('hidden');
@@ -42,7 +42,7 @@
         }
         gameview.classList.toggle('resizable');
         menu.classList.toggle('hidden');
-        dice_osd.classList.toggle('show');
+        tool_osd.classList.toggle('show');
         chat_osd.classList.toggle('show');
       };
     }

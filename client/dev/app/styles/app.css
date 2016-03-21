@@ -10,7 +10,7 @@ input.ng-invalid-required {
   font-style: italic;
   font-size: 90%; }
 
-#lounge .game-list, #lounge .chat-list, #settings .error-list, #game #cmd-osd .scroll-container, #game #dice-osd .dice-list, #game #chat-osd .chat-list, #menu .chat-list, #menu .dice-list, #game .log-replay-list, #game .log-command-list {
+#lounge .game-list, #lounge .chat-list, #settings .error-list, #game #cmd-osd .scroll-container, #game #tool-osd .dice-list, #game #chat-osd .chat-list, #menu .chat-list, #menu .dice-list, #game .log-replay-list, #game .log-command-list {
   overflow-y: auto; }
 
 input[type='file'].form-control {
@@ -278,18 +278,18 @@ a:not([href]):focus {
   #game #selection-osd .panel-content {
     min-width: 300px;
     padding: 10px; }
-#game #dice-osd {
+#game #tool-osd {
   z-index: 1000;
   display: none;
-  max-width: 310px;
+  max-width: 410px;
   background-color: rgba(255, 255, 255, 0.6);
   position: absolute;
   top: 2px;
   right: 145px;
   border-radius: 5px; }
-  #game #dice-osd.show {
+  #game #tool-osd.show {
     display: initial; }
-  #game #dice-osd .dice-list {
+  #game #tool-osd .dice-list {
     overflow-x: hidden;
     max-height: 4.2em; }
 #game #chat-osd {
@@ -299,7 +299,7 @@ a:not([href]):focus {
   background-color: rgba(255, 255, 255, 0.6);
   position: absolute;
   top: 2px;
-  right: 455px;
+  right: 555px;
   border-radius: 5px; }
   #game #chat-osd.show {
     display: initial; }

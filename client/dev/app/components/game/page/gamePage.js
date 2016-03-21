@@ -27,7 +27,7 @@
       return function () {
         var gameview = element.querySelector('#gameview');
         var menu = element.querySelector('#menu');
-        var dice_osd = element.querySelector('#dice-osd');
+        var tool_osd = element.querySelector('#tool-osd');
         var chat_osd = element.querySelector('#chat-osd');
 
         var menu_hidden = menu.classList.contains('hidden');
@@ -40,7 +40,7 @@
         }
         gameview.classList.toggle('resizable');
         menu.classList.toggle('hidden');
-        dice_osd.classList.toggle('show');
+        tool_osd.classList.toggle('show');
         chat_osd.classList.toggle('show');
       };
     }

@@ -79,11 +79,11 @@
         }
     }
 
-    $dice-osd-width: 310px;
-    #dice-osd {
+    $tool-osd-width: 410px;
+    #tool-osd {
         z-index: $osd-zindex;
         display: none;
-        max-width: $dice-osd-width;
+        max-width: $tool-osd-width;
         background-color: rgba(255,255,255,0.6);
         position: absolute;
         top: 2px;
@@ -92,12 +92,12 @@
         &.show {
             display: initial
         }
-        
+
         .dice-list {
             @extend %scrollbox-y;
             overflow-x: hidden;
             max-height: 4.2em;
-        }            
+        }
     }
     #chat-osd {
         z-index: $osd-zindex;
@@ -106,7 +106,7 @@
         background-color: rgba(255,255,255,0.6);
         position: absolute;
         top: 2px;
-        right: ($dice-osd-width+$cmd-button-width+$scrollbar-width+30);
+        right: ($tool-osd-width+$cmd-button-width+$scrollbar-width+30);
         border-radius: 5px;
         &.show {
             display: initial
@@ -116,6 +116,6 @@
             @extend %scrollbox-y;
             overflow-x: hidden;
             max-height: 4.2em;
-        }            
+        }
     }
 }
