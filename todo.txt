@@ -7,9 +7,10 @@ model
 online:
 - save online game in cache
 - load local game online & reverse
-game:
-- put msg hints in directives
+ruler:
+- origin/target live update
+los:
+- origin/target live update
 =================================
 - page trop grande en bas
-- mouseup pas vu en FF
 - tools au dessus dice en OSD

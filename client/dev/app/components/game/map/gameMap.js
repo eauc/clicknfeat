@@ -49,6 +49,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       self.window.requestAnimationFrame(zoomEvents.reset);
 
       function buildMouseEvents() {
+        var mouse_is_down = false;
         var drag = {
           active: false,
           start: null,
@@ -73,8 +74,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           event.preventDefault();
           if (event.which !== 1) return;
 
+          mouse_is_down = true;
           var start = gameMapService.eventToMapCoordinates(map, event);
           gameMapService.findEventTarget(state.game, event).then(function (target) {
+            if (!mouse_is_down) return;
+
             dragStart(start, target);
             map.addEventListener('mousemove', dragMap);
           });
@@ -107,6 +111,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           log('mouseLeaveMap', event);
           event.preventDefault();
 
+          mouse_is_down = false;
           map.removeEventListener('mousemove', dragMap);
           if (drag.active) dragEnd(event);
         }
@@ -116,6 +121,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           event.preventDefault();
           if (event.which !== 1) return;
 
+          mouse_is_down = false;
           map.removeEventListener('mousemove', dragMap);
 
           var now = gameMapService.eventToMapCoordinates(map, event);

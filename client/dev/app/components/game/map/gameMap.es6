@@ -51,6 +51,7 @@
       self.window.requestAnimationFrame(zoomEvents.reset);
 
       function buildMouseEvents() {
+        let mouse_is_down = false;
         let drag = {
           active: false,
           start: null,
@@ -75,10 +76,13 @@
           event.preventDefault();
           if(event.which !== 1) return;
 
+          mouse_is_down = true;
           const start = gameMapService.eventToMapCoordinates(map, event);
           gameMapService
             .findEventTarget(state.game, event)
             .then((target) => {
+              if(!mouse_is_down) return;
+
               dragStart(start, target);
               map.addEventListener('mousemove', dragMap);
             });
@@ -119,6 +123,7 @@
           log('mouseLeaveMap', event);
           event.preventDefault();
 
+          mouse_is_down = false;
           map.removeEventListener('mousemove', dragMap);
           if(drag.active) dragEnd(event);
         }
@@ -128,6 +133,7 @@
           event.preventDefault();
           if(event.which !== 1) return;
 
+          mouse_is_down = false;
           map.removeEventListener('mousemove', dragMap);
 
           const now = gameMapService.eventToMapCoordinates(map, event);
