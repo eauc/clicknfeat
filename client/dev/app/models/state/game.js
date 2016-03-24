@@ -176,9 +176,7 @@
 
       return state.eventP('User.sendChatMsg', { to: [to], msg: msg, link: link });
     }
-    function stateGameOnModelCreate(state, _event_, model_path) {
-      var repeat = arguments.length <= 3 || arguments[3] === undefined ? 1 : arguments[3];
-
+    function stateGameOnModelCreate(state, _event_, model_path, repeat) {
       state.create = {
         base: { x: 240, y: 240, r: 0 },
         models: R.times(function (i) {
@@ -186,7 +184,7 @@
             info: model_path,
             x: 20 * i, y: 0, r: 0
           };
-        }, repeat)
+        }, R.defaultTo(1, repeat))
       };
       return state.eventP('Modes.switchTo', 'CreateModel');
     }
