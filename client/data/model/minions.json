@@ -612,6 +612,7 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunt",
+              "ranges": [ 1, 2 ],
               "type": "warrior",
               "base": "small",
               "img": [
