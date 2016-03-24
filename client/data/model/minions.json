@@ -406,7 +406,7 @@
           "unit": {
             "grunt": {
               "name": "Shambler",
-              "ranges": [ 1, 10 ],
+              "ranges": [ 1, 9 ],
               "type": "warrior",
               "base": "small",
               "img": [
