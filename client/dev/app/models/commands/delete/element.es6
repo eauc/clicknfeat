@@ -56,7 +56,7 @@
           R.map(createElementFnP(state)),
           R.promiseAll,
           R.reject(R.isNil),
-          R.rejectIf(R.isEmpty, `No valid ${type} definition`),
+          R.rejectIfP(R.isEmpty, `No valid ${type} definition`),
           onNewCreatedElements
         );
 

@@ -105,7 +105,7 @@
     }
     function gameConnectionSendEventP(event, game) {
       return R.threadP(game)(
-        R.rejectIf(R.complement(gameConnectionModel.active),
+        R.rejectIfP(R.complement(gameConnectionModel.active),
                    'Not active'),
         () => websocketModel
           .send(event, game.connection.state.socket),

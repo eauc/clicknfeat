@@ -5,13 +5,12 @@
   appCtrl.$inject = [
     '$rootScope',
     '$state',
-    'state',
-    'user',
+    'appState',
+    'stateUser',
   ];
   function appCtrl($rootScope,
                    $state,
-                   stateService,
-                   userModel) {
+                   appStateService) {
     console.log('init appCtrl');
 
     const vm = this;
@@ -20,50 +19,46 @@
     vm.stateMatches = stateMatches;
     vm.goToState = goToState;
 
-    $rootScope.state = stateService.create();
     $rootScope.stateIs = stateIs;
+    $rootScope.goToState = goToState;
+
     $rootScope.stateEvent = stateEvent;
-    $rootScope.stateChangeEvent = stateChangeEvent;
+    // $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;
     $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
-    // $scope.reloadFactions = reloadFactions;
-
-    // $scope.userIsValid = userIsValid;
-    // $scope.checkUser = checkUser;
-
-    $rootScope.goToState = goToState;
 
     activate();
 
+    function activate() {
+      $rootScope.onStateChangeEvent('AppState.change', (_event_, [new_state]) => {
+        $rootScope.state = new_state;
+      }, $rootScope);
+      $rootScope.onStateChangeEvent('User.becomesInvalid', onUserInvalid, $rootScope);
+      $rootScope.digestOnStateChangeEvent('User.state.change', $rootScope);
+      $rootScope.state = appStateService.init();
+    }
+
+    function onUserInvalid() {
+      $state.go('user');
+      $rootScope.$digest();
+    }
+
     function stateEvent(...args) {
-      return stateService.queueEventP(args, $rootScope.state);
+      return appStateService.reduce.apply(appStateService, args);
     }
-    function stateChangeEvent(...args) {
-      return stateService.queueChangeEventP(args, $rootScope.state);
-    }
+    // function stateChangeEvent(...args) {
+    //   return appStateService.emit(appStateService, args);
+    // }
     function onStateChangeEvent(event, listener, scope) {
-      let unsubscribe = stateService
-            .onChangeEvent(event, listener, $rootScope.state);
-      scope.$on('$destroy', () => { unsubscribe(); });
+      appStateService.addListener(event, listener);
+      scope.$on('$destroy', () => {
+        appStateService.removeListener(event, listener);
+      });
     }
     function digestOnStateChangeEvent(event, scope) {
       onStateChangeEvent(event, () => {
         scope.$digest();
       }, scope);
-    }
-    // function reloadFactions() {
-    //   stateService.event('Factions.reload', $scope.state);
-    // }
-
-    // function userIsValid() {
-    //   return userService.isValid($scope.state.user);
-    // }
-    function checkUser() {
-      if(!userModel.isValid($rootScope.state.user)) {
-        $state.go('user');
-      }
-      console.warn('checkUser ok');
-      $rootScope.$digest();
     }
 
     function isNavHidden() {
@@ -79,21 +74,6 @@
       self.setTimeout(() => {
         $state.go.apply($state, args);
       }, 100);
-    }
-    // function currentState() {
-    //   return $state.current;
-    // }
-
-    function activate() {
-      $rootScope.stateEvent('State.init');
-      $rootScope.state.user_ready.then(checkUserOnInit);
-      $rootScope.onStateChangeEvent('User.change', checkUser, $rootScope);
-    }
-    function checkUserOnInit() {
-      console.log('Checking user on init');
-      if(userModel.isValid($rootScope.state.user)) return;
-
-      $state.transitionTo('user');
     }
   }
 })();

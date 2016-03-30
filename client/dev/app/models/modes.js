@@ -61,13 +61,13 @@
     }
     function currentModeActionP(action, args, modes) {
       var mode_name = modesModel.currentModeName(modes);
-      return R.threadP(modes)(currentMode, R.path(['actions', action]), R.rejectIf(R.isNil, 'Unknown action "' + action + '" in "' + mode_name + '" mode'), function (handler) {
+      return R.threadP(modes)(currentMode, R.path(['actions', action]), R.rejectIfP(R.isNil, 'Unknown action "' + action + '" in "' + mode_name + '" mode'), function (handler) {
         return handler.apply(null, args);
       });
     }
     function switchToModeP(name, state, modes) {
       var previous_mode = currentMode(modes);
-      return R.threadP(modes)(R.path(['register', name]), R.rejectIf(R.isNil, 'Mode ' + name + ' does not exists'), R.always(modes), leaveModeP$(state), enterModeP$(name, state), R.spy('Modes: switch mode from ' + previous_mode.name + ' to ' + name));
+      return R.threadP(modes)(R.path(['register', name]), R.rejectIfP(R.isNil, 'Mode ' + name + ' does not exists'), R.always(modes), leaveModeP$(state), enterModeP$(name, state), R.spy('Modes: switch mode from ' + previous_mode.name + ' to ' + name));
     }
     function currentMode() {
       var modes = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];

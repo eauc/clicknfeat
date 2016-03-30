@@ -122,7 +122,7 @@
       element.style.visibility = 'hidden';
       R.threadP(origin)(
         findOriginModelP,
-        R.rejectIf(checkOriginDisplay, 'no display'),
+        R.rejectIfP(checkOriginDisplay, 'no display'),
         (origin_model) => R.threadP(factions)(
           gameFactionsModel.getModelInfoP$(origin_model.state.info),
           (info) => {
@@ -136,7 +136,7 @@
 
       function findOriginModelP(origin) {
         return R.threadP(origin)(
-          R.rejectIf(R.isNil, 'no origin'),
+          R.rejectIfP(R.isNil, 'no origin'),
           (origin) => gameModelsModel
             .findStampP(origin, models)
         );
@@ -152,7 +152,7 @@
       element.style.visibility = 'hidden';
       R.threadP(target)(
         findTargetModelP,
-        R.rejectIf(checkTargetDisplay, 'no display'),
+        R.rejectIfP(checkTargetDisplay, 'no display'),
         (target_model) => R.threadP(factions)(
           gameFactionsModel.getModelInfoP$(target_model.state.info),
           (info) => {
@@ -167,7 +167,7 @@
 
       function findTargetModelP(target) {
         return R.threadP(target)(
-          R.rejectIf(R.isNil, 'no target'),
+          R.rejectIfP(R.isNil, 'no target'),
           (target) => gameModelsModel
             .findStampP(target, models)
         );

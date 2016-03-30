@@ -22,8 +22,7 @@
     function localStorageKeys() {
       return R.thread(self.localStorage.length)(
         R.range(0),
-        R.map(R.bind(self.localStorage.key,
-                     self.localStorage))
+        R.map((i) => self.localStorage.key(i))
       );
     }
     function localStorageGetItem(key) {

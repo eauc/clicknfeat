@@ -34,7 +34,7 @@
         socket.onmessage = websocketOnMessage;
 
         function websocketOnOpen(event) {
-          console.error('WebSocket open', name, event);
+          console.warn('WebSocket open', name, event);
           resolve(socket);
           resolved = true;
         }
@@ -50,23 +50,21 @@
           handlers.close();
         }
         function websocketOnMessage(event) {
-          console.log('WebSocket message', name, event);
+          // console.log('WebSocket message', name, event);
           R.threadP(event.data)(
             jsonParserService.parseP,
-            (msg) => {
-              if(R.isNil(handlers[msg.type])) {
-                handlers.error('Unknown msg type', msg);
-                return;
-              }
-              handlers[msg.type](msg);
-            }
+            R.ifElse(
+              (msg) => R.exists(handlers[msg.type]),
+              (msg) => handlers[msg.type](msg),
+              (msg) => handlers.error('Unknown msg type', msg)
+            )
           );
         }
         function defaultErrorHandler(reason, event) {
-          console.error('WebSocket error', name, reason, event);
+          console.warn('WebSocket error', name, reason, event);
         }
         function defaultCloseHandler() {
-          console.error('WebSocket close', name);
+          console.warn('WebSocket close', name);
         }
       });
     }

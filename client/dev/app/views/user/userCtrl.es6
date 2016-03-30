@@ -13,8 +13,7 @@
     activate();
 
     function doSave() {
-      $scope.stateEvent('User.set', vm.edit)
-        .then(() => { $scope.goToState('lounge'); });
+      $scope.stateEvent('User.set', { state: vm.edit });
     }
 
     function activate() {
@@ -23,6 +22,9 @@
         vm.edit = R.clone($scope.state.user.state);
         $scope.$digest();
       });
+      $scope.onStateChangeEvent('User.becomesValid',
+                                () => { $scope.goToState('lounge'); },
+                                $scope);
     }
   }
 })();

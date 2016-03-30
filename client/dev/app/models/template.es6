@@ -49,7 +49,7 @@
     function templateCreateDefaultP(temp) {
       return R.threadP(TEMPS_REG)(
         R.prop(temp.type),
-        R.rejectIf(R.isNil, `Create unknown template type "${temp.type}"`),
+        R.rejectIfP(R.isNil, `Create unknown template type "${temp.type}"`),
         (model) => R.threadP(base.createDefaultP())(
           R.assocPath(['state','type'], temp.type),
           model._create
@@ -63,7 +63,7 @@
     }
     function templateCallP(method, args, template) {
       return R.threadP(template)(
-        R.rejectIf(R.complement(templateModel.respondTo$(method)),
+        R.rejectIfP(R.complement(templateModel.respondTo$(method)),
                    `Unknown call ${method} on ${template.state.type} template`),
         () => TEMPS_REG[template.state.type][method]
           .apply(TEMPS_REG[template.state.type],

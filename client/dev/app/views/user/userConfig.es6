@@ -23,7 +23,7 @@
   ];
   function checkUserOnStateTransition($rootScope, $state, userModel) {
     $rootScope.$on('$stateChangeStart', (event, toState) => {
-      if(!$rootScope.state.user_ready.fulfilled) return;
+      if($rootScope.state.user.init === false) return;
       if(toState.name === 'user') return;
 
       console.log('Checking user on transition to', toState);

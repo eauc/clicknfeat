@@ -48,7 +48,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       }
       function elementsFindAnyStampsP(stamps, elements) {
-        return R.threadP(stamps)(R.map(findStampP), R.promiseAll, R.rejectIf(R.compose(R.isEmpty, R.reject(R.isNil)), 'No ' + type + ' found'));
+        return R.threadP(stamps)(R.map(findStampP), R.promiseAll, R.rejectIfP(R.compose(R.isEmpty, R.reject(R.isNil)), 'No ' + type + ' found'));
 
         function findStampP(stamp) {
           return gameElementsModel.findStampP(stamp, elements).catch(R.always(null));
@@ -98,7 +98,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return R.threadP()(checkIfMethodExists, R.always(elements), gameElementsModel.findAnyStampsP$(stamps), R.reject(R.isNil), R.map(callMethodOnElementP), R.promiseAll);
 
         function checkIfMethodExists() {
-          return R.threadP(model)(R.prop(method), R.type, R.rejectIf(R.complement(R.equals('Function')), 'Unknown method "' + method + '" on ' + type + 's'));
+          return R.threadP(model)(R.prop(method), R.type, R.rejectIfP(R.complement(R.equals('Function')), 'Unknown method "' + method + '" on ' + type + 's'));
         }
         function callMethodOnElementP(element) {
           return self.Promise.resolve(model[method].apply(model, [].concat(_toConsumableArray(args), [element]))).catch(onError(element));

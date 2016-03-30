@@ -14,12 +14,10 @@
 
     function link(scope, element) {
       var audio = element[0].querySelector('audio');
-      $rootScope.onStateChangeEvent(s.capitalize(scope.type) + '.chat', onChat, scope);
+      $rootScope.onStateChangeEvent(s.capitalize(scope.type) + '.chat.receive', onChat, scope);
 
-      function onChat(event, chat) {
-        console.log(scope.type + 'MailNotification', event, chat);
-        if (R.isNil(chat) || R.isNil(chat.from) || chat.from === $rootScope.state.user.state.stamp || chat.from === $rootScope.state.user.state.name) return;
-
+      function onChat() {
+        console.log(scope.type + 'MailNotification');
         audio.currentTime = 0;
         audio.play();
       }

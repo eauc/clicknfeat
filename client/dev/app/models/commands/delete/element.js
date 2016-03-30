@@ -37,7 +37,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return onDeletedStates(state, game, ctxt[type + 's']);
       }
       function deleteElementUndoP(ctxt, state, game) {
-        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFnP(state)), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid ' + type + ' definition'), onNewCreatedElements);
+        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFnP(state)), R.promiseAll, R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onNewCreatedElements);
 
         function onNewCreatedElements(elements) {
           var stamps = R.map(R.path(['state', 'stamp']), elements);

@@ -40,9 +40,9 @@
       function generateDataUrlP(state) {
         return R.threadP(state)(
           buildData,
-          R.rejectIf(dataUnchanged, 'unchanged'),
+          R.rejectIfP(dataUnchanged, 'unchanged'),
           memoizeData,
-          R.rejectIf(R.isNil, 'nil'),
+          R.rejectIfP(R.isNil, 'nil'),
           fileExportService.generate$('json')
         );
       }

@@ -20,7 +20,6 @@
   ];
   function userChatCtrl($scope) {
     const vm = this;
-    const state = $scope.state;
     console.log('userChatCtrl', $scope.state.user);
 
     vm.userIsInRecipients = userIsInRecipients;
@@ -39,16 +38,16 @@
         msg: '',
         to: []
       };
-      $scope.onStateChangeEvent('User.change', updateUser, $scope);
+      $scope.onStateChangeEvent('User.state.change', updateUser, $scope);
+      $scope.onStateChangeEvent('User.connection.change', updateUser, $scope);
       self.window.requestAnimationFrame(updateUser);
     }
     function updateUser() {
-      vm.user = R.clone(state.user);
-      console.warn('updateUser', vm.user, state.user);
+      vm.user = R.clone($scope.state.user);
       $scope.$digest();
     }
     function setChatRecipients(to) {
-      vm.chat.to = R.reject(R.equals(state.user.state.stamp), to);
+      vm.chat.to = R.reject(R.equals(vm.user.state.stamp), to);
     }
     function userIsInRecipients(stamp) {
       return R.find(R.equals(stamp), vm.chat.to);
@@ -62,7 +61,7 @@
       }
     }
     function doSetAllRecipients() {
-      setChatRecipients(R.pluck('stamp', state.user.connection.users));
+      setChatRecipients(R.pluck('stamp', vm.user.connection.users));
     }
     function doSetRecipientsFromChat(chat) {
       setChatRecipients(R.thread(chat)(
@@ -83,16 +82,11 @@
     function doSendChatMsg() {
       if(!vm.canSendChatMsg()) return;
 
-      R.threadP()(
-        () => $scope.stateEvent('User.sendChatMsg', vm.chat),
-        () => {
-          vm.chat.msg = '';
-          $scope.$digest();
-        }
-      );
+      $scope.stateEvent('User.sendChatMsg', R.clone(vm.chat));
+      vm.chat.msg = '';
     }
     function doBroadcastChatMsg() {
-      setChatRecipients(R.pluck('stamp', state.user.connection.users));
+      setChatRecipients(R.pluck('stamp', vm.user.connection.users));
       vm.doSendChatMsg();
     }
   }

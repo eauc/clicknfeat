@@ -36,7 +36,7 @@
 
       function modelStartChargeP(model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           R.assocPath(['state','cha'], {
             s: R.pick(['x','y','r'], model.state),
@@ -61,7 +61,7 @@
       }
       function modelSetChargeTargetP(factions, other, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             if(R.exists(other)) {
@@ -88,7 +88,7 @@
       }
       function modelMoveFrontChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -102,7 +102,7 @@
       }
       function modelMoveBackChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             let dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -118,7 +118,7 @@
       }
       function modelRotateLeftChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
@@ -134,7 +134,7 @@
       }
       function modelRotateRightChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
@@ -149,7 +149,7 @@
       }
       function modelShiftLeftChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -162,7 +162,7 @@
       }
       function modelShiftRightChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -175,7 +175,7 @@
       }
       function modelShiftUpChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -188,7 +188,7 @@
       }
       function modelShiftDownChargeP(factions, target, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];

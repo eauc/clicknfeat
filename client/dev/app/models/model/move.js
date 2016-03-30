@@ -34,7 +34,7 @@
           var model = R.last(args);
           var factions = R.head(args);
           var target = withTarget ? R.nth(1, args) : null;
-          return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function () {
+          return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
             return move.apply(_this, args);
           }, modelModel.checkStateP$(factions, target));
         };
@@ -43,7 +43,7 @@
         return R.pipe(R.assocPath(['state', 'x'], pos.x), R.assocPath(['state', 'y'], pos.y))(model);
       }
       function modelSetPosition_(factions, target, pos, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), R.assocPath(['state', 'x'], pos.x), R.assocPath(['state', 'y'], pos.y), modelModel.checkStateP$(factions, target), function (check) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), R.assocPath(['state', 'x'], pos.x), R.assocPath(['state', 'y'], pos.y), modelModel.checkStateP$(factions, target), function (check) {
           model.state = check.state;
           return model;
         });

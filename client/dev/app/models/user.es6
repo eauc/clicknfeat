@@ -51,16 +51,21 @@
         userConnectionModel.init
       );
     }
-    function userInitP(state) {
+    function userInitP() {
       return R.threadP()(
         userLoadP,
-        userModel.checkOnlineP$(state)
+        userModel.checkOnlineP
       );
     }
     function userDescription(user) {
-      if(R.type(R.prop('state', user)) !== 'Object') return '';
-
-      return userModel.stateDescription(user.state);
+      return R.thread(user)(
+        R.prop('state'),
+        R.ifElse(
+          R.compose(R.equals('Object'), R.type),
+          userModel.stateDescription,
+          R.always('')
+        )
+      );
     }
     function userStateDescription({ name,
                                     language,
@@ -99,28 +104,28 @@
     function userOnline(user) {
       return R.path(['state','online'], user);
     }
-    function userToggleOnlineP(state, user) {
+    function userToggleOnlineP(user) {
       return ( userModel.online(user)
                ? userGoOffline(user)
-               : userGoOnlineP(state, user)
+               : userGoOnlineP(user)
              );
     }
-    function userCheckOnlineP(state, user) {
+    function userCheckOnlineP(user) {
       return R.threadP(user)(
-        R.rejectIf(R.complement(userModel.online),
+        R.rejectIfP(R.complement(userModel.online),
                    'No online flag'),
         (user) => userUpdateOnlineP(user)
           .catch(() => userCreateOnlineP(user)),
-        (user) => userOnlineStartP(state, user)
+        userOnlineStartP
       ).catch((reason) => {
         console.error('User: checkOnline error', reason);
         return userOnlineStop(user);
       });
     }
-    function userGoOnlineP(state, user) {
+    function userGoOnlineP(user) {
       return R.threadP(user)(
         R.assocPath(['state','online'], true),
-        userModel.checkOnlineP$(state)
+        userModel.checkOnlineP
       );
     }
     function userGoOffline(user) {
@@ -135,23 +140,22 @@
     }
     function userUpdateOnlineP(user) {
       return R.threadP(user)(
-        R.rejectIf(R.compose(R.isNil, R.path(['state','stamp'])),
+        R.rejectIfP(R.compose(R.isNil, R.path(['state','stamp'])),
                    'No valid stamp'),
         R.prop('state'),
         httpService.putP$('/api/users/'+user.state.stamp),
         (state) => R.assoc('state', state, user)
       );
     }
-    function userOnlineStartP(state, user) {
+    function userOnlineStartP(user) {
       return R.threadP(user)(
-        userConnectionModel.openP$(state),
+        userConnectionModel.openP,
         R.assocPath(['state','online'], true)
       );
     }
     function userOnlineStop(user) {
       return R.thread(user)(
         R.assocPath(['state','online'], false),
-        // R.assocPath(['state','stamp'], null),
         userConnectionModel.close
       );
     }

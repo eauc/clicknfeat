@@ -463,12 +463,12 @@
         fileImportService.readP$('json'),
         (data) => R.threadP(data)(
           R.prop('board'),
-          R.rejectIf(R.isNil, 'No board'),
+          R.rejectIfP(R.isNil, 'No board'),
           () => state.eventP('Game.command.execute',
                              'setBoard', [data.board]),
           R.always(data),
           R.path(['terrain', 'terrains']),
-          R.rejectIf(R.isEmpty, 'No terrain'),
+          R.rejectIfP(R.isEmpty, 'No terrain'),
           () => state.eventP('Game.terrain.reset'),
           () => state.eventP('Game.command.execute',
                              'createTerrain', [data.terrain, false])
@@ -553,12 +553,12 @@
       return stateExportsModel
         .exportP('models', (state) => R.threadP(state)(
           R.path(['game','model_selection']),
-          R.rejectIf(R.isNil, 'selection is nil'),
+          R.rejectIfP(R.isNil, 'selection is nil'),
           gameModelSelectionModel.get$('local'),
-          R.rejectIf(R.isEmpty, 'selection is empty'),
+          R.rejectIfP(R.isEmpty, 'selection is empty'),
           (stamps) => gameModelsModel
             .copyStampsP(stamps, R.path(['game', 'models'], state)),
-          R.rejectIf(R.isEmpty, 'selection models not found')
+          R.rejectIfP(R.isEmpty, 'selection models not found')
         ), state);
     }
     function exportBoardData(state) {

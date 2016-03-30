@@ -16,7 +16,7 @@
         return JSON.parse(string);
       }).catch(function (error) {
         console.error('JSON Parse error', error);
-        return self.Promise.reject(error.message);
+        return R.rejectP(error.message);
       });
     }
   }

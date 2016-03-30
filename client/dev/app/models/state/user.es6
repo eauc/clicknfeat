@@ -8,149 +8,210 @@
     'userConnection',
     'http',
     'prompt',
+    'appState',
+    'state',
   ];
   function stateUserServiceFactory(userModel,
                                    userConnectionModel,
                                    httpService,
-                                   promptService) {
+                                   promptService,
+                                   appStateService,
+                                   stateModel) {
+    const USER_LENS = R.lensProp('user');
+
     const stateUserModel = {
       create: stateUserCreate,
-      save: stateUserSave,
-      onStateInit: stateUserOnInit,
+      watch: stateUserWatch,
       onUserSet: stateUserOnSet,
+      onUserUpdate: stateUserOnUpdate,
       onUserToggleOnline: stateOnUserToggleOnline,
       onUserSendChatMsg: stateOnUserSendChatMsg,
       onUserConnectionClose: stateOnUserConnectionClose,
       onUserSetOnlineUsers: stateOnUserSetOnlineUsers,
       onUserSetOnlineGames: stateOnUserSetOnlineGames,
       onUserNewChatMsg: stateOnUserNewChatMsg,
-      onUserChange: stateUserOnChange
+      onUserStateChange: stateUserOnChange,
+      onUserIsValid: stateUserOnIsValid,
+      updateOnlineKeepAlive: stateUserUpdateOnlineKeepAlive,
+      filterChatReceived: stateUserFilterChatReceived
     };
-    const setUser$ = R.curry(setUser);
     R.curryService(stateUserModel);
+    stateModel.register(stateUserModel);
     return stateUserModel;
 
     function stateUserCreate(state) {
-      state.user = {};
-      state.user_ready = new self.Promise((resolve) => {
-        state.onEvent('State.init',
-                      stateUserModel.onStateInit$(state, resolve));
-      });
+      console.log('create stateUser');
 
-      state.onEvent('User.set',
-                    stateUserModel.onUserSet$(state));
-      state.onEvent('User.toggleOnline',
-                    stateUserModel.onUserToggleOnline$(state));
-      state.onEvent('User.sendChatMsg',
-                    stateUserModel.onUserSendChatMsg$(state));
-      state.onEvent('User.connection.close',
-                    stateUserModel.onUserConnectionClose$(state));
-      state.onEvent('User.setOnlineUsers',
-                    stateUserModel.onUserSetOnlineUsers$(state));
-      state.onEvent('User.setOnlineGames',
-                    stateUserModel.onUserSetOnlineGames$(state));
-      state.onEvent('User.newChatMsg',
-                    stateUserModel.onUserNewChatMsg$(state));
-      state.onChangeEvent('User.change',
-                          stateUserModel.onUserChange$(state));
+      appStateService
+        .addReducer('User.set'              , stateUserModel.onUserSet)
+        .addReducer('User.update'           , stateUserModel.onUserUpdate)
+        .addReducer('User.toggleOnline'     , stateUserModel.onUserToggleOnline)
+        .addReducer('User.sendChatMsg'      , stateUserModel.onUserSendChatMsg)
+        .addReducer('User.connection.close' , stateUserModel.onUserConnectionClose)
+        .addReducer('User.setOnlineUsers'   , stateUserModel.onUserSetOnlineUsers)
+        .addReducer('User.setOnlineGames'   , stateUserModel.onUserSetOnlineGames)
+        .addReducer('User.newChatMsg'       , stateUserModel.onUserNewChatMsg)
+        .addListener('User.state.change'    , stateUserModel.onUserStateChange)
+        .addListener('User.isValid'         , stateUserModel.onUserIsValid);
 
-      return state;
-    }
-    function stateUserSave(state) {
-      if(state._user === state.user) return null;
-      state._user = state.user;
-      return userModel.save(state.user);
-    }
-    function stateUserOnInit(state, ready, _event_) {
-      return R.threadP(state)(
+      appStateService
+        .onChange('AppState.change',
+                  'User.state.change',
+                  R.compose(R.prop('state'), R.view(USER_LENS)));
+      appStateService
+        .onChange('AppState.change',
+                  'User.connection.change',
+                  R.compose(R.prop('connection'), R.view(USER_LENS)));
+      appStateService
+        .onChange('AppState.change',
+                  'User.isValid',
+                  R.compose(userModel.isValid, R.view(USER_LENS)));
+      appStateService
+        .onChange('AppState.change',
+                  'User.isOnline',
+                  R.compose(userModel.online, R.view(USER_LENS)));
+      appStateService
+        .onChange('AppState.change',
+                  'User.chat.new',
+                  R.pipe(
+                    R.view(USER_LENS),
+                    R.pathOr([], ['connection', 'chat']),
+                    R.last
+                  ));
+      appStateService
+        .filterEvent('User.chat.new',
+                     'User.chat.receive',
+                     stateUserModel.filterChatReceived);
+      appStateService
+        .cell('User.isOnline',
+              stateUserModel.updateOnlineKeepAlive,
+              null);
+
+      const user_ready = R.threadP()(
         userModel.initP,
-        setUser$(state),
-        () => { state.user_ready.fulfilled = true; },
-        ready
+        (user) => appStateService.reduce('User.set', user)
+      );
+      return R.thread(state)(
+        R.set(USER_LENS, { init: false }),
+        R.assoc('user_ready', user_ready)
       );
     }
-    function stateUserOnSet(state, _event_, user_state) {
-      return R.threadP(state.user)(
+    let _user;
+    function stateUserWatch(state) {
+      const user = R.view(USER_LENS, state);
+      if(user === _user) return;
+      _user = user;
+      appStateService.emit('User.change', user);
+    }
+    function stateUserOnSet(state, _event_, [user]) {
+      return R.set(USER_LENS, user, state);
+    }
+    function stateUserOnUpdate(state, _event_, [user_state]) {
+      return R.over(
+        USER_LENS,
         R.assoc('state', user_state),
-        userModel.checkOnlineP$(state),
-        setUser$(state)
+        state
       );
     }
-    function stateOnUserToggleOnline(state, _event_) {
-      return R.threadP(state.user)(
-        userModel.toggleOnlineP$(state),
-        setUser$(state)
+    function stateOnUserToggleOnline(state) {
+      R.threadP(state)(
+        R.view(USER_LENS),
+        userModel.toggleOnlineP,
+        (user) => appStateService.reduce('User.set', user)
       );
     }
-    function stateOnUserSendChatMsg(state, _event_, chat) {
-      return userConnectionModel
-        .sendChatP$(chat, state.user);
+    function stateOnUserSendChatMsg(state, _event_, [chat]) {
+      R.threadP(state)(
+        R.view(USER_LENS),
+        userConnectionModel.sendChatP$(chat)
+      );
     }
-    function stateOnUserConnectionClose(state, _event_) {
-      return R.threadP(state.user)(
-        userModel.online,
-        R.rejectIf(R.not, 'User not online when connection close'),
+    function stateOnUserConnectionClose(state) {
+      R.threadP(state)(
+        R.view(USER_LENS),
+        R.rejectIfP(R.complement(userModel.online),
+                    'User not online when connection close'),
         () => promptService
           .promptP('alert','Server connection lost.')
           .catch(R.always(null)),
-        () => userModel.toggleOnlineP(state, state.user),
-        setUser$(state)
+        () => {
+          const state = appStateService.current();
+          return userModel.toggleOnlineP(state, R.view(USER_LENS, state));
+        },
+        (user) => appStateService.reduce('User.set', user)
       );
     }
-    function stateOnUserSetOnlineUsers(state, _event_, users) {
-      return R.thread(state.user)(
+    function stateOnUserSetOnlineUsers(state, _event_, [users]) {
+      return R.over(
+        USER_LENS,
         R.assocPath(['connection','users'], users),
-        setUser$(state)
+        state
       );
     }
-    function stateOnUserSetOnlineGames(state, _event_, games) {
-      return R.thread(state.user)(
+    function stateOnUserSetOnlineGames(state, _event_, [games]) {
+      return R.over(
+        USER_LENS,
         R.assocPath(['connection','games'], games),
-        setUser$(state)
+        state
       );
     }
-    function stateOnUserNewChatMsg(state, _event_, msg) {
-      state.queueChangeEventP('User.chat', msg);
-      return R.thread(state.user)(
+    function stateOnUserNewChatMsg(state, _event_, [msg]) {
+      return R.over(
+        USER_LENS,
         R.over(R.lensPath(['connection','chat']), R.pipe(
           R.defaultTo([]),
           R.append(msg)
         )),
-        setUser$(state)
+        state
       );
     }
-    function stateUserOnChange(state, _event_) {
-      if(userModel.online(state.user)) {
-        registerKeepAliveInterval(state);
+    function stateUserOnChange() {
+      const user = R.view(USER_LENS, appStateService.current());
+      userModel.save(user);
+    }
+    function stateUserOnIsValid(_event_, [is_valid]) {
+      if(!is_valid) {
+        appStateService.emit('User.becomesInvalid');
       }
       else {
-        clearKeepAliveInterval(state);
+        appStateService.emit('User.becomesValid');
       }
     }
-    function registerKeepAliveInterval(state) {
-      if(R.exists(state._keep_alive_interval)) return;
-
-      state._keep_alive_interval =
-        self.window.setInterval(keepAliveRequest(state),
-                                KEEP_ALIVE_INTERVAL_SECONDS * 1000);
+    function stateUserUpdateOnlineKeepAlive(interval, is_online) {
+      if(is_online) {
+        const user = R.view(USER_LENS, appStateService.current());
+        return registerKeepAliveInterval(interval, user);
+      }
+      else {
+        return clearKeepAliveInterval(interval);
+      }
     }
-    function clearKeepAliveInterval(state) {
-      if(R.isNil(state._keep_alive_interval)) return;
+    function registerKeepAliveInterval(interval, user) {
+      if(R.exists(interval)) return interval;
 
-      self.window.clearInterval(state._keep_alive_interval);
-      state._keep_alive_interval = null;
+      return self.window
+        .setInterval(keepAliveRequest(user),
+                     KEEP_ALIVE_INTERVAL_SECONDS * 1000);
     }
-    function keepAliveRequest(state) {
+    function clearKeepAliveInterval(interval) {
+      if(R.isNil(interval)) return null;
+
+      self.window.clearInterval(interval);
+      return null;
+    }
+    function keepAliveRequest(user) {
       return () => {
         httpService
-          .getP(`/api/users/${state.user.state.stamp}`)
+          .getP(`/api/users/${user.state.stamp}`)
           .then(R.spyInfo('** keepAlive'));
       };
     }
-    function setUser(state, user) {
-      state.user = user;
-      console.log('stateSetUser', state.user);
-      state.queueChangeEventP('User.change');
+    function stateUserFilterChatReceived(chat) {
+      const user = R.view(USER_LENS, appStateService.current());
+      return ( R.exists(chat) &&
+               R.exists(chat.from) &&
+               chat.from !== user.state.stamp
+             );
     }
   }
 })();

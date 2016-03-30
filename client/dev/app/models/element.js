@@ -87,7 +87,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           var element = R.last(args);
           var params = R.init(args);
-          return R.threadP(element)(R.rejectIf(this.isLocked, s.capitalize(type) + ' is locked'), function (element) {
+          return R.threadP(element)(R.rejectIfP(this.isLocked, s.capitalize(type) + ' is locked'), function (element) {
             return move.apply(null, [].concat(_toConsumableArray(params), [element]));
           }, this.checkState);
         };

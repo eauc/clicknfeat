@@ -30,7 +30,7 @@
           const factions = R.head(args);
           const target = (withTarget ? R.nth(1, args) : null);
           return R.threadP(model)(
-            R.rejectIf(modelModel.isLocked,
+            R.rejectIfP(modelModel.isLocked,
                        'Model is locked'),
             () => move.apply(this, args),
             modelModel.checkStateP$(factions, target)
@@ -45,7 +45,7 @@
       }
       function modelSetPosition_(factions, target, pos, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           R.assocPath(['state','x'], pos.x),
           R.assocPath(['state','y'], pos.y),

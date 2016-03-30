@@ -31,7 +31,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         });
 
         function checkMethod(gameSegmentModel) {
-          return R.threadP(gameSegmentModel)(R.prop(method), R.type, R.rejectIf(R.complement(R.equals('Function')), s.capitalize(type) + ' unknown method "' + method + '"'));
+          return R.threadP(gameSegmentModel)(R.prop(method), R.type, R.rejectIfP(R.complement(R.equals('Function')), s.capitalize(type) + ' unknown method "' + method + '"'));
         }
         function saveState(when) {
           return function (game) {

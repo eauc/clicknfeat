@@ -35,7 +35,7 @@
         return R.propOr([], where, selection);
       }
       function elementSelectionCheckModeP(state, selection) {
-        return R.threadP(selection)(gameElementSelectionModel.get$('local'), R.head, R.rejectIf(R.isNil, 'No ' + type + ' selection'), function () {
+        return R.threadP(selection)(gameElementSelectionModel.get$('local'), R.head, R.rejectIfP(R.isNil, 'No ' + type + ' selection'), function () {
           state.queueEventP('Modes.switchTo', s.capitalize(type));
         });
       }

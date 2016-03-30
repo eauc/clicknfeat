@@ -16,7 +16,6 @@ describe('user model', function() {
         state: { stamp: null },
         connection: 'connection'
       };
-      this.state = {};
     }
   ]));
 
@@ -105,7 +104,7 @@ describe('user model', function() {
 
   context('toggleOnlineP()', function() {
     return this.userModel
-      .toggleOnlineP(this.state, this.user);
+      .toggleOnlineP(this.user);
   }, function() {
     beforeEach(function() {
       spyOn(this.userModel, 'checkOnlineP')
@@ -127,7 +126,7 @@ describe('user model', function() {
     }, function() {
       it('should try to go online', function() {
         expect(this.userModel.checkOnlineP)
-          .toHaveBeenCalledWith(this.state, {
+          .toHaveBeenCalledWith({
             state: { stamp: 'stamp', online: true },
             connection: 'connection'
           });
@@ -139,7 +138,7 @@ describe('user model', function() {
 
   context('checkOnline()', function() {
     return this.userModel
-      .checkOnlineP(this.state, this.user);
+      .checkOnlineP(this.user);
   }, function() {
     context('when user is not online', function() {
       this.user.state.stamp = 'stamp';
@@ -233,7 +232,7 @@ describe('user model', function() {
   function it_should_set_user_online() {
     it('should set user online', function() {
       expect(this.userConnectionModel.openP)
-        .toHaveBeenCalledWith(this.state, {
+        .toHaveBeenCalledWith({
           state: {
             stamp: 'stamp',
             server: 'update'

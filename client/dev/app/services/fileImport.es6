@@ -7,7 +7,7 @@
   ];
   function fileImportServiceFactory(jsonParserService) {
     const parsers = {
-      'json': jsonParserService
+      json: jsonParserService
     };
 
     const fileImportService = {

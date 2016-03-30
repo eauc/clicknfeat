@@ -30,7 +30,7 @@
     function aoeTemplateSetSizeP(size, temp) {
       return R.threadP(size)(
         (size) => R.find(R.equals(size), [3,4,5]),
-        R.rejectIf(R.isNil, 'Invalid size for an AoE'),
+        R.rejectIfP(R.isNil, 'Invalid size for an AoE'),
         () => R.assocPath(['state','s'], size * 5, temp)
       );
     }
@@ -39,7 +39,7 @@
     }
     function aoeTemplateDeviateP(dir, len, temp) {
       return R.threadP(temp)(
-        R.rejectIf(templateModel.isLocked, 'Template is locked'),
+        R.rejectIfP(templateModel.isLocked, 'Template is locked'),
         (temp) => {
           dir = temp.state.r + 60 * (dir-1);
           const max_len = R.defaultTo(len, R.path(['state','m'], temp));
@@ -61,7 +61,7 @@
     }
     function aoeTemplateSetToRulerP(pos, temp) {
       return R.threadP(temp)(
-        R.rejectIf(templateModel.isLocked, 'Template is locked'),
+        R.rejectIfP(templateModel.isLocked, 'Template is locked'),
         (temp) => {
           const state = R.thread(temp.state)(
             R.assoc('x', pos.x),

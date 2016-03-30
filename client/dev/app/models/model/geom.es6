@@ -85,7 +85,7 @@
       }
       function modelSetB2BP(factions, other, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           (model) => {
             const direction = pointModel.directionTo(model.state, other.state);

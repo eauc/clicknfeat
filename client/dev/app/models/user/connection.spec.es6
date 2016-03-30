@@ -3,10 +3,7 @@ describe('userConnection model', function() {
     this.userConnectionModel = userConnectionModel;
 
     this.websocketService = spyOnService('websocket');
-
-    this.state = jasmine.createSpyObj('state', [
-      'queueEventP'
-    ]);
+    this.appStateService = spyOnService('appState');
   }]));
 
   context('init()', function() {
@@ -20,7 +17,7 @@ describe('userConnection model', function() {
 
   context('openP()', function() {
     return this.userConnectionModel
-      .openP(this.state, this.user);
+      .openP(this.user);
   }, function() {
     beforeEach(function() {
       this.user = this.userConnectionModel.init({
@@ -64,7 +61,7 @@ describe('userConnection model', function() {
         state: { stamp: 'stamp' }
       });
       return this.userConnectionModel
-        .openP(this.state, this.user)
+        .openP(this.user)
         .then((user) => {
           this.user = user;
         });
@@ -96,7 +93,7 @@ describe('userConnection model', function() {
       this.to = [ 'stamp1', 'stamp2' ];
       this.msg = 'hello';
       return this.userConnectionModel
-        .openP(this.state, this.user)
+        .openP(this.user)
         .then((user) => {
           this.user = user;
         });
@@ -127,7 +124,7 @@ describe('userConnection model', function() {
       this.msg = 'hello';
       this.link = '#link';
       return this.userConnectionModel
-        .openP(this.state, this.user)
+        .openP(this.user)
         .then((user) => {
           this.user = user;
         });
@@ -223,7 +220,7 @@ describe('userConnection model', function() {
         state: { stamp: 'stamp' }
       });
       return this.userConnectionModel
-        .openP(this.state, this.user)
+        .openP(this.user)
         .then((user) => {
           this.handlers = this.websocketService.createP
             .calls.first().args[2];
@@ -242,7 +239,7 @@ describe('userConnection model', function() {
       });
 
       it('should emit "setOnlineUsers" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('User.setOnlineUsers', [
             { name: 'Manu' },
             { name: 'ToTo' },
@@ -259,7 +256,7 @@ describe('userConnection model', function() {
       });
 
       it('should emit "User.setOnlineGames" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('User.setOnlineGames',
                                 this.msg.games);
       });
@@ -273,7 +270,7 @@ describe('userConnection model', function() {
       });
 
       it('should emit "User.newChatMsg" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('User.newChatMsg',
                                 this.msg);
       });
@@ -283,7 +280,7 @@ describe('userConnection model', function() {
       this.handlers.close();
     }, function() {
       it('should emit "User.connection.close" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('User.connection.close');
       });
     });

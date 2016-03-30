@@ -39,7 +39,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       TEMPS_REG[type] = model;
     }
     function templateCreateDefaultP(temp) {
-      return R.threadP(TEMPS_REG)(R.prop(temp.type), R.rejectIf(R.isNil, 'Create unknown template type "' + temp.type + '"'), function (model) {
+      return R.threadP(TEMPS_REG)(R.prop(temp.type), R.rejectIfP(R.isNil, 'Create unknown template type "' + temp.type + '"'), function (model) {
         return R.threadP(base.createDefaultP())(R.assocPath(['state', 'type'], temp.type), model._create);
       });
     }
@@ -47,7 +47,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return R.exists(TEMPS_REG[template.state.type]) && R.exists(TEMPS_REG[template.state.type][method]);
     }
     function templateCallP(method, args, template) {
-      return R.threadP(template)(R.rejectIf(R.complement(templateModel.respondTo$(method)), 'Unknown call ' + method + ' on ' + template.state.type + ' template'), function () {
+      return R.threadP(template)(R.rejectIfP(R.complement(templateModel.respondTo$(method)), 'Unknown call ' + method + ' on ' + template.state.type + ' template'), function () {
         return TEMPS_REG[template.state.type][method].apply(TEMPS_REG[template.state.type], [].concat(_toConsumableArray(args), [template]));
       });
     }

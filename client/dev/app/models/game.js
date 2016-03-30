@@ -155,7 +155,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }));
 
       function getLastCommand(game) {
-        return R.threadP(game)(R.propOr([], 'commands'), R.last, R.rejectIf(R.isNil, 'Command history empty'));
+        return R.threadP(game)(R.propOr([], 'commands'), R.last, R.rejectIfP(R.isNil, 'Command history empty'));
       }
       function undoCommand(command) {
         return R.threadP(game)(commandsModel.undoP$(command, state), function (game) {
@@ -197,7 +197,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }));
 
       function getNextUndo(game) {
-        return R.threadP(game)(R.propOr([], 'undo'), R.last, R.rejectIf(R.isNil, 'Undo history empty'));
+        return R.threadP(game)(R.propOr([], 'undo'), R.last, R.rejectIfP(R.isNil, 'Undo history empty'));
       }
       function replayCommand(command) {
         return R.threadP(game)(commandsModel.replayP$(command, state), function (game) {

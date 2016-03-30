@@ -37,7 +37,7 @@
         return R.threadP(selection)(
           gameElementSelectionModel.get$('local'),
           R.head,
-          R.rejectIf(R.isNil, `No ${type} selection`),
+          R.rejectIfP(R.isNil, `No ${type} selection`),
           () => {
             state.queueEventP('Modes.switchTo', s.capitalize(type));
           }

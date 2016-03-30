@@ -54,7 +54,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return R.threadP(ctxt)(R.prop('type'), findTypeP);
     }
     function findTypeP(type) {
-      return R.threadP(CMDS_REG)(R.prop(type), R.rejectIf(R.isNil, 'Game: unknown command "' + type + '"'));
+      return R.threadP(CMDS_REG)(R.prop(type), R.rejectIfP(R.isNil, 'Game: unknown command "' + type + '"'));
     }
     function commandsReplayBatchP(commands, state, game) {
       if (R.isEmpty(commands)) {

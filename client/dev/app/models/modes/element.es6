@@ -149,7 +149,7 @@
         let drag_element_start_state;
         function dragStartElement(state, event) {
           return R.threadP(event.target)(
-            R.rejectIf(elementModel.isLocked, `${s.capitalize(type)} is locked`),
+            R.rejectIfP(elementModel.isLocked, `${s.capitalize(type)} is locked`),
             () => {
               drag_element_start_state = R.clone(event.target.state);
               return dragElement(state, event);
@@ -165,7 +165,7 @@
         }
         function dragElement(state, event) {
           return R.threadP(event.target)(
-            R.rejectIf(elementModel.isLocked, `${s.capitalize(type)} is locked`),
+            R.rejectIfP(elementModel.isLocked, `${s.capitalize(type)} is locked`),
             () => {
               updateStateWithDelta(event, event.target.state);
               state.queueChangeEventP(`Game.${type}.change.${event.target.state.stamp}`);
@@ -174,7 +174,7 @@
         }
         function dragEndElement(state, event) {
           return R.threadP(event.target)(
-            R.rejectIf(elementModel.isLocked, `${s.capitalize(type)} is locked`),
+            R.rejectIfP(elementModel.isLocked, `${s.capitalize(type)} is locked`),
             () => {
               event.target.state = R.clone(drag_element_start_state);
               const end_state = R.clone(drag_element_start_state);

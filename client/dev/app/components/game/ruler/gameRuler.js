@@ -98,7 +98,7 @@
     function updateOrigin(factions, models, ruler, display, element) {
       var origin = gameRulerModel.origin(ruler);
       element.style.visibility = 'hidden';
-      R.threadP(origin)(findOriginModelP, R.rejectIf(checkOriginDisplay, 'no display'), function (origin_model) {
+      R.threadP(origin)(findOriginModelP, R.rejectIfP(checkOriginDisplay, 'no display'), function (origin_model) {
         return R.threadP(factions)(gameFactionsModel.getModelInfoP$(origin_model.state.info), function (info) {
           element.setAttribute('cx', origin_model.state.x + '');
           element.setAttribute('cy', origin_model.state.y + '');
@@ -108,7 +108,7 @@
       }).catch(R.always(null));
 
       function findOriginModelP(origin) {
-        return R.threadP(origin)(R.rejectIf(R.isNil, 'no origin'), function (origin) {
+        return R.threadP(origin)(R.rejectIfP(R.isNil, 'no origin'), function (origin) {
           return gameModelsModel.findStampP(origin, models);
         });
       }
@@ -119,7 +119,7 @@
     function updateTarget(factions, models, ruler, display, element) {
       var target = gameRulerModel.target(ruler);
       element.style.visibility = 'hidden';
-      R.threadP(target)(findTargetModelP, R.rejectIf(checkTargetDisplay, 'no display'), function (target_model) {
+      R.threadP(target)(findTargetModelP, R.rejectIfP(checkTargetDisplay, 'no display'), function (target_model) {
         return R.threadP(factions)(gameFactionsModel.getModelInfoP$(target_model.state.info), function (info) {
           element.setAttribute('cx', target_model.state.x + '');
           element.setAttribute('cy', target_model.state.y + '');
@@ -129,7 +129,7 @@
       }, checkTargetReached).catch(R.always(null));
 
       function findTargetModelP(target) {
-        return R.threadP(target)(R.rejectIf(R.isNil, 'no target'), function (target) {
+        return R.threadP(target)(R.rejectIfP(R.isNil, 'no target'), function (target) {
           return gameModelsModel.findStampP(target, models);
         });
       }

@@ -81,7 +81,7 @@
       }), R.over(R.lensProp('undo_log'), R.compose(R.append(command), R.defaultTo([]))));
     }
     function gameConnectionSendEventP(event, game) {
-      return R.threadP(game)(R.rejectIf(R.complement(gameConnectionModel.active), 'Not active'), function () {
+      return R.threadP(game)(R.rejectIfP(R.complement(gameConnectionModel.active), 'Not active'), function () {
         return websocketModel.send(event, game.connection.state.socket);
       }, R.always(game));
     }

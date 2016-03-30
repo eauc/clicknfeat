@@ -92,7 +92,7 @@
           const element = R.last(args);
           const params = R.init(args);
           return R.threadP(element)(
-            R.rejectIf(this.isLocked,
+            R.rejectIfP(this.isLocked,
                        `${s.capitalize(type)} is locked`),
             (element) => move.apply(null, [...params, element]),
             this.checkState

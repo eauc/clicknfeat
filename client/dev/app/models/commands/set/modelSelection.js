@@ -14,7 +14,7 @@
     return setModelSelectionCommandModel;
 
     function setModelSelectionExecuteP(method, stamps, state, game) {
-      return R.threadP(gameModelSelectionModel)(R.prop(method), R.type, R.rejectIf(R.complement(R.equals('Function')), 'SetModelSelection unknown method ' + method), function () {
+      return R.threadP(gameModelSelectionModel)(R.prop(method), R.type, R.rejectIfP(R.complement(R.equals('Function')), 'SetModelSelection unknown method ' + method), function () {
         var args = R.isNil(stamps) ? ['local', state, game.model_selection] : ['local', stamps, state, game.model_selection];
         return gameModelSelectionModel[method].apply(gameModelSelectionModel, args);
       }, function (selection) {

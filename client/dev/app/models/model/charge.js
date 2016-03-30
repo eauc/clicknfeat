@@ -34,7 +34,7 @@
       return modelChargeModel;
 
       function modelStartChargeP(model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), R.assocPath(['state', 'cha'], {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), R.assocPath(['state', 'cha'], {
           s: R.pick(['x', 'y', 'r'], model.state),
           t: null
         }));
@@ -55,7 +55,7 @@
         return R.assocPath(['state', 'cha'], null, model);
       }
       function modelSetChargeTargetP(factions, other, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           if (R.exists(other)) {
             return R.thread(model)(R.over(R.lensPath(['state', 'cha']), R.assoc('t', other.state.stamp)), R.over(R.lensProp('state'), R.assoc('r', pointModel.directionTo(other.state, model.state))));
           } else {
@@ -71,14 +71,14 @@
         return modelModel.checkStateP(factions, null, model);
       }
       function modelMoveFrontChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.cha.s.r;
           return R.over(R.lensProp('state'), pointModel.translateInDirection$(dist, direction), model);
         }, modelModel.checkStateP$(factions, target));
       }
       function modelMoveBackChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.cha.s.r + 180;
           var distance = pointModel.distanceTo(model.state, model.state.cha.s);
@@ -87,37 +87,37 @@
         }, modelModel.checkStateP$(factions, target));
       }
       function modelRotateLeftChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(R.lensProp('state'), pointModel.rotateLeftAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.subtract(R.__, angle)));
         }, modelModel.checkStateP$(factions, target));
       }
       function modelRotateRightChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(R.lensProp('state'), pointModel.rotateRightAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.add(angle)));
         }, modelModel.checkStateP$(factions, target));
       }
       function modelShiftLeftChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(R.lensProp('state'), pointModel.shiftLeft$(dist), model);
         }, modelModel.checkStateP$(factions, target));
       }
       function modelShiftRightChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(R.lensProp('state'), pointModel.shiftRight$(dist), model);
         }, modelModel.checkStateP$(factions, target));
       }
       function modelShiftUpChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(R.lensProp('state'), pointModel.shiftUp$(dist), model);
         }, modelModel.checkStateP$(factions, target));
       }
       function modelShiftDownChargeP(factions, target, small, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(R.lensProp('state'), pointModel.shiftDown$(dist), model);
         }, modelModel.checkStateP$(factions, target));

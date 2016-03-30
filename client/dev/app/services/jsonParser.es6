@@ -12,12 +12,10 @@
 
     function jsonParseP(string) {
       return self.Promise.resolve(string)
-        .then((string) => {
-          return JSON.parse(string);
-        })
+        .then((string) => JSON.parse(string))
         .catch((error) => {
           console.error('JSON Parse error', error);
-          return self.Promise.reject(error.message);
+          return R.rejectP(error.message);
         });
     }
   }

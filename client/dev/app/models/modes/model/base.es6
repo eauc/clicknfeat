@@ -127,7 +127,7 @@
         gameModelsModel.findStampP$(selection[0]),
         (model) => R.threadP(model)(
           modelModel.unit,
-          R.rejectIf(R.isNil,
+          R.rejectIfP(R.isNil,
                      'Model not in unit'),
           (unit) => R.thread(state.game)(
             R.prop('models'),

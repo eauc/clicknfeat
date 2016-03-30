@@ -35,7 +35,7 @@
 
       function modelStartPlaceP(model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           R.assocPath(['state','pla'],
                       { s: R.pick(['x','y','r'], model.state) })
@@ -49,7 +49,7 @@
       }
       function modelSetPlaceOriginP(factions, other, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const direction = pointModel
@@ -65,7 +65,7 @@
       }
       function modelSetPlaceTargetP(factions, other, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const direction = pointModel
@@ -95,7 +95,7 @@
       }
       function modelMoveFrontPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -109,7 +109,7 @@
       }
       function modelMoveBackPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             let dist = MOVES[small ? 'MoveSmall' : 'Move'];
@@ -126,7 +126,7 @@
       }
       function modelRotateLeftPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
@@ -141,7 +141,7 @@
       }
       function modelRotateRightPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
@@ -156,7 +156,7 @@
       }
       function modelShiftLeftPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -169,7 +169,7 @@
       }
       function modelShiftRightPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -182,7 +182,7 @@
       }
       function modelShiftUpPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
@@ -195,7 +195,7 @@
       }
       function modelShiftDownPlaceP(factions, small, model) {
         return R.threadP(model)(
-          R.rejectIf(modelModel.isLocked,
+          R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           () => {
             const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];

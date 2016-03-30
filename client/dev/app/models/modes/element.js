@@ -109,7 +109,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         var drag_element_start_state = undefined;
         function dragStartElement(state, event) {
-          return R.threadP(event.target)(R.rejectIf(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
+          return R.threadP(event.target)(R.rejectIfP(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
             drag_element_start_state = R.clone(event.target.state);
             return dragElement(state, event);
           }, function () {
@@ -117,13 +117,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           });
         }
         function dragElement(state, event) {
-          return R.threadP(event.target)(R.rejectIf(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
+          return R.threadP(event.target)(R.rejectIfP(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
             updateStateWithDelta(event, event.target.state);
             state.queueChangeEventP('Game.' + type + '.change.' + event.target.state.stamp);
           });
         }
         function dragEndElement(state, event) {
-          return R.threadP(event.target)(R.rejectIf(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
+          return R.threadP(event.target)(R.rejectIfP(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
             event.target.state = R.clone(drag_element_start_state);
             var end_state = R.clone(drag_element_start_state);
             updateStateWithDelta(event, end_state);

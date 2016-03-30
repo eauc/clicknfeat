@@ -83,7 +83,7 @@
     function findTypeP(type) {
       return R.threadP(CMDS_REG)(
         R.prop(type),
-        R.rejectIf(R.isNil, `Game: unknown command "${type}"`)
+        R.rejectIfP(R.isNil, `Game: unknown command "${type}"`)
       );
     }
     function commandsReplayBatchP(commands, state, game) {

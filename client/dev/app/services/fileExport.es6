@@ -21,9 +21,7 @@
     function fileExportGenerate(type, data) {
       return R.thread(data)(
         stringifiers[type].stringify,
-        (string) => {
-          return new self.Blob([string], {type: 'text/plain'});
-        },
+        (string) => new self.Blob([string], {type: 'text/plain'}),
         self.URL.createObjectURL
       );
     }

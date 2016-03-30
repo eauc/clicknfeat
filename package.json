@@ -30,10 +30,13 @@
   },
   "scripts": {
     "postinstall": "bower install && grunt build",
-    "server-run": "RACK_ENV=production bundle exec rerun --dir server -- rackup -p 4567",
-    "client-build-src": "babel --only *.es6 -s true -w -d client/dev/app client/dev/app",
-    "client-lint-src": "esw -w --ext .es6 client/dev/app/",
-    "client-build-styles": "sass -I client/dev/app --watch client/dev/app/styles/app.scss:client/dev/app/styles/app.css",
-    "client-run-tests": "karma start"
+    "dist:client:js:build": "babel --only *.es6 -s true -d client/dev/app client/dev/app",
+    "dist:client:js:lint": "esw --ext .es6 client/dev/app/",
+    "dist:client:css:build": "sass -I client/dev/app client/dev/app/styles/app.scss:client/dev/app/styles/app.css",
+    "dev:server:run": "RACK_ENV=production bundle exec rerun --dir server -- rackup -p 4567",
+    "dev:client:js:watch": "npm run dist:client:js:build -- --watch",
+    "dev:client:js:lint": "npm run dist:client:js:lint -- --watch",
+    "dev:client:css:watch": "npm run dist:client:css:build -- --watch",
+    "test": "karma start"
   }
 }

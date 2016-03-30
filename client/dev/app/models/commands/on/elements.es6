@@ -53,7 +53,7 @@
                    ? R.threadP(elementModel)(
                      R.prop(method),
                      R.type,
-                     R.rejectIf(R.complement(R.equals('Function')),
+                     R.rejectIfP(R.complement(R.equals('Function')),
                                 `Unknown method "${method}" on ${type}`)
                    )
                    : true

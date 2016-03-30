@@ -315,9 +315,9 @@
     }
     function stateGameOnBoardImportFile(state, _event_, file) {
       return R.threadP(file)(fileImportService.readP$('json'), function (data) {
-        return R.threadP(data)(R.prop('board'), R.rejectIf(R.isNil, 'No board'), function () {
+        return R.threadP(data)(R.prop('board'), R.rejectIfP(R.isNil, 'No board'), function () {
           return state.eventP('Game.command.execute', 'setBoard', [data.board]);
-        }, R.always(data), R.path(['terrain', 'terrains']), R.rejectIf(R.isEmpty, 'No terrain'), function () {
+        }, R.always(data), R.path(['terrain', 'terrains']), R.rejectIfP(R.isEmpty, 'No terrain'), function () {
           return state.eventP('Game.terrain.reset');
         }, function () {
           return state.eventP('Game.command.execute', 'createTerrain', [data.terrain, false]);
@@ -379,9 +379,9 @@
     }
     function exportCurrentModelSelectionP(state) {
       return stateExportsModel.exportP('models', function (state) {
-        return R.threadP(state)(R.path(['game', 'model_selection']), R.rejectIf(R.isNil, 'selection is nil'), gameModelSelectionModel.get$('local'), R.rejectIf(R.isEmpty, 'selection is empty'), function (stamps) {
+        return R.threadP(state)(R.path(['game', 'model_selection']), R.rejectIfP(R.isNil, 'selection is nil'), gameModelSelectionModel.get$('local'), R.rejectIfP(R.isEmpty, 'selection is empty'), function (stamps) {
           return gameModelsModel.copyStampsP(stamps, R.path(['game', 'models'], state));
-        }, R.rejectIf(R.isEmpty, 'selection models not found'));
+        }, R.rejectIfP(R.isEmpty, 'selection models not found'));
       }, state);
     }
     function exportBoardData(state) {

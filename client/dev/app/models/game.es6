@@ -199,7 +199,7 @@
         return R.threadP(game)(
           R.propOr([],'commands'),
           R.last,
-          R.rejectIf(R.isNil, 'Command history empty')
+          R.rejectIfP(R.isNil, 'Command history empty')
         );
       }
       function undoCommand(command) {
@@ -269,7 +269,7 @@
         return R.threadP(game)(
           R.propOr([], 'undo'),
           R.last,
-          R.rejectIf(R.isNil, 'Undo history empty')
+          R.rejectIfP(R.isNil, 'Undo history empty')
         );
       }
       function replayCommand(command) {

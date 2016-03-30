@@ -4,8 +4,10 @@
 
   userConnectionServiceFactory.$inject = [
     'websocket',
+    'appState',
   ];
-  function userConnectionServiceFactory(websocketService) {
+  function userConnectionServiceFactory(websocketService,
+                                        appStateService) {
     const userConnectionService = {
       init: userConnectionInit,
       openP: userConnectionOpenP,
@@ -15,9 +17,6 @@
       userNameForStamp: userNameForStamp,
       usersNamesForStamps: usersNamesForStamps
     };
-    const usersMessageHandler$ = R.curry(usersMessageHandler);
-    const gamesMessageHandler$ = R.curry(gamesMessageHandler);
-    const chatMessageHandler$ = R.curry(chatMessageHandler);
     const userForStamp$ = R.curry(userForStamp);
     const usersForStamps$ = R.curry(usersForStamps);
     R.curryService(userConnectionService);
@@ -29,16 +28,16 @@
       };
       return R.assoc('connection', connection, user);
     }
-    function userConnectionOpenP(state, user) {
+    function userConnectionOpenP(user) {
       if(userConnectionService.active(user)) {
         return R.resolveP(user);
       }
 
       const handlers = {
-        close: closeHandler$(state),
-        users: usersMessageHandler$(state),
-        games: gamesMessageHandler$(state),
-        chat: chatMessageHandler$(state)
+        close: closeHandler,
+        users: usersMessageHandler,
+        games: gamesMessageHandler,
+        chat: chatMessageHandler
       };
 
       user = R.assocPath(['connection','state','socket'], null, user);
@@ -49,16 +48,12 @@
       );
     }
     function userConnectionClose(user) {
-      return R.thread()(
-        () => {
-          if(userConnectionService.active(user)) {
-            websocketService
-              .close(user.connection.state.socket);
-          }
-        },
-        () => R.over(R.lensProp('connection'),
-                     cleanupConnection, user)
-      );
+      if(userConnectionService.active(user)) {
+        websocketService
+          .close(user.connection.state.socket);
+      }
+      return R.over(R.lensProp('connection'),
+                    cleanupConnection, user);
     }
     function userConnectionActive(user) {
       return R.thread(user)(
@@ -68,16 +63,14 @@
     }
     function userConnectionSendChatP(chat, user) {
       return R.threadP(user)(
-        R.rejectIf(R.complement(userConnectionService.active),
-                   'Not active'),
-        (user) => {
-          chat = R.thread(chat)(
-            R.assoc('type', 'chat'),
-            R.assoc('from', user.state.stamp)
-          );
-          return websocketService
-            .send(chat, user.connection.state.socket);
-        }
+        R.rejectIfP(R.complement(userConnectionService.active),
+                    'Not active'),
+        (user) => R.thread(chat)(
+          R.assoc('type', 'chat'),
+          R.assoc('from', user.state.stamp)
+        ),
+        (chat) => websocketService
+          .send(chat, user.connection.state.socket)
       );
     }
     function userNameForStamp(stamp, user) {
@@ -95,10 +88,10 @@
         R.propOr({}, 'connection'),
         usersForStamps$(R.defaultTo([], stamps)),
         R.pluck('name'),
-        (names) => ( R.isEmpty(names)
-                     ? [ 'Unknown' ]
-                     : names
-                   ),
+        R.when(
+          R.isEmpty,
+          () => ([ 'Unknown' ])
+        ),
         R.map(normalizeUserName)
       );
     }
@@ -111,28 +104,26 @@
         R.assoc('users', [])
       );
     }
-    function closeHandler$(state) {
-      return () => {
-        console.error('User connection: close');
-        state.queueEventP('User.connection.close');
-      };
+    function closeHandler() {
+      // console.error('User connection: close');
+      appStateService.reduce('User.connection.close');
     }
-    function usersMessageHandler(state, msg) {
-      console.log('User connection: users list', msg);
-      state.queueEventP('User.setOnlineUsers', R.thread(msg)(
+    function usersMessageHandler(msg) {
+      // console.log('User connection: users list', msg);
+      appStateService.reduce('User.setOnlineUsers', R.thread(msg)(
         R.propOr([], 'users'),
         R.sortBy(R.compose(R.toLower, R.prop('name')))
       ));
     }
-    function gamesMessageHandler(state, msg) {
-      console.log('User connection: games list', msg);
-      state.queueEventP('User.setOnlineGames', R.thread(msg)(
+    function gamesMessageHandler(msg) {
+      // console.log('User connection: games list', msg);
+      appStateService.reduce('User.setOnlineGames', R.thread(msg)(
         R.propOr([], 'games')
       ));
     }
-    function chatMessageHandler(state, msg) {
-      console.log('User connection: chat msg', msg);
-      state.queueEventP('User.newChatMsg', msg);
+    function chatMessageHandler(msg) {
+      // console.log('User connection: chat msg', msg);
+      appStateService.reduce('User.newChatMsg', msg);
     }
     function userForStamp(stamp, connection) {
       return R.thread(connection)(

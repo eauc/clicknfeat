@@ -37,7 +37,7 @@
           return R.threadP(gameSegmentModel)(
             R.prop(method),
             R.type,
-            R.rejectIf(R.complement(R.equals('Function')),
+            R.rejectIfP(R.complement(R.equals('Function')),
                        `${s.capitalize(type)} unknown method "${method}"`)
           );
         }

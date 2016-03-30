@@ -50,7 +50,7 @@
         return R.threadP(stamps)(
           R.map(findStampP),
           R.promiseAll,
-          R.rejectIf(R.compose(R.isEmpty, R.reject(R.isNil)),
+          R.rejectIfP(R.compose(R.isEmpty, R.reject(R.isNil)),
                      `No ${type} found`)
         );
 
@@ -142,7 +142,7 @@
           return R.threadP(model)(
             R.prop(method),
             R.type,
-            R.rejectIf(R.complement(R.equals('Function')),
+            R.rejectIfP(R.complement(R.equals('Function')),
                        `Unknown method "${method}" on ${type}s`)
           );
         }

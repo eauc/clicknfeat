@@ -21,7 +21,7 @@
       return R.threadP(gameModelSelectionModel)(
         R.prop(method),
         R.type,
-        R.rejectIf(R.complement(R.equals('Function')),
+        R.rejectIfP(R.complement(R.equals('Function')),
                    `SetModelSelection unknown method ${method}`),
         () => {
           const args = ( R.isNil(stamps)

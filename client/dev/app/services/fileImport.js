@@ -6,7 +6,7 @@
   fileImportServiceFactory.$inject = ['jsonParser'];
   function fileImportServiceFactory(jsonParserService) {
     var parsers = {
-      'json': jsonParserService
+      json: jsonParserService
     };
 
     var fileImportService = {

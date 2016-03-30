@@ -6,63 +6,85 @@
   pubSubServiceFactory.$inject = [];
   function pubSubServiceFactory() {
     // Subscribe to this event to see all events
-    var WATCH_EVENT = '#watch#';
+    var WATCH_EVENT = '#ALL#';
+
     var pubSubService = {
-      init: pubSubInit,
-      subscribe: pubSubSubscribe,
-      publishP: pubSubPublishP
+      create: pubSubCreate,
+      emit: pubSubEmit,
+      addListener: pubSubAdd$('listeners'),
+      removeListener: pubSubRemove$('listeners'),
+      reduce: pubSubReduce,
+      addReducer: pubSubAdd$('reducers'),
+      removeReducer: pubSubRemove$('reducers')
     };
-    var signalListenersP$ = R.curry(signalListenersP);
+    var warnOnEmptyWatchers$ = R.curry(warnOnEmptyWatchers);
     R.curryService(pubSubService);
     return pubSubService;
 
-    function pubSubInit(data) {
-      var name = arguments.length <= 1 || arguments[1] === undefined ? 'channel' : arguments[1];
-
-      return R.thread(data)(R.defaultTo({}), R.assoc('_pubSubName', name), R.assoc('_pubSubCache', {}));
-    }
-    function pubSubSubscribe(event, listener, pubSub) {
-      return R.thread(pubSub)(R.prop('_pubSubCache'), function (cache) {
-        return R.thread(cache)(R.propOr([], event), R.append(listener), function (listeners) {
-          cache[event] = listeners;
-          return unsubscribe(event, listener, cache);
-        });
-      });
-    }
-    function pubSubPublishP() {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      var event = args[0];
-
-      return R.threadP(args)(R.last, signalListenersP$(event, R.init(args)), signalListenersP$(WATCH_EVENT, R.init(args)));
-    }
-    function unsubscribe(event, listener, cache) {
-      return function () {
-        cache[event] = R.reject(R.equals(listener), cache[event]);
+    function pubSubCreate() {
+      return {
+        listeners: {},
+        reducers: {}
       };
     }
-    function signalListenersP(event, args, channel) {
-      return R.threadP(channel)(R.pathOr([], ['_pubSubCache', event]), warnIfNoListeners, R.map(resolveListenerP), R.promiseAll, R.always(channel));
 
-      function warnIfNoListeners(listeners) {
-        if (R.isEmpty(listeners) && event !== WATCH_EVENT) {
-          console.warn('Event: "' + channel._pubSubName + '>' + event + '" with no listeners');
+    function pubSubEmit(event, args, pubSub) {
+      console.info('---> ' + event, args);
+      // console.trace();
+      return R.thread()(signalListeners(event), signalListeners(WATCH_EVENT));
+
+      function signalListeners(event) {
+        return function () {
+          return R.thread(pubSub)(R.pathOr([], ['listeners', event]), warnOnEmptyWatchers$(event), R.forEach(callListener));
+        };
+      }
+      function callListener(listener) {
+        try {
+          listener.apply(null, [event, args]);
+        } catch (error) {
+          console.error('xxx> ' + event + ' : listener error', error, listener);
         }
-        return listeners;
       }
-      function resolveListenerP(listener) {
-        return new self.Promise(function (resolve) {
-          var ret = undefined;
-          try {
-            ret = listener.apply(null, args);
-          } catch (error) {
-            console.error('Listener error: "' + channel._pubSubName + '>' + event + '"', listener, error);
-          }
-          resolve(ret);
-        });
+    }
+
+    function pubSubReduce(event, args, value, pubSub) {
+      console.info('===> ' + event, args);
+      console.trace();
+      return R.thread(value)(callReducers(event), callReducers(WATCH_EVENT));
+
+      function callReducers(event) {
+        return function (current_value) {
+          return R.thread(pubSub)(R.pathOr([], ['reducers', event]), warnOnEmptyWatchers$(event), R.reduce(callReducer, current_value));
+        };
       }
+      function callReducer(mem, reducer) {
+        var ret = undefined;
+        try {
+          ret = reducer.apply(null, [mem, event, args]);
+          return R.exists(ret) ? ret : mem;
+        } catch (error) {
+          console.error('xxx> ' + event + ' : reducer error', error, reducer);
+          return mem;
+        }
+      }
+    }
+
+    function pubSubAdd$(type) {
+      return function pubSubAdd(event, reducer, pubSub) {
+        return R.over(R.lensPath([type, event]), R.pipe(R.defaultTo([]), R.append(reducer)), pubSub);
+      };
+    }
+
+    function pubSubRemove$(type) {
+      return function (event, reducer, pubSub) {
+        return R.over(R.lensPath([type, event]), R.pipe(R.defaultTo([]), R.reject(R.equals(reducer))), pubSub);
+      };
+    }
+
+    function warnOnEmptyWatchers(event, watchers) {
+      return R.when(function (watchers) {
+        return R.isEmpty(watchers) && event !== WATCH_EVENT;
+      }, R.spyWarn('...> ' + event + ' with no watchers'), watchers);
     }
   }
 })();

@@ -82,7 +82,7 @@
       return R.threadP(modes)(
         currentMode,
         R.path(['actions', action]),
-        R.rejectIf(R.isNil, `Unknown action "${action}" in "${mode_name}" mode`),
+        R.rejectIfP(R.isNil, `Unknown action "${action}" in "${mode_name}" mode`),
         (handler) => {
           return handler.apply(null, args);
         }
@@ -92,7 +92,7 @@
       const previous_mode = currentMode(modes);
       return R.threadP(modes)(
         R.path(['register', name]),
-        R.rejectIf(R.isNil, `Mode ${name} does not exists`),
+        R.rejectIfP(R.isNil, `Mode ${name} does not exists`),
         R.always(modes),
         leaveModeP$(state),
         enterModeP$(name, state),

@@ -29,7 +29,7 @@
     function sprayTemplateSetSizeP(size, temp) {
       return R.threadP(size)(function (size) {
         return R.find(R.equals(size), [6, 8, 10]);
-      }, R.rejectIf(R.isNil, 'Invalid size for a Spray'), function () {
+      }, R.rejectIfP(R.isNil, 'Invalid size for a Spray'), function () {
         return R.assocPath(['state', 's'], size, temp);
       });
     }
@@ -40,7 +40,7 @@
       return R.path(['state', 'o'], temp);
     }
     function sprayTemplateSetOriginP(factions, origin, temp) {
-      return R.threadP(temp)(R.rejectIf(templateModel.isLocked, 'Template is locked'), function () {
+      return R.threadP(temp)(R.rejectIfP(templateModel.isLocked, 'Template is locked'), function () {
         return modelModel.baseEdgeInDirectionP$(factions, temp.state.r, origin);
       }, function (position) {
         return R.thread(temp)(R.assocPath(['state', 'o'], origin.state.stamp), function (temp) {
@@ -49,7 +49,7 @@
       });
     }
     function sprayTemplateSetTargetP(factions, origin, target, temp) {
-      return R.threadP(temp)(R.rejectIf(templateModel.isLocked, 'Template is locked'), function () {
+      return R.threadP(temp)(R.rejectIfP(templateModel.isLocked, 'Template is locked'), function () {
         return pointModel.directionTo(target.state, origin.state);
       }, function (direction) {
         return R.threadP(origin)(modelModel.baseEdgeInDirectionP$(factions, direction), function (position) {
@@ -63,7 +63,7 @@
       sprayTemplateModel[move] = sprayTemplateForwardMove;
 
       function sprayTemplateForwardMove(small, template) {
-        return R.threadP(template)(R.rejectIf(templateModel.isLocked, 'Template is locked'), R.assocPath(['state', 'o'], null), function (template) {
+        return R.threadP(template)(R.rejectIfP(templateModel.isLocked, 'Template is locked'), R.assocPath(['state', 'o'], null), function (template) {
           return templateModel[move](small, template);
         });
       }

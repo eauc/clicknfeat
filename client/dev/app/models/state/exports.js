@@ -28,7 +28,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }]]), updateExportsP, R.condErrorP([[R.T, R.always(null)]]));
 
       function generateDataUrlP(state) {
-        return R.threadP(state)(buildData, R.rejectIf(dataUnchanged, 'unchanged'), memoizeData, R.rejectIf(R.isNil, 'nil'), fileExportService.generate$('json'));
+        return R.threadP(state)(buildData, R.rejectIfP(dataUnchanged, 'unchanged'), memoizeData, R.rejectIfP(R.isNil, 'nil'), fileExportService.generate$('json'));
       }
       function dataUnchanged(data) {
         return R.equals(R.path(['exports', '_' + name], state), data);

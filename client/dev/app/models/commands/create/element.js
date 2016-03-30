@@ -23,7 +23,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       function createElementExecuteP(create, is_flipped, state, game) {
         var add$ = pointModel.addToWithFlip$(is_flipped);
-        return R.threadP(create)(R.prop(type + 's'), R.map(addElementP), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid ' + type + ' definition'), onNewElements);
+        return R.threadP(create)(R.prop(type + 's'), R.map(addElementP), R.promiseAll, R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onNewElements);
 
         function addElementP(element) {
           return R.thread(element)(add$(create.base), R.omit(['stamp']), createElementFnP(state));
@@ -38,7 +38,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       }
       function createElementReplayP(ctxt, state, game) {
-        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFnP(state)), R.promiseAll, R.reject(R.isNil), R.rejectIf(R.isEmpty, 'No valid ' + type + ' definition'), onCreatedElements$('remote', state, game));
+        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFnP(state)), R.promiseAll, R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onCreatedElements$('remote', state, game));
       }
       function createElementUndoP(ctxt, state, game) {
         var stamps = R.pluck('stamp', R.prop(type + 's', ctxt));

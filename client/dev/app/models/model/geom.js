@@ -52,7 +52,7 @@
         });
       }
       function modelSetB2BP(factions, other, model) {
-        return R.threadP(model)(R.rejectIf(modelModel.isLocked, 'Model is locked'), function (model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var direction = pointModel.directionTo(model.state, other.state);
           return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
             return R.threadP(factions)(gameFactionsModel.getModelInfoP$(other.state.info), function (other_info) {

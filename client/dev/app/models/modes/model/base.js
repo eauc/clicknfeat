@@ -83,7 +83,7 @@
     function modelSelectAllUnit(state) {
       var selection = gameModelSelectionModel.get('local', state.game.model_selection);
       return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(selection[0]), function (model) {
-        return R.threadP(model)(modelModel.unit, R.rejectIf(R.isNil, 'Model not in unit'), function (unit) {
+        return R.threadP(model)(modelModel.unit, R.rejectIfP(R.isNil, 'Model not in unit'), function (unit) {
           return R.thread(state.game)(R.prop('models'), gameModelsModel.all, R.filter(modelModel.userIs$(modelModel.user(model))), R.filter(modelModel.unitIs$(unit)), R.map(modelModel.stamp));
         });
       }, function (stamps) {
