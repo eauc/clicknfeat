@@ -34,7 +34,7 @@
             .loadP(k)
             .catch(R.spyAndDiscardError('GamesModel: Failed to load local game', k));
         }),
-        R.promiseAll,
+        R.allP,
         R.reject(R.isNil),
         R.defaultTo([]),
         R.spyWarn('Games local load')

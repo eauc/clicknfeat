@@ -24,7 +24,7 @@
         this.value = null;
       }
       function onChange() {
-        var files = input.files;
+        const files = input.files;
         scope.clickFile({ file: files });
         input.blur();
       }

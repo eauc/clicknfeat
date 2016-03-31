@@ -32,10 +32,8 @@
     }
     function settingsLoadP() {
       return R.threadP(SETTINGS_STORAGE_KEY)(
-        (key) => {
-          return localStorageService.loadP(key)
-            .catch(R.spy('settings: failed to load data'));
-        },
+        (key) => localStorageService.loadP(key)
+          .catch(R.spy('settings: failed to load data')),
         R.defaultTo({}),
         R.spyWarn('Settings load')
       );
@@ -51,43 +49,45 @@
       settings = R.defaultTo({}, settings);
       return R.thread(DEFAULT_SETTINGS)(
         R.keys,
-        R.reduce((mem, type) => {
-          const settings_type = R.propOr({}, type, settings);
-          mem[type] = R.thread(DEFAULT_SETTINGS[type])(
-            R.keys,
-            R.reduce((mem, name) => {
-              const base = Object.create(DEFAULT_SETTINGS[type][name]);
-              R.extend(base, R.propOr({}, name, settings_type));
-              mem[name] = base;
-              return mem;
-            }, {})
-          );
-          return mem;
-        }, {}),
-        (binded) => {
-          return {
-            default: DEFAULT_SETTINGS,
-            current: binded
-          };
-        }
+        R.reduce(bindType, {}),
+        (binded) => ({
+          default: DEFAULT_SETTINGS,
+          current: binded
+        })
       );
+
+      function bindType(mem, type) {
+        const settings_type = R.propOr({}, type, settings);
+        mem[type] = R.thread(DEFAULT_SETTINGS[type])(
+          R.keys,
+          R.reduce(bindName, {})
+        );
+        return mem;
+
+        function bindName(mem, name) {
+          const base = Object.create(DEFAULT_SETTINGS[type][name]);
+          R.extend(base, R.propOr({}, name, settings_type));
+          mem[name] = base;
+          return mem;
+        }
+      }
     }
     function settingsUpdate(settings) {
       R.thread(settings.current)(
         R.keys,
-        R.forEach((type) => {
-          R.thread(settings.current[type])(
-            R.keys,
-            R.filter((name) => {
-              return R.exists(UPDATERS[type][name]);
-            }),
-            R.forEach((name) => {
-              UPDATERS[type][name](settings.current[type][name]);
-            })
-          );
-        })
+        R.forEach(updateType)
       );
       return settings;
+
+      function updateType(type) {
+        R.thread(settings.current[type])(
+          R.keys,
+          R.filter((name) => R.exists(UPDATERS[type][name])),
+          R.forEach((name) => {
+            UPDATERS[type][name](settings.current[type][name]);
+          })
+        );
+      }
     }
     function settingsStore(settings) {
       return R.thread(settings.current)(

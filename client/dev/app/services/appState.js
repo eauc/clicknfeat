@@ -81,6 +81,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       });
     }
     function appStateCell(update_event, update, initial) {
+      var events = pubSubService.create();
       var value = initial;
       appStateService.addListener(update_event, function (_event_, _ref3) {
         var _ref4 = _slicedToArray(_ref3, 1);
@@ -88,13 +89,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var observable = _ref4[0];
 
         value = update(value, observable);
+        pubSubService.emit('update', [value], events);
       });
+      return {
+        bind: function bind(listener) {
+          var _listener = function _listener(_event_, _ref5) {
+            var _ref6 = _slicedToArray(_ref5, 1);
+
+            var value = _ref6[0];
+
+            listener(value);
+          };
+          listener(value);
+          events = pubSubService.addListener('update', _listener, events);
+          return function () {
+            events = pubSubService.removeListener('update', _listener, events);
+          };
+        }
+      };
     }
     function appStateFilterEvent(event_in, event_out, filter) {
-      appStateService.addListener(event_in, function (_event_, _ref5) {
-        var _ref6 = _slicedToArray(_ref5, 1);
+      appStateService.addListener(event_in, function (_event_, _ref7) {
+        var _ref8 = _slicedToArray(_ref7, 1);
 
-        var observable = _ref6[0];
+        var observable = _ref8[0];
 
         if (filter(observable)) {
           appStateService.emit(event_out, observable);

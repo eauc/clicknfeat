@@ -8,35 +8,23 @@
   function gameTerrainInfoModelFactory(httpService) {
     const gameTerrainInfoModel = {
       initP: gameTerrainInfoInitP,
-      getInfoP: gameTerrainInfoGetInfoP
+      getInfo: gameTerrainInfoGetInfo
     };
 
     R.curryService(gameTerrainInfoModel);
     return gameTerrainInfoModel;
 
     function gameTerrainInfoInitP() {
-      return R.thread('/data/terrains.json')(
-        httpService.getP,
-        R.condErrorP([
-          [ R.T, (reason) => {
-            console.error('Error getting terrains.json', reason);
-            return [];
-          } ]
-        ]),
-        updateTerrainsP
-      );
+      return httpService
+        .getP('/data/terrains.json')
+        .catch((error) => {
+          R.spyError('Error getting terrains.json')(error);
+          return [];
+        })
+        .then(updateTerrains);
     }
-    function gameTerrainInfoGetInfoP(path, infos) {
-      return new self.Promise((resolve, reject) => {
-        var info = R.path(path, infos);
-        if(R.isNil(info)) reject(`Terrain info "${path.join('.')}" not found`);
-        else resolve(info);
-      });
-    }
-    function updateTerrainsP(terrains) {
-      return R.threadP(terrains)(
-        updateTerrains
-      );
+    function gameTerrainInfoGetInfo(path, infos) {
+      return R.pathOr(null, path, infos);
     }
     function updateTerrains(terrains) {
       return R.thread(terrains)(

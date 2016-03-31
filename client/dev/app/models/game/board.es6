@@ -15,13 +15,12 @@
     return gameBoardModel;
 
     function gameBoardInitP() {
-      return R.thread('/data/boards.json')(
-        httpService.getP,
-        R.condErrorP([
-          [ R.T, R.pipe(R.spyError('Error getting boards.json'),
-                        R.always([])) ]
-        ])
-      );
+      return httpService
+        .getP('/data/boards.json')
+        .catch((error) => {
+          R.spyError('Error getting boards.json')(error);
+          return [];
+        });
     }
     function gameBoardName(board) {
       return R.prop('name', board);

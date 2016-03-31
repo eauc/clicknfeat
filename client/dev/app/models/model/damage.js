@@ -29,7 +29,7 @@
         }
       }
       function modelSetWarriorDamageP(factions, i, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
           var value = R.defaultTo(0, model.state.dmg.n);
           value = value === i ? 0 : i;
           value = Math.min(value, info.damage.n);
@@ -37,7 +37,7 @@
         });
       }
       function modelSetFieldDamageP(factions, i, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
           var value = R.defaultTo(0, model.state.dmg.f);
           value = value === i ? 0 : i;
           value = Math.min(value, info.damage.field);
@@ -45,7 +45,7 @@
         });
       }
       function modelSetGridDamageP(factions, line, col, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
           var value = model.state.dmg[col][line];
           value = value === 0 ? 1 : 0;
           value = R.exists(info.damage[col][line]) ? value : 0;
@@ -55,7 +55,7 @@
         });
       }
       function modelSetGridColDamageP(factions, col, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
           var full = R.thread(model.state.dmg[col])(R.addIndex(R.filter)(function (_val_, line) {
             return R.exists(info.damage[col][line]);
           }), R.reject(R.equals(1)), R.isEmpty);

@@ -39,31 +39,37 @@
     }
     function settingsBind(settings) {
       settings = R.defaultTo({}, settings);
-      return R.thread(DEFAULT_SETTINGS)(R.keys, R.reduce(function (mem, type) {
-        var settings_type = R.propOr({}, type, settings);
-        mem[type] = R.thread(DEFAULT_SETTINGS[type])(R.keys, R.reduce(function (mem, name) {
-          var base = Object.create(DEFAULT_SETTINGS[type][name]);
-          R.extend(base, R.propOr({}, name, settings_type));
-          mem[name] = base;
-          return mem;
-        }, {}));
-        return mem;
-      }, {}), function (binded) {
+      return R.thread(DEFAULT_SETTINGS)(R.keys, R.reduce(bindType, {}), function (binded) {
         return {
           default: DEFAULT_SETTINGS,
           current: binded
         };
       });
+
+      function bindType(mem, type) {
+        var settings_type = R.propOr({}, type, settings);
+        mem[type] = R.thread(DEFAULT_SETTINGS[type])(R.keys, R.reduce(bindName, {}));
+        return mem;
+
+        function bindName(mem, name) {
+          var base = Object.create(DEFAULT_SETTINGS[type][name]);
+          R.extend(base, R.propOr({}, name, settings_type));
+          mem[name] = base;
+          return mem;
+        }
+      }
     }
     function settingsUpdate(settings) {
-      R.thread(settings.current)(R.keys, R.forEach(function (type) {
+      R.thread(settings.current)(R.keys, R.forEach(updateType));
+      return settings;
+
+      function updateType(type) {
         R.thread(settings.current[type])(R.keys, R.filter(function (name) {
           return R.exists(UPDATERS[type][name]);
         }), R.forEach(function (name) {
           UPDATERS[type][name](settings.current[type][name]);
         }));
-      }));
-      return settings;
+      }
     }
     function settingsStore(settings) {
       return R.thread(settings.current)(R.spyWarn('Settings store'), localStorageService.save$(SETTINGS_STORAGE_KEY));

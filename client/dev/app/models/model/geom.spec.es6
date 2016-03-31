@@ -25,9 +25,10 @@ describe('model geom model', function() {
         other_info: { base_radius: 7.874 }
       };
 
-      this.gameFactionsModel.getModelInfoP.resolveWith((i) => {
-        return this.fake_info[i];
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.callFake((i) => {
+          return this.fake_info[i];
+        });
     });
 
     example(function(e, d) {
@@ -64,9 +65,10 @@ describe('model geom model', function() {
         other_info: { base_radius: 7.874 }
       };
 
-      this.gameFactionsModel.getModelInfoP.resolveWith((i) => {
-        return this.fake_info[i];
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.callFake((i) => {
+          return this.fake_info[i];
+        });
     });
 
     it('should move model B2B with <other>', function() {
@@ -98,9 +100,10 @@ describe('model geom model', function() {
       this.model = { state: { info: 'model', x: 240, y: 240 } };
       this.other = { state: { info: 'other', x: 120, y: 120 } };
 
-      this.gameFactionsModel.getModelInfoP.resolveWith((i) =>{
-        return info[i];
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.callFake((i) =>{
+          return info[i];
+        });
     });
 
     it('should compute the shortest line between both models', function() {
@@ -118,9 +121,10 @@ describe('model geom model', function() {
     });
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        base_radius: 7.874
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          base_radius: 7.874
+        });
     });
 
     it('should compute the point on model\s base edge in <direction>', function() {
@@ -163,9 +167,10 @@ describe('model geom model', function() {
       this.fake_info = {
         info: { base_radius: 9.842 }
       };
-      this.gameFactionsModel.getModelInfoP.resolveWith((i) => {
-        return this.fake_info[i];
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.callFake((i) => {
+          return this.fake_info[i];
+        });
       this.aoe = {
         state: { s: 20, x: 270, y: 270 }
       };

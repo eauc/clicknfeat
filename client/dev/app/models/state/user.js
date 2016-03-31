@@ -82,11 +82,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       R.threadP(state)(R.view(USER_LENS), userConnectionModel.sendChatP$(chat));
     }
     function stateOnUserConnectionClose(state) {
-      R.threadP(state)(R.view(USER_LENS), R.rejectIfP(R.complement(userModel.online), 'User not online when connection close'), function () {
+      return R.threadP(state)(R.view(USER_LENS), R.rejectIfP(R.complement(userModel.online), 'User not online when connection close'), function () {
         return promptService.promptP('alert', 'Server connection lost.').catch(R.always(null));
       }, function () {
         var state = appStateService.current();
-        return userModel.toggleOnlineP(state, R.view(USER_LENS, state));
+        return userModel.toggleOnlineP(R.view(USER_LENS, state));
       }, function (user) {
         return appStateService.reduce('User.set', user);
       });

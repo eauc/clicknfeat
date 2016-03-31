@@ -406,7 +406,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         }
       }
       function modelsDragContinue(state, event) {
-        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPosition), R.promiseAll, R.forEach(emitModelChangeEvent));
+        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPosition), R.allP, R.forEach(emitModelChangeEvent));
 
         function updateDragedModelPosition(model, index) {
           var pos = {
@@ -420,7 +420,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         }
       }
       function modelsDragEnd(state, event) {
-        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(resetDragedModelPosition), R.promiseAll, R.map(R.path(['state', 'stamp'])), setFinalPositions);
+        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(resetDragedModelPosition), R.allP, R.map(R.path(['state', 'stamp'])), setFinalPositions);
 
         function resetDragedModelPosition(model, index) {
           return modelModel.setPosition_(state.factions, drag_charge_target, drag_models_start_states[index], model);

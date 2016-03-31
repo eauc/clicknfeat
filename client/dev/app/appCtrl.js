@@ -5,7 +5,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appState', 'stateUser'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appState', 'stateData', 'stateUser'];
   function appCtrl($rootScope, $state, appStateService) {
     console.log('init appCtrl');
 
@@ -22,6 +22,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;
     $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
+    $rootScope.bindCell = bindCell;
 
     activate();
 
@@ -63,6 +64,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onStateChangeEvent(event, function () {
         scope.$digest();
       }, scope);
+    }
+    function bindCell(cell, listener, scope) {
+      var unbind = cell.bind(listener);
+      scope.$on('$destroy', unbind);
     }
 
     function isNavHidden() {

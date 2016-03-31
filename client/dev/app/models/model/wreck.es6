@@ -20,7 +20,7 @@
       }
       function modelGetWreckImageP(factions, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           R.prop('img'),
           (info_img) => R.thread(info_img)(
             R.find(R.propEq('type','wreck')),

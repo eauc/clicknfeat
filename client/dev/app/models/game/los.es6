@@ -191,14 +191,14 @@
           gameModelsModel.findStampP(origin, game.models),
           gameModelsModel.findStampP(target, game.models),
         ],
-        R.promiseAll,
+        R.allP,
         ([{ state: origin_state }, { state: target_state }]) => {
           return R.threadP()(
             () => [
               gameFactionsModel.getModelInfoP(origin_state.info, state.factions),
               gameFactionsModel.getModelInfoP(target_state.info, state.factions),
             ],
-            R.promiseAll,
+            R.allP,
             ([origin_info, target_info]) => [
               origin_state, origin_info,
               target_state, target_info,
@@ -213,7 +213,7 @@
       return R.threadP(game.models)(
         gameModelsModel.all,
         R.map(getModelCircle),
-        R.promiseAll,
+        R.allP,
         R.reject(circleIsNotIntervening),
         R.filter(circleModel.isInEnvelope$(envelope))
       );

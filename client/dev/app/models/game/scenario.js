@@ -11,7 +11,7 @@
       group: gameScenarioGroup,
       forName: gameScenarioForName,
       groupForName: gameScenarioGroupForName,
-      createObjectivesP: gameScenarioCreateObjectivesP,
+      createObjectives: gameScenarioCreateObjectives,
       isContesting: gameScenarioIsContesting,
       isKillboxing: gameScenarioIsKillboxing
     };
@@ -37,19 +37,17 @@
       if (R.isNil(name)) return undefined;
       return R.find(R.compose(R.find(R.propEq('name', name)), R.last), groups);
     }
-    function gameScenarioCreateObjectivesP(scenario) {
-      return new self.Promise(function (resolve, reject) {
-        var objectives = R.concat(R.propOr([], 'objectives', scenario), R.propOr([], 'flags', scenario));
-        if (R.isEmpty(objectives)) reject('No objectives');
+    function gameScenarioCreateObjectives(scenario) {
+      var objectives = R.concat(R.propOr([], 'objectives', scenario), R.propOr([], 'flags', scenario));
+      if (R.isEmpty(objectives)) return null;
 
-        var base = R.assoc('r', 0, R.head(objectives));
-        resolve({
-          base: R.pick(['x', 'y', 'r'], base),
-          models: R.map(function (objective) {
-            return R.thread(objective)(R.assoc('r', 0), R.assoc('info', R.concat(['scenario', 'models'], R.prop('info', objective))), pointModel.differenceFrom$(base));
-          }, objectives)
-        });
-      });
+      var base = R.assoc('r', 0, R.head(objectives));
+      return {
+        base: R.pick(['x', 'y', 'r'], base),
+        models: R.map(function (objective) {
+          return R.thread(objective)(R.assoc('r', 0), R.assoc('info', R.concat(['scenario', 'models'], R.prop('info', objective))), pointModel.differenceFrom$(base));
+        }, objectives)
+      };
     }
     function gameScenarioIsContesting(circle, scenario) {
       return R.exists(R.find(function (c) {

@@ -49,7 +49,7 @@
       function elementsFindAnyStampsP(stamps, elements) {
         return R.threadP(stamps)(
           R.map(findStampP),
-          R.promiseAll,
+          R.allP,
           R.rejectIfP(R.compose(R.isEmpty, R.reject(R.isNil)),
                      `No ${type} found`)
         );
@@ -135,7 +135,7 @@
           gameElementsModel.findAnyStampsP$(stamps),
           R.reject(R.isNil),
           R.map(callMethodOnElementP),
-          R.promiseAll
+          R.allP
         );
 
         function checkIfMethodExists() {

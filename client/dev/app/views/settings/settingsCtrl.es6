@@ -15,7 +15,8 @@
 
     function activate() {
       $scope.state.data_ready.then(updateEditSettings);
-      $scope.onStateChangeEvent('Settings.change', updateEditSettings, $scope);
+      $scope.onStateChangeEvent('Settings.current.change',
+                                updateEditSettings, $scope);
     }
     function updateEditSettings() {
       vm.edit = R.thread($scope.state)(

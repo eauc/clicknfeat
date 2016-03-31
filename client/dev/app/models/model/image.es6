@@ -21,7 +21,7 @@
       }
       function modelGetImageP(factions, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           R.prop('img'),
           (info_img) => {
             let img = R.thread(info_img)(
@@ -49,7 +49,7 @@
       }
       function modelSetNextImageP(factions, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           R.prop('img'),
           R.filter(R.propEq('type','default')),
           (imgs) => {

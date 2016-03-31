@@ -72,7 +72,10 @@
         let ret;
         try {
           ret = reducer.apply(null, [mem, event, args]);
-          return ( R.exists(ret) ? ret : mem);
+          return ( R.exists(ret) && 'Promise' !== R.type(ret)
+                   ? ret
+                   : mem
+                 );
         }
         catch(error) {
           console.error(`xxx> ${event} : reducer error`,

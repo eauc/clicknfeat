@@ -33,7 +33,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return R.threadP(templates)(fromStampsP$(R.always, method, args, stamps), updateTemplates$(templates));
     }
     function fromStampsP(onError, method, args, stamps, templates) {
-      return R.threadP(templates)(gameTemplatesModel.findAnyStampsP$(stamps), R.reject(R.isNil), R.map(callMethodOnTemplate), R.promiseAll);
+      return R.threadP(templates)(gameTemplatesModel.findAnyStampsP$(stamps), R.reject(R.isNil), R.map(callMethodOnTemplate), R.allP);
 
       function callMethodOnTemplate(template) {
         return self.Promise.resolve(templateModel.callP(method, args, template)).catch(onError(template));

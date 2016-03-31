@@ -74,10 +74,24 @@
       });
     }
     function appStateCell(update_event, update, initial) {
+      let events = pubSubService.create();
       let value = initial;
       appStateService.addListener(update_event, (_event_, [observable]) => {
         value = update(value, observable);
+        pubSubService.emit('update', [value], events);
       });
+      return {
+        bind: (listener) => {
+          const _listener = (_event_, [value]) => {
+            listener(value);
+          };
+          listener(value);
+          events = pubSubService.addListener('update', _listener, events);
+          return () => {
+            events = pubSubService.removeListener('update', _listener, events);
+          };
+        }
+      };
     }
     function appStateFilterEvent(event_in, event_out, filter) {
       appStateService.addListener(event_in, (_event_, [observable]) => {

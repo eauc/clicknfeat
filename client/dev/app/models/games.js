@@ -24,7 +24,7 @@
         return k.startsWith(LOCAL_GAME_STORAGE_KEY);
       }), R.map(function (k) {
         return localStorageService.loadP(k).catch(R.spyAndDiscardError('GamesModel: Failed to load local game', k));
-      }), R.promiseAll, R.reject(R.isNil), R.defaultTo([]), R.spyWarn('Games local load'));
+      }), R.allP, R.reject(R.isNil), R.defaultTo([]), R.spyWarn('Games local load'));
     }
     function gamesSaveLocalGame(game) {
       var key = LOCAL_GAME_STORAGE_KEY + game.local_stamp;

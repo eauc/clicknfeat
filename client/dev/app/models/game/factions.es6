@@ -24,7 +24,7 @@
       updateInfo: gameFactionsUpdateInfo,
       storeDesc: gameFactionsStoreDesc,
       buildReferences: gameFactionsBuildReferences,
-      getModelInfoP: gameFactionsGetModelInfoP,
+      getModelInfo: gameFactionsGetModelInfo,
       getListInfo: gameFactionsGetListInfo,
       buildModelsList: gameFactionsBuildModelsList,
       buildReferenceRegexp: gameFactionsBuildReferenceRegexp
@@ -59,13 +59,11 @@
           R.keys,
           R.map((faction) => {
             return httpModel.getP(data[faction])
-              .then((fdata) => { return [ faction, fdata ]; });
+              .then((fdata) => ([ faction, fdata ]));
           })
         ),
-        R.promiseAll,
-        R.reduce((mem, [name, faction]) => {
-          return R.assoc(name, faction, mem);
-        }, {})
+        R.allP,
+        R.reduce((mem, [name, faction]) => R.assoc(name, faction, mem), {})
       );
     }
     function gameFactionsUpdateDesc(factions) {
@@ -93,13 +91,13 @@
     function gameFactionsUpdateInfo({ base, desc, current}) {
       return { base: base,
                desc: desc,
-               current: R.pipe(
+               current: R.thread(current)(
                  R.toPairs,
                  R.sortBy(R.compose(R.prop('name'), R.nth(1))),
                  R.reduce((mem, [name, faction]) => {
                    return R.assoc(name, updateFaction(faction), mem);
                  }, {})
-               )(current)
+               )
              };
     }
     function gameFactionsStoreDesc(factions) {
@@ -117,12 +115,8 @@
         references: R.reduce(buildFactionRefs$(current), {}, R.keys(current))
       };
     }
-    function gameFactionsGetModelInfoP(path, factions) {
-      return new self.Promise((resolve, reject) => {
-        const info = R.path(['current',...path], factions);
-        if(R.isNil(info)) reject(`Model info ${path.join('.')} not found`);
-        else resolve(info);
-      });
+    function gameFactionsGetModelInfo(path, factions) {
+      return R.path(['current',...path], factions);
     }
     function gameFactionsGetListInfo(list, references) {
       const lineMatchesReference$ = R.curry(lineMatchesReference);

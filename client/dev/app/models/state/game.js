@@ -106,7 +106,7 @@
       }), connectOnlineGame, setGame$(state), broadcast('Game.load.success')).catch(onError);
 
       function waitForDataReady() {
-        return R.promiseAll([state.data_ready, state.user_ready, state.games_ready]);
+        return R.allP([state.data_ready, state.user_ready, state.games_ready]);
       }
       function loadStoredGameDataP() {
         return is_online ? gamesModel.loadOnlineGameP(is_private, id) : gamesModel.loadLocalGameP(id, state.local_games);

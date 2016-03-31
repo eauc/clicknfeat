@@ -169,7 +169,7 @@
       ).catch(onError);
 
       function waitForDataReady() {
-        return R.promiseAll([
+        return R.allP([
           state.data_ready,
           state.user_ready,
           state.games_ready

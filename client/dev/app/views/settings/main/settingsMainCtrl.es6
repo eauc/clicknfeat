@@ -15,10 +15,12 @@
     activate();
 
     function activate() {
-      $scope.digestOnStateChangeEvent('Exports.settings', $scope);
       $scope.onStateChangeEvent('Settings.loadFile', updateLoadResult, $scope);
+      $scope.bindCell($scope.state.exports.settings, (exp) => {
+        vm.export = exp;
+      }, $scope);
     }
-    function updateLoadResult(_event_, result) {
+    function updateLoadResult(_event_, [result]) {
       vm.load_settings_result = result;
       $scope.$digest();
     }

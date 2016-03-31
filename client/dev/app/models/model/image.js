@@ -19,7 +19,7 @@
         return !!R.find(R.equals('i'), model.state.dsp);
       }
       function modelGetImageP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), R.prop('img'), function (info_img) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.prop('img'), function (info_img) {
           var img = R.thread(info_img)(R.filter(R.propEq('type', 'default')), R.prop(model.state.img));
           if (modelModel.isLeaderDisplayed(model)) {
             img = R.thread(info_img)(R.filter(R.propEq('type', 'leader')), R.head, R.defaultTo(img));
@@ -32,7 +32,7 @@
         });
       }
       function modelSetNextImageP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), R.prop('img'), R.filter(R.propEq('type', 'default')), function (imgs) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.prop('img'), R.filter(R.propEq('type', 'default')), function (imgs) {
           return model.state.img >= imgs.length - 1 ? 0 : model.state.img + 1;
         }, function (next_img) {
           return R.assocPath(['state', 'img'], next_img, model);

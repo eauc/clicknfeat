@@ -18,7 +18,7 @@
       return modelAreaModel;
 
       function modelIsCtrlAreaDisplayedP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
           return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), model.state.dsp);
         });
       }

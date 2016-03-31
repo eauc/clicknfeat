@@ -22,7 +22,7 @@
     return userModel;
 
     function userIsValid(user) {
-      return R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
+      return R.propEq('init', false, user) || R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
     }
     function userSave(user) {
       return R.thread(user)(R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user));

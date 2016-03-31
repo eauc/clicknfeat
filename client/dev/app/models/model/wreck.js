@@ -18,7 +18,7 @@
         return !!R.find(R.equals('w'), model.state.dsp);
       }
       function modelGetWreckImageP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), R.prop('img'), function (info_img) {
+        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.prop('img'), function (info_img) {
           return R.thread(info_img)(R.find(R.propEq('type', 'wreck')), R.defaultTo(R.thread(info_img)(R.find(R.propEq('type', 'default')), R.defaultTo({}), R.assoc('link', null))));
         }, function (img) {
           var link = modelModel.isImageDisplayed(model) ? img.link : null;

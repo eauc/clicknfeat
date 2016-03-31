@@ -47,7 +47,7 @@
         gameTemplatesModel.findAnyStampsP$(stamps),
         R.reject(R.isNil),
         R.map(callMethodOnTemplate),
-        R.promiseAll
+        R.allP
       );
 
       function callMethodOnTemplate(template) {

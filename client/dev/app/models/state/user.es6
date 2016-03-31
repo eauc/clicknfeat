@@ -127,7 +127,7 @@
       );
     }
     function stateOnUserConnectionClose(state) {
-      R.threadP(state)(
+      return R.threadP(state)(
         R.view(USER_LENS),
         R.rejectIfP(R.complement(userModel.online),
                     'User not online when connection close'),
@@ -136,7 +136,7 @@
           .catch(R.always(null)),
         () => {
           const state = appStateService.current();
-          return userModel.toggleOnlineP(state, R.view(USER_LENS, state));
+          return userModel.toggleOnlineP(R.view(USER_LENS, state));
         },
         (user) => appStateService.reduce('User.set', user)
       );

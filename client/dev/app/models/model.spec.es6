@@ -15,24 +15,25 @@ describe('model model', function() {
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'] };
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        damage: { type: 'warrior', n: 1 }
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          damage: { type: 'warrior', n: 1 }
+        });
     });
 
-    it('should check whether model info exists', function() {
-      expect(this.gameFactionsModel.getModelInfoP)
+    it('should get model info exists', function() {
+      expect(this.gameFactionsModel.getModelInfo)
         .toHaveBeenCalledWith(['info'], 'factions');
     });
 
     context('when <state.info> is unknown', function() {
-      this.gameFactionsModel.getModelInfoP
-        .rejectWith('reason');
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue(null);
       this.expectContextError();
     }, function() {
       it('should reject creation', function() {
         expect(this.contextError).toEqual([
-          'reason'
+          'Unknown model'
         ]);
       });
     });
@@ -95,9 +96,10 @@ describe('model model', function() {
 
     example(function(e) {
       context('when <state.info> damage type is '+e.info.type, function() {
-        this.gameFactionsModel.getModelInfoP.resolveWith({
-          damage: e.info
-        });
+        this.gameFactionsModel.getModelInfo
+          .and.returnValue({
+            damage: e.info
+          });
       }, function() {
         it('should init <state> damage', function() {
           expect(this.context.state.dmg)
@@ -127,10 +129,11 @@ describe('model model', function() {
 
     example(function(e) {
       context('when <state.info> type is '+e.type, function() {
-        this.gameFactionsModel.getModelInfoP.resolveWith({
-          type: e.type,
-          damage: { type: 'warrior', n: 1 }
-        });
+        this.gameFactionsModel.getModelInfo
+          .and.returnValue({
+            type: e.type,
+            damage: { type: 'warrior', n: 1 }
+          });
       }, function() {
         it('should init counter display', function() {
           expect(this.modelModel.isCounterDisplayed('c', this.context))
@@ -146,11 +149,12 @@ describe('model model', function() {
     ]);
 
     context('when <state.info> is immovable', function() {
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        type: 'objective',
-        immovable: true,
-        damage: { type: 'warrior', n: 1 }
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          type: 'objective',
+          immovable: true,
+          damage: { type: 'warrior', n: 1 }
+        });
     }, function() {
       it('should init lock model', function() {
         expect(this.modelModel.isLocked(this.context))
@@ -274,15 +278,16 @@ describe('model model', function() {
   }, function() {
     beforeEach(function() {
       this.modelModel.checkStateP.and.callThrough();
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        base_radius: 7.874
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          base_radius: 7.874
+        });
       this.model = { state: { info: 'info' } };
       this.target = null;
     });
 
     it('should fetch model info', function() {
-      expect(this.gameFactionsModel.getModelInfoP)
+      expect(this.gameFactionsModel.getModelInfo)
         .toHaveBeenCalledWith('info', 'factions');
     });
 

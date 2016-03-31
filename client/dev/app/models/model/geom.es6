@@ -29,13 +29,13 @@
       function modelShortestLineToP(factions, other, model) {
         const direction = pointModel.directionTo(other.state, model.state);
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             const start = pointModel.translateInDirection(info.base_radius,
                                                             direction,
                                                             model.state);
             return R.threadP(factions)(
-              gameFactionsModel.getModelInfoP$(other.state.info),
+              gameFactionsModel.getModelInfo$(other.state.info),
               (other_info) => {
                 const end = pointModel.translateInDirection(other_info.base_radius,
                                                               direction+180,
@@ -50,7 +50,7 @@
       }
       function modelBaseEdgeInDirectionP(factions, dir, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => R.thread(model.state)(
             pointModel.translateInDirection$(info.base_radius, dir),
             R.pick(['x','y'])
@@ -59,9 +59,9 @@
       }
       function modelDistanceToP(factions, other, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => R.threadP(factions)(
-            gameFactionsModel.getModelInfoP$(other.state.info),
+            gameFactionsModel.getModelInfo$(other.state.info),
             (other_info) => {
               return ( pointModel.distanceTo(other.state, model.state) -
                        info.base_radius -
@@ -73,7 +73,7 @@
       }
       function modelDistanceToAoEP(factions, aoe, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             const aoe_size = aoe.state.s;
             return ( pointModel.distanceTo(aoe.state, model.state) -
@@ -90,9 +90,9 @@
           (model) => {
             const direction = pointModel.directionTo(model.state, other.state);
             return R.threadP(factions)(
-              gameFactionsModel.getModelInfoP$(model.state.info),
+              gameFactionsModel.getModelInfo$(model.state.info),
               (info) => R.threadP(factions)(
-                gameFactionsModel.getModelInfoP$(other.state.info),
+                gameFactionsModel.getModelInfo$(other.state.info),
                 (other_info) => {
                   const distance = info.base_radius + other_info.base_radius;
                   const position = pointModel.translateInDirection(distance, direction,

@@ -46,8 +46,8 @@ describe('model damage model', function() {
       .setWarriorDamageP('factions', this.i, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP
-        .resolveWith({ damage: { n: 10 } });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({ damage: { n: 10 } });
     });
 
     context('when <i> is different from current damage', function() {
@@ -84,8 +84,8 @@ describe('model damage model', function() {
       .setFieldDamageP('factions', this.i, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP
-        .resolveWith({ damage: { field: 10 } });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({ damage: { field: 10 } });
     });
 
     context('when <i> is different from current field damage', function() {
@@ -121,8 +121,8 @@ describe('model damage model', function() {
       .setGridDamageP('factions', this.line, this.col, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP
-        .resolveWith({ damage: { 'col': [ null, 'b', 'b', null ] } });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({ damage: { 'col': [ null, 'b', 'b', null ] } });
       this.col = 'col';
     });
 
@@ -167,11 +167,12 @@ describe('model damage model', function() {
       .setGridColDamageP('factions', this.col, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        damage: { 'col1': [ null, 'b', 'b', null ],
-                  'col2': [  'b', 'b', 'b', null ],
-                  'col3': [ null, 'b', 'b',  'b' ] }
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          damage: { 'col1': [ null, 'b', 'b', null ],
+                    'col2': [  'b', 'b', 'b', null ],
+                    'col3': [ null, 'b', 'b',  'b' ] }
+        });
     });
 
     example(function(e, d) {

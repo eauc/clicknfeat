@@ -17,15 +17,14 @@
     activate();
 
     function activate() {
-      self.requestAnimationFrame(updateFactions);
-      $scope.onStateChangeEvent('Factions.change', updateFactions, $scope);
+      $scope.state.data_ready.then(updateFactions);
       $scope.onStateChangeEvent('Factions.loadDescFile', updateLoadResult, $scope);
     }
     function updateFactions() {
       vm.factions = R.path(['factions', 'base'], $scope.state);
       $scope.$digest();
     }
-    function updateLoadResult(_event_, result) {
+    function updateLoadResult(_event_, [result]) {
       $scope.result = result;
       $scope.$digest();
     }

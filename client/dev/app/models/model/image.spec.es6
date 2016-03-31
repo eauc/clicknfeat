@@ -11,24 +11,25 @@ describe('model model', function() {
     return this.modelModel.getImageP('factions', this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
+        });
       this.model = {
         state: { dsp:[], img: 0, info: 'info' }
       };
     });
 
     it('should fetch model info from <factions>', function() {
-      expect(this.gameFactionsModel.getModelInfoP)
+      expect(this.gameFactionsModel.getModelInfo)
         .toHaveBeenCalledWith('info', 'factions');
     });
 
     example(function(e, d) {
       describe(d, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfoP
-            .resolveWith({ img: e.info_img });
+          this.gameFactionsModel.getModelInfo
+            .and.returnValue({ img: e.info_img });
           this.model = {
             state: { dsp: e.dsp, img: e.img, info: 'info' }
           };
@@ -77,8 +78,8 @@ describe('model model', function() {
         this.model = this.modelModel.setImageDisplay(e.is_displayed, this.model);
       }, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfoP
-            .resolveWith({ img: e.info_img });
+          this.gameFactionsModel.getModelInfo
+            .and.returnValue({ img: e.info_img });
         });
 
         it('should return leader image info for <model> if it exists, '+d, function() {
@@ -117,8 +118,8 @@ describe('model model', function() {
         this.model = this.modelModel.setImageDisplay(e.is_displayed, this.model);
       }, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfoP
-            .resolveWith({ img: e.info_img });
+          this.gameFactionsModel.getModelInfo
+            .and.returnValue({ img: e.info_img });
         });
 
         it('should return incorporeal image info for <model> if it exists, '+d, function() {
@@ -155,13 +156,14 @@ describe('model model', function() {
       this.model = {
         state: { dsp:[], img: 0, info: 'info' }
       };
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
+        });
     });
 
     it('should fetch model info from <factions>', function() {
-      expect(this.gameFactionsModel.getModelInfoP)
+      expect(this.gameFactionsModel.getModelInfo)
         .toHaveBeenCalledWith('info', 'factions');
     });
 
@@ -171,8 +173,8 @@ describe('model model', function() {
           this.model = {
             state: { img: e.img, info: 'info' }
           };
-          this.gameFactionsModel.getModelInfoP
-            .resolveWith({ img: e.info_img });
+          this.gameFactionsModel.getModelInfo
+            .and.returnValue({ img: e.info_img });
         });
 
         it('should set next image <model>, '+d, function() {

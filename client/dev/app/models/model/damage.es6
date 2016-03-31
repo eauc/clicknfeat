@@ -35,7 +35,7 @@
       }
       function modelSetWarriorDamageP(factions, i, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             let value = R.defaultTo(0, model.state.dmg.n);
             value = (value === i) ? 0 : i;
@@ -49,7 +49,7 @@
       }
       function modelSetFieldDamageP(factions, i, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             let value = R.defaultTo(0, model.state.dmg.f);
             value = (value === i) ? 0 : i;
@@ -60,7 +60,7 @@
       }
       function modelSetGridDamageP(factions, line, col, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             let value = model.state.dmg[col][line];
             value = (value === 0) ? 1 : 0;
@@ -74,7 +74,7 @@
       }
       function modelSetGridColDamageP(factions, col, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             const full = R.thread(model.state.dmg[col])(
               R.addIndex(R.filter)((_val_, line) => R.exists(info.damage[col][line])),

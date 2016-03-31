@@ -32,7 +32,7 @@
         return R.threadP(create)(
           R.prop(`${type}s`),
           R.map(addElementP),
-          R.promiseAll,
+          R.allP,
           R.reject(R.isNil),
           R.rejectIfP(R.isEmpty, `No valid ${type} definition`),
           onNewElements
@@ -66,7 +66,7 @@
         return R.threadP(ctxt)(
           R.prop(`${type}s`),
           R.map(createElementFnP(state)),
-          R.promiseAll,
+          R.allP,
           R.reject(R.isNil),
           R.rejectIfP(R.isEmpty, `No valid ${type} definition`),
           onCreatedElements$('remote', state, game)

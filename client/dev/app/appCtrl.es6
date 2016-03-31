@@ -6,6 +6,7 @@
     '$rootScope',
     '$state',
     'appState',
+    'stateData',
     'stateUser',
   ];
   function appCtrl($rootScope,
@@ -26,6 +27,7 @@
     // $rootScope.stateChangeEvent = stateChangeEvent;
     $rootScope.onStateChangeEvent = onStateChangeEvent;
     $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
+    $rootScope.bindCell = bindCell;
 
     activate();
 
@@ -59,6 +61,10 @@
       onStateChangeEvent(event, () => {
         scope.$digest();
       }, scope);
+    }
+    function bindCell(cell, listener, scope) {
+      const unbind = cell.bind(listener);
+      scope.$on('$destroy', unbind);
     }
 
     function isNavHidden() {

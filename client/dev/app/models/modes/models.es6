@@ -639,7 +639,7 @@
       function modelsDragContinue(state, event) {
         return R.threadP(drag_models_start_selection)(
           R.addIndex(R.map)(updateDragedModelPosition),
-          R.promiseAll,
+          R.allP,
           R.forEach(emitModelChangeEvent)
         );
 
@@ -658,7 +658,7 @@
       function modelsDragEnd(state, event) {
         return R.threadP(drag_models_start_selection)(
           R.addIndex(R.map)(resetDragedModelPosition),
-          R.promiseAll,
+          R.allP,
           R.map(R.path(['state','stamp'])),
           setFinalPositions
         );

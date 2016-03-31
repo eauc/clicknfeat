@@ -172,7 +172,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function getOriginTargetInfo(state, game, origin, target) {
       return R.threadP()(function () {
         return [gameModelsModel.findStampP(origin, game.models), gameModelsModel.findStampP(target, game.models)];
-      }, R.promiseAll, function (_ref5) {
+      }, R.allP, function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2);
 
         var origin_state = _ref6[0].state;
@@ -180,7 +180,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         return R.threadP()(function () {
           return [gameFactionsModel.getModelInfoP(origin_state.info, state.factions), gameFactionsModel.getModelInfoP(target_state.info, state.factions)];
-        }, R.promiseAll, function (_ref7) {
+        }, R.allP, function (_ref7) {
           var _ref8 = _slicedToArray(_ref7, 2);
 
           var origin_info = _ref8[0];
@@ -190,7 +190,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       });
     }
     function computeIntervenings(state, game, ignore, target, target_circle, origin, envelope) {
-      return R.threadP(game.models)(gameModelsModel.all, R.map(getModelCircle), R.promiseAll, R.reject(circleIsNotIntervening), R.filter(circleModel.isInEnvelope$(envelope)));
+      return R.threadP(game.models)(gameModelsModel.all, R.map(getModelCircle), R.allP, R.reject(circleIsNotIntervening), R.filter(circleModel.isInEnvelope$(envelope)));
 
       function getModelCircle(model) {
         return R.threadP()(function () {

@@ -25,7 +25,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       updateInfo: gameFactionsUpdateInfo,
       storeDesc: gameFactionsStoreDesc,
       buildReferences: gameFactionsBuildReferences,
-      getModelInfoP: gameFactionsGetModelInfoP,
+      getModelInfo: gameFactionsGetModelInfo,
       getListInfo: gameFactionsGetListInfo,
       buildModelsList: gameFactionsBuildModelsList,
       buildReferenceRegexp: gameFactionsBuildReferenceRegexp
@@ -56,12 +56,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             return [faction, fdata];
           });
         }));
-      }, R.promiseAll, R.reduce(function (mem, _ref) {
+      }, R.allP, R.reduce(function (mem, _ref) {
         var _ref2 = _slicedToArray(_ref, 2);
 
         var name = _ref2[0];
         var faction = _ref2[1];
-
         return R.assoc(name, faction, mem);
       }, {}));
     }
@@ -89,14 +88,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       return { base: base,
         desc: desc,
-        current: R.pipe(R.toPairs, R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, _ref5) {
+        current: R.thread(current)(R.toPairs, R.sortBy(R.compose(R.prop('name'), R.nth(1))), R.reduce(function (mem, _ref5) {
           var _ref6 = _slicedToArray(_ref5, 2);
 
           var name = _ref6[0];
           var faction = _ref6[1];
 
           return R.assoc(name, updateFaction(faction), mem);
-        }, {}))(current)
+        }, {}))
       };
     }
     function gameFactionsStoreDesc(factions) {
@@ -114,11 +113,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         references: R.reduce(buildFactionRefs$(current), {}, R.keys(current))
       };
     }
-    function gameFactionsGetModelInfoP(path, factions) {
-      return new self.Promise(function (resolve, reject) {
-        var info = R.path(['current'].concat(_toConsumableArray(path)), factions);
-        if (R.isNil(info)) reject('Model info ' + path.join('.') + ' not found');else resolve(info);
-      });
+    function gameFactionsGetModelInfo(path, factions) {
+      return R.path(['current'].concat(_toConsumableArray(path)), factions);
     }
     function gameFactionsGetListInfo(list, references) {
       var lineMatchesReference$ = R.curry(lineMatchesReference);

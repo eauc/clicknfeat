@@ -27,12 +27,12 @@
     return userModel;
 
     function userIsValid(user) {
-      return R.thread(user)(
+      return ( R.propEq('init', false, user) || R.thread(user)(
         R.pathOr('', ['state','name']),
         s.trim,
         R.length,
         R.lt(0)
-      );
+      ) );
     }
     function userSave(user) {
       return R.thread(user)(

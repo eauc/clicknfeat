@@ -37,7 +37,9 @@
     return modelModel;
 
     function modelCreateP(factions, temp) {
-      return R.threadP(factions)(gameFactionsModel.getModelInfoP$(temp.info), function (info) {
+      return R.threadP(factions)(gameFactionsModel.getModelInfo$(temp.info), R.ifElse(R.isNil, function () {
+        return R.rejectP('Unknown model');
+      }, function (info) {
         var model = {
           state: {
             x: 0, y: 0, r: 0,
@@ -66,7 +68,7 @@
         }
         model.state = R.deepExtend(model.state, temp);
         return modelModel.checkStateP(factions, null, model);
-      });
+      }));
     }
     function modelUser(model) {
       return R.path(['state', 'user'], model);
@@ -75,7 +77,7 @@
       return R.pathEq(['state', 'user'], user, model);
     }
     function modelCheckStateP(factions, target, model) {
-      return R.threadP(factions)(gameFactionsModel.getModelInfoP$(model.state.info), function (info) {
+      return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
         var radius = info.base_radius;
         return R.thread(model.state)(R.assoc('x', Math.max(0 + radius, Math.min(480 - radius, model.state.x))), R.assoc('y', Math.max(0 + radius, Math.min(480 - radius, model.state.y))), function (state) {
           return R.reduce(function (state, checker) {

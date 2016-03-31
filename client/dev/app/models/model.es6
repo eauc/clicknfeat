@@ -96,39 +96,43 @@
 
     function modelCreateP(factions, temp) {
       return R.threadP(factions)(
-        gameFactionsModel.getModelInfoP$(temp.info),
-        (info) => {
-          const model = {
-            state: {
-              x: 0, y: 0, r: 0,
-              img: 0,
-              dsp: ['i'],
-              eff: [],
-              l: [],
-              c: 0, s: 0,
-              u: null,
-              aur: null,
-              are: null,
-              rml: null,
-              cml: null,
-              pml: [null,false],
-              cha: null,
-              pla: null,
-              dmg: initDamage(info.damage),
-              stamp: R.guid()
+        gameFactionsModel.getModelInfo$(temp.info),
+        R.ifElse(
+          R.isNil,
+          () => R.rejectP('Unknown model'),
+          (info) => {
+            const model = {
+              state: {
+                x: 0, y: 0, r: 0,
+                img: 0,
+                dsp: ['i'],
+                eff: [],
+                l: [],
+                c: 0, s: 0,
+                u: null,
+                aur: null,
+                are: null,
+                rml: null,
+                cml: null,
+                pml: [null,false],
+                cha: null,
+                pla: null,
+                dmg: initDamage(info.damage),
+                stamp: R.guid()
+              }
+            };
+            if(info.type === 'wardude' ||
+               info.type === 'beast' ||
+               info.type === 'jack') {
+              model.state.dsp = R.append('c', model.state.dsp);
             }
-          };
-          if(info.type === 'wardude' ||
-             info.type === 'beast' ||
-             info.type === 'jack') {
-            model.state.dsp = R.append('c', model.state.dsp);
+            if(info.immovable) {
+              model.state.lk = true;
+            }
+            model.state = R.deepExtend(model.state, temp);
+            return modelModel.checkStateP(factions, null, model);
           }
-          if(info.immovable) {
-            model.state.lk = true;
-          }
-          model.state = R.deepExtend(model.state, temp);
-          return modelModel.checkStateP(factions, null, model);
-        }
+        )
       );
     }
     function modelUser(model) {
@@ -139,7 +143,7 @@
     }
     function modelCheckStateP(factions, target, model) {
       return R.threadP(factions)(
-        gameFactionsModel.getModelInfoP$(model.state.info),
+        gameFactionsModel.getModelInfo$(model.state.info),
         (info) => {
           const radius = info.base_radius;
           return R.thread(model.state)(

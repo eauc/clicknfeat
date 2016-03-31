@@ -5,10 +5,11 @@ describe('model area model', function() {
       this.modelModel = modelModel;
 
       this.gameFactionsModel = spyOnService('gameFactions');
-      this.gameFactionsModel.getModelInfoP.resolveWith({
-        type: 'wardude',
-        focus: 8
-      });
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue({
+          type: 'wardude',
+          focus: 8
+        });
     }
   ]));
 

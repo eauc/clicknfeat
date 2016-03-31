@@ -20,7 +20,7 @@
 
       function modelIsCtrlAreaDisplayedP(factions, model) {
         return R.threadP(factions)(
-          gameFactionsModel.getModelInfoP$(model.state.info),
+          gameFactionsModel.getModelInfo$(model.state.info),
           (info) => {
             return ( info.type === 'wardude' &&
                      ( 'Number' === R.type(info.focus) ||

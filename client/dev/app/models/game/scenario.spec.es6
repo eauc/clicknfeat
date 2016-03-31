@@ -82,18 +82,15 @@ describe('gameScenario model', function() {
     ]);
   });
 
-  context('createObjectivesP()', function() {
+  context('createObjectives()', function() {
     return this.gameScenarioModel
-      .createObjectivesP(this.scenario);
+      .createObjectives(this.scenario);
   }, function() {
     context('when scenario does not have objectives', function() {
       this.scenario = {};
-      this.expectContextError();
     }, function() {
-      it('should reject creation', function() {
-        expect(this.contextError).toEqual([
-          'No objectives'
-        ]);
+      it('should return null', function() {
+        expect(this.context).toBe(null);
       });
     });
 
