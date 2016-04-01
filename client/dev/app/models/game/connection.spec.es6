@@ -3,11 +3,11 @@ describe('gameConnection model', function() {
     this.gameConnectionModel = gameConnectionModel;
 
     this.websocketService = spyOnService('websocket');
+    this.appStateService = spyOnService('appState');
   }]));
 
   context('create()', function() {
-    return this.gameConnectionModel
-      .create({});
+    return this.gameConnectionModel.create({});
   }, function() {
     it('should initialize a connection state', function() {
       expect(this.context.connection)
@@ -17,11 +17,10 @@ describe('gameConnection model', function() {
 
   context('openP()', function() {
     return this.gameConnectionModel
-      .openP(this.user_name, this.state, this.game);
+      .openP(this.user_name, this.game);
   }, function() {
     beforeEach(function() {
       this.user_name = 'user';
-      this.state = {};
 
       this.game = this.gameConnectionModel.create({
         public_stamp: 'public_stamp'
@@ -69,15 +68,14 @@ describe('gameConnection model', function() {
   });
 
   context('close()', function() {
-    return this.gameConnectionModel
-      .close(this.game);
+    return this.gameConnectionModel.close(this.game);
   }, function() {
     beforeEach(function() {
       this.game = this.gameConnectionModel.create({
         public_stamp: 'public_stamp'
       });
       return this.gameConnectionModel
-        .openP('user', {}, this.game)
+        .openP('user', this.game)
         .then((game) => {
           this.game = game;
         });
@@ -110,9 +108,9 @@ describe('gameConnection model', function() {
     });
   });
 
-  context('sendEventP(<event>)', function() {
+  context('sendEvent(<event>)', function() {
     return this.gameConnectionModel
-      .sendEventP(this.event, this.game);
+      .sendEvent(this.event, this.game);
   }, function() {
     beforeEach(function() {
       this.game = this.gameConnectionModel.create({
@@ -120,7 +118,7 @@ describe('gameConnection model', function() {
       });
       this.event = 'event';
       return this.gameConnectionModel
-        .openP('user', {}, this.game)
+        .openP('user', this.game)
         .then((game) => {
           this.game = game;
         });
@@ -139,11 +137,8 @@ describe('gameConnection model', function() {
       this.game = this.gameConnectionModel.create({
         public_stamp: 'public_stamp'
       });
-      this.state = jasmine.createSpyObj('state', [
-        'queueEventP'
-      ]);
       return this.gameConnectionModel
-        .openP('user', this.state, this.game)
+        .openP('user', this.game)
         .then(() => {
           this.handlers = this.websocketService.createP
             .calls.first().args[2];
@@ -158,7 +153,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.command.replay" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.command.replay', this.msg.cmd);
       });
     });
@@ -171,7 +166,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.command.replayBatch" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.command.replayBatch', this.msg.cmds);
       });
     });
@@ -184,7 +179,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.command.undo" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.command.undo', this.msg.cmd);
       });
     });
@@ -197,7 +192,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.newChatMsg" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.newChatMsg', this.msg);
       });
     });
@@ -210,7 +205,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.setCmds" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.setCmds', this.msg);
       });
     });
@@ -223,7 +218,7 @@ describe('gameConnection model', function() {
       });
 
       it('should send "Game.setPlayers" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.setPlayers', this.msg.players);
       });
     });
@@ -232,30 +227,30 @@ describe('gameConnection model', function() {
       return this.handlers.close();
     }, function() {
       it('should send "Game.connection.close" event', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Game.connection.close');
       });
     });
   });
 
-  context('sendReplayCommandP(<cmd>, <game>)', function() {
+  context('sendReplayCommand(<cmd>, <game>)', function() {
     return this.gameConnectionModel
-      .sendReplayCommandP(this.cmd, this.game);
+      .sendReplayCommand(this.cmd, this.game);
   }, function() {
     beforeEach(function() {
       this.cmd = 'cmd';
       this.game = { commands_log: [ 'log1' ] };
 
-      spyOn(this.gameConnectionModel, 'sendEventP');
-      this.gameConnectionModel.sendEventP$ =
-        R.curryN(2, this.gameConnectionModel.sendEventP);
-      spyReturnPromise(this.gameConnectionModel.sendEventP);
-      this.gameConnectionModel.sendEventP
-        .resolveWith(this.game);
+      spyOn(this.gameConnectionModel, 'sendEvent');
+      this.gameConnectionModel.sendEvent$ =
+        R.curryN(2, this.gameConnectionModel.sendEvent);
+      spyReturnPromise(this.gameConnectionModel.sendEvent);
+      this.gameConnectionModel.sendEvent
+        .and.returnValue(this.game);
     });
 
     it('should send "replayCmd" event', function() {
-      expect(this.gameConnectionModel.sendEventP)
+      expect(this.gameConnectionModel.sendEvent)
         .toHaveBeenCalledWith({
           type: 'replayCmd',
           cmd: 'cmd'
@@ -270,24 +265,24 @@ describe('gameConnection model', function() {
     });
   });
 
-  context('sendUndoCommandP(<cmd>, <game>)', function() {
+  context('sendUndoCommand(<cmd>, <game>)', function() {
     return this.gameConnectionModel
-      .sendUndoCommandP(this.cmd, this.game);
+      .sendUndoCommand(this.cmd, this.game);
   }, function() {
     beforeEach(function() {
       this.cmd = 'cmd';
       this.game = { undo_log: [ 'log1' ] };
 
-      spyOn(this.gameConnectionModel, 'sendEventP');
-      this.gameConnectionModel.sendEventP$ =
-        R.curryN(2, this.gameConnectionModel.sendEventP);
-      spyReturnPromise(this.gameConnectionModel.sendEventP);
-      this.gameConnectionModel.sendEventP
-        .resolveWith(this.game);
+      spyOn(this.gameConnectionModel, 'sendEvent');
+      this.gameConnectionModel.sendEvent$ =
+        R.curryN(2, this.gameConnectionModel.sendEvent);
+      spyReturnPromise(this.gameConnectionModel.sendEvent);
+      this.gameConnectionModel.sendEvent
+        .and.returnValue(this.game);
     });
 
     it('should send "undoCmd" event', function() {
-      expect(this.gameConnectionModel.sendEventP)
+      expect(this.gameConnectionModel.sendEvent)
         .toHaveBeenCalledWith({
           type: 'undoCmd',
           cmd: 'cmd'

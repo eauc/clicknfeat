@@ -1,20 +1,19 @@
-xdescribe('stateGame model', function() {
+describe('stateGame model', function() {
   beforeEach(inject([
     'stateGame',
     function(stateGameModel) {
       this.stateGameModel = stateGameModel;
 
       this.gameModel = spyOnService('game');
+      this.appStateService = spyOnService('appState');
 
       this.state = {
-        game: 'game',
-        eventP: jasmine.createSpy('eventP'),
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
+        game: 'game'
       };
     }
   ]));
 
-  context('onInvitePlayer(<cmd>, <args>)', function() {
+  xcontext('onInvitePlayer(<cmd>, <args>)', function() {
     return this.stateGameModel
       .onGameInvitePlayer(this.state, 'event', 'player');
   }, function() {
@@ -32,129 +31,120 @@ xdescribe('stateGame model', function() {
     });
   });
 
-  context('onGameCommandExecute(<cmd>, <args>)', function() {
+  context('onCommandExecute(<cmd>, <args>)', function() {
     return this.stateGameModel
-      .onGameCommandExecute(this.state, 'event', 'cmd', 'args');
+      .onCommandExecute(this.state, 'event', ['cmd', 'args']);
   }, function() {
     it('should execute game command', function() {
       expect(this.gameModel.executeCommandP)
-        .toHaveBeenCalledWith('cmd', 'args', this.state, 'game');
+        .toHaveBeenCalledWith('cmd', 'args', 'game');
       expectGameUpdate(this, 'game.executeCommandP.returnValue');
     });
   });
 
-  context('onGameCommandReplay(<cmd>)', function() {
+  context('onCommandReplay(<cmd>)', function() {
     return this.stateGameModel
-      .onGameCommandReplay(this.state, 'event', 'cmd');
+      .onCommandReplay(this.state, 'event', ['cmd']);
   }, function() {
     it('should replay game command', function() {
       expect(this.gameModel.replayCommandP)
-        .toHaveBeenCalledWith('cmd', this.state, 'game');
+        .toHaveBeenCalledWith('cmd', 'game');
       expectGameUpdate(this, 'game.replayCommandP.returnValue');
     });
   });
 
-  context('onGameCommandReplayBatch(<cmds>)', function() {
+  context('onCommandReplayBatch(<cmds>)', function() {
     return this.stateGameModel
-      .onGameCommandReplayBatch(this.state, 'event', 'cmds');
+      .onCommandReplayBatch(this.state, 'event', ['cmds']);
   }, function() {
     it('should replay game command', function() {
       expect(this.gameModel.replayCommandsBatchP)
-        .toHaveBeenCalledWith('cmds', this.state, 'game');
+        .toHaveBeenCalledWith('cmds', 'game');
       expectGameUpdate(this, 'game.replayCommandsBatchP.returnValue');
     });
   });
 
-  context('onGameCommandReplayNext()', function() {
+  context('onCommandReplayNext()', function() {
     return this.stateGameModel
-      .onGameCommandReplayNext(this.state);
+      .onCommandReplayNext(this.state);
   }, function() {
     it('should replay game next command', function() {
       expect(this.gameModel.replayNextCommandP)
-        .toHaveBeenCalledWith(this.state, 'game');
+        .toHaveBeenCalledWith('game');
       expectGameUpdate(this, 'game.replayNextCommandP.returnValue');
     });
   });
 
-  context('onGameCommandUndo(<cmd>)', function() {
+  context('onCommandUndo(<cmd>)', function() {
     return this.stateGameModel
-      .onGameCommandUndo(this.state, 'event', 'cmd');
+      .onCommandUndo(this.state, 'event', ['cmd']);
   }, function() {
     it('should undo game command', function() {
       expect(this.gameModel.undoCommandP)
-        .toHaveBeenCalledWith('cmd', this.state, 'game');
+        .toHaveBeenCalledWith('cmd', 'game');
       expectGameUpdate(this, 'game.undoCommandP.returnValue');
     });
   });
 
-  context('onGameCommandUndoLast()', function() {
+  context('onCommandUndoLast()', function() {
     return this.stateGameModel
-      .onGameCommandUndoLast(this.state, 'event');
+      .onCommandUndoLast(this.state);
   }, function() {
     it('should undo last game command', function() {
       expect(this.gameModel.undoLastCommandP)
-        .toHaveBeenCalledWith(this.state, 'game');
+        .toHaveBeenCalledWith('game');
       expectGameUpdate(this, 'game.undoLastCommandP.returnValue');
     });
   });
 
-  context('onGameNewChatMsg(<msg>)', function() {
+  context('onNewChatMsg(<msg>)', function() {
     return this.stateGameModel
-      .onGameNewChatMsg(this.state, 'event', { chat: 'chat' });
+      .onNewChatMsg(this.state, 'event', [{ chat: 'chat' }]);
   }, function() {
     beforeEach(function() {
       this.state.game = {};
     });
 
     it('should append <msg> to game chat', function() {
-      expect(this.state.game.chat)
+      expect(this.context.game.chat)
         .toEqual(['chat']);
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.change');
     });
   });
 
-  context('onGameSetCmds(<msg>)', function() {
+  context('onSetCmds(<msg>)', function() {
     return this.stateGameModel
-      .onGameSetCmds(this.state, 'event', {
+      .onSetCmds(this.state, 'event', [{
         where: 'where',
         cmds: 'cmds'
-      });
+      }]);
   }, function() {
     beforeEach(function() {
       this.state.game = {};
     });
 
     it('should set game.<msg.where> to <msg.cmds>', function() {
-
-      expect(this.state.game.where)
+      expect(this.context.game.where)
         .toEqual('cmds');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.change');
     });
   });
 
-  context('onGameSetPlayers(<players>)', function() {
+  context('onSetPlayers(<players>)', function() {
     return this.stateGameModel
-      .onGameSetPlayers(this.state, 'event', 'players');
+      .onSetPlayers(this.state, 'event', ['players']);
   }, function() {
     beforeEach(function() {
       this.state.game = {};
     });
 
     it('should set game.players to <players>', function() {
-      expect(this.state.game.players)
+      expect(this.context.game.players)
         .toEqual('players');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.players.change');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.change');
     });
   });
 
-  context('onGameConnectionClose()', function() {
+  context('onConnectionClose()', function() {
     return this.stateGameModel
-      .onGameConnectionClose(this.state);
+      .onConnectionClose(this.state);
   }, function() {
     beforeEach(function() {
       this.state.game = {};
@@ -162,17 +152,13 @@ xdescribe('stateGame model', function() {
     });
 
     it('should cleanup game connection', function() {
-      expect(this.state.game)
+      expect(this.context.game)
         .toBe('gameConnection.cleanup.returnValue');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.change');
     });
   });
 
   function expectGameUpdate(ctxt, game) {
-    expect(ctxt.state.game)
-      .toBe(game);
-    expect(ctxt.state.queueChangeEventP)
-      .toHaveBeenCalledWith('Game.change');
+    expect(ctxt.appStateService.reduce)
+      .toHaveBeenCalledWith('Game.set', game);
   }
 });

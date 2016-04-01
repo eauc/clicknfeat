@@ -38,7 +38,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       appStateService.onChange('AppState.change', 'User.connection.change', R.compose(R.prop('connection'), R.view(USER_LENS)));
       appStateService.onChange('AppState.change', 'User.isValid', R.compose(userModel.isValid, R.view(USER_LENS)));
       appStateService.onChange('AppState.change', 'User.isOnline', R.compose(userModel.online, R.view(USER_LENS)));
-      appStateService.onChange('User.connection.change', 'Games.online.change', R.prop('games'));
+      appStateService.onChange('User.connection.change', 'Games.online.change', R.pipe(R.defaultTo({}), R.prop('games')));
       appStateService.onChange('AppState.change', 'User.chat.new', R.pipe(R.view(USER_LENS), R.pathOr([], ['connection', 'chat']), R.last));
       appStateService.filterEvent('User.chat.new', 'User.chat.receive', stateUserModel.filterChatReceived);
       appStateService.cell('User.isOnline', stateUserModel.updateOnlineKeepAlive, null);

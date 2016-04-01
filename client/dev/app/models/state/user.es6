@@ -72,7 +72,7 @@
       appStateService
         .onChange('User.connection.change',
                   'Games.online.change',
-                  R.prop('games'));
+                  R.pipe(R.defaultTo({}), R.prop('games')));
       appStateService
         .onChange('AppState.change',
                   'User.chat.new',

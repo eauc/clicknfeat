@@ -1,9 +1,7 @@
-describe('commandsModel', function() {
+describe('commands model', function() {
   beforeEach(inject([ 'commands', function(commandsModel) {
     this.commandsModel = commandsModel;
 
-    this.state = { state: 'state' };
-    this.game = { game: 'game' };
     this.game = { game: 'game' };
     this.cmd1 = jasmine.createSpyObj('cmd1', [
       'executeP', 'replayP', 'undoP'
@@ -18,7 +16,7 @@ describe('commandsModel', function() {
 
   context('executeP(<name>, <args>, <state>, <game>)', function() {
     return this.commandsModel
-      .executeP(this.name, this.args, this.state, this.game);
+      .executeP(this.name, this.args, this.game);
   }, function() {
     beforeEach(function() {
       this.cmd1.executeP.and.returnValue([
@@ -50,7 +48,7 @@ describe('commandsModel', function() {
       }, function() {
         it('should proxy <name>.execute', function() {
           expect(this[e.cmd].executeP)
-            .toHaveBeenCalledWith('arg1', 'arg2', this.state, this.game);
+            .toHaveBeenCalledWith('arg1', 'arg2', this.game);
         });
 
         it('should return context', function() {
@@ -81,7 +79,7 @@ describe('commandsModel', function() {
 
   context('replayP(<ctxt>, <scope>, <game>)', function() {
     return this.commandsModel
-      .replayP(this.cmd, 'state', 'game');
+      .replayP(this.cmd, 'game');
   }, function() {
     beforeEach(function() {
       this.cmd1.replayP.and.returnValue('cmd1.returnValue');
@@ -104,7 +102,7 @@ describe('commandsModel', function() {
       }, function() {
         it('should proxy <name>.replayP', function() {
           expect(this[e.cmd].replayP)
-            .toHaveBeenCalledWith({ type: e.cmd }, 'state', 'game');
+            .toHaveBeenCalledWith({ type: e.cmd }, 'game');
 
           expect(this.context).toBe(e.cmd+'.returnValue');
         });
@@ -130,7 +128,7 @@ describe('commandsModel', function() {
 
   context('replayBatchP(<cmds>, <scope>, <game>)', function() {
     return this.commandsModel
-      .replayBatchP(this.cmds, 'state', 'game');
+      .replayBatchP(this.cmds, 'game');
   }, function() {
     beforeEach(function() {
       spyOnPromise(this.commandsModel, 'replayP');
@@ -146,11 +144,11 @@ describe('commandsModel', function() {
 
     it('should replay each command in batch in order', function() {
       expect(this.commandsModel.replayP)
-        .toHaveBeenCalledWith('cmd1', 'state', 'game');
+        .toHaveBeenCalledWith('cmd1', 'game');
       expect(this.commandsModel.replayP)
-        .toHaveBeenCalledWith('cmd2', 'state', 'game');
+        .toHaveBeenCalledWith('cmd2', 'game');
       expect(this.commandsModel.replayP)
-        .toHaveBeenCalledWith('cmd3', 'state', 'game');
+        .toHaveBeenCalledWith('cmd3', 'game');
 
       expect(this.replay).toBe('cmd1cmd2cmd3');
     });
@@ -165,11 +163,11 @@ describe('commandsModel', function() {
     }, function() {
       it('should still replay all commands in batch', function() {
         expect(this.commandsModel.replayP)
-          .toHaveBeenCalledWith('cmd1', 'state', 'game');
+          .toHaveBeenCalledWith('cmd1', 'game');
         expect(this.commandsModel.replayP)
-          .toHaveBeenCalledWith('cmd2', 'state', 'game');
+          .toHaveBeenCalledWith('cmd2', 'game');
         expect(this.commandsModel.replayP)
-          .toHaveBeenCalledWith('cmd3', 'state', 'game');
+          .toHaveBeenCalledWith('cmd3', 'game');
       });
     });
   });
@@ -177,7 +175,7 @@ describe('commandsModel', function() {
   context('undoP(<ctxt>, <state>, <arg>)', function() {
     return this.commandsModel.undoP({
       type: this.type
-    }, 'state', 'game');
+    }, 'game');
   }, function() {
     beforeEach(function() {
       this.cmd1.undoP.and.returnValue('cmd1.undoP.returnValue');
@@ -203,7 +201,7 @@ describe('commandsModel', function() {
           expect(this[e.cmd].undoP)
             .toHaveBeenCalledWith({
               type: e.cmd
-            }, 'state', 'game');
+            }, 'game');
 
           expect(this.context)
             .toBe(e.cmd+'.undoP.returnValue');

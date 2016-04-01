@@ -5,7 +5,28 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 (function () {
-  angular.module('clickApp.services').factory('commands', commandsModelFactory).factory('allCommands', ['createModelCommand', 'deleteModelCommand', 'setModelSelectionCommand', 'lockModelsCommand', 'onModelsCommand', 'createTemplateCommand', 'deleteTemplateCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand', 'setLosCommand', 'setRulerCommand', 'setScenarioCommand', function () {
+  angular.module('clickApp.services').factory('commands', commandsModelFactory).factory('allCommands', [
+  // 'createModelCommand',
+  // 'deleteModelCommand',
+  // 'setModelSelectionCommand',
+  // 'lockModelsCommand',
+  // 'onModelsCommand',
+  // 'createTemplateCommand',
+  // 'deleteTemplateCommand',
+  // 'lockTemplatesCommand',
+  // 'onTemplatesCommand',
+  // 'createTerrainCommand',
+  // 'deleteTerrainCommand',
+  // 'lockTerrainsCommand',
+  // 'onTerrainsCommand',
+  // 'rollDiceCommand',
+  // 'rollDeviationCommand',
+  // 'setBoardCommand',
+  'setLayersCommand',
+  // 'setLosCommand',
+  // 'setRulerCommand',
+  // 'setScenarioCommand',
+  function () {
     return {};
   }]);
 
@@ -26,9 +47,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       console.log('register command', name, command);
       CMDS_REG[name] = command;
     }
-    function commandsExecuteP(name, args, state, game) {
+    function commandsExecuteP(name, args, game) {
       return R.threadP(name)(findTypeP, function (cmd) {
-        return cmd.executeP.apply(null, [].concat(_toConsumableArray(args), [state, game]));
+        return cmd.executeP.apply(cmd, [].concat(_toConsumableArray(args), [game]));
       }, updateCommandType);
 
       function updateCommandType(_ref) {
@@ -40,33 +61,35 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return [R.assoc('type', name, ctxt), game];
       }
     }
-    function commandsUndoP(ctxt, state, game) {
+    function commandsUndoP(ctxt, game) {
       return R.threadP(ctxt)(findCtxtTypeP, function (cmd) {
-        return cmd.undoP(ctxt, state, game);
+        return cmd.undoP(ctxt, game);
       });
     }
-    function commandsReplayP(ctxt, state, game) {
+    function commandsReplayP(ctxt, game) {
       return R.threadP(ctxt)(findCtxtTypeP, function (cmd) {
-        return cmd.replayP(ctxt, state, game);
+        return cmd.replayP(ctxt, game);
       });
-    }
-    function findCtxtTypeP(ctxt) {
-      return R.threadP(ctxt)(R.prop('type'), findTypeP);
     }
     function findTypeP(type) {
       return R.threadP(CMDS_REG)(R.prop(type), R.rejectIfP(R.isNil, 'Game: unknown command "' + type + '"'));
     }
-    function commandsReplayBatchP(commands, state, game) {
+    function findCtxtTypeP(ctxt) {
+      return R.threadP(ctxt)(R.prop('type'), findTypeP);
+    }
+    function commandsReplayBatchP(commands, game) {
       if (R.isEmpty(commands)) {
-        return self.Promise.resolve(game);
+        return R.resolveP(game);
       }
       return R.threadP(game)(replayNextCommand, recurP);
 
       function replayNextCommand(game) {
-        return commandsModel.replayP(commands[0], state, game).catch(R.always(game));
+        return commandsModel.replayP(commands[0], game).catch(function () {
+          return game;
+        });
       }
       function recurP(game) {
-        return commandsReplayBatchP(R.tail(commands), state, game);
+        return commandsReplayBatchP(R.tail(commands), game);
       }
     }
   }

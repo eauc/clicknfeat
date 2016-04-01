@@ -8,46 +8,47 @@
   ];
   function setLayersCommandModelFactory(commandsModel,
                                         gameLayersModel) {
+    const LAYERS_LENS = R.lensProp('layers');
+
     const setLayersCommandModel = {
       executeP: setLayersExecuteP,
       replayP: setLayersRedoP,
       undoP: setLayersUndoP
     };
-
     commandsModel.registerCommand('setLayers', setLayersCommandModel);
     return setLayersCommandModel;
 
-    function setLayersExecuteP(cmd, l, state, game) {
-      if('Function' !== R.type(gameLayersModel[cmd])) {
-        return R.rejectP(`Layers unknown method "${cmd}"`);
-      }
-
-      const ctxt = {
-        before: game.layers,
-        desc: `${cmd}(${l})`
-      };
-      game = R.over(R.lensProp('layers'),
-                    gameLayersModel[`${cmd}$`](l),
-                    game);
-      ctxt.after = game.layers;
-
-      state.queueChangeEventP('Game.layers.change');
-
-      return [ctxt, game];
+    function setLayersExecuteP(method, arg, game) {
+      return R.threadP(method)(
+        checkMethodP,
+        () => ({
+          before: R.view(LAYERS_LENS, game),
+          desc: `${method}(${arg})`
+        }),
+        (ctxt) => {
+          game = R.over(
+            LAYERS_LENS,
+            gameLayersModel[`${method}$`](arg),
+            game
+          );
+          ctxt.after = R.view(LAYERS_LENS, game);
+          return [ ctxt, game ];
+        }
+      );
     }
-    function setLayersRedoP(ctxt, state, game) {
-      game = R.assoc('layers', ctxt.after, game);
-
-      state.queueChangeEventP('Game.layers.change');
-
-      return game;
+    function setLayersRedoP(ctxt, game) {
+      return R.set(LAYERS_LENS, ctxt.after, game);
     }
-    function setLayersUndoP(ctxt, state, game) {
-      game = R.assoc('layers', ctxt.before, game);
-
-      state.queueChangeEventP('Game.layers.change');
-
-      return game;
+    function setLayersUndoP(ctxt, game) {
+      return R.set(LAYERS_LENS, ctxt.before, game);
+    }
+    function checkMethodP(method) {
+      return R.thread(method)(
+        R.prop(R.__, gameLayersModel),
+        R.type,
+        R.rejectIfP(R.complement(R.equals)('Function'),
+                    `Layers unknown method "${method}"`)
+      );
     }
   }
 })();

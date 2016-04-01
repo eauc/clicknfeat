@@ -5,15 +5,12 @@ describe('setLayersCommand model', function() {
       this.setLayersCommandModel = setLayersCommand;
 
       this.gameLayersModel = spyOnService('gameLayers');
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP'
-      ]);
     }
   ]));
 
   context('executeP(<cmd>, <layer>, <state>, <game>)', function() {
     return this.setLayersCommandModel
-      .executeP(this.cmd, 'l', this.state, this.game);
+      .executeP(this.cmd, 'l', this.game);
   }, function() {
     beforeEach(function() {
       this.game = { layers: 'before' };
@@ -38,11 +35,6 @@ describe('setLayersCommand model', function() {
           .toHaveBeenCalledWith('l', 'before');
       });
 
-      it('should send changeLayers event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.layers.change');
-      });
-
       it('should return ctxt', function() {
         expect(this.context[0])
           .toEqual({
@@ -56,7 +48,7 @@ describe('setLayersCommand model', function() {
 
   example(function(e) {
     context(e.method+'(<ctxt>, <state>, <game>)', function() {
-      return this.setLayersCommandModel[e.method](this.ctxt, this.state, this.game);
+      return this.setLayersCommandModel[e.method](this.ctxt, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -69,11 +61,6 @@ describe('setLayersCommand model', function() {
 
       it('should set game layers', function() {
         expect(this.context.layers).toBe(e.result);
-      });
-
-      it('should send changeLayers event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.layers.change');
       });
     });
   }, [

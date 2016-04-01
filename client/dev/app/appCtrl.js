@@ -5,7 +5,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appState', 'stateData', 'stateGames', 'stateUser'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appState', 'stateData', 'stateGame', 'stateGames', 'stateUser'];
   function appCtrl($rootScope, $state, appStateService) {
     console.log('init appCtrl');
 

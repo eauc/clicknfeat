@@ -59,12 +59,12 @@
       $scope.stateEvent('Games.local.delete', id);
     }
     function onGamesLocalLoad(_event_, [id]) {
-      // $scope.goToState('game.main', {
-      //   online: 'offline',
-      //   private: 'private',
-      //   id: id
-      // });
-      // $scope.$digest();
+      $scope.goToState('game.main', {
+        online: 'offline',
+        private: 'private',
+        id: id
+      });
+      $scope.$digest();
     }
 
     function doUserToggleOnline() {
@@ -89,12 +89,12 @@
       $scope.stateEvent('Games.online.loadFile', files[0]);
     }
     function onGamesOnlineLoad(_event_, [isPrivate, id]) {
-      // $scope.goToState('game.main', {
-      //   online: 'online',
-      //   private: isPrivate,
-      //   id: id
-      // });
-      // $scope.$digest();
+      $scope.goToState('game.main', {
+        online: 'online',
+        private: isPrivate,
+        id: id
+      });
+      $scope.$digest();
     }
   }
 })();

@@ -52,16 +52,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       $scope.stateEvent('Games.local.delete', id);
     }
     function onGamesLocalLoad(_event_, _ref) {
-      // $scope.goToState('game.main', {
-      //   online: 'offline',
-      //   private: 'private',
-      //   id: id
-      // });
-      // $scope.$digest();
-
       var _ref2 = _slicedToArray(_ref, 1);
 
       var id = _ref2[0];
+
+      $scope.goToState('game.main', {
+        online: 'offline',
+        private: 'private',
+        id: id
+      });
+      $scope.$digest();
     }
 
     function doUserToggleOnline() {
@@ -80,17 +80,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       $scope.stateEvent('Games.online.loadFile', files[0]);
     }
     function onGamesOnlineLoad(_event_, _ref3) {
-      // $scope.goToState('game.main', {
-      //   online: 'online',
-      //   private: isPrivate,
-      //   id: id
-      // });
-      // $scope.$digest();
-
       var _ref4 = _slicedToArray(_ref3, 2);
 
       var isPrivate = _ref4[0];
       var id = _ref4[1];
+
+      $scope.goToState('game.main', {
+        online: 'online',
+        private: isPrivate,
+        id: id
+      });
+      $scope.$digest();
     }
   }
 })();

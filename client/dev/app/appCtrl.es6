@@ -7,6 +7,7 @@
     '$state',
     'appState',
     'stateData',
+    'stateGame',
     'stateGames',
     'stateUser',
   ];

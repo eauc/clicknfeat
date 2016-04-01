@@ -5,11 +5,11 @@
   gameCtrl.$inject = [
     '$scope',
     '$stateParams',
-    'modes',
+    // 'modes',
   ];
   function gameCtrl($scope,
-                    $stateParams,
-                    modesModel) {
+                    $stateParams) {
+                    // modesModel) {
     const vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -17,11 +17,11 @@
     const is_private = R.propEq('private', 'private', $stateParams);
     const id = R.prop('id', $stateParams);
 
-    vm.currentModeName = currentModeName;
-    vm.currentModeIs = currentModeIs;
+    // vm.currentModeName = currentModeName;
+    // vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
-    vm.doInvitePlayer = doInvitePlayer;
+    // vm.doInvitePlayer = doInvitePlayer;
 
     activate();
 
@@ -30,58 +30,57 @@
       vm.invite_player = null;
 
       $scope.stateEvent('Game.load', is_online, is_private, id);
-      $scope.digestOnStateChangeEvent('Game.load.success', $scope);
-      $scope.onStateChangeEvent('Game.load.error', onGameLoadError, $scope);
+      // $scope.digestOnStateChangeEvent('Game.load.success', $scope);
+      // $scope.onStateChangeEvent('Game.load.error', onGameLoadError, $scope);
 
       $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.board.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
-      $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
-      $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
-      $scope.digestOnStateChangeEvent('Game.players.change', $scope);
-      $scope.digestOnStateChangeEvent('User.change', $scope);
+      // $scope.digestOnStateChangeEvent('Game.board.change', $scope);
+      // $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
+      // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
+      // $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
+      // $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
+      // $scope.digestOnStateChangeEvent('Game.players.change', $scope);
+      // $scope.digestOnStateChangeEvent('User.change', $scope);
 
-      $scope.onStateChangeEvent('Modes.change',
-                                updateCurrentModeBindings,
-                                $scope);
-      $scope.onStateChangeEvent('Modes.buttons.update',
-                                updateCurrentModeBindings,
-                                $scope);
-      // $scope.onStateChangeEvent('Game.loaded', updateCurrentModeBindings, $scope);
+      // $scope.onStateChangeEvent('Modes.change',
+      //                           updateCurrentModeBindings,
+      //                           $scope);
+      // $scope.onStateChangeEvent('Modes.buttons.update',
+      //                           updateCurrentModeBindings,
+      //                           $scope);
 
       $scope.$on('$destroy', () => {
         $scope.stateEvent('Modes.exit');
       });
     }
 
-    function onGameLoadError() {
-      $scope.goToState('lounge');
-    }
+    // function onGameLoadError() {
+    //   $scope.goToState('lounge');
+    // }
 
-    function updateCurrentModeBindings() {
-      vm.action_bindings = R.thread($scope)(
-        R.path(['state','modes']),
-        modesModel.currentModeBindings,
-        R.clone
-      );
-      vm.action_buttons = R.thread($scope)(
-        R.path(['state','modes']),
-        modesModel.currentModeButtons,
-        R.clone
-      );
-      $scope.$digest();
-    }
+    // function updateCurrentModeBindings() {
+    //   vm.action_bindings = R.thread($scope)(
+    //     R.path(['state','modes']),
+    //     modesModel.currentModeBindings,
+    //     R.clone
+    //   );
+    //   vm.action_buttons = R.thread($scope)(
+    //     R.path(['state','modes']),
+    //     modesModel.currentModeButtons,
+    //     R.clone
+    //   );
+    //   $scope.$digest();
+    // }
 
-    function currentModeName() {
-      return R.thread($scope)(
-        R.pathOr({}, ['state', 'modes']),
-        modesModel.currentModeName
-      );
-    }
-    function currentModeIs(mode) {
-      return currentModeName() === mode;
-    }
+    // function currentModeName() {
+    //   return R.thread($scope)(
+    //     R.pathOr({}, ['state', 'modes']),
+    //     modesModel.currentModeName
+    //   );
+    // }
+    // function currentModeIs(mode) {
+    //   return currentModeName() === mode;
+    // }
     function doModeAction(action, ...args) {
       $scope.stateEvent('Modes.current.action',
                         action, [...args, {}]);
@@ -97,11 +96,12 @@
       $scope.stateEvent('Modes.current.action',
                         action, [{}]);
     }
-    function doInvitePlayer() {
-      if(R.isNil(vm.invite_player)) return;
+    // function doInvitePlayer() {
+    //   if(R.isNil(vm.invite_player)) return;
 
-      $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    }
+    //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
+    // }
+
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {
     //   let game_los = {

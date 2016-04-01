@@ -14,7 +14,7 @@ describe('stateModesModel', function() {
     }
   ]));
 
-  context('onModesCurrentAction(<action>,<event>)', function() {
+  xcontext('onModesCurrentAction(<action>,<event>)', function() {
     return this.stateModesModel
       .onModesCurrentAction(this.state, 'event', 'action', [this.event]);
   }, function() {
@@ -39,7 +39,7 @@ describe('stateModesModel', function() {
     });
   });
 
-  context('onModesSwitchTo(<to>)', function() {
+  xcontext('onModesSwitchTo(<to>)', function() {
     return this.stateModesModel
       .onModesSwitchTo(this.state, 'event', 'to');
   }, function() {

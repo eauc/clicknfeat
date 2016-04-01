@@ -2,26 +2,26 @@
   angular.module('clickApp.services')
     .factory('commands', commandsModelFactory)
     .factory('allCommands', [
-      'createModelCommand',
-      'deleteModelCommand',
-      'setModelSelectionCommand',
-      'lockModelsCommand',
-      'onModelsCommand',
-      'createTemplateCommand',
-      'deleteTemplateCommand',
-      'lockTemplatesCommand',
-      'onTemplatesCommand',
-      'createTerrainCommand',
-      'deleteTerrainCommand',
-      'lockTerrainsCommand',
-      'onTerrainsCommand',
-      'rollDiceCommand',
-      'rollDeviationCommand',
-      'setBoardCommand',
+      // 'createModelCommand',
+      // 'deleteModelCommand',
+      // 'setModelSelectionCommand',
+      // 'lockModelsCommand',
+      // 'onModelsCommand',
+      // 'createTemplateCommand',
+      // 'deleteTemplateCommand',
+      // 'lockTemplatesCommand',
+      // 'onTemplatesCommand',
+      // 'createTerrainCommand',
+      // 'deleteTerrainCommand',
+      // 'lockTerrainsCommand',
+      // 'onTerrainsCommand',
+      // 'rollDiceCommand',
+      // 'rollDeviationCommand',
+      // 'setBoardCommand',
       'setLayersCommand',
-      'setLosCommand',
-      'setRulerCommand',
-      'setScenarioCommand',
+      // 'setLosCommand',
+      // 'setRulerCommand',
+      // 'setScenarioCommand',
       () => ({ })
     ]);
 
@@ -42,13 +42,11 @@
       console.log('register command', name, command);
       CMDS_REG[name] = command;
     }
-    function commandsExecuteP(name, args, state, game) {
+    function commandsExecuteP(name, args, game) {
       return R.threadP(name)(
         findTypeP,
-        (cmd) => {
-          return cmd.executeP
-            .apply(null, [...args, state, game]);
-        },
+        (cmd) => cmd.executeP
+          .apply(cmd, [...args, game]),
         updateCommandType
       );
 
@@ -58,26 +56,16 @@
                ];
       }
     }
-    function commandsUndoP(ctxt, state, game) {
+    function commandsUndoP(ctxt, game) {
       return R.threadP(ctxt)(
         findCtxtTypeP,
-        (cmd) => {
-          return cmd.undoP(ctxt, state, game);
-        }
+        (cmd) => cmd.undoP(ctxt, game)
       );
     }
-    function commandsReplayP(ctxt, state, game) {
+    function commandsReplayP(ctxt, game) {
       return R.threadP(ctxt)(
         findCtxtTypeP,
-        (cmd) => {
-          return cmd.replayP(ctxt, state, game);
-        }
-      );
-    }
-    function findCtxtTypeP(ctxt) {
-      return R.threadP(ctxt)(
-        R.prop('type'),
-        findTypeP
+        (cmd) => cmd.replayP(ctxt, game)
       );
     }
     function findTypeP(type) {
@@ -86,9 +74,15 @@
         R.rejectIfP(R.isNil, `Game: unknown command "${type}"`)
       );
     }
-    function commandsReplayBatchP(commands, state, game) {
+    function findCtxtTypeP(ctxt) {
+      return R.threadP(ctxt)(
+        R.prop('type'),
+        findTypeP
+      );
+    }
+    function commandsReplayBatchP(commands, game) {
       if(R.isEmpty(commands)) {
-        return self.Promise.resolve(game);
+        return R.resolveP(game);
       }
       return R.threadP(game)(
         replayNextCommand,
@@ -96,11 +90,11 @@
       );
 
       function replayNextCommand(game) {
-        return commandsModel.replayP(commands[0], state, game)
-          .catch(R.always(game));
+        return commandsModel.replayP(commands[0], game)
+          .catch(() => game);
       }
       function recurP(game) {
-        return commandsReplayBatchP(R.tail(commands), state, game);
+        return commandsReplayBatchP(R.tail(commands), game);
       }
     }
   }

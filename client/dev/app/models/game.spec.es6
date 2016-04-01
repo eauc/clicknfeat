@@ -1,4 +1,4 @@
-xdescribe('game model', function() {
+describe('game model', function() {
   beforeEach(inject([ 'game', function(gameModel) {
     this.gameModel = gameModel;
 
@@ -7,9 +7,6 @@ xdescribe('game model', function() {
       .and.callThrough();
     this.gameConnectionModel.active
       .and.callThrough();
-    this.state = jasmine.createSpyObj('state', [
-      'queueChangeEventP'
-    ]);
   }]));
 
   context('create(<user>)', function() {
@@ -68,8 +65,8 @@ xdescribe('game model', function() {
     });
   });
 
-  context('load(<state>, <data>)', function() {
-    return this.gameModel.loadP(this.state, this.data);
+  context('loadP(<data>)', function() {
+    return this.gameModel.loadP(this.data);
   }, function() {
     beforeEach(function() {
       this.data = {
@@ -79,7 +76,7 @@ xdescribe('game model', function() {
 
       this.commandsModel = spyOnService('commands');
       this.commandsModel.replayBatchP
-        .resolveWith(R.nthArg(2));
+        .resolveWith(R.nthArg(1));
     });
 
     it('should extend game with default values', function() {
@@ -96,43 +93,43 @@ xdescribe('game model', function() {
           commands_log: [ ],
           undo_log: [],
           dice: [],
-          ruler: {
-            local: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 },
-              length: null
-            },
-            remote: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 },
-              length: null
-            }
-          },
-          los: {
-            local: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 }
-            },
-            remote: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 }
-            },
-            computed: {}
-          },
-          models: { active: [], locked: [] },
-          model_selection: { local: [],
-                             remote: []
-                           },
-          templates: { active: [], locked: [] },
-          template_selection: { local: [],
-                                remote: []
-                              },
-          terrains: { active: [], locked: [] },
-          terrain_selection: { local: [], remote: [] },
+          // ruler: {
+          //   local: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 },
+          //     length: null
+          //   },
+          //   remote: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 },
+          //     length: null
+          //   }
+          // },
+          // los: {
+          //   local: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 }
+          //   },
+          //   remote: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 }
+          //   },
+          //   computed: {}
+          // },
+          // models: { active: [], locked: [] },
+          // model_selection: { local: [],
+          //                    remote: []
+          //                  },
+          // templates: { active: [], locked: [] },
+          // template_selection: { local: [],
+          //                       remote: []
+          //                     },
+          // terrains: { active: [], locked: [] },
+          // terrain_selection: { local: [], remote: [] },
           layers: ['b','d','s','m','t']
         });
     });
@@ -149,20 +146,22 @@ xdescribe('game model', function() {
     it('should replay commands', function() {
       expect(this.commandsModel.replayBatchP)
         .toHaveBeenCalledWith(['cmd1', 'cmd2'],
-                              this.state, this.context);
+                              this.context);
     });
   });
 
-  context('executeCommandP(<...args...>, <scope>, <game>)', function() {
+  context('executeCommandP(<...args...>, <game>)', function() {
     return this.gameModel
-      .executeCommandP('cmd', ['arg1', 'arg2'], this.state, this.game);
+      .executeCommandP('cmd', ['arg1', 'arg2'], this.game);
   }, function() {
     beforeEach(function() {
       this.game = { commands: [],
                     commands_log: [],
                     dice: []
                   };
-      this.state.user = { state: { name: 'user' } };
+      this.appStateService = spyOnService('appState');
+      this.appStateService.current
+        .and.returnValue({ user: { state: { name: 'user' } } });
 
       this.commandsModel = spyOnService('commands');
       this.commandsModel.executeP.resolveWith([
@@ -174,7 +173,7 @@ xdescribe('game model', function() {
 
     it('should proxy commandsModel.execute', function() {
       expect(this.commandsModel.executeP)
-        .toHaveBeenCalledWith('cmd', ['arg1', 'arg2'], this.state, this.game);
+        .toHaveBeenCalledWith('cmd', ['arg1', 'arg2'], this.game);
     });
 
     context('when commandsModel.execute fails', function() {
@@ -194,21 +193,16 @@ xdescribe('game model', function() {
         .and.returnValue(true);
     }, function() {
       beforeEach(function() {
-        this.gameConnectionModel.sendReplayCommandP
-          .resolveWith(this.game);
+        this.gameConnectionModel.sendReplayCommand
+          .and.returnValue(this.game);
       });
 
       it('should send replay command', function() {
-        expect(this.gameConnectionModel.sendReplayCommandP)
+        expect(this.gameConnectionModel.sendReplayCommand)
           .toHaveBeenCalledWith({ command: 'ctxt',
                                   user: 'user',
                                   stamp: 'stamp'
                                 }, this.game);
-      });
-
-      it('should send "Game.command.execute" changeEvent', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.command.execute');
       });
 
       it('should not change game', function() {
@@ -265,11 +259,6 @@ xdescribe('game model', function() {
       });
     });
 
-    it('should send "Game.command.execute" changeEvent', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.command.execute');
-    });
-
     it('should return updated game', function() {
       expect(this.context)
         .toEqual({
@@ -280,9 +269,9 @@ xdescribe('game model', function() {
     });
   });
 
-  context('replayCommandP(<cmd>, <state>, <game>)', function() {
+  context('replayCommandP(<cmd>, <game>)', function() {
     return this.gameModel
-      .replayCommandP(this.cmd, this.state, this.game);
+      .replayCommandP(this.cmd, this.game);
   }, function() {
     beforeEach(function() {
       this.game = { commands: [ { stamp: 'cmd1' }
@@ -316,7 +305,7 @@ xdescribe('game model', function() {
 
     it('should replay <cmd>', function() {
       expect(this.commandsModel.replayP)
-        .toHaveBeenCalledWith(this.cmd, this.state, this.game);
+        .toHaveBeenCalledWith(this.cmd, this.game);
     });
 
     context('when undo fails', function() {
@@ -343,15 +332,11 @@ xdescribe('game model', function() {
       });
     });
 
-    it('should send replay event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.command.replay');
-    });
   });
 
-  context('replayCommandsBatchP(<cmds>, <state>, <game>)', function() {
+  context('replayCommandsBatchP(<cmds>, <game>)', function() {
     return this.gameModel
-      .replayCommandsBatchP(this.cmds, 'state', 'game');
+      .replayCommandsBatchP(this.cmds, 'game');
   }, function() {
     beforeEach(function() {
       this.cmds = [ 'cmd2', 'cmd3' ];
@@ -363,7 +348,7 @@ xdescribe('game model', function() {
 
     it('should replay command batch', function() {
       expect(this.commandsModel.replayBatchP)
-        .toHaveBeenCalledWith(this.cmds, 'state','game');
+        .toHaveBeenCalledWith(this.cmds, 'game');
     });
 
     it('should append batch to game\'s commands', function() {
@@ -372,9 +357,9 @@ xdescribe('game model', function() {
     });
   });
 
-  context('replayNextCommandP(<state>, <game>)', function() {
+  context('replayNextCommandP(<game>)', function() {
     return this.gameModel
-      .replayNextCommandP(this.state, this.game);
+      .replayNextCommandP(this.game);
   }, function() {
     beforeEach(function() {
       this.game = { commands: [ 'cmd1' ],
@@ -384,8 +369,8 @@ xdescribe('game model', function() {
       this.commandsModel = spyOnService('commands');
       this.commandsModel.replayP
         .resolveWith(this.game);
-      this.gameConnectionModel.sendReplayCommandP
-        .resolveWith(R.nthArg(1));
+      this.gameConnectionModel.sendReplayCommand
+        .and.callFake(R.nthArg(1));
     });
 
     context('when undo history is empty', function() {
@@ -401,7 +386,7 @@ xdescribe('game model', function() {
 
     it('should replay next undo', function() {
       expect(this.commandsModel.replayP)
-        .toHaveBeenCalledWith('cmd2', this.state, this.game);
+        .toHaveBeenCalledWith('cmd2', this.game);
     });
 
     context('when undo fails', function() {
@@ -421,16 +406,11 @@ xdescribe('game model', function() {
         .and.returnValue(true);
     }, function() {
       it('should send replayCommand event on connection', function() {
-        expect(this.gameConnectionModel.sendReplayCommandP)
+        expect(this.gameConnectionModel.sendReplayCommand)
           .toHaveBeenCalledWith('cmd2', {
             commands: [ 'cmd1' ],
             undo: [ 'cmd3' ]
           });
-      });
-
-      it('should send replay event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.command.replay');
       });
 
       it('should update game', function() {
@@ -448,16 +428,11 @@ xdescribe('game model', function() {
           undo: [ 'cmd3' ]
         });
     });
-
-    it('should send replay event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.command.replay');
-    });
   });
 
-  context('undoCommandP(<cmd>, <state>, <game>)', function() {
+  context('undoCommandP(<cmd>, <game>)', function() {
     return this.gameModel
-      .undoCommandP(this.cmd, this.state, this.game);
+      .undoCommandP(this.cmd, this.game);
   }, function() {
     beforeEach(function() {
       this.game = { undo: [ { stamp: 'cmd1' }
@@ -489,11 +464,6 @@ xdescribe('game model', function() {
       });
     });
 
-    it('should undo next undo', function() {
-      expect(this.commandsModel.undoP)
-        .toHaveBeenCalledWith(this.cmd, this.state, this.game);
-    });
-
     context('when undo fails', function() {
       this.commandsModel.undoP
         .rejectWith('reason');
@@ -517,16 +487,11 @@ xdescribe('game model', function() {
         commands: []
       });
     });
-
-    it('should send undo event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.command.undo');
-    });
   });
 
-  context('undoLastCommandP(<scope>, <game>)', function() {
+  context('undoLastCommandP(<game>)', function() {
     return this.gameModel
-      .undoLastCommandP(this.state, this.game);
+      .undoLastCommandP(this.game);
   }, function() {
     beforeEach(function() {
       this.game = { commands: ['cmd1','cmd2'],
@@ -537,8 +502,8 @@ xdescribe('game model', function() {
       this.commandsModel = spyOnService('commands');
       this.commandsModel.undoP
         .resolveWith(this.game);
-      this.gameConnectionModel.sendUndoCommandP
-        .resolveWith(R.nthArg(1));
+      this.gameConnectionModel.sendUndoCommand
+        .and.callFake(R.nthArg(1));
     });
 
     context('when command history is empty', function() {
@@ -554,7 +519,7 @@ xdescribe('game model', function() {
 
     it('should undo last command', function() {
       expect(this.commandsModel.undoP)
-        .toHaveBeenCalledWith('cmd2', this.state, this.game);
+        .toHaveBeenCalledWith('cmd2', this.game);
     });
 
     context('when undo fails', function() {
@@ -574,7 +539,7 @@ xdescribe('game model', function() {
         .and.returnValue(true);
     }, function() {
       it('should send undoCmd event on connection', function() {
-        expect(this.gameConnectionModel.sendUndoCommandP)
+        expect(this.gameConnectionModel.sendUndoCommand)
           .toHaveBeenCalledWith('cmd2', {
             commands: ['cmd1' ],
             undo: ['cmd3'],
@@ -590,11 +555,6 @@ xdescribe('game model', function() {
             undo_log: [  ]
           });
       });
-
-      it('should send undo event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.command.undo');
-      });
     });
 
     it('should switch cmd to undo queue', function() {
@@ -605,16 +565,11 @@ xdescribe('game model', function() {
           undo_log: [  ]
         });
     });
-
-    it('should send undo event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.command.undo');
-    });
   });
 
-  context('sendChatP(<from>, <msg>)', function() {
+  context('sendChat(<from>, <msg>)', function() {
     return this.gameModel
-      .sendChatP(this.from, this.msg, 'game');
+      .sendChat(this.from, this.msg, 'game');
   }, function() {
     beforeEach(function() {
       this.from = 'user';
@@ -622,7 +577,7 @@ xdescribe('game model', function() {
     });
 
     it('should send chat event on connection', function() {
-      expect(this.gameConnectionModel.sendEventP)
+      expect(this.gameConnectionModel.sendEvent)
         .toHaveBeenCalledWith({
           type: 'chat',
           chat: { from: this.from,
