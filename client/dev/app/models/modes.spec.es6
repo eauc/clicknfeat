@@ -1,4 +1,4 @@
-describe('modesModel', function() {
+describe('modes model', function() {
   beforeEach(inject([
     'modes',
     'defaultMode',
@@ -20,13 +20,9 @@ describe('modesModel', function() {
     }
   ]));
 
-  context('initP(<state>)', function() {
-    return this.modesModel.initP(this.state);
+  context('init()', function() {
+    return this.modesModel.init();
   }, function() {
-    beforeEach(function() {
-      this.state = { 'this': 'state' };
-    });
-
     it('should start in default mode', function() {
       expect(this.modesModel.currentModeName(this.context))
         .toBe('Default');
@@ -34,19 +30,7 @@ describe('modesModel', function() {
 
     it('should enter default mode', function() {
       expect(this.defaultModeModel.onEnter)
-        .toHaveBeenCalledWith(this.state);
-    });
-
-    context('when default mode enter fails', function() {
-      spyReturnPromise(this.defaultModeModel.onEnter);
-      this.defaultModeModel.onEnter.rejectWith('reason');
-      this.expectContextError();
-    }, function() {
-      it('should reject promise', function() {
-        expect(this.contextError).toEqual([
-          'reason'
-        ]);
-      });
+        .toHaveBeenCalled();
     });
 
     it('should reset Mousetrap bindings', function() {
@@ -62,24 +46,19 @@ describe('modesModel', function() {
 
   describe('Mousetrap binding', function() {
     beforeEach(function() {
+      this.appStateService = spyOnService('appState');
       this.event = jasmine.createSpyObj('event', ['preventDefault']);
-      this.state = jasmine.createSpyObj('state', [
-        'queueEventP'
-      ]);
-      return this.modesModel.initP(this.state)
-        .then((modes) => {
-          this.modes = modes;
-          this.actionBinding = findCallByArgs(Mousetrap.bind, (args) => {
-            return args[0] === 'ctrl+test';
-          }).args[1];
-        });
+      this.modes = this.modesModel.init(this.state);
+      this.actionBinding = findCallByArgs(Mousetrap.bind, (args) => {
+        return args[0] === 'ctrl+test';
+      }).args[1];
     });
 
     context('when event is triggered', function() {
       return this.actionBinding(this.event);
     }, function() {
       it('should should call associated mode action', function() {
-        expect(this.state.queueEventP)
+        expect(this.appStateService.reduce)
           .toHaveBeenCalledWith('Modes.current.action', 'test', [this.event]);
       });
     });
@@ -87,65 +66,30 @@ describe('modesModel', function() {
 
   context('switchToModeP(<next>, <state>)', function() {
     return this.modesModel
-      .switchToModeP(this.to, this.state, this.modes);
+      .switchToMode(this.to, this.modes);
   }, function() {
     beforeEach(function() {
-      this.state = { 'this': 'state',
-                     changeEvent: jasmine.createSpy('changeEvent')
-                   };
-
-      return this.modesModel.initP(this.state)
-        .then((modes) => {
-          this.modes = modes;
-          this.modes.current = 'Default';
-
-          this.defaultModeModel.onEnter.calls.reset();
-        });
+      this.appStateService = spyOnService('appState');
+      this.state = { 'this': 'state' };
+      this.modes = this.modesModel.init();
+      this.modes.current = 'Default';
+      this.defaultModeModel.onEnter.calls.reset();
     });
 
     function testModeSwitch(nextModeName, nextModeModel) {
       it('should leave current mode', function() {
         expect(this.defaultModeModel.onLeave)
-          .toHaveBeenCalledWith(this.state);
+          .toHaveBeenCalled();
       });
 
       it('should enter new mode', function() {
         expect(this[nextModeModel].onEnter)
-          .toHaveBeenCalledWith(this.state);
+          .toHaveBeenCalled();
       });
 
       it('should change current mode', function() {
         expect(this.modesModel.currentModeName(this.context))
           .toBe(nextModeName);
-      });
-
-      context('when leaveMode fails', function() {
-        spyReturnPromise(this.defaultModeModel.onLeave);
-        this.defaultModeModel.onLeave.rejectWith('reason');
-        this.expectContextError();
-      }, function() {
-        it('should abort switch and reject promise', function() {
-          expect(this.contextError).toEqual([
-            'reason'
-          ]);
-        });
-      });
-
-      context('when enterMode fails', function() {
-        spyReturnPromise(this[nextModeModel].onEnter);
-        this[nextModeModel].onEnter.rejectWith('reason');
-        this.expectContextError();
-      }, function() {
-        it('should abort switch and reject promise', function() {
-          expect(this.contextError).toEqual([
-            'reason'
-          ]);
-
-          expect(this.modesModel.currentModeName(this.modes))
-            .toBe('Default');
-          expect(this.state.changeEvent)
-            .not.toHaveBeenCalled();
-        });
       });
     }
 
@@ -163,12 +107,9 @@ describe('modesModel', function() {
 
     context('when <next> mode does not exist', function() {
       this.to = 'Unknown';
-      this.expectContextError();
     }, function() {
       it('should do nothing', function() {
-        expect(this.contextError).toEqual([
-          'Mode Unknown does not exists'
-        ]);
+        expect(this.context).toBe(this.modes);
 
         expect(this.defaultModeModel.onLeave)
           .not.toHaveBeenCalled();
@@ -179,8 +120,11 @@ describe('modesModel', function() {
 
         expect(this.modesModel.currentModeName(this.modes))
           .toBe('Default');
-        expect(this.state.changeEvent)
-          .not.toHaveBeenCalled();
+      });
+
+      it('should emit Game.error event', function() {
+        expect(this.appStateService.emit)
+          .toHaveBeenCalledWith('Game.error', 'Mode Unknown does not exist');
       });
     });
   });
@@ -190,16 +134,11 @@ describe('modesModel', function() {
       .currentModeActionP(this.action, ['args'], this.modes);
   }, function() {
     beforeEach(function() {
-      this.state = { game: { template_selection: 'selection' } };
-
       spyOn(this.defaultModeModel.actions, 'viewZoomIn');
       this.defaultModeModel.actions.viewZoomIn
         .and.returnValue('viewZoomIn.returnValue');
 
-      return this.modesModel.initP(this.state)
-        .then((modes) => {
-          this.modes = modes;
-        });
+      this.modes = this.modesModel.init();
     });
 
     context('when action is unknown in current mode', function() {
@@ -243,16 +182,12 @@ describe('modesModel', function() {
       .currentModeBindingsPairs(this.modes);
   }, function() {
     beforeEach(function() {
-      this.state = { game: { template_selection: 'selection' } };
       this.defaultModeModel.bindings = {
         'test2': 'ctrl+test2',
         'test1': 'ctrl+test1',
         'test3': 'ctrl+test3'
       };
-      return this.modesModel.initP(this.scope)
-        .then((modes) => {
-          this.modes = modes;
-        });
+      this.modes = this.modesModel.init();
     });
 
     it('should proxy current mode\'s action', function() {

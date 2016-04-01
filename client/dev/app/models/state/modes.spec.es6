@@ -1,26 +1,25 @@
-describe('stateModesModel', function() {
+describe('stateModes model', function() {
   beforeEach(inject([
     'stateModes',
     function(stateModesModel) {
       this.stateModesModel = stateModesModel;
 
       this.modesModel = spyOnService('modes');
+      this.appStateService = spyOnService('appState');
 
-      this.state = { modes: 'modes',
-                     queueChangeEventP: jasmine.createSpy('queueChangeEventP')
-                   };
+      this.state = { modes: 'modes' };
       this.event = { preventDefault: jasmine.createSpy('preventDefault')
                    };
     }
   ]));
 
-  xcontext('onModesCurrentAction(<action>,<event>)', function() {
+  context('onModesCurrentAction(<action>,<event>)', function() {
     return this.stateModesModel
-      .onModesCurrentAction(this.state, 'event', 'action', [this.event]);
+      .onModesCurrentAction(this.state, 'event', ['action', [this.event]]);
   }, function() {
     it('should dispatch mode action', function() {
       expect(this.modesModel.currentModeActionP)
-        .toHaveBeenCalledWith('action', [this.state, this.event], 'modes');
+        .toHaveBeenCalledWith('action', [this.event], 'modes');
     });
 
     it('should prevent <event> default', function() {
@@ -32,27 +31,25 @@ describe('stateModesModel', function() {
       this.modesModel.currentModeActionP
         .rejectWith('reason');
     }, function() {
-      it('should emit "Game.action.error" event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.action.error','reason');
+      it('should emit "Game.error" event', function() {
+        expect(this.appStateService.emit)
+          .toHaveBeenCalledWith('Game.error','reason');
       });
     });
   });
 
-  xcontext('onModesSwitchTo(<to>)', function() {
+  context('onModesSwitchTo(<to>)', function() {
     return this.stateModesModel
-      .onModesSwitchTo(this.state, 'event', 'to');
+      .onModesSwitchTo(this.state, 'event', ['to']);
   }, function() {
     it('should switch modes', function() {
-      expect(this.modesModel.switchToModeP)
-        .toHaveBeenCalledWith('to', this.state, 'modes');
+      expect(this.modesModel.switchToMode)
+        .toHaveBeenCalledWith('to', 'modes');
     });
 
     it('should update state\'s modes', function() {
-      expect(this.state.modes)
-        .toBe('modes.switchToModeP.returnValue');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Modes.change');
+      expect(this.context.modes)
+        .toBe('modes.switchToMode.returnValue');
     });
   });
 
@@ -61,15 +58,13 @@ describe('stateModesModel', function() {
       .onModesReset(this.state);
   }, function() {
     it('should reset modes', function() {
-      expect(this.modesModel.initP)
+      expect(this.modesModel.init)
         .toHaveBeenCalled();
     });
 
     it('should update state\'s modes', function() {
-      expect(this.state.modes)
-        .toBe('modes.initP.returnValue');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Modes.change');
+      expect(this.context.modes)
+        .toBe('modes.init.returnValue');
     });
   });
 
@@ -79,14 +74,12 @@ describe('stateModesModel', function() {
   }, function() {
     it('should exit modes', function() {
       expect(this.modesModel.exit)
-        .toHaveBeenCalledWith(this.state, 'modes');
+        .toHaveBeenCalledWith('modes');
     });
 
     it('should update state\'s modes', function() {
-      expect(this.state.modes)
+      expect(this.context.modes)
         .toBe('modes.exit.returnValue');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Modes.change');
     });
   });
 });

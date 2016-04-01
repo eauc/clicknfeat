@@ -1,16 +1,30 @@
 'use strict';
 
 (function () {
-  angular.module('clickApp.services').factory('modes', modesModelFactory).factory('allModes', ['defaultMode', 'rulerMode', 'losMode', 'createModelMode', 'modelsMode', 'modelMode', 'modelChargeMode', 'modelPlaceMode', 'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
+  angular.module('clickApp.services').factory('modes', modesModelFactory).factory('allModes', ['defaultMode',
+  // 'rulerMode',
+  // 'losMode',
+  // 'createModelMode',
+  // 'modelsMode',
+  // 'modelMode',
+  // 'modelChargeMode',
+  // 'modelPlaceMode',
+  // 'createTemplateMode',
+  // 'aoeTemplateMode',
+  // 'sprayTemplateMode',
+  // 'wallTemplateMode',
+  // 'createTerrainMode',
+  // 'terrainMode',
+  function () {
     return {};
   }]);
 
-  modesModelFactory.$inject = [];
-  function modesModelFactory() {
+  modesModelFactory.$inject = ['appState'];
+  function modesModelFactory(appStateService) {
     var MODES_REG = {};
     var modesModel = {
       registerMode: registerMode,
-      initP: modesInitP,
+      init: modesInit,
       exit: modesExit,
       currentModeName: currentModeName,
       currentModeActions: currentModeActions,
@@ -18,14 +32,9 @@
       currentModeButtons: currentModeButtons,
       currentModeBindingsPairs: currentModeBindingsPairs,
       currentModeActionP: currentModeActionP,
-      switchToModeP: switchToModeP
+      switchToMode: switchToMode
     };
-
-    var enterModeP$ = R.curry(enterModeP);
-    var leaveModeP$ = R.curry(leaveModeP);
-    var cleanupCurrentModeBindings$ = R.curry(cleanupCurrentModeBindings);
-    var setupCurrentModeBindings$ = R.curry(setupCurrentModeBindings);
-
+    var enterMode$ = R.curry(enterMode);
     R.curryService(modesModel);
     return modesModel;
 
@@ -33,16 +42,16 @@
       console.log('modes: registering ' + mode.name, mode);
       MODES_REG[mode.name] = mode;
     }
-    function modesInitP(state) {
+    function modesInit() {
       var modes = {
         register: MODES_REG
       };
       // TODO : import customized bindings
       Mousetrap.reset();
-      return enterModeP$('Default', state, modes);
+      return enterMode('Default', modes);
     }
-    function modesExit(state, modes) {
-      return cleanupCurrentModeBindings$(state, modes);
+    function modesExit(modes) {
+      return cleanupCurrentModeBindings(modes);
     }
     function currentModeName(modes) {
       return R.propOr('Unknown', 'name', currentMode(modes));
@@ -65,34 +74,47 @@
         return handler.apply(null, args);
       });
     }
-    function switchToModeP(name, state, modes) {
+    function switchToMode(name, modes) {
       var previous_mode = currentMode(modes);
-      return R.threadP(modes)(R.path(['register', name]), R.rejectIfP(R.isNil, 'Mode ' + name + ' does not exists'), R.always(modes), leaveModeP$(state), enterModeP$(name, state), R.spy('Modes: switch mode from ' + previous_mode.name + ' to ' + name));
+      return R.thread(modes)(R.path(['register', name]), R.ifElse(R.isNil, function () {
+        appStateService.emit('Game.error', 'Mode ' + name + ' does not exist');
+        return modes;
+      }, function () {
+        return R.thread(modes)(leaveMode, enterMode$(name), R.spy('Modes: switch mode from ' + previous_mode.name + ' to ' + name));
+      }));
     }
     function currentMode() {
       var modes = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       return R.pathOr({}, ['register', R.propOr('##', 'current', modes)], modes);
     }
-    function enterModeP(name, state, modes) {
-      return R.threadP(modes)(R.path(['register', name]), function (next_mode) {
-        return R.exists(next_mode.onEnter) ? next_mode.onEnter(state) : null;
-      }, R.always(modes), R.assoc('current', name), setupCurrentModeBindings$(state));
+    function enterMode(name, modes) {
+      return R.thread(modes)(R.path(['register', name]), R.when(function (next_mode) {
+        return R.exists(next_mode.onEnter);
+      }, function (next_mode) {
+        return next_mode.onEnter();
+      }), function () {
+        return R.assoc('current', name, modes);
+      }, setupCurrentModeBindings);
     }
-    function leaveModeP(state, modes) {
-      return R.threadP(modes)(currentMode, function (mode) {
-        return R.exists(mode.onLeave) ? mode.onLeave(state) : null;
-      }, R.always(modes), cleanupCurrentModeBindings$(state), R.assoc('current', null));
+    function leaveMode(modes) {
+      return R.thread(modes)(currentMode, R.when(function (mode) {
+        return R.exists(mode.onLeave);
+      }, function (mode) {
+        return mode.onLeave();
+      }), function () {
+        return cleanupCurrentModeBindings(modes);
+      }, R.assoc('current', null));
     }
-    function cleanupCurrentModeBindings(_state_, modes) {
+    function cleanupCurrentModeBindings(modes) {
       Mousetrap.reset();
       return modes;
     }
-    function setupCurrentModeBindings(state, modes) {
-      setupBindings(currentMode(modes), state);
+    function setupCurrentModeBindings(modes) {
+      setupBindings(currentMode(modes));
       return modes;
     }
-    function setupBindings(mode, state) {
+    function setupBindings(mode) {
       var own_bindings = R.keys(mode.bindings);
       var all_bindings = R.keysIn(mode.bindings);
       var inherited_bindings = R.difference(all_bindings, own_bindings);
@@ -106,7 +128,7 @@
         return function (event, keys) {
           console.warn('binding', name, keys, event);
 
-          state.queueEventP('Modes.current.action', name, [event]);
+          appStateService.reduce('Modes.current.action', name, [event]);
           return false;
         };
       }

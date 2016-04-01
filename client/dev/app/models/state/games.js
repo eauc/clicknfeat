@@ -11,6 +11,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var stateGamesModel = {
       create: stateGamesCreate,
       onLocalSet: stateGamesOnLocalSet,
+      onLocalUpdate: stateGamesOnLocalUpdate,
       onLocalCreate: stateGamesOnLocalCreate,
       onLocalLoadFile: stateGamesOnLocalLoadFile,
       onLocalLoadNew: stateGamesOnLocalLoadNew,
@@ -26,7 +27,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return stateGamesModel;
 
     function stateGamesCreate(state) {
-      appStateService.addReducer('Games.local.set', stateGamesModel.onLocalSet).addReducer('Games.local.create', stateGamesModel.onLocalCreate).addReducer('Games.local.loadFile', stateGamesModel.onLocalLoadFile).addReducer('Games.local.loadNew', stateGamesModel.onLocalLoadNew).addReducer('Games.local.load', stateGamesModel.onLocalLoad).addReducer('Games.local.delete', stateGamesModel.onLocalDelete).addReducer('Games.online.create', stateGamesModel.onOnlineCreate).addReducer('Games.online.load', stateGamesModel.onOnlineLoad).addReducer('Games.online.loadFile', stateGamesModel.onOnlineLoadFile);
+      appStateService.addReducer('Games.local.set', stateGamesModel.onLocalSet).addReducer('Games.local.update', stateGamesModel.onLocalUpdate).addReducer('Games.local.create', stateGamesModel.onLocalCreate).addReducer('Games.local.loadFile', stateGamesModel.onLocalLoadFile).addReducer('Games.local.loadNew', stateGamesModel.onLocalLoadNew).addReducer('Games.local.load', stateGamesModel.onLocalLoad).addReducer('Games.local.delete', stateGamesModel.onLocalDelete).addReducer('Games.online.create', stateGamesModel.onOnlineCreate).addReducer('Games.online.load', stateGamesModel.onOnlineLoad).addReducer('Games.online.loadFile', stateGamesModel.onOnlineLoadFile);
 
       appStateService.onChange('AppState.change', 'Games.local.change', R.view(LOCAL_GAMES_LENS));
 
@@ -43,24 +44,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       return R.set(LOCAL_GAMES_LENS, games, state);
     }
+    function stateGamesOnLocalUpdate(state, _event_, _ref3) {
+      var _ref4 = _slicedToArray(_ref3, 1);
+
+      var game = _ref4[0];
+
+      return R.over(LOCAL_GAMES_LENS, gamesModel.updateLocalGame$(game), state);
+    }
     function stateGamesOnLocalCreate(state, _event_) {
       return R.thread(state.user.state)(gameModel.create, function (game) {
         return stateGamesModel.onLocalLoadNew(state, _event_, [game]);
       });
     }
-    function stateGamesOnLocalLoadFile(_state_, _event_, _ref3) {
-      var _ref4 = _slicedToArray(_ref3, 1);
+    function stateGamesOnLocalLoadFile(_state_, _event_, _ref5) {
+      var _ref6 = _slicedToArray(_ref5, 1);
 
-      var file = _ref4[0];
+      var file = _ref6[0];
 
       return R.threadP(file)(fileImportService.readP$('json'), function (data) {
         return appStateService.reduce('Games.local.loadNew', data);
       });
     }
-    function stateGamesOnLocalLoadNew(state, _event_, _ref5) {
-      var _ref6 = _slicedToArray(_ref5, 1);
+    function stateGamesOnLocalLoadNew(state, _event_, _ref7) {
+      var _ref8 = _slicedToArray(_ref7, 1);
 
-      var game = _ref6[0];
+      var game = _ref8[0];
 
       return R.thread(state)(R.over(LOCAL_GAMES_LENS, gamesModel.newLocalGame$(game)), R.tap(function (state) {
         return R.thread(state)(R.view(LOCAL_GAMES_LENS), R.last, R.prop('local_stamp'), function (id) {
@@ -68,27 +76,27 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         });
       }));
     }
-    function stateGamesOnLocalLoad(_state_, _event_, _ref7) {
-      var _ref8 = _slicedToArray(_ref7, 1);
+    function stateGamesOnLocalLoad(_state_, _event_, _ref9) {
+      var _ref10 = _slicedToArray(_ref9, 1);
 
-      var index = _ref8[0];
+      var index = _ref10[0];
 
       appStateService.emit('Games.local.load', index);
     }
-    function stateGamesOnLocalDelete(state, _event_, _ref9) {
-      var _ref10 = _slicedToArray(_ref9, 1);
+    function stateGamesOnLocalDelete(state, _event_, _ref11) {
+      var _ref12 = _slicedToArray(_ref11, 1);
 
-      var id = _ref10[0];
+      var id = _ref12[0];
 
       return R.over(LOCAL_GAMES_LENS, gamesModel.removeLocalGame$(id), state);
     }
     function stateGamesOnOnlineCreate(state) {
       return R.thread(state)(R.pathOr({}, ['user', 'state']), gameModel.create, stateGamesModel.loadNewOnlineGameP);
     }
-    function stateGamesOnOnlineLoadFile(_state_, _event_, _ref11) {
-      var _ref12 = _slicedToArray(_ref11, 1);
+    function stateGamesOnOnlineLoadFile(_state_, _event_, _ref13) {
+      var _ref14 = _slicedToArray(_ref13, 1);
 
-      var file = _ref12[0];
+      var file = _ref14[0];
 
       return R.threadP(file)(fileImportService.readP$('json'), stateGamesModel.loadNewOnlineGameP).catch(R.spyAndDiscardError('Failed to open online game file'));
     }
@@ -97,10 +105,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.emit('Games.online.load', 'private', id);
       });
     }
-    function stateGamesOnOnlineLoad(_state_, _event_, _ref13) {
-      var _ref14 = _slicedToArray(_ref13, 1);
+    function stateGamesOnOnlineLoad(_state_, _event_, _ref15) {
+      var _ref16 = _slicedToArray(_ref15, 1);
 
-      var id = _ref14[0];
+      var id = _ref16[0];
 
       appStateService.emit('Games.online.load', 'public', id);
     }

@@ -18,6 +18,7 @@
     const stateGamesModel = {
       create: stateGamesCreate,
       onLocalSet: stateGamesOnLocalSet,
+      onLocalUpdate: stateGamesOnLocalUpdate,
       onLocalCreate: stateGamesOnLocalCreate,
       onLocalLoadFile: stateGamesOnLocalLoadFile,
       onLocalLoadNew: stateGamesOnLocalLoadNew,
@@ -35,6 +36,7 @@
     function stateGamesCreate(state) {
       appStateService
         .addReducer('Games.local.set'       , stateGamesModel.onLocalSet)
+        .addReducer('Games.local.update'    , stateGamesModel.onLocalUpdate)
         .addReducer('Games.local.create'    , stateGamesModel.onLocalCreate)
         .addReducer('Games.local.loadFile'  , stateGamesModel.onLocalLoadFile)
         .addReducer('Games.local.loadNew'   , stateGamesModel.onLocalLoadNew)
@@ -61,6 +63,13 @@
     }
     function stateGamesOnLocalSet(state, _event_, [games]) {
       return R.set(LOCAL_GAMES_LENS, games, state);
+    }
+    function stateGamesOnLocalUpdate(state, _event_, [game]) {
+      return R.over(
+        LOCAL_GAMES_LENS,
+        gamesModel.updateLocalGame$(game),
+        state
+      );
     }
     function stateGamesOnLocalCreate(state, _event_) {
       return R.thread(state.user.state)(

@@ -1,59 +1,59 @@
 'use strict';
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 (function () {
   angular.module('clickApp.services').factory('stateModes', stateModesModelFactory);
 
-  stateModesModelFactory.$inject = ['modes', 'game', 'allModes'];
-  function stateModesModelFactory(modesModel, gameModel) {
+  stateModesModelFactory.$inject = ['modes', 'appState', 'state', 'allModes'];
+  function stateModesModelFactory(modesModel, appStateService, stateModel) {
+    var MODES_LENS = R.lensProp('modes');
     var stateModesModel = {
       create: stateModesCreate,
-      save: stateModesSave,
       onModesSwitchTo: stateModesOnSwitchTo,
       onModesCurrentAction: stateModesOnCurrentAction,
       onModesReset: stateModesOnReset,
       onModesExit: stateModesOnExit
     };
-
-    var setModes$ = R.curry(setModes);
-
     R.curryService(stateModesModel);
+    stateModel.register(stateModesModel);
     return stateModesModel;
 
     function stateModesCreate(state) {
-      state.modes = {};
+      appStateService.addReducer('Modes.switchTo', stateModesModel.onModesSwitchTo).addReducer('Modes.current.action', stateModesModel.onModesCurrentAction).addReducer('Modes.reset', stateModesModel.onModesReset).addReducer('Modes.exit', stateModesModel.onModesExit);
 
-      state.onEvent('Modes.switchTo', stateModesModel.onModesSwitchTo$(state));
-      state.onEvent('Modes.current.action', stateModesModel.onModesCurrentAction$(state));
-      state.onEvent('Modes.reset', stateModesModel.onModesReset$(state));
-      state.onEvent('Modes.exit', stateModesModel.onModesExit$(state));
-      return state;
+      appStateService.onChange('AppState.change', 'Modes.change', R.pathOr({}, ['modes', 'current']));
+
+      return R.thread(state)(R.assoc('modes', {}));
     }
-    function stateModesSave(state) {
-      return state;
+    function stateModesOnSwitchTo(state, _event_, _ref) {
+      var _ref2 = _slicedToArray(_ref, 1);
+
+      var to = _ref2[0];
+
+      return R.over(MODES_LENS, modesModel.switchToMode$(to), state);
     }
-    function stateModesOnSwitchTo(state, _event_, to) {
-      return R.threadP(state.modes)(modesModel.switchToModeP$(to, state), setModes$(state)).catch(gameModel.actionError$(state));
-    }
-    function stateModesOnCurrentAction(state, _event_, action, args) {
-      var res = modesModel.currentModeActionP(action, [state].concat(_toConsumableArray(args)), state.modes);
+    function stateModesOnCurrentAction(state, _event_, _ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2);
+
+      var action = _ref4[0];
+      var args = _ref4[1];
+
+      var res = modesModel.currentModeActionP(action, args, state.modes);
       var event = R.last(args);
       if (R.exists(R.prop('preventDefault', event))) {
         event.preventDefault();
       }
 
-      return self.Promise.resolve(res).catch(gameModel.actionError$(state));
+      return R.resolveP(res).catch(function (error) {
+        return appStateService.emit('Game.error', error);
+      });
     }
-    function stateModesOnReset(state, _event_) {
-      return R.threadP(state)(modesModel.initP, setModes$(state));
+    function stateModesOnReset(state) {
+      return R.set(MODES_LENS, modesModel.init(), state);
     }
     function stateModesOnExit(state, _event_) {
-      return R.threadP(state.modes)(modesModel.exit$(state), setModes$(state));
-    }
-    function setModes(state, modes) {
-      state.modes = modes;
-      state.queueChangeEventP('Modes.change');
+      return R.over(MODES_LENS, modesModel.exit, state);
     }
   }
 })();

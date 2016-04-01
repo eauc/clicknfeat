@@ -5,9 +5,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('stateGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['appState', 'state',
-  // 'modes',
-  'games', 'game',
+  stateGameModelFactory.$inject = ['fileExport', 'appState', 'state', 'modes', 'games', 'game',
   // 'gameBoard',
   'gameConnection',
   // 'gameFactions',
@@ -21,9 +19,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   'allCommands'];
 
   // 'allTemplates',
-  function stateGameModelFactory(appStateService, stateModel,
-  // modesModel,
-  gamesModel, gameModel,
+  function stateGameModelFactory(fileExportService, appStateService, stateModel, modesModel, gamesModel, gameModel,
   // gameBoardModel,
   gameConnectionModel) {
     // gameFactionsModel,
@@ -41,7 +37,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onLoad: stateGameOnLoad,
       onLoadDataReady: stateGameOnLoadDataReady,
       onLoadDataLoaded: stateGameOnLoadDataLoaded,
-      onLoadModesReset: stateGameOnLoadModesReset,
       onLoadGameLoaded: stateGameOnLoadGameLoaded,
       onConnectionClose: stateGameOnConnectionClose,
       onCommandExecute: stateGameOnCommandExecute,
@@ -52,37 +47,39 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onCommandReplayBatch: stateGameOnCommandReplayBatch,
       onSetCmds: stateGameOnSetCmds,
       onSetPlayers: stateGameOnSetPlayers,
-      onNewChatMsg: stateGameOnNewChatMsg
+      onNewChatMsg: stateGameOnNewChatMsg,
+      // onUpdate: stateGameOnUpdate,
+      // onInvitePlayer: stateGameOnInvitePlayer,
+      // onModelCreate: stateGameOnModelCreate,
+      // onModelCopy: stateGameOnModelCopy,
+      // onModelImportList: stateGameOnModelImportList,
+      // onModelImportFile: stateGameOnModelImportFile,
+      // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
+      // onTemplateCreate: stateGameOnTemplateCreate,
+      // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
+      // onTerrainCreate: stateGameOnTerrainCreate,
+      // onTerrainReset: stateGameOnTerrainReset,
+      // onBoardSet: stateGameOnBoardSet,
+      // onBoardSetRandom: stateGameOnBoardSetRandom,
+      // onBoardImportFile: stateGameOnBoardImportFile,
+      // onScenarioSet: stateGameOnScenarioSet,
+      // onScenarioSetRandom: stateGameOnScenarioSetRandom,
+      // onScenarioRefresh: stateGameOnScenarioRefresh,
+      // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
+      // onSelectionLocalChange: stateGameOnSelectionLocalChange,
+      updateExport: stateGameUpdateExport,
+      saveCurrent: stateGameSaveCurrent
     };
     // const exportCurrentGame = stateExportsModel
     //         .exportP$('game', R.prop('game'));
     // const exportCurrentBoard = stateExportsModel
     //         .exportP$('board', exportBoardData);
-    // onUpdate: stateGameOnUpdate,
-    // onInvitePlayer: stateGameOnInvitePlayer,
-    // onModelCreate: stateGameOnModelCreate,
-    // onModelCopy: stateGameOnModelCopy,
-    // onModelImportList: stateGameOnModelImportList,
-    // onModelImportFile: stateGameOnModelImportFile,
-    // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
-    // onTemplateCreate: stateGameOnTemplateCreate,
-    // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
-    // onTerrainCreate: stateGameOnTerrainCreate,
-    // onTerrainReset: stateGameOnTerrainReset,
-    // onBoardSet: stateGameOnBoardSet,
-    // onBoardSetRandom: stateGameOnBoardSetRandom,
-    // onBoardImportFile: stateGameOnBoardImportFile,
-    // onScenarioSet: stateGameOnScenarioSet,
-    // onScenarioSetRandom: stateGameOnScenarioSetRandom,
-    // onScenarioRefresh: stateGameOnScenarioRefresh,
-    // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
-    // onSelectionLocalChange: stateGameOnSelectionLocalChange
     R.curryService(stateGameModel);
     stateModel.register(stateGameModel);
     return stateGameModel;
 
     function stateGamesCreate(state) {
-      appStateService.addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.modesReset', stateGameModel.onLoadModesReset).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg);
+      appStateService.addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addListener('Game.change', stateGameModel.saveCurrent);
       // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
       // .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
       // .addReducer('Game.model.copy'          , stateGameModel.onModelCopy)
@@ -106,12 +103,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // .addListener('Game.selection.local.change',
       //              stateGameModel.onGameSelectionLocalChange);
 
-      return R.thread(state)(R.assoc('game', null));
+      appStateService.onChange('AppState.change', 'Game.change', R.view(GAME_LENS));
+      var game_export_cell = appStateService.cell('Game.change', stateGameModel.updateExport, {});
+
+      return R.thread(state)(R.assoc('game', null), R.assocPath(['exports', 'game'], game_export_cell));
     }
     // function stateGameSave(state) {
     //   return R.thread()(
-    //     () => saveCurrentGame(state),
-    //     () => exportCurrentGame(state),
     //     () => exportCurrentModelSelectionP(state),
     //     () => exportCurrentBoard(state)
     //   );
@@ -155,33 +153,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.reduce('Game.load.dataLoaded', data);
       });
     }
-    function stateGameOnLoadDataLoaded(_state_, _event_, _ref7) {
+    function stateGameOnLoadDataLoaded(state, _event_, _ref7) {
       var _ref8 = _slicedToArray(_ref7, 1);
 
       var data = _ref8[0];
 
       appStateService.emit('Game.loading');
-      return R.threadP()(
-      // modesModel.initP,
-      function (modes) {
-        return appStateService.reduce('Game.load.modesReset', data, modes);
-      });
-    }
-    function stateGameOnLoadModesReset(state, _event_, _ref9) {
-      var _ref10 = _slicedToArray(_ref9, 2);
-
-      var data = _ref10[0];
-      var modes = _ref10[1];
-
       R.threadP(data)(gameModel.loadP, function (game) {
         return appStateService.reduce('Game.load.gameLoaded', game);
       });
-      return R.assoc('modes', modes, state);
+      return R.assoc('modes', modesModel.init(), state);
     }
-    function stateGameOnLoadGameLoaded(state, _event_, _ref11) {
-      var _ref12 = _slicedToArray(_ref11, 1);
+    function stateGameOnLoadGameLoaded(state, _event_, _ref9) {
+      var _ref10 = _slicedToArray(_ref9, 1);
 
-      var game = _ref12[0];
+      var game = _ref10[0];
 
       appStateService.emit('Game.loaded');
       var user = R.path(['user', 'state', 'name'], state);
@@ -192,11 +178,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function stateGameOnConnectionClose(state, _event_) {
       return R.over(GAME_LENS, gameConnectionModel.cleanup, state);
     }
-    function stateGameOnCommandExecute(state, _event_, _ref13) {
-      var _ref14 = _slicedToArray(_ref13, 2);
+    function stateGameOnCommandExecute(state, _event_, _ref11) {
+      var _ref12 = _slicedToArray(_ref11, 2);
 
-      var cmd = _ref14[0];
-      var args = _ref14[1];
+      var cmd = _ref12[0];
+      var args = _ref12[1];
 
       return R.threadP(state.game)(gameModel.executeCommandP$(cmd, args), function (game) {
         return appStateService.reduce('Game.set', game);
@@ -204,10 +190,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.reduce('Game.error', error);
       });
     }
-    function stateGameOnCommandUndo(state, _event_, _ref15) {
-      var _ref16 = _slicedToArray(_ref15, 1);
+    function stateGameOnCommandUndo(state, _event_, _ref13) {
+      var _ref14 = _slicedToArray(_ref13, 1);
 
-      var cmd = _ref16[0];
+      var cmd = _ref14[0];
 
       return R.threadP(state.game)(gameModel.undoCommandP$(cmd), function (game) {
         return appStateService.reduce('Game.set', game);
@@ -222,10 +208,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.reduce('Game.error', error);
       });
     }
-    function stateGameOnCommandReplay(state, _event_, _ref17) {
-      var _ref18 = _slicedToArray(_ref17, 1);
+    function stateGameOnCommandReplay(state, _event_, _ref15) {
+      var _ref16 = _slicedToArray(_ref15, 1);
 
-      var cmd = _ref18[0];
+      var cmd = _ref16[0];
 
       return R.threadP(state.game)(gameModel.replayCommandP$(cmd), function (game) {
         return appStateService.reduce('Game.set', game);
@@ -233,10 +219,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.reduce('Game.error', error);
       });
     }
-    function stateGameOnCommandReplayBatch(state, _event_, _ref19) {
-      var _ref20 = _slicedToArray(_ref19, 1);
+    function stateGameOnCommandReplayBatch(state, _event_, _ref17) {
+      var _ref18 = _slicedToArray(_ref17, 1);
 
-      var cmds = _ref20[0];
+      var cmds = _ref18[0];
 
       return R.threadP(state.game)(gameModel.replayCommandsBatchP$(cmds), function (game) {
         return appStateService.reduce('Game.set', game);
@@ -251,35 +237,26 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.reduce('Game.error', error);
       });
     }
-    function stateGameOnSetCmds(state, _event_, _ref21) {
+    function stateGameOnSetCmds(state, _event_, _ref19) {
+      var _ref20 = _slicedToArray(_ref19, 1);
+
+      var set = _ref20[0];
+
+      return R.over(GAME_LENS, R.assoc(set.where, set.cmds), state);
+    }
+    function stateGameOnSetPlayers(state, _event_, _ref21) {
       var _ref22 = _slicedToArray(_ref21, 1);
 
-      var set = _ref22[0];
+      var players = _ref22[0];
 
-      return R.over(GAME_LENS, R.assoc(set.where, set.cmds),
-      // R.when(
-      //   () => (set.where = 'chat'),
-      //   R.tap(() => { state.queueChangeEventP('Game.chat'); })
-      // ),
-      state);
+      return R.over(GAME_LENS, R.assoc('players', players), state);
     }
-    function stateGameOnSetPlayers(state, _event_, _ref23) {
+    function stateGameOnNewChatMsg(state, _event_, _ref23) {
       var _ref24 = _slicedToArray(_ref23, 1);
 
-      var players = _ref24[0];
+      var msg = _ref24[0];
 
-      return R.over(GAME_LENS, R.assoc('players', players),
-      // R.tap(() => { state.queueChangeEventP('Game.players.change'); }),
-      state);
-    }
-    function stateGameOnNewChatMsg(state, _event_, _ref25) {
-      var _ref26 = _slicedToArray(_ref25, 1);
-
-      var msg = _ref26[0];
-
-      return R.over(GAME_LENS, R.over(R.lensProp('chat'), R.compose(R.append(msg.chat), R.defaultTo([]))), state
-      // () => { state.queueChangeEventP('Game.chat', msg.chat); }
-      );
+      return R.over(GAME_LENS, R.over(R.lensProp('chat'), R.compose(R.append(msg.chat), R.defaultTo([]))), state);
     }
     // function stateGameOnUpdate(state, _event_, [lens, update]) {
     //   return R.over(
@@ -540,22 +517,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // function stateGameOnSelectionLocalChange(state, _event_) {
     //   state.queueEventP('Modes.switchTo', 'Default');
     // }
-    // function saveCurrentGame(state) {
-    //   if(state._game === state.game) return null;
-    //   state._game = state.game;
-
-    //   if(R.isNil(R.path(['game','local_stamp'], state))) {
-    //     return null;
-    //   }
-    //   return R.thread(state.local_games)(
-    //     gamesModel.updateLocalGame$(state.game),
-    //     (games) => {
-    //       state.local_games = games;
-    //       console.log('stateSetLocalGames', state.local_games);
-    //       state.queueChangeEventP('Games.local.change');
-    //     }
-    //   );
-    // }
+    function stateGameUpdateExport(exp, current_game) {
+      fileExportService.cleanup(exp.url);
+      return {
+        name: 'clicknfeat_game.json',
+        url: fileExportService.generate('json', current_game)
+      };
+    }
+    function stateGameSaveCurrent(game) {
+      if (R.isNil(R.prop('local_stamp', game))) {
+        return;
+      }
+      self.window.requestAnimationFrame(function () {
+        appStateService.reduce('Games.local.update', game);
+      });
+    }
     // function exportCurrentModelSelectionP(state) {
     //   return stateExportsModel
     //     .exportP('models', (state) => R.threadP(state)(

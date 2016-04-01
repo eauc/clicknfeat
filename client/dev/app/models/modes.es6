@@ -3,28 +3,30 @@
     .factory('modes', modesModelFactory)
     .factory('allModes', [
       'defaultMode',
-      'rulerMode',
-      'losMode',
-      'createModelMode',
-      'modelsMode',
-      'modelMode',
-      'modelChargeMode',
-      'modelPlaceMode',
-      'createTemplateMode',
-      'aoeTemplateMode',
-      'sprayTemplateMode',
-      'wallTemplateMode',
-      'createTerrainMode',
-      'terrainMode',
+      // 'rulerMode',
+      // 'losMode',
+      // 'createModelMode',
+      // 'modelsMode',
+      // 'modelMode',
+      // 'modelChargeMode',
+      // 'modelPlaceMode',
+      // 'createTemplateMode',
+      // 'aoeTemplateMode',
+      // 'sprayTemplateMode',
+      // 'wallTemplateMode',
+      // 'createTerrainMode',
+      // 'terrainMode',
       () => ({})
     ]);
 
-  modesModelFactory.$inject = [];
-  function modesModelFactory() {
+  modesModelFactory.$inject = [
+    'appState',
+  ];
+  function modesModelFactory(appStateService) {
     const MODES_REG = {};
     const modesModel = {
       registerMode: registerMode,
-      initP: modesInitP,
+      init: modesInit,
       exit: modesExit,
       currentModeName: currentModeName,
       currentModeActions: currentModeActions,
@@ -32,14 +34,9 @@
       currentModeButtons: currentModeButtons,
       currentModeBindingsPairs: currentModeBindingsPairs,
       currentModeActionP: currentModeActionP,
-      switchToModeP: switchToModeP
+      switchToMode: switchToMode
     };
-
-    const enterModeP$ = R.curry(enterModeP);
-    const leaveModeP$ = R.curry(leaveModeP);
-    const cleanupCurrentModeBindings$ = R.curry(cleanupCurrentModeBindings);
-    const setupCurrentModeBindings$ = R.curry(setupCurrentModeBindings);
-
+    const enterMode$ = R.curry(enterMode);
     R.curryService(modesModel);
     return modesModel;
 
@@ -47,16 +44,16 @@
       console.log('modes: registering '+mode.name, mode);
       MODES_REG[mode.name] = mode;
     }
-    function modesInitP(state) {
+    function modesInit() {
       const modes = {
         register: MODES_REG
       };
       // TODO : import customized bindings
       Mousetrap.reset();
-      return enterModeP$('Default', state, modes);
+      return enterMode('Default', modes);
     }
-    function modesExit(state, modes) {
-      return cleanupCurrentModeBindings$(state, modes);
+    function modesExit(modes) {
+      return cleanupCurrentModeBindings(modes);
     }
     function currentModeName(modes) {
       return R.propOr('Unknown', 'name', currentMode(modes));
@@ -83,20 +80,26 @@
         currentMode,
         R.path(['actions', action]),
         R.rejectIfP(R.isNil, `Unknown action "${action}" in "${mode_name}" mode`),
-        (handler) => {
-          return handler.apply(null, args);
-        }
+        (handler) => handler.apply(null, args)
       );
     }
-    function switchToModeP(name, state, modes) {
+    function switchToMode(name, modes) {
       const previous_mode = currentMode(modes);
-      return R.threadP(modes)(
+      return R.thread(modes)(
         R.path(['register', name]),
-        R.rejectIfP(R.isNil, `Mode ${name} does not exists`),
-        R.always(modes),
-        leaveModeP$(state),
-        enterModeP$(name, state),
-        R.spy(`Modes: switch mode from ${previous_mode.name} to ${name}`)
+        R.ifElse(
+          R.isNil,
+          () => {
+            appStateService
+              .emit('Game.error', `Mode ${name} does not exist`);
+            return modes;
+          },
+          () => R.thread(modes)(
+            leaveMode,
+            enterMode$(name),
+            R.spy(`Modes: switch mode from ${previous_mode.name} to ${name}`)
+          )
+        )
       );
     }
     function currentMode(modes = {}) {
@@ -105,43 +108,37 @@
         R.propOr('##', 'current', modes)
       ], modes);
     }
-    function enterModeP(name, state, modes) {
-      return R.threadP(modes)(
+    function enterMode(name, modes) {
+      return R.thread(modes)(
         R.path(['register', name]),
-        (next_mode) => {
-          return ( R.exists(next_mode.onEnter)
-                   ? next_mode.onEnter(state)
-                   : null
-                 );
-        },
-        R.always(modes),
-        R.assoc('current', name),
-        setupCurrentModeBindings$(state)
+        R.when(
+          (next_mode) => R.exists(next_mode.onEnter),
+          (next_mode) => next_mode.onEnter()
+        ),
+        () => R.assoc('current', name, modes),
+        setupCurrentModeBindings
       );
     }
-    function leaveModeP(state, modes) {
-      return R.threadP(modes)(
+    function leaveMode(modes) {
+      return R.thread(modes)(
         currentMode,
-        (mode) => {
-          return ( R.exists(mode.onLeave)
-                   ? mode.onLeave(state)
-                   : null
-                 );
-        },
-        R.always(modes),
-        cleanupCurrentModeBindings$(state),
+        R.when(
+          (mode) => R.exists(mode.onLeave),
+          (mode) => mode.onLeave()
+        ),
+        () => cleanupCurrentModeBindings(modes),
         R.assoc('current', null)
       );
     }
-    function cleanupCurrentModeBindings(_state_, modes) {
+    function cleanupCurrentModeBindings(modes) {
       Mousetrap.reset();
       return modes;
     }
-    function setupCurrentModeBindings(state, modes) {
-      setupBindings(currentMode(modes), state);
+    function setupCurrentModeBindings(modes) {
+      setupBindings(currentMode(modes));
       return modes;
     }
-    function setupBindings(mode, state) {
+    function setupBindings(mode) {
       const own_bindings = R.keys(mode.bindings);
       const all_bindings = R.keysIn(mode.bindings);
       const inherited_bindings = R.difference(all_bindings,
@@ -158,7 +155,7 @@
         return (event, keys) => {
           console.warn('binding', name, keys, event);
 
-          state.queueEventP('Modes.current.action', name, [event]);
+          appStateService.reduce('Modes.current.action', name, [event]);
           return false;
         };
       }

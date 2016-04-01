@@ -4,8 +4,10 @@
 
   commonModeModelFactory.$inject = [
     'settings',
+    'appState',
   ];
-  function commonModeModelFactory(settingsModel) {
+  function commonModeModelFactory(settingsModel,
+                                  appStateService) {
     const DEFAULT_SETTINGS = {
       DragEpsilon: 3,
       ScrollStep: 30,
@@ -24,12 +26,7 @@
       viewZoomOut: viewZoomOut,
       viewZoomReset: viewZoomReset,
       flipMap: flipMap,
-      toggleMenu: toggleMenu,
-      // roll1D6: roll1D6,
-      // roll2D6: roll2D6,
-      // roll3D6: roll3D6,
-      // roll4D6: roll4D6,
-      // roll5D6: roll5D6
+      toggleMenu: toggleMenu
     };
     const common_bindings = {
       modeBackToDefault: 'esc',
@@ -66,61 +63,47 @@
                            });
     return common_mode;
 
-    function modeBackToDefault(state) {
-      return state.eventP('Modes.switchTo', 'Default');
+    function modeBackToDefault() {
+      self.window.requestAnimationFrame(() => {
+        appStateService.reduce('Modes.switchTo', 'Default');
+      });
     }
-    function commandUndoLast(state) {
-      return state.eventP('Game.command.undoLast');
+    function commandUndoLast() {
+      self.window.requestAnimationFrame(() => {
+        appStateService.reduce('Game.command.undoLast');
+      });
     }
-    function commandReplayNext(state) {
-      return state.eventP('Game.command.replayNext');
+    function commandReplayNext() {
+      self.window.requestAnimationFrame(() => {
+        appStateService.reduce('Game.command.replayNext');
+      });
     }
-    function viewScrollLeft(state) {
-      state.queueChangeEventP('Game.view.scrollLeft');
+    function viewScrollLeft() {
+      appStateService.emit('Game.view.scrollLeft');
     }
-    function viewScrollRight(state) {
-      state.queueChangeEventP('Game.view.scrollRight');
+    function viewScrollRight() {
+      appStateService.emit('Game.view.scrollRight');
     }
-    function viewScrollUp(state) {
-      state.queueChangeEventP('Game.view.scrollUp');
+    function viewScrollUp() {
+      appStateService.emit('Game.view.scrollUp');
     }
-    function viewScrollDown(state) {
-      state.queueChangeEventP('Game.view.scrollDown');
+    function viewScrollDown() {
+      appStateService.emit('Game.view.scrollDown');
     }
-    function viewZoomIn(state) {
-      state.queueChangeEventP('Game.view.zoomIn');
+    function viewZoomIn() {
+      appStateService.emit('Game.view.zoomIn');
     }
-    function viewZoomOut(state) {
-      state.queueChangeEventP('Game.view.zoomOut');
+    function viewZoomOut() {
+      appStateService.emit('Game.view.zoomOut');
     }
-    function viewZoomReset(state) {
-      state.queueChangeEventP('Game.view.zoomReset');
+    function viewZoomReset() {
+      appStateService.emit('Game.view.zoomReset');
     }
-    function flipMap(state) {
-      state.queueChangeEventP('Game.view.flipMap');
+    function flipMap() {
+      appStateService.emit('Game.view.flipMap');
     }
-    function toggleMenu(state) {
-      state.queueChangeEventP('Game.toggleMenu');
+    function toggleMenu() {
+      appStateService.emit('Game.toggleMenu');
     }
-    // function roll1D6(state) {
-    //   return state.event('Game.command.execute',
-    //                      'rollDice', [6, 1]);
-    // }
-    // function roll2D6(state) {
-    //   return state.event('Game.command.execute',
-    //                      'rollDice', [6, 2]);
-    // }
-    // function roll3D6(state) {
-    //   return state.event('Game.command.execute',
-    //                      'rollDice', [6, 3]);
-    // }
-    // function roll4D6(state) {
-    //   return state.event('Game.command.execute',
-    //                      'rollDice', [6, 4]);
-    // }
-    // function roll5D6(state) {
-    //   return state.event('Game.command.execute',
-    //                      'rollDice', [6, 5]);
-    // }
   }
 })();

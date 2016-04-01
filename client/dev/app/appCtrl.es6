@@ -9,6 +9,7 @@
     'stateData',
     'stateGame',
     'stateGames',
+    'stateModes',
     'stateUser',
   ];
   function appCtrl($rootScope,

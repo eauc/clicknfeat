@@ -1,4 +1,4 @@
-describe('defaultMode model', function() {
+xdescribe('defaultMode model', function() {
   beforeEach(inject([
     'defaultMode',
     function(defaultModeModel) {

@@ -3,9 +3,10 @@
     .factory('stateGame', stateGameModelFactory);
 
   stateGameModelFactory.$inject = [
+    'fileExport',
     'appState',
     'state',
-    // 'modes',
+    'modes',
     'games',
     'game',
     // 'gameBoard',
@@ -21,9 +22,10 @@
     'allCommands',
     // 'allTemplates',
   ];
-  function stateGameModelFactory(appStateService,
+  function stateGameModelFactory(fileExportService,
+                                 appStateService,
                                  stateModel,
-                                 // modesModel,
+                                 modesModel,
                                  gamesModel,
                                  gameModel,
                                  // gameBoardModel,
@@ -43,7 +45,6 @@
       onLoad: stateGameOnLoad,
       onLoadDataReady: stateGameOnLoadDataReady,
       onLoadDataLoaded: stateGameOnLoadDataLoaded,
-      onLoadModesReset: stateGameOnLoadModesReset,
       onLoadGameLoaded: stateGameOnLoadGameLoaded,
       onConnectionClose: stateGameOnConnectionClose,
       onCommandExecute: stateGameOnCommandExecute,
@@ -73,7 +74,9 @@
       // onScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
       // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
-      // onSelectionLocalChange: stateGameOnSelectionLocalChange
+      // onSelectionLocalChange: stateGameOnSelectionLocalChange,
+      updateExport: stateGameUpdateExport,
+      saveCurrent: stateGameSaveCurrent
     };
     // const exportCurrentGame = stateExportsModel
     //         .exportP$('game', R.prop('game'));
@@ -87,10 +90,9 @@
       appStateService
         .addReducer('Game.set'                 , stateGameModel.onSet)
         .addReducer('Game.load'                , stateGameModel.onLoad)
-        .addReducer('Game.load.dataReady'          , stateGameModel.onLoadDataReady)
-        .addReducer('Game.load.dataLoaded'          , stateGameModel.onLoadDataLoaded)
-        .addReducer('Game.load.modesReset'          , stateGameModel.onLoadModesReset)
-        .addReducer('Game.load.gameLoaded'          , stateGameModel.onLoadGameLoaded)
+        .addReducer('Game.load.dataReady'      , stateGameModel.onLoadDataReady)
+        .addReducer('Game.load.dataLoaded'     , stateGameModel.onLoadDataLoaded)
+        .addReducer('Game.load.gameLoaded'     , stateGameModel.onLoadGameLoaded)
         .addReducer('Game.connection.close'    , stateGameModel.onConnectionClose)
         .addReducer('Game.command.execute'     , stateGameModel.onCommandExecute)
         .addReducer('Game.command.undo'        , stateGameModel.onCommandUndo)
@@ -100,7 +102,8 @@
         .addReducer('Game.command.replayNext'  , stateGameModel.onCommandReplayNext)
         .addReducer('Game.setCmds'             , stateGameModel.onSetCmds)
         .addReducer('Game.setPlayers'          , stateGameModel.onSetPlayers)
-        .addReducer('Game.newChatMsg'          , stateGameModel.onNewChatMsg);
+        .addReducer('Game.newChatMsg'          , stateGameModel.onNewChatMsg)
+        .addListener('Game.change'             , stateGameModel.saveCurrent);
         // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
         // .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
         // .addReducer('Game.model.copy'          , stateGameModel.onModelCopy)
@@ -124,14 +127,22 @@
         // .addListener('Game.selection.local.change',
         //              stateGameModel.onGameSelectionLocalChange);
 
+      appStateService
+        .onChange('AppState.change',
+                  'Game.change',
+                  R.view(GAME_LENS));
+      const game_export_cell = appStateService
+        .cell('Game.change',
+              stateGameModel.updateExport,
+              {});
+
       return R.thread(state)(
-        R.assoc('game', null)
+        R.assoc('game', null),
+        R.assocPath(['exports', 'game'], game_export_cell)
       );
     }
     // function stateGameSave(state) {
     //   return R.thread()(
-    //     () => saveCurrentGame(state),
-    //     () => exportCurrentGame(state),
     //     () => exportCurrentModelSelectionP(state),
     //     () => exportCurrentBoard(state)
     //   );
@@ -163,21 +174,14 @@
           .reduce('Game.load.dataLoaded', data)
       );
     }
-    function stateGameOnLoadDataLoaded(_state_, _event_, [data]) {
+    function stateGameOnLoadDataLoaded(state, _event_, [data]) {
       appStateService.emit('Game.loading');
-      return R.threadP()(
-        // modesModel.initP,
-        (modes) => appStateService
-          .reduce('Game.load.modesReset', data, modes)
-      );
-    }
-    function stateGameOnLoadModesReset(state, _event_, [data, modes]) {
       R.threadP(data)(
         gameModel.loadP,
         (game) => appStateService
           .reduce('Game.load.gameLoaded', game)
       );
-      return R.assoc('modes', modes, state);
+      return R.assoc('modes', modesModel.init(), state);
     }
     function stateGameOnLoadGameLoaded(state, _event_, [game]) {
       appStateService.emit('Game.loaded');
@@ -238,10 +242,6 @@
       return R.over(
         GAME_LENS,
         R.assoc(set.where, set.cmds),
-        // R.when(
-        //   () => (set.where = 'chat'),
-        //   R.tap(() => { state.queueChangeEventP('Game.chat'); })
-        // ),
         state
       );
     }
@@ -249,7 +249,6 @@
       return R.over(
         GAME_LENS,
         R.assoc('players', players),
-        // R.tap(() => { state.queueChangeEventP('Game.players.change'); }),
         state
       );
     }
@@ -259,7 +258,6 @@
         R.over(R.lensProp('chat'),
                R.compose(R.append(msg.chat), R.defaultTo([]))),
         state
-        // () => { state.queueChangeEventP('Game.chat', msg.chat); }
       );
     }
     // function stateGameOnUpdate(state, _event_, [lens, update]) {
@@ -521,22 +519,21 @@
     // function stateGameOnSelectionLocalChange(state, _event_) {
     //   state.queueEventP('Modes.switchTo', 'Default');
     // }
-    // function saveCurrentGame(state) {
-    //   if(state._game === state.game) return null;
-    //   state._game = state.game;
-
-    //   if(R.isNil(R.path(['game','local_stamp'], state))) {
-    //     return null;
-    //   }
-    //   return R.thread(state.local_games)(
-    //     gamesModel.updateLocalGame$(state.game),
-    //     (games) => {
-    //       state.local_games = games;
-    //       console.log('stateSetLocalGames', state.local_games);
-    //       state.queueChangeEventP('Games.local.change');
-    //     }
-    //   );
-    // }
+    function stateGameUpdateExport(exp, current_game) {
+      fileExportService.cleanup(exp.url);
+      return {
+        name: 'clicknfeat_game.json',
+        url: fileExportService.generate('json', current_game)
+      };
+    }
+    function stateGameSaveCurrent(game) {
+      if(R.isNil(R.prop('local_stamp', game))) {
+        return;
+      }
+      self.window.requestAnimationFrame(() => {
+        appStateService.reduce('Games.local.update', game);
+      });
+    }
     // function exportCurrentModelSelectionP(state) {
     //   return stateExportsModel
     //     .exportP('models', (state) => R.threadP(state)(
