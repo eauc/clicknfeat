@@ -26,14 +26,10 @@
 
     function gamesLoadLocalGamesP() {
       return R.threadP(localStorageService.keys())(
-        R.filter((k) => {
-          return k.startsWith(LOCAL_GAME_STORAGE_KEY);
-        }),
-        R.map((k) => {
-          return localStorageService
-            .loadP(k)
-            .catch(R.spyAndDiscardError('GamesModel: Failed to load local game', k));
-        }),
+        R.filter((k) => k.startsWith(LOCAL_GAME_STORAGE_KEY)),
+        R.map((k) => localStorageService
+              .loadP(k)
+              .catch(R.spyAndDiscardError('GamesModel: Failed to load local game', k))),
         R.allP,
         R.reject(R.isNil),
         R.defaultTo([]),
@@ -41,13 +37,13 @@
       );
     }
     function gamesSaveLocalGame(game) {
-      let key = LOCAL_GAME_STORAGE_KEY+game.local_stamp;
+      const key = LOCAL_GAME_STORAGE_KEY+game.local_stamp;
       console.warn('Game save', key, game);
       return localStorageService
         .save(key, game);
     }
     function gamesLoadLocalGameP(id) {
-      let key = LOCAL_GAME_STORAGE_KEY+id;
+      const key = LOCAL_GAME_STORAGE_KEY+id;
       console.warn('Game load', key);
       return localStorageService
         .loadP(key);
@@ -56,24 +52,22 @@
       return R.thread(game)(
         R.assoc('local_stamp', R.guid()),
         gamesModel.saveLocalGame,
-        R.flip(R.append)(games)
+        R.append(R.__, games)
       );
     }
     function gamesRemoveLocalGame(id, games) {
       return R.thread(LOCAL_GAME_STORAGE_KEY+id)(
         localStorageService.removeItem,
-        R.always(games),
-        R.reject(R.propEq('local_stamp', id))
+        () => R.reject(R.propEq('local_stamp', id), games)
       );
     }
     function gamesUpdateLocalGame(game, games) {
-      const game_index = R.findIndex(R.propEq('local_stamp',
-                                              game.local_stamp),
-                                     games);
+      const game_index =
+              R.findIndex(R.propEq('local_stamp', game.local_stamp),
+                          games);
       return R.thread(game)(
         gamesModel.saveLocalGame,
-        R.always(games),
-        R.update(game_index, game)
+        () => R.update(game_index, game, games)
       );
     }
     function gamesNewOnlineGameP(game) {
@@ -92,7 +86,7 @@
       ].join('/');
       return R.threadP(url)(
         httpService.getP,
-        R.spyError('Games: load online game')
+        R.spyWarn('Games: load online game')
       );
     }
   }

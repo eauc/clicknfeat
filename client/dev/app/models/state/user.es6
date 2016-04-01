@@ -21,7 +21,6 @@
 
     const stateUserModel = {
       create: stateUserCreate,
-      watch: stateUserWatch,
       onUserSet: stateUserOnSet,
       onUserUpdate: stateUserOnUpdate,
       onUserToggleOnline: stateOnUserToggleOnline,
@@ -71,6 +70,10 @@
                   'User.isOnline',
                   R.compose(userModel.online, R.view(USER_LENS)));
       appStateService
+        .onChange('User.connection.change',
+                  'Games.online.change',
+                  R.prop('games'));
+      appStateService
         .onChange('AppState.change',
                   'User.chat.new',
                   R.pipe(
@@ -95,13 +98,6 @@
         R.set(USER_LENS, { init: false }),
         R.assoc('user_ready', user_ready)
       );
-    }
-    let _user;
-    function stateUserWatch(state) {
-      const user = R.view(USER_LENS, state);
-      if(user === _user) return;
-      _user = user;
-      appStateService.emit('User.change', user);
     }
     function stateUserOnSet(state, _event_, [user]) {
       return R.set(USER_LENS, user, state);

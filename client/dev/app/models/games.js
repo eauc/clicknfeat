@@ -37,21 +37,25 @@
       return localStorageService.loadP(key);
     }
     function gamesNewLocalGame(game, games) {
-      return R.thread(game)(R.assoc('local_stamp', R.guid()), gamesModel.saveLocalGame, R.flip(R.append)(games));
+      return R.thread(game)(R.assoc('local_stamp', R.guid()), gamesModel.saveLocalGame, R.append(R.__, games));
     }
     function gamesRemoveLocalGame(id, games) {
-      return R.thread(LOCAL_GAME_STORAGE_KEY + id)(localStorageService.removeItem, R.always(games), R.reject(R.propEq('local_stamp', id)));
+      return R.thread(LOCAL_GAME_STORAGE_KEY + id)(localStorageService.removeItem, function () {
+        return R.reject(R.propEq('local_stamp', id), games);
+      });
     }
     function gamesUpdateLocalGame(game, games) {
       var game_index = R.findIndex(R.propEq('local_stamp', game.local_stamp), games);
-      return R.thread(game)(gamesModel.saveLocalGame, R.always(games), R.update(game_index, game));
+      return R.thread(game)(gamesModel.saveLocalGame, function () {
+        return R.update(game_index, game, games);
+      });
     }
     function gamesNewOnlineGameP(game) {
       return R.threadP(game)(gameModel.pickForJson, R.spyWarn('upload game'), httpService.postP$('/api/games'), R.spyWarn('upload game response'));
     }
     function gamesLoadOnlineGameP(is_private, id) {
       var url = ['/api/games', is_private ? 'private' : 'public', id].join('/');
-      return R.threadP(url)(httpService.getP, R.spyError('Games: load online game'));
+      return R.threadP(url)(httpService.getP, R.spyWarn('Games: load online game'));
     }
   }
 })();
