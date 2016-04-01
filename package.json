@@ -4,6 +4,20 @@
   "engines": {
     "node": "0.10.28"
   },
+  "scripts": {
+    "postinstall": "bower install && grunt build",
+    "dist:client:css:build": "build/dist_client_css_build",
+    "dist:client:js:build": "build/dist_client_js_build",
+    "dist:client:js:lint": "build/dist_client_js_lint",
+    "dev:server:run": "build/dev_server_run",
+    "dev:server": "npm run dev:server:run",
+    "dev:client:js:watch": "npm run dist:client:js:build -- --watch",
+    "dev:client:js:lint": "npm run dist:client:js:lint -- --watch",
+    "dev:client:css:watch": "npm run dist:client:css:build -- --watch",
+    "dev:client": "npm-run-all -p dev:client:js:watch dev:client:js:lint dev:client:css:watch",
+    "dev": "npm-run-all -p dev:server dev:client",
+    "test": "karma start"
+  },
   "devDependencies": {
     "babel-cli": "^6.4.5",
     "babel-eslint": "^5.0.0-beta6",
@@ -26,17 +40,7 @@
     "karma-chrome-launcher": "^0.2.2",
     "karma-jasmine": "^0.3.6",
     "karma-jasmine-diff-reporter": "^0.3.1",
-    "karma-jasmine-html-reporter": "^0.1.8"
-  },
-  "scripts": {
-    "postinstall": "bower install && grunt build",
-    "dist:client:js:build": "babel --only *.es6 -s true -d client/dev/app client/dev/app",
-    "dist:client:js:lint": "esw --ext .es6 client/dev/app/",
-    "dist:client:css:build": "sass -I client/dev/app client/dev/app/styles/app.scss:client/dev/app/styles/app.css",
-    "dev:server:run": "RACK_ENV=production bundle exec rerun --dir server -- rackup -p 4567",
-    "dev:client:js:watch": "npm run dist:client:js:build -- --watch",
-    "dev:client:js:lint": "npm run dist:client:js:lint -- --watch",
-    "dev:client:css:watch": "npm run dist:client:css:build -- --watch",
-    "test": "karma start"
+    "karma-jasmine-html-reporter": "^0.1.8",
+    "npm-run-all": "^1.7.0"
   }
 }

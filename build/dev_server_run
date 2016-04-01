@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+RACK_ENV=production bundle exec rerun --dir server -- rackup -p 4567 $*

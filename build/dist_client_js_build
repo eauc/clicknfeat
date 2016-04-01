@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+babel --only *.es6 -s true -d client/dev/app client/dev/app $*
