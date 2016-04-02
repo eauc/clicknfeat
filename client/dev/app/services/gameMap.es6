@@ -73,13 +73,17 @@
       }
       function emitTypeEvent(model, type) {
         const stamp = event.target.getAttribute('data-stamp');
-        return R.threadP(game)(
+        return R.thread(game)(
           R.prop(`${type}s`),
-          model.findStampP$(stamp),
-          (element) => ({ type: s.capitalize(type),
-                          target: element
-                        })
-        ).catch(R.always(not_found));
+          model.findStamp$(stamp),
+          R.ifElse(
+            R.exists,
+            (element) => ({ type: s.capitalize(type),
+                            target: element
+                          }),
+            () => not_found
+          )
+        );
       }
     }
   }

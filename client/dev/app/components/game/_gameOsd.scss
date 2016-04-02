@@ -45,20 +45,20 @@
         opacity: 0.8;
     }
 
-    #game-action-error {
+    #game-error {
         z-index: (3*$osd-zindex);
         position: absolute;
         top: 50%;
         width: 100%;
-        color: $action-error-text-color;
-        background-color: $action-error-fill-color;
+        color: $game-error-text-color;
+        background-color: $game-error-fill-color;
         opacity: 0.8;
 
-        .action-error-mode-name {
+        .game-error-mode-name {
             font-size: 3em;
             font-weight: bold;
         }
-        .action-error-reason {
+        .game-error-reason {
             font-size: 2em;
         }
     }

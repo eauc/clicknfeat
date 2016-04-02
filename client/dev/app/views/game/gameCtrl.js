@@ -5,11 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.controllers').controller('gameCtrl', gameCtrl);
 
-  gameCtrl.$inject = ['$scope', '$stateParams'];
-
-  // 'modes',
-  function gameCtrl($scope, $stateParams) {
-    // modesModel) {
+  gameCtrl.$inject = ['$scope', '$stateParams', 'modes'];
+  function gameCtrl($scope, $stateParams, modesModel) {
     var vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -17,8 +14,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var is_private = R.propEq('private', 'private', $stateParams);
     var id = R.prop('id', $stateParams);
 
-    // vm.currentModeName = currentModeName;
-    // vm.currentModeIs = currentModeIs;
+    vm.currentModeName = currentModeName;
+    vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
     // vm.doInvitePlayer = doInvitePlayer;
@@ -42,9 +39,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // $scope.digestOnStateChangeEvent('Game.players.change', $scope);
       // $scope.digestOnStateChangeEvent('User.change', $scope);
 
-      // $scope.onStateChangeEvent('Modes.change',
-      //                           updateCurrentModeBindings,
-      //                           $scope);
+      $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
       // $scope.onStateChangeEvent('Modes.buttons.update',
       //                           updateCurrentModeBindings,
       //                           $scope);
@@ -58,29 +53,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //   $scope.goToState('lounge');
     // }
 
-    // function updateCurrentModeBindings() {
-    //   vm.action_bindings = R.thread($scope)(
-    //     R.path(['state','modes']),
-    //     modesModel.currentModeBindings,
-    //     R.clone
-    //   );
-    //   vm.action_buttons = R.thread($scope)(
-    //     R.path(['state','modes']),
-    //     modesModel.currentModeButtons,
-    //     R.clone
-    //   );
-    //   $scope.$digest();
-    // }
+    function updateCurrentModeBindings() {
+      vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeBindings, R.clone);
+      vm.action_buttons = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeButtons, R.clone);
+      $scope.$digest();
+    }
 
-    // function currentModeName() {
-    //   return R.thread($scope)(
-    //     R.pathOr({}, ['state', 'modes']),
-    //     modesModel.currentModeName
-    //   );
-    // }
-    // function currentModeIs(mode) {
-    //   return currentModeName() === mode;
-    // }
+    function currentModeName() {
+      return R.thread($scope)(R.pathOr({}, ['state', 'modes']), modesModel.currentModeName);
+    }
+    function currentModeIs(mode) {
+      return currentModeName() === mode;
+    }
     function doModeAction(action) {
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];

@@ -93,7 +93,9 @@
       appStateService.emit('Game.view.zoomReset');
     }
     function flipMap() {
-      appStateService.emit('Game.view.flipMap');
+      self.window.requestAnimationFrame(function () {
+        appStateService.reduce('Game.uiState.flip');
+      });
     }
     function toggleMenu() {
       appStateService.emit('Game.toggleMenu');

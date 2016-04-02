@@ -2,6 +2,8 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 (function () {
   angular.module('clickApp.services').factory('appState', appStateServiceFactory);
 
@@ -67,17 +69,23 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return appStateService;
     }
     function appStateOnChange(on_event, emit_event, getValue) {
-      var _value = undefined;
+      getValue = R.unless(R.isArrayLike, R.of, getValue);
+      var _value = R.map(function () {
+        return undefined;
+      }, getValue);
+      var hasChanged = R.thread(getValue)(R.addIndex(R.map)(function (getter, i) {
+        return function (observable) {
+          return _value[i] !== getter(observable);
+        };
+      }), R.allPass);
       appStateService.addListener(on_event, function (_event_, _ref) {
         var _ref2 = _slicedToArray(_ref, 1);
 
         var observable = _ref2[0];
 
-        var value = getValue(observable);
-        if (value === _value) return;
-
-        _value = value;
-        appStateService.emit(emit_event, value);
+        if (!hasChanged(observable)) return;
+        _value = R.ap(getValue, [observable]);
+        appStateService.emit.apply(appStateService, [emit_event].concat(_toConsumableArray(_value)));
       });
     }
     function appStateCell(update_event, update, initial) {

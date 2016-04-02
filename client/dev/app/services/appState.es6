@@ -64,13 +64,17 @@
       return appStateService;
     }
     function appStateOnChange(on_event, emit_event, getValue) {
-      let _value;
+      getValue = R.unless(R.isArrayLike, R.of, getValue);
+      let _value = R.map(() => undefined, getValue);
+      const hasChanged = R.thread(getValue)(
+        R.addIndex(R.map)((getter, i) => ((observable) => (_value[i] !== getter(observable)))),
+        R.allPass
+      );
       appStateService.addListener(on_event, (_event_, [observable]) => {
-        const value = getValue(observable);
-        if(value === _value) return;
-
-        _value = value;
-        appStateService.emit(emit_event, value);
+        if(!hasChanged(observable)) return;
+        _value = R.ap(getValue, [observable]);
+        appStateService.emit
+          .apply(appStateService, [emit_event, ..._value]);
       });
     }
     function appStateCell(update_event, update, initial) {

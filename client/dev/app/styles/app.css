@@ -257,7 +257,7 @@ a:not([href]):focus {
   width: 100%;
   font-size: 1.5em;
   opacity: 0.8; }
-#game #game-action-error {
+#game #game-error {
   z-index: 3000;
   position: absolute;
   top: 50%;
@@ -265,10 +265,10 @@ a:not([href]):focus {
   color: #CCC;
   background-color: #F00;
   opacity: 0.8; }
-  #game #game-action-error .action-error-mode-name {
+  #game #game-error .game-error-mode-name {
     font-size: 3em;
     font-weight: bold; }
-  #game #game-action-error .action-error-reason {
+  #game #game-error .game-error-reason {
     font-size: 2em; }
 #game #selection-osd {
   z-index: 2000;

@@ -12,10 +12,7 @@
     activate();
 
     function activate() {
-      $scope.onStateChangeEvent('Game.command.execute', updateLists, $scope);
-      $scope.onStateChangeEvent('Game.command.replay', updateLists, $scope);
-      $scope.onStateChangeEvent('Game.command.undo', updateLists, $scope);
-      $scope.onStateChangeEvent('Game.loaded', updateLists, $scope);
+      $scope.onStateChangeEvent('Game.command.change', updateLists, $scope);
       self.requestAnimationFrame(updateLists);
     }
 

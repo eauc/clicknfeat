@@ -39,6 +39,7 @@
                                  // gameTemplateSelectionModel,
                                  // fileImportService) {
     const GAME_LENS = R.lensProp('game');
+    const UI_STATE_LENS = R.lensProp('ui_state');
     const stateGameModel = {
       create: stateGamesCreate,
       onSet: stateGameOnSet,
@@ -56,6 +57,7 @@
       onSetCmds: stateGameOnSetCmds,
       onSetPlayers: stateGameOnSetPlayers,
       onNewChatMsg: stateGameOnNewChatMsg,
+      onUiStateFlip: stateGameOnUiStateFlip,
       // onUpdate: stateGameOnUpdate,
       // onInvitePlayer: stateGameOnInvitePlayer,
       // onModelCreate: stateGameOnModelCreate,
@@ -103,6 +105,7 @@
         .addReducer('Game.setCmds'             , stateGameModel.onSetCmds)
         .addReducer('Game.setPlayers'          , stateGameModel.onSetPlayers)
         .addReducer('Game.newChatMsg'          , stateGameModel.onNewChatMsg)
+        .addReducer('Game.uiState.flip'        , stateGameModel.onUiStateFlip)
         .addListener('Game.change'             , stateGameModel.saveCurrent);
         // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
         // .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
@@ -135,9 +138,30 @@
         .cell('Game.change',
               stateGameModel.updateExport,
               {});
+      appStateService
+        .onChange('Game.change',
+                  'Game.layers.change',
+                  R.pipe(R.defaultTo({}), R.prop('layers')));
+      appStateService
+        .onChange('AppState.change',
+                  'Modes.change',
+                  R.path(['modes','current','name']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.command.change',
+                  [ R.prop('commands'),
+                    R.prop('commands_log'),
+                    R.prop('undo'),
+                    R.prop('undo_log')
+                  ]);
+      appStateService
+        .onChange('AppState.change',
+                  'Game.view.flipMap',
+                  R.pipe(R.view(UI_STATE_LENS), R.prop('flipped')));
 
       return R.thread(state)(
-        R.assoc('game', null),
+        R.set(UI_STATE_LENS, { flipped: false }),
+        R.set(GAME_LENS, {}),
         R.assocPath(['exports', 'game'], game_export_cell)
       );
     }
@@ -206,37 +230,37 @@
       return R.threadP(state.game)(
         gameModel.executeCommandP$(cmd, args),
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnCommandUndo(state, _event_, [cmd]) {
       return R.threadP(state.game)(
         gameModel.undoCommandP$(cmd),
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnCommandUndoLast(state, _event_) {
       return R.threadP(state.game)(
         gameModel.undoLastCommandP,
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnCommandReplay(state, _event_, [cmd]) {
       return R.threadP(state.game)(
         gameModel.replayCommandP$(cmd),
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
       return R.threadP(state.game)(
         gameModel.replayCommandsBatchP$(cmds),
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnCommandReplayNext(state, _event_) {
       return R.threadP(state.game)(
         gameModel.replayNextCommandP,
         (game) => appStateService.reduce('Game.set', game)
-      ).catch((error) => appStateService.reduce('Game.error', error));
+      ).catch((error) => appStateService.emit('Game.error', error));
     }
     function stateGameOnSetCmds(state, _event_, [set]) {
       return R.over(
@@ -257,6 +281,13 @@
         GAME_LENS,
         R.over(R.lensProp('chat'),
                R.compose(R.append(msg.chat), R.defaultTo([]))),
+        state
+      );
+    }
+    function stateGameOnUiStateFlip(state) {
+      return R.over(
+        UI_STATE_LENS,
+        R.over(R.lensProp('flipped'), R.not),
         state
       );
     }
@@ -526,8 +557,8 @@
         url: fileExportService.generate('json', current_game)
       };
     }
-    function stateGameSaveCurrent(game) {
-      if(R.isNil(R.prop('local_stamp', game))) {
+    function stateGameSaveCurrent(_event_, [game]) {
+      if(R.isNil(R.prop('local_stamp', R.defaultTo({}, game)))) {
         return;
       }
       self.window.requestAnimationFrame(() => {

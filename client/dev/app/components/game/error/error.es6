@@ -1,9 +1,9 @@
 (function() {
   angular.module('clickApp.directives')
-    .directive('clickGameActionError', gameActionErrorDirectiveFactory);
+    .directive('clickGameError', gameErrorDirectiveFactory);
 
-  gameActionErrorDirectiveFactory.$inject = [];
-  function gameActionErrorDirectiveFactory() {
+  gameErrorDirectiveFactory.$inject = [];
+  function gameErrorDirectiveFactory() {
     return {
       restrict: 'A',
       link: link
@@ -11,17 +11,17 @@
 
     function link(scope, element) {
       const banner = element[0];
-      console.log('gameActionError');
+      console.log('gameError');
 
       banner.style.display = 'none';
 
-      const mode_span = banner.querySelector('.action-error-mode-name');
-      const reason_span = banner.querySelector('.action-error-reason');
+      const mode_span = banner.querySelector('.game-error-mode-name');
+      const reason_span = banner.querySelector('.game-error-reason');
 
-      scope.onStateChangeEvent('Game.action.error', onActionError, scope);
+      scope.onStateChangeEvent('Game.error', onError, scope);
 
       let timeout;
-      function onActionError(_event_, error) {
+      function onError(_event_, error) {
         if(R.exists(timeout)) self.clearTimeout(timeout);
 
         mode_span.innerHTML = scope.game.currentModeName();

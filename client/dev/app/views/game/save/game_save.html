@@ -3,9 +3,9 @@
     <div class="panel-heading">Save current game</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!game_save.exports.game.url"
-         ng-href="{{game_save.exports.game.url}}"
-         download="{{game_save.exports.game.name}}">
+         ng-disabled="!game_save.game_export.url"
+         ng-href="{{game_save.game_export.url}}"
+         download="{{game_save.game_export.name}}">
         Download Game File
       </a>
     </div>
@@ -14,9 +14,9 @@
     <div class="panel-heading">Save current models selection</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!game_save.exports.models.url"
-         ng-href="{{game_save.exports.models.url}}"
-         download="{{game_save.exports.models.name}}">
+         ng-disabled="!game_save.models_export.url"
+         ng-href="{{game_save.models_export.url}}"
+         download="{{game_save.models_export.name}}">
         Download Models File
       </a>
     </div>
@@ -25,9 +25,9 @@
     <div class="panel-heading">Save current board and terrain</div>
     <div class="panel-body">
       <a class="btn btn-default"
-         ng-disabled="!game_save.exports.board.url"
-         ng-href="{{game_save.exports.board.url}}"
-         download="{{game_save.exports.board.name}}">
+         ng-disabled="!game_save.board_export.url"
+         ng-href="{{game_save.board_export.url}}"
+         download="{{game_save.board_export.name}}">
         Download Board File
       </a>
     </div>

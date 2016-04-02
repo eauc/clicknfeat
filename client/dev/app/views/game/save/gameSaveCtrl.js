@@ -8,17 +8,14 @@
     var vm = this;
     console.log('init gameSaveCtrl');
 
-    activate();
+    self.window.requestAnimationFrame(activate);
 
     function activate() {
-      $scope.onStateChangeEvent('Exports.game', updateExports, $scope);
-      $scope.onStateChangeEvent('Exports.board', updateExports, $scope);
-      $scope.onStateChangeEvent('Exports.models', updateExports, $scope);
-      self.requestAnimationFrame(updateExports);
-    }
-    function updateExports() {
-      vm.exports = R.path(['state', 'exports'], $scope);
-      $scope.$digest();
+      $scope.bindCell($scope.state.exports.game, function (game_exp) {
+        console.error(game_exp);
+        vm.game_export = game_exp;
+        $scope.$digest();
+      }, $scope);
     }
   }
 })();
