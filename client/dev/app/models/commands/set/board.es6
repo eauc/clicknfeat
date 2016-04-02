@@ -11,34 +11,24 @@
       replayP: setBoardReplayP,
       undoP: setBoardUndoP
     };
-
     commandsService.registerCommand('setBoard', setBoardCommandModel);
     return setBoardCommandModel;
 
-    function setBoardExecuteP(board, state, game) {
+    function setBoardExecuteP(board, game) {
       const ctxt = {
         before: game.board,
         after: board,
         desc: board.name
       };
       game = R.assoc('board', board, game);
-
-      state.queueChangeEventP('Game.board.change');
-
       return [ctxt, game];
     }
-    function setBoardReplayP(ctxt, state, game) {
+    function setBoardReplayP(ctxt, game) {
       game = R.assoc('board', ctxt.after, game);
-
-      state.queueChangeEventP('Game.board.change');
-
       return game;
     }
-    function setBoardUndoP(ctxt, state, game) {
+    function setBoardUndoP(ctxt, game) {
       game = R.assoc('board', ctxt.before, game);
-
-      state.queueChangeEventP('Game.board.change');
-
       return game;
     }
   }

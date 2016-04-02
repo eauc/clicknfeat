@@ -4,27 +4,19 @@ describe('rollDiceCommand model', function() {
     function(rollDiceCommand) {
       this.rollDiceCommandModel = rollDiceCommand;
 
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP'
-      ]);
       this.game = { dice: [] };
     }
   ]));
 
   context('executeP(<sides>, <dice>, <state>, <game>)', function() {
     return this.rollDiceCommandModel
-      .executeP(6, 4, this.state, this.game);
+      .executeP(6, 4, this.game);
   }, function() {
     beforeEach(function() {
       const fake_dice = [5,4,2,6];
       let ndie = 0;
       spyOn(R, 'randomRange')
         .and.callFake(() => { return fake_dice[ndie++]; });
-    });
-
-    it('should send diceRoll event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.dice.roll');
     });
 
     it('should return context', function() {
@@ -38,7 +30,7 @@ describe('rollDiceCommand model', function() {
 
   context('replayP(<ctxt>, <state>, <game>)', function() {
     return this.rollDiceCommandModel
-      .replayP(this.ctxt, this.state, this.game);
+      .replayP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -56,7 +48,7 @@ describe('rollDiceCommand model', function() {
 
   context('undoP(<ctxt>, <state>, <game>)', function() {
     return this.rollDiceCommandModel
-      .undoP(this.ctxt, this.state, this.game);
+      .undoP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {

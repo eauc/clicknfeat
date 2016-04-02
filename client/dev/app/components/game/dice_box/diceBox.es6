@@ -11,7 +11,7 @@
     console.log('gameDiceBoxCtrl');
 
     vm.doRollDice = doRollDice;
-    $scope.onStateChangeEvent('Game.dice.roll', updateList, $scope);
+    $scope.onStateChangeEvent('Game.dice.change', updateList, $scope);
     self.requestAnimationFrame(updateList);
 
     function updateList() {

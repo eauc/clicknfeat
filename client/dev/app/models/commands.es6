@@ -15,13 +15,13 @@
       // 'deleteTerrainCommand',
       // 'lockTerrainsCommand',
       // 'onTerrainsCommand',
-      // 'rollDiceCommand',
+      'rollDiceCommand',
       // 'rollDeviationCommand',
-      // 'setBoardCommand',
+      'setBoardCommand',
       'setLayersCommand',
       // 'setLosCommand',
       // 'setRulerCommand',
-      // 'setScenarioCommand',
+      'setScenarioCommand',
       () => ({ })
     ]);
 

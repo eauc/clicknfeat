@@ -11,10 +11,10 @@
     const vm = this;
     console.log('init gameSetupCtrl');
 
-    // vm.doSetBoard = doSetBoard;
-    // vm.doSetRandomBoard = doSetRandomBoard;
-    // vm.doSetScenario = doSetScenario;
-    // vm.doSetRandomScenario = doSetRandomScenario;
+    vm.doSetBoard = doSetBoard;
+    vm.doSetRandomBoard = doSetRandomBoard;
+    vm.doSetScenario = doSetScenario;
+    vm.doSetRandomScenario = doSetRandomScenario;
     // vm.doGenerateObjectives = doGenerateObjectives;
     vm.doToggleLayer = doToggleLayer;
     // vm.onAmbianceChange = onAmbianceChange;
@@ -30,14 +30,13 @@
     function activate() {
       $scope.state.data_ready.then(onDataReady);
 
-      // $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
-      // self.requestAnimationFrame(updateBoardName);
+      $scope.onStateChangeEvent('Game.board.change', updateBoardName, $scope);
+      self.requestAnimationFrame(updateBoardName);
 
-      // $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
-      // self.requestAnimationFrame(updateScenario);
+      $scope.onStateChangeEvent('Game.scenario.change', updateScenario, $scope);
+      self.requestAnimationFrame(updateScenario);
 
       $scope.onStateChangeEvent('Game.layers.change', updateLayers, $scope);
-      // $scope.onStateChangeEvent('Game.load.success', updateLayers, $scope);
       self.requestAnimationFrame(updateLayers);
 
       // $scope.$on('$destroy', () => {
@@ -55,32 +54,32 @@
       $scope.$digest();
     }
 
-    // function updateBoardName() {
-    //   vm.board_name = R.path(['game','board','name'], $scope.state);
-    //   $scope.$digest();
-    // }
-    // function doSetBoard() {
-    //   $scope.stateEvent('Game.board.set', vm.board_name);
-    // }
-    // function doSetRandomBoard() {
-    //   $scope.stateEvent('Game.board.setRandom');
-    // }
+    function updateBoardName() {
+      vm.board_name = R.path(['game','board','name'], $scope.state);
+      $scope.$digest();
+    }
+    function doSetBoard() {
+      $scope.stateEvent('Game.board.set', vm.board_name);
+    }
+    function doSetRandomBoard() {
+      $scope.stateEvent('Game.board.setRandom');
+    }
 
-    // function updateScenario() {
-    //   vm.scenario_name = R.path(['state','game','scenario','name'], $scope);
-    //   vm.scenario_group = gameScenarioService
-    //     .groupForName(vm.scenario_name, vm.scenarios);
-    //   $scope.$digest();
-    // }
-    // function doSetScenario() {
-    //   if(R.isNil(vm.scenario_name)) return;
+    function updateScenario() {
+      vm.scenario_name = R.path(['state','game','scenario','name'], $scope);
+      vm.scenario_group = gameScenarioService
+        .groupForName(vm.scenario_name, vm.scenarios);
+      $scope.$digest();
+    }
+    function doSetScenario() {
+      if(R.isNil(vm.scenario_name)) return;
 
-    //   $scope.stateEvent('Game.scenario.set',
-    //                     vm.scenario_name, vm.scenario_group);
-    // }
-    // function doSetRandomScenario() {
-    //   $scope.stateEvent('Game.scenario.setRandom');
-    // }
+      $scope.stateEvent('Game.scenario.set',
+                        vm.scenario_name, vm.scenario_group);
+    }
+    function doSetRandomScenario() {
+      $scope.stateEvent('Game.scenario.setRandom');
+    }
     // function doGenerateObjectives() {
     //   $scope.stateEvent('Game.scenario.generateObjectives');
     // }

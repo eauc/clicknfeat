@@ -14,7 +14,7 @@
     commandsModel.registerCommand('rollDice', rollDiceCommandModel);
     return rollDiceCommandModel;
 
-    function rollDiceExecuteP(sides, nb_dice, state, game) {
+    function rollDiceExecuteP(sides, nb_dice, game) {
       const dice = R.times(() => {
         return R.randomRange(1, sides);
       }, nb_dice);
@@ -25,22 +25,16 @@
         n: nb_dice,
         d: dice
       };
-
-      state.queueChangeEventP('Game.dice.roll');
       return [ctxt, game];
     }
-    function rollDiceReplayP(ctxt, state, game) {
+    function rollDiceReplayP(ctxt, game) {
       game = R.over(R.lensProp('dice'), R.append(ctxt), game);
-
-      state.queueChangeEventP('Game.dice.roll');
       return game;
     }
-    function rollDiceUndoP(ctxt, state, game) {
+    function rollDiceUndoP(ctxt, game) {
       game = R.over(R.lensProp('dice'),
                     R.reject(R.propEq('stamp', ctxt.stamp)),
                     game);
-
-      state.queueChangeEventP('Game.dice.roll');
       return game;
     }
   }

@@ -13,30 +13,21 @@
     commandsModel.registerCommand('setScenario', setScenarioCommandModel);
     return setScenarioCommandModel;
 
-    function setScenarioExecuteP(scenario, state, game) {
+    function setScenarioExecuteP(scenario, game) {
       var ctxt = {
         before: game.scenario,
         after: scenario,
         desc: scenario.name
       };
       game = R.assoc('scenario', scenario, game);
-
-      state.queueChangeEventP('Game.scenario.change');
-
       return [ctxt, game];
     }
-    function setScenarioReplayP(ctxt, state, game) {
+    function setScenarioReplayP(ctxt, game) {
       game = R.assoc('scenario', ctxt.after, game);
-
-      state.queueChangeEventP('Game.scenario.change');
-
       return game;
     }
-    function setScenarioUndoP(ctxt, state, game) {
+    function setScenarioUndoP(ctxt, game) {
       game = R.assoc('scenario', ctxt.before, game);
-
-      state.queueChangeEventP('Game.scenario.change');
-
       return game;
     }
   }

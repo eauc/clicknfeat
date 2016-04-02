@@ -11,7 +11,7 @@ describe('commonMode model', function() {
   example(function(e) {
     describe(e.action+'()', function() {
       it('should broadcast "'+e.event+'" event', function() {
-        this.commonModeModel.actions[e.action](this.state);
+        this.commonModeModel.actions[e.action]();
         expect(this.appStateService.emit)
           .toHaveBeenCalledWith(e.event);
       });
@@ -25,9 +25,16 @@ describe('commonMode model', function() {
     [ 'viewZoomIn', 'Game.view.zoomIn' ],
     [ 'viewZoomOut', 'Game.view.zoomOut' ],
     [ 'viewZoomReset', 'Game.view.zoomReset' ],
-    [ 'flipMap', 'Game.view.flipMap' ],
     [ 'toggleMenu', 'Game.toggleMenu' ],
   ]);
+
+  describe('flipMap()', function() {
+    it('should do Game.uiState.flip action', function() {
+      this.commonModeModel.actions.flipMap();
+      expect(this.appStateService.reduce)
+        .toHaveBeenCalledWith('Game.uiState.flip');
+    });
+  });
 
   describe('modeBackToDefault', function() {
     it('should switch to default mode', function() {
