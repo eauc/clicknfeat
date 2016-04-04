@@ -64,7 +64,7 @@ describe('modes model', function() {
     });
   });
 
-  context('switchToModeP(<next>, <state>)', function() {
+  context('switchToMode(<next>, <state>)', function() {
     return this.modesModel
       .switchToMode(this.to, this.modes);
   }, function() {

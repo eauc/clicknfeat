@@ -1,4 +1,4 @@
-describe('deleteModelCommand model', function() {
+xdescribe('deleteModelCommand model', function() {
   beforeEach(inject([
     'deleteModelCommand',
     function(deleteModelCommandModel) {

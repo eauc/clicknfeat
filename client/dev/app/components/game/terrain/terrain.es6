@@ -4,12 +4,12 @@
     .directive('clickGameTerrainsList', clickGameTerrainsListDirectiveFactory);
 
   clickGameTerrainDirectiveFactory.$inject = [
-    'gameTerrains',
-    'gameTerrainInfo',
+    '$rootScope',
+    'terrain',
     'gameTerrainSelection',
   ];
-  function clickGameTerrainDirectiveFactory(gameTerrainsModel,
-                                            gameTerrainInfoModel,
+  function clickGameTerrainDirectiveFactory($rootScope,
+                                            terrainModel,
                                             gameTerrainSelectionModel) {
     return {
       restrict: 'A',
@@ -17,111 +17,72 @@
     };
 
     function link(scope, parent) {
-      const state = scope.state;
-      R.threadP()(
-        () => {
-          return gameTerrainInfoModel
-            .getInfoP(scope.terrain.state.info, state.terrains)
-            .catch((reason) => {
-              console.error('clickGameTerrain', reason);
-              return self.Promise.reject(reason);
-            });
-        },
-        (info) => {
-          console.log('gameTerrain', scope.terrain, info);
-
-          return buildTerrainElement(state, info, scope.terrain,
-                                     parent[0], scope);
-        }
-      );
+      parent = parent[0];
+      console.log('gameTerrain', scope.terrain);
+      return buildTerrainElement(scope, parent);
     }
-    function buildTerrainElement(state, info, terrain, parent, scope) {
-      const element = createTerrainElement(info, terrain, parent);
+    function buildTerrainElement(scope, parent) {
+      const state = $rootScope.state;
+      const render = terrainModel.render(state.terrains, scope.terrain.state);
+      initTerrainElement(render, parent);
+      scope.pos = render;
+      updateTerrainSelection(state.game.terrain_selection,
+                             scope.terrain, scope);
 
-      const updateTerrain = gameTerrainOnUpdate(state, info,
-                                                scope, element);
-      scope.onStateChangeEvent(`Game.terrain.change.${terrain.state.stamp}`,
+      const updateTerrain = gameTerrainOnUpdate(scope);
+      scope.onStateChangeEvent('Game.terrains.change',
                                updateTerrain, scope);
-      updateTerrain();
+      scope.onStateChangeEvent(`Game.terrain.change.${scope.terrain.state.stamp}`,
+                               gameTerrainOnUpdate_(scope), scope);
+      scope.onStateChangeEvent('Game.terrain_selection.change',
+                               updateTerrain, scope);
     }
-    function createTerrainElement(info, terrain, parent) {
-      const map = document.getElementById('map');
-      const svgNS = map.namespaceURI;
+    function initTerrainElement(render, parent) {
+      const image = parent.querySelector('image');
+      image.setAttribute('data-stamp', render.stamp);
+      image.setAttribute('width', render.width+'');
+      image.setAttribute('height', render.height+'');
+      image.setAttributeNS('http://www.w3.org/1999/xlink',
+                           'href', render.img_link);
 
-      const image = document.createElementNS(svgNS, 'image');
-      image.classList.add('terrain-image');
-      image.setAttribute('data-stamp', terrain.state.stamp);
-      image.setAttribute('x', '0');
-      image.setAttribute('y', '0');
-      image.setAttribute('width', info.img.width+'');
-      image.setAttribute('height', info.img.height+'');
-      image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', info.img.link);
-      parent.appendChild(image);
-
-      const direction = document.createElementNS(svgNS, 'line');
-      direction.classList.add('terrain-los');
-      direction.setAttribute('x1', (info.img.width/2)+'');
-      direction.setAttribute('y1', (info.img.height/2)+'');
-      direction.setAttribute('x2', (info.img.width/2)+'');
-      direction.setAttribute('y2', '0');
-      parent.appendChild(direction);
-
-      const edge = document.createElementNS(svgNS, 'rect');
-      edge.classList.add('terrain-edge');
-      edge.setAttribute('x', '0');
-      edge.setAttribute('y', '0');
-      edge.setAttribute('width', (info.img.width)+'');
-      edge.setAttribute('height', (info.img.height)+'');
-      parent.appendChild(edge);
-
-      return { container: parent,
-               image: image,
-               direction: direction,
-               edge: edge
-             };
+      const edge = parent.querySelector('rect');
+      edge.setAttribute('width', render.width+'');
+      edge.setAttribute('height', render.height+'');
     }
-    function gameTerrainOnUpdate(state, info, scope, element) {
+    function gameTerrainOnUpdate(scope) {
+      const onUpdate_ = gameTerrainOnUpdate_(scope);
+      let _terrain = scope.terrain;
+      let _selection = R.path(['game', 'terrain_selection'], $rootScope.state);
       return () => {
-        R.threadP(scope.state.game.terrains)(
-          gameTerrainsModel.findStampP$(scope.terrain.state.stamp),
-          (terrain) => {
-            updateTerrainPosition(info.img, terrain, element);
-            updateTerrainSelection(state.game.terrain_selection,
-                                   terrain, element);
-          }
-        ).catch(R.spyAndDiscardError());
+        const current_selection = R.path(['game', 'terrain_selection'], $rootScope.state);
+        if( scope.terrain === _terrain &&
+            current_selection === _selection ) {
+          return;
+        }
+        _terrain = scope.terrain;
+        _selection = current_selection;
+        onUpdate_();
       };
     }
-    function updateTerrainPosition(img, terrain, element) {
-      element.container.setAttribute('transform', [
-        'translate(',
-        terrain.state.x-img.width/2,
-        ',',
-        terrain.state.y-img.height/2,
-        ') rotate(',
-        terrain.state.r,
-        ',',
-        img.width/2,
-        ',',
-        img.height/2,
-        ')'
-      ].join(''));
+    function gameTerrainOnUpdate_(scope) {
+      return () => {
+        console.warn('RENDER TERRAIN', scope.terrain.state.stamp);
+        const state = $rootScope.state;
+        const render = terrainModel.render(state.terrains, scope.terrain.state);
+        scope.pos = render;
+        updateTerrainSelection(state.game.terrain_selection,
+                               scope.terrain, scope);
+        scope.$digest();
+      };
     }
-    function updateTerrainSelection(selection, terrain, element) {
-      const container = element.container;
+    function updateTerrainSelection(selection, terrain, scope) {
       const stamp = terrain.state.stamp;
-      if(gameTerrainSelectionModel.in('local', stamp, selection)) {
-        container.classList.add('local-selection');
-      }
-      else {
-        container.classList.remove('local-selection');
-      }
-      if(gameTerrainSelectionModel.in('remote', stamp, selection)) {
-        container.classList.add('remote-selection');
-      }
-      else {
-        container.classList.remove('remote-selection');
-      }
+      scope.selection = {
+        local: gameTerrainSelectionModel
+          .in('local', stamp, selection),
+        remote: gameTerrainSelectionModel
+          .in('remote', stamp, selection)
+      };
     }
   }
 
@@ -134,9 +95,9 @@
       link: link
     };
 
-    function link(scope, element) {
-      scope.type = element[0].getAttribute('click-game-terrains-list');
-      scope.digestOnStateChangeEvent('Game.terrain.create', scope);
+    function link(scope, _element_, attrs) {
+      scope.type = attrs.clickGameTerrainsList;
+      scope.digestOnStateChangeEvent('Game.terrains.change', scope);
       console.log('clickGameTerrainsList', scope.type);
     }
   }

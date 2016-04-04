@@ -1,4 +1,4 @@
-describe('createModelCommand model', function() {
+xdescribe('createModelCommand model', function() {
   beforeEach(inject([
     'createModelCommand',
     function(createModelCommandModel) {

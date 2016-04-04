@@ -3,8 +3,13 @@
 (function () {
   angular.module('clickApp.services').factory('gameMap', gameMapServiceFactory);
 
-  gameMapServiceFactory.$inject = ['gameModels', 'gameTemplates', 'gameTerrains'];
-  function gameMapServiceFactory(gameModelsModel, gameTemplatesModel, gameTerrainsModel) {
+  gameMapServiceFactory.$inject = [
+  // 'gameModels',
+  // 'gameTemplates',
+  'gameTerrains'];
+  function gameMapServiceFactory( // gameModelsModel,
+  // gameTemplatesModel,
+  gameTerrainsModel) {
     var gameMapService = {
       isFlipped: mapIsFlipped,
       zoomFactor: mapZoomFactor,
@@ -50,16 +55,16 @@
         type: 'Map',
         target: null
       };
-      if (eventTargetTypeIs('template')) {
-        return emitTypeEvent(gameTemplatesModel, 'template');
-      }
-      if (eventTargetTypeIs('model-base')) {
-        return emitTypeEvent(gameModelsModel, 'model');
-      }
+      // if(eventTargetTypeIs('template')) {
+      //   return emitTypeEvent(gameTemplatesModel, 'template');
+      // }
+      // if(eventTargetTypeIs('model-base')) {
+      //   return emitTypeEvent(gameModelsModel, 'model');
+      // }
       if (eventTargetTypeIs('terrain-image')) {
         return emitTypeEvent(gameTerrainsModel, 'terrain');
       }
-      return R.resolveP(not_found);
+      return not_found;
 
       function eventTargetTypeIs(type) {
         return event.target.classList.contains(type) && event.target.hasAttribute('data-stamp');

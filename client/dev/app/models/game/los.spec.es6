@@ -1,4 +1,4 @@
-describe('gameLos model', function() {
+xdescribe('gameLos model', function() {
   beforeEach(inject([ 'gameLos', function(gameLosModel) {
     this.gameLosModel = gameLosModel;
 

@@ -9,22 +9,22 @@
     // 'gameTemplateSelection',
     // 'gameModels',
     // 'gameModelSelection',
-    // 'gameTerrainSelection',
+    'gameTerrainSelection',
   ];
   function defaultModeModelFactory(modesModel,
                                    settingsModel,
-                                   commonModeModel) {
+                                   commonModeModel,
                                    // gameTemplateSelectionModel,
                                    // gameModelsModel,
                                    // gameModelSelectionModel,
-                                   // gameTerrainSelectionModel) {
+                                   gameTerrainSelectionModel) {
     const default_actions = Object.create(commonModeModel.actions);
     // default_actions.setModelSelection = setModelSelection;
     // default_actions.toggleModelSelection = toggleModelSelection;
     // default_actions.modelSelectionDetail = modelSelectionDetail;
     // default_actions.selectTemplate = selectTemplate;
     // default_actions.templateSelectionDetail = templateSelectionDetail;
-    // default_actions.selectTerrain = selectTerrain;
+    default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     // default_actions.dragStartMap = dragStartMap;
@@ -135,19 +135,17 @@
     //     }
     //   );
     // }
-    // function selectTerrain(state, event) {
-    //   return R.threadP()(
-    //     clearTemplateSelection$(state),
-    //     () => state.eventP(
-    //       'Game.update', R.lensProp('terrain_selection'),
-    //       gameTerrainSelectionModel.set$(
-    //         'local',
-    //         [event['click#'].target.state.stamp],
-    //         state
-    //       )
-    //     )
-    //   );
-    // }
+    function selectTerrain(state, event) {
+      // clearTemplateSelection(state),
+      return R.over(
+        R.lensPath(['game', 'terrain_selection']),
+        gameTerrainSelectionModel.set$(
+          'local',
+          [event['click#'].target.state.stamp]
+        ),
+        state
+      );
+    }
     // function enterRulerMode(state) {
     //   return state.eventP('Modes.switchTo', 'Ruler');
     // }

@@ -15,9 +15,10 @@
     // 'gameModels',
     // 'gameModelSelection',
     'gameScenario',
-    // 'gameTerrains',
+    'gameTerrains',
     // 'gameTemplates',
     // 'gameTemplateSelection',
+    'gameTerrainSelection',
     // 'fileImport',
     'allCommands',
     // 'allTemplates',
@@ -33,10 +34,11 @@
                                  // gameFactionsModel,
                                  // gameModelsModel,
                                  // gameModelSelectionModel,
-                                 gameScenarioModel) {
-                                 // gameTerrainsModel,
+                                 gameScenarioModel,
+                                 gameTerrainsModel,
                                  // gameTemplatesModel,
                                  // gameTemplateSelectionModel,
+                                 gameTerrainSelectionModel) {
                                  // fileImportService) {
     const GAME_LENS = R.lensProp('game');
     const UI_STATE_LENS = R.lensProp('ui_state');
@@ -67,8 +69,8 @@
       // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
       // onTemplateCreate: stateGameOnTemplateCreate,
       // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
-      // onTerrainCreate: stateGameOnTerrainCreate,
-      // onTerrainReset: stateGameOnTerrainReset,
+      onTerrainCreate: stateGameOnTerrainCreate,
+      onTerrainReset: stateGameOnTerrainReset,
       onBoardSet: stateGameOnBoardSet,
       onBoardSetRandom: stateGameOnBoardSetRandom,
       // onBoardImportFile: stateGameOnBoardImportFile,
@@ -78,7 +80,8 @@
       // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       // onSelectionLocalChange: stateGameOnSelectionLocalChange,
       updateExport: stateGameUpdateExport,
-      saveCurrent: stateGameSaveCurrent
+      saveCurrent: stateGameSaveCurrent,
+      checkMode: stateGameCheckMode
     };
     // const exportCurrentGame = stateExportsModel
     //         .exportP$('game', R.prop('game'));
@@ -110,7 +113,11 @@
         .addReducer('Game.board.setRandom'     , stateGameModel.onBoardSetRandom)
         .addReducer('Game.scenario.set'        , stateGameModel.onScenarioSet)
         .addReducer('Game.scenario.setRandom'  , stateGameModel.onScenarioSetRandom)
-        .addListener('Game.change'             , stateGameModel.saveCurrent);
+        .addReducer('Game.terrain.create'      , stateGameModel.onTerrainCreate)
+        .addReducer('Game.terrain.reset'       , stateGameModel.onTerrainReset)
+        .addListener('Game.change'             , stateGameModel.saveCurrent)
+        .addListener('Game.terrain_selection.local.change',
+                     stateGameModel.checkMode);
         // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
         // .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
         // .addReducer('Game.model.copy'          , stateGameModel.onModelCopy)
@@ -170,6 +177,22 @@
         .onChange('Game.change',
                   'Game.scenario.change',
                   R.prop('scenario'));
+      appStateService
+        .onChange('AppState.change',
+                  'Create.base.change',
+                  R.path(['create','base']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.terrains.change',
+                  R.prop(['terrains']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.terrain_selection.change',
+                  R.prop('terrain_selection'));
+      appStateService
+        .onChange('Game.terrain_selection.change',
+                  'Game.terrain_selection.local.change',
+                  R.prop('local'));
 
       return R.thread(state)(
         R.set(UI_STATE_LENS, { flipped: false }),
@@ -459,26 +482,29 @@
     //   unsubscribe();
     //   state._template_selection_listener = {};
     // }
-    // function stateGameOnTerrainCreate(state, _event_, path) {
-    //   state.create = {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     terrains: [ {
-    //       info: path,
-    //       x: 0, y: 0, r: 0
-    //     } ]
-    //   };
-    //   return state.eventP('Modes.switchTo', 'CreateTerrain');
-    // }
-    // function stateGameOnTerrainReset(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     R.prop('terrains'),
-    //     gameTerrainsModel.all,
-    //     R.pluck('state'),
-    //     R.pluck('stamp'),
-    //     (stamps) => state.eventP('Game.command.execute',
-    //                              'deleteTerrain', [stamps])
-    //   ).catch(gameModel.actionError$(state));
-    // }
+    function stateGameOnTerrainCreate(state, _event_, [path]) {
+      appStateService.chainReduce('Modes.switchTo', 'CreateTerrain');
+      return R.assoc('create', {
+        base: { x: 240, y: 240, r: 0 },
+        terrains: [ {
+          info: path,
+          x: 0, y: 0, r: 0
+        } ]
+      }, state);
+    }
+    function stateGameOnTerrainReset(state) {
+      return R.threadP(state)(
+        R.view(GAME_LENS),
+        R.prop('terrains'),
+        gameTerrainsModel.all,
+        R.pluck('state'),
+        R.pluck('stamp'),
+        (stamps) => {
+          appStateService.reduce('Game.command.execute',
+                                 'deleteTerrain', [stamps]);
+        }
+      ).catch((error) => appStateService.emit('Game.error', error));
+    }
     function stateGameOnBoardSet(state, _event_, [name]) {
       const board = gameBoardModel.forName(name, state.boards);
       self.window.requestAnimationFrame(() => {
@@ -613,5 +639,20 @@
     //     })
     //   );
     // }
+    function stateGameCheckMode() {
+      const state = appStateService.current();
+      const game = R.propOr({}, 'game', state);
+      const current_mode = modesModel.currentModeName(state.modes);
+      const mode = R.thread(game)(
+        R.propOr({}, 'terrain_selection'),
+        gameTerrainSelectionModel
+          .checkMode$,
+        R.defaultTo('Default')
+      );
+      if(R.exists(mode) &&
+         mode !== current_mode) {
+        appStateService.chainReduce('Modes.switchTo', mode);
+      }
+    }
   }
 })();

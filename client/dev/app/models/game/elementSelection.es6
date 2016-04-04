@@ -9,14 +9,12 @@
         create: elementSelectionCreate,
         'in': elementSelectionIn,
         get: elementSelectionGet,
-        checkModeP: elementSelectionCheckModeP,
+        checkMode: elementSelectionCheckMode,
         set: elementSelectionSet,
         addTo: elementSelectionAddTo,
         removeFrom: elementSelectionRemoveFrom,
         clear: elementSelectionClear
       };
-
-      const emitChangeEvent$ = R.curry(emitChangeEvent);
       R.curryService(gameElementSelectionModel);
       return gameElementSelectionModel;
 
@@ -33,63 +31,33 @@
       function elementSelectionGet(where, selection) {
         return R.propOr([], where, selection);
       }
-      function elementSelectionCheckModeP(state, selection) {
-        return R.threadP(selection)(
+      function elementSelectionCheckMode(selection) {
+        return R.thread(selection)(
           gameElementSelectionModel.get$('local'),
-          R.head,
-          R.rejectIfP(R.isNil, `No ${type} selection`),
-          () => {
-            state.queueEventP('Modes.switchTo', s.capitalize(type));
-          }
+          R.ifElse(
+            R.isEmpty,
+            () => null,
+            () => s.capitalize(type)
+          )
         );
       }
-      function elementSelectionSet(where, stamps, state, selection) {
-        const previous = gameElementSelectionModel.get(where, selection);
-        const ret = R.assoc(where, stamps, selection);
-
-        checkSelection(where, state);
-
-        R.forEach(emitChangeEvent$(state), stamps);
-        R.forEach(emitChangeEvent$(state), previous);
-
-        return ret;
+      function elementSelectionSet(where, stamps, selection) {
+        return R.assoc(where, stamps, selection);
       }
-      function elementSelectionAddTo(where, stamps, state, selection) {
+      function elementSelectionAddTo(where, stamps, selection) {
         const previous = gameElementSelectionModel.get(where, selection);
         const new_selection = R.uniq(R.concat(previous, stamps));
-        const ret = R.assoc(where, new_selection, selection);
-
-        checkSelection(where, state);
-
-        R.forEach(emitChangeEvent$(state), new_selection);
-
-        return ret;
+        return R.assoc(where, new_selection, selection);
       }
-      function elementSelectionRemoveFrom(where, stamps, state, selection) {
+      function elementSelectionRemoveFrom(where, stamps, selection) {
         const previous = R.prop(where, selection);
         const new_selection = R.difference(previous, stamps);
-        const ret = R.assoc(where, new_selection, selection);
-
-        checkSelection(where, state);
-
-        R.forEach(emitChangeEvent$(state),
-                  R.uniq(R.concat(previous, stamps)));
-
-        return ret;
+        return R.assoc(where, new_selection, selection);
       }
-      function elementSelectionClear(where, state, selection) {
+      function elementSelectionClear(where, selection) {
         const previous = R.prop(where, selection);
         return gameElementSelectionModel
-          .removeFrom(where, previous, state, selection);
-      }
-      function checkSelection(where, state) {
-        if('local' === where) {
-          state.queueChangeEventP(`Game.selection.local.change`);
-          state.queueChangeEventP(`Game.${type}.selection.local.change`);
-        }
-      }
-      function emitChangeEvent(state, stamp) {
-        state.queueChangeEventP(`Game.${type}.change.${stamp}`);
+          .removeFrom(where, previous, selection);
       }
     };
   }

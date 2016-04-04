@@ -9,10 +9,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   // 'gameFactions',
   // 'gameModels',
   // 'gameModelSelection',
-  'gameScenario',
-  // 'gameTerrains',
+  'gameScenario', 'gameTerrains',
   // 'gameTemplates',
   // 'gameTemplateSelection',
+  'gameTerrainSelection',
   // 'fileImport',
   'allCommands'];
 
@@ -21,10 +21,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   // gameFactionsModel,
   // gameModelsModel,
   // gameModelSelectionModel,
-  gameScenarioModel) {
-    // gameTerrainsModel,
-    // gameTemplatesModel,
-    // gameTemplateSelectionModel,
+  gameScenarioModel, gameTerrainsModel,
+  // gameTemplatesModel,
+  // gameTemplateSelectionModel,
+  gameTerrainSelectionModel) {
     // fileImportService) {
     var GAME_LENS = R.lensProp('game');
     var UI_STATE_LENS = R.lensProp('ui_state');
@@ -55,8 +55,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
       // onTemplateCreate: stateGameOnTemplateCreate,
       // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
-      // onTerrainCreate: stateGameOnTerrainCreate,
-      // onTerrainReset: stateGameOnTerrainReset,
+      onTerrainCreate: stateGameOnTerrainCreate,
+      onTerrainReset: stateGameOnTerrainReset,
       onBoardSet: stateGameOnBoardSet,
       onBoardSetRandom: stateGameOnBoardSetRandom,
       // onBoardImportFile: stateGameOnBoardImportFile,
@@ -66,7 +66,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       // onSelectionLocalChange: stateGameOnSelectionLocalChange,
       updateExport: stateGameUpdateExport,
-      saveCurrent: stateGameSaveCurrent
+      saveCurrent: stateGameSaveCurrent,
+      checkMode: stateGameCheckMode
     };
     // const exportCurrentGame = stateExportsModel
     //         .exportP$('game', R.prop('game'));
@@ -77,7 +78,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return stateGameModel;
 
     function stateGamesCreate(state) {
-      appStateService.addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addListener('Game.change', stateGameModel.saveCurrent);
+      appStateService.addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addReducer('Game.terrain.create', stateGameModel.onTerrainCreate).addReducer('Game.terrain.reset', stateGameModel.onTerrainReset).addListener('Game.change', stateGameModel.saveCurrent).addListener('Game.terrain_selection.local.change', stateGameModel.checkMode);
       // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
       // .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
       // .addReducer('Game.model.copy'          , stateGameModel.onModelCopy)
@@ -106,6 +107,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       appStateService.onChange('Game.change', 'Game.dice.change', R.prop('dice'));
       appStateService.onChange('Game.change', 'Game.board.change', R.prop('board'));
       appStateService.onChange('Game.change', 'Game.scenario.change', R.prop('scenario'));
+      appStateService.onChange('AppState.change', 'Create.base.change', R.path(['create', 'base']));
+      appStateService.onChange('Game.change', 'Game.terrains.change', R.prop(['terrains']));
+      appStateService.onChange('Game.change', 'Game.terrain_selection.change', R.prop('terrain_selection'));
+      appStateService.onChange('Game.terrain_selection.change', 'Game.terrain_selection.local.change', R.prop('local'));
 
       return R.thread(state)(R.set(UI_STATE_LENS, { flipped: false }), R.set(GAME_LENS, {}), R.assocPath(['exports', 'game'], game_export_cell));
     }
@@ -418,30 +423,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //   unsubscribe();
     //   state._template_selection_listener = {};
     // }
-    // function stateGameOnTerrainCreate(state, _event_, path) {
-    //   state.create = {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     terrains: [ {
-    //       info: path,
-    //       x: 0, y: 0, r: 0
-    //     } ]
-    //   };
-    //   return state.eventP('Modes.switchTo', 'CreateTerrain');
-    // }
-    // function stateGameOnTerrainReset(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     R.prop('terrains'),
-    //     gameTerrainsModel.all,
-    //     R.pluck('state'),
-    //     R.pluck('stamp'),
-    //     (stamps) => state.eventP('Game.command.execute',
-    //                              'deleteTerrain', [stamps])
-    //   ).catch(gameModel.actionError$(state));
-    // }
-    function stateGameOnBoardSet(state, _event_, _ref25) {
+    function stateGameOnTerrainCreate(state, _event_, _ref25) {
       var _ref26 = _slicedToArray(_ref25, 1);
 
-      var name = _ref26[0];
+      var path = _ref26[0];
+
+      appStateService.chainReduce('Modes.switchTo', 'CreateTerrain');
+      return R.assoc('create', {
+        base: { x: 240, y: 240, r: 0 },
+        terrains: [{
+          info: path,
+          x: 0, y: 0, r: 0
+        }]
+      }, state);
+    }
+    function stateGameOnTerrainReset(state) {
+      return R.threadP(state)(R.view(GAME_LENS), R.prop('terrains'), gameTerrainsModel.all, R.pluck('state'), R.pluck('stamp'), function (stamps) {
+        appStateService.reduce('Game.command.execute', 'deleteTerrain', [stamps]);
+      }).catch(function (error) {
+        return appStateService.emit('Game.error', error);
+      });
+    }
+    function stateGameOnBoardSet(state, _event_, _ref27) {
+      var _ref28 = _slicedToArray(_ref27, 1);
+
+      var name = _ref28[0];
 
       var board = gameBoardModel.forName(name, state.boards);
       self.window.requestAnimationFrame(function () {
@@ -476,11 +482,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //     )
     //   ).catch(R.spyAndDiscardError('Import board file'));
     // }
-    function stateGameOnScenarioSet(_state_, _event_, _ref27) {
-      var _ref28 = _slicedToArray(_ref27, 2);
+    function stateGameOnScenarioSet(_state_, _event_, _ref29) {
+      var _ref30 = _slicedToArray(_ref29, 2);
 
-      var name = _ref28[0];
-      var group = _ref28[1];
+      var name = _ref30[0];
+      var group = _ref30[1];
 
       var scenario = gameScenarioModel.forName(name, group);
       self.window.requestAnimationFrame(function () {
@@ -543,10 +549,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         url: fileExportService.generate('json', current_game)
       };
     }
-    function stateGameSaveCurrent(_event_, _ref29) {
-      var _ref30 = _slicedToArray(_ref29, 1);
+    function stateGameSaveCurrent(_event_, _ref31) {
+      var _ref32 = _slicedToArray(_ref31, 1);
 
-      var game = _ref30[0];
+      var game = _ref32[0];
 
       if (R.isNil(R.prop('local_stamp', R.defaultTo({}, game)))) {
         return;
@@ -583,6 +589,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //     })
     //   );
     // }
+    function stateGameCheckMode() {
+      var state = appStateService.current();
+      var game = R.propOr({}, 'game', state);
+      var current_mode = modesModel.currentModeName(state.modes);
+      var mode = R.thread(game)(R.propOr({}, 'terrain_selection'), gameTerrainSelectionModel.checkMode$, R.defaultTo('Default'));
+      if (R.exists(mode) && mode !== current_mode) {
+        appStateService.chainReduce('Modes.switchTo', mode);
+      }
+    }
   }
 })();
 //# sourceMappingURL=game.js.map

@@ -13,9 +13,7 @@
   // 'aoeTemplateMode',
   // 'sprayTemplateMode',
   // 'wallTemplateMode',
-  // 'createTerrainMode',
-  // 'terrainMode',
-  function () {
+  'createTerrainMode', 'terrainMode', function () {
     return {};
   }]);
 
@@ -70,9 +68,11 @@
     }
     function currentModeActionP(action, args, modes) {
       var mode_name = modesModel.currentModeName(modes);
-      return R.threadP(modes)(currentMode, R.path(['actions', action]), R.rejectIfP(R.isNil, 'Unknown action "' + action + '" in "' + mode_name + '" mode'), function (handler) {
+      return R.thread(modes)(currentMode, R.path(['actions', action]), R.ifElse(R.exists, function (handler) {
         return handler.apply(null, args);
-      });
+      }, function () {
+        return R.rejectP('Unknown action "' + action + '" in "' + mode_name + '" mode');
+      }));
     }
     function switchToMode(name, modes) {
       var previous_mode = currentMode(modes);

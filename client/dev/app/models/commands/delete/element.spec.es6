@@ -16,10 +16,6 @@ describe('deleteElementCommand model', function() {
                                   this.gameElementsModel,
                                   this.gameElementSelectionModel);
 
-      this.state = {
-        factions: 'factions',
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
-      };
       this.game = { types: 'elements',
                     type_selection: 'selection' };
     }
@@ -27,7 +23,7 @@ describe('deleteElementCommand model', function() {
 
   context('executeP(<stamps>, <state>, <game>)', function() {
     return this.deleteElementCommandModel
-      .executeP(this.stamps, this.state, this.game);
+      .executeP(this.stamps, this.game);
   }, function() {
     beforeEach(function() {
       this.stamps = ['stamp1', 'stamp2', 'stamp3'];
@@ -50,25 +46,13 @@ describe('deleteElementCommand model', function() {
         }
       ];
 
-      this.gameElementsModel.findAnyStampsP
-        .resolveWith(this.elements);
+      this.gameElementsModel.findAnyStamps
+        .and.returnValue(this.elements);
     });
 
     it('should find <stamps> in game elements', function() {
-      expect(this.gameElementsModel.findAnyStampsP)
+      expect(this.gameElementsModel.findAnyStamps)
         .toHaveBeenCalledWith(this.stamps, 'elements');
-    });
-
-    context('no stamps are found', function() {
-      this.gameElementsModel.findAnyStampsP
-        .rejectWith('reason');
-      this.expectContextError();
-    }, function() {
-      it('should reject command', function() {
-        expect(this.contextError).toEqual([
-          'reason'
-        ]);
-      });
     });
 
     it('should remove elements from <game> elements', function() {
@@ -81,15 +65,10 @@ describe('deleteElementCommand model', function() {
     it('should remove <ctxt.elements> from elementSelection', function() {
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
+                              'selection');
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'gameTerrainSelection.removeFrom.returnValue');
-    });
-
-    it('should emit createElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.create');
+                              'gameTerrainSelection.removeFrom.returnValue');
     });
 
     it('should resolve context', function() {
@@ -133,7 +112,7 @@ describe('deleteElementCommand model', function() {
 
   context('replayP(<ctxt>, <state>, <game>)', function() {
     return this.deleteElementCommandModel
-      .replayP(this.ctxt, this.state, this.game);
+      .replayP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -165,21 +144,16 @@ describe('deleteElementCommand model', function() {
     it('should remove <ctxt.elements> from elementSelection', function() {
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
+                              'selection');
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'gameTerrainSelection.removeFrom.returnValue');
-    });
-
-    it('should emit createElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.create');
+                              'gameTerrainSelection.removeFrom.returnValue');
     });
   });
 
   context('undoP(<ctxt>, <state>, <game>)', function() {
     return this.deleteElementCommandModel
-      .undoP(this.ctxt, this.state, this.game);
+      .undoP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -201,25 +175,25 @@ describe('deleteElementCommand model', function() {
       };
 
       var stamp_index = 1;
-      this.elementModel.createP.resolveWith((m) => {
+      this.elementModel.create.and.callFake((m) => {
         return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
       });
     });
 
     it('should create new elements from <ctxt.elements>', function() {
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill1' ],
           x: 240, y: 240,
           stamp: 'stamp1'
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill2' ],
           x: 260, y: 240,
           stamp: 'stamp2'
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'wall', 'wall1' ],
           x: 280, y: 240,
@@ -254,12 +228,7 @@ describe('deleteElementCommand model', function() {
     it('should set remote elementSelection to new elements', function() {
       expect(this.gameElementSelectionModel.set)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
-    });
-
-    it('should emit createElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.create');
+                              'selection');
     });
   });
 });

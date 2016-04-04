@@ -11,7 +11,7 @@ describe('template model', function() {
     }
   ]));
 
-  context('createP(<state>)', function() {
+  xcontext('createP(<state>)', function() {
     return this.templateModel
       .createP(this.state);
   }, function() {

@@ -17,6 +17,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       current: appStateCurrent,
       addReducer: appStateAddReducer,
       reduce: appStateReduce,
+      chainReduce: appStateChainReduce,
       addListener: appStateAddListener,
       removeListener: appStateRemoveListener,
       emit: appStateEmit,
@@ -52,6 +53,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       return appStateService;
     }
+    function appStateChainReduce() {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      self.requestAnimationFrame(function () {
+        appStateService.reduce.apply(appStateService, args);
+      });
+    }
     function appStateAddListener(event, listener) {
       events = pubSubService.addListener(event, listener, events);
       return appStateService;
@@ -61,8 +71,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return appStateService;
     }
     function appStateEmit(event) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
       }
 
       pubSubService.emit(event, args, events);
@@ -77,7 +87,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return function (observable) {
           return _value[i] !== getter(observable);
         };
-      }), R.allPass);
+      }), R.anyPass);
       appStateService.addListener(on_event, function (_event_, _ref) {
         var _ref2 = _slicedToArray(_ref, 1);
 

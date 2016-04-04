@@ -47,15 +47,19 @@
       );
     }
     function stateModesOnCurrentAction(state, _event_, [action, args]) {
-      const res = modesModel
-              .currentModeActionP(action, args, state.modes);
       const event = R.last(args);
       if(R.exists(R.prop('preventDefault', event))) {
         event.preventDefault();
       }
 
-      return R.resolveP(res)
-        .catch((error) => appStateService.emit('Game.error', error));
+      return R.thread(state.modes)(
+        modesModel.currentModeActionP$(action, [state, ...args]),
+        R.when(
+          (res) => ('Promise' === R.type(res)),
+          (res) => R.resolveP(res)
+            .catch((error) => appStateService.emit('Game.error', error))
+        )
+      );
     }
     function stateModesOnReset(state) {
       return R.set(MODES_LENS, modesModel.init(), state);

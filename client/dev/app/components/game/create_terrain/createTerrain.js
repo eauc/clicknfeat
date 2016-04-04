@@ -3,48 +3,48 @@
 (function () {
   angular.module('clickApp.directives').directive('clickGameCreateTerrain', clickGameCreateTerrainDirectiveFactory);
 
-  clickGameCreateTerrainDirectiveFactory.$inject = ['gameTerrainInfo', 'gameMap'];
-  function clickGameCreateTerrainDirectiveFactory(gameTerrainInfoModel, gameMapModel) {
+  clickGameCreateTerrainDirectiveFactory.$inject = ['$rootScope', 'terrain', 'gameMap'];
+  function clickGameCreateTerrainDirectiveFactory($rootScope, terrainModel, gameMapService) {
     return {
       restrict: 'A',
       link: link
     };
 
     function link(scope, parent) {
-      var map = document.getElementById('map');
-      var svgNS = map.namespaceURI;
+      parent = parent[0];
+      console.log('clickCreateTerrain', scope.index, scope.terrain);
 
-      console.log('clickCreateTerrain', scope.index);
-      var state = scope.state;
-      var terrain = R.nth(scope.index, state.create.terrains);
-      R.threadP(state.terrains)(gameTerrainInfoModel.getInfoP$(terrain.info), function (info) {
-        var element = createTerrainElement(info, document, svgNS, parent[0]);
-        var is_flipped = gameMapModel.isFlipped(map);
-        setTerrainPosition(info, state.create.base, is_flipped, terrain, element);
+      var state = $rootScope.state;
+      var render = terrainModel.render(state.terrains, scope.terrain);
+      initTerrainElement(render, parent);
+      setTerrainPosition(R.path(['create', 'base'], state), render, scope);
 
-        scope.onStateChangeEvent('Game.create.update', updateTerrainElement(map, state, info, terrain, element), scope);
-      });
+      $rootScope.onStateChangeEvent('Create.base.change', updateTerrainElement(scope), scope);
     }
-    function createTerrainElement(info, document, svgNS, parent) {
-      var element = document.createElementNS(svgNS, 'rect');
-      element.classList.add('create-terrain');
-      element.setAttribute('x', '240');
-      element.setAttribute('y', '240');
-      element.setAttribute('width', info.img.width);
-      element.setAttribute('height', info.img.height);
-      parent.appendChild(element);
-      return element;
+    function initTerrainElement(render, parent) {
+      var element = parent.querySelector('rect');
+      element.setAttribute('width', render.width);
+      element.setAttribute('height', render.height);
     }
-    function updateTerrainElement(map, state, info, terrain, element) {
+    function updateTerrainElement(scope) {
       return function () {
-        var is_flipped = gameMapModel.isFlipped(map);
-        setTerrainPosition(info, state.create.base, is_flipped, terrain, element);
+        var state = $rootScope.state;
+        var base = R.path(['create', 'base'], state);
+        if (R.isNil(base)) return;
+
+        var render = terrainModel.render(state.terrains, scope.terrain);
+        setTerrainPosition(base, render, scope);
+        scope.$digest();
       };
     }
-    function setTerrainPosition(info, base, is_flipped, terrain, element) {
+    function setTerrainPosition(base, render, scope) {
+      var map = document.getElementById('map');
+      var is_flipped = gameMapService.isFlipped(map);
       var coeff = is_flipped ? -1 : 1;
-      element.setAttribute('x', base.x + coeff * terrain.x - info.img.width / 2 + '');
-      element.setAttribute('y', base.y + coeff * terrain.y - info.img.height / 2 + '');
+      scope.pos = {
+        x: base.x + coeff * render.x,
+        y: base.y + coeff * render.y
+      };
     }
   }
 })();

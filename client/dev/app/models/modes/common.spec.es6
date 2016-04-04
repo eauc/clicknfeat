@@ -31,7 +31,7 @@ describe('commonMode model', function() {
   describe('flipMap()', function() {
     it('should do Game.uiState.flip action', function() {
       this.commonModeModel.actions.flipMap();
-      expect(this.appStateService.reduce)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.uiState.flip');
     });
   });
@@ -40,7 +40,7 @@ describe('commonMode model', function() {
     it('should switch to default mode', function() {
       this.commonModeModel.actions
         .modeBackToDefault();
-      expect(this.appStateService.reduce)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo', 'Default');
     });
   });
@@ -49,7 +49,7 @@ describe('commonMode model', function() {
     it('should undo last command', function() {
       this.commonModeModel.actions
         .commandUndoLast();
-      expect(this.appStateService.reduce)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.undoLast');
     });
   });
@@ -58,7 +58,7 @@ describe('commonMode model', function() {
     it('should switch to default mode', function() {
       this.commonModeModel.actions
         .commandReplayNext();
-      expect(this.appStateService.reduce)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.replayNext');
     });
   });

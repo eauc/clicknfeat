@@ -1,4 +1,4 @@
-describe('modelChargeMode model', function() {
+xdescribe('modelChargeMode model', function() {
   beforeEach(inject([
     'modelChargeMode',
     function(modelChargeModeModel) {

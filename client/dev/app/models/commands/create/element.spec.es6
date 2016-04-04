@@ -12,15 +12,11 @@ describe('createElementCommand model', function() {
                                   this.gameElementsModel,
                                   this.gameElementSelectionModel);
 
-      this.state = {
-        factions: 'factions',
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
-      };
       this.game = { types: 'elements',
                     type_selection: 'selection' };
 
       let stamp_index = 1;
-      this.elementModel.createP.resolveWith((m) => {
+      this.elementModel.create.and.callFake((m) => {
         return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
       });
     }
@@ -28,7 +24,7 @@ describe('createElementCommand model', function() {
 
   context('executeP(<create>, <flip>, <state>, <game>)', function() {
     return this.createElementCommandModel
-      .executeP(this.create, this.flip, this.state, this.game);
+      .executeP(this.create, this.flip, this.game);
   }, function() {
     beforeEach(function() {
       this.create = {
@@ -50,18 +46,18 @@ describe('createElementCommand model', function() {
     });
 
     it('should create new elements from <create>', function() {
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['snow','hill','hill1'],
           x: 240, y: 240, r: 225,
           lk: true
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['snow','hill','hill2'],
           x: 260, y: 240, r: 180
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: ['grass','wall','wall1'],
           x: 280, y: 240, r: 135,
@@ -73,18 +69,18 @@ describe('createElementCommand model', function() {
       this.flip = true;
     }, function() {
       it('should flip new elements positions', function() {
-        expect(this.elementModel.createP)
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['snow','hill','hill1'],
             x: 240, y: 240, r: 405,
             lk: true
           });
-        expect(this.elementModel.createP)
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['snow','hill','hill2'],
             x: 220, y: 240, r: 360
           });
-        expect(this.elementModel.createP)
+        expect(this.elementModel.create)
           .toHaveBeenCalledWith({
             info: ['grass','wall','wall1'],
             x: 200, y: 240, r: 315,
@@ -121,13 +117,9 @@ describe('createElementCommand model', function() {
 
     it('should set local elementSelection to new element', function() {
       expect(this.gameElementSelectionModel.set)
-        .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
-                              this.state, 'selection');
-    });
-
-    it('should emit createElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.create');
+        .toHaveBeenCalledWith('local',
+                              ['stamp1', 'stamp2', 'stamp3'],
+                              'selection');
     });
 
     it('should return context', function() {
@@ -168,7 +160,7 @@ describe('createElementCommand model', function() {
 
   context('replayP(<ctxt>, <state>, <game>)', function() {
     return this.createElementCommandModel
-      .replayP(this.ctxt, this.state, this.game);
+      .replayP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -193,20 +185,20 @@ describe('createElementCommand model', function() {
     });
 
     it('should create new elements from <ctxt.elements>', function() {
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill1' ],
             x: 240, y: 240,
           lk: true,
           stamp: 'stamp'
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'hill', 'hill2' ],
           x: 260, y: 240,
           stamp: 'stamp'
         });
-      expect(this.elementModel.createP)
+      expect(this.elementModel.create)
         .toHaveBeenCalledWith({
           info: [ 'snow', 'wall', 'wall1' ],
           x: 280, y: 240,
@@ -242,19 +234,15 @@ describe('createElementCommand model', function() {
 
     it('should set remote elementSelection to new element', function() {
       expect(this.gameElementSelectionModel.set)
-        .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
-    });
-
-    it('should emit createElement event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.create');
+        .toHaveBeenCalledWith('remote',
+                              ['stamp1','stamp2','stamp3'],
+                              'selection');
     });
   });
 
   context('undoP(<ctxt>, <state>, <game>)', function() {
     return this.createElementCommandModel
-      .undoP(this.ctxt, this.state, this.game);
+      .undoP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -288,15 +276,10 @@ describe('createElementCommand model', function() {
     it('should remove <ctxt.element> from elementSelection', function() {
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
+                              'selection');
       expect(this.gameElementSelectionModel.removeFrom)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'gameTerrainSelection.removeFrom.returnValue');
-    });
-
-    it('should emit createElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.create');
+                              'gameTerrainSelection.removeFrom.returnValue');
     });
   });
 });

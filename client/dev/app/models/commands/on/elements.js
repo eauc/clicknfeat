@@ -15,50 +15,42 @@
         replayP: onElementsReplayP,
         undoP: onElementsUndoP
       };
-
       var applyMethodOnGameElementsP$ = R.curry(applyMethodOnGameElementsP);
       var setStates$ = R.curry(setStates);
       var saveStatesP$ = R.curry(saveStatesP);
       var setRemoteSelection$ = R.curry(setRemoteSelection);
-      var emitChangeEvents$ = R.curry(emitChangeEvents);
-
       return onElementsCommandModel;
 
-      function onElementsExecuteP(method, args, stamps, state, game) {
+      function onElementsExecuteP(method, args, stamps, game) {
+        var ctxt = {
+          before: [],
+          after: [],
+          desc: method
+        };
         return R.threadP(elementModel)(checkMethod, function () {
-          var ctxt = {
-            before: [],
-            after: [],
-            desc: method
-          };
-
-          return R.threadP(game)(saveStatesP$(ctxt, 'before', stamps), applyMethodOnGameElementsP$(method, args, stamps), saveStatesP$(ctxt, 'after', stamps), emitChangeEvents$(stamps, state), function (game) {
-            return [ctxt, game];
-          });
+          return game;
+        }, saveStatesP$(ctxt, 'before', stamps), applyMethodOnGameElementsP$(method, args, stamps), saveStatesP$(ctxt, 'after', stamps), function (game) {
+          return [ctxt, game];
         });
 
         function checkMethod() {
           return checkIfModelRespondToMethod ? R.threadP(elementModel)(R.prop(method), R.type, R.rejectIfP(R.complement(R.equals('Function')), 'Unknown method "' + method + '" on ' + type)) : true;
         }
       }
-      function onElementsReplayP(ctxt, state, game) {
+      function onElementsReplayP(ctxt, game) {
         var stamps = R.pluck('stamp', ctxt.after);
-        return R.threadP(game)(setStates$(ctxt.after, stamps), setRemoteSelection$(stamps, state), emitChangeEvents$(stamps, state));
+        return R.thread(game)(setStates$(ctxt.after, stamps), setRemoteSelection$(stamps));
       }
-      function onElementsUndoP(ctxt, state, game) {
+      function onElementsUndoP(ctxt, game) {
         var stamps = R.pluck('stamp', ctxt.before);
-        return R.threadP(game)(setStates$(ctxt.before, stamps), setRemoteSelection$(stamps, state), emitChangeEvents$(stamps, state));
+        return R.thread(game)(setStates$(ctxt.before, stamps), setRemoteSelection$(stamps));
       }
 
       function applyMethodOnGameElementsP(method, args, stamps, game) {
-        return R.threadP(game)(R.prop(type + 's'), gameElementsModel.onStampsP$(method, args, stamps), function (elements) {
-          return R.assoc(type + 's', elements, game);
-        });
+        return R.threadP(game)(R.prop(type + 's'), gameElementsModel.onStampsP$(method, args, stamps), R.assoc(type + 's', R.__, game));
       }
       function setStates(states, stamps, game) {
-        return R.threadP(game)(R.prop(type + 's'), gameElementsModel.setStateStampsP$(states, stamps), function (elements) {
-          return R.assoc(type + 's', elements, game);
-        });
+        return R.over(R.lensProp(type + 's'), gameElementsModel.setStateStamps$(states, stamps), game);
       }
       function saveStatesP(ctxt, prop, stamps, game) {
         return R.threadP(game)(R.prop(type + 's'), gameElementsModel.fromStampsP$('saveState', [], stamps), function (states) {
@@ -66,16 +58,8 @@
           return game;
         });
       }
-      function setRemoteSelection(stamps, state, game) {
-        return R.thread(game)(R.prop(type + '_selection'), gameElementSelectionModel.set$('remote', stamps, state), function (selection) {
-          return R.assoc(type + '_selection', selection, game);
-        });
-      }
-      function emitChangeEvents(stamps, state, game) {
-        R.forEach(function (stamp) {
-          state.queueChangeEventP('Game.' + type + '.change.' + stamp);
-        }, stamps);
-        return game;
+      function setRemoteSelection(stamps, game) {
+        return R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.set$('remote', stamps), game);
       }
     };
   }

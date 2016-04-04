@@ -14,12 +14,12 @@
     vm.doSetRandomScenario = doSetRandomScenario;
     // vm.doGenerateObjectives = doGenerateObjectives;
     vm.doToggleLayer = doToggleLayer;
-    // vm.onAmbianceChange = onAmbianceChange;
-    // vm.onCategoryChange = onCategoryChange;
-    // vm.onEntryChange = onEntryChange;
-    // vm.getTerrain = getTerrain;
-    // vm.doCreateTerrain = doCreateTerrain;
-    // vm.doResetTerrain = doResetTerrain;
+    vm.onAmbianceChange = onAmbianceChange;
+    vm.onCategoryChange = onCategoryChange;
+    vm.onEntryChange = onEntryChange;
+    vm.getTerrain = getTerrain;
+    vm.doCreateTerrain = doCreateTerrain;
+    vm.doResetTerrain = doResetTerrain;
     // vm.doImportBoardFile = doImportBoardFile;
 
     activate();
@@ -45,8 +45,8 @@
     function onDataReady() {
       vm.boards = $scope.state.boards;
       vm.terrains = $scope.state.terrains;
-      // vm.ambiance = R.head(R.keys(vm.terrains));
-      // vm.onAmbianceChange();
+      vm.ambiance = R.head(R.keys(vm.terrains));
+      vm.onAmbianceChange();
       vm.scenarios = $scope.state.scenarios;
       $scope.$digest();
     }
@@ -87,36 +87,28 @@
       $scope.stateEvent('Game.command.execute', 'setLayers', ['toggle', l]);
     }
 
-    // function onAmbianceChange() {
-    //   vm.category = R.head(R.keys(vm.terrains[vm.ambiance]));
-    //   vm.onCategoryChange();
-    // }
-    // function onCategoryChange() {
-    //   vm.entry = R.head(R.keys(vm.terrains[vm.ambiance][vm.category]));
-    //   vm.onEntryChange();
-    // }
-    // function onEntryChange() {
-    // }
-    // function getTerrainPath() {
-    //   return [ vm.ambiance,
-    //            vm.category,
-    //            vm.entry
-    //          ];
-    // }
-    // function getTerrain() {
-    //   return R.path([
-    //     vm.ambiance,
-    //     vm.category,
-    //     vm.entry
-    //   ], vm.terrains);
-    // }
-    // function doCreateTerrain() {
-    //   const terrain_path = getTerrainPath();
-    //   $scope.stateEvent('Game.terrain.create', terrain_path);
-    // }
-    // function doResetTerrain() {
-    //   $scope.stateEvent('Game.terrain.reset');
-    // }
+    function onAmbianceChange() {
+      vm.category = R.head(R.keys(vm.terrains[vm.ambiance]));
+      vm.onCategoryChange();
+    }
+    function onCategoryChange() {
+      vm.entry = R.head(R.keys(vm.terrains[vm.ambiance][vm.category]));
+      vm.onEntryChange();
+    }
+    function onEntryChange() {}
+    function getTerrainPath() {
+      return [vm.ambiance, vm.category, vm.entry];
+    }
+    function getTerrain() {
+      return R.path([vm.ambiance, vm.category, vm.entry], vm.terrains);
+    }
+    function doCreateTerrain() {
+      var terrain_path = getTerrainPath();
+      $scope.stateEvent('Game.terrain.create', terrain_path);
+    }
+    function doResetTerrain() {
+      $scope.stateEvent('Game.terrain.reset');
+    }
 
     // function doImportBoardFile(files) {
     //   $scope.stateEvent('Game.board.importFile', files[0]);

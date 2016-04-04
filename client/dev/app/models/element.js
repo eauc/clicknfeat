@@ -9,10 +9,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   function elementModelFactory(pointModel) {
     return function buildElementModel(type, MOVES) {
       var elementModel = {
-        createDefaultP: elementCreateDefaultP,
-        createP: elementCreateP,
+        createDefault: elementCreateDefault,
+        create: elementCreate,
         stamp: elementStamp,
-        eventName: elementEventName,
         state: elementState,
         saveState: elementSaveState,
         setState: elementSetState,
@@ -39,26 +38,23 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       R.curryService(elementModel);
       return elementModel;
 
-      function elementCreateDefaultP() {
-        return R.resolveP({
+      function elementCreateDefault() {
+        return {
           state: {
             x: 0, y: 0, r: 0,
             l: [],
             lk: false,
             stamp: R.guid()
           }
-        });
+        };
       }
-      function elementCreateP(temp) {
-        return R.threadP(temp)(this.createDefaultP, function (element) {
+      function elementCreate(temp) {
+        return R.thread(temp)(this.createDefault, function (element) {
           R.deepExtend(element.state, temp);
           return element;
         }, this.checkState);
       }
       function elementStamp(element) {
-        return R.path(['state', 'stamp'], element);
-      }
-      function elementEventName(element) {
         return R.path(['state', 'stamp'], element);
       }
       function elementState(element) {

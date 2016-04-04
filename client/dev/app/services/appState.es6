@@ -16,6 +16,7 @@
       current: appStateCurrent,
       addReducer: appStateAddReducer,
       reduce: appStateReduce,
+      chainReduce: appStateChainReduce,
       addListener: appStateAddListener,
       removeListener: appStateRemoveListener,
       emit: appStateEmit,
@@ -49,6 +50,11 @@
 
       return appStateService;
     }
+    function appStateChainReduce(...args) {
+      self.requestAnimationFrame(() => {
+        appStateService.reduce.apply(appStateService, args);
+      });
+    }
     function appStateAddListener(event, listener) {
       events = pubSubService
         .addListener(event, listener, events);
@@ -68,7 +74,7 @@
       let _value = R.map(() => undefined, getValue);
       const hasChanged = R.thread(getValue)(
         R.addIndex(R.map)((getter, i) => ((observable) => (_value[i] !== getter(observable)))),
-        R.allPass
+        R.anyPass
       );
       appStateService.addListener(on_event, (_event_, [observable]) => {
         if(!hasChanged(observable)) return;

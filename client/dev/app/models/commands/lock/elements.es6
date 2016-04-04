@@ -11,53 +11,32 @@
         replayP: lockElementsRedoP,
         undoP: lockElementsUndoP
       };
-
-      const lockStampsP$ = R.curry(lockStampsP);
-      const emitChangeEvents$ = R.curry(emitChangeEvents);
-
+      const lockStamps$ = R.curry(lockStamps);
       return lockElementsCommandModel;
 
-      function lockElementsExecuteP(lock, stamps, state, game) {
+      function lockElementsExecuteP(lock, stamps, game) {
         const ctxt = {
           desc: lock,
           stamps: stamps
         };
 
-        return R.threadP(game)(
-          lockStampsP$(lock, stamps),
-          emitChangeEvents$(stamps, state),
-          (game) => {
-            return [ctxt, game];
-          }
+        return R.thread(game)(
+          lockStamps$(lock, stamps),
+          (game) => [ctxt, game]
         );
       }
-      function lockElementsRedoP(ctxt, state, game) {
-        return R.threadP(game)(
-          lockStampsP$(ctxt.desc, ctxt.stamps),
-          emitChangeEvents$(ctxt.stamps, state)
-        );
+      function lockElementsRedoP(ctxt, game) {
+        return lockStamps(ctxt.desc, ctxt.stamps, game);
       }
-      function lockElementsUndoP(ctxt, state, game) {
-        return R.threadP(game)(
-          lockStampsP$(!ctxt.desc, ctxt.stamps),
-          emitChangeEvents$(ctxt.stamps, state)
-        );
+      function lockElementsUndoP(ctxt, game) {
+        return lockStamps(!ctxt.desc, ctxt.stamps, game);
       }
-      function lockStampsP(lock, stamps, game) {
-        return R.threadP(game)(
-          R.prop(`${type}s`),
-          gameElementsModel.lockStampsP$(lock, stamps),
-          (game_elements) => {
-            return R.assoc(`${type}s`, game_elements, game);
-          }
+      function lockStamps(lock, stamps, game) {
+        return R.over(
+          R.lensProp(`${type}s`),
+          gameElementsModel.lockStamps$(lock, stamps),
+          game
         );
-      }
-      function emitChangeEvents(stamps, state, game) {
-        R.forEach((stamp) => {
-          state.queueChangeEventP(`Game.${type}.change.${stamp}`);
-        }, stamps);
-        state.queueChangeEventP(`Game.${type}.create`);
-        return game;
       }
     };
   }

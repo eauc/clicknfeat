@@ -8,10 +8,9 @@
   function elementModelFactory(pointModel) {
     return function buildElementModel(type, MOVES) {
       const elementModel = {
-        createDefaultP: elementCreateDefaultP,
-        createP: elementCreateP,
+        createDefault: elementCreateDefault,
+        create: elementCreate,
         stamp: elementStamp,
-        eventName: elementEventName,
         state: elementState,
         saveState: elementSaveState,
         setState: elementSetState,
@@ -38,19 +37,19 @@
       R.curryService(elementModel);
       return elementModel;
 
-      function elementCreateDefaultP() {
-        return R.resolveP({
+      function elementCreateDefault() {
+        return {
           state: {
             x: 0, y: 0, r: 0,
             l: [],
             lk: false,
             stamp: R.guid()
           }
-        });
+        };
       }
-      function elementCreateP(temp) {
-        return R.threadP(temp)(
-          this.createDefaultP,
+      function elementCreate(temp) {
+        return R.thread(temp)(
+          this.createDefault,
           (element) => {
             R.deepExtend(element.state, temp);
             return element;
@@ -59,9 +58,6 @@
         );
       }
       function elementStamp(element) {
-        return R.path(['state','stamp'], element);
-      }
-      function elementEventName(element) {
         return R.path(['state','stamp'], element);
       }
       function elementState(element) {

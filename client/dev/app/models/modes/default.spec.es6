@@ -1,4 +1,4 @@
-xdescribe('defaultMode model', function() {
+describe('defaultMode model', function() {
   beforeEach(inject([
     'defaultMode',
     function(defaultModeModel) {
@@ -16,16 +16,8 @@ xdescribe('defaultMode model', function() {
                              model_selection: 'selection',
                              template_selection: 'template_selection',
                              terrain_selection: 'terrain_selection'
-                           },
-                     queueChangeEventP: jasmine.createSpy('queueChangeEventP'),
-                     eventP: jasmine.createSpy('eventP')
+                           }
                    };
-      this.state.eventP.and.callFake((e,l,u) => {
-        if('Game.update' === e) {
-          this.state.game = R.over(l,u, this.state.game);
-        }
-        return 'state.event.returnValue';
-      });
       this.event = { 'click#': { target: { state: { stamp: 'stamp' } } } };
     }
   ]));
@@ -36,21 +28,20 @@ xdescribe('defaultMode model', function() {
   }, function() {
     it('should set gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.set)
-        .toHaveBeenCalledWith('local', ['stamp'],
-                              this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', ['stamp'], 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.set.returnValue');
     });
 
-    it('should clear gameTemplateSelection', function() {
-      expect(this.gameTemplateSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'template_selection');
-      expect(this.state.game.template_selection)
-        .toBe('gameTemplateSelection.clear.returnValue');
-    });
+    // it('should clear gameTemplateSelection', function() {
+    //   expect(this.gameTemplateSelectionModel.clear)
+    //     .toHaveBeenCalledWith('local', this.state, 'template_selection');
+    //   expect(this.state.game.template_selection)
+    //     .toBe('gameTemplateSelection.clear.returnValue');
+    // });
   });
 
-  context('when user set template selection', function() {
+  xcontext('when user set template selection', function() {
     return this.defaultModeModel.actions
       .selectTemplate(this.state, this.event);
   }, function() {
@@ -69,7 +60,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user right-click on template', function() {
+  xcontext('when user right-click on template', function() {
     return this.defaultModeModel.actions
       .templateSelectionDetail(this.state, this.event);
   }, function() {
@@ -94,7 +85,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user set model selection', function() {
+  xcontext('when user set model selection', function() {
     return this.defaultModeModel.actions
       .setModelSelection(this.state, this.event);
   }, function() {
@@ -120,7 +111,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user toggle model selection', function() {
+  xcontext('when user toggle model selection', function() {
     return this.defaultModeModel.actions
       .toggleModelSelection(this.state, this.event);
   }, function() {
@@ -168,7 +159,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user starts dragging on map', function() {
+  xcontext('when user starts dragging on map', function() {
     return this.defaultModeModel.actions
       .dragStartMap(this.state, { start: 'start', now: 'now' });
   }, function() {
@@ -178,7 +169,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user drags on map', function() {
+  xcontext('when user drags on map', function() {
     this.defaultModeModel.actions
       .dragMap(this.state, { start: 'start', now: 'now' });
   }, function() {
@@ -188,7 +179,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user select box', function() {
+  xcontext('when user select box', function() {
     return this.defaultModeModel.actions
       .dragEndMap(this.state, {
         start: { x: 180, y: 150 },
@@ -230,7 +221,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user right-click on model', function() {
+  xcontext('when user right-click on model', function() {
     return this.defaultModeModel.actions
       .modelSelectionDetail(this.state, this.event);
   }, function() {
@@ -261,7 +252,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user uses los', function() {
+  xcontext('when user uses los', function() {
     return this.defaultModeModel
       .actions.enterLosMode(this.state);
   }, function() {
@@ -271,7 +262,7 @@ xdescribe('defaultMode model', function() {
     });
   });
 
-  context('when user uses ruler', function() {
+  xcontext('when user uses ruler', function() {
     return this.defaultModeModel
       .actions.enterRulerMode(this.state);
   }, function() {

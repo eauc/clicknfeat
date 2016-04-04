@@ -3,12 +3,12 @@
     .factory('gameMap', gameMapServiceFactory);
 
   gameMapServiceFactory.$inject = [
-    'gameModels',
-    'gameTemplates',
+    // 'gameModels',
+    // 'gameTemplates',
     'gameTerrains',
   ];
-  function gameMapServiceFactory(gameModelsModel,
-                                 gameTemplatesModel,
+  function gameMapServiceFactory(// gameModelsModel,
+                                 // gameTemplatesModel,
                                  gameTerrainsModel) {
     const gameMapService = {
       isFlipped: mapIsFlipped,
@@ -55,16 +55,16 @@
         type: 'Map',
         target: null
       };
-      if(eventTargetTypeIs('template')) {
-        return emitTypeEvent(gameTemplatesModel, 'template');
-      }
-      if(eventTargetTypeIs('model-base')) {
-        return emitTypeEvent(gameModelsModel, 'model');
-      }
+      // if(eventTargetTypeIs('template')) {
+      //   return emitTypeEvent(gameTemplatesModel, 'template');
+      // }
+      // if(eventTargetTypeIs('model-base')) {
+      //   return emitTypeEvent(gameModelsModel, 'model');
+      // }
       if(eventTargetTypeIs('terrain-image')) {
         return emitTypeEvent(gameTerrainsModel, 'terrain');
       }
-      return R.resolveP(not_found);
+      return not_found;
 
       function eventTargetTypeIs(type) {
         return ( event.target.classList.contains(type) &&

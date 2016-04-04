@@ -10,15 +10,15 @@
       const gameElementsModel = {
         create: elementsCreate,
         all: elementsAll,
-        findStampP: elementsFindStampP,
-        findAnyStampsP: elementsFindAnyStampsP,
+        findStamp: elementsFindStamp,
+        findAnyStamps: elementsFindAnyStamps,
         fromStampsP: elementsFromStampsP,
         onStampsP: elementsOnStampsP,
-        setStateStampsP: elementsSetStateStampsP,
-        lockStampsP: elementsLockStampsP,
+        setStateStamps: elementsSetStateStamps,
+        lockStamps: elementsLockStamps,
         add: elementsAdd,
         removeStamps: elementsRemoveStamps,
-        copyStampsP: elementsCopyStampsP
+        copyStamps: elementsCopyStamps
       };
 
       const fromStampsP$ = R.curry(fromStampsP);
@@ -36,29 +36,14 @@
       function elementsAll(elements) {
         return R.concat(elements.active, elements.locked);
       }
-      function elementsFindStampP(stamp, elements) {
-        return new self.Promise(function(resolve, reject) {
-          var element = R.thread(elements)(
-            gameElementsModel.all,
-            R.find(R.pathEq(['state','stamp'], stamp))
-          );
-          if(R.isNil(element)) reject(`${s.capitalize(type)} "${stamp}" not found`);
-          else resolve(element);
-        });
-      }
-      function elementsFindAnyStampsP(stamps, elements) {
-        return R.threadP(stamps)(
-          R.map(findStampP),
-          R.allP,
-          R.rejectIfP(R.compose(R.isEmpty, R.reject(R.isNil)),
-                     `No ${type} found`)
+      function elementsFindStamp(stamp, elements) {
+        return R.thread(elements)(
+          gameElementsModel.all,
+          R.find(R.pathEq(['state','stamp'], stamp))
         );
-
-        function findStampP(stamp) {
-          return gameElementsModel
-            .findStampP(stamp, elements)
-            .catch(R.always(null));
-        }
+      }
+      function elementsFindAnyStamps(stamps, elements) {
+        return R.map(gameElementsModel.findStamp$(R.__, elements), stamps);
       }
       function elementsFromStampsP(method, args, stamps, elements) {
         return fromStampsP(() => R.always(null),
@@ -70,9 +55,9 @@
           updateElements$(elements)
         );
       }
-      function elementsSetStateStampsP(states, stamps, elements) {
-        return R.threadP(elements)(
-          gameElementsModel.findAnyStampsP$(stamps),
+      function elementsSetStateStamps(states, stamps, elements) {
+        return R.thread(elements)(
+          gameElementsModel.findAnyStamps$(stamps),
           R.addIndex(R.map)(setStateIndex),
           R.reject(R.isNil),
           updateElements$(elements)
@@ -85,9 +70,9 @@
                  );
         }
       }
-      function elementsLockStampsP(lock, stamps, elements) {
-        return R.threadP(elements)(
-          gameElementsModel.findAnyStampsP$(stamps),
+      function elementsLockStamps(lock, stamps, elements) {
+        return R.thread(elements)(
+          gameElementsModel.findAnyStamps$(stamps),
           R.reject(R.isNil),
           R.map(model.setLock$(lock)),
           updateElements$(elements)
@@ -97,7 +82,7 @@
         const new_stamps = R.map(R.path(['state','stamp']), news);
         return R.thread(elements)(
           gameElementsModel.removeStamps$(new_stamps),
-          R.flip(updateElements$)(news)
+          updateElements$(R.__, news)
         );
       }
       function elementsRemoveStamps(stamps, elements) {
@@ -110,16 +95,15 @@
           return R.find(R.equals(R.path(['state', 'stamp'], element)), stamps);
         }
       }
-      function elementsCopyStampsP(stamps, elements) {
-        return R.threadP(elements)(
-          gameElementsModel.findAnyStampsP$(stamps),
+      function elementsCopyStamps(stamps, elements) {
+        return R.thread(elements)(
+          gameElementsModel.findAnyStamps$(stamps),
           R.reject(R.isNil),
           makeCreate
         );
 
         function makeCreate(selection) {
           const base = R.pick(['x','y','r'], selection[0].state);
-
           return {
             base: base,
             [`${type}s`]: R.map(R.compose(pointModel.differenceFrom$(base),
@@ -131,8 +115,7 @@
       function fromStampsP(onError, method, args, stamps, elements) {
         return R.threadP()(
           checkIfMethodExists,
-          R.always(elements),
-          gameElementsModel.findAnyStampsP$(stamps),
+          () => gameElementsModel.findAnyStamps(stamps, elements),
           R.reject(R.isNil),
           R.map(callMethodOnElementP),
           R.allP
@@ -147,8 +130,7 @@
           );
         }
         function callMethodOnElementP(element) {
-          return self.Promise
-            .resolve(model[method].apply(model, [...args, element]))
+          return R.resolveP(model[method].apply(model, [...args, element]))
             .catch(onError(element));
         }
       }
@@ -158,12 +140,10 @@
           R.concat(news),
           R.uniqBy(R.path(['state','stamp'])),
           R.partition(model.isLocked),
-          ([locked, active]) => {
-            return {
-              active: active,
-              locked: locked
-            };
-          }
+          ([locked, active]) => ({
+            active: active,
+            locked: locked
+          })
         );
       }
     };

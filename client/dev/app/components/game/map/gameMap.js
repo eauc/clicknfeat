@@ -2,16 +2,13 @@
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 (function () {
   angular.module('clickApp.directives').directive('clickGameMap', clickGameMapDirectiveFactory);
 
-  clickGameMapDirectiveFactory.$inject = [
-  // 'gameMap',
-  // 'terrain',
-  'commonMode'];
-  function clickGameMapDirectiveFactory( // gameMapService,
-  // terrainModel,
-  commonModeModel) {
+  clickGameMapDirectiveFactory.$inject = ['appState', 'gameMap', 'terrain', 'commonMode'];
+  function clickGameMapDirectiveFactory(appStateService, gameMapService, terrainModel, commonModeModel) {
     var log = true // eslint-disable-line
     ? R.bind(console.log, console) : function () {};
     return {
@@ -22,25 +19,24 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function link(scope, element) {
       var viewport = document.querySelector('#viewport');
       var map = element[0];
-      // const state = scope.state;
 
-      // const mouseEvents = buildMouseEvents();
-      // const moveEvents = buildMoveEvents();
+      var mouseEvents = buildMouseEvents();
+      var moveEvents = buildMoveEvents();
       var flipMap = buildFlipMap();
       var zoomEvents = buildZoomEvents();
       var scrollEvents = buildScrollEvents();
 
-      // map.addEventListener('mouseup', mouseEvents.click);
-      // map.addEventListener('mousedown', mouseEvents.down);
-      // map.addEventListener('mouseleave', mouseEvents.leave);
-      // map.addEventListener('dragstart', (event) => {
-      //   event.preventDefault();
-      // });
+      map.addEventListener('mouseup', mouseEvents.click);
+      map.addEventListener('mousedown', mouseEvents.down);
+      map.addEventListener('mouseleave', mouseEvents.leave);
+      map.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+      });
       // map.addEventListener('contextmenu', mouseEvents.rightClick);
 
       scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
-      // scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
-      // scope.onStateChangeEvent('Game.moveMap.disable', moveEvents.disable, scope);
+      scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
+      scope.onStateChangeEvent('Game.moveMap.disable', moveEvents.disable, scope);
       scope.onStateChangeEvent('Game.view.zoomIn', zoomEvents.in, scope);
       scope.onStateChangeEvent('Game.view.zoomOut', zoomEvents.out, scope);
       scope.onStateChangeEvent('Game.view.zoomReset', zoomEvents.reset, scope);
@@ -51,197 +47,165 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       self.window.requestAnimationFrame(zoomEvents.reset);
 
-      // function buildMouseEvents() {
-      //   let mouse_is_down = false;
-      //   let drag = {
-      //     active: false,
-      //     start: null,
-      //     target: null,
-      //     now: null
-      //   };
+      function buildMouseEvents() {
+        var drag = {
+          active: false,
+          start: null,
+          target: null,
+          now: null
+        };
+        return {
+          down: mouseDownMap,
+          // drag: dragMap,
+          leave: mouseLeaveMap,
+          click: clickMap,
+          //     rightClick: rightClickMap,
+          move: moveMap
+        };
 
-      //   const emitClickEvent$ = R.curry(emitClickEvent);
+        function mouseDownMap(event) {
+          log('mouseDownMap', event, map.getBoundingClientRect());
+          blurInputs();
+          event.preventDefault();
+          if (event.which !== 1) return;
 
-      //   return {
-      //     down: mouseDownMap,
-      //     drag: dragMap,
-      //     leave: mouseLeaveMap,
-      //     click: clickMap,
-      //     rightClick: rightClickMap,
-      //     move: moveMap
-      //   };
+          var state = appStateService.current();
+          var start = gameMapService.eventToMapCoordinates(map, event);
+          var target = gameMapService.findEventTarget(state.game, event);
+          dragStart(start, target);
+          map.addEventListener('mousemove', dragMap);
+        }
 
-      //   function mouseDownMap(event) {
-      //     log('mouseDownMap', event, map.getBoundingClientRect());
-      //     blurInputs();
-      //     event.preventDefault();
-      //     if(event.which !== 1) return;
+        function dragMap(event) {
+          log('dragMap', event);
+          event.preventDefault();
+          if (event.which !== 1) return;
 
-      //     mouse_is_down = true;
-      //     const start = gameMapService.eventToMapCoordinates(map, event);
-      //     gameMapService
-      //       .findEventTarget(state.game, event)
-      //       .then((target) => {
-      //         if(!mouse_is_down) return;
+          drag.now = gameMapService.eventToMapCoordinates(map, event);
+          if (!drag.active && currentDragIsBellowThreshold()) {
+            return;
+          }
+          var emit = drag.active ? 'drag' : 'dragStart';
+          drag.active = true;
 
-      //         dragStart(start, target);
-      //         map.addEventListener('mousemove', dragMap);
-      //       });
+          if ('Terrain' === drag.target.type && terrainModel.isLocked(drag.target.target)) {
+            drag.target = { type: 'Map',
+              target: null
+            };
+          }
+          scope.stateEvent('Modes.current.action', emit + drag.target.type, [{ target: drag.target.target,
+            start: drag.start,
+            now: drag.now
+          }, event]);
+        }
 
-      //   }
+        function mouseLeaveMap(event) {
+          log('mouseLeaveMap', event);
+          event.preventDefault();
 
-      //   function dragMap(event) {
-      //     log('dragMap', event);
-      //     event.preventDefault();
-      //     if(event.which !== 1) return;
+          map.removeEventListener('mousemove', dragMap);
+          if (drag.active) dragEnd(event);
+        }
 
-      //     drag.now = gameMapService.eventToMapCoordinates(map, event);
-      //     if(!drag.active &&
-      //        currentDragIsBellowThreshold()) {
-      //       return;
-      //     }
-      //     const emit = drag.active ? 'drag' : 'dragStart';
-      //     drag.active = true;
+        function clickMap(event) {
+          log('clickMap', event);
+          event.preventDefault();
+          if (event.which !== 1) return;
 
-      //     if('Terrain' === drag.target.type &&
-      //        terrainModel.isLocked(drag.target.target)) {
-      //       drag.target = { type: 'Map',
-      //                       target: null
-      //                     };
-      //     }
-      //     scope.stateEvent('Modes.current.action',
-      //                      emit+drag.target.type,
-      //                      [ { target: drag.target.target,
-      //                          start: drag.start,
-      //                          now: drag.now
-      //                        },
-      //                        event
-      //                      ]);
+          map.removeEventListener('mousemove', dragMap);
 
-      //   }
+          var state = appStateService.current();
+          var now = gameMapService.eventToMapCoordinates(map, event);
+          if (drag.active) {
+            drag.now = now;
+            dragEnd(event);
+          } else {
+            var target = gameMapService.findEventTarget(state.game, event);
+            emitClickEvent('click', event, now, target);
+          }
+        }
 
-      //   function mouseLeaveMap(event) {
-      //     log('mouseLeaveMap', event);
-      //     event.preventDefault();
+        //   function rightClickMap(event) {
+        //     log('rightClickMap', event);
+        //     event.preventDefault();
 
-      //     mouse_is_down = false;
-      //     map.removeEventListener('mousemove', dragMap);
-      //     if(drag.active) dragEnd(event);
-      //   }
+        //     const now = gameMapService.eventToMapCoordinates(map, event);
+        //     gameMapService.findEventTarget(state.game, event)
+        //       .then(emitClickEvent$('rightClick', event, now));
+        //   }
 
-      //   function clickMap(event) {
-      //     log('clickMap', event);
-      //     event.preventDefault();
-      //     if(event.which !== 1) return;
+        function moveMap(event) {
+          log('moveMap', event);
+          event.preventDefault();
 
-      //     mouse_is_down = false;
-      //     map.removeEventListener('mousemove', dragMap);
+          var now = gameMapService.eventToMapCoordinates(map, event);
+          scope.stateEvent('Modes.current.action', 'moveMap', [now, event]);
+        }
 
-      //     const now = gameMapService.eventToMapCoordinates(map, event);
-      //     if(drag.active) {
-      //       drag.now = now;
-      //       dragEnd(event);
-      //     }
-      //     else {
-      //       gameMapService.findEventTarget(state.game, event)
-      //         .then(emitClickEvent$('click', event, now));
-      //     }
-      //   }
+        function blurInputs() {
+          var inputs = [].concat(_toConsumableArray(document.querySelectorAll('input')), _toConsumableArray(document.querySelectorAll('select')), _toConsumableArray(document.querySelectorAll('textarea')));
+          R.forEach(function (e) {
+            e.blur();
+          }, inputs);
+        }
+        function emitClickEvent(type, event, now, target) {
+          var event_name = R.thread(event)(_eventModifiers, R.append(type + target.type), R.join('+'));
+          event['click#'] = {
+            target: target.target,
+            x: now.x,
+            y: now.y
+          };
+          // state.queueChangeEventP('Game.selectionDetail.close');
+          // state.queueChangeEventP('Game.editLabel.close');
+          // state.queueChangeEventP('Game.editDamage.close');
+          Mousetrap.trigger(event_name, undefined, event);
+        }
 
-      //   function rightClickMap(event) {
-      //     log('rightClickMap', event);
-      //     event.preventDefault();
+        function dragStart(start, target) {
+          drag = {
+            active: false,
+            start: start,
+            target: target,
+            now: null
+          };
+        }
+        function dragEnd(event) {
+          scope.stateEvent('Modes.current.action', 'dragEnd' + drag.target.type, [{ target: drag.target.target,
+            start: drag.start,
+            now: drag.now
+          }, event]);
+          drag = {
+            active: false,
+            start: null,
+            target: null,
+            now: null
+          };
+        }
+        function currentDragIsBellowThreshold() {
+          var epsilon = commonModeModel.settings().DragEpsilon;
+          return Math.abs(drag.now.x - drag.start.x) < epsilon && Math.abs(drag.now.y - drag.start.y) < epsilon;
+        }
+      }
 
-      //     const now = gameMapService.eventToMapCoordinates(map, event);
-      //     gameMapService.findEventTarget(state.game, event)
-      //       .then(emitClickEvent$('rightClick', event, now));
-      //   }
+      function buildMoveEvents() {
+        var move_enabled = false;
+        return {
+          enable: onEnableMove,
+          disable: onDisableMove
+        };
 
-      //   function moveMap(event) {
-      //     log('moveMap', event);
-      //     event.preventDefault();
+        function onEnableMove() {
+          if (move_enabled) return;
+          map.addEventListener('mousemove', mouseEvents.move);
+          move_enabled = true;
+        }
 
-      //     const now = gameMapService.eventToMapCoordinates(map, event);
-      //     scope.stateEvent('Modes.current.action',
-      //                      'moveMap', [now, event]);
-      //   }
-
-      //   function blurInputs() {
-      //     const inputs = [
-      //         ...document.querySelectorAll('input'),
-      //         ...document.querySelectorAll('select'),
-      //         ...document.querySelectorAll('textarea'),
-      //     ];
-      //     R.forEach((e) => { e.blur(); }, inputs);
-      //   }
-      //   function emitClickEvent(type, event, now, target) {
-      //     const event_name = R.thread(event)(
-      //       _eventModifiers,
-      //       R.append(type + target.type),
-      //       R.join('+')
-      //     );
-      //     event['click#'] = {
-      //       target: target.target,
-      //       x: now.x,
-      //       y: now.y
-      //     };
-      //     state.queueChangeEventP('Game.selectionDetail.close');
-      //     state.queueChangeEventP('Game.editLabel.close');
-      //     state.queueChangeEventP('Game.editDamage.close');
-      //     Mousetrap.trigger(event_name, undefined, event);
-      //   }
-
-      //   function dragStart(start, target) {
-      //     drag = {
-      //       active: false,
-      //       start: start,
-      //       target: target,
-      //       now: null
-      //     };
-      //   }
-      //   function dragEnd(event) {
-      //     scope.stateEvent('Modes.current.action',
-      //                      'dragEnd'+drag.target.type,
-      //                      [ { target: drag.target.target,
-      //                          start: drag.start,
-      //                          now: drag.now
-      //                        },
-      //                        event
-      //                      ]);
-      //     drag = {
-      //       active: false,
-      //       start: null,
-      //       target: null,
-      //       now: null
-      //     };
-      //   }
-      //   function currentDragIsBellowThreshold() {
-      //     const epsilon = commonModeModel.settings().DragEpsilon;
-      //     return ( Math.abs(drag.now.x - drag.start.x) < epsilon &&
-      //              Math.abs(drag.now.y - drag.start.y) < epsilon
-      //            );
-      //   }
-      // }
-
-      // function buildMoveEvents() {
-      //   let move_enabled = false;
-      //   return {
-      //     enable: onEnableMove,
-      //     disable: onDisableMove
-      //   };
-
-      //   function onEnableMove() {
-      //     if(move_enabled) return;
-      //     map.addEventListener('mousemove', mouseEvents.move);
-      //     move_enabled = true;
-      //   }
-
-      //   function onDisableMove() {
-      //     if(!move_enabled) return;
-      //     map.removeEventListener('mousemove', mouseEvents.move);
-      //     move_enabled = false;
-      //   }
-      // }
+        function onDisableMove() {
+          if (!move_enabled) return;
+          map.removeEventListener('mousemove', mouseEvents.move);
+          move_enabled = false;
+        }
+      }
 
       function buildFlipMap() {
         var deploiement_labels = undefined;
@@ -388,26 +352,26 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }
     }
   }
-  // function _eventModifiers(e) {
-  //   const modifiers = [];
+  function _eventModifiers(e) {
+    var modifiers = [];
 
-  //   if (e.shiftKey) {
-  //     modifiers.push('shift');
-  //   }
+    if (e.shiftKey) {
+      modifiers.push('shift');
+    }
 
-  //   if (e.altKey) {
-  //     modifiers.push('alt');
-  //   }
+    if (e.altKey) {
+      modifiers.push('alt');
+    }
 
-  //   if (e.ctrlKey) {
-  //     modifiers.push('ctrl');
-  //   }
+    if (e.ctrlKey) {
+      modifiers.push('ctrl');
+    }
 
-  //   if (e.metaKey) {
-  //     modifiers.push('meta');
-  //   }
+    if (e.metaKey) {
+      modifiers.push('meta');
+    }
 
-  //   return modifiers.sort();
-  // }
+    return modifiers.sort();
+  }
 })();
 //# sourceMappingURL=gameMap.js.map

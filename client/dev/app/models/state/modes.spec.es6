@@ -19,7 +19,7 @@ describe('stateModes model', function() {
   }, function() {
     it('should dispatch mode action', function() {
       expect(this.modesModel.currentModeActionP)
-        .toHaveBeenCalledWith('action', [this.event], 'modes');
+        .toHaveBeenCalledWith('action', [this.state, this.event], 'modes');
     });
 
     it('should prevent <event> default', function() {

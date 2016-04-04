@@ -14,8 +14,8 @@
       // 'aoeTemplateMode',
       // 'sprayTemplateMode',
       // 'wallTemplateMode',
-      // 'createTerrainMode',
-      // 'terrainMode',
+      'createTerrainMode',
+      'terrainMode',
       () => ({})
     ]);
 
@@ -76,11 +76,14 @@
     }
     function currentModeActionP(action, args, modes) {
       const mode_name = modesModel.currentModeName(modes);
-      return R.threadP(modes)(
+      return R.thread(modes)(
         currentMode,
         R.path(['actions', action]),
-        R.rejectIfP(R.isNil, `Unknown action "${action}" in "${mode_name}" mode`),
-        (handler) => handler.apply(null, args)
+        R.ifElse(
+          R.exists,
+          (handler) => handler.apply(null, args),
+          () => R.rejectP(`Unknown action "${action}" in "${mode_name}" mode`)
+        )
       );
     }
     function switchToMode(name, modes) {

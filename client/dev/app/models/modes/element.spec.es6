@@ -12,12 +12,11 @@ describe('elementMode model', function() {
                          this.gameElementsModel,
                          this.gameElementSelectionModel);
 
+      this.appStateService = spyOnService('appState');
       this.state = {
         create: {},
         game: { types: 'elements',
-                type_selection: 'selection' },
-        eventP: jasmine.createSpy('eventP'),
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
+                type_selection: 'selection' }
       };
     }
   ]));
@@ -29,14 +28,14 @@ describe('elementMode model', function() {
     it('should copy current selection', function() {
       expect(this.gameElementSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameElementsModel.copyStampsP)
+      expect(this.gameElementsModel.copyStamps)
         .toHaveBeenCalledWith('gameTerrainSelection.get.returnValue', 'elements');
     });
 
     it('should enter createElement mode', function() {
-      expect(this.state.create)
-        .toBe('gameTerrains.copyStampsP.returnValue');
-      expect(this.state.eventP)
+      expect(this.context.create)
+        .toBe('gameTerrains.copyStamps.returnValue');
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo','CreateType');
     });
   });
@@ -53,7 +52,7 @@ describe('elementMode model', function() {
     it('should execute deleteElementCommand', function() {
       expect(this.gameElementSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'deleteType', ['stamps']);
     });
@@ -75,9 +74,10 @@ describe('elementMode model', function() {
       });
 
       it('should execute onElements/'+e.action+' command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes', [ `${e.action}P`, [false], 'stamps' ]);
+                                'onTypes',
+                                [ `${e.action}P`, [false], 'stamps' ]);
       });
     });
 
@@ -96,9 +96,10 @@ describe('elementMode model', function() {
       });
 
       it('should execute onElements/'+e.action+'Small command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes', [ `${e.action}P`, [true], 'stamps' ]);
+                                'onTypes',
+                                [ `${e.action}P`, [true], 'stamps' ]);
       });
     });
   }, [
@@ -125,7 +126,7 @@ describe('elementMode model', function() {
       });
 
       it('should execute onElements/'+e.action+' command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTypes',
                                 [ `${e.action}P`, [false], 'stamps' ]);
@@ -135,7 +136,7 @@ describe('elementMode model', function() {
         this.state.ui_state = { flip_map: true };
       }, function() {
         it('should execute onElements/'+e.flipped_action+' command', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onTypes',
                                   [ `${e.flipped_action}P`, [false], 'stamps' ]);
@@ -158,7 +159,7 @@ describe('elementMode model', function() {
       });
 
       it('should execute onElements/'+e.action+'Small command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTypes',
                                 [ `${e.action}P`, [true], 'stamps' ]);
@@ -168,7 +169,7 @@ describe('elementMode model', function() {
         this.state.ui_state = { flip_map: true };
       }, function() {
         it('should execute onElements/'+e.flipped_action+'Small command', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onTypes',
                                   [ `${e.flipped_action}P`, [true], 'stamps' ]);
@@ -186,20 +187,12 @@ describe('elementMode model', function() {
   describe('drag', function() {
     beforeEach(function() {
       this.elementModel.saveState.and.callThrough();
-      this.elementModel.eventName.and.callThrough();
 
       this.state = R.extend(this.state, {
         game: { type_selection: 'selection',
                 types: [ { state: { stamp: 'stamp1', x: 240, y: 240, r: 180 } },
                          { state: { stamp: 'stamp2', x: 200, y: 300, r:  90 } } ]
-              },
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
-      });
-      this.state.eventP.and.callFake((e,l,u) => {
-        if('Game.update' === e) {
-          this.state.game = R.over(l,u, this.state.game);
-        }
-        return 'state.eventP.returnValue';
+              }
       });
 
       this.event = {
@@ -215,8 +208,8 @@ describe('elementMode model', function() {
           return m;
         });
 
-      this.gameElementsModel.findAnyStampsP
-        .resolveWith((ss, ms) => {
+      this.gameElementsModel.findAnyStamps
+        .and.callFake((ss, ms) => {
           return R.map(function(s) {
             return R.find(R.pathEq(['state','stamp'], s), ms);
           }, ss);
@@ -236,16 +229,13 @@ describe('elementMode model', function() {
 
       it('should set current selection', function() {
         expect(this.gameElementSelectionModel.set)
-          .toHaveBeenCalledWith('local', ['stamp'],
-                                this.state, 'selection');
+          .toHaveBeenCalledWith('local', ['stamp'], 'selection');
       });
 
       it('should update target position', function() {
         expect(R.pick(['x','y'], this.event.target.state))
             .toEqual({ x: 250, y: 241 });
       });
-
-      shouldEmitChangeElementEvent();
     });
 
     context('when user drags element', function() {
@@ -257,7 +247,6 @@ describe('elementMode model', function() {
           .dragStartType(this.state, this.event);
 
         this.elementModel.setPositionP.calls.reset();
-        this.state.queueChangeEventP.calls.reset();
 
         this.event = {
           target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -273,7 +262,10 @@ describe('elementMode model', function() {
             .toEqual({ x: 270, y: 230 });
       });
 
-      shouldEmitChangeElementEvent();
+      it('should emit change event', function() {
+        expect(this.appStateService.emit)
+          .toHaveBeenCalledWith('Game.type.change.stamp');
+      });
     });
 
     context('when user ends draging element', function() {
@@ -284,7 +276,6 @@ describe('elementMode model', function() {
         this.elementModeModel.actions
           .dragStartType(this.state, this.event);
 
-        this.state.queueChangeEventP.calls.reset();
         this.elementModel.setPositionP.calls.reset();
 
         this.event = {
@@ -302,7 +293,7 @@ describe('elementMode model', function() {
       });
 
       it('should execute onElements/setPosition command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTypes', [
                                   'setPositionP',
@@ -325,12 +316,6 @@ describe('elementMode model', function() {
         });
       });
     }
-    function shouldEmitChangeElementEvent() {
-      it('should emit changeElement event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.change.stamp');
-      });
-    }
   });
 
   context('when user toggles lock on elements', function() {
@@ -350,12 +335,12 @@ describe('elementMode model', function() {
         it('should toggle lock on local selection, '+d, function() {
           expect(this.gameElementSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameElementsModel.findStampP)
+          expect(this.gameElementsModel.findStamp)
             .toHaveBeenCalledWith('stamp1', 'elements');
 
           expect(this.elementModel.isLocked)
-            .toHaveBeenCalledWith('gameTerrains.findStampP.returnValue');
-          expect(this.state.eventP)
+            .toHaveBeenCalledWith('gameTerrains.findStamp.returnValue');
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith(
               'Game.command.execute',
               'lockTypes',
@@ -375,28 +360,19 @@ describe('elementMode model', function() {
       return this.elementModeModel
         .actions[e.action](this.state, 'event');
     }, function() {
-      beforeEach(function() {
-        this.state.eventP.and.callFake((e,l,u) => {
-          if('Game.update' === e) {
-            this.state.game = R.over(l,u, this.state.game);
-          }
-          return 'state.event.returnValue';
-        });
-      });
-
-      it('should close edit OSD', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.selectionDetail.close');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.editDamage.close');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.editLabel.close');
-      });
+      // it('should close edit OSD', function() {
+      //   expect(this.state.queueChangeEventP)
+      //     .toHaveBeenCalledWith('Game.selectionDetail.close');
+      //   expect(this.state.queueChangeEventP)
+      //     .toHaveBeenCalledWith('Game.editDamage.close');
+      //   expect(this.state.queueChangeEventP)
+      //     .toHaveBeenCalledWith('Game.editLabel.close');
+      // });
 
       it('should clear local element selection', function() {
         expect(this.gameElementSelectionModel.clear)
-          .toHaveBeenCalledWith('local', this.state, 'selection');
-        expect(this.state.game.type_selection)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.context.game.type_selection)
           .toBe('gameTerrainSelection.clear.returnValue');
       });
     });

@@ -40,9 +40,9 @@ describe('element model', function() {
     ]);
   });
 
-  context('createP(<state>)', function() {
+  context('create(<state>)', function() {
     return this.elementModel
-      .createP(this.state);
+      .create(this.state);
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'],

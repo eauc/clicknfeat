@@ -5,25 +5,22 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['appState', 'jsonStringifier', 'commands', 'gameConnection', 'gameLayers'];
-
+  gameModelFactory.$inject = ['appState', 'jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
   // 'gameLos',
   // 'gameModels',
   // 'gameModelSelection',
   // 'gameRuler',
   // 'gameTemplates',
   // 'gameTemplateSelection',
-  // 'gameTerrains',
-  // 'gameTerrainSelection',
-  function gameModelFactory(appStateService, jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel) {
-    // gameLosModel,
-    // gameModelsModel,
-    // gameModelSelectionModel,
-    // gameRulerModel,
-    // gameTemplatesModel,
-    // gameTemplateSelectionModel,
-    // gameTerrainsModel,
-    // gameTerrainSelectionModel) {
+  'gameTerrains', 'gameTerrainSelection'];
+  function gameModelFactory(appStateService, jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
+  // gameLosModel,
+  // gameModelsModel,
+  // gameModelSelectionModel,
+  // gameRulerModel,
+  // gameTemplatesModel,
+  // gameTemplateSelectionModel,
+  gameTerrainsModel, gameTerrainSelectionModel) {
     var gameModel = {
       create: gameCreate,
       isOnline: gameIsOnline,
@@ -88,8 +85,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         // model_selection: gameModelSelectionModel.create(),
         // templates: gameTemplatesModel.create(),
         // template_selection: gameTemplateSelectionModel.create(),
-        // terrains: gameTerrainsModel.create(),
-        // terrain_selection: gameTerrainSelectionModel.create(),
+        terrains: gameTerrainsModel.create(),
+        terrain_selection: gameTerrainSelectionModel.create(),
         layers: gameLayersModel.create()
       };
     }

@@ -122,7 +122,7 @@ describe('gameElements model', function() {
 
   context('copyStampsP(<stamps>)', function() {
     return this.gameElementsModel
-      .copyStampsP(this.stamps, this.elements);
+      .copyStamps(this.stamps, this.elements);
   }, function() {
     beforeEach(function() {
       this.elements = {
@@ -167,9 +167,9 @@ describe('gameElements model', function() {
     ]);
   });
 
-  context('findStampP(<stamp>)', function() {
+  context('findStamp(<stamp>)', function() {
     return this.gameElementsModel
-      .findStampP(this.stamp, this.elements);
+      .findStamp(this.stamp, this.elements);
   }, function() {
     example(function(e) {
       context('when stamp exists', function() {
@@ -187,19 +187,16 @@ describe('gameElements model', function() {
 
     context('when <stamp> is not  found', function() {
       this.stamp = 'unknown';
-      this.expectContextError();
     }, function() {
-      it('should reject result', function() {
-        expect(this.contextError).toEqual([
-          'Type "unknown" not found'
-        ]);
+      it('should return nil', function() {
+        expect(R.isNil(this.context)).toBe(true);
       });
     });
   });
 
   context('findAnyStamps(<stamps>)', function() {
     return this.gameElementsModel
-      .findAnyStampsP(this.stamps, this.elements);
+      .findAnyStamps(this.stamps, this.elements);
   }, function() {
     context('when some <stamps> exist', function() {
       this.stamps = ['stamp2', 'whatever', 'stamp3'];
@@ -207,7 +204,7 @@ describe('gameElements model', function() {
       it('should find stamps', function() {
         expect(this.context).toEqual([
           { state: { stamp: 'stamp2' } },
-          null,
+          undefined,
           { state: { stamp: 'stamp3' } },
         ]);
       });
@@ -215,11 +212,10 @@ describe('gameElements model', function() {
 
     context('none of the <stamps> exist', function() {
       this.stamps = ['whatever', 'unknown'];
-      this.expectContextError();
     }, function() {
       it('should reject result', function() {
-        expect(this.contextError).toEqual([
-          'No type found'
+        expect(this.context).toEqual([
+          undefined, undefined
         ]);
       });
     });
@@ -247,17 +243,6 @@ describe('gameElements model', function() {
     context('when elementModel responds to <method>', function() {
       this.method = 'setState';
     }, function() {
-      context('when none of the <stamps> are found', function() {
-        this.stamps = ['whatever', 'unknown'];
-        this.expectContextError();
-      }, function() {
-        it('should reject method', function() {
-          expect(this.contextError).toEqual([
-            'No type found'
-          ]);
-        });
-      });
-
       context('when some <stamps> are found', function() {
         this.stamps = ['stamp2', 'whatever', 'stamp3'];
       }, function() {
@@ -335,17 +320,6 @@ describe('gameElements model', function() {
     context('when terrainModel responds to <method>', function() {
       this.method = 'setState';
     }, function() {
-      context('when none of the <stamps> are found', function() {
-        this.stamps = ['whatever', 'unknown'];
-        this.expectContextError();
-      }, function() {
-        it('should reject method', function() {
-          expect(this.contextError).toEqual([
-            'No type found'
-          ]);
-        });
-      });
-
       context('when some <stamps> are found', function() {
         this.stamps = ['stamp2', 'whatever', 'stamp3'];
       }, function() {
@@ -384,7 +358,7 @@ describe('gameElements model', function() {
 
   context('lockStampsP(<lock>, <stamps>)', function() {
     return this.gameElementsModel
-      .lockStampsP(this.lock, this.stamps, this.elements);
+      .lockStamps(this.lock, this.stamps, this.elements);
   }, function() {
     beforeEach(function() {
       this.elements = {

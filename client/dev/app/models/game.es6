@@ -14,22 +14,22 @@
     // 'gameRuler',
     // 'gameTemplates',
     // 'gameTemplateSelection',
-    // 'gameTerrains',
-    // 'gameTerrainSelection',
+    'gameTerrains',
+    'gameTerrainSelection',
   ];
   function gameModelFactory(appStateService,
                             jsonStringifierService,
                             commandsModel,
                             gameConnectionModel,
-                            gameLayersModel) {
+                            gameLayersModel,
                             // gameLosModel,
                             // gameModelsModel,
                             // gameModelSelectionModel,
                             // gameRulerModel,
                             // gameTemplatesModel,
                             // gameTemplateSelectionModel,
-                            // gameTerrainsModel,
-                            // gameTerrainSelectionModel) {
+                            gameTerrainsModel,
+                            gameTerrainSelectionModel) {
     const gameModel = {
       create: gameCreate,
       isOnline: gameIsOnline,
@@ -98,8 +98,8 @@
         // model_selection: gameModelSelectionModel.create(),
         // templates: gameTemplatesModel.create(),
         // template_selection: gameTemplateSelectionModel.create(),
-        // terrains: gameTerrainsModel.create(),
-        // terrain_selection: gameTerrainSelectionModel.create(),
+        terrains: gameTerrainsModel.create(),
+        terrain_selection: gameTerrainSelectionModel.create(),
         layers: gameLayersModel.create()
       };
     }

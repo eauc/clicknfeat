@@ -3,9 +3,8 @@ describe('onElementsCommand model', function() {
     'onElementsCommand',
     function(onElementsCommandModel) {
       this.elementModel = spyOnService('terrain');
-      this.elementModel.eventName.and.callThrough();
       this.gameElementsModel = spyOnService('gameTerrains');
-      this.gameElementsModel.findStampP.resolveWith((s) => {
+      this.gameElementsModel.findStamp.and.callFake((s) => {
         return { state: { stamp: s } };
       });
       this.gameElementSelectionModel = spyOnService('gameTerrainSelection');
@@ -16,9 +15,6 @@ describe('onElementsCommand model', function() {
                                this.gameElementsModel,
                                this.gameElementSelectionModel);
 
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP'
-      ]);
       this.game = { types: 'elements',
                     type_selection: 'selection' };
     }
@@ -26,7 +22,7 @@ describe('onElementsCommand model', function() {
 
   context('executeP(<method>, <..args..>, <stamps>, <state>, <game>)', function() {
     return this.onElementsCommandModel
-      .executeP(this.method, this.args, this.stamps, this.state, this.game);
+      .executeP(this.method, this.args, this.stamps, this.game);
   }, function() {
     beforeEach(function() {
       this.args = ['arg1', 'arg2'];
@@ -78,13 +74,6 @@ describe('onElementsCommand model', function() {
           .toEqual('gameElements.fromStampsP.returnValue(saveState)');
       });
 
-      it('should emit changeElement changeEvents', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.change.stamp1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.change.stamp2');
-      });
-
       it('should return context', function() {
         expect(this.context[0])
           .toEqual({
@@ -98,7 +87,7 @@ describe('onElementsCommand model', function() {
 
   example(function(e) {
     context(e.method+'(<ctxt>, <state>, <game>)', function() {
-      return this.onElementsCommandModel[e.method](this.ctxt, this.state, this.game);
+      return this.onElementsCommandModel[e.method](this.ctxt, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -108,37 +97,18 @@ describe('onElementsCommand model', function() {
       });
 
       it('should set <'+e.state+'> states', function() {
-        expect(this.gameElementsModel.setStateStampsP)
+        expect(this.gameElementsModel.setStateStamps)
           .toHaveBeenCalledWith(this.ctxt[e.state],
                                 [e.state+'1',e.state+'2'],
                                 'elements');
         expect(this.context.types)
-            .toBe('gameTerrains.setStateStampsP.returnValue');
-      });
-
-      context('setStateStamps fails', function() {
-        this.gameElementsModel.setStateStampsP
-          .rejectWith('reason');
-        this.expectContextError();
-      }, function() {
-        it('should reject command', function() {
-          expect(this.contextError).toEqual([
-            'reason'
-          ]);
-        });
-      });
-
-      it('should emit changeElement changeEvents', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.change.'+e.state+'1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.type.change.'+e.state+'2');
+            .toBe('gameTerrains.setStateStamps.returnValue');
       });
 
       it('should set remote elementSelection to modified elements', function() {
         expect(this.gameElementSelectionModel.set)
           .toHaveBeenCalledWith('remote', [e.state+'1', e.state+'2'],
-                                this.state, 'selection');
+                                'selection');
         expect(this.context.type_selection)
           .toBe('gameTerrainSelection.set.returnValue');
       });

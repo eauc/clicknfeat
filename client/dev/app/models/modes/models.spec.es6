@@ -1,4 +1,4 @@
-describe('modelsMode model', function() {
+xdescribe('modelsMode model', function() {
   beforeEach(inject([
     'modelsMode',
     function(modelsModeModel) {

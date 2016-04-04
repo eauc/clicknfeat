@@ -45,7 +45,7 @@ describe('sprayTemplateMode model', function() {
     });
   });
 
-  context('when user set target model', function() {
+  xcontext('when user set target model', function() {
     return this.sprayTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -98,7 +98,7 @@ describe('sprayTemplateMode model', function() {
   });
 
   example(function(e, d) {
-    context('when user rotate left, '+d, function() {
+    xcontext('when user rotate left, '+d, function() {
       return this.sprayTemplateModeModel
         .actions[e.action](this.state);
     }, function() {

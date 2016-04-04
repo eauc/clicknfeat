@@ -64,19 +64,13 @@
     return common_mode;
 
     function modeBackToDefault() {
-      self.window.requestAnimationFrame(() => {
-        appStateService.reduce('Modes.switchTo', 'Default');
-      });
+      appStateService.chainReduce('Modes.switchTo', 'Default');
     }
     function commandUndoLast() {
-      self.window.requestAnimationFrame(() => {
-        appStateService.reduce('Game.command.undoLast');
-      });
+      appStateService.chainReduce('Game.command.undoLast');
     }
     function commandReplayNext() {
-      self.window.requestAnimationFrame(() => {
-        appStateService.reduce('Game.command.replayNext');
-      });
+      appStateService.chainReduce('Game.command.replayNext');
     }
     function viewScrollLeft() {
       appStateService.emit('Game.view.scrollLeft');
@@ -100,9 +94,7 @@
       appStateService.emit('Game.view.zoomReset');
     }
     function flipMap() {
-      self.window.requestAnimationFrame(() => {
-        appStateService.reduce('Game.uiState.flip');
-      });
+      appStateService.chainReduce('Game.uiState.flip');
     }
     function toggleMenu() {
       appStateService.emit('Game.toggleMenu');

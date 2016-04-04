@@ -3,9 +3,12 @@
     .factory('createElementMode', createElementModeModelFactory);
 
   createElementModeModelFactory.$inject = [
+    'appState',
     'commonMode',
   ];
-  function createElementModeModelFactory(commonModeModel) {
+  function createElementModeModelFactory(appStateService,
+                                         commonModeModel) {
+    const CREATE_LENS = R.lensProp('create');
     return function createElementModeModel(type) {
       const createElement_actions = Object.create(commonModeModel.actions);
       createElement_actions.moveMap = moveMap;
@@ -26,37 +29,42 @@
         buttons: createElement_buttons,
         bindings: createElement_bindings
       };
-
+      const updateCreateBase$ = R.curry(updateCreateBase);
       return createElement_mode;
 
-      function onEnter(state) {
-        state.queueChangeEventP(`Game.${type}.create.enable`);
-        state.queueChangeEventP('Game.moveMap.enable');
+      function onEnter() {
+        appStateService.emit('Game.moveMap.enable');
       }
-      function onLeave(state) {
-        state.create = R.assoc(`${type}s`, null, state.create);
-        state.queueChangeEventP('Game.moveMap.disable');
-        state.queueChangeEventP(`Game.${type}.create.disable`);
+      function onLeave() {
+        appStateService.emit('Game.moveMap.disable');
       }
       function moveMap(state, coord) {
-        updateCreateBase(coord, state);
-        state.queueChangeEventP('Game.create.update');
+        // state.queueChangeEventP('Game.create.update');
+        return R.over(
+          CREATE_LENS,
+          updateCreateBase$(coord),
+          state
+        );
       }
       function create(state, event) {
-        let is_flipped = R.path(['ui_state','flip_map'], state);
-        updateCreateBase(event['click#'], state);
-        return state.eventP('Game.command.execute',
-                            `create${s.capitalize(type)}`,
-                            [ state.create, is_flipped ]);
+        const is_flipped = R.path(['ui_state','flip_map'], state);
+        const create = R.thread(state)(
+          R.view(CREATE_LENS),
+          updateCreateBase$(event['click#'])
+        );
+        appStateService.chainReduce('Game.command.execute',
+                                    `create${s.capitalize(type)}`,
+                                    [ create, is_flipped ]);
+        return R.set(CREATE_LENS, {}, state);
       }
-      function updateCreateBase(coord, state) {
-        state.create = R.over(
+      function updateCreateBase(coord, create) {
+        return R.over(
           R.lensProp('base'),
           R.pipe(
             R.assoc('x', coord.x),
             R.assoc('y', coord.y)
           ),
-          state.create
+          create
         );
       }
     };

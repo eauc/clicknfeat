@@ -22,7 +22,7 @@ describe('segmentMode model', function() {
     });
   }]));
 
-  context('when user starts using segment', function() {
+  xcontext('when user starts using segment', function() {
     return this.segmentModeModel
       .onEnter(this.state);
   }, function() {

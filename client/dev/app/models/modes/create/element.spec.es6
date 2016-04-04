@@ -12,7 +12,7 @@ describe('createElementMode model', function() {
     }
   ]));
 
-  context('onEnter()', function() {
+  xcontext('onEnter()', function() {
     return this.createElementModeModel
       .onEnter(this.state);
   }, function() {
@@ -28,7 +28,7 @@ describe('createElementMode model', function() {
     ]);
   });
 
-  context('onLeave()', function() {
+  xcontext('onLeave()', function() {
     return this.createElementModeModel
       .onLeave(this.state);
   }, function() {
@@ -51,7 +51,7 @@ describe('createElementMode model', function() {
     ]);
   });
 
-  context('user move mouse over map', function() {
+  xcontext('user move mouse over map', function() {
     return this.createElementModeModel.actions
       .moveMap(this.state, { x: 42, y: 71 });
   }, function() {
@@ -68,7 +68,7 @@ describe('createElementMode model', function() {
     });
   });
 
-  context('user create element', function() {
+  xcontext('user create element', function() {
     return this.createElementModeModel.actions
       .create(this.state, { 'click#': { x: 42, y: 71 } });
   }, function() {

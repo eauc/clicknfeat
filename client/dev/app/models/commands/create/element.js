@@ -7,70 +7,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
   createElementCommandModelFactory.$inject = ['point'];
   function createElementCommandModelFactory(pointModel) {
-    return function buildCreateElementCommandModel(type, elementModel, gameElementsModel, gameElementSelectionModel, createElementFnP) {
+    return function buildCreateElementCommandModel(type, elementModel, gameElementsModel, gameElementSelectionModel, createElementFn) {
       var createElementCommandModel = {
         executeP: createElementExecuteP,
         replayP: createElementReplayP,
         undoP: createElementUndoP
       };
-
-      var emitCreateEvent$ = R.curry(emitCreateEvent);
-      var emitDeleteEvent$ = R.curry(emitDeleteEvent);
       var onCreatedElements$ = R.curry(onCreatedElements);
-      createElementFnP = R.thread(createElementFnP)(R.defaultTo(tryToCreateElementP), R.curry);
-
+      createElementFn = R.thread(createElementFn)(R.defaultTo(tryToCreateElement), R.curry);
       return createElementCommandModel;
 
-      function createElementExecuteP(create, is_flipped, state, game) {
+      function createElementExecuteP(create, is_flipped, game) {
         var add$ = pointModel.addToWithFlip$(is_flipped);
-        return R.threadP(create)(R.prop(type + 's'), R.map(addElementP), R.allP, R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onNewElements);
+        return R.threadP(create)(R.prop(type + 's'), R.map(addElement), R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onNewElements);
 
-        function addElementP(element) {
-          return R.thread(element)(add$(create.base), R.omit(['stamp']), createElementFnP(state));
+        function addElement(element) {
+          return R.thread(element)(add$(create.base), R.omit(['stamp']), createElementFn);
         }
         function onNewElements(elements) {
           var _ctxt;
 
           var ctxt = (_ctxt = {}, _defineProperty(_ctxt, type + 's', R.map(elementModel.saveState, elements)), _defineProperty(_ctxt, 'desc', R.thread(elements)(R.head, R.pathOr([], ['state', 'info']), R.join('.'))), _ctxt);
-          return R.thread(elements)(onCreatedElements$('local', state, game), function (game) {
+          return R.thread(elements)(onCreatedElements$('local', game), function (game) {
             return [ctxt, game];
           });
         }
       }
-      function createElementReplayP(ctxt, state, game) {
-        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFnP(state)), R.allP, R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onCreatedElements$('remote', state, game));
+      function createElementReplayP(ctxt, game) {
+        return R.threadP(ctxt)(R.prop(type + 's'), R.map(createElementFn), R.reject(R.isNil), R.rejectIfP(R.isEmpty, 'No valid ' + type + ' definition'), onCreatedElements$('remote', game));
       }
-      function createElementUndoP(ctxt, state, game) {
+      function createElementUndoP(ctxt, game) {
         var stamps = R.pluck('stamp', R.prop(type + 's', ctxt));
-        return R.thread(game)(R.over(R.lensProp(type + 's'), gameElementsModel.removeStamps$(stamps)), R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.removeFrom$('local', stamps, state)), R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.removeFrom$('remote', stamps, state)), function (game) {
-          R.forEach(emitDeleteEvent$(state), stamps);
-          return game;
-        }, emitCreateEvent$(state));
+        return R.thread(game)(R.over(R.lensProp(type + 's'), gameElementsModel.removeStamps$(stamps)), R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.removeFrom$('local', stamps)), R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.removeFrom$('remote', stamps)));
       }
-      function tryToCreateElementP(_state_, element) {
-        return elementModel.createP(element).catch(R.always(null));
+      function tryToCreateElement(element) {
+        return elementModel.create(element);
       }
-      function onCreatedElements(selection, state, game, elements) {
-        return R.thread(game)(addToGameElements, addToGameElementSelection, emitCreateEvent$(state));
+      function onCreatedElements(selection, game, elements) {
+        return R.thread(game)(addToGameElements, addToGameElementSelection);
 
         function addToGameElements(game) {
-          return R.thread(game)(R.prop(type + 's'), gameElementsModel.add$(elements), function (game_elements) {
-            return R.assoc(type + 's', game_elements, game);
-          });
+          return R.over(R.lensProp(type + 's'), gameElementsModel.add$(elements), game);
         }
         function addToGameElementSelection(game) {
           var stamps = R.map(R.path(['state', 'stamp']), elements);
-          return R.thread(game)(R.prop(type + '_selection'), gameElementSelectionModel.set$(selection, stamps, state), function (selection) {
-            return R.assoc(type + '_selection', selection, game);
-          });
+          return R.over(R.lensProp(type + '_selection'), gameElementSelectionModel.set$(selection, stamps), game);
         }
-      }
-      function emitCreateEvent(state, game) {
-        state.queueChangeEventP('Game.' + type + '.create');
-        return game;
-      }
-      function emitDeleteEvent(state, stamp) {
-        state.queueChangeEventP('Game.model.delete.' + stamp);
       }
     };
   }

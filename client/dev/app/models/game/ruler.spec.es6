@@ -1,4 +1,4 @@
-describe('gameRuler model', function() {
+xdescribe('gameRuler model', function() {
   beforeEach(inject([ 'gameRuler', function(gameRulerModel) {
     this.gameRulerModel = gameRulerModel;
 

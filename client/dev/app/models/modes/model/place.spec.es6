@@ -1,4 +1,4 @@
-describe('modelPlaceMode model', function() {
+xdescribe('modelPlaceMode model', function() {
   beforeEach(inject([
     'modelPlaceMode',
     function(modelPlaceModeModel) {
