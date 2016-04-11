@@ -32,7 +32,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         shiftLeftP: moveElementP(elementShiftLeft),
         shiftRightP: moveElementP(elementShiftRight),
         shiftUpP: moveElementP(elementShiftUp),
-        shiftDownP: moveElementP(elementShiftDown)
+        shiftDownP: moveElementP(elementShiftDown),
+        renderLabel: elementRenderLabel
       };
 
       R.curryService(elementModel);
@@ -140,6 +141,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
       function elementFullLabel(element) {
         return R.pathOr([], ['state', 'l'], element).join(' ');
+      }
+      function elementRenderLabel(_ref, element_state) {
+        var _ref$rotate_with_mode = _ref.rotate_with_model;
+        var rotate_with_model = _ref$rotate_with_mode === undefined ? false : _ref$rotate_with_mode;
+        var _ref$flipped = _ref.flipped;
+        var flipped = _ref$flipped === undefined ? false : _ref$flipped;
+        var _ref$flip_center = _ref.flip_center;
+        var flip_center = _ref$flip_center === undefined ? { x: 240, y: 240 } : _ref$flip_center;
+        var _ref$text_center = _ref.text_center;
+        var text_center = _ref$text_center === undefined ? { x: 240, y: 240 } : _ref$text_center;
+
+        var text = R.propOr([], 'l', element_state).join(' ');
+        var show = R.length(text) > 0 ? true : false;
+        var r = rotate_with_model ? element_state.r : 0;
+        r += flipped ? 180 : 0;
+        var transform = 'rotate(' + r + ',' + flip_center.x + ',' + flip_center.y + ')';
+        var x = text_center.x;
+        var y = text_center.y;
+        var bkg_width = R.length(text) * 5;
+        var bkg_x = text_center.x - bkg_width / 2;
+        var bkg_y = text_center.y - 5;
+        return {
+          text: text,
+          show: show,
+          x: x, y: y, transform: transform,
+          bkg_x: bkg_x, bkg_y: bkg_y, bkg_width: bkg_width
+        };
       }
     };
   }

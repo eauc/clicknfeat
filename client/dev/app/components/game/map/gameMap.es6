@@ -36,7 +36,7 @@
       map.addEventListener('dragstart', (event) => {
         event.preventDefault();
       });
-      // map.addEventListener('contextmenu', mouseEvents.rightClick);
+      map.addEventListener('contextmenu', mouseEvents.rightClick);
 
       scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
       scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
@@ -63,7 +63,7 @@
           // drag: dragMap,
           leave: mouseLeaveMap,
           click: clickMap,
-      //     rightClick: rightClickMap,
+          rightClick: rightClickMap,
           move: moveMap
         };
 
@@ -138,14 +138,15 @@
           }
         }
 
-      //   function rightClickMap(event) {
-      //     log('rightClickMap', event);
-      //     event.preventDefault();
+        function rightClickMap(event) {
+          log('rightClickMap', event);
+          event.preventDefault();
 
-      //     const now = gameMapService.eventToMapCoordinates(map, event);
-      //     gameMapService.findEventTarget(state.game, event)
-      //       .then(emitClickEvent$('rightClick', event, now));
-      //   }
+          const state = appStateService.current();
+          const now = gameMapService.eventToMapCoordinates(map, event);
+          const target = gameMapService.findEventTarget(state.game, event);
+          emitClickEvent('rightClick', event, now, target);
+        }
 
         function moveMap(event) {
           log('moveMap', event);

@@ -10,7 +10,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var base = gameElementsModel('template', templateModel);
     var gameTemplatesModel = Object.create(base);
     R.deepExtend(gameTemplatesModel, {
-      modeForStampP: gameTemplatesModeForStampP,
       fromStampsP: gameTemplatesFromStampsP,
       onStampsP: gameTemplatesOnStampsP
     });
@@ -21,11 +20,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     R.curryService(gameTemplatesModel);
     return gameTemplatesModel;
 
-    function gameTemplatesModeForStampP(stamp, templates) {
-      return R.threadP(templates)(gameTemplatesModel.findStampP$(stamp), R.path(['state', 'type']), R.defaultTo('aoe'), function (type) {
-        return type + 'Template';
-      });
-    }
     function gameTemplatesFromStampsP(method, args, stamps, templates) {
       return fromStampsP$(R.compose(R.always, R.always(null)), method, args, stamps, templates);
     }
@@ -33,10 +27,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return R.threadP(templates)(fromStampsP$(R.always, method, args, stamps), updateTemplates$(templates));
     }
     function fromStampsP(onError, method, args, stamps, templates) {
-      return R.threadP(templates)(gameTemplatesModel.findAnyStampsP$(stamps), R.reject(R.isNil), R.map(callMethodOnTemplate), R.allP);
+      return R.threadP(templates)(gameTemplatesModel.findAnyStamps$(stamps), R.reject(R.isNil), R.map(callMethodOnTemplateP), R.allP);
 
-      function callMethodOnTemplate(template) {
-        return self.Promise.resolve(templateModel.callP(method, args, template)).catch(onError(template));
+      function callMethodOnTemplateP(template) {
+        return R.resolveP(templateModel.callP(method, args, template)).catch(onError(template));
       }
     }
     function updateTemplates(templates, news) {
@@ -45,7 +39,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         var locked = _ref2[0];
         var active = _ref2[1];
-
         return {
           active: active,
           locked: locked

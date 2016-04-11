@@ -4,12 +4,15 @@ describe('defaultMode model', function() {
     function(defaultModeModel) {
       this.defaultModeModel = defaultModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.gameModel = spyOnService('game');
       this.gameModelsModel = spyOnService('gameModels');
       this.gameModelSelectionModel = spyOnService('gameModelSelection');
       this.gameTerrainsModel = spyOnService('gameTerrains');
       this.gameTerrainSelectionModel = spyOnService('gameTerrainSelection');
+      this.gameTerrainSelectionModel.isEmpty.and.returnValue(false);
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
+      this.gameTemplateSelectionModel.isEmpty.and.returnValue(false);
 
       this.state = { game: { terrains: 'terrains',
                              models: 'models',
@@ -33,54 +36,54 @@ describe('defaultMode model', function() {
         .toBe('gameTerrainSelection.set.returnValue');
     });
 
-    // it('should clear gameTemplateSelection', function() {
-    //   expect(this.gameTemplateSelectionModel.clear)
-    //     .toHaveBeenCalledWith('local', this.state, 'template_selection');
-    //   expect(this.state.game.template_selection)
-    //     .toBe('gameTemplateSelection.clear.returnValue');
-    // });
+    it('should clear gameTemplateSelection', function() {
+      expect(this.gameTemplateSelectionModel.clear)
+        .toHaveBeenCalledWith('local', 'template_selection');
+      expect(this.context.game.template_selection)
+        .toBe('gameTemplateSelection.clear.returnValue');
+    });
   });
 
-  xcontext('when user set template selection', function() {
+  context('when user set template selection', function() {
     return this.defaultModeModel.actions
       .selectTemplate(this.state, this.event);
   }, function() {
     it('should set gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.set)
-        .toHaveBeenCalledWith('local', ['stamp'], this.state, 'template_selection');
-      expect(this.state.game.template_selection)
+        .toHaveBeenCalledWith('local', ['stamp'], 'template_selection');
+      expect(this.context.game.template_selection)
         .toBe('gameTemplateSelection.set.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });
 
-  xcontext('when user right-click on template', function() {
+  context('when user right-click on template', function() {
     return this.defaultModeModel.actions
       .templateSelectionDetail(this.state, this.event);
   }, function() {
     it('should open template selection detail', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.selectionDetail.open', 'template',
                               { state: { stamp: 'stamp' } });
     });
 
     it('should set gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.set)
-        .toHaveBeenCalledWith('local', ['stamp'], this.state, 'template_selection');
-      expect(this.state.game.template_selection)
+        .toHaveBeenCalledWith('local', ['stamp'], 'template_selection');
+      expect(this.context.game.template_selection)
         .toBe('gameTemplateSelection.set.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });

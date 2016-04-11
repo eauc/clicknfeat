@@ -5,16 +5,15 @@
 
   gameSelectionDetailCtrl.$inject = [
     '$scope',
-    'gameFactions',
-    'gameModels',
+    // 'gameFactions',
+    // 'gameModels',
     'gameTemplates',
   ];
   function gameSelectionDetailCtrl($scope,
-                                   gameFactionsModel,
-                                   gameModelsModel,
+                                   // gameFactionsModel,
+                                   // gameModelsModel,
                                    gameTemplatesModel) {
     const vm = this;
-    const state = $scope.state;
     console.log('init clickGameSelectionDetailCtrl');
 
     vm.edit = { label: '',
@@ -29,24 +28,31 @@
     vm.doAddLabel = doAddLabel;
     vm.doRemoveLabel = doRemoveLabel;
 
+    activate();
+
+    function activate() {
+      $scope.onStateChangeEvent('Game.templates.change',
+                                updateElement,
+                                $scope);
+    }
     const updateOnOpenType = {
       template: updateTemplateElement,
       model: updateModelElement
     };
     function onOpen() {
       vm.show.info = false;
-      return updateElement();
+      updateElement();
     }
     function updateElement() {
-      return R.threadP()(
-        () => updateOnOpenType[vm.type](),
-        () => { $scope.$digest(); }
-      );
+      if(R.isNil(vm.type)) return;
+
+      updateOnOpenType[vm.type]();
+      $scope.$digest();
     }
     function updateTemplateElement() {
-      return R.threadP(state.game)(
+      return R.thread($scope.state.game)(
         R.prop('templates'),
-        gameTemplatesModel.findStampP$(vm.element.stamp),
+        gameTemplatesModel.findStamp$(vm.element.stamp),
         (template) => {
           vm.element = template.state;
           vm.edit.max_deviation = R.propOr(0, 'm', vm.element);
@@ -54,17 +60,17 @@
       );
     }
     function updateModelElement() {
-      return R.threadP(state.game)(
-        R.prop('models'),
-        gameModelsModel.findStampP$(vm.element.stamp),
-        (model) => {
-          vm.element = model.state;
-        },
-        () => gameFactionsModel.getModelInfoP(vm.element.info, state.factions),
-        (info) => {
-          vm.info = info;
-        }
-      );
+      // return R.thread($scope.state.game)(
+      //   R.prop('models'),
+      //   gameModelsModel.findStamp$(vm.element.stamp),
+      //   (model) => {
+      //     vm.element = model.state;
+      //   },
+      //   () => gameFactionsModel.getModelInfo(vm.element.info, state.factions),
+      //   (info) => {
+      //     vm.info = info;
+      //   }
+      // );
     }
     function labelDisplay(l) {
       return s.truncate(l, 12);
@@ -74,13 +80,11 @@
                     ? vm.edit.max_deviation
                     : null
                   );
-      $scope
-        .stateEvent('Game.command.execute',
-                    'onTemplates',
-                    [ 'setMaxDeviation', [max],
-                      [vm.element.stamp]
-                    ])
-        .then(updateElement);
+      $scope.stateEvent('Game.command.execute',
+                        'onTemplates',
+                        [ 'setMaxDeviation', [max],
+                          [vm.element.stamp]
+                        ]);
     }
     function doAddLabel() {
       const cmd = ( vm.type === 'template'
@@ -90,13 +94,11 @@
       const new_label = s.trim(vm.edit.label);
       if(R.length(new_label) === 0) return;
 
-      $scope
-        .stateEvent('Game.command.execute',
-                    cmd,
-                    [ 'addLabel', [new_label],
-                      [vm.element.stamp]
-                    ])
-        .then(updateElement);
+      $scope.stateEvent('Game.command.execute',
+                        cmd,
+                        [ 'addLabel', [new_label],
+                          [vm.element.stamp]
+                        ]);
       vm.edit.label = '';
     }
     function doRemoveLabel(label) {
@@ -104,13 +106,11 @@
                     ? 'onTemplates'
                     : 'onModels'
                   );
-      $scope
-        .stateEvent('Game.command.execute',
-                    cmd,
-                    [ 'removeLabel', [label],
-                      [vm.element.stamp]
-                    ])
-        .then(updateElement);
+      $scope.stateEvent('Game.command.execute',
+                        cmd,
+                        [ 'removeLabel', [label],
+                          [vm.element.stamp]
+                        ]);
     }
   }
 
@@ -142,19 +142,19 @@
                                closeSelectionDetail, scope);
       vm.doClose = closeSelectionDetail;
 
-      function openSelectionDetail(_event_, type, element) {
+      function openSelectionDetail(_event_, [type, element]) {
         // console.log('openSelectionDetail');
         vm.type = type;
         vm.element = element.state;
         vm.edit = { label: '',
                     max_deviation: 0
                   };
-        vm.onOpen().then(() => {
-          self.window.requestAnimationFrame(displaySelectionDetail);
-        });
+        vm.onOpen();
+        self.window.requestAnimationFrame(displaySelectionDetail);
       }
       function closeSelectionDetail() {
         // console.log('closeSelectionDetail');
+        vm.type = null;
         vm.element = {};
         element.style.display = 'none';
         element.style.visibility = 'hidden';

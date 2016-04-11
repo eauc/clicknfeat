@@ -4,22 +4,15 @@
     .directive('clickGameTemplatesList', gameTemplatesListDirectiveFactory);
 
   gameTemplateDirectiveFactory.$inject = [
-    'labelElement',
-    'aoeTemplateElement',
-    'sprayTemplateElement',
-    'wallTemplateElement',
-    'gameTemplates',
+    'appState',
+    'gameMap',
+    'template',
+    'gameTemplateSelection',
   ];
-  function gameTemplateDirectiveFactory(labelElementModel,
-                                        aoeTemplateElementModel,
-                                        sprayTemplateElementModel,
-                                        wallTemplateElementModel,
-                                        gameTemplatesModel) {
-    const templates = {
-      aoe: aoeTemplateElementModel,
-      spray: sprayTemplateElementModel,
-      wall: wallTemplateElementModel
-    };
+  function gameTemplateDirectiveFactory(appStateService,
+                                        gameMapService,
+                                        templateModel,
+                                        gameTemplateSelectionModel) {
     const gameTemplateDirective = {
       restrict: 'A',
       scope: true,
@@ -27,37 +20,63 @@
     };
     return gameTemplateDirective;
 
-    function link(scope, parent) {
-      const map = document.getElementById('map');
-      const svgNS = map.namespaceURI;
+    function link(scope) {
+      console.log('gameTemplate', scope.template);
 
       const template = scope.template;
-      console.log('gameTemplate', template);
-      if(R.isNil(template)) return;
-
-      const element = templates[template.state.type]
-              .create(svgNS, parent[0], template);
-      scope.$on('$destroy', () => {
-        templates[template.state.type].cleanup(parent, element);
-      });
-      element.container = parent[0];
-
-      scope.onStateChangeEvent('Game.map.flipped', () => {
-        labelElementModel
-          .updateOnFlipMap(map, template.state, element.label);
-      }, scope);
-      updateTemplate();
+      scope.onStateChangeEvent('Game.view.flipMap', onUpdate, scope);
+      scope.onStateChangeEvent('Game.templates.change', onUpdate, scope);
+      scope.onStateChangeEvent('Game.template_selection.change', onUpdate, scope);
       scope.onStateChangeEvent(`Game.template.change.${template.state.stamp}`,
-                               updateTemplate, scope);
+                               _onUpdate, scope);
+      updateTemplate(scope);
 
-      function updateTemplate() {
-        R.threadP()(
-          () => gameTemplatesModel
-            .findStampP(template.state.stamp, scope.state.game.templates),
-          (template) => templates[template.state.type]
-            .update(map, scope.state, template, element)
-        );
+      let _template;
+      let _selection;
+      let _is_flipped;
+      function onUpdate() {
+        const map = document.getElementById('map');
+        const is_flipped = gameMapService.isFlipped(map);
+        const state = appStateService.current();
+        const selection = R.path(['game','template_selection'], state);
+        const template = scope.template;
+        if(_template === template &&
+           _selection === selection &&
+           _is_flipped === is_flipped) {
+          return;
+        }
+        _template = template;
+        _selection = selection;
+        _is_flipped = is_flipped;
+
+        _onUpdate();
       }
+      function _onUpdate() {
+        updateTemplate(scope);
+        scope.$digest();
+      }
+    }
+
+    function updateTemplate(scope) {
+      const map = document.getElementById('map');
+      const is_flipped = gameMapService.isFlipped(map);
+      const template = scope.template;
+      console.warn('RENDER TEMPLATE', template.state.stamp);
+      scope.render = templateModel.render(is_flipped, template.state);
+
+      const state = appStateService.current();
+      const selection = R.path(['game','template_selection'], state);
+      const stamp = template.state.stamp;
+      const local = gameTemplateSelectionModel
+              .in('local', stamp, selection);
+      const remote = gameTemplateSelectionModel
+              .in('remote', stamp, selection);
+      const selected = (local || remote);
+      scope.selection = {
+        local: local,
+        remote: remote,
+        selected: selected
+      };
     }
   }
 
@@ -73,7 +92,7 @@
 
     function link(scope, element) {
       scope.type = element[0].getAttribute('click-game-templates-list');
-      scope.digestOnStateChangeEvent('Game.template.create', scope);
+      scope.digestOnStateChangeEvent('Game.templates.change', scope);
       console.log('clickGameTemplatesList', scope.type);
     }
   }

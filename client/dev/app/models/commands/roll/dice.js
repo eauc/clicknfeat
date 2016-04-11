@@ -5,6 +5,7 @@
 
   rollDiceCommandModelFactory.$inject = ['commands'];
   function rollDiceCommandModelFactory(commandsModel) {
+    var DICE_LENS = R.lensProp('dice');
     var rollDiceCommandModel = {
       executeP: rollDiceExecuteP,
       replayP: rollDiceReplayP,
@@ -27,12 +28,10 @@
       return [ctxt, game];
     }
     function rollDiceReplayP(ctxt, game) {
-      game = R.over(R.lensProp('dice'), R.append(ctxt), game);
-      return game;
+      return R.over(DICE_LENS, R.append(ctxt), game);
     }
     function rollDiceUndoP(ctxt, game) {
-      game = R.over(R.lensProp('dice'), R.reject(R.propEq('stamp', ctxt.stamp)), game);
-      return game;
+      return R.over(DICE_LENS, R.reject(R.propEq('stamp', ctxt.stamp)), game);
     }
   }
 })();

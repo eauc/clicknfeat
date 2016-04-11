@@ -26,10 +26,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var base = elementModel('template', MOVES);
     var templateModel = Object.create(base);
     R.deepExtend(templateModel, {
-      createDefaultP: templateCreateDefaultP,
       registerTemplate: templateRegister,
+      createDefault: templateCreateDefault,
       respondTo: templateRespondTo,
-      callP: templateCallP
+      callP: templateCallP,
+      render: templateRender
     });
 
     R.curryService(templateModel);
@@ -38,10 +39,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function templateRegister(type, model) {
       TEMPS_REG[type] = model;
     }
-    function templateCreateDefaultP(temp) {
-      return R.threadP(TEMPS_REG)(R.prop(temp.type), R.rejectIfP(R.isNil, 'Create unknown template type "' + temp.type + '"'), function (model) {
-        return R.threadP(base.createDefaultP())(R.assocPath(['state', 'type'], temp.type), model._create);
-      });
+    function templateCreateDefault(temp) {
+      return R.thread(temp.type)(R.unless(function (type) {
+        return R.exists(TEMPS_REG[type]);
+      }, function () {
+        return null;
+      }), R.ifElse(R.exists, function (type) {
+        return R.thread(base.createDefault())(R.assocPath(['state', 'type'], type), TEMPS_REG[type]._create);
+      }, function () {
+        return base.createDefault();
+      }));
     }
     function templateRespondTo(method, template) {
       return R.exists(TEMPS_REG[template.state.type]) && R.exists(TEMPS_REG[template.state.type][method]);
@@ -50,6 +57,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       return R.threadP(template)(R.rejectIfP(R.complement(templateModel.respondTo$(method)), 'Unknown call ' + method + ' on ' + template.state.type + ' template'), function () {
         return TEMPS_REG[template.state.type][method].apply(TEMPS_REG[template.state.type], [].concat(_toConsumableArray(args), [template]));
       });
+    }
+    function templateRender(is_flipped, temp_state) {
+      var render = {
+        stamp: temp_state.stamp,
+        type: temp_state.type,
+        x: 0,
+        y: 0,
+        transform: ''
+      };
+      var label_options = TEMPS_REG[temp_state.type].render(temp_state, render);
+      label_options.flipped = is_flipped;
+      render.label = base.renderLabel(label_options, temp_state);
+      return render;
     }
   }
 })();

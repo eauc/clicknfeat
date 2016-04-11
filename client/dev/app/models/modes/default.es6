@@ -3,27 +3,31 @@
     .factory('defaultMode', defaultModeModelFactory);
 
   defaultModeModelFactory.$inject = [
+    'appState',
     'modes',
     'settings',
     'commonMode',
-    // 'gameTemplateSelection',
     // 'gameModels',
     // 'gameModelSelection',
+    'gameTemplateSelection',
     'gameTerrainSelection',
   ];
-  function defaultModeModelFactory(modesModel,
+  const TERRAIN_SELECTION_LENS = R.lensPath(['game','terrain_selection']);
+  const TEMPLATE_SELECTION_LENS = R.lensPath(['game','template_selection']);
+  function defaultModeModelFactory(appStateService,
+                                   modesModel,
                                    settingsModel,
                                    commonModeModel,
-                                   // gameTemplateSelectionModel,
                                    // gameModelsModel,
                                    // gameModelSelectionModel,
+                                   gameTemplateSelectionModel,
                                    gameTerrainSelectionModel) {
     const default_actions = Object.create(commonModeModel.actions);
     // default_actions.setModelSelection = setModelSelection;
     // default_actions.toggleModelSelection = toggleModelSelection;
     // default_actions.modelSelectionDetail = modelSelectionDetail;
-    // default_actions.selectTemplate = selectTemplate;
-    // default_actions.templateSelectionDetail = templateSelectionDetail;
+    default_actions.selectTemplate = selectTemplate;
+    default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
@@ -46,7 +50,6 @@
     const default_buttons = [];
     const default_mode = {
       name: 'Default',
-      onEnter: onEnter,
       actions: default_actions,
       buttons: default_buttons,
       bindings: default_bindings
@@ -103,47 +106,35 @@
     //     }
     //   );
     // }
-    // function selectTemplate(state, event) {
-    //   return R.threadP()(
-    //     clearTerrainSelection$(state),
-    //     () => state.eventP(
-    //       'Game.update', R.lensProp('template_selection'),
-    //       gameTemplateSelectionModel.set$(
-    //         'local',
-    //         [event['click#'].target.state.stamp],
-    //         state
-    //       )
-    //     )
-    //   );
-    // }
-    // function templateSelectionDetail(state, event) {
-    //   return R.threadP()(
-    //     clearTerrainSelection$(state),
-    //     () => state.eventP(
-    //       'Game.update', R.lensProp('template_selection'),
-    //       gameTemplateSelectionModel.set$(
-    //         'local',
-    //         [event['click#'].target.state.stamp],
-    //         state
-    //       )
-    //     ),
-    //     () => {
-    //       state.queueChangeEventP(
-    //         'Game.selectionDetail.open',
-    //         'template', event['click#'].target
-    //       );
-    //     }
-    //   );
-    // }
+    function selectTemplate(state, event) {
+      return R.thread(state)(
+        clearTerrainSelection,
+        R.over(
+          TEMPLATE_SELECTION_LENS,
+          gameTemplateSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp]
+          )
+        )
+      );
+    }
+    function templateSelectionDetail(state, event) {
+      appStateService.emit(
+        'Game.selectionDetail.open',
+        'template', event['click#'].target
+      );
+      return selectTemplate(state, event);
+    }
     function selectTerrain(state, event) {
-      // clearTemplateSelection(state),
-      return R.over(
-        R.lensPath(['game', 'terrain_selection']),
-        gameTerrainSelectionModel.set$(
-          'local',
-          [event['click#'].target.state.stamp]
-        ),
-        state
+      return R.thread(state)(
+        clearTemplateSelection,
+        R.over(
+          TERRAIN_SELECTION_LENS,
+          gameTerrainSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp]
+          )
+        )
       );
     }
     // function enterRulerMode(state) {
@@ -181,34 +172,25 @@
     //     }
     //   );
     // }
-    function onEnter() {
-      // return R.thread()(
-      //   () => gameTemplateSelectionModel
-      //     .checkModeP(state, state.game.template_selection),
-      //   R.condErrorP([
-      //     [ R.T, () => gameTerrainSelectionModel
-      //       .checkModeP(state, state.game.terrain_selection) ]
-      //   ]),
-      //   R.condErrorP([
-      //     [ R.T, () => gameModelSelectionModel
-      //       .checkModeP(state, state.game.model_selection) ]
-      //   ]),
-      //   R.condErrorP([
-      //     [ R.T, R.always(null) ]
-      //   ])
-      // );
+    function clearTemplateSelection(state) {
+      return R.over(
+        TEMPLATE_SELECTION_LENS,
+        R.unless(
+          gameTemplateSelectionModel.isEmpty$('local'),
+          gameTemplateSelectionModel.clear$('local')
+        ),
+        state
+      );
     }
-    // function clearTemplateSelection$(state) {
-    //   return () => state.eventP(
-    //     'Game.update', R.lensProp('template_selection'),
-    //     gameTemplateSelectionModel.clear$('local', state)
-    //   );
-    // }
-    // function clearTerrainSelection$(state) {
-    //   return () => state.eventP(
-    //     'Game.update', R.lensProp('terrain_selection'),
-    //     gameTerrainSelectionModel.clear$('local', state)
-    //   );
-    // }
+    function clearTerrainSelection(state) {
+      return R.over(
+        TERRAIN_SELECTION_LENS,
+        R.unless(
+          gameTerrainSelectionModel.isEmpty$('local'),
+          gameTerrainSelectionModel.clear$('local')
+        ),
+        state
+      );
+    }
   }
 })();

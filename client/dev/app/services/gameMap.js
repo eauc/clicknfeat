@@ -5,11 +5,9 @@
 
   gameMapServiceFactory.$inject = [
   // 'gameModels',
-  // 'gameTemplates',
-  'gameTerrains'];
+  'gameTemplates', 'gameTerrains'];
   function gameMapServiceFactory( // gameModelsModel,
-  // gameTemplatesModel,
-  gameTerrainsModel) {
+  gameTemplatesModel, gameTerrainsModel) {
     var gameMapService = {
       isFlipped: mapIsFlipped,
       zoomFactor: mapZoomFactor,
@@ -55,9 +53,9 @@
         type: 'Map',
         target: null
       };
-      // if(eventTargetTypeIs('template')) {
-      //   return emitTypeEvent(gameTemplatesModel, 'template');
-      // }
+      if (eventTargetTypeIs('template')) {
+        return emitTypeEvent(gameTemplatesModel, 'template');
+      }
       // if(eventTargetTypeIs('model-base')) {
       //   return emitTypeEvent(gameModelsModel, 'model');
       // }

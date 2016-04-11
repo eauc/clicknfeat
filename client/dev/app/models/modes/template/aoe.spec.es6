@@ -4,6 +4,7 @@ describe('aoeTemplateMode model', function() {
     function(aoeTemplateModeModel) {
       this.aoeTemplateModeModel = aoeTemplateModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.gameTemplatesModel = spyOnService('gameTemplates');
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
 
@@ -12,17 +13,9 @@ describe('aoeTemplateMode model', function() {
         game: { template_selection: 'selection',
                 templates: 'templates',
                 models: 'models',
-                ruler: 'ruler',
-                dice: [ { r: 4, d: 2 } ]},
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP'),
-        eventP: jasmine.createSpy('eventP')
+                ruler: 'ruler'
+              }
       };
-      this.state.eventP.and.callFake((e,l,u) => {
-        if('Game.update'===e) {
-          this.state.game = R.over(l,u,this.state.game);
-        }
-        return 'state.event.returnValue';
-      });
     }
   ]));
 
@@ -41,15 +34,9 @@ describe('aoeTemplateMode model', function() {
     });
 
     it('should execute rollDeviation command', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
-                              'rollDeviation', []);
-    });
-
-    it('should execute onTemplates/deviate command', function() {
-      expect(this.state.eventP)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onTemplates', ['deviate', [4, 2], ['stamp']]);
+                              'rollDeviation', [['stamp']]);
     });
   });
 
@@ -64,6 +51,8 @@ describe('aoeTemplateMode model', function() {
         .resolveWith([42]);
       this.promptService.promptP
         .resolveWith(71);
+      this.appStateService.current
+        .and.returnValue(this.state);
     });
 
     it('should get current selection max deviation', function() {
@@ -127,7 +116,7 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should execute onTemplates/setSize command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
                                 [ 'setSizeP', [e.size], ['stamp'] ]);
@@ -140,7 +129,7 @@ describe('aoeTemplateMode model', function() {
     [ 'aoeSize5' , 5      ],
   ]);
 
-  context('when user set target model', function() {
+  xcontext('when user set target model', function() {
     return this.aoeTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -154,7 +143,7 @@ describe('aoeTemplateMode model', function() {
     it('should set target for current template selection', function() {
       expect(this.gameTemplateSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onTemplates',
                               [ 'setTargetP',
@@ -164,7 +153,7 @@ describe('aoeTemplateMode model', function() {
     });
   });
 
-  context('when user set aoe to ruler target', function() {
+  xcontext('when user set aoe to ruler target', function() {
     return this.aoeTemplateModeModel.actions
       .setToRulerTarget(this.state);
   }, function() {
@@ -180,7 +169,7 @@ describe('aoeTemplateMode model', function() {
         .and.returnValue(false);
     }, function() {
       it('should not execute command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -200,7 +189,7 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should execute onTemplates/setToRuler command', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
                                 [ 'setToRulerP',

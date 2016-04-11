@@ -394,9 +394,11 @@ a:not([href]):focus {
 #game #game-templates-locked .template-aoe-direction {
   stroke-width: 0px; }
 #game .selection.remote .template.aoe,
+#game .selection.remote .template.spray,
 #game .selection.remote .template.wall {
   stroke: white; }
 #game .selection.local .template.aoe,
+#game .selection.local .template.spray,
 #game .selection.local .template.wall {
   stroke: #0F0; }
 #game .selection.local .template-aoe-direction {

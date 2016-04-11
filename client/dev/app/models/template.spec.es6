@@ -1,6 +1,7 @@
 describe('template model', function() {
   beforeEach(inject([
     'template',
+    'allTemplates',
     function(templateModel) {
       this.templateModel = templateModel;
       this.wallTemplateModel = spyOnService('wallTemplate');
@@ -11,18 +12,20 @@ describe('template model', function() {
     }
   ]));
 
-  xcontext('createP(<state>)', function() {
+  context('createP(<state>)', function() {
     return this.templateModel
-      .createP(this.state);
+      .create(this.state);
   }, function() {
     context('when <state.type> is unknown', function() {
       this.state = { type: 'unknown' };
-      this.expectContextError();
     }, function() {
-      it('should reject promise', function() {
-        expect(this.contextError).toEqual([
-          'Create unknown template type "unknown"'
-        ]);
+      it('should return default element', function() {
+        expect(this.context).toEqual({
+          state: { x: 0, y: 0, r: 0,
+                   l: [  ], lk: false,
+                   stamp: 'newGuid',
+                   type: 'unknown' }
+        });
       });
     });
 

@@ -14,7 +14,8 @@
       maxDeviation: aoeTemplateMaxDeviation,
       setMaxDeviation: aoeTemplateSetMaxDeviation,
       setToRulerP: aoeTemplateSetToRulerP,
-      setTargetP: aoeTemplateSetTargetP
+      setTargetP: aoeTemplateSetTargetP,
+      render: aoeTemplateRender
     });
 
     templateModel.registerTemplate('aoe', aoeTemplateModel);
@@ -56,6 +57,23 @@
     }
     function aoeTemplateSetTargetP(_factions_, _origin_, target, temp) {
       return templateModel.setPositionP(target.state, temp);
+    }
+    function aoeTemplateRender(temp_state, base_render) {
+      R.deepExtend(base_render, {
+        x: temp_state.x,
+        y: temp_state.y,
+        radius: temp_state.s || 15,
+        dx: temp_state.x,
+        dy: temp_state.y - (temp_state.s || 15),
+        dtransform: 'rotate(' + temp_state.r + ',' + temp_state.x + ',' + temp_state.y + ')'
+      });
+      return {
+        text_center: { x: temp_state.x,
+          y: temp_state.y + temp_state.s + 5
+        },
+        flip_center: temp_state,
+        rotate_with_model: false
+      };
     }
   }
 })();

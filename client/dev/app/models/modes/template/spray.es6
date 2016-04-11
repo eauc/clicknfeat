@@ -3,27 +3,29 @@
     .factory('sprayTemplateMode', sprayTemplateModeModelFactory);
 
   sprayTemplateModeModelFactory.$inject = [
+    'appState',
     'modes',
     'settings',
     'templateMode',
     'sprayTemplate',
     'gameTemplates',
     'gameTemplateSelection',
-    'gameModels',
+    // 'gameModels',
   ];
-  function sprayTemplateModeModelFactory(modesModel,
+  function sprayTemplateModeModelFactory(appStateService,
+                                         modesModel,
                                          settingsModel,
                                          templateModeModel,
                                          sprayTemplateModel,
                                          gameTemplatesModel,
-                                         gameTemplateSelectionModel,
-                                         gameModelsModel) {
+                                         gameTemplateSelectionModel) {
+                                         // gameModelsModel) {
     const template_actions = Object.create(templateModeModel.actions);
     template_actions.spraySize6 = spraySize6;
     template_actions.spraySize8 = spraySize8;
     template_actions.spraySize10 = spraySize10;
-    template_actions.setOriginModel = setOriginModel;
-    template_actions.setTargetModel = setTargetModel;
+    // template_actions.setOriginModel = setOriginModel;
+    // template_actions.setTargetModel = setTargetModel;
     const moves = [
       ['rotateLeft', 'left'],
       ['rotateRight', 'right'],
@@ -42,7 +44,7 @@
       spraySize10: '0'
     };
     const template_bindings = R.extend(Object.create(templateModeModel.bindings),
-                                     template_default_bindings);
+                                       template_default_bindings);
 
     const template_buttons = R.concat([
       [ 'Size'    , 'toggle'      , 'size' ],
@@ -61,87 +63,88 @@
     };
     modesModel.registerMode(template_mode);
     settingsModel.register('Bindings',
-                             template_mode.name,
-                             template_default_bindings,
-                             (bs) => {
-                               R.extend(template_mode.bindings, bs);
-                             });
+                           template_mode.name,
+                           template_default_bindings,
+                           (bs) => {
+                             R.extend(template_mode.bindings, bs);
+                           });
     const findOriginModel$ = R.curry(findOriginModel);
     return template_mode;
 
     function spraySize6(state) {
       const stamps = gameTemplateSelectionModel
             .get('local', state.game.template_selection);
-      return state.eventP('Game.command.execute',
-                          'onTemplates',
-                          ['setSizeP', [6], stamps]);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onTemplates',
+                                  ['setSizeP', [6], stamps]);
     }
     function spraySize8(state) {
       const stamps = gameTemplateSelectionModel
             .get('local', state.game.template_selection);
-      return state.eventP('Game.command.execute',
-                          'onTemplates',
-                          ['setSizeP', [8], stamps]);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onTemplates',
+                                  ['setSizeP', [8], stamps]);
     }
     function spraySize10(state) {
       const stamps = gameTemplateSelectionModel
             .get('local', state.game.template_selection);
-      return state.eventP('Game.command.execute',
-                          'onTemplates',
-                          ['setSizeP', [10], stamps]);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onTemplates',
+                                  ['setSizeP', [10], stamps]);
     }
-    function setOriginModel(state, event) {
-      const stamps = gameTemplateSelectionModel
-            .get('local', state.game.template_selection);
-      return state.eventP('Game.command.execute',
-                          'onTemplates',
-                          [ 'setOriginP',
-                            [state.factions, event['click#'].target],
-                            stamps
-                          ]);
-    }
-    function setTargetModel(state, event) {
-      const stamps = gameTemplateSelectionModel
-              .get('local', state.game.template_selection);
-      return R.threadP(state.game)(
-        R.prop('templates'),
-        gameTemplatesModel.findStampP$(stamps[0]),
-        sprayTemplateModel.origin,
-        findOriginModel$(state),
-        (origin_model) => {
-          if(R.isNil(origin_model)) return null;
+    // function setOriginModel(state, event) {
+    //   const stamps = gameTemplateSelectionModel
+    //         .get('local', state.game.template_selection);
+    //   appStateService.chainReduce('Game.command.execute',
+    //                               'onTemplates',
+    //                               [ 'setOriginP',
+    //                                 [state.factions, event['click#'].target],
+    //                                 stamps
+    //                               ]);
+    // }
+    // function setTargetModel(state, event) {
+    //   const stamps = gameTemplateSelectionModel
+    //           .get('local', state.game.template_selection);
+    //   return R.threadP(state.game)(
+    //     R.prop('templates'),
+    //     gameTemplatesModel.findStampP$(stamps[0]),
+    //     sprayTemplateModel.origin,
+    //     findOriginModel$(state),
+    //     (origin_model) => {
+    //       if(R.isNil(origin_model)) return null;
 
-          return state.eventP('Game.command.execute',
-                              'onTemplates',
-                              [ 'setTargetP',
-                                [state.factions, origin_model, event['click#'].target],
-                                stamps
-                              ]);
-        }
-      );
-    }
+    //       appStateService.chainReduce('Game.command.execute',
+    //                                   'onTemplates',
+    //                                   [ 'setTargetP',
+    //                                     [state.factions, origin_model, event['click#'].target],
+    //                                     stamps
+    //                                   ]);
+    //     }
+    //   );
+    // }
     function buildTemplateMove(move, small, state) {
       const stamps = gameTemplateSelectionModel
               .get('local', state.game.template_selection);
-      return R.threadP(state.game)(
+      return R.thread(state.game)(
         R.prop('templates'),
-        gameTemplatesModel.findStampP$(stamps[0]),
+        gameTemplatesModel.findStamp$(stamps[0]),
         sprayTemplateModel.origin,
         findOriginModel$(state),
-        (origin_model) => state
-          .eventP('Game.command.execute',
-                  'onTemplates',
-                  [ move+'P',
-                    [state.factions, origin_model, small],
-                    stamps
-                  ])
+        (origin_model) => {
+          appStateService.chainReduce('Game.command.execute',
+                                      'onTemplates',
+                                      [ move+'P',
+                                        [state.factions, origin_model, small],
+                                        stamps
+                                      ]);
+        }
       );
     }
-    function findOriginModel(state, stamp) {
+    function findOriginModel(_state_, stamp) {
       if(R.isNil(stamp)) return null;
 
-      return gameModelsModel
-          .findStampP(stamp, state.game.models);
+      // return gameModelsModel
+      //     .findStamp(stamp, state.game.models);
     }
   }
 })();

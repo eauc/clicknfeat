@@ -4,62 +4,86 @@ describe('rollDeviationCommand model', function() {
     function(rollDeviationCommand) {
       this.rollDeviationCommandModel = rollDeviationCommand;
 
+      this.onTemplatesCommandModel = spyOnService('onTemplatesCommand');
+
       this.game = { dice: [] };
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP'
-      ]);
     }
   ]));
 
-  describe('executeP(<sides>, <dice>, <state>, <game>)', function() {
+  context('executeP(<stamps>, <game>)', function() {
+    return this.rollDeviationCommandModel
+      .executeP(['stamps'], this.game);
+  }, function() {
     beforeEach(function() {
       const fake_dice = [5,4];
       let ndie = 0;
       spyOn(R, 'randomRange')
         .and.callFake(() => { return fake_dice[ndie++]; });
 
-      [this.ctxt, this.game] = this.rollDeviationCommandModel
-        .executeP(this.state, this.game);
+      this.onTemplatesCommandModel.executeP
+        .resolveWith((_c_, _a_, _s_, g) => {
+          return [
+            { ctxt: 'onTemplatesCommand' },
+            R.assoc('onTemplatesCommand', true, g)
+          ];
+        });
     });
 
-    it('should send diceRoll event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.dice.roll');
+    it('should deviate <stamps> templates', function() {
+      expect(this.onTemplatesCommandModel.executeP)
+        .toHaveBeenCalledWith('deviate', [5, 4], ['stamps'] , this.game);
     });
 
-    it('should return context', function() {
-      expect(this.ctxt).toEqual({
+    it('should return updated game', function() {
+      expect(this.context[1]).toEqual({
+        dice: [  ],
+        onTemplatesCommand: true
+      });
+    });
+
+    it('should extend context', function() {
+      expect(this.context[0]).toEqual({
+        ctxt: 'onTemplatesCommand',
         desc: 'AoE deviation : direction 5, distance 4"',
         r: 5, d: 4
       });
     });
   });
 
-  describe('replayP(<ctxt>, <state>, <game>)', function() {
+  context('replayP(<ctxt>, <game>)', function() {
+    return this.rollDeviationCommandModel
+      .replayP(this.ctxt, this.game);
+  }, function() {
     beforeEach(function() {
       this.ctxt = {
         desc: 'AoE deviation : direction 5, distance 4"',
         r: 5, d: 4
       };
 
-      this.game = this.rollDeviationCommandModel
-        .replayP(this.ctxt, this.state, this.game);
+      this.onTemplatesCommandModel.replayP
+        .resolveWith((_c_, g) => {
+          return R.assoc('onTemplatesCommand', true, g);
+        });
     });
 
-    it('should add ctxt to game dice rolls', function() {
-      expect(this.game.dice).toEqual([{
-        desc: 'AoE deviation : direction 5, distance 4"',
-        r: 5, d: 4
-      }]);
+    it('should replay onTemplatesCommand', function() {
+      expect(this.onTemplatesCommandModel.replayP)
+        .toHaveBeenCalledWith(this.ctxt, this.game);
     });
 
-    it('should send diceRoll event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.dice.roll');
+    it('should return update game', function() {
+      expect(this.context).toEqual({
+        onTemplatesCommand: true,
+        dice: [ { desc: 'AoE deviation : direction 5, distance 4"',
+                  r: 5, d: 4 } ]
+      });
     });
   });
 
-  describe('undoP(<ctxt>, <state>, <game>)', function() {
+  context('undoP(<ctxt>, <game>)', function() {
+    return this.rollDeviationCommandModel
+      .undoP(this.ctxt, this.game);
+  }, function() {
     beforeEach(function() {
       this.ctxt = {
         stamp: 'ctxt'
@@ -70,20 +94,25 @@ describe('rollDeviationCommand model', function() {
         { stamp: 'other2' },
       ] };
 
-      this.game = this.rollDeviationCommandModel
-        .undoP(this.ctxt, this.state, this.game);
+      this.onTemplatesCommandModel.undoP
+        .resolveWith((_c_, g) => {
+          return R.assoc('onTemplatesCommand', true, g);
+        });
     });
 
-    it('should remove ctxt from game dice rolls', function() {
-      expect(this.game.dice).toEqual([
-        { stamp: 'other1' },
-        { stamp: 'other2' },
-      ]);
+    it('should undo onTemplatesCommand', function() {
+      expect(this.onTemplatesCommandModel.undoP)
+        .toHaveBeenCalledWith(this.ctxt, this.game);
     });
 
-    it('should send diceRoll event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.dice.roll');
+    it('should return updated game', function() {
+      expect(this.context).toEqual({
+        onTemplatesCommand: true,
+        dice: [
+          { stamp: 'other1' },
+          { stamp: 'other2' },
+        ]
+      });
     });
   });
 });

@@ -44,6 +44,7 @@
 
     .selection.remote {
         .template.aoe,
+        .template.spray,
         .template.wall {
             stroke: $selection-remote-stroke-color;
         }
@@ -51,6 +52,7 @@
 
     .selection.local {
         .template.aoe,
+        .template.spray,
         .template.wall {
             stroke: $selection-local-stroke-color;
         }

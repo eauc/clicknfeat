@@ -1,3 +1,36 @@
 <g ng-repeat="template in state.game.templates[type] track by template.state.stamp"
-   click-game-template>
+   click-game-template
+   ng-class="{
+             'selection': selection.selected,
+             'local': selection.local,
+             'remote': selection.remote
+             }">
+  <circle ng-show="render.type==='aoe'"
+          class="template aoe"
+          data-stamp="{{render.stamp}}"
+          ng-attr-cx="{{render.x}}" ng-attr-cy="{{render.y}}"
+          ng-attr-r="{{render.radius}}">
+  </circle>
+  <line ng-show="render.type==='aoe'"
+        class="template-aoe-direction"
+        style="marker-end: url(#aoe-direction-end);"
+        ng-attr-x1="{{render.x}}" ng-attr-y1="{{render.y}}"
+        ng-attr-x2="{{render.dx}}" ng-attr-y2="{{render.dy}}"
+        ng-attr-transform="{{render.dtransform}}">
+  </line>
+  <polygon ng-show="render.type==='spray'"
+           class="template spray"
+           data-stamp="{{render.stamp}}"
+           ng-attr-points="{{render.points}}"
+           ng-attr-transform="{{render.transform}}">
+  </polygon>
+  <rect ng-show="render.type==='wall'"
+        class="template wall"
+        data-stamp="{{render.stamp}}"
+        ng-attr-x="{{render.x}}" ng-attr-y="{{render.y}}"
+        width="40" height="7.5"
+        ng-attr-transform="{{render.transform}}">
+  </rect>
+  <g click-game-element-label="render.label">
+  </g>
 </g>

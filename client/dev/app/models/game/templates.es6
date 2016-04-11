@@ -11,7 +11,6 @@
     const base = gameElementsModel('template', templateModel);
     const gameTemplatesModel = Object.create(base);
     R.deepExtend(gameTemplatesModel, {
-      modeForStampP: gameTemplatesModeForStampP,
       fromStampsP: gameTemplatesFromStampsP,
       onStampsP: gameTemplatesOnStampsP
     });
@@ -22,16 +21,6 @@
     R.curryService(gameTemplatesModel);
     return gameTemplatesModel;
 
-    function gameTemplatesModeForStampP(stamp, templates) {
-      return R.threadP(templates)(
-        gameTemplatesModel.findStampP$(stamp),
-        R.path(['state','type']),
-        R.defaultTo('aoe'),
-        (type) => {
-          return type+'Template';
-        }
-      );
-    }
     function gameTemplatesFromStampsP(method, args, stamps, templates) {
       return fromStampsP$(R.compose(R.always, R.always(null)),
                           method, args, stamps, templates);
@@ -44,15 +33,14 @@
     }
     function fromStampsP(onError, method, args, stamps, templates) {
       return R.threadP(templates)(
-        gameTemplatesModel.findAnyStampsP$(stamps),
+        gameTemplatesModel.findAnyStamps$(stamps),
         R.reject(R.isNil),
-        R.map(callMethodOnTemplate),
+        R.map(callMethodOnTemplateP),
         R.allP
       );
 
-      function callMethodOnTemplate(template) {
-        return self.Promise
-          .resolve(templateModel.callP(method, args, template))
+      function callMethodOnTemplateP(template) {
+        return R.resolveP(templateModel.callP(method, args, template))
           .catch(onError(template));
       }
     }
@@ -62,12 +50,10 @@
         R.concat(news),
         R.uniqBy(R.path(['state','stamp'])),
         R.partition(templateModel.isLocked),
-        ([locked, active]) => {
-          return {
-            active: active,
-            locked: locked
-          };
-        }
+        ([locked, active]) => ({
+          active: active,
+          locked: locked
+        })
       );
     }
   }

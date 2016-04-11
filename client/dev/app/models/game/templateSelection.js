@@ -3,22 +3,25 @@
 (function () {
   angular.module('clickApp.models').factory('gameTemplateSelection', gameTemplateSelectionModelFactory);
 
-  gameTemplateSelectionModelFactory.$inject = ['gameElementSelection', 'gameTemplates'];
-  function gameTemplateSelectionModelFactory(gameElementSelectionModel, gameTemplatesModel) {
+  gameTemplateSelectionModelFactory.$inject = ['appState', 'gameElementSelection', 'gameTemplates'];
+  function gameTemplateSelectionModelFactory(appStateService, gameElementSelectionModel, gameTemplatesModel) {
     var base = gameElementSelectionModel('template');
     var gameTemplateSelectionModel = Object.create(base);
     R.deepExtend(gameTemplateSelectionModel, {
-      checkModeP: templateSelectionCheckModeP
+      checkMode: templateSelectionCheckMode
     });
     R.curryService(gameTemplateSelectionModel);
     return gameTemplateSelectionModel;
 
-    function templateSelectionCheckModeP(state, selection) {
-      return R.threadP(selection)(gameTemplateSelectionModel.get$('local'), R.head, R.rejectIfP(R.isNil, 'No template selection'), function (stamp) {
-        return gameTemplatesModel.findStampP(stamp, state.game.templates);
-      }, function (template) {
-        state.queueEventP('Modes.switchTo', template.state.type + 'Template');
-      });
+    function templateSelectionCheckMode(selection) {
+      var state = appStateService.current();
+      return R.thread(selection)(gameTemplateSelectionModel.get$('local'), R.ifElse(R.isEmpty, function () {
+        return null;
+      }, function (local) {
+        return R.thread(local)(R.head, gameTemplatesModel.findStamp$(R.__, state.game.templates), function (template) {
+          return template.state.type + 'Template';
+        });
+      }));
     }
   }
 })();

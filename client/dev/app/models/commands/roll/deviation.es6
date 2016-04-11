@@ -4,46 +4,52 @@
 
   rollDeviationCommandModelFactory.$inject = [
     'commands',
+    'onTemplatesCommand',
   ];
-  function rollDeviationCommandModelFactory(commandsModel) {
+  function rollDeviationCommandModelFactory(commandsModel,
+                                            onTemplatesCommandModel) {
+    const DICE_LENS = R.lensProp('dice');
     const rollDeviationCommandModel = {
       executeP: rollDeviationExecuteP,
-      replayP: rollDiceRedoP,
+      replayP: rollDiceReplayP,
       undoP: rollDiceUndoP
     };
 
     commandsModel.registerCommand('rollDeviation', rollDeviationCommandModel);
     return rollDeviationCommandModel;
 
-    function rollDeviationExecuteP(state, game) {
+    function rollDeviationExecuteP(stamps, game) {
       const direction = R.randomRange(1, 6);
       const distance = R.randomRange(1, 6);
 
-      const ctxt = {
-        desc: `AoE deviation : direction ${direction}, distance ${distance}"`,
-        r: direction,
-        d: distance
-      };
-
-      state.queueChangeEventP('Game.dice.roll');
-
-      return [ctxt, game];
+      return R.threadP()(
+        () => onTemplatesCommandModel
+          .executeP('deviate', [ direction, distance ], stamps, game),
+        ([ctxt, game]) => {
+          ctxt = R.thread(ctxt)(
+            R.assoc('desc',
+                    `AoE deviation : direction ${direction}, distance ${distance}"`),
+            R.assoc('r', direction),
+            R.assoc('d', distance)
+          );
+          return [ctxt, game];
+        }
+      );
     }
-    function rollDiceRedoP(ctxt, state, game) {
-      const dice = R.propOr([], 'dice', game);
-      game = R.assoc('dice', R.append(ctxt, dice), game);
-
-      state.queueChangeEventP('Game.dice.roll');
-
-      return game;
+    function rollDiceReplayP(ctxt, game) {
+      return R.threadP()(
+        () => onTemplatesCommandModel
+          .replayP(ctxt, game),
+        R.over(DICE_LENS, R.pipe(R.defaultTo([]), R.append(ctxt)))
+      );
     }
-    function rollDiceUndoP(ctxt, state, game) {
-      const dice = R.propOr([], 'dice', game);
-      game = R.assoc('dice', R.reject(R.propEq('stamp', ctxt.stamp), dice), game);
-
-      state.queueChangeEventP('Game.dice.roll');
-
-      return game;
+    function rollDiceUndoP(ctxt, game) {
+      return R.threadP()(
+        () => onTemplatesCommandModel
+          .undoP(ctxt, game),
+        R.over(DICE_LENS, R.pipe(R.defaultTo([]),
+                                 R.reject(R.propEq('stamp', ctxt.stamp))))
+      );
     }
   }
 })();

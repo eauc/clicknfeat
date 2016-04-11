@@ -17,7 +17,7 @@
     'gameScenario',
     'gameTerrains',
     // 'gameTemplates',
-    // 'gameTemplateSelection',
+    'gameTemplateSelection',
     'gameTerrainSelection',
     // 'fileImport',
     'allCommands',
@@ -37,7 +37,7 @@
                                  gameScenarioModel,
                                  gameTerrainsModel,
                                  // gameTemplatesModel,
-                                 // gameTemplateSelectionModel,
+                                 gameTemplateSelectionModel,
                                  gameTerrainSelectionModel) {
                                  // fileImportService) {
     const GAME_LENS = R.lensProp('game');
@@ -67,7 +67,7 @@
       // onModelImportList: stateGameOnModelImportList,
       // onModelImportFile: stateGameOnModelImportFile,
       // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
-      // onTemplateCreate: stateGameOnTemplateCreate,
+      onTemplateCreate: stateGameOnTemplateCreate,
       // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
       onTerrainCreate: stateGameOnTerrainCreate,
       onTerrainReset: stateGameOnTerrainReset,
@@ -113,9 +113,12 @@
         .addReducer('Game.board.setRandom'     , stateGameModel.onBoardSetRandom)
         .addReducer('Game.scenario.set'        , stateGameModel.onScenarioSet)
         .addReducer('Game.scenario.setRandom'  , stateGameModel.onScenarioSetRandom)
+        .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
         .addReducer('Game.terrain.create'      , stateGameModel.onTerrainCreate)
         .addReducer('Game.terrain.reset'       , stateGameModel.onTerrainReset)
         .addListener('Game.change'             , stateGameModel.saveCurrent)
+        .addListener('Game.template_selection.local.change',
+                     stateGameModel.checkMode)
         .addListener('Game.terrain_selection.local.change',
                      stateGameModel.checkMode);
         // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
@@ -181,6 +184,18 @@
         .onChange('AppState.change',
                   'Create.base.change',
                   R.path(['create','base']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.templates.change',
+                  R.prop(['templates']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.template_selection.change',
+                  R.prop('template_selection'));
+      appStateService
+        .onChange('Game.template_selection.change',
+                  'Game.template_selection.local.change',
+                  R.prop('local'));
       appStateService
         .onChange('Game.change',
                   'Game.terrains.change',
@@ -424,13 +439,13 @@
     //   unsubscribe();
     //   state._model_selection_listener = {};
     // }
-    // function stateGameOnTemplateCreate(state, _event_, type) {
-    //   state.create = {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     templates: [ { type: type, x: 0, y: 0, r: 0 } ]
-    //   };
-    //   return state.eventP('Modes.switchTo', 'CreateTemplate');
-    // }
+    function stateGameOnTemplateCreate(state, _event_, [type]) {
+      appStateService.chainReduce('Modes.switchTo', 'CreateTemplate');
+      return R.assoc('create', {
+        base: { x: 240, y: 240, r: 0 },
+        templates: [ { type: type, x: 0, y: 0, r: 0 } ]
+      }, state);
+    }
     // function stateGameOnTemplateSelectionLocalChange(state, _event_) {
     //   console.warn('onTemplateSelectionLocalChange', arguments);
     //   const local_template_selection = gameTemplateSelectionModel
@@ -643,10 +658,14 @@
       const state = appStateService.current();
       const game = R.propOr({}, 'game', state);
       const current_mode = modesModel.currentModeName(state.modes);
-      const mode = R.thread(game)(
-        R.propOr({}, 'terrain_selection'),
-        gameTerrainSelectionModel
-          .checkMode$,
+      const mode = R.thread()(
+        () => gameTerrainSelectionModel
+          .checkMode(R.propOr({}, 'terrain_selection', game)),
+        R.unless(
+          R.exists,
+          () => gameTemplateSelectionModel
+            .checkMode(R.propOr({}, 'template_selection', game))
+        ),
         R.defaultTo('Default')
       );
       if(R.exists(mode) &&

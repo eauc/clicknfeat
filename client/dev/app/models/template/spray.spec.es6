@@ -8,69 +8,69 @@ describe('sprayTemplate model', function() {
     }
   ]));
 
-  // context('setOriginP(<factions>, <origin>), ', function() {
-  //   return this.sprayTemplateModel
-  //     .setOriginP('factions', this.origin, this.template);
-  // }, function() {
-  //   beforeEach(function() {
-  //     this.template = {
-  //       state: { x: 240, y: 240, r: 42 }
-  //     };
-  //     this.origin = {
-  //       state: { stamp: 'origin' }
-  //     };
-  //     this.modelModel.baseEdgeInDirectionP
-  //       .resolveWith({
-  //         x: 124, y: 124
-  //       });
-  //   });
+  xcontext('setOriginP(<factions>, <origin>), ', function() {
+    return this.sprayTemplateModel
+      .setOriginP('factions', this.origin, this.template);
+  }, function() {
+    beforeEach(function() {
+      this.template = {
+        state: { x: 240, y: 240, r: 42 }
+      };
+      this.origin = {
+        state: { stamp: 'origin' }
+      };
+      this.modelModel.baseEdgeInDirectionP
+        .resolveWith({
+          x: 124, y: 124
+        });
+    });
 
-  //   it('should set template position to <origin> base edge', function() {
-  //     expect(this.modelModel.baseEdgeInDirectionP)
-  //       .toHaveBeenCalledWith('factions', 42, this.origin);
+    it('should set template position to <origin> base edge', function() {
+      expect(this.modelModel.baseEdgeInDirectionP)
+        .toHaveBeenCalledWith('factions', 42, this.origin);
 
-  //     expect(R.pick(['x','y','r'], this.context.state))
-  //       .toEqual({ x: 124, y: 124, r: 42 });
-  //   });
+      expect(R.pick(['x','y','r'], this.context.state))
+        .toEqual({ x: 124, y: 124, r: 42 });
+    });
 
-  //   it('should set template origin', function() {
-  //     expect(this.sprayTemplateModel.origin(this.context))
-  //       .toEqual('origin');
-  //   });
+    it('should set template origin', function() {
+      expect(this.sprayTemplateModel.origin(this.context))
+        .toEqual('origin');
+    });
 
-  // whenSprayIsLockedShouldRejectAction();
-  // });
+    whenSprayIsLockedShouldRejectAction();
+  });
 
-  // context('setTargetP(<factions>, <origin>, <target>), ', function() {
-  //   return this.sprayTemplateModel
-  //     .setTargetP('factions', this.origin, this.target, this.template);
-  // }, function() {
-  //   beforeEach(function() {
-  //     this.template = {
-  //       state: { x: 240, y: 240, r: 0 }
-  //     };
-  //     this.origin = {
-  //       state: { x: 240, y: 240 }
-  //     };
-  //     this.modelModel.baseEdgeInDirectionP
-  //       .resolveWith({
-  //       x: 236, y: 236
-  //       });
-  //     this.target = {
-  //       state: { x: 120, y: 120 }
-  //     };
-  //   });
+  xcontext('setTargetP(<factions>, <origin>, <target>), ', function() {
+    return this.sprayTemplateModel
+      .setTargetP('factions', this.origin, this.target, this.template);
+  }, function() {
+    beforeEach(function() {
+      this.template = {
+        state: { x: 240, y: 240, r: 0 }
+      };
+      this.origin = {
+        state: { x: 240, y: 240 }
+      };
+      this.modelModel.baseEdgeInDirectionP
+        .resolveWith({
+        x: 236, y: 236
+        });
+      this.target = {
+        state: { x: 120, y: 120 }
+      };
+    });
 
-  //   it('should center template on <target>', function() {
-  //     expect(this.modelModel.baseEdgeInDirectionP)
-  //       .toHaveBeenCalledWith('factions', -45, this.origin);
+    it('should center template on <target>', function() {
+      expect(this.modelModel.baseEdgeInDirectionP)
+        .toHaveBeenCalledWith('factions', -45, this.origin);
 
-  //     expect(this.context.state)
-  //       .toEqual({ x: 236, y: 236, r: -45 });
-  //   });
+      expect(this.context.state)
+        .toEqual({ x: 236, y: 236, r: -45 });
+    });
 
-  // whenSprayIsLockedShouldRejectAction();
-  // });
+    whenSprayIsLockedShouldRejectAction();
+  });
 
   example(function(e) {
     context(e.move+'(<small>)', function() {

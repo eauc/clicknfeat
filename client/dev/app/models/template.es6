@@ -34,10 +34,11 @@
     const base = elementModel('template', MOVES);
     const templateModel = Object.create(base);
     R.deepExtend(templateModel, {
-      createDefaultP: templateCreateDefaultP,
       registerTemplate: templateRegister,
+      createDefault: templateCreateDefault,
       respondTo: templateRespondTo,
-      callP: templateCallP
+      callP: templateCallP,
+      render: templateRender
     });
 
     R.curryService(templateModel);
@@ -46,13 +47,19 @@
     function templateRegister(type, model) {
       TEMPS_REG[type] = model;
     }
-    function templateCreateDefaultP(temp) {
-      return R.threadP(TEMPS_REG)(
-        R.prop(temp.type),
-        R.rejectIfP(R.isNil, `Create unknown template type "${temp.type}"`),
-        (model) => R.threadP(base.createDefaultP())(
-          R.assocPath(['state','type'], temp.type),
-          model._create
+    function templateCreateDefault(temp) {
+      return R.thread(temp.type)(
+        R.unless(
+          (type) => R.exists(TEMPS_REG[type]),
+          () => null
+        ),
+        R.ifElse(
+          R.exists,
+          (type) => R.thread(base.createDefault())(
+            R.assocPath(['state','type'], type),
+            TEMPS_REG[type]._create
+          ),
+          () => base.createDefault()
         )
       );
     }
@@ -69,6 +76,21 @@
           .apply(TEMPS_REG[template.state.type],
                  [...args, template])
       );
+    }
+    function templateRender(is_flipped, temp_state) {
+      const render = {
+        stamp: temp_state.stamp,
+        type: temp_state.type,
+        x: 0,
+        y: 0,
+        transform: ''
+      };
+      const label_options = TEMPS_REG[temp_state.type]
+              .render(temp_state, render);
+      label_options.flipped = is_flipped;
+      render.label = base
+        .renderLabel(label_options, temp_state);
+      return render;
     }
   }
 })();

@@ -10,6 +10,7 @@
         create: elementSelectionCreate,
         'in': elementSelectionIn,
         get: elementSelectionGet,
+        isEmpty: elementSelectionIsEmpty,
         checkMode: elementSelectionCheckMode,
         set: elementSelectionSet,
         addTo: elementSelectionAddTo,
@@ -31,6 +32,9 @@
       }
       function elementSelectionGet(where, selection) {
         return R.propOr([], where, selection);
+      }
+      function elementSelectionIsEmpty(where, selection) {
+        return R.thread(selection)(gameElementSelectionModel.get$(where), R.isEmpty);
       }
       function elementSelectionCheckMode(selection) {
         return R.thread(selection)(gameElementSelectionModel.get$('local'), R.ifElse(R.isEmpty, function () {

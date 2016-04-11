@@ -39,7 +39,6 @@
         appStateService.emit('Game.moveMap.disable');
       }
       function moveMap(state, coord) {
-        // state.queueChangeEventP('Game.create.update');
         return R.over(
           CREATE_LENS,
           updateCreateBase$(coord),

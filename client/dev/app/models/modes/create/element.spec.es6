@@ -4,79 +4,62 @@ describe('createElementMode model', function() {
     function(createElementModeModel) {
       this.createElementModeModel = createElementModeModel('type');
 
-      this.state = jasmine.createSpyObj('state', [
-        'queueChangeEventP', 'eventP'
-      ]);
-      this.state.create = { base: {}, types: [] };
+      this.appStateService = spyOnService('appState');
+
+      this.state = { create: { base: {}, types: [] } };
       this.game = 'game';
     }
   ]));
 
-  xcontext('onEnter()', function() {
+  context('onEnter()', function() {
     return this.createElementModeModel
       .onEnter(this.state);
   }, function() {
     example(function(e) {
       it('should emit '+e.event+' event', function() {
-        expect(this.state.queueChangeEventP)
+        expect(this.appStateService.emit)
           .toHaveBeenCalledWith(e.event);
       });
     }, [
       [ 'event'                   ],
-      [ 'Game.type.create.enable' ],
       [ 'Game.moveMap.enable'     ],
     ]);
   });
 
-  xcontext('onLeave()', function() {
+  context('onLeave()', function() {
     return this.createElementModeModel
       .onLeave(this.state);
   }, function() {
-    it('should reset state\'s create object', function() {
-      expect(this.state.create)
-        .toEqual({ base: {},
-                   types: null
-                 });
-    });
-
     example(function(e) {
       it('should emit '+e.event+' event', function() {
-        expect(this.state.queueChangeEventP)
+        expect(this.appStateService.emit)
           .toHaveBeenCalledWith(e.event);
       });
     }, [
       [ 'event'                    ],
-      [ 'Game.type.create.disable' ],
       [ 'Game.moveMap.disable'     ],
     ]);
   });
 
-  xcontext('user move mouse over map', function() {
+  context('user move mouse over map', function() {
     return this.createElementModeModel.actions
       .moveMap(this.state, { x: 42, y: 71 });
   }, function() {
     it('should update state\'s create object', function() {
-      expect(this.state.create.base)
+      expect(this.context.create.base)
         .toEqual({
           x: 42, y: 71
         });
-    });
-
-    it('should emit moveCreateElement event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.create.update');
     });
   });
 
-  xcontext('user create element', function() {
+  context('user creates element', function() {
     return this.createElementModeModel.actions
       .create(this.state, { 'click#': { x: 42, y: 71 } });
   }, function() {
-    it('should update state\'s create object', function() {
-      expect(this.state.create.base)
-        .toEqual({
-          x: 42, y: 71
-        });
+    it('should reset create object', function() {
+      expect(this.context.create)
+        .toEqual({});
     });
 
     example(function(e) {
@@ -84,10 +67,11 @@ describe('createElementMode model', function() {
         this.state.ui_state = { flip_map: e.flip_map };
       }, function() {
         it('should execute createElementCommand', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'createType',
-                                  [ this.state.create, e.flip_map ]);
+                                  [ { base: { x: 42, y: 71 }, types: [  ] },
+                                    e.flip_map ]);
         });
       });
     }, [
