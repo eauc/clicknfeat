@@ -5,14 +5,13 @@ describe('setModelSelectionCommand model', function() {
       this.setModelSelectionCommandModel = setModelSelectionCommandModel;
       this.gameModelSelectionModel = spyOnService('gameModelSelection');
 
-      this.state = { state: 'state' };
       this.game = { model_selection: 'selection' };
     }
   ]));
 
-  context('executeP(<method>, <stamps>, <state>, <game>)', function() {
+  context('executeP(<method>, <stamps>, <game>)', function() {
     return this.setModelSelectionCommandModel
-      .executeP(this.method, this.stamps, this.state, this.game);
+      .executeP(this.method, this.stamps, this.game);
   }, function() {
     beforeEach(function() {
       this.stamps = ['stamps1', 'stamp2' ];
@@ -26,7 +25,7 @@ describe('setModelSelectionCommand model', function() {
     }, function() {
       it('should proxy <method> on gameModelSelectionModel', function() {
         expect(this.gameModelSelectionModel[this.method])
-          .toHaveBeenCalledWith('local', this.stamps, this.state, 'selection');
+          .toHaveBeenCalledWith('local', this.stamps, 'selection');
       });
 
       it('should return context', function() {
@@ -52,9 +51,9 @@ describe('setModelSelectionCommand model', function() {
     });
   });
 
-  context('replayP(<ctxt>, <state>, <game>)', function() {
+  context('replayP(<ctxt>, <game>)', function() {
     return this.setModelSelectionCommandModel
-      .replayP(this.ctxt, this.state, this.game);
+      .replayP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -66,8 +65,7 @@ describe('setModelSelectionCommand model', function() {
 
     it('should set remote selection to <ctxt.after>', function() {
       expect(this.gameModelSelectionModel.set)
-        .toHaveBeenCalledWith('remote', [ 'stamp1', 'stamp2' ],
-                              this.state, 'selection');
+        .toHaveBeenCalledWith('remote', [ 'stamp1', 'stamp2' ], 'selection');
     });
   });
 

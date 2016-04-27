@@ -5,13 +5,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelsMode', modelsModeModelFactory);
 
-  modelsModeModelFactory.$inject = ['modes', 'settings', 'defaultMode', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
-  function modelsModeModelFactory(modesModel, settingsModel, defaultModeModel, modelModel, gameModelsModel, gameModelSelectionModel, promptService) {
+  modelsModeModelFactory.$inject = ['appState', 'modes', 'settings', 'defaultMode', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
+  function modelsModeModelFactory(appStateService, modesModel, settingsModel, defaultModeModel, modelModel, gameModelsModel, gameModelSelectionModel, promptService) {
     var models_actions = Object.create(defaultModeModel.actions);
     models_actions.clickMap = modelsClearSelection;
     models_actions.rightClickMap = modelsClearSelection;
     models_actions.modeBackToDefault = modelsClearSelection;
     models_actions.deleteSelection = modelsDeleteSelection;
+    models_actions.copySelection = modelsCopySelection;
     models_actions.toggleLock = modelsToggleLock;
     models_actions.toggleImageDisplay = modelsToggleImageDisplay;
     models_actions.setNextImage = modelsSetNextImage;
@@ -27,16 +28,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     models_actions.toggleSoulsDisplay = modelsToggleSoulsDisplay;
     models_actions.incrementSouls = modelsIncrementSouls;
     models_actions.decrementSouls = modelsDecrementSouls;
-    models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
-    models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
-    models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
-    models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
+    // models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
+    // models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
+    // models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
+    // models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
     models_actions.toggleLeaderDisplay = modelsToggleLeaderDisplay;
     models_actions.toggleIncorporealDisplay = modelsToggleIncorporealDisplay;
     models_actions.setOrientationUp = modelsSetOrientationUp;
     models_actions.setOrientationDown = modelsSetOrientationDown;
     models_actions.setTargetModel = modelsSetTargetModel;
-    models_actions.copySelection = modelsCopySelection;
     models_actions.clearLabel = modelsClearLabel;
     var effects = [['Blind', 'b'], ['Corrosion', 'c'], ['Disrupt', 'd'], ['Fire', 'f'], ['Fleeing', 'e'], ['KD', 'k'], ['Stationary', 't']];
     R.forEach(modelsToggleEffect, effects);
@@ -110,146 +110,184 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     return models_mode;
 
-    function modelsClearSelection(state) {
-      state.queueChangeEventP('Game.selectionDetail.close');
-      state.queueChangeEventP('Game.editDamage.close');
-      state.queueChangeEventP('Game.editLabel.close');
-      return state.eventP('Game.command.execute', 'setModelSelection', ['clear', null]);
+    function modelsClearSelection() {
+      appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['clear', null]);
     }
     function modelsDeleteSelection(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'deleteModel', [stamps]);
+      appStateService.chainReduce('Game.command.execute', 'deleteModel', [stamps]);
+    }
+    function modelsCopySelection(state) {
+      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.copyStamps$(stamps), function (copy) {
+        appStateService.chainReduce('Game.model.copy', copy);
+      });
     }
     function modelsToggleLock(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isLocked, function (present) {
-        return state.eventP('Game.command.execute', 'lockModels', [!present, stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLocked, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'lockModels', [!present, stamps]);
+      })));
     }
     function modelsToggleImageDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isImageDisplayed, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setImageDisplay', [!present], stamps]);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isImageDisplayed, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setImageDisplay', [!present], stamps]);
       });
     }
     function modelsSetNextImage(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['setNextImageP', [state.factions], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['setNextImage', [state.factions], stamps]);
     }
     function modelsToggleWreckDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isWreckDisplayed, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setWreckDisplay', [!present], stamps]);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isWreckDisplayed, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setWreckDisplay', [!present], stamps]);
       });
     }
     function modelsToggleUnitDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isUnitDisplayed, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setUnitDisplay', [!present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isUnitDisplayed, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setUnitDisplay', [!present], stamps]);
+      })));
     }
     function modelsSetUnit(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        return R.defaultTo(0, modelModel.unit(model));
-      }, function (value) {
-        return promptService.promptP('prompt', 'Set unit number :', value).catch(R.always(null));
-      }, function (value) {
-        return state.eventP('Game.command.execute', 'onModels', ['setUnit', [value], stamps]);
-      });
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        return R.threadP(model)(modelModel.unit, R.defaultTo(0), function (value) {
+          return promptService.promptP('prompt', 'Set unit number :', value).catch(R.always(null));
+        }, function (value) {
+          appStateService.chainReduce('Game.command.execute', 'onModels', ['setUnit', [value], stamps]);
+        });
+      }));
     }
     function modelsToggleMeleeDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isMeleeDisplayed$('mm'), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mm', !present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mm'), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mm', !present], stamps]);
+      })));
     }
     function modelsToggleReachDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isMeleeDisplayed$('mr'), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mr', !present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mr'), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mr', !present], stamps]);
+      })));
     }
     function modelsToggleStrikeDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isMeleeDisplayed$('ms'), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setMeleeDisplay', ['ms', !present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('ms'), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['ms', !present], stamps]);
+      })));
     }
     function modelsToggleCounterDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isCounterDisplayed$('c'), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setCounterDisplay', ['c', !present], stamps]);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('c'), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCounterDisplay', ['c', !present], stamps]);
       });
     }
     function modelsIncrementCounter(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['incrementCounter', ['c'], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['incrementCounter', ['c'], stamps]);
     }
     function modelsDecrementCounter(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['decrementCounter', ['c'], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['decrementCounter', ['c'], stamps]);
     }
     function modelsToggleSoulsDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isCounterDisplayed$('s'), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setCounterDisplay', ['s', !present], stamps]);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('s'), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCounterDisplay', ['s', !present], stamps]);
       });
     }
     function modelsIncrementSouls(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['incrementCounter', ['s'], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['incrementCounter', ['s'], stamps]);
     }
     function modelsDecrementSouls(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['decrementCounter', ['s'], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['decrementCounter', ['s'], stamps]);
     }
-    function modelsSetRulerMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.rulerMaxLength, R.defaultTo(0), function (value) {
-        return promptService.promptP('prompt', 'Set ruler max length :', value).catch(R.always(null));
-      }, function (value) {
-        return value === 0 ? null : value;
-      }, function (value) {
-        return state.eventP('Game.command.execute', 'onModels', ['setRulerMaxLength', [value], stamps]);
-      });
-    }
-    function modelsSetChargeMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.chargeMaxLength, function (value) {
-        return promptService.promptP('prompt', 'Set charge max length :', value).catch(R.always(null));
-      }, function (value) {
-        return value === 0 ? null : value;
-      }, function (value) {
-        return state.eventP('Game.command.execute', 'onModels', ['setChargeMaxLengthP', [state.factions, value], stamps]);
-      });
-    }
-    function modelsSetPlaceMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.placeMaxLength, R.defaultTo(0), function (value) {
-        return promptService.promptP('prompt', 'Set place max length :', value).catch(R.always(null));
-      }, function (value) {
-        return value === 0 ? null : value;
-      }, function (value) {
-        return state.eventP('Game.command.execute', 'onModels', ['setPlaceMaxLengthP', [state.factions, value], stamps]);
-      });
-    }
-    function modelsTogglePlaceWithin(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.placeWithin, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setPlaceWithinP', [state.factions, !present], stamps]);
-      });
-    }
+    // function modelsSetRulerMaxLength(state) {
+    //   const stamps = gameModelSelectionModel
+    //           .get('local', state.game.model_selection);
+    //   return R.threadP(state.game)(
+    //     R.prop('models'),
+    //     gameModelsModel.findStampP$(stamps[0]),
+    //     modelModel.rulerMaxLength,
+    //     R.defaultTo(0),
+    //     (value) => promptService
+    //       .promptP('prompt', 'Set ruler max length :', value)
+    //       .catch(R.always(null)),
+    //     (value) => (value === 0) ? null : value,
+    //     (value) => state.eventP('Game.command.execute',
+    //                             'onModels',
+    //                             [ 'setRulerMaxLength', [value], stamps])
+    //   );
+    // }
+    // function modelsSetChargeMaxLength(state) {
+    //   const stamps = gameModelSelectionModel
+    //           .get('local', state.game.model_selection);
+    //   return R.threadP(state.game)(
+    //     R.prop('models'),
+    //     gameModelsModel.findStampP$(stamps[0]),
+    //     modelModel.chargeMaxLength,
+    //     (value) => promptService
+    //       .promptP('prompt', 'Set charge max length :', value)
+    //       .catch(R.always(null)),
+    //     (value) => (value === 0) ? null : value,
+    //     (value) => state.eventP('Game.command.execute',
+    //                             'onModels', [
+    //                               'setChargeMaxLengthP',
+    //                               [state.factions, value],
+    //                               stamps
+    //                             ])
+    //   );
+    // }
+    // function modelsSetPlaceMaxLength(state) {
+    //   const stamps = gameModelSelectionModel
+    //           .get('local', state.game.model_selection);
+    //   return R.threadP(state.game)(
+    //     R.prop('models'),
+    //     gameModelsModel.findStampP$(stamps[0]),
+    //     modelModel.placeMaxLength,
+    //     R.defaultTo(0),
+    //     (value) => promptService
+    //       .promptP('prompt','Set place max length :', value)
+    //       .catch(R.always(null)),
+    //     (value) => (value === 0) ? null : value,
+    //     (value) => state.eventP('Game.command.execute',
+    //                             'onModels', [
+    //                               'setPlaceMaxLengthP',
+    //                               [state.factions, value],
+    //                               stamps
+    //                             ])
+    //   );
+    // }
+    // function modelsTogglePlaceWithin(state) {
+    //   const stamps = gameModelSelectionModel
+    //           .get('local', state.game.model_selection);
+    //   return R.threadP(state.game)(
+    //     R.prop('models'),
+    //     gameModelsModel.findStampP$(stamps[0]),
+    //     modelModel.placeWithin,
+    //     (present) => state.eventP('Game.command.execute',
+    //                               'onModels', [
+    //                                 'setPlaceWithinP',
+    //                                 [state.factions, !present],
+    //                                 stamps
+    //                               ])
+    //   );
+    // }
     function modelsToggleLeaderDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isLeaderDisplayed, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setLeaderDisplay', [!present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLeaderDisplayed, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setLeaderDisplay', [!present], stamps]);
+      })));
     }
     function modelsToggleIncorporealDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isIncorporealDisplayed, function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setIncorporealDisplay', [!present], stamps]);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isIncorporealDisplayed, function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setIncorporealDisplay', [!present], stamps]);
       });
     }
     function modelsToggleEffect(_ref) {
@@ -262,9 +300,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       function modelsToggleEffect_(state) {
         var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-        return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isEffectDisplayed$(flag), function (present) {
-          return state.eventP('Game.command.execute', 'onModels', ['setEffectDisplay', [flag, !present], stamps]);
-        });
+        R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isEffectDisplayed$(flag), function (present) {
+          appStateService.chainReduce('Game.command.execute', 'onModels', ['setEffectDisplay', [flag, !present], stamps]);
+        })));
       }
     }
     function modelsToggleAura(_ref3) {
@@ -277,16 +315,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       function modelsToggleAura_(state) {
         var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-        return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.auraDisplay, function (present) {
-          return state.eventP('Game.command.execute', 'onModels', ['setAuraDisplay', [present === hex ? null : hex], stamps]);
-        });
+        R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.auraDisplay, function (present) {
+          appStateService.chainReduce('Game.command.execute', 'onModels', ['setAuraDisplay', [present === hex ? null : hex], stamps]);
+        })));
       }
     }
     function modelsToggleCtrlAreaDisplay(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), modelModel.isCtrlAreaDisplayedP$(state.factions), function (present) {
-        return state.eventP('Game.command.execute', 'onModels', ['setCtrlAreaDisplay', [!present], stamps]);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isCtrlAreaDisplayed$(state.factions), function (present) {
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCtrlAreaDisplay', [!present], stamps]);
+      })));
     }
     function modelsToggleAreaDisplay(area) {
       var size = area === 0 ? 10 : area;
@@ -297,11 +335,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       function modelsToggleAreaDisplay_(size) {
         return function modelsToggleSizeAreaDisplay(state) {
           var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-          return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-            return modelModel.areaDisplay(model);
-          }, function (present) {
-            return state.eventP('Game.command.execute', 'onModels', ['setAreaDisplay', [present === size ? null : size], stamps]);
-          });
+          return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.areaDisplay, function (present) {
+            appStateService.chainReduce('Game.command.execute', 'onModels', ['setAreaDisplay', [present === size ? null : size], stamps]);
+          })));
         };
       }
     }
@@ -317,7 +353,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       function modelsMove_(small) {
         return function modelsSmallMove(state) {
           var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-          return state.eventP('Game.command.execute', 'onModels', [move + 'P', [state.factions, small], stamps]);
+          appStateService.chainReduce('Game.command.execute', 'onModels', [move + 'P', [state.factions, small], stamps]);
         };
       }
     }
@@ -335,102 +371,96 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return function modelsShiftSmall(state) {
           var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
           var model_shift = R.path(['ui_state', 'flip_map'], state) ? flip_shift : shift;
-          return state.eventP('Game.command.execute', 'onModels', [model_shift + 'P', [state.factions, small], stamps]);
+          appStateService.chainReduce('Game.command.execute', 'onModels', [model_shift + 'P', [state.factions, small], stamps]);
         };
       }
     }
     function modelsSetOrientationUp(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       var orientation = state.ui_state.flip_map ? 180 : 0;
-      return state.eventP('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
     }
     function modelsSetOrientationDown(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
       var orientation = state.ui_state.flip_map ? 0 : 180;
-      return state.eventP('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
     }
     function modelsSetTargetModel(state, event) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['orientToP', [state.factions, event['click#'].target], stamps]);
-    }
-    function modelsCopySelection(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.copyStampsP$(stamps), function (copy) {
-        return state.eventP('Game.model.copy', copy);
-      });
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['orientToP', [state.factions, event['click#'].target], stamps]);
     }
     function modelsClearLabel(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return state.eventP('Game.command.execute', 'onModels', ['clearLabel', [], stamps]);
+      appStateService.chainReduce('Game.command.execute', 'onModels', ['clearLabel', [], stamps]);
     }
 
     function modelsDrag() {
       var drag_charge_target = undefined;
       var drag_models_start_states = undefined;
       var drag_models_start_selection = undefined;
+
       models_actions.dragStartModel = modelsDragStart;
       defaultModeModel.actions.dragStartModel = modelsDragStart;
       models_actions.dragModel = modelsDragContinue;
+      defaultModeModel.actions.dragModel = modelsDragContinue;
       models_actions.dragEndModel = modelsDragEnd;
+      defaultModeModel.actions.dragEndModel = modelsDragEnd;
 
       function modelsDragStart(state, event) {
         var stamp = event.target.state.stamp;
-        return R.threadP(state.game)(R.prop('model_selection'), gameModelSelectionModel.in$('local', stamp), setSelectionIfNotAlreadySelectedP, function () {
-          return gameModelSelectionModel.get('local', state.game.model_selection);
-        }, function (stamps) {
-          return gameModelsModel.findAnyStampsP(stamps, state.game.models);
-        }, R.reject(R.isNil), initDragChargeTarget, initDragStartSelection, R.map(modelModel.saveState), R.spyWarn(drag_models_start_selection, drag_models_start_states), initDragStartStates, function () {
+        return R.thread(state.game)(resolveModelSelection, gameModelsModel.findAnyStamps$(R.__, state.game.models), R.reject(R.isNil), R.tap(initDragChargeTarget), R.tap(function (models) {
+          drag_models_start_selection = models;
+        }), R.map(modelModel.saveState), R.tap(function (states) {
+          drag_models_start_states = states;
+        }), function () {
           return modelsDragContinue(state, event);
         });
 
-        function setSelectionIfNotAlreadySelectedP(in_selection) {
-          if (in_selection) return null;
-          return state.eventP('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+        function resolveModelSelection() {
+          return R.thread(state.game)(R.prop('model_selection'), R.ifElse(gameModelSelectionModel.in$('local', stamp), gameModelSelectionModel.get$('local'), function () {
+            appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+            return [stamp];
+          }));
         }
         function initDragChargeTarget(models) {
           drag_charge_target = null;
-          if (R.length(models) !== 1) return models;
+          if (R.length(models) !== 1) return;
 
-          return R.threadP(models)(R.head, modelModel.chargeTargetP, function (target_stamp) {
-            return gameModelsModel.findStampP(target_stamp, state.game.models);
-          }, function (target_model) {
+          R.thread(models)(R.head, modelModel.chargeTarget, R.unless(R.isNil, R.pipe(gameModelsModel.findStamp$(R.__, state.game.models), function (target_model) {
             drag_charge_target = target_model;
-          }, R.always(models)).catch(R.always(models));
-        }
-        function initDragStartSelection(models) {
-          drag_models_start_selection = models;
-          return models;
-        }
-        function initDragStartStates(states) {
-          drag_models_start_states = states;
+          })));
         }
       }
       function modelsDragContinue(state, event) {
-        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPosition), R.allP, R.forEach(emitModelChangeEvent));
+        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPositionP), R.allP, R.reject(R.isNil), R.forEach(emitModelChangeEvent));
 
-        function updateDragedModelPosition(model, index) {
+        function updateDragedModelPositionP(model, index) {
           var pos = {
             x: drag_models_start_states[index].x + event.now.x - event.start.x,
             y: drag_models_start_states[index].y + event.now.y - event.start.y
           };
-          return modelModel.setPosition_(state.factions, drag_charge_target, pos, model);
+          return modelModel.setPositionP_(state.factions, drag_charge_target, pos, model).catch(function () {
+            return null;
+          });
         }
         function emitModelChangeEvent(model) {
-          state.queueChangeEventP('Game.model.change.' + model.state.stamp);
+          appStateService.emit('Game.model.change.' + model.state.stamp);
         }
       }
       function modelsDragEnd(state, event) {
-        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(resetDragedModelPosition), R.allP, R.map(R.path(['state', 'stamp'])), setFinalPositions);
+        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(resetDragedModelPositionP), R.allP, R.reject(R.isNil), R.map(R.path(['state', 'stamp'])), setFinalPositions);
 
-        function resetDragedModelPosition(model, index) {
-          return modelModel.setPosition_(state.factions, drag_charge_target, drag_models_start_states[index], model);
+        function resetDragedModelPositionP(model, index) {
+          return modelModel.setPositionP_(state.factions, drag_charge_target, drag_models_start_states[index], model).catch(function () {
+            return null;
+          });
         }
         function setFinalPositions(stamps) {
           var shift = {
             x: event.now.x - event.start.x,
             y: event.now.y - event.start.y
           };
-          return state.eventP('Game.command.execute', 'onModels', ['shiftPositionP', [state.factions, drag_charge_target, shift], stamps]);
+          appStateService.chainReduce('Game.command.execute', 'onModels', ['shiftPositionP', [state.factions, drag_charge_target, shift], stamps]);
         }
       }
     }
@@ -484,7 +514,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var start_place = _ref17.start_place;
       var end_place = _ref17.end_place;
 
-      var ret = [['Delete', 'deleteSelection'], ['Copy', 'copySelection'], ['Lock', 'toggleLock'], ['Ruler Max Len.', 'setRulerMaxLength'], ['Clear Label', 'clearLabel'], ['Image', 'toggle', 'image'], ['Show/Hide', 'toggleImageDisplay', 'image'], ['Next', 'setNextImage', 'image'], ['Wreck', 'toggleWreckDisplay', 'image'], ['Orient.', 'toggle', 'orientation'], ['Face Up', 'setOrientationUp', 'orientation'], ['Face Down', 'setOrientationDown', 'orientation'], ['Counter', 'toggle', 'counter'], ['Show/Hide', 'toggleCounterDisplay', 'counter'], ['Inc.', 'incrementCounter', 'counter'], ['Dec.', 'decrementCounter', 'counter'], ['Souls', 'toggle', 'souls'], ['Show/Hide', 'toggleSoulsDisplay', 'souls'], ['Inc.', 'incrementSouls', 'souls'], ['Dec.', 'decrementSouls', 'souls'], ['Melee', 'toggle', 'melee'], ['0.5"', 'toggleMeleeDisplay', 'melee'], ['Reach', 'toggleReachDisplay', 'melee'], ['Strike', 'toggleStrikeDisplay', 'melee']];
+      var ret = [['Delete', 'deleteSelection'], ['Copy', 'copySelection'], ['Lock', 'toggleLock'],
+      // [ 'Ruler Max Len.', 'setRulerMaxLength' ],
+      ['Clear Label', 'clearLabel'], ['Image', 'toggle', 'image'], ['Show/Hide', 'toggleImageDisplay', 'image'], ['Next', 'setNextImage', 'image'], ['Wreck', 'toggleWreckDisplay', 'image'], ['Orient.', 'toggle', 'orientation'], ['Face Up', 'setOrientationUp', 'orientation'], ['Face Down', 'setOrientationDown', 'orientation'], ['Counter', 'toggle', 'counter'], ['Show/Hide', 'toggleCounterDisplay', 'counter'], ['Inc.', 'incrementCounter', 'counter'], ['Dec.', 'decrementCounter', 'counter'], ['Souls', 'toggle', 'souls'], ['Show/Hide', 'toggleSoulsDisplay', 'souls'], ['Inc.', 'incrementSouls', 'souls'], ['Dec.', 'decrementSouls', 'souls'], ['Melee', 'toggle', 'melee'], ['0.5"', 'toggleMeleeDisplay', 'melee'], ['Reach', 'toggleReachDisplay', 'melee'], ['Strike', 'toggleStrikeDisplay', 'melee']];
       if (single) {
         ret = R.concat(ret, [['Templates', 'toggle', 'templates'], ['AoE', 'createAoEOnModel', 'templates'], ['Spray', 'createSprayOnModel', 'templates']]);
       }
@@ -515,23 +547,23 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return [effect, 'toggle' + effect + 'EffectDisplay', 'effects'];
       }, effects));
       ret = R.append(['Incorp.', 'toggleIncorporealDisplay', 'effects'], ret);
-      ret = R.append(['Charge', 'toggle', 'charge'], ret);
-      if (start_charge) {
-        ret = R.append(['Start', 'startCharge', 'charge'], ret);
-      }
-      if (end_charge) {
-        ret = R.append(['End', 'endCharge', 'charge'], ret);
-      }
-      ret = R.append(['Max Len.', 'setChargeMaxLength', 'charge'], ret);
-      ret = R.append(['Place', 'toggle', 'place'], ret);
-      if (start_place) {
-        ret = R.append(['Start', 'startPlace', 'place'], ret);
-      }
-      if (end_place) {
-        ret = R.append(['End', 'endPlace', 'place'], ret);
-      }
-      ret = R.append(['Max Len.', 'setPlaceMaxLength', 'place'], ret);
-      ret = R.append(['Within', 'togglePlaceWithin', 'place'], ret);
+      // ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
+      // if(start_charge) {
+      //   ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
+      // }
+      // if(end_charge) {
+      //   ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
+      // }
+      // ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
+      // ret = R.append([ 'Place', 'toggle', 'place' ], ret);
+      // if(start_place) {
+      //   ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
+      // }
+      // if(end_place) {
+      //   ret = R.append([ 'End', 'endPlace', 'place' ], ret);
+      // }
+      // ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
+      // ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
       ret = R.concat(ret, [['Unit', 'toggle', 'unit'], ['Show/Hide', 'toggleUnitDisplay', 'unit'], ['Set #', 'setUnit', 'unit'], ['Leader', 'toggleLeaderDisplay', 'unit']]);
       if (single) {
         ret = R.append(['Select All', 'selectAllUnit', 'unit'], ret);

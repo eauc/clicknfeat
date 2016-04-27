@@ -25,16 +25,28 @@
     vm.doGridDamage = doGridDamage;
     vm.doGridColDamage = doGridColDamage;
 
+    activate();
+
+    function activate() {
+      $rootScope
+        .onStateChangeEvent('Game.models.change',
+                            updateModel,
+                            $scope);
+    }
     function range(n) {
       return R.range(0, n);
     }
     function warriorBoxClass(i) {
+      if(R.isNil(vm.state) ||
+         R.isNil(vm.state.dmg)) return '';
       return ( vm.state && vm.state.dmg.n > i
                ? 'mark'
                : ''
              );
     }
     function fieldBoxClass(col, line) {
+      if(R.isNil(vm.state) ||
+         R.isNil(vm.state.dmg)) return '';
       return ( vm.state &&
                vm.state.dmg.f > line * vm.info.field/2 + col
                ? 'mark'
@@ -42,6 +54,8 @@
              );
     }
     function gridBoxClass(col, line) {
+      if(R.isNil(vm.state) ||
+         R.isNil(vm.state.dmg)) return '';
       return ( !vm.info[col][line]
                ? 'none'
                : ( vm.state && vm.state.dmg[col][line] === 1
@@ -59,8 +73,7 @@
                       'resetDamage',
                       [],
                       [vm.state.stamp]
-                    ])
-        .then(refreshState);
+                    ]);
     }
     function doWarriorDamage(i) {
       if(R.isNil(vm.state)) return;
@@ -68,11 +81,10 @@
       $rootScope
         .stateEvent('Game.command.execute',
                     'onModels', [
-                      'setWarriorDamageP',
+                      'setWarriorDamage',
                       [state.factions, i],
                       [vm.state.stamp]
-                    ])
-        .then(refreshState);
+                    ]);
     }
     function doFieldDamage(i) {
       if(R.isNil(vm.state)) return;
@@ -80,11 +92,10 @@
       $rootScope
         .stateEvent('Game.command.execute',
                     'onModels', [
-                      'setFieldDamageP',
+                      'setFieldDamage',
                       [state.factions, i],
                       [vm.state.stamp]
-                    ])
-        .then(refreshState);
+                    ]);
     }
     function doGridDamage(line, col) {
       if(R.isNil(vm.state)) return;
@@ -93,11 +104,10 @@
       $rootScope
         .stateEvent('Game.command.execute',
                     'onModels', [
-                      'setGridDamageP',
+                      'setGridDamage',
                       [state.factions, line, col],
                       [vm.state.stamp]
-                    ])
-        .then(refreshState);
+                    ]);
     }
     function doGridColDamage(col) {
       if(R.isNil(vm.state)) return;
@@ -105,20 +115,29 @@
       $rootScope
         .stateEvent('Game.command.execute',
                     'onModels', [
-                      'setGridColDamageP',
+                      'setGridColDamage',
                       [state.factions, col],
                       [vm.state.stamp]
-                    ])
-        .then(refreshState);
+                    ]);
     }
-    function refreshState() {
-      return gameModelsModel
-        .findStampP(vm.state.stamp,
-                    $rootScope.state.game.models)
-        .then((model) => {
-          vm.state = model.state;
-          $scope.$digest();
-        });
+    function updateModel() {
+      if(R.isNil(vm.state)) return;
+
+      R.thread($rootScope.state)(
+        R.path(['game','models']),
+        gameModelsModel.findStamp$(vm.state.stamp),
+        R.ifElse(
+          R.exists,
+          (model) => {
+            vm.state = model.state;
+            $scope.$digest();
+          },
+          () => {
+            vm.state = {};
+            $scope.$digest();
+          }
+        )
+      );
     }
   }
 

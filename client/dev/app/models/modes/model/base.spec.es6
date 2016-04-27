@@ -1,9 +1,10 @@
-xdescribe('modelBaseMode model', function() {
+describe('modelBaseMode model', function() {
   beforeEach(inject([
     'modelBaseMode',
     function(modelBaseModeModel) {
       this.modelBaseModeModel = modelBaseModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.gameModel = spyOnService('game');
       this.gameModelsModel = spyOnService('gameModels');
       this.gameModelSelectionModel = spyOnService('gameModelSelection');
@@ -11,9 +12,7 @@ xdescribe('modelBaseMode model', function() {
       this.state = { game: { model_selection: 'selection',
                              models: 'models' },
                      ui_state: { flip_map: 'flip' },
-                     factions: 'factions',
-                     eventP: jasmine.createSpy('eventP'),
-                     queueChangeEventP: jasmine.createSpy('queueChangeEventP')
+                     factions: 'factions'
                    };
       this.gameModelSelectionModel.get
         .and.returnValue(['stamp']);
@@ -30,7 +29,7 @@ xdescribe('modelBaseMode model', function() {
         'click#': { target: this.target }
       };
 
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { stamp: 'stamp' }
       });
     });
@@ -39,7 +38,7 @@ xdescribe('modelBaseMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -48,7 +47,7 @@ xdescribe('modelBaseMode model', function() {
       this.target.state.stamp = 'target';
     }, function() {
       it('should place selected model B2B with target', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setB2BP',
@@ -64,7 +63,7 @@ xdescribe('modelBaseMode model', function() {
       .createAoEOnModel(this.state);
   }, function() {
     beforeEach(function() {
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { x: 42, y: 71 }
       });
     });
@@ -72,10 +71,10 @@ xdescribe('modelBaseMode model', function() {
     it('should create AoE centered on model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp', 'models');
 
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'createTemplate', [
                                 { base: { x: 0, y: 0, r: 0 },
@@ -91,41 +90,35 @@ xdescribe('modelBaseMode model', function() {
       .createSprayOnModel(this.state);
   }, function() {
     beforeEach(function() {
-      this.model = {
-        state: { stamp: 'stamp', x: 42, y: 71 }
-      };
-      this.gameModelsModel.findStampP
-        .resolveWith(this.model);
+      this.modelModel = spyOnService('model');
+      this.modelModel.baseEdgeInDirection
+        .and.returnValue({ x: 42, y: 71 });
 
-      this.sprayTemplateModeModel = spyOnService('sprayTemplateMode');
-      spyOn(this.sprayTemplateModeModel.actions, 'setOriginModel');
-      this.sprayTemplateModeModel.actions.setOriginModel
-        .and.returnValue('sprayTemplateMode.setOriginModel.returnValue');
+      this.model = {
+        state: { stamp: 'stamp', r: 36 }
+      };
+      this.gameModelsModel.findStamp
+        .and.returnValue(this.model);
+
     });
 
     it('should create Spray centered on model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp', 'models');
+      expect(this.modelModel.baseEdgeInDirection)
+        .toHaveBeenCalledWith('factions', 36, this.model);
 
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'createTemplate', [
                                 { base: { x: 0, y: 0, r: 0 },
-                                  templates: [ { x: 42, y: 71, r: 0, type: 'spray' } ]
+                                  templates: [ { x: 42, y: 71, r: 36,
+                                                 o: 'stamp', type: 'spray' } ]
                                 },
                                 'flip'
                               ]);
-    });
-
-    it('should set model as spray\'s origin', function() {
-      expect(this.sprayTemplateModeModel.actions.setOriginModel)
-        .toHaveBeenCalledWith(this.state,
-                              { 'click#': { target: this.model } });
-
-      expect(this.context)
-        .toBe('sprayTemplateMode.setOriginModel.returnValue');
     });
   });
 
@@ -134,9 +127,9 @@ xdescribe('modelBaseMode model', function() {
       .openEditDamage(this.state);
   }, function() {
     it('should emit toggleEditDamage event', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.editDamage.toggle',
-                              'gameModels.findStampP.returnValue');
+                              'gameModels.findStamp.returnValue');
     });
   });
 
@@ -145,9 +138,9 @@ xdescribe('modelBaseMode model', function() {
       .openEditLabel(this.state);
   }, function() {
     it('should emit openEditLabel event', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.editLabel.open', 'onModels',
-                              'gameModels.findStampP.returnValue');
+                              'gameModels.findStamp.returnValue');
     });
   });
 
@@ -174,7 +167,7 @@ xdescribe('modelBaseMode model', function() {
         .and.returnValue(['stamp1']);
       this.gameModelsModel.all
         .and.callThrough();
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { user: 'user' }
       });
     });
@@ -182,12 +175,12 @@ xdescribe('modelBaseMode model', function() {
     it('should fetch selected model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp1', this.state.game.models);
     });
 
     it('should select all models with the same user', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection', [
                                 'set',
@@ -218,7 +211,7 @@ xdescribe('modelBaseMode model', function() {
       this.gameModelSelectionModel.get
         .and.returnValue(['stamp1']);
       this.gameModelsModel.all.and.callThrough();
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { user: 'user', u: 42 }
       });
     });
@@ -226,12 +219,12 @@ xdescribe('modelBaseMode model', function() {
     it('should fetch selected model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp1', this.state.game.models);
     });
 
     it('should select all models with the same user & unit number', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection', [
                                 'set',

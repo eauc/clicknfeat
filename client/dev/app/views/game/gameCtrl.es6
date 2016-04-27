@@ -22,6 +22,7 @@
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
     // vm.doInvitePlayer = doInvitePlayer;
+    self.window.gameUpdate = gameUpdate;
 
     activate();
 
@@ -101,6 +102,10 @@
 
     //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
     // }
+
+    function gameUpdate(fn) {
+      $scope.stateEvent('Game.update', fn);
+    }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {

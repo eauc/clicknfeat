@@ -6,7 +6,8 @@ describe('createElementMode model', function() {
 
       this.appStateService = spyOnService('appState');
 
-      this.state = { create: { base: {}, types: [] } };
+      this.state = { create: { base: {}, types: [] },
+                     factions: 'factions' };
       this.game = 'game';
     }
   ]));
@@ -70,7 +71,9 @@ describe('createElementMode model', function() {
           expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'createType',
-                                  [ { base: { x: 42, y: 71 }, types: [  ] },
+                                  [ { base: { x: 42, y: 71 },
+                                      types: [  ],
+                                      factions: 'factions' },
                                     e.flip_map ]);
         });
       });

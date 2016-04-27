@@ -58,16 +58,14 @@
         container.style.left = 0+'px';
         container.style.top = 0+'px';
       }
-      function openEditDamage(_event_, selection) {
+      function openEditDamage(_event_, [selection]) {
         // console.log('openEditDamage');
         opened = true;
         scope.selection = selection;
-        gameFactionsModel
-          .getModelInfoP(scope.selection.state.info, state.factions)
-          .then((info) => {
-            scope.info = info;
-            scope.$digest();
-          });
+        const info = gameFactionsModel
+                .getModelInfo(scope.selection.state.info, state.factions);
+        scope.info = info;
+        scope.$digest();
 
         self.window.requestAnimationFrame(displayEditDamage);
       }
@@ -83,14 +81,23 @@
       }
       function placeEditDamage() {
         const detail_rect = container.getBoundingClientRect();
-        const screen_pos = gameMapService.mapToScreenCoordinates(map, scope.selection.state);
+        const screen_pos = gameMapService
+                .mapToScreenCoordinates(map, scope.selection.state);
         const viewport_rect = viewport.getBoundingClientRect();
 
         const max_top = viewport_rect.height - detail_rect.height;
         const max_left = viewport_rect.width - detail_rect.width;
 
-        const top = Math.max(0, Math.min(max_top, screen_pos.y - detail_rect.height / 2));
-        const left = Math.max(0, Math.min(max_left, screen_pos.x - detail_rect.width / 2));
+        const top = Math.max(0,
+                             Math.min(max_top,
+                                      screen_pos.y - detail_rect.height / 2
+                                     )
+                            );
+        const left = Math.max(0,
+                              Math.min(max_left,
+                                       screen_pos.x - detail_rect.width / 2
+                                      )
+                             );
 
         container.style.top = top + 'px';
         container.style.left = left + 'px';

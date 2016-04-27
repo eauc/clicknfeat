@@ -5,6 +5,7 @@
 
   modelAuraModelFactory.$inject = [];
   function modelAuraModelFactory() {
+    var AURA_LENS = R.lensPath(['state', 'aur']);
     return function () {
       var modelAuraModel = {
         isAuraDisplayed: modelIsAuraDisplayed,
@@ -15,16 +16,16 @@
       return modelAuraModel;
 
       function modelIsAuraDisplayed(model) {
-        return R.exists(model.state.aur);
+        return R.exists(R.view(AURA_LENS, model));
       }
       function modelAuraDisplay(model) {
-        return model.state.aur;
+        return R.view(AURA_LENS, model);
       }
       function modelSetAuraDisplay(aura, model) {
-        return R.assocPath(['state', 'aur'], aura, model);
+        return R.set(AURA_LENS, aura, model);
       }
       function modelToggleAuraDisplay(aura, model) {
-        return R.over(R.lensPath(['state', 'aur']), function (aur) {
+        return R.over(AURA_LENS, function (aur) {
           return aura === aur ? null : aura;
         }, model);
       }

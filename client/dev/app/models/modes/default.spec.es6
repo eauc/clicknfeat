@@ -88,12 +88,12 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user set model selection', function() {
+  context('when user set model selection', function() {
     return this.defaultModeModel.actions
       .setModelSelection(this.state, this.event);
   }, function() {
     it('should set gameModelSelection', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection',
                               ['set', ['stamp']]);
@@ -101,20 +101,20 @@ describe('defaultMode model', function() {
 
     it('should clear gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'template_selection');
-      expect(this.state.game.template_selection)
+        .toHaveBeenCalledWith('local', 'template_selection');
+      expect(this.context.game.template_selection)
         .toBe('gameTemplateSelection.clear.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });
 
-  xcontext('when user toggle model selection', function() {
+  context('when user toggle model selection', function() {
     return this.defaultModeModel.actions
       .toggleModelSelection(this.state, this.event);
   }, function() {
@@ -128,7 +128,7 @@ describe('defaultMode model', function() {
         .and.returnValue(false);
     }, function() {
       it('should add model to selection', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 [ 'addTo', ['stamp'] ]);
@@ -140,7 +140,7 @@ describe('defaultMode model', function() {
         .and.returnValue(true);
     }, function() {
       it('should remove model from selection', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 ['removeFrom', ['stamp']]);
@@ -149,40 +149,40 @@ describe('defaultMode model', function() {
 
     it('should clear gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'template_selection');
-      expect(this.state.game.template_selection)
+        .toHaveBeenCalledWith('local', 'template_selection');
+      expect(this.context.game.template_selection)
         .toBe('gameTemplateSelection.clear.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });
 
-  xcontext('when user starts dragging on map', function() {
+  context('when user starts dragging on map', function() {
     return this.defaultModeModel.actions
       .dragStartMap(this.state, { start: 'start', now: 'now' });
   }, function() {
     it('should enable dragbox', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
     });
   });
 
-  xcontext('when user drags on map', function() {
+  context('when user drags on map', function() {
     this.defaultModeModel.actions
       .dragMap(this.state, { start: 'start', now: 'now' });
   }, function() {
     it('should update dragbox', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
     });
   });
 
-  xcontext('when user select box', function() {
+  context('when user selects box', function() {
     return this.defaultModeModel.actions
       .dragEndMap(this.state, {
         start: { x: 180, y: 150 },
@@ -190,33 +190,33 @@ describe('defaultMode model', function() {
       });
   }, function() {
     it('should disable dragbox', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.dragBox.disable');
     });
 
     it('should lookup models inside the dragbox', function() {
-      expect(this.gameModelsModel.findStampsBetweenPointsP)
+      expect(this.gameModelsModel.findStampsBetweenPoints)
         .toHaveBeenCalledWith({ x: 180, y: 120 },
                               { x: 240, y: 150 },
                               'models');
     });
 
     context('when there is no model in the dragbox', function() {
-      this.gameModelsModel.findStampsBetweenPointsP
-        .rejectWith('reason');
+      this.gameModelsModel.findStampsBetweenPoints
+        .and.returnValue([]);
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
 
     context('when there are models in the dragbox', function() {
-      this.gameModelsModel.findStampsBetweenPointsP
-        .resolveWith(['stamp1', 'stamp2']);
+      this.gameModelsModel.findStampsBetweenPoints
+        .and.returnValue(['stamp1', 'stamp2']);
     }, function() {
       it('should set selection to those models', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 [ 'set', [ 'stamp1', 'stamp2' ] ]);
@@ -224,33 +224,33 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user right-click on model', function() {
+  context('when user right-click on model', function() {
     return this.defaultModeModel.actions
       .modelSelectionDetail(this.state, this.event);
   }, function() {
     it('should open model selection detail', function() {
-        expect(this.state.queueChangeEventP)
+        expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.selectionDetail.open', 'model',
                               { state: { stamp: 'stamp' } });
     });
 
     it('should set gameModelSelection', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection', ['set', ['stamp']]);
     });
 
     it('should clear gameTemplateSelection', function() {
       expect(this.gameTemplateSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'template_selection');
-      expect(this.state.game.template_selection)
+        .toHaveBeenCalledWith('local', 'template_selection');
+      expect(this.context.game.template_selection)
         .toBe('gameTemplateSelection.clear.returnValue');
     });
 
     it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
-        .toHaveBeenCalledWith('local', this.state, 'terrain_selection');
-      expect(this.state.game.terrain_selection)
+        .toHaveBeenCalledWith('local', 'terrain_selection');
+      expect(this.context.game.terrain_selection)
         .toBe('gameTerrainSelection.clear.returnValue');
     });
   });

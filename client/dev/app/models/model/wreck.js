@@ -5,20 +5,21 @@
 
   modelWreckModelFactory.$inject = ['gameFactions'];
   function modelWreckModelFactory(gameFactionsModel) {
+    var DSP_LENS = R.lensPath(['state', 'dsp']);
     return function (modelModel) {
       var modelWreckModel = {
         isWreckDisplayed: modelIsWreckDisplayed,
-        getWreckImageP: modelGetWreckImageP,
+        getWreckImage: modelGetWreckImage,
         setWreckDisplay: modelSetWreckDisplay,
         toggleWreckDisplay: modelToggleWreckDisplay
       };
       return modelWreckModel;
 
       function modelIsWreckDisplayed(model) {
-        return !!R.find(R.equals('w'), model.state.dsp);
+        return !!R.find(R.equals('w'), R.viewOr([], DSP_LENS, model));
       }
-      function modelGetWreckImageP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.prop('img'), function (info_img) {
+      function modelGetWreckImage(factions, model) {
+        return R.thread(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.prop('img'), function (info_img) {
           return R.thread(info_img)(R.find(R.propEq('type', 'wreck')), R.defaultTo(R.thread(info_img)(R.find(R.propEq('type', 'default')), R.defaultTo({}), R.assoc('link', null))));
         }, function (img) {
           var link = modelModel.isImageDisplayed(model) ? img.link : null;
@@ -26,18 +27,12 @@
         });
       }
       function modelSetWreckDisplay(set, model) {
-        if (set) {
-          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('w')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('w')), model);
-        }
+        var update = set ? R.compose(R.uniq, R.append('w')) : R.reject(R.equals('w'));
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleWreckDisplay(model) {
-        if (modelModel.isWreckDisplayed(model)) {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('w')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.append('w'), model);
-        }
+        var update = modelModel.isWreckDisplayed(model) ? R.reject(R.equals('w')) : R.append('w');
+        return R.over(DSP_LENS, update, model);
       }
     };
   }

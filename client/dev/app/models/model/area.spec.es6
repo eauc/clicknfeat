@@ -18,18 +18,12 @@ describe('model area model', function() {
       this.model = { state: { dsp: [] } };
 
       this.model = this.modelModel.toggleCtrlAreaDisplay(this.model);
-      return R.threadP(this.model)(
-        this.modelModel.isCtrlAreaDisplayedP$('factions'),
-        (result) => {
-          expect(result).toBeTruthy();
+      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+        .toBeTruthy();
 
-          return this.modelModel.toggleCtrlAreaDisplay(this.model);
-        },
-        this.modelModel.isCtrlAreaDisplayedP$('factions'),
-        (result) => {
-          expect(result).toBeFalsy();
-        }
-      );
+      this.model = this.modelModel.toggleCtrlAreaDisplay(this.model);
+      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+        .toBeFalsy();
     });
   });
 
@@ -38,18 +32,12 @@ describe('model area model', function() {
       this.model = { state: { dsp: [] } };
 
       this.model = this.modelModel.setCtrlAreaDisplay(true, this.model);
-      return R.threadP(this.model)(
-        this.modelModel.isCtrlAreaDisplayedP$('factions'),
-        (result) => {
-          expect(result).toBeTruthy();
+      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+        .toBeTruthy();
 
-          return this.modelModel.setCtrlAreaDisplay(false, this.model);
-        },
-        this.modelModel.isCtrlAreaDisplayedP$('factions'),
-        (result) => {
-          expect(result).toBeFalsy();
-        }
-      );
+      this.model = this.modelModel.setCtrlAreaDisplay(false, this.model);
+      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+        .toBeFalsy();
     });
   });
 

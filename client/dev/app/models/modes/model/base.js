@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('modelBaseMode', modelBaseModeModelFactory);
 
-  modelBaseModeModelFactory.$inject = ['settings', 'modelsMode', 'sprayTemplateMode', 'model', 'gameModels', 'gameModelSelection'];
-  function modelBaseModeModelFactory(settingsModel, modelsModeModel, sprayTemplateModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
+  modelBaseModeModelFactory.$inject = ['appState', 'settings', 'modelsMode', 'model', 'gameModels', 'gameModelSelection'];
+  function modelBaseModeModelFactory(appStateService, settingsModel, modelsModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
     var model_actions = Object.create(modelsModeModel.actions);
     model_actions.createAoEOnModel = modelCreateAoEOnModel;
     model_actions.createSprayOnModel = modelCreateSprayOnModel;
@@ -40,7 +40,7 @@
 
     function modelCreateAoEOnModel(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(function (model) {
         return R.pick(['x', 'y'], model.state);
       }, R.assoc('type', 'aoe'), function (position) {
         return {
@@ -49,66 +49,60 @@
         };
       }, function (create) {
         var is_flipped = R.path(['ui_state', 'flip_map'], state);
-        return state.eventP('Game.command.execute', 'createTemplate', [create, is_flipped]);
-      });
+        appStateService.chainReduce('Game.command.execute', 'createTemplate', [create, is_flipped]);
+      })));
     }
     function modelCreateSprayOnModel(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        return R.threadP(model)(R.prop('state'), R.pick(['x', 'y']), R.assoc('type', 'spray'), function (position) {
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(function (model) {
+        return R.thread(model)(modelModel.baseEdgeInDirection$(state.factions, model.state.r), R.assoc('o', model.state.stamp), R.assoc('r', model.state.r), R.assoc('type', 'spray'), function (position) {
           return {
             base: { x: 0, y: 0, r: 0 },
-            templates: [R.assoc('r', 0, position)]
+            templates: [position]
           };
         }, function (create) {
           var is_flipped = R.path(['ui_state', 'flip_map'], state);
-          return R.threadP()(function () {
-            return state.eventP('Game.command.execute', 'createTemplate', [create, is_flipped]);
-          },
-          // simulate set-origin-model in sprayTemplateMode
-          function () {
-            return sprayTemplateModeModel.actions.setOriginModel(state, { 'click#': { target: model } });
-          });
+          appStateService.chainReduce('Game.command.execute', 'createTemplate', [create, is_flipped]);
         });
-      });
+      })));
     }
     function modelSelectAllFriendly(state) {
       var selection = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(selection[0]), modelModel.user, function (user) {
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(selection[0]), R.unless(R.isNil, R.pipe(modelModel.user, function (user) {
         return R.thread(state.game)(R.prop('models'), gameModelsModel.all, R.filter(modelModel.userIs$(user)), R.map(modelModel.stamp));
       }, function (stamps) {
-        return state.eventP('Game.command.execute', 'setModelSelection', ['set', stamps]);
-      });
+        appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', stamps]);
+      })));
     }
     function modelSelectAllUnit(state) {
       var selection = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(selection[0]), function (model) {
-        return R.threadP(model)(modelModel.unit, R.rejectIfP(R.isNil, 'Model not in unit'), function (unit) {
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(selection[0]), R.unless(R.isNil, R.pipe(function (model) {
+        return R.thread(model)(modelModel.unit, R.unless(R.equals(0), R.pipe(function (unit) {
           return R.thread(state.game)(R.prop('models'), gameModelsModel.all, R.filter(modelModel.userIs$(modelModel.user(model))), R.filter(modelModel.unitIs$(unit)), R.map(modelModel.stamp));
-        });
-      }, function (stamps) {
-        return state.eventP('Game.command.execute', 'setModelSelection', ['set', stamps]);
-      });
+        }, function (stamps) {
+          appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', stamps]);
+        })));
+      })));
     }
     function modelSetB2B(state, event) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        if (model.state.stamp === event['click#'].target.state.stamp) return null;
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        if (model.state.stamp === event['click#'].target.state.stamp) return;
 
-        return state.eventP('Game.command.execute', 'onModels', ['setB2BP', [state.factions, event['click#'].target], stamps]);
-      });
+        appStateService.chainReduce('Game.command.execute', 'onModels', ['setB2BP', [state.factions, event['click#'].target], stamps]);
+      }));
     }
     function modelOpenEditLabel(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        state.queueChangeEventP('Game.editLabel.open', 'onModels', model);
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), function (model) {
+        appStateService.emit('Game.editLabel.open', 'onModels', model);
       });
     }
     function modelOpenEditDamage(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStampP$(stamps[0]), function (model) {
-        state.queueChangeEventP('Game.editDamage.toggle', model);
-      });
+      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        appStateService.emit('Game.editDamage.toggle', model);
+      }));
     }
   }
 })();

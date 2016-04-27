@@ -5,17 +5,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('sprayTemplateMode', sprayTemplateModeModelFactory);
 
-  sprayTemplateModeModelFactory.$inject = ['appState', 'modes', 'settings', 'templateMode', 'sprayTemplate', 'gameTemplates', 'gameTemplateSelection'];
-
-  // 'gameModels',
-  function sprayTemplateModeModelFactory(appStateService, modesModel, settingsModel, templateModeModel, sprayTemplateModel, gameTemplatesModel, gameTemplateSelectionModel) {
-    // gameModelsModel) {
+  sprayTemplateModeModelFactory.$inject = ['appState', 'modes', 'settings', 'templateMode', 'sprayTemplate', 'gameTemplates', 'gameTemplateSelection', 'gameModels'];
+  function sprayTemplateModeModelFactory(appStateService, modesModel, settingsModel, templateModeModel, sprayTemplateModel, gameTemplatesModel, gameTemplateSelectionModel, gameModelsModel) {
     var template_actions = Object.create(templateModeModel.actions);
     template_actions.spraySize6 = spraySize6;
     template_actions.spraySize8 = spraySize8;
     template_actions.spraySize10 = spraySize10;
-    // template_actions.setOriginModel = setOriginModel;
-    // template_actions.setTargetModel = setTargetModel;
+    template_actions.setOriginModel = setOriginModel;
+    template_actions.setTargetModel = setTargetModel;
     var moves = [['rotateLeft', 'left'], ['rotateRight', 'right']];
     var buildTemplateMove$ = R.curry(buildTemplateMove);
     R.forEach(function (_ref) {
@@ -65,47 +62,28 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
       appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setSizeP', [10], stamps]);
     }
-    // function setOriginModel(state, event) {
-    //   const stamps = gameTemplateSelectionModel
-    //         .get('local', state.game.template_selection);
-    //   appStateService.chainReduce('Game.command.execute',
-    //                               'onTemplates',
-    //                               [ 'setOriginP',
-    //                                 [state.factions, event['click#'].target],
-    //                                 stamps
-    //                               ]);
-    // }
-    // function setTargetModel(state, event) {
-    //   const stamps = gameTemplateSelectionModel
-    //           .get('local', state.game.template_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('templates'),
-    //     gameTemplatesModel.findStampP$(stamps[0]),
-    //     sprayTemplateModel.origin,
-    //     findOriginModel$(state),
-    //     (origin_model) => {
-    //       if(R.isNil(origin_model)) return null;
+    function setOriginModel(state, event) {
+      var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
+      appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setOriginP', [state.factions, event['click#'].target], stamps]);
+    }
+    function setTargetModel(state, event) {
+      var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
+      R.thread(state.game)(R.prop('templates'), gameTemplatesModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(sprayTemplateModel.origin, findOriginModel$(state), function (origin_model) {
+        if (R.isNil(origin_model)) return;
 
-    //       appStateService.chainReduce('Game.command.execute',
-    //                                   'onTemplates',
-    //                                   [ 'setTargetP',
-    //                                     [state.factions, origin_model, event['click#'].target],
-    //                                     stamps
-    //                                   ]);
-    //     }
-    //   );
-    // }
+        appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setTargetP', [state.factions, origin_model, event['click#'].target], stamps]);
+      })));
+    }
     function buildTemplateMove(move, small, state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
       return R.thread(state.game)(R.prop('templates'), gameTemplatesModel.findStamp$(stamps[0]), sprayTemplateModel.origin, findOriginModel$(state), function (origin_model) {
         appStateService.chainReduce('Game.command.execute', 'onTemplates', [move + 'P', [state.factions, origin_model, small], stamps]);
       });
     }
-    function findOriginModel(_state_, stamp) {
+    function findOriginModel(state, stamp) {
       if (R.isNil(stamp)) return null;
 
-      // return gameModelsModel
-      //     .findStamp(stamp, state.game.models);
+      return gameModelsModel.findStamp(stamp, state.game.models);
     }
   }
 })();

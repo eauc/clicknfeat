@@ -11,10 +11,10 @@
     return (modelModel) => {
       const modelGeomModel = {
         isBetweenPoints: modelIsBetweenPoints,
-        shortestLineToP: modelShortestLineToP,
-        baseEdgeInDirectionP: modelBaseEdgeInDirectionP,
-        distanceToP: modelDistanceToP,
-        distanceToAoEP: modelDistanceToAoEP,
+        shortestLineTo: modelShortestLineTo,
+        baseEdgeInDirection: modelBaseEdgeInDirection,
+        distanceTo: modelDistanceTo,
+        distanceToAoE: modelDistanceToAoE,
         setB2BP: modelSetB2BP
       };
       return modelGeomModel;
@@ -26,84 +26,59 @@
                  top_left.y <= y && y <= bottom_right.y
                );
       }
-      function modelShortestLineToP(factions, other, model) {
+      function modelShortestLineTo(factions, other, model) {
+        const info = gameFactionsModel.getModelInfo(model.state.info, factions);
+        const other_info = gameFactionsModel.getModelInfo(other.state.info, factions);
+
         const direction = pointModel.directionTo(other.state, model.state);
-        return R.threadP(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          (info) => {
-            const start = pointModel.translateInDirection(info.base_radius,
-                                                            direction,
-                                                            model.state);
-            return R.threadP(factions)(
-              gameFactionsModel.getModelInfo$(other.state.info),
-              (other_info) => {
-                const end = pointModel.translateInDirection(other_info.base_radius,
-                                                              direction+180,
-                                                              other.state);
-                return { start: R.pick(['x','y'], start),
-                         end: R.pick(['x','y'], end)
-                       };
-              }
-            );
-          }
+        const start = pointModel.translateInDirection(info.base_radius,
+                                                      direction,
+                                                      model.state);
+        const end = pointModel.translateInDirection(other_info.base_radius,
+                                                    direction+180,
+                                                    other.state);
+        return { start: R.pick(['x','y'], start),
+                 end: R.pick(['x','y'], end)
+               };
+      }
+      function modelBaseEdgeInDirection(factions, dir, model) {
+        const info = gameFactionsModel.getModelInfo(model.state.info, factions);
+        return R.thread(model.state)(
+          pointModel.translateInDirection$(info.base_radius, dir),
+          R.pick(['x','y'])
         );
       }
-      function modelBaseEdgeInDirectionP(factions, dir, model) {
-        return R.threadP(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          (info) => R.thread(model.state)(
-            pointModel.translateInDirection$(info.base_radius, dir),
-            R.pick(['x','y'])
-          )
-        );
+      function modelDistanceTo(factions, other, model) {
+        const info = gameFactionsModel.getModelInfo(model.state.info, factions);
+        const other_info = gameFactionsModel.getModelInfo(other.state.info, factions);
+        return ( pointModel.distanceTo(other.state, model.state) -
+                 info.base_radius -
+                 other_info.base_radius
+               );
       }
-      function modelDistanceToP(factions, other, model) {
-        return R.threadP(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          (info) => R.threadP(factions)(
-            gameFactionsModel.getModelInfo$(other.state.info),
-            (other_info) => {
-              return ( pointModel.distanceTo(other.state, model.state) -
-                       info.base_radius -
-                       other_info.base_radius
-                     );
-            }
-          )
-        );
-      }
-      function modelDistanceToAoEP(factions, aoe, model) {
-        return R.threadP(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          (info) => {
-            const aoe_size = aoe.state.s;
-            return ( pointModel.distanceTo(aoe.state, model.state) -
-                     info.base_radius -
-                     aoe_size
-                   );
-          }
-        );
+      function modelDistanceToAoE(factions, aoe, model) {
+        const info = gameFactionsModel.getModelInfo(model.state.info, factions);
+        const aoe_size = aoe.state.s;
+        return ( pointModel.distanceTo(aoe.state, model.state) -
+                 info.base_radius -
+                 aoe_size
+               );
       }
       function modelSetB2BP(factions, other, model) {
+        const info = gameFactionsModel.getModelInfo(model.state.info, factions);
+        const other_info = gameFactionsModel.getModelInfo(other.state.info, factions);
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
-                     'Model is locked'),
+                      'Model is locked'),
           (model) => {
             const direction = pointModel.directionTo(model.state, other.state);
-            return R.threadP(factions)(
-              gameFactionsModel.getModelInfo$(model.state.info),
-              (info) => R.threadP(factions)(
-                gameFactionsModel.getModelInfo$(other.state.info),
-                (other_info) => {
-                  const distance = info.base_radius + other_info.base_radius;
-                  const position = pointModel.translateInDirection(distance, direction,
-                                                                     other.state);
-                  return R.thread(model)(
-                    R.assocPath(['state','x'], position.x),
-                    R.assocPath(['state','y'], position.y)
-                  );
-                },
-                modelModel.checkStateP$(factions, null)
-              )
+            const distance = info.base_radius + other_info.base_radius;
+            const position = pointModel.translateInDirection(distance, direction,
+                                                             other.state);
+            return R.thread(model)(
+              R.assocPath(['state','x'], position.x),
+              R.assocPath(['state','y'], position.y),
+              modelModel.checkState$(factions, null)
             );
           }
         );

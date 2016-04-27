@@ -33,4 +33,10 @@
   </rect>
   <g click-game-element-label="render.label">
   </g>
+  <circle class="spray-origin"
+          ng-if="render.origin"
+          ng-attr-cx="{{render.origin.cx}}"
+          ng-attr-cy="{{render.origin.cy}}"
+          ng-attr-r="{{render.origin.radius}}">
+  </circle>
 </g>

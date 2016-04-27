@@ -1,4 +1,4 @@
-xdescribe('gameModels model', function() {
+describe('gameModels model', function() {
   beforeEach(inject([
     'gameModels',
     function(gameModelsModel) {
@@ -14,11 +14,11 @@ xdescribe('gameModels model', function() {
 
       this.models = {
         active: [
-          { state: { stamp: 'stamp1' } },
-          { state: { stamp: 'stamp2' } },
+          { state: { stamp: 'stamp1', lk: false } },
+          { state: { stamp: 'stamp2', lk: false } },
         ],
         locked: [
-          { state: { stamp: 'stamp3' } },
+          { state: { stamp: 'stamp3', lk: true } },
         ]
       };
     }
@@ -33,9 +33,9 @@ xdescribe('gameModels model', function() {
     });
   });
 
-  context('copyStampsP(<stamps>)', function() {
+  context('copyStamps(<stamps>)', function() {
     return this.gameModelsModel
-      .copyStampsP(this.stamps, this.models);
+      .copyStamps(this.stamps, this.models);
   }, function() {
     beforeEach(function() {
       this.models = {
@@ -152,9 +152,9 @@ xdescribe('gameModels model', function() {
     ]);
   });
 
-  context('lockStampsP(<lock>, <stamps>)', function() {
+  context('lockStamps(<lock>, <stamps>)', function() {
     return this.gameModelsModel
-      .lockStampsP(this.lock, this.stamps, this.models);
+      .lockStamps(this.lock, this.stamps, this.models);
   }, function() {
     beforeEach(function() {
       this.models = {
@@ -211,57 +211,53 @@ xdescribe('gameModels model', function() {
 
   context('findStampP(<stamp>)', function() {
     return this.gameModelsModel
-      .findStampP(this.stamp, this.models);
+      .findStamp(this.stamp, this.models);
   }, function() {
     example(function(e, d) {
       context(d, function() {
         this.stamp = e.stamp;
       }, function() {
         it('should find <stamp> in models', function() {
-          expect(this.context).toEqual({ state: { stamp: e.stamp } });
+          expect(this.context).toEqual({ state: { stamp: e.stamp, lk: e.lk } });
         });
       });
     }, [
-      [ 'stamp'  ],
-      [ 'stamp2' ],
-      [ 'stamp3' ],
+      [ 'stamp'  , 'lk'  ],
+      [ 'stamp2' , false ],
+      [ 'stamp3' , true  ],
     ]);
 
     context('when <stamp> is not  found', function() {
       this.stamp = 'unknown';
-      this.expectContextError();
     }, function() {
-      it('should reject result', function() {
-        expect(this.contextError).toEqual([
-          'Model "unknown" not found'
-        ]);
+      it('should return undefined', function() {
+        expect(this.context).toBe(undefined);
       });
     });
   });
 
-  context('findAnyStampsP(<stamps>)', function() {
+  context('findAnyStamps(<stamps>)', function() {
     return this.gameModelsModel
-      .findAnyStampsP(this.stamps, this.models);
+      .findAnyStamps(this.stamps, this.models);
   }, function() {
     context('when some <stamps> exist', function() {
       this.stamps = ['stamp2', 'whatever', 'stamp3'];
     }, function() {
       it('should find stamps', function() {
         expect(this.context).toEqual([
-          { state: { stamp: 'stamp2' } },
-          null,
-          { state: { stamp: 'stamp3' } },
+          { state: { stamp: 'stamp2', lk: false } },
+          undefined,
+          { state: { stamp: 'stamp3', lk: true } },
         ]);
       });
     });
 
     context('when none of the <stamps> exist', function() {
       this.stamps = ['whatever', 'unknown'];
-      this.expectContextError();
     }, function() {
-      it('should reject result', function() {
-        expect(this.contextError).toEqual([
-          'No model found'
+      it('should return undefined array', function() {
+        expect(this.context).toEqual([
+          undefined, undefined
         ]);
       });
     });
@@ -295,12 +291,9 @@ xdescribe('gameModels model', function() {
     }, function() {
       context('when none of the <stamps> are found', function() {
         this.stamps = ['whatever', 'unknown'];
-        this.expectContextError();
       }, function() {
-        it('should reject method', function() {
-          expect(this.contextError).toEqual([
-            'No model found'
-          ]);
+        it('should return unchanged models', function() {
+          expect(this.context).toEqual(this.models);
         });
       });
 
@@ -308,9 +301,6 @@ xdescribe('gameModels model', function() {
         this.stamps = ['stamp2', 'whatever', 'stamp3'];
       }, function() {
         beforeEach(function() {
-          this.modelModel.isLocked.and.callFake((m) => {
-            return m.state.stamp === 'stamp2';
-          });
           this.modelModel.setState.and.callFake((_f_,_s_,m) => {
             return R.assocPath(['state','set'],'set', m);
           });
@@ -319,16 +309,16 @@ xdescribe('gameModels model', function() {
         it('should call <method> on <stamp> model', function() {
           expect(this.modelModel[this.method])
             .toHaveBeenCalledWith('arg1', 'arg2',
-                                  { state: { stamp: 'stamp2' } });
+                                  { state: { stamp: 'stamp2', lk: false } });
           expect(this.modelModel[this.method])
             .toHaveBeenCalledWith('arg1', 'arg2',
-                                  { state: { stamp: 'stamp3' } });
+                                  { state: { stamp: 'stamp3', lk: true } });
           expect(this.context)
             .toEqual({
-              active: [ { state: { stamp: 'stamp3', set: 'set' } },
-                        { state: { stamp: 'stamp1' } }
+              active: [ { state: { stamp: 'stamp2', set: 'set', lk: false } },
+                        { state: { stamp: 'stamp1', lk: false } }
                       ],
-              locked: [ { state: { stamp: 'stamp2', set: 'set' } }
+              locked: [ { state: { stamp: 'stamp3', set: 'set', lk: true } }
                       ]
             });
         });
@@ -343,10 +333,10 @@ xdescribe('gameModels model', function() {
         }, function() {
           it('should return partial result', function() {
             expect(this.context).toEqual({
-              active: [ { state: { stamp: 'stamp3' } },
-                        { state: { stamp: 'stamp1' } }
+              active: [ { state: { stamp: 'stamp2', set: 'set', lk: false } },
+                        { state: { stamp: 'stamp1', lk: false } }
                       ],
-              locked: [ { state: { stamp: 'stamp2', set: 'set' } }
+              locked: [ { state: { stamp: 'stamp3', lk: true } }
                       ]
             });
           });
@@ -383,12 +373,9 @@ xdescribe('gameModels model', function() {
     }, function() {
       context('when none of the <stamps> are found', function() {
         this.stamps = ['whatever', 'unknown'];
-        this.expectContextError();
       }, function() {
-        it('should reject method', function() {
-          expect(this.contextError).toEqual([
-            'No model found'
-          ]);
+        it('should return undefined', function() {
+          expect(this.context).toEqual([]);
         });
       });
 
@@ -398,10 +385,10 @@ xdescribe('gameModels model', function() {
         it('should call <method> on <stamp> model', function() {
           expect(this.modelModel[this.method])
             .toHaveBeenCalledWith('arg1', 'arg2',
-                                  { state: { stamp: 'stamp2' } });
+                                  { state: { stamp: 'stamp2', lk: false } });
           expect(this.modelModel[this.method])
             .toHaveBeenCalledWith('arg1', 'arg2',
-                                  { state: { stamp: 'stamp3' } });
+                                  { state: { stamp: 'stamp3', lk: true } });
           expect(this.context)
             .toEqual([
               'model.setState.returnValue(stamp2)',
@@ -428,9 +415,9 @@ xdescribe('gameModels model', function() {
     });
   });
 
-  context('modeForStampP(<stamp>)', function() {
+  context('modeForStamp(<stamp>)', function() {
     return this.gameModelsModel
-      .modeForStampP('stamp2', this.models);
+      .modeForStamp('stamp2', this.models);
   }, function() {
     beforeEach(function() {
       this.models = { active: [
@@ -447,10 +434,10 @@ xdescribe('gameModels model', function() {
     });
   });
 
-  context('findStampsBetweenPointsP', function() {
+  context('findStampsBetweenPoints(<top_left>,<bottom_right>)', function() {
     return this.gameModelsModel
-      .findStampsBetweenPointsP('topleft', 'bottomright',
-                                this.models);
+      .findStampsBetweenPoints('topleft', 'bottomright',
+                               this.models);
   }, function() {
     beforeEach(function() {
       this.modelModel.isBetweenPoints.and.callFake((_s_,_e_,m) => {
@@ -474,12 +461,9 @@ xdescribe('gameModels model', function() {
 
     context('when no stamps are found', function() {
       this.modelModel.isBetweenPoints.and.returnValue(false);
-      this.expectContextError();
     }, function() {
       it('should find all models between the 2 points', function() {
-        expect(this.contextError).toEqual([
-          'No model found between points'
-        ]);
+        expect(this.context).toEqual([]);
       });
     });
   });

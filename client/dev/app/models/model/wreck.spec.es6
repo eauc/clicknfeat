@@ -1,4 +1,4 @@
-describe('model model', function() {
+describe('model wreck model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
@@ -7,8 +7,8 @@ describe('model model', function() {
     }
   ]));
 
-  context('getWreckImageP(<factions>)', function() {
-    return this.modelModel.getWreckImageP('factions', this.model);
+  context('getWreckImage(<factions>)', function() {
+    return this.modelModel.getWreckImage('factions', this.model);
   }, function() {
     beforeEach(function() {
       this.model = {

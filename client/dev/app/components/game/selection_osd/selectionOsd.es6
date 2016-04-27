@@ -5,13 +5,13 @@
 
   gameSelectionDetailCtrl.$inject = [
     '$scope',
-    // 'gameFactions',
-    // 'gameModels',
+    'gameFactions',
+    'gameModels',
     'gameTemplates',
   ];
   function gameSelectionDetailCtrl($scope,
-                                   // gameFactionsModel,
-                                   // gameModelsModel,
+                                   gameFactionsModel,
+                                   gameModelsModel,
                                    gameTemplatesModel) {
     const vm = this;
     console.log('init clickGameSelectionDetailCtrl');
@@ -32,6 +32,9 @@
 
     function activate() {
       $scope.onStateChangeEvent('Game.templates.change',
+                                updateElement,
+                                $scope);
+      $scope.onStateChangeEvent('Game.models.change',
                                 updateElement,
                                 $scope);
     }
@@ -60,17 +63,18 @@
       );
     }
     function updateModelElement() {
-      // return R.thread($scope.state.game)(
-      //   R.prop('models'),
-      //   gameModelsModel.findStamp$(vm.element.stamp),
-      //   (model) => {
-      //     vm.element = model.state;
-      //   },
-      //   () => gameFactionsModel.getModelInfo(vm.element.info, state.factions),
-      //   (info) => {
-      //     vm.info = info;
-      //   }
-      // );
+      return R.thread($scope.state.game)(
+        R.prop('models'),
+        gameModelsModel.findStamp$(vm.element.stamp),
+        (model) => {
+          vm.element = model.state;
+        },
+        () => gameFactionsModel
+          .getModelInfo(vm.element.info, $scope.state.factions),
+        (info) => {
+          vm.info = info;
+        }
+      );
     }
     function labelDisplay(l) {
       return s.truncate(l, 12);

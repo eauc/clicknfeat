@@ -7,14 +7,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
   gameModelFactory.$inject = ['appState', 'jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
   // 'gameLos',
-  // 'gameModels',
-  // 'gameModelSelection',
+  'gameModels', 'gameModelSelection',
   // 'gameRuler',
   'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'allTemplates'];
   function gameModelFactory(appStateService, jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
   // gameLosModel,
-  // gameModelsModel,
-  // gameModelSelectionModel,
+  gameModelsModel, gameModelSelectionModel,
   // gameRulerModel,
   gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var gameModel = {
@@ -77,8 +75,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         dice: [],
         // ruler: gameRulerModel.create(),
         // los: gameLosModel.create(),
-        // models: gameModelsModel.create(),
-        // model_selection: gameModelSelectionModel.create(),
+        models: gameModelsModel.create(),
+        model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),
         template_selection: gameTemplateSelectionModel.create(),
         terrains: gameTerrainsModel.create(),

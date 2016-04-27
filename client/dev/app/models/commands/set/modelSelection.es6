@@ -8,6 +8,7 @@
   ];
   function setModelSelectionCommandModelFactory(commandsModel,
                                                 gameModelSelectionModel) {
+    const SELECTION_LENS = R.lensProp('model_selection');
     const setModelSelectionCommandModel = {
       executeP: setModelSelectionExecuteP,
       replayP: setModelSelectionReplayP,
@@ -17,20 +18,18 @@
                                   setModelSelectionCommandModel);
     return setModelSelectionCommandModel;
 
-    function setModelSelectionExecuteP(method, stamps, state, game) {
+    function setModelSelectionExecuteP(method, stamps, game) {
       return R.threadP(gameModelSelectionModel)(
         R.prop(method),
         R.type,
         R.rejectIfP(R.complement(R.equals('Function')),
                    `SetModelSelection unknown method ${method}`),
-        () => {
-          const args = ( R.isNil(stamps)
-                         ? [ 'local', state, game.model_selection ]
-                         : [ 'local', stamps, state, game.model_selection ]
-                       );
-          return gameModelSelectionModel[method]
-            .apply(gameModelSelectionModel, args);
-        },
+        () => ( R.isNil(stamps)
+                ? [ 'local', game.model_selection ]
+                : [ 'local', stamps, game.model_selection ]
+              ),
+        (args) => gameModelSelectionModel[method]
+          .apply(gameModelSelectionModel, args),
         (selection) => R.assoc('model_selection', selection, game),
         (game) => {
           const ctxt = {
@@ -42,11 +41,12 @@
         }
       );
     }
-    function setModelSelectionReplayP(ctxt, state, game) {
-      const selection = gameModelSelectionModel
-              .set('remote', ctxt.after, state, game.model_selection);
-      game = R.assoc('model_selection', selection, game);
-      return game;
+    function setModelSelectionReplayP(ctxt, game) {
+      return R.over(
+        SELECTION_LENS,
+        gameModelSelectionModel.set$('remote', ctxt.after),
+        game
+      );
     }
     function setModelSelectionUndoP() {
       return R.rejectP('!!! ERROR : WE SHOULD NOT BE HERE !!!');

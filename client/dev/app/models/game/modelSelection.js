@@ -9,8 +9,7 @@
     var gameModelSelectionModel = Object.create(base);
     R.deepExtend(gameModelSelectionModel, {
       inSingle: modelSelectionInSingle,
-      modeForP: modeForP,
-      checkModeP: modelSelectionCheckModeP
+      checkMode: modelCheckMode
     });
     R.curryService(gameModelSelectionModel);
     return gameModelSelectionModel;
@@ -19,20 +18,13 @@
       var stamps = R.prop(where, selection);
       return R.length(stamps) === 1 && stamps[0] === stamp;
     }
-    function modeForP(models, selection) {
+    function modelCheckMode(models, selection) {
       var local = gameModelSelectionModel.get('local', selection);
-      if (R.isEmpty(local)) {
-        return self.Promise.reject('No model selection');
-      }
+      if (R.isEmpty(local)) return null;
       if (R.length(local) === 1) {
-        return gameModelsModel.modeForStampP(local[0], models);
+        return gameModelsModel.modeForStamp(local[0], models);
       }
       return 'Models';
-    }
-    function modelSelectionCheckModeP(state, selection) {
-      return R.threadP(selection)(gameModelSelectionModel.modeForP$(state.game.models), function (mode) {
-        state.queueEventP('Modes.switchTo', mode);
-      });
     }
   }
 })();

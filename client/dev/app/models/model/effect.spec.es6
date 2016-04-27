@@ -1,4 +1,4 @@
-describe('model model', function() {
+describe('model effect model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
@@ -65,7 +65,7 @@ describe('model model', function() {
   example(function(ee) {
     describe('toggleEffectDisplay(<effect>)', function() {
       it('should toggle effect display for <model>', function() {
-        this.model = { state: { dsp: [] } };
+        this.model = { state: { eff: [] } };
 
         this.model = this.modelModel.toggleEffectDisplay(ee.flag, this.model);
         expect(this.modelModel.isEffectDisplayed(ee.flag, this.model))
@@ -79,7 +79,7 @@ describe('model model', function() {
 
     describe('setEffectDisplay(<set>)', function() {
       it('should set effect display for <model>', function() {
-        this.model = { state: { dsp: [] } };
+        this.model = { state: { eff: [] } };
 
         this.model = this.modelModel.setEffectDisplay(ee.flag, true, this.model);
         expect(this.modelModel.isEffectDisplayed(ee.flag, this.model))
@@ -91,7 +91,7 @@ describe('model model', function() {
       });
     });
   }, [
-    [ 'effect'     , 'flag' ], 
+    [ 'effect'     , 'flag' ],
     [ 'Blind'      , 'b'    ],
     [ 'Corrosion'  , 'c'    ],
     [ 'Disrupt'    , 'd'    ],

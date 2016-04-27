@@ -8,9 +8,9 @@ describe('model geom model', function() {
     }
   ]));
 
-  context('distanceToP(<factions>, <other>)', function() {
+  context('distanceTo(<factions>, <other>)', function() {
     return this.modelModel
-      .distanceToP('factions', this.other, this.model);
+      .distanceTo('factions', this.other, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -47,7 +47,7 @@ describe('model geom model', function() {
     ]);
   });
 
-  context('setB2BP(<factions>, <other>)', function() {
+  context('setB2B(<factions>, <other>)', function() {
     return this.modelModel
       .setB2BP('factions', this.other, this.model);
   }, function() {
@@ -90,7 +90,7 @@ describe('model geom model', function() {
 
   context('shortestLineTo(<factions>, <other>)', function() {
     return this.modelModel
-      .shortestLineToP('factions', this.other, this.model);
+      .shortestLineTo('factions', this.other, this.model);
   }, function() {
     beforeEach(function() {
       const info = {
@@ -116,7 +116,7 @@ describe('model geom model', function() {
   });
 
   context('baseEdgeInDirection(<factions>, <dir>)', function() {
-    return this.modelModel.baseEdgeInDirectionP('factions', 42, {
+    return this.modelModel.baseEdgeInDirection('factions', 42, {
       state: { x: 140, y: 340 }
     });
   }, function() {
@@ -161,7 +161,7 @@ describe('model geom model', function() {
 
   context('distanceToAoEP(<factions>, <aoe>)', function() {
     return this.modelModel
-      .distanceToAoEP('factions', this.aoe, this.model);
+      .distanceToAoE('factions', this.aoe, this.model);
   }, function() {
     beforeEach(function() {
       this.fake_info = {

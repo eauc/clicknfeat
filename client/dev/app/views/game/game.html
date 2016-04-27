@@ -174,7 +174,7 @@
         </g>
         <g id="game-create-terrains">
           <g ng-repeat="(index, terrain) in state.create.terrains"
-             click-game-create-terrain="terrain">
+             click-game-create-terrain>
             <rect class="create-terrain"
                   ng-attr-x="{{pos.x}}" ng-attr-y="{{pos.y}}"
                   width="0" height="0">
@@ -184,6 +184,10 @@
         <g id="game-create-models">
           <g ng-repeat="(index, model) in state.create.models"
              click-game-create-model>
+            <circle class="create-model"
+                    ng-attr-cx="{{pos.x}}" ng-attr-cy="{{pos.y}}"
+                    ng-attr-r="{{pos.radius}}">
+            </circle>
           </g>
         </g>
         <g id="game-create-templates">

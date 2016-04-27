@@ -6,21 +6,22 @@
     'gameFactions',
   ];
   function modelImageModelFactory(gameFactionsModel) {
+    const DSP_LENS = R.lensPath(['state','dsp']);
     return (modelModel) => {
       const modelImageModel = {
         isImageDisplayed: modelIsImageDisplayed,
-        getImageP: modelGetImageP,
-        setNextImageP: modelSetNextImageP,
+        getImage: modelGetImage,
+        setNextImage: modelSetNextImage,
         setImageDisplay: modelSetImageDisplay,
         toggleImageDisplay: modelToggleImageDisplay
       };
       return modelImageModel;
 
       function modelIsImageDisplayed(model) {
-        return !!R.find(R.equals('i'), model.state.dsp);
+        return !!R.find(R.equals('i'), R.viewOr([], DSP_LENS, model));
       }
-      function modelGetImageP(factions, model) {
-        return R.threadP(factions)(
+      function modelGetImage(factions, model) {
+        return R.thread(factions)(
           gameFactionsModel.getModelInfo$(model.state.info),
           R.prop('img'),
           (info_img) => {
@@ -47,40 +48,28 @@
           }
         );
       }
-      function modelSetNextImageP(factions, model) {
-        return R.threadP(factions)(
+      function modelSetNextImage(factions, model) {
+        return R.thread(factions)(
           gameFactionsModel.getModelInfo$(model.state.info),
           R.prop('img'),
           R.filter(R.propEq('type','default')),
-          (imgs) => {
-            return (model.state.img >= imgs.length-1) ? 0 : model.state.img + 1;
-          },
+          (imgs) => (model.state.img >= imgs.length-1) ? 0 : model.state.img + 1,
           (next_img) => R.assocPath(['state','img'], next_img, model)
         );
       }
       function modelSetImageDisplay(set, model) {
-        if(set) {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.compose(R.uniq, R.append('i')),
-                        model);
-        }
-        else {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.reject(R.equals('i')),
-                        model);
-        }
+        const update = ( set
+                         ? R.compose(R.uniq, R.append('i'))
+                         : R.reject(R.equals('i'))
+                       );
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleImageDisplay(model) {
-        if(modelModel.isImageDisplayed(model)) {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.reject(R.equals('i')),
-                        model);
-        }
-        else {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.append('i'),
-                        model);
-        }
+        const update = ( modelModel.isImageDisplayed(model)
+                         ? R.reject(R.equals('i'))
+                         : R.append('i')
+                       );
+        return R.over(DSP_LENS, update, model);
       }
     };
   }

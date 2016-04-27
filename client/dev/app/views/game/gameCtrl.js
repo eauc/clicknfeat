@@ -19,6 +19,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
     // vm.doInvitePlayer = doInvitePlayer;
+    self.window.gameUpdate = gameUpdate;
 
     activate();
 
@@ -90,6 +91,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
     // }
+
+    function gameUpdate(fn) {
+      $scope.stateEvent('Game.update', fn);
+    }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {

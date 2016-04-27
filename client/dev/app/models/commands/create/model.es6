@@ -3,13 +3,15 @@
     .factory('createModelCommand', createModelCommandModelFactory);
 
   createModelCommandModelFactory.$inject = [
+    'appState',
     'createElementCommand',
     'commands',
     'model',
     'gameModels',
     'gameModelSelection',
   ];
-  function createModelCommandModelFactory(createElementCommandModel,
+  function createModelCommandModelFactory(appStateService,
+                                          createElementCommandModel,
                                           commandsModel,
                                           modelModel,
                                           gameModelsModel,
@@ -19,14 +21,14 @@
                                       modelModel,
                                       gameModelsModel,
                                       gameModelSelectionModel,
-                                      tryToCreateModelP);
+                                      tryToCreateModel);
     commandsModel.registerCommand('createModel', createModelCommandModel);
     return createModelCommandModel;
 
-    function tryToCreateModelP(state, model) {
+    function tryToCreateModel(model) {
+      const state = appStateService.current();
       return modelModel
-        .createP(state.factions, model)
-        .catch(R.always(null));
+        .create(state.factions, model);
     }
   }
 })();

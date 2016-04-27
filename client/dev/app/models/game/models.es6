@@ -11,28 +11,27 @@
     const base = gameElementsModel('model', modelModel);
     const gameModelsModel = Object.create(base);
     R.deepExtend(gameModelsModel, {
-      findStampsBetweenPointsP: modelsFindStampBetweenPointsP,
-      modeForStampP: modelsModeForStampP
+      findStampsBetweenPoints: modelsFindStampBetweenPoints,
+      modeForStamp: modelsModeForStamp
     });
 
     R.curryService(gameModelsModel);
     return gameModelsModel;
 
-    function modelsFindStampBetweenPointsP(top_left, bottom_right, models) {
-      return new self.Promise(function(resolve, reject) {
-        const stamps = R.thread(models)(
-          gameModelsModel.all,
-          R.filter(modelModel.isBetweenPoints$(top_left, bottom_right)),
-          R.map(R.path(['state','stamp']))
-        );
-        if(R.isEmpty(stamps)) reject('No model found between points');
-        else resolve(stamps);
-      });
+    function modelsFindStampBetweenPoints(top_left, bottom_right, models) {
+      return R.thread(models)(
+        gameModelsModel.all,
+        R.filter(modelModel.isBetweenPoints$(top_left, bottom_right)),
+        R.map(R.path(['state','stamp']))
+      );
     }
-    function modelsModeForStampP(stamp, models) {
-      return R.threadP(models)(
-        gameModelsModel.findStampP$(stamp),
-        modelModel.modeFor$
+    function modelsModeForStamp(stamp, models) {
+      return R.thread(models)(
+        gameModelsModel.findStamp$(stamp),
+        R.when(
+          R.exists,
+          modelModel.modeFor
+        )
       );
     }
   }

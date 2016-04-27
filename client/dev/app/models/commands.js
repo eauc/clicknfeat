@@ -5,13 +5,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 (function () {
-  angular.module('clickApp.services').factory('commands', commandsModelFactory).factory('allCommands', [
-  // 'createModelCommand',
-  // 'deleteModelCommand',
-  // 'setModelSelectionCommand',
-  // 'lockModelsCommand',
-  // 'onModelsCommand',
-  'createTemplateCommand', 'deleteTemplateCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand',
+  angular.module('clickApp.services').factory('commands', commandsModelFactory).factory('allCommands', ['createModelCommand', 'deleteModelCommand', 'setModelSelectionCommand', 'lockModelsCommand', 'onModelsCommand', 'createTemplateCommand', 'deleteTemplateCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setLayersCommand',
   // 'setLosCommand',
   // 'setRulerCommand',
   'setScenarioCommand', function () {

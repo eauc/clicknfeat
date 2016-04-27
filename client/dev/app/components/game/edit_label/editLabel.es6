@@ -23,12 +23,9 @@
                       'addLabel',
                       [new_label],
                       [vm.selection.state.stamp]
-                    ])
-        .then(() => {
-          vm.new_label = '';
-          vm.doClose();
-          $scope.$digest();
-        });
+                    ]);
+      vm.new_label = '';
+      vm.doClose();
     }
   }
 
@@ -61,6 +58,7 @@
       function closeOnEscape(event) {
         if(event.keyCode === 27) { // ESC
           closeEditLabel();
+          event.preventDefault();
         }
       }
       function closeEditLabel() {
@@ -72,7 +70,7 @@
         container.style.left = 0+'px';
         container.style.top = 0+'px';
       }
-      function openEditLabel(_event_, cmd, selection) {
+      function openEditLabel(_event_, [cmd, selection]) {
         // console.log('openEditLabel');
         scope.edit_label.cmd = cmd;
         scope.edit_label.selection = selection;

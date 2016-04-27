@@ -11,6 +11,7 @@
     const CREATE_LENS = R.lensProp('create');
     return function createElementModeModel(type) {
       const createElement_actions = Object.create(commonModeModel.actions);
+      createElement_actions.modeBackToDefault = modeBackToDefault;
       createElement_actions.moveMap = moveMap;
       createElement_actions.create = create;
 
@@ -38,6 +39,10 @@
       function onLeave() {
         appStateService.emit('Game.moveMap.disable');
       }
+      function modeBackToDefault(state) {
+        commonModeModel.actions.modeBackToDefault();
+        return R.set(CREATE_LENS, {}, state);
+      }
       function moveMap(state, coord) {
         return R.over(
           CREATE_LENS,
@@ -49,7 +54,8 @@
         const is_flipped = R.path(['ui_state','flip_map'], state);
         const create = R.thread(state)(
           R.view(CREATE_LENS),
-          updateCreateBase$(event['click#'])
+          updateCreateBase$(event['click#']),
+          R.assoc('factions', state.factions)
         );
         appStateService.chainReduce('Game.command.execute',
                                     `create${s.capitalize(type)}`,

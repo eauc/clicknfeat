@@ -10,7 +10,7 @@
     'sprayTemplate',
     'gameTemplates',
     'gameTemplateSelection',
-    // 'gameModels',
+    'gameModels',
   ];
   function sprayTemplateModeModelFactory(appStateService,
                                          modesModel,
@@ -18,14 +18,14 @@
                                          templateModeModel,
                                          sprayTemplateModel,
                                          gameTemplatesModel,
-                                         gameTemplateSelectionModel) {
-                                         // gameModelsModel) {
+                                         gameTemplateSelectionModel,
+                                         gameModelsModel) {
     const template_actions = Object.create(templateModeModel.actions);
     template_actions.spraySize6 = spraySize6;
     template_actions.spraySize8 = spraySize8;
     template_actions.spraySize10 = spraySize10;
-    // template_actions.setOriginModel = setOriginModel;
-    // template_actions.setTargetModel = setTargetModel;
+    template_actions.setOriginModel = setOriginModel;
+    template_actions.setTargetModel = setTargetModel;
     const moves = [
       ['rotateLeft', 'left'],
       ['rotateRight', 'right'],
@@ -92,36 +92,43 @@
                                   'onTemplates',
                                   ['setSizeP', [10], stamps]);
     }
-    // function setOriginModel(state, event) {
-    //   const stamps = gameTemplateSelectionModel
-    //         .get('local', state.game.template_selection);
-    //   appStateService.chainReduce('Game.command.execute',
-    //                               'onTemplates',
-    //                               [ 'setOriginP',
-    //                                 [state.factions, event['click#'].target],
-    //                                 stamps
-    //                               ]);
-    // }
-    // function setTargetModel(state, event) {
-    //   const stamps = gameTemplateSelectionModel
-    //           .get('local', state.game.template_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('templates'),
-    //     gameTemplatesModel.findStampP$(stamps[0]),
-    //     sprayTemplateModel.origin,
-    //     findOriginModel$(state),
-    //     (origin_model) => {
-    //       if(R.isNil(origin_model)) return null;
+    function setOriginModel(state, event) {
+      const stamps = gameTemplateSelectionModel
+            .get('local', state.game.template_selection);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onTemplates',
+                                  [ 'setOriginP',
+                                    [state.factions, event['click#'].target],
+                                    stamps
+                                  ]);
+    }
+    function setTargetModel(state, event) {
+      const stamps = gameTemplateSelectionModel
+              .get('local', state.game.template_selection);
+      R.thread(state.game)(
+        R.prop('templates'),
+        gameTemplatesModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          R.pipe(
+            sprayTemplateModel.origin,
+            findOriginModel$(state),
+            (origin_model) => {
+              if(R.isNil(origin_model)) return;
 
-    //       appStateService.chainReduce('Game.command.execute',
-    //                                   'onTemplates',
-    //                                   [ 'setTargetP',
-    //                                     [state.factions, origin_model, event['click#'].target],
-    //                                     stamps
-    //                                   ]);
-    //     }
-    //   );
-    // }
+              appStateService.chainReduce('Game.command.execute',
+                                          'onTemplates',
+                                          [ 'setTargetP',
+                                            [state.factions,
+                                             origin_model,
+                                             event['click#'].target],
+                                            stamps
+                                          ]);
+            }
+          )
+        )
+      );
+    }
     function buildTemplateMove(move, small, state) {
       const stamps = gameTemplateSelectionModel
               .get('local', state.game.template_selection);
@@ -140,11 +147,11 @@
         }
       );
     }
-    function findOriginModel(_state_, stamp) {
+    function findOriginModel(state, stamp) {
       if(R.isNil(stamp)) return null;
 
-      // return gameModelsModel
-      //     .findStamp(stamp, state.game.models);
+      return gameModelsModel
+          .findStamp(stamp, state.game.models);
     }
   }
 })();

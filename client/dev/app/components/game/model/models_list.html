@@ -1,3 +1,141 @@
 <g ng-repeat="(i,model) in state.game.models[type] track by model.state.stamp"
-   click-game-model>
+   click-game-model
+   ng-attr-transform="{{render.transform}}"
+   ng-class="{
+             'remote-selection': selection.remote,
+             'local-selection': selection.local,
+             'single-remote': selection.single_remote,
+             'single-local': selection.single_local
+             }">
+  <circle class="model-ctrl-area"
+          ng-if="render.ctrl"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.ctrl}}">
+  </circle>
+  <circle class="model-area"
+          ng-show="render.area"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.area}}">
+  </circle>
+  <circle class="color-aura"
+          style="filter: url(#aura-filter)"
+          ng-show="render.aura.show"
+          ng-style="{ fill: render.aura.color }"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.aura.radius}}">
+  </circle>
+  <circle class="state-aura"
+          style="filter: url(#aura-filter)"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.aura.radius}}">
+  </circle>
+  <path class="model-melee"
+        ng-show="render.melee.strike.show"
+        ng-attr-d="{{render.melee.strike.path}}">
+  </path>
+  <path class="model-melee"
+        ng-show="render.melee.reach.show"
+        ng-attr-d="{{render.melee.reach.path}}">
+  </path>
+  <path class="model-melee"
+        ng-show="render.melee.melee.show"
+        ng-attr-d="{{render.melee.melee.path}}">
+  </path>
+  <circle class="model-base"
+          data-stamp="{{render.stamp}}"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.radius}}"
+          ng-style="{
+                    fill: render.base_color,
+                    }">
+    <title>{{render.title}}</title>
+  </circle>
+  <line class="model-los"
+        ng-attr-x1="{{render.cx}}" ng-attr-y1="{{render.cy}}"
+        ng-attr-x2="{{render.dx}}" ng-attr-y2="{{render.dy}}">
+  </line>
+  <line class="model-los"
+        ng-attr-x1="{{render.flx}}" ng-attr-y1="{{render.cy}}"
+        ng-attr-x2="{{render.frx}}" ng-attr-y2="{{render.cy}}">
+  </line>
+  <image class="model-image"
+         x="0" y="0"
+         ng-show="render.img"
+         ng-attr-width="{{render.width}}"
+         ng-attr-height="{{render.height}}"
+         xlink:href="{{render.img}}">
+  </image>
+  <circle class="model-edge"
+          ng-attr-cx="{{render.cx}}"
+          ng-attr-cy="{{render.cy}}"
+          ng-attr-r="{{render.radius}}">
+  </circle>
+  <image class="model-image"
+         ng-show="render.lock.show"
+         ng-attr-x="{{render.lock.x}}"
+         ng-attr-y="{{render.lock.y}}"
+         width="10" height="10"
+         xlink:href="/data/icons/Lock.png">
+  </image>
+  <line class="model-los-selection"
+        ng-attr-x1="{{render.cx}}" ng-attr-y1="{{render.cy}}"
+        ng-attr-x2="{{render.cx}}" ng-attr-y2="{{render.los.dy}}">
+  </line>
+  <line class="model-los-selection"
+        ng-attr-x1="{{render.los.lx}}" ng-attr-y1="{{render.cy}}"
+        ng-attr-x2="{{render.los.rx}}" ng-attr-y2="{{render.cy}}">
+  </line>
+  <image class="model-image"
+         ng-repeat="e in ['b','c','d','e','f','k','l','t']"
+         ng-show="render.effects[e].show"
+         ng-attr-x="{{render.effects[e].x}}"
+         ng-attr-y="{{render.effects[e].y}}"
+         width="10" height="10"
+         xlink:href="{{render.effects[e].link}}">
+  </image>
+  <g ng-if="render.dmg.show">
+    <line class="model-damage-bar"
+          style="stroke: #F00;"
+          ng-attr-x1="{{render.dmg.lx}}" ng-attr-y1="{{render.dmg.ly}}"
+          ng-attr-x2="{{render.dmg.rx}}" ng-attr-y2="{{render.dmg.ry}}">
+    </line>
+    <line class="model-damage-bar"
+          style="stroke: #0F0;"
+          ng-attr-x1="{{render.dmg.x}}" ng-attr-y1="{{render.dmg.ly}}"
+          ng-attr-x2="{{render.dmg.rx}}" ng-attr-y2="{{render.dmg.ry}}">
+    </line>
+  </g>
+  <g ng-if="render.field.show">
+    <line class="model-damage-bar"
+          style="stroke: #066;"
+          ng-attr-x1="{{render.field.lx}}" ng-attr-y1="{{render.field.ly}}"
+          ng-attr-x2="{{render.field.rx}}" ng-attr-y2="{{render.field.ry}}">
+    </line>
+    <line class="model-damage-bar"
+          style="stroke: #0FF;"
+          ng-attr-x1="{{render.field.x}}" ng-attr-y1="{{render.field.ly}}"
+          ng-attr-x2="{{render.field.rx}}" ng-attr-y2="{{render.field.ry}}">
+    </line>
+  </g>
+  <g click-game-element-label="render.label">
+  </g>
+  <g click-game-element-label="render.counter">
+  </g>
+  <image class="model-image"
+         ng-show="render.souls.show"
+         ng-attr-x="{{render.souls.cx}}"
+         ng-attr-y="{{render.souls.cy}}"
+         width="20" height="20"
+         ng-attr-transform="{{render.souls.transform}}"
+         xlink:href="/data/icons/Soul.png">
+  </image>
+  <g click-game-element-label="render.souls">
+  </g>
+  <g click-game-element-label="render.unit">
+  </g>
 </g>

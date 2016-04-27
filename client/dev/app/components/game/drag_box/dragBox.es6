@@ -21,7 +21,7 @@
       function hideDragbox() {
         box.style.visibility = 'hidden';
       }
-      function updateDragbox(_event_, start, end) {
+      function updateDragbox(_event_, [start, end]) {
         const x = Math.min(start.x, end.x);
         const y = Math.min(start.y, end.y);
         const width = Math.abs(start.x - end.x);

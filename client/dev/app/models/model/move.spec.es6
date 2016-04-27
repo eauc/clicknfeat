@@ -3,9 +3,9 @@ describe('model move model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      spyOn(this.modelModel, 'checkStateP')
+      spyOn(this.modelModel, 'checkState')
         .and.callFake((_f_,_t_,m) => m);
-      this.modelModel.checkStateP$ = R.curryN(3, this.modelModel.checkStateP);
+      this.modelModel.checkState$ = R.curryN(3, this.modelModel.checkState);
     }
   ]));
 
@@ -27,16 +27,16 @@ describe('model move model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', 'target', this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
   });
 
-  context('setPosition_(<pos>)', function() {
+  context('setPositionP_(<pos>)', function() {
     return this.modelModel
-      .setPosition_('factions', this.target, { x: 15, y: 42 }, this.model);
+      .setPositionP_('factions', this.target, { x: 15, y: 42 }, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -52,7 +52,7 @@ describe('model move model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', 'target', this.model);
     });
 
@@ -77,7 +77,7 @@ describe('model move model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', 'target', this.context);
     });
 
@@ -101,7 +101,7 @@ describe('model move model', function() {
         });
 
         it('should check state', function() {
-          expect(this.modelModel.checkStateP)
+          expect(this.modelModel.checkState)
             .toHaveBeenCalledWith('factions', null, this.context);
         });
 
@@ -156,7 +156,7 @@ describe('model move model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', null, this.context);
     });
 
@@ -182,7 +182,7 @@ describe('model move model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', null, this.context);
     });
 

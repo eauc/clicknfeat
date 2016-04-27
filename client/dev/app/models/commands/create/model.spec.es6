@@ -1,31 +1,31 @@
-xdescribe('createModelCommand model', function() {
+describe('createModelCommand model', function() {
   beforeEach(inject([
     'createModelCommand',
     function(createModelCommandModel) {
       this.createModelCommandModel = createModelCommandModel;
 
+      this.appStateService = spyOnService('appState');
+      this.appStateService.current.and.returnValue({
+        factions: 'factions'
+      });
       this.modelModel = spyOnService('model');
       this.gameModelsModel = spyOnService('gameModels');
       this.gameModelSelectionModel = spyOnService('gameModelSelection');
 
-      this.state = {
-        factions: 'factions',
-        queueChangeEventP: jasmine.createSpy('queueChangeEventP')
-      };
       this.game = { models: 'models',
                     model_selection: 'selection'
                   };
 
       var stamp_index = 1;
-      this.modelModel.createP.resolveWith((_f_, m) => {
-        return { state: R.assoc('stamp', 'stamp'+(stamp_index++), m) };
+      this.modelModel.create.and.callFake((_f_, m) => {
+        return { state: R.assoc('stamp', `stamp${stamp_index++}`, m) };
       });
     }
   ]));
 
-  context('executeP(<create>, <flip>, <state>, <game>)', function() {
+  context('executeP(<create>, <flip>, <game>)', function() {
     return this.createModelCommandModel
-      .executeP(this.create, this.flip, this.state, this.game);
+      .executeP(this.create, this.flip, this.game);
   }, function() {
     beforeEach(function() {
       this.create = {
@@ -48,19 +48,19 @@ xdescribe('createModelCommand model', function() {
     });
 
     it('should create new models from <create>', function() {
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
           info: [ 'legion', 'models', 'locks', 'absylonia1' ],
           x: 240, y: 240, r: 225,
           l: [ 'toto' ]
         });
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
           info: ['legion','models','units','archers','entries','unit','grunt'],
           x: 260, y: 240, r: 180,
           l: [ 'titi' ]
         });
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
           info: ['legion','models','units','archers','entries','unit','grunt'],
           x: 280, y: 240, r: 135,
@@ -72,19 +72,19 @@ xdescribe('createModelCommand model', function() {
       this.flip = true;
     }, function() {
       it('should flip new models positions', function() {
-        expect(this.modelModel.createP)
+        expect(this.modelModel.create)
           .toHaveBeenCalledWith('factions', {
             info: [ 'legion', 'models', 'locks', 'absylonia1' ],
             x: 240, y: 240, r: 405,
             l: [ 'toto' ]
           });
-        expect(this.modelModel.createP)
+        expect(this.modelModel.create)
           .toHaveBeenCalledWith('factions', {
             info: ['legion','models','units','archers','entries','unit','grunt'],
             x: 220, y: 240, r: 360,
             l: [ 'titi' ]
           });
-        expect(this.modelModel.createP)
+        expect(this.modelModel.create)
           .toHaveBeenCalledWith('factions', {
             info: ['legion','models','units','archers','entries','unit','grunt'],
             x: 200, y: 240, r: 315,
@@ -94,7 +94,7 @@ xdescribe('createModelCommand model', function() {
     });
 
     context('create models fails', function() {
-      this.modelModel.createP.rejectWith('reason');
+      this.modelModel.create.and.returnValue(null);
       this.expectContextError();
     }, function() {
       it('should reject command', function() {
@@ -113,13 +113,15 @@ xdescribe('createModelCommand model', function() {
                      stamp: 'stamp1'
                    }
           },
-          { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { state: { info: [ 'legion', 'models', 'units', 'archers',
+                             'entries', 'unit', 'grunt' ],
                      x: 260, y: 240, r: 180,
                      l: [ 'titi' ],
                      stamp: 'stamp2'
                    }
           },
-          { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { state: { info: [ 'legion', 'models', 'units', 'archers',
+                             'entries', 'unit', 'grunt' ],
                      x: 280, y: 240, r: 135,
                      l: [ 'tata' ],
                      stamp: 'stamp3'
@@ -132,13 +134,7 @@ xdescribe('createModelCommand model', function() {
 
     it('should set local modelSelection to new model', function() {
       expect(this.gameModelSelectionModel.set)
-        .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'],
-                              this.state, 'selection');
-    });
-
-    it('should emit createModel event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.create');
+        .toHaveBeenCalledWith('local', ['stamp1', 'stamp2', 'stamp3'], 'selection');
     });
 
     it('should return context', function() {
@@ -152,7 +148,8 @@ xdescribe('createModelCommand model', function() {
         });
       expect(this.modelModel.saveState)
         .toHaveBeenCalledWith({
-          state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          state: { info: [ 'legion', 'models', 'units', 'archers',
+                           'entries', 'unit', 'grunt' ],
                    x: 260, y: 240, r: 180,
                    l: [ 'titi' ],
                    stamp: 'stamp2'
@@ -160,7 +157,8 @@ xdescribe('createModelCommand model', function() {
         });
       expect(this.modelModel.saveState)
         .toHaveBeenCalledWith({
-          state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          state: { info: [ 'legion', 'models', 'units', 'archers',
+                           'entries', 'unit', 'grunt' ],
                    x: 280, y: 240, r: 135,
                    l: [ 'tata' ],
                    stamp: 'stamp3'
@@ -177,9 +175,9 @@ xdescribe('createModelCommand model', function() {
     });
   });
 
-  context('replayP(<ctxt>, <state>, <game>)', function() {
+  context('replayP(<ctxt>, <game>)', function() {
     return this.createModelCommandModel
-      .replayP(this.ctxt, this.state, this.game);
+      .replayP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -188,11 +186,13 @@ xdescribe('createModelCommand model', function() {
             x: 240, y: 240,
             stamp: 'stamp'
           },
-          { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { info: [ 'legion', 'models', 'units', 'archers',
+                    'entries', 'unit', 'grunt' ],
             x: 260, y: 240,
             stamp: 'stamp'
           },
-          { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { info: [ 'legion', 'models', 'units', 'archers',
+                    'entries', 'unit', 'grunt' ],
             x: 280, y: 240,
             stamp: 'stamp'
           }
@@ -202,28 +202,30 @@ xdescribe('createModelCommand model', function() {
     });
 
     it('should create new models from <ctxt.models>', function() {
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
           info: [ 'legion', 'models', 'locks', 'absylonia1' ],
           x: 240, y: 240,
           stamp: 'stamp'
         });
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
-          info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          info: [ 'legion', 'models', 'units', 'archers',
+                  'entries', 'unit', 'grunt' ],
           x: 260, y: 240,
           stamp: 'stamp'
         });
-      expect(this.modelModel.createP)
+      expect(this.modelModel.create)
         .toHaveBeenCalledWith('factions', {
-          info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          info: [ 'legion', 'models', 'units', 'archers',
+                  'entries', 'unit', 'grunt' ],
           x: 280, y: 240,
           stamp: 'stamp'
         });
     });
 
     context('create models fails', function() {
-      this.modelModel.createP.rejectWith('reason');
+      this.modelModel.create.and.returnValue(null);
       this.expectContextError();
     }, function() {
       it('should reject command', function() {
@@ -241,12 +243,14 @@ xdescribe('createModelCommand model', function() {
                      stamp: 'stamp1'
                    }
           },
-          { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { state: { info: [ 'legion', 'models', 'units', 'archers',
+                             'entries', 'unit', 'grunt' ],
                      x: 260, y: 240,
                      stamp: 'stamp2'
                    }
           },
-          { state: { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { state: { info: [ 'legion', 'models', 'units', 'archers',
+                             'entries', 'unit', 'grunt' ],
                      x: 280, y: 240,
                      stamp: 'stamp3'
                    }
@@ -258,19 +262,13 @@ xdescribe('createModelCommand model', function() {
 
     it('should set remote modelSelection to new model', function() {
       expect(this.gameModelSelectionModel.set)
-        .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
-    });
-
-    it('should emit createModel event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.create');
+        .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'], 'selection');
     });
   });
 
-  context('undoP(<ctxt>, <state>, <game>)', function() {
+  context('undoP(<ctxt>, <game>)', function() {
     return this.createModelCommandModel
-      .undoP(this.ctxt, this.state, this.game);
+      .undoP(this.ctxt, this.game);
   }, function() {
     beforeEach(function() {
       this.ctxt = {
@@ -279,11 +277,13 @@ xdescribe('createModelCommand model', function() {
             x: 240, y: 240,
             stamp: 'stamp1'
           },
-          { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { info: [ 'legion', 'models', 'units', 'archers',
+                    'entries', 'unit', 'grunt' ],
             x: 260, y: 240,
             stamp: 'stamp2'
           },
-          { info: [ 'legion', 'models', 'units', 'archers', 'entries', 'unit', 'grunt' ],
+          { info: [ 'legion', 'models', 'units', 'archers',
+                    'entries', 'unit', 'grunt' ],
             x: 280, y: 240,
             stamp: 'stamp3'
           }
@@ -301,25 +301,10 @@ xdescribe('createModelCommand model', function() {
 
     it('should remove <ctxt.model> from modelSelection', function() {
       expect(this.gameModelSelectionModel.removeFrom)
-        .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'],
-                              this.state, 'selection');
+        .toHaveBeenCalledWith('local', ['stamp1','stamp2','stamp3'], 'selection');
       expect(this.gameModelSelectionModel.removeFrom)
         .toHaveBeenCalledWith('remote', ['stamp1','stamp2','stamp3'],
-                              this.state, 'gameModelSelection.removeFrom.returnValue');
-    });
-
-    it('should emit deleteModel events', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.delete.stamp1');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.delete.stamp2');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.delete.stamp3');
-    });
-
-    it('should emit createModel event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.create');
+                              'gameModelSelection.removeFrom.returnValue');
     });
   });
 });

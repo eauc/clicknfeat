@@ -5,6 +5,7 @@
 
   modelRulerServiceFactory.$inject = [];
   function modelRulerServiceFactory() {
+    var RULER_MAX_LENGTH_LENS = R.lensPath(['state', 'rml']);
     return function () {
       var modelRulerService = {
         rulerMaxLength: modelRulerMaxLength,
@@ -13,10 +14,10 @@
       return modelRulerService;
 
       function modelRulerMaxLength(model) {
-        return R.path(['state', 'rml'], model);
+        return R.view(RULER_MAX_LENGTH_LENS, model);
       }
       function modelSetRulerMaxLength(value, model) {
-        return R.assocPath(['state', 'rml'], value, model);
+        return R.set(RULER_MAX_LENGTH_LENS, value, model);
       }
     };
   }

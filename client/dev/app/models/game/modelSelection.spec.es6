@@ -1,4 +1,4 @@
-xdescribe('gameModelSelection model', function() {
+describe('gameModelSelection model', function() {
   beforeEach(inject([
     'gameModelSelection',
     function(gameModelSelectionModel) {
@@ -6,20 +6,13 @@ xdescribe('gameModelSelection model', function() {
 
       this.gameModelsModel = spyOnService('gameModels');
       this.modelModel = spyOnService('model');
-      spyOn(this.gameModelSelectionModel, 'checkModeP');
-
-      this.state = jasmine.createSpyObj('state', [
-        'queueEventP', 'queueChangeEventP'
-      ]);
-      this.state.game = { models: 'models' };
-      this.state.modes = 'modes';
     }
   ]));
 
   example(function(e) {
     context('set('+e.where+', <stamps>, <state>)', function() {
       return this.gameModelSelectionModel
-        .set(e.where, this.after, this.state, this.selection);
+        .set(e.where, this.after, this.selection);
     }, function() {
       beforeEach(function() {
         this.selection = { local: [ 'before1', 'before2' ],
@@ -38,27 +31,11 @@ xdescribe('gameModelSelection model', function() {
         expect(this.gameModelSelectionModel.in(e.where, 'before2', this.context))
           .toBeFalsy();
       });
-
-      it('should emit changeModel event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.after1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.after2');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.before1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.before2');
-      });
-
-      if(e.where === 'local') {
-        testChangeLocalSelection();
-      }
     });
 
     context('removeFrom('+e.where+', <stamps>, <state>)', function() {
       return this.gameModelSelectionModel
-        .removeFrom(e.where, this.remove,
-                    this.state, this.selection);
+        .removeFrom(e.where, this.remove, this.selection);
     }, function() {
       beforeEach(function() {
         this.selection = { local: [ 'stamp1', 'stamp2' ],
@@ -75,26 +52,11 @@ xdescribe('gameModelSelection model', function() {
         expect(this.gameModelSelectionModel.in(e.where, 'stamp3', this.context))
           .toBeFalsy();
       });
-
-      it('should emit changeModel event', function() {
-        // also emit stamp1 to update single selection styles
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp2');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp3');
-      });
-
-      if(e.where === 'local') {
-        testChangeLocalSelection();
-      }
     });
 
     context('addTo('+e.where+', <stamps>, <state>)', function() {
       return this.gameModelSelectionModel
-        .addTo(e.where, this.add,
-               this.state, this.selection);
+        .addTo(e.where, this.add, this.selection);
     }, function() {
       beforeEach(function() {
         this.add = ['stamp2', 'stamp3'];
@@ -109,25 +71,11 @@ xdescribe('gameModelSelection model', function() {
         expect(this.gameModelSelectionModel.in(e.where, 'stamp3', this.context))
           .toBeTruthy();
       });
-
-      it('should emit changeModel event', function() {
-        // also emit stamp1 to update single selection styles
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp2');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp3');
-      });
-
-      if(e.where === 'local') {
-        testChangeLocalSelection();
-      }
     });
 
     context('clear('+e.where+', <stamps>, <state>)', function() {
       return this.gameModelSelectionModel
-        .clear(e.where, this.state, this.selection);
+        .clear(e.where, this.selection);
     }, function() {
       beforeEach(function() {
         this.selection = { local: ['stamp1', 'stamp2'],
@@ -141,20 +89,6 @@ xdescribe('gameModelSelection model', function() {
         expect(this.gameModelSelectionModel.in(e.where, 'stamp2', this.context))
           .toBeFalsy();
       });
-
-      it('should emit changeModel event', function() {
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp1');
-        expect(this.state.queueChangeEventP)
-          .toHaveBeenCalledWith('Game.model.change.stamp2');
-      });
-
-      if(e.where === 'local') {
-        it('should emite changeLocalModelSelection', function() {
-          expect(this.state.queueChangeEventP)
-            .toHaveBeenCalledWith('Game.model.selection.local.change');
-        });
-      }
     });
 
     describe('inSingle(<where>, <stamp>)', function() {
@@ -182,36 +116,30 @@ xdescribe('gameModelSelection model', function() {
     [ 'remote' ],
   ]);
 
-  context('checkMode(<state>)', function() {
+  context('checkMode(<models>)', function() {
     return this.gameModelSelectionModel
-      .checkModeP(this.state, this.selection);
+      .checkMode(this.models, this.selection);
   }, function() {
     beforeEach(function() {
-      this.gameModelSelectionModel.checkModeP.and.callThrough();
-      this.state = { modes: 'modes',
-                     game: { models: 'models' },
-                     queueEventP: jasmine.createSpy('queueEventP')
-                   };
+      // this.gameModelSelectionModel.checkMode.and.callThrough();
+      this.models = 'models';
       this.selection = { local: [] };
     });
 
     context('when <selection> is empty', function() {
       this.selection.local = [];
-      this.expectContextError();
     }, function() {
-      it('should reject check', function() {
-        expect(this.contextError).toEqual([
-          'No model selection'
-        ]);
+      it('should return null', function() {
+        expect(this.context).toBe(null);
       });
     });
 
     context('when <selection> is multiple', function() {
       this.selection.local = [ 'stamp1', 'stamp2' ];
     }, function() {
-      it('should switch to Models mode', function() {
-        expect(this.state.queueEventP)
-          .toHaveBeenCalledWith('Modes.switchTo','Models');
+      it('should return Models', function() {
+        expect(this.context)
+          .toBe('Models');
       });
     });
 
@@ -219,19 +147,11 @@ xdescribe('gameModelSelection model', function() {
       this.selection.local = [ 'stamp' ];
     }, function() {
       it('should switch to mode for model', function() {
-        expect(this.state.queueEventP)
-          .toHaveBeenCalledWith('Modes.switchTo',
-                                'gameModels.modeForStampP.returnValue');
+        expect(this.gameModelsModel.modeForStamp)
+          .toHaveBeenCalledWith('stamp', 'models');
+        expect(this.context)
+          .toBe('gameModels.modeForStamp.returnValue');
       });
     });
   });
-
-  function testChangeLocalSelection() {
-    it('should emit changeLocalModelSelection', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.selection.local.change');
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.model.selection.local.change');
-    });
-  }
 });

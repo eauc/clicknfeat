@@ -32,7 +32,8 @@
         shiftRightP: moveElementP(elementShiftRight),
         shiftUpP: moveElementP(elementShiftUp),
         shiftDownP: moveElementP(elementShiftDown),
-        renderLabel: elementRenderLabel
+        renderLabel: elementRenderLabel,
+        renderText: elementRenderText
       };
 
       R.curryService(elementModel);
@@ -192,22 +193,33 @@
                                   }, element_state) {
         const text = R.propOr([], 'l', element_state).join(' ');
         const show = R.length(text) > 0 ? true : false;
-        let r = (rotate_with_model
-                 ? element_state.r
-                 : 0
-                );
-        r += (flipped ? 180 : 0);
-        const transform = `rotate(${r},${flip_center.x},${flip_center.y})`;
+        let rotate = (rotate_with_model
+                      ? element_state.r
+                      : 0
+                     );
+        const label = elementModel.renderText({
+          rotate, flipped, flip_center, text_center
+        }, text);
+        label.show = show;
+        return label;
+      }
+      function elementRenderText({ rotate = 0,
+                                   flipped = false,
+                                   flip_center = { x: 240, y: 240 },
+                                   text_center = { x: 240, y: 240 },
+                                 }, text) {
+        text += '';
+        rotate += (flipped ? 180 : 0);
+        const transform = `rotate(${rotate},${flip_center.x},${flip_center.y})`;
         const x = text_center.x;
         const y = text_center.y;
         const bkg_width = R.length(text) * 5;
         const bkg_x = text_center.x - bkg_width / 2;
         const bkg_y = text_center.y - 5;
         return {
-          text: text,
-          show: show,
-          x: x, y: y, transform: transform,
-          bkg_x: bkg_x, bkg_y: bkg_y, bkg_width: bkg_width
+          text,
+          x, y, transform,
+          bkg_x, bkg_y, bkg_width
         };
       }
     };

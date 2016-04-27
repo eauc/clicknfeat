@@ -8,11 +8,15 @@
     'gameMap',
     'template',
     'gameTemplateSelection',
+    'gameModels',
+    'gameFactions',
   ];
   function gameTemplateDirectiveFactory(appStateService,
                                         gameMapService,
                                         templateModel,
-                                        gameTemplateSelectionModel) {
+                                        gameTemplateSelectionModel,
+                                        gameModelsModel,
+                                        gameFactionsModel) {
     const gameTemplateDirective = {
       restrict: 'A',
       scope: true,
@@ -77,7 +81,30 @@
         remote: remote,
         selected: selected
       };
-    }
+
+      if(local &&
+         R.exists(template.state.o)) {
+        R.thread(state.game.models)(
+          gameModelsModel.findStamp$(template.state.o),
+          R.unless(
+            R.isNil,
+            R.pipe(
+              (origin) => [
+                origin,
+                gameFactionsModel.getModelInfo(origin.state.info, state.factions)
+              ],
+              ([origin, info]) => {
+                scope.render.origin = {
+                  cx: origin.state.x,
+                  cy: origin.state.y,
+                  radius: info.base_radius
+                };
+              }
+            )
+          )
+        );
+      }
+}
   }
 
   gameTemplatesListDirectiveFactory.$inject = [];

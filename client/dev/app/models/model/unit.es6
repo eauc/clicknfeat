@@ -4,6 +4,8 @@
 
   modelModelFactory.$inject = [];
   function modelModelFactory() {
+    const DSP_LENS = R.lensPath(['state','dsp']);
+    const UNIT_LENS = R.lensPath(['state','u']);
     return (modelModel) => {
       const modelUnitModel = {
         isUnitDisplayed: modelIsUnitDisplayed,
@@ -16,40 +18,30 @@
       return modelUnitModel;
 
       function modelIsUnitDisplayed(model) {
-        return !!R.find(R.equals('u'), model.state.dsp);
+        return !!R.find(R.equals('u'), R.viewOr([], DSP_LENS, model));
       }
       function modelUnit(model) {
-        return R.prop('u', model.state);
+        return R.viewOr(0, UNIT_LENS, model);
       }
       function modelUnitIs(unit, model) {
-        return R.propEq('u', unit, model.state);
+        return unit === R.view(UNIT_LENS, model);
       }
       function modelSetUnit(unit, model) {
-        return R.assocPath(['state','u'], unit, model);
+        return R.set(UNIT_LENS, unit, model);
       }
       function modelSetUnitDisplay(set, model) {
-        if(set) {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.compose(R.uniq, R.append('u')),
-                        model);
-        }
-        else {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.reject(R.equals('u')),
-                        model);
-        }
+        const update = ( set
+                         ? R.compose(R.uniq, R.append('u'))
+                         : R.reject(R.equals('u'))
+                       );
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleUnitDisplay(model) {
-        if(modelModel.isUnitDisplayed(model)) {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.reject(R.equals('u')),
-                        model);
-        }
-        else {
-          return R.over(R.lensPath(['state','dsp']),
-                        R.append('u'),
-                        model);
-        }
+        const update = ( modelModel.isUnitDisplayed(model)
+                         ? R.reject(R.equals('u'))
+                         : R.append('u')
+                       );
+        return R.over(DSP_LENS, update, model);
       }
     };
   }

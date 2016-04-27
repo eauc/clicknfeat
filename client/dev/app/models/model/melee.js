@@ -5,6 +5,7 @@
 
   modelMeleeServiceFactory.$inject = [];
   function modelMeleeServiceFactory() {
+    var DSP_LENS = R.lensPath(['state', 'dsp']);
     return function (modelService) {
       var modelMeleeService = {
         isMeleeDisplayed: modelIsMeleeDisplayed,
@@ -17,18 +18,12 @@
         return !!R.find(R.equals(melee), model.state.dsp);
       }
       function modelSetMeleeDisplay(melee, set, model) {
-        if (set) {
-          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append(melee)), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals(melee)), model);
-        }
+        var update = set ? R.compose(R.uniq, R.append(melee)) : R.reject(R.equals(melee));
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleMeleeDisplay(melee, model) {
-        if (modelService.isMeleeDisplayed(melee, model)) {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals(melee)), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.append(melee), model);
-        }
+        var update = modelService.isMeleeDisplayed(melee, model) ? R.reject(R.equals(melee)) : R.append(melee);
+        return R.over(DSP_LENS, update, model);
       }
     };
   }

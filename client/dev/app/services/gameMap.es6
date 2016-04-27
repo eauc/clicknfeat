@@ -3,11 +3,11 @@
     .factory('gameMap', gameMapServiceFactory);
 
   gameMapServiceFactory.$inject = [
-    // 'gameModels',
+    'gameModels',
     'gameTemplates',
     'gameTerrains',
   ];
-  function gameMapServiceFactory(// gameModelsModel,
+  function gameMapServiceFactory(gameModelsModel,
                                  gameTemplatesModel,
                                  gameTerrainsModel) {
     const gameMapService = {
@@ -58,9 +58,9 @@
       if(eventTargetTypeIs('template')) {
         return emitTypeEvent(gameTemplatesModel, 'template');
       }
-      // if(eventTargetTypeIs('model-base')) {
-      //   return emitTypeEvent(gameModelsModel, 'model');
-      // }
+      if(eventTargetTypeIs('model-base')) {
+        return emitTypeEvent(gameModelsModel, 'model');
+      }
       if(eventTargetTypeIs('terrain-image')) {
         return emitTypeEvent(gameTerrainsModel, 'terrain');
       }

@@ -5,14 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.directives').controller('clickGameSelectionDetailCtrl', gameSelectionDetailCtrl).directive('clickGameSelectionDetail', gameSelectionDetailDirectiveFactory);
 
-  gameSelectionDetailCtrl.$inject = ['$scope',
-  // 'gameFactions',
-  // 'gameModels',
-  'gameTemplates'];
-  function gameSelectionDetailCtrl($scope,
-  // gameFactionsModel,
-  // gameModelsModel,
-  gameTemplatesModel) {
+  gameSelectionDetailCtrl.$inject = ['$scope', 'gameFactions', 'gameModels', 'gameTemplates'];
+  function gameSelectionDetailCtrl($scope, gameFactionsModel, gameModelsModel, gameTemplatesModel) {
     var vm = this;
     console.log('init clickGameSelectionDetailCtrl');
 
@@ -32,6 +26,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function activate() {
       $scope.onStateChangeEvent('Game.templates.change', updateElement, $scope);
+      $scope.onStateChangeEvent('Game.models.change', updateElement, $scope);
     }
     var updateOnOpenType = {
       template: updateTemplateElement,
@@ -54,17 +49,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       });
     }
     function updateModelElement() {
-      // return R.thread($scope.state.game)(
-      //   R.prop('models'),
-      //   gameModelsModel.findStamp$(vm.element.stamp),
-      //   (model) => {
-      //     vm.element = model.state;
-      //   },
-      //   () => gameFactionsModel.getModelInfo(vm.element.info, state.factions),
-      //   (info) => {
-      //     vm.info = info;
-      //   }
-      // );
+      return R.thread($scope.state.game)(R.prop('models'), gameModelsModel.findStamp$(vm.element.stamp), function (model) {
+        vm.element = model.state;
+      }, function () {
+        return gameFactionsModel.getModelInfo(vm.element.info, $scope.state.factions);
+      }, function (info) {
+        vm.info = info;
+      });
     }
     function labelDisplay(l) {
       return s.truncate(l, 12);

@@ -5,9 +5,11 @@
 
   modelAreaModelFactory.$inject = ['gameFactions'];
   function modelAreaModelFactory(gameFactionsModel) {
+    var DSP_LENS = R.lensPath(['state', 'dsp']);
+    var AREA_LENS = R.lensPath(['state', 'are']);
     return function () {
       var modelAreaModel = {
-        isCtrlAreaDisplayedP: modelIsCtrlAreaDisplayedP,
+        isCtrlAreaDisplayed: modelIsCtrlAreaDisplayed,
         setCtrlAreaDisplay: modelSetCtrlAreaDisplay,
         toggleCtrlAreaDisplay: modelToggleCtrlAreaDisplay,
         isAreaDisplayed: modelIsAreaDisplayed,
@@ -17,36 +19,32 @@
       };
       return modelAreaModel;
 
-      function modelIsCtrlAreaDisplayedP(factions, model) {
-        return R.threadP(factions)(gameFactionsModel.getModelInfo$(model.state.info), function (info) {
+      function modelIsCtrlAreaDisplayed(factions, model) {
+        return R.thread(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.ifElse(R.isNil, function () {
+          return false;
+        }, function (info) {
           return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), model.state.dsp);
-        });
+        }));
       }
       function modelSetCtrlAreaDisplay(set, model) {
-        if (set) {
-          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('a')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('a')), model);
-        }
+        var update = set ? R.compose(R.uniq, R.append('a')) : R.reject(R.equals('a'));
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleCtrlAreaDisplay(model) {
-        if (R.find(R.equals('a'), model.state.dsp)) {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('a')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.append('a'), model);
-        }
+        var update = R.find(R.equals('a'), model.state.dsp) ? R.reject(R.equals('a')) : R.append('a');
+        return R.over(DSP_LENS, update, model);
       }
       function modelIsAreaDisplayed(model) {
-        return R.exists(model.state.are);
+        return R.exists(R.view(AREA_LENS, model));
       }
       function modelAreaDisplay(model) {
-        return model.state.are;
+        return R.view(AREA_LENS, model);
       }
       function modelSetAreaDisplay(area, model) {
-        return R.assocPath(['state', 'are'], area, model);
+        return R.set(AREA_LENS, area, model);
       }
       function modelToggleAreaDisplay(area, model) {
-        return R.over(R.lensPath(['state', 'are']), function (are) {
+        return R.over(AREA_LENS, function (are) {
           return area === are ? null : area;
         }, model);
       }

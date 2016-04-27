@@ -3,55 +3,45 @@
     .directive('clickGameCreateModel', gameCreateModelDirectiveFactory);
 
   gameCreateModelDirectiveFactory.$inject = [
-    'gameFactions',
+    '$rootScope',
     'gameMap',
+    'model',
   ];
-  function gameCreateModelDirectiveFactory(gameFactionsService,
-                                           gameMapService) {
+  function gameCreateModelDirectiveFactory($rootScope,
+                                           gameMapService,
+                                           modelModel) {
     return {
       restrict: 'A',
       link: link
     };
 
-    function link(scope, parent) {
-      const map = document.getElementById('map');
-      const svgNS = map.namespaceURI;
+    function link(scope) {
+      console.log('clickCreateModel');
 
-      console.log('clickCreateModel', scope.index);
-      const state = scope.state;
-      const model = R.nth(scope.index, state.create.models);
-      let element;
+      updateCreateModel(scope);
+      $rootScope.onStateChangeEvent('Create.base.change', onUpdateCreateModel, scope);
 
-      R.threadP(state.factions)(
-        gameFactionsService.getModelInfoP$(model.info),
-        (info) => {
-          element = createModelElement(info, document, svgNS, parent[0]);
-          updateCreateModel();
-
-          scope.onStateChangeEvent('Game.create.update', updateCreateModel, scope);
-        }
-      );
-
-      function updateCreateModel() {
-        if(R.isNil(R.path(['create','models'], state))) return;
-
-        const is_flipped = gameMapService.isFlipped(map);
-        setModelPosition(state.create.base, is_flipped, model, element);
+      function onUpdateCreateModel() {
+        updateCreateModel(scope);
+        scope.$digest();
       }
     }
-    function createModelElement(info, document, svgNS, parent) {
-      const element = document.createElementNS(svgNS, 'circle');
-      element.classList.add('create-model');
-      element.setAttribute('cx', '240');
-      element.setAttribute('cy', '240');
-      element.setAttribute('r', info.base_radius);
-      parent.appendChild(element);
-      return element;
-    }
-    function setModelPosition(base, is_flipped, model, element) {
-      const coeff = is_flipped ? -1 : 1;
-      element.setAttribute('cx', (base.x + coeff * model.x)+'');
-      element.setAttribute('cy', (base.y + coeff * model.y)+'');
+
+    function updateCreateModel(scope) {
+      const state = $rootScope.state;
+      const create = state.create;
+      if(R.isNil(create.base)) return;
+      const model = scope.model;
+
+      const map = document.getElementById('map');
+      const is_flipped = gameMapService.isFlipped(map);
+      const coeff = is_flipped ? 1 : -1;
+
+      scope.pos = modelModel.render(is_flipped, state.factions, R.thread(model)(
+        R.assoc('x', state.create.base.x + coeff * model.x),
+        R.assoc('y', state.create.base.y + coeff * model.y)
+      ));
+      console.warn('createModel.update', scope.pos);
     }
   }
 })();

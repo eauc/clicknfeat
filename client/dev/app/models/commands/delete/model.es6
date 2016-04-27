@@ -3,13 +3,15 @@
     .factory('deleteModelCommand', deleteModelCommandModelFactory);
 
   deleteModelCommandModelFactory.$inject = [
+    'appState',
     'deleteElementCommand',
     'commands',
     'model',
     'gameModels',
     'gameModelSelection',
   ];
-  function deleteModelCommandModelFactory(deleteElementCommandModel,
+  function deleteModelCommandModelFactory(appStateService,
+                                          deleteElementCommandModel,
                                           commandsModel,
                                           modelModel,
                                           gameModelsModel,
@@ -19,14 +21,14 @@
                                       modelModel,
                                       gameModelsModel,
                                       gameModelSelectionModel,
-                                      tryToCreateModelP);
+                                      tryToCreateModel);
     commandsModel.registerCommand('deleteModel', deleteModelCommandModel);
     return deleteModelCommandModel;
 
-    function tryToCreateModelP(state, model) {
+    function tryToCreateModel(model) {
+      const state = appStateService.current();
       return modelModel
-        .createP(state.factions, model)
-        .catch(R.always(null));
+        .create(state.factions, model);
     }
   }
 })();

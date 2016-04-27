@@ -3,28 +3,23 @@
 (function () {
   angular.module('clickApp.services').factory('defaultMode', defaultModeModelFactory);
 
-  defaultModeModelFactory.$inject = ['appState', 'modes', 'settings', 'commonMode',
-  // 'gameModels',
-  // 'gameModelSelection',
-  'gameTemplateSelection', 'gameTerrainSelection'];
+  defaultModeModelFactory.$inject = ['appState', 'modes', 'settings', 'commonMode', 'gameModels', 'gameModelSelection', 'gameTemplateSelection', 'gameTerrainSelection'];
+  var MODEL_SELECTION_LENS = R.lensPath(['game', 'model_selection']);
   var TERRAIN_SELECTION_LENS = R.lensPath(['game', 'terrain_selection']);
   var TEMPLATE_SELECTION_LENS = R.lensPath(['game', 'template_selection']);
-  function defaultModeModelFactory(appStateService, modesModel, settingsModel, commonModeModel,
-  // gameModelsModel,
-  // gameModelSelectionModel,
-  gameTemplateSelectionModel, gameTerrainSelectionModel) {
+  function defaultModeModelFactory(appStateService, modesModel, settingsModel, commonModeModel, gameModelsModel, gameModelSelectionModel, gameTemplateSelectionModel, gameTerrainSelectionModel) {
     var default_actions = Object.create(commonModeModel.actions);
-    // default_actions.setModelSelection = setModelSelection;
-    // default_actions.toggleModelSelection = toggleModelSelection;
-    // default_actions.modelSelectionDetail = modelSelectionDetail;
+    default_actions.setModelSelection = setModelSelection;
+    default_actions.toggleModelSelection = toggleModelSelection;
+    default_actions.modelSelectionDetail = modelSelectionDetail;
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
-    // default_actions.dragStartMap = dragStartMap;
-    // default_actions.dragMap = dragMap;
-    // default_actions.dragEndMap = dragEndMap;
+    default_actions.dragStartMap = dragStartMap;
+    default_actions.dragMap = dragMap;
+    default_actions.dragEndMap = dragEndMap;
 
     var default_default_bindings = {
       enterRulerMode: 'ctrl+r',
@@ -50,49 +45,25 @@
     });
     return default_mode;
 
-    // function setModelSelection(state, event) {
-    //   return R.threadP()(
-    //     clearTemplateSelection$(state),
-    //     clearTerrainSelection$(state),
-    //     () => event['click#'].target.state.stamp,
-    //     (stamp) => state.eventP('Game.command.execute',
-    //                             'setModelSelection',
-    //                             ['set', [stamp]])
-    //   );
-    // }
-    // function toggleModelSelection(state, event) {
-    //   return R.threadP()(
-    //     clearTemplateSelection$(state),
-    //     clearTerrainSelection$(state),
-    //     () => event['click#'].target.state.stamp,
-    //     (stamp) => {
-    //       if(gameModelSelectionModel.in('local', stamp,
-    //                                     state.game.model_selection)) {
-    //         return state.eventP('Game.command.execute',
-    //                             'setModelSelection',
-    //                             ['removeFrom', [stamp]]);
-    //       }
-    //       else {
-    //         return state.eventP('Game.command.execute',
-    //                             'setModelSelection',
-    //                             ['addTo', [stamp]]);
-    //       }
-    //     }
-    //   );
-    // }
-    // function modelSelectionDetail(state, event) {
-    //   return R.threadP()(
-    //     clearTemplateSelection$(state),
-    //     clearTerrainSelection$(state),
-    //     () => event['click#'].target.state.stamp,
-    //     (stamp) => {
-    //       state.queueChangeEventP('Game.selectionDetail.open',
-    //                               'model', event['click#'].target);
-    //       return state.eventP('Game.command.execute',
-    //                           'setModelSelection', ['set', [stamp]]);
-    //     }
-    //   );
-    // }
+    function setModelSelection(state, event) {
+      var stamp = event['click#'].target.state.stamp;
+      appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+      return R.thread(state)(clearTemplateSelection, clearTerrainSelection);
+    }
+    function toggleModelSelection(state, event) {
+      var stamp = event['click#'].target.state.stamp;
+      var is_in_local = gameModelSelectionModel.in('local', stamp, R.view(MODEL_SELECTION_LENS, state));
+      if (is_in_local) {
+        appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['removeFrom', [stamp]]);
+      } else {
+        appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['addTo', [stamp]]);
+      }
+      return R.threadP(state)(clearTemplateSelection, clearTerrainSelection);
+    }
+    function modelSelectionDetail(state, event) {
+      appStateService.emit('Game.selectionDetail.open', 'model', event['click#'].target);
+      return setModelSelection(state, event);
+    }
     function selectTemplate(state, event) {
       return R.thread(state)(clearTerrainSelection, R.over(TEMPLATE_SELECTION_LENS, gameTemplateSelectionModel.set$('local', [event['click#'].target.state.stamp])));
     }
@@ -109,35 +80,29 @@
     // function enterLosMode(state) {
     //   return state.eventP('Modes.switchTo', 'Los');
     // }
-    // function dragStartMap(state, event) {
-    //   state.queueChangeEventP('Game.dragBox.enable', event.start, event.now);
-    // }
-    // function dragMap(state, event) {
-    //   state.queueChangeEventP('Game.dragBox.enable', event.start, event.now);
-    // }
-    // function dragEndMap(state, event) {
-    //   state.queueChangeEventP('Game.dragBox.disable');
-    //   const top_left = {
-    //     x: Math.min(event.now.x, event.start.x),
-    //     y: Math.min(event.now.y, event.start.y)
-    //   };
-    //   const bottom_right = {
-    //     x: Math.max(event.now.x, event.start.x),
-    //     y: Math.max(event.now.y, event.start.y)
-    //   };
-    //   return R.threadP(state.game)(
-    //     R.prop('models'),
-    //     (models) => gameModelsModel
-    //       .findStampsBetweenPointsP(top_left, bottom_right, models)
-    //       .catch(R.always([])),
-    //     (stamps) => {
-    //       if(R.isEmpty(stamps)) return null;
-    //       return state.eventP('Game.command.execute',
-    //                           'setModelSelection',
-    //                           ['set', stamps]);
-    //     }
-    //   );
-    // }
+    function dragStartMap(_state_, event) {
+      appStateService.emit('Game.dragBox.enable', event.start, event.now);
+    }
+    function dragMap(_state_, event) {
+      appStateService.emit('Game.dragBox.enable', event.start, event.now);
+    }
+    function dragEndMap(state, event) {
+      appStateService.emit('Game.dragBox.disable');
+      var top_left = {
+        x: Math.min(event.now.x, event.start.x),
+        y: Math.min(event.now.y, event.start.y)
+      };
+      var bottom_right = {
+        x: Math.max(event.now.x, event.start.x),
+        y: Math.max(event.now.y, event.start.y)
+      };
+      R.thread(state.game)(R.prop('models'), function (models) {
+        return gameModelsModel.findStampsBetweenPoints(top_left, bottom_right, models);
+      }, function (stamps) {
+        if (R.isEmpty(stamps)) return;
+        appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', stamps]);
+      });
+    }
     function clearTemplateSelection(state) {
       return R.over(TEMPLATE_SELECTION_LENS, R.unless(gameTemplateSelectionModel.isEmpty$('local'), gameTemplateSelectionModel.clear$('local')), state);
     }

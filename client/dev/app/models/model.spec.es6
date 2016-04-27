@@ -3,15 +3,15 @@ describe('model model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      spyOn(this.modelModel, 'checkStateP')
+      spyOn(this.modelModel, 'checkState')
         .and.callFake(function(_f_,_t_,m) { return m; });
       this.gameFactionsModel = spyOnService('gameFactions');
       spyOn(R, 'guid').and.returnValue('newGuid');
     }
   ]));
 
-  context('createP(<state>)', function() {
-    return this.modelModel.createP('factions', this.state);
+  context('create(<state>)', function() {
+    return this.modelModel.create('factions', this.state);
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'] };
@@ -29,12 +29,9 @@ describe('model model', function() {
     context('when <state.info> is unknown', function() {
       this.gameFactionsModel.getModelInfo
         .and.returnValue(null);
-      this.expectContextError();
     }, function() {
-      it('should reject creation', function() {
-        expect(this.contextError).toEqual([
-          'Unknown model'
-        ]);
+      it('should return null', function() {
+        expect(this.context).toBe(null);
       });
     });
 
@@ -46,7 +43,7 @@ describe('model model', function() {
                    };
     }, function() {
       it('should check <state>', function() {
-        expect(this.modelModel.checkStateP)
+        expect(this.modelModel.checkState)
           .toHaveBeenCalledWith('factions', null, {
             state: { x: 240, y: 0, r: 0,
                      dmg: { n: 0, t: 0 },
@@ -272,12 +269,12 @@ describe('model model', function() {
     });
   });
 
-  context('checkStateP(<factions>, <target>)', function() {
+  context('checkState(<factions>, <target>)', function() {
     return this.modelModel
-      .checkStateP('factions', this.target, this.model);
+      .checkState('factions', this.target, this.model);
   }, function() {
     beforeEach(function() {
-      this.modelModel.checkStateP.and.callThrough();
+      this.modelModel.checkState.and.callThrough();
       this.gameFactionsModel.getModelInfo
         .and.returnValue({
           base_radius: 7.874

@@ -43,7 +43,7 @@ describe('model damage model', function() {
 
   context('setWarriorDamage(<factions>, <i>)', function() {
     return this.modelModel
-      .setWarriorDamageP('factions', this.i, this.model);
+      .setWarriorDamage('factions', this.i, this.model);
   }, function() {
     beforeEach(function() {
       this.gameFactionsModel.getModelInfo
@@ -81,7 +81,7 @@ describe('model damage model', function() {
 
   context('setFieldDamage(<factions>, <i>)', function() {
     return this.modelModel
-      .setFieldDamageP('factions', this.i, this.model);
+      .setFieldDamage('factions', this.i, this.model);
   }, function() {
     beforeEach(function() {
       this.gameFactionsModel.getModelInfo
@@ -118,7 +118,7 @@ describe('model damage model', function() {
 
   context('setGridDamage(<factions>, <line>, <col>)', function() {
     return this.modelModel
-      .setGridDamageP('factions', this.line, this.col, this.model);
+      .setGridDamage('factions', this.line, this.col, this.model);
   }, function() {
     beforeEach(function() {
       this.gameFactionsModel.getModelInfo
@@ -164,7 +164,7 @@ describe('model damage model', function() {
 
   context('setGridColDamage(<factions>, <col>)', function() {
     return this.modelModel
-      .setGridColDamageP('factions', this.col, this.model);
+      .setGridColDamage('factions', this.col, this.model);
   }, function() {
     beforeEach(function() {
       this.gameFactionsModel.getModelInfo

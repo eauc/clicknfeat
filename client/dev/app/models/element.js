@@ -33,7 +33,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         shiftRightP: moveElementP(elementShiftRight),
         shiftUpP: moveElementP(elementShiftUp),
         shiftDownP: moveElementP(elementShiftDown),
-        renderLabel: elementRenderLabel
+        renderLabel: elementRenderLabel,
+        renderText: elementRenderText
       };
 
       R.curryService(elementModel);
@@ -154,9 +155,26 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
         var text = R.propOr([], 'l', element_state).join(' ');
         var show = R.length(text) > 0 ? true : false;
-        var r = rotate_with_model ? element_state.r : 0;
-        r += flipped ? 180 : 0;
-        var transform = 'rotate(' + r + ',' + flip_center.x + ',' + flip_center.y + ')';
+        var rotate = rotate_with_model ? element_state.r : 0;
+        var label = elementModel.renderText({
+          rotate: rotate, flipped: flipped, flip_center: flip_center, text_center: text_center
+        }, text);
+        label.show = show;
+        return label;
+      }
+      function elementRenderText(_ref2, text) {
+        var _ref2$rotate = _ref2.rotate;
+        var rotate = _ref2$rotate === undefined ? 0 : _ref2$rotate;
+        var _ref2$flipped = _ref2.flipped;
+        var flipped = _ref2$flipped === undefined ? false : _ref2$flipped;
+        var _ref2$flip_center = _ref2.flip_center;
+        var flip_center = _ref2$flip_center === undefined ? { x: 240, y: 240 } : _ref2$flip_center;
+        var _ref2$text_center = _ref2.text_center;
+        var text_center = _ref2$text_center === undefined ? { x: 240, y: 240 } : _ref2$text_center;
+
+        text += '';
+        rotate += flipped ? 180 : 0;
+        var transform = 'rotate(' + rotate + ',' + flip_center.x + ',' + flip_center.y + ')';
         var x = text_center.x;
         var y = text_center.y;
         var bkg_width = R.length(text) * 5;
@@ -164,7 +182,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         var bkg_y = text_center.y - 5;
         return {
           text: text,
-          show: show,
           x: x, y: y, transform: transform,
           bkg_x: bkg_x, bkg_y: bkg_y, bkg_width: bkg_width
         };

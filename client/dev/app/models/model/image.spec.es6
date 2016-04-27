@@ -1,4 +1,4 @@
-describe('model model', function() {
+describe('model image model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
@@ -7,8 +7,8 @@ describe('model model', function() {
     }
   ]));
 
-  context('getImageP(<factions>)', function() {
-    return this.modelModel.getImageP('factions', this.model);
+  context('getImage(<factions>)', function() {
+    return this.modelModel.getImage('factions', this.model);
   }, function() {
     beforeEach(function() {
       this.gameFactionsModel.getModelInfo
@@ -149,8 +149,8 @@ describe('model model', function() {
     ]);
   });
 
-  context('setNextImageP(<factions>)', function() {
-    return this.modelModel.setNextImageP('factions', this.model);
+  context('setNextImage(<factions>)', function() {
+    return this.modelModel.setNextImage('factions', this.model);
   }, function() {
     beforeEach(function() {
       this.model = {

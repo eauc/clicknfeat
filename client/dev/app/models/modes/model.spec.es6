@@ -18,7 +18,7 @@ describe('modelMode model', function() {
     }
   ]));
 
-  context('when user starts charge on model', function() {
+  xcontext('when user starts charge on model', function() {
     return this.modelModeModel.actions
       .startCharge(this.state);
   }, function() {
@@ -36,7 +36,7 @@ describe('modelMode model', function() {
     });
   });
 
-  context('when user starts place on model', function() {
+  xcontext('when user starts place on model', function() {
     return this.modelModeModel.actions
       .startPlace(this.state);
   }, function() {

@@ -5,6 +5,7 @@
 
   modelLeaderModelFactory.$inject = [];
   function modelLeaderModelFactory() {
+    var DSP_LENS = R.lensPath(['state', 'dsp']);
     return function (modelModel) {
       var modelLeaderModel = {
         isLeaderDisplayed: modelIsLeaderDisplayed,
@@ -14,21 +15,15 @@
       return modelLeaderModel;
 
       function modelIsLeaderDisplayed(model) {
-        return !!R.find(R.equals('l'), model.state.dsp);
+        return !!R.find(R.equals('l'), R.viewOr([], DSP_LENS, model));
       }
       function modelSetLeaderDisplay(set, model) {
-        if (set) {
-          return R.over(R.lensPath(['state', 'dsp']), R.compose(R.uniq, R.append('l')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('l')), model);
-        }
+        var update = set ? R.compose(R.uniq, R.append('l')) : R.reject(R.equals('l'));
+        return R.over(DSP_LENS, update, model);
       }
       function modelToggleLeaderDisplay(model) {
-        if (modelModel.isLeaderDisplayed(model)) {
-          return R.over(R.lensPath(['state', 'dsp']), R.reject(R.equals('l')), model);
-        } else {
-          return R.over(R.lensPath(['state', 'dsp']), R.append('l'), model);
-        }
+        var update = modelModel.isLeaderDisplayed(model) ? R.reject(R.equals('l')) : R.append('l');
+        return R.over(DSP_LENS, update, model);
       }
     };
   }
