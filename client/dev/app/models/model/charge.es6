@@ -7,7 +7,7 @@
   ];
   function modelChargeModelFactory(pointModel) {
     const CHARGE_EPSILON = 0.1;
-    const STATE_LENS = STATE_LENS;
+    const STATE_LENS = R.lensProp('state');
     const CHARGE_LENS = R.lensPath(['state','cha']);
     const CHARGE_TARGET_LENS = R.lensPath(['state','cha','t']);
     const CHARGE_MAX_LENGTH_LENS = R.lensPath(['state','cml']);

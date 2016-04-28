@@ -8,7 +8,7 @@
       'createModelMode',
       'modelsMode',
       'modelMode',
-      // 'modelChargeMode',
+      'modelChargeMode',
       // 'modelPlaceMode',
       'createTemplateMode',
       'aoeTemplateMode',

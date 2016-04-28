@@ -6,7 +6,7 @@
   modelChargeModelFactory.$inject = ['point'];
   function modelChargeModelFactory(pointModel) {
     var CHARGE_EPSILON = 0.1;
-    var STATE_LENS = STATE_LENS;
+    var STATE_LENS = R.lensProp('state');
     var CHARGE_LENS = R.lensPath(['state', 'cha']);
     var CHARGE_TARGET_LENS = R.lensPath(['state', 'cha', 't']);
     var CHARGE_MAX_LENGTH_LENS = R.lensPath(['state', 'cml']);

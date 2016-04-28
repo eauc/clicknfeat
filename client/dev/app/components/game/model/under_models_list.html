@@ -1,0 +1,56 @@
+<g ng-repeat="(i,model) in state.game.models.active track by model.state.stamp"
+   click-game-under-model>
+  <rect class="model-charge-path"
+        ng-show="model.render.path.show"
+        ng-attr-x="{{model.render.path.x}}"
+        ng-attr-y="{{model.render.path.y}}"
+        ng-attr-width="{{2*model.render.radius}}" height="800"
+        ng-attr-transform="{{model.render.path.transform}}">
+  </rect>
+  <g ng-attr-transform="{{model.render.transform}}"
+     ng-class="{
+               'remote-selection': model.selection.remote,
+               'local-selection': model.selection.local,
+               'single-remote': model.selection.single_remote,
+               'single-local': model.selection.single_local
+               }">
+    <circle class="model-ctrl-area"
+            ng-if="model.render.ctrl"
+            ng-attr-cx="{{model.render.cx}}"
+            ng-attr-cy="{{model.render.cy}}"
+            ng-attr-r="{{model.render.ctrl}}">
+    </circle>
+    <circle class="model-area"
+            ng-show="model.render.area"
+            ng-attr-cx="{{model.render.cx}}"
+            ng-attr-cy="{{model.render.cy}}"
+            ng-attr-r="{{model.render.area}}">
+    </circle>
+    <circle class="color-aura"
+            style="filter: url(#aura-filter)"
+            ng-show="model.render.aura.show"
+            ng-style="{ fill: model.render.aura.color }"
+            ng-attr-cx="{{model.render.cx}}"
+            ng-attr-cy="{{model.render.cy}}"
+            ng-attr-r="{{model.render.aura.radius}}">
+    </circle>
+    <circle class="state-aura"
+            style="filter: url(#aura-filter)"
+            ng-attr-cx="{{model.render.cx}}"
+            ng-attr-cy="{{model.render.cy}}"
+            ng-attr-r="{{model.render.aura.radius}}">
+    </circle>
+    <path class="model-melee"
+          ng-show="model.render.melee.strike.show"
+          ng-attr-d="{{model.render.melee.strike.path}}">
+    </path>
+    <path class="model-melee"
+          ng-show="model.render.melee.reach.show"
+          ng-attr-d="{{model.render.melee.reach.path}}">
+    </path>
+    <path class="model-melee"
+          ng-show="model.render.melee.melee.show"
+          ng-attr-d="{{model.render.melee.melee.path}}">
+    </path>
+  </g>
+</g>

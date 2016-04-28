@@ -4,6 +4,7 @@ describe('modelMode model', function() {
     function(modelModeModel) {
       this.modelModeModel = modelModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.gameModelSelectionModel = spyOnService('gameModelSelection');
       this.gameModelSelectionModel.get
         .and.returnValue(['stamp']);
@@ -18,19 +19,19 @@ describe('modelMode model', function() {
     }
   ]));
 
-  xcontext('when user starts charge on model', function() {
+  context('when user starts charge on model', function() {
     return this.modelModeModel.actions
       .startCharge(this.state);
   }, function() {
     it('should start charge for model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels',
                               [ 'startChargeP', [], ['stamp'] ]);
     });
 
     it('should switch to charge mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo',
                               'ModelCharge');
     });
@@ -41,14 +42,14 @@ describe('modelMode model', function() {
       .startPlace(this.state);
   }, function() {
     it('should start place for model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels',
                               ['startPlaceP', [], ['stamp']]);
     });
 
     it('should switch to ModelPlace mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo',
                               'ModelPlace');
     });

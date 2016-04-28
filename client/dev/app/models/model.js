@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('model', modelModelFactory);
 
-  modelModelFactory.$inject = ['settings', 'element', 'gameFactions', 'modelArea', 'modelAura', 'modelCharge', 'modelCounter', 'modelDamage', 'modelEffect', 'modelGeom', 'modelImage', 'modelIncorporeal', 'modelLeader', 'modelMelee', 'modelMove', 'modelPlace', 'modelRuler', 'modelUnit', 'modelWreck'];
-  function modelModelFactory(settingsModel, elementModel, gameFactionsModel, modelAreaModel, modelAuraModel, modelChargeModel, modelCounterModel, modelDamageModel, modelEffectModel, modelGeomModel, modelImageModel, modelIncorporealModel, modelLeaderModel, modelMeleeModel, modelMoveModel, modelPlaceModel, modelUnitModel, modelWreckModel, modelRulerModel) {
+  modelModelFactory.$inject = ['settings', 'point', 'element', 'gameFactions', 'modelArea', 'modelAura', 'modelCharge', 'modelCounter', 'modelDamage', 'modelEffect', 'modelGeom', 'modelImage', 'modelIncorporeal', 'modelLeader', 'modelMelee', 'modelMove', 'modelPlace', 'modelRuler', 'modelUnit', 'modelWreck'];
+  function modelModelFactory(settingsModel, pointModel, elementModel, gameFactionsModel, modelAreaModel, modelAuraModel, modelChargeModel, modelCounterModel, modelDamageModel, modelEffectModel, modelGeomModel, modelImageModel, modelIncorporealModel, modelLeaderModel, modelMeleeModel, modelMoveModel, modelPlaceModel, modelUnitModel, modelWreckModel, modelRulerModel) {
     var EFFECTS = [['b', '/data/icons/Blind.png'], ['c', '/data/icons/Corrosion.png'], ['d', '/data/icons/BoltBlue.png'], ['f', '/data/icons/Fire.png'], ['e', '/data/icons/BoltYellow.png'], ['k', '/data/icons/KD.png'], ['t', '/data/icons/Stationary.png']];
     var DEFAULT_MOVES = {
       Move: 10,
@@ -116,7 +116,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return R.assoc(key, R.map(R.always(0), info[key]), mem);
       }, {}), R.assoc('f', 0), R.assoc('t', 0));
     }
-    function modelRender(is_flipped, factions, state) {
+    function modelRender(_ref, factions, state) {
+      var is_flipped = _ref.is_flipped;
+      var charge_target = _ref.charge_target;
+
       var info = R.thread(factions)(gameFactionsModel.getModelInfo$(state.info), R.defaultTo({ base_radius: 5.905 }));
       var is_wreck = modelModel.isWreckDisplayed({ state: state });
       var img = is_wreck ? modelModel.getWreckImage(factions, { state: state }) : modelModel.getImage(factions, { state: state });
@@ -170,7 +173,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       };
       var label = base.renderLabel(label_options, state);
       var counter_options = {
-        rotate: state.r,
+        rotate: 0,
         flipped: is_flipped,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx, y: cy + 2 }
@@ -178,7 +181,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var counter = base.renderText(counter_options, state.c);
       counter.show = modelModel.isCounterDisplayed('c', { state: state });
       var souls_options = {
-        rotate: state.r,
+        rotate: 0,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx + radius * 0.8 + 5,
           y: cy - radius - 5 }
@@ -188,7 +191,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       souls.cx = souls.x - 10;
       souls.cy = souls.y - 10;
       var unit_options = {
-        rotate: state.r,
+        rotate: 0,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx - radius * 0.7 - 5,
           y: cy - radius * 0.7 - 5 }
@@ -213,19 +216,19 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       };
       var area = modelModel.isAreaDisplayed({ state: state }) ? modelModel.areaDisplay({ state: state }) * 10 + radius : null;
       var ctrl = modelModel.isCtrlAreaDisplayed(factions, { state: state }) ? (info.focus || info.fury) * 20 + radius : null;
-      var effects = R.thread(EFFECTS)(R.filter(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 1);
+      var effects = R.thread(EFFECTS)(R.filter(function (_ref2) {
+        var _ref3 = _slicedToArray(_ref2, 1);
 
-        var key = _ref2[0];
+        var key = _ref3[0];
         return modelModel.isEffectDisplayed(key, { state: state });
       }), function (actives) {
         var base_x = img.width / 2 - R.length(actives) * 10 / 2;
         var base_y = img.height / 2 + info.base_radius + 1;
-        return R.addIndex(R.reduce)(function (mem, _ref3, i) {
-          var _ref4 = _slicedToArray(_ref3, 2);
+        return R.addIndex(R.reduce)(function (mem, _ref4, i) {
+          var _ref5 = _slicedToArray(_ref4, 2);
 
-          var key = _ref4[0];
-          var link = _ref4[1];
+          var key = _ref5[0];
+          var link = _ref5[1];
 
           return R.assoc(key, {
             show: modelModel.isEffectDisplayed(key, { state: state }),
@@ -239,6 +242,77 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         x: cx - radius * 0.7 - 5,
         y: cy - radius * 0.7 - 5
       };
+      var path = { show: false, x: 0, y: 0, transform: '', length: {} };
+      var charge_target_ = {};
+      if (modelModel.isCharging({ state: state })) {
+        path.show = true;
+
+        var charge_dir = state.cha.s.r;
+        var charge_middle = pointModel.translateInDirection(400, charge_dir, state.cha.s);
+        path.x = charge_middle.x - radius;
+        path.y = charge_middle.y - 400;
+        path.transform = 'rotate(' + charge_dir + ',' + charge_middle.x + ',' + charge_middle.y + ')';
+
+        var charge_length = pointModel.distanceTo(state, state.cha.s);
+        var charge_text = Math.round(charge_length * 10) / 100 + '"';
+        var charge_max_dist = modelModel.chargeMaxLength({ state: state });
+        if (R.exists(charge_max_dist)) {
+          charge_text += '/' + charge_max_dist + '"';
+        }
+        var charge_options = {
+          rotate: 0,
+          flip_center: state.cha.s,
+          text_center: state.cha.s
+        };
+        var charge_label = base.renderText(charge_options, charge_text);
+        charge_label.show = true;
+        path.length = charge_label;
+
+        if (charge_target) {
+          charge_target_.show = true;
+          charge_target_.cx = charge_target.state.x;
+          charge_target_.cy = charge_target.state.y;
+          charge_target_.radius = charge_target.info.base_radius;
+
+          var melee_range = 0;
+          if (modelModel.isMeleeDisplayed('mm', { state: state })) {
+            melee_range = 5;
+          }
+          if (modelModel.isMeleeDisplayed('mr', { state: state })) {
+            melee_range = 20;
+          }
+          if (modelModel.isMeleeDisplayed('ms', { state: state })) {
+            melee_range = 40;
+          }
+          var distance_to_target = pointModel.distanceTo(charge_target.state, state);
+          charge_target_.reached = distance_to_target <= melee_range + radius + charge_target.info.base_radius;
+        }
+      }
+      if (modelModel.isPlacing({ state: state })) {
+        path.show = true;
+
+        var place_dir = state.pla.s.r;
+        var place_middle = pointModel.translateInDirection(400, place_dir, state.pla.s);
+        path.x = place_middle.x - info.base_radius;
+        path.y = place_middle.y - 400;
+        path.transform = 'rotate(' + place_dir + ',' + place_middle.x + ',' + place_middle.y + ')';
+
+        var place_length = pointModel.distanceTo(state, state.pla.s);
+        var place_text = Math.round(place_length * 10) / 100 + '"';
+        var within = modelModel.placeWithin({ state: state });
+        var place_max_dist = modelModel.placeMaxLength({ state: state });
+        if (R.exists(place_max_dist)) {
+          place_text += '/' + (within ? 'w.' : '') + place_max_dist + '"';
+        }
+        var place_options = {
+          rotate: 0,
+          flip_center: state.pla.s,
+          text_center: state.pla.s
+        };
+        var place_label = base.renderText(place_options, place_text);
+        place_label.show = true;
+        path.length = place_label;
+      }
       return {
         stamp: state.stamp,
         x: state.x, y: state.y,
@@ -249,7 +323,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         base_color: info.base_color,
         title: modelModel.descriptionFromInfo(info, { state: state }),
         area: area, ctrl: ctrl, aura: aura, lock: lock, dmg: dmg, field: field, label: label,
-        counter: counter, souls: souls, melee: melee, effects: effects, unit: unit
+        counter: counter, souls: souls, melee: melee, effects: effects, unit: unit,
+        path: path, charge_target: charge_target_
       };
     }
     function computeMeleePath(size, img, info) {

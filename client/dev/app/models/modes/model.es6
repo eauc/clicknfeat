@@ -3,19 +3,21 @@
     .factory('modelMode', modelModeModelFactory);
 
   modelModeModelFactory.$inject = [
+    'appState',
     'modes',
     'settings',
     'modelsMode',
     'modelBaseMode',
     'gameModelSelection',
   ];
-  function modelModeModelFactory(modesModel,
+  function modelModeModelFactory(appStateService,
+                                 modesModel,
                                  settingsModel,
                                  modelsModeModel,
                                  modelBaseModeModel,
                                  gameModelSelectionModel) {
     const model_actions = Object.create(modelBaseModeModel.actions);
-    // model_actions.startCharge = modelStartCharge;
+    model_actions.startCharge = modelStartCharge;
     // model_actions.startPlace = modelStartPlace;
 
     const model_default_bindings = {
@@ -46,16 +48,14 @@
                            });
     return model_mode;
 
-    // function modelStartCharge(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP()(
-    //     () => state.eventP('Game.command.execute',
-    //                        'onModels',
-    //                        ['startChargeP', [], stamps]),
-    //     () => state.eventP('Modes.switchTo', 'ModelCharge')
-    //   );
-    // }
+    function modelStartCharge(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onModels',
+                                  ['startChargeP', [], stamps]);
+      appStateService.chainReduce('Modes.switchTo', 'ModelCharge');
+    }
     // function modelStartPlace(state) {
     //   const stamps = gameModelSelectionModel
     //           .get('local', state.game.model_selection);

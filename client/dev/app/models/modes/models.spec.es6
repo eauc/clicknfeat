@@ -134,7 +134,7 @@ describe('modelsMode model', function() {
     [ 'Cyan'   , '#0FF' ],
   ]);
 
-  xcontext('when user set charge max length', function() {
+  context('when user set charge max length', function() {
     return this.modelsModeModel.actions
       .setChargeMaxLength(this.state);
   }, function() {
@@ -168,7 +168,7 @@ describe('modelsMode model', function() {
         expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
-                                  'setChargeMaxLengthP',
+                                  'setChargeMaxLength',
                                   ['factions', null],
                                   ['stamp1','stamp2']
                                 ]);
@@ -184,7 +184,7 @@ describe('modelsMode model', function() {
           expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
-                                    'setChargeMaxLengthP',
+                                    'setChargeMaxLength',
                                     ['factions', e.max],
                                     ['stamp1','stamp2']
                                   ]);

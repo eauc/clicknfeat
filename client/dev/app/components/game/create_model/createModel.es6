@@ -37,7 +37,7 @@
       const is_flipped = gameMapService.isFlipped(map);
       const coeff = is_flipped ? 1 : -1;
 
-      scope.pos = modelModel.render(is_flipped, state.factions, R.thread(model)(
+      scope.pos = modelModel.render({is_flipped}, state.factions, R.thread(model)(
         R.assoc('x', state.create.base.x + coeff * model.x),
         R.assoc('y', state.create.base.y + coeff * model.y)
       ));

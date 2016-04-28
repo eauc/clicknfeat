@@ -3,6 +3,7 @@
     .factory('modelChargeMode', modelChargeModeModelFactory);
 
   modelChargeModeModelFactory.$inject = [
+    'appState',
     'modes',
     'settings',
     'modelsMode',
@@ -11,7 +12,8 @@
     'gameModels',
     'gameModelSelection',
   ];
-  function modelChargeModeModelFactory(modesModel,
+  function modelChargeModeModelFactory(appStateService,
+                                       modesModel,
                                        settingsModel,
                                        modelsModeModel,
                                        modelBaseModeModel,
@@ -64,40 +66,39 @@
     function chargeModelEnd(state) {
       const stamps = gameModelSelectionModel
             .get('local', state.game.model_selection);
-      return R.threadP()(
-        () => state.eventP('Game.command.execute',
-                           'onModels',
-                           ['endCharge', [], stamps]),
-        () => state.eventP('Modes.switchTo', 'Model')
-      );
+      appStateService.chainReduce('Game.command.execute',
+                                  'onModels',
+                                  ['endCharge', [], stamps]);
+      appStateService.chainReduce('Modes.switchTo','Model');
     }
     function chargeModelSetTarget(state, event) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      return R.threadP(state.game)(
+      R.thread(state.game)(
         R.prop('models'),
-        gameModelsModel.findStampP$(stamps[0]),
-        (model) => R.threadP()(
-          () => modelModel
-            .chargeTargetP(model)
-            .catch(R.always(null)),
-          (target_stamp) => {
-            return ( target_stamp === event['click#'].target.state.stamp
-                     ? null
-                     : event['click#'].target
-                   );
-          },
-          (set_target) => {
-            if(R.exists(set_target) &&
-               model.state.stamp === set_target.state.stamp) return null;
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          R.pipe(
+            (model) => R.threadP(model)(
+              modelModel.chargeTarget,
+              (target_stamp) => ( target_stamp === event['click#'].target.state.stamp
+                                  ? null
+                                  : event['click#'].target
+                                ),
+              (set_target) => {
+                if(R.exists(set_target) &&
+                   model.state.stamp === set_target.state.stamp) return;
 
-            return state.eventP('Game.command.execute',
-                                'onModels', [
-                                  'setChargeTargetP',
-                                  [state.factions, set_target],
-                                  stamps
-                                ]);
-          }
+                appStateService.chainReduce('Game.command.execute',
+                                            'onModels', [
+                                              'setChargeTargetP',
+                                              [state.factions, set_target],
+                                              stamps
+                                            ]);
+              }
+            )
+          )
         )
       );
     }
@@ -108,24 +109,29 @@
                       ? flip_move
                       : move
                     );
-      return R.threadP(state.game)(
+      R.thread(state.game)(
         R.prop('models'),
-        gameModelsModel.findStampP$(stamps[0]),
-        (model) => modelModel
-          .chargeTargetP(model)
-          .catch(R.always(null)),
-        (target_stamp) => ( R.exists(target_stamp)
-                            ? gameModelsModel.findStampP(target_stamp,
-                                                         state.game.models)
-                            : null
-                          ),
-        (target_model) => state
-          .eventP('Game.command.execute',
-                  'onModels', [
-                    _move+'ChargeP',
-                    [state.factions, target_model, small],
-                    stamps
-                  ])
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          R.pipe(
+            modelModel.chargeTarget,
+            (target_stamp) => ( R.exists(target_stamp)
+                                ? gameModelsModel.findStamp(target_stamp,
+                                                            state.game.models)
+                                : null
+                              ),
+            (target_model) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'onModels', [
+                               _move+'ChargeP',
+                               [state.factions, target_model, small],
+                               stamps
+                             ]);
+            }
+          )
+        )
       );
     }
     function buildChargeMove([move, _keys_, flip_move]) {

@@ -4,6 +4,7 @@
 
   modelModelFactory.$inject = [
     'settings',
+    'point',
     'element',
     'gameFactions',
     'modelArea',
@@ -24,6 +25,7 @@
     'modelWreck',
   ];
   function modelModelFactory(settingsModel,
+                             pointModel,
                              elementModel,
                              gameFactionsModel,
                              modelAreaModel,
@@ -207,7 +209,9 @@
         R.assoc('t', 0)
       );
     }
-    function modelRender(is_flipped, factions, state) {
+    function modelRender({ is_flipped,
+                           charge_target
+                         }, factions, state) {
       const info = R.thread(factions)(
         gameFactionsModel.getModelInfo$(state.info),
         R.defaultTo({ base_radius: 5.905 })
@@ -268,7 +272,7 @@
       const label = base
         .renderLabel(label_options, state);
       const counter_options = {
-        rotate: state.r,
+        rotate: 0,
         flipped: is_flipped,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx, y: cy + 2 }
@@ -278,7 +282,7 @@
       counter.show = modelModel
         .isCounterDisplayed('c', {state});
       const souls_options = {
-        rotate: state.r,
+        rotate: 0,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx + radius * 0.8 + 5,
                        y: cy - radius - 5 }
@@ -290,7 +294,7 @@
       souls.cx = souls.x - 10;
       souls.cy = souls.y - 10;
       const unit_options = {
-        rotate: state.r,
+        rotate: 0,
         flip_center: { x: cx, y: cy },
         text_center: { x: cx - radius * 0.7 - 5,
                        y: cy - radius * 0.7 - 5 }
@@ -342,6 +346,83 @@
         x: cx - radius * 0.7 - 5,
         y: cy - radius * 0.7 - 5
       };
+      const path = { show: false, x: 0, y: 0, transform: '', length: {} };
+      const charge_target_ = {};
+      if(modelModel.isCharging({state})) {
+        path.show = true;
+
+        const charge_dir = state.cha.s.r;
+        const charge_middle = pointModel
+                .translateInDirection(400, charge_dir, state.cha.s);
+        path.x = charge_middle.x - radius;
+        path.y = charge_middle.y - 400;
+        path.transform = `rotate(${charge_dir},${charge_middle.x},${charge_middle.y})`;
+
+        const charge_length = pointModel.distanceTo(state, state.cha.s);
+        let charge_text = `${Math.round(charge_length*10)/100}"`;
+        const charge_max_dist = modelModel.chargeMaxLength({state});
+        if(R.exists(charge_max_dist)) {
+          charge_text += `/${charge_max_dist}"`;
+        }
+        const charge_options = {
+          rotate: 0,
+          flip_center: state.cha.s,
+          text_center: state.cha.s
+        };
+        const charge_label = base
+                .renderText(charge_options, charge_text);
+        charge_label.show = true;
+        path.length = charge_label;
+
+        if(charge_target) {
+          charge_target_.show = true;
+          charge_target_.cx = charge_target.state.x;
+          charge_target_.cy = charge_target.state.y;
+          charge_target_.radius = charge_target.info.base_radius;
+
+          let melee_range = 0;
+          if(modelModel.isMeleeDisplayed('mm', {state})) {
+            melee_range = 5;
+          }
+          if(modelModel.isMeleeDisplayed('mr', {state})) {
+            melee_range = 20;
+          }
+          if(modelModel.isMeleeDisplayed('ms', {state})) {
+            melee_range = 40;
+          }
+          const distance_to_target = pointModel
+                  .distanceTo(charge_target.state, state);
+          charge_target_.reached = distance_to_target <=
+            melee_range + radius + charge_target.info.base_radius;
+        }
+      }
+      if(modelModel.isPlacing({state})) {
+        path.show = true;
+
+        const place_dir = state.pla.s.r;
+        const place_middle = pointModel
+                .translateInDirection(400, place_dir, state.pla.s);
+        path.x = place_middle.x - info.base_radius;
+        path.y = place_middle.y - 400;
+        path.transform = `rotate(${place_dir},${place_middle.x},${place_middle.y})`;
+
+        const place_length = pointModel.distanceTo(state, state.pla.s);
+        let place_text = `${Math.round(place_length*10)/100}"`;
+        const within = modelModel.placeWithin({state});
+        const place_max_dist = modelModel.placeMaxLength({state});
+        if(R.exists(place_max_dist)) {
+          place_text += `/${within ? 'w.' : ''}${place_max_dist}"`;
+        }
+        const place_options = {
+          rotate: 0,
+          flip_center: state.pla.s,
+          text_center: state.pla.s
+        };
+        const place_label = base
+                .renderText(place_options, place_text);
+        place_label.show = true;
+        path.length = place_label;
+      }
       return {
         stamp: state.stamp,
         x: state.x, y: state.y,
@@ -354,7 +435,8 @@
         base_color: info.base_color,
         title: modelModel.descriptionFromInfo(info, {state}),
         area, ctrl, aura, lock, dmg, field, label,
-        counter, souls, melee, effects, unit
+        counter, souls, melee, effects, unit,
+        path, charge_target: charge_target_
       };
     }
     function computeMeleePath(size, img, info) {

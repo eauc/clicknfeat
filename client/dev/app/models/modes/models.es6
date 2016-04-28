@@ -42,7 +42,7 @@
     models_actions.incrementSouls = modelsIncrementSouls;
     models_actions.decrementSouls = modelsDecrementSouls;
     // models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
-    // models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
+    models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
     // models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
     // models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
     models_actions.toggleLeaderDisplay = modelsToggleLeaderDisplay;
@@ -417,25 +417,33 @@
     //                             [ 'setRulerMaxLength', [value], stamps])
     //   );
     // }
-    // function modelsSetChargeMaxLength(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStampP$(stamps[0]),
-    //     modelModel.chargeMaxLength,
-    //     (value) => promptService
-    //       .promptP('prompt', 'Set charge max length :', value)
-    //       .catch(R.always(null)),
-    //     (value) => (value === 0) ? null : value,
-    //     (value) => state.eventP('Game.command.execute',
-    //                             'onModels', [
-    //                               'setChargeMaxLengthP',
-    //                               [state.factions, value],
-    //                               stamps
-    //                             ])
-    //   );
-    // }
+    function modelsSetChargeMaxLength(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      return R.threadP(state.game)(
+        R.prop('models'),
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          (model) => R.threadP(model)(
+            modelModel.chargeMaxLength,
+            (value) => promptService
+              .promptP('prompt', 'Set charge max length :', value)
+              .catch(R.always(null)),
+            (value) => (value === 0) ? null : value,
+            (value) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'onModels', [
+                               'setChargeMaxLength',
+                               [state.factions, value],
+                               stamps
+                             ]);
+            }
+          )
+        )
+      );
+    }
     // function modelsSetPlaceMaxLength(state) {
     //   const stamps = gameModelSelectionModel
     //           .get('local', state.game.model_selection);
@@ -886,14 +894,14 @@
         return [ effect, `toggle${effect}EffectDisplay`, 'effects' ];
       }, effects));
       ret = R.append([ 'Incorp.', 'toggleIncorporealDisplay', 'effects' ], ret);
-      // ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
-      // if(start_charge) {
-      //   ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
-      // }
-      // if(end_charge) {
-      //   ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
-      // }
-      // ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
+      ret = R.append([ 'Charge', 'toggle', 'charge' ], ret);
+      if(start_charge) {
+        ret = R.append([ 'Start', 'startCharge', 'charge' ], ret);
+      }
+      if(end_charge) {
+        ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
+      }
+      ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
       // ret = R.append([ 'Place', 'toggle', 'place' ], ret);
       // if(start_place) {
       //   ret = R.append([ 'Start', 'startPlace', 'place' ], ret);

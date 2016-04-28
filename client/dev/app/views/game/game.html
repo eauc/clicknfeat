@@ -139,6 +139,8 @@
         </g>
         <g id="game-under-models"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
+          <g click-game-under-models-list>
+          </g>
           <g click-game-los-refresh
              style="clip-path: url(#los-clip);">
             <polygon ng-repeat="envelope in state.game.los.computed.shadow"
@@ -161,6 +163,8 @@
         </g>
         <g id="game-over-models"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
+          <g click-game-over-models-list>
+          </g>
         </g>
         <g id="game-templates"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'t'"

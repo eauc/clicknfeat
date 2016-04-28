@@ -1,11 +1,11 @@
-xdescribe('model charge model', function() {
+describe('model charge model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      spyOn(this.modelModel, 'checkStateP')
+      spyOn(this.modelModel, 'checkState')
         .and.callFake((_f_,_t_,m) => m);
-      this.modelModel.checkStateP$ = R.curryN(3, this.modelModel.checkStateP);
+      this.modelModel.checkState$ = R.curryN(3, this.modelModel.checkState);
     }
   ]));
 
@@ -76,10 +76,8 @@ xdescribe('model charge model', function() {
     });
 
     it('should set charge <target> on model', function() {
-      return this.modelModel.chargeTargetP(this.context)
-        .then((result) => {
-          expect(result).toBe('target');
-        });
+      expect(this.modelModel.chargeTarget(this.context))
+        .toBe('target');
     });
 
     it('should orient model toward <target>', function() {
@@ -90,9 +88,9 @@ xdescribe('model charge model', function() {
     whenModelIsLockedShouldRejectMove();
   });
 
-  context('setChargeMaxLengthP(<length>)', function() {
+  context('setChargeMaxLength(<length>)', function() {
     return this.modelModel
-      .setChargeMaxLengthP('factions', 42, this.model);
+      .setChargeMaxLength('factions', 42, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -106,7 +104,7 @@ xdescribe('model charge model', function() {
     });
 
     it('should check state', function() {
-      expect(this.modelModel.checkStateP)
+      expect(this.modelModel.checkState)
         .toHaveBeenCalledWith('factions', null, this.context);
     });
   });
@@ -137,7 +135,7 @@ xdescribe('model charge model', function() {
           });
 
           it('should check state', function() {
-            expect(this.modelModel.checkStateP)
+            expect(this.modelModel.checkState)
               .toHaveBeenCalledWith('factions', this.target, this.context);
           });
         });
@@ -160,7 +158,7 @@ xdescribe('model charge model', function() {
         });
 
         it('should check state', function() {
-          expect(this.modelModel.checkStateP)
+          expect(this.modelModel.checkState)
             .toHaveBeenCalledWith('factions', this.target, this.context);
         });
       });

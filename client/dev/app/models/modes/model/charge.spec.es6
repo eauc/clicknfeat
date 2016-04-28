@@ -1,9 +1,10 @@
-xdescribe('modelChargeMode model', function() {
+describe('modelChargeMode model', function() {
   beforeEach(inject([
     'modelChargeMode',
     function(modelChargeModeModel) {
       this.modelChargeModeModel = modelChargeModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.modesModel = spyOnService('modes');
       this.modelModel = spyOnService('model');
       this.gameModelsModel = spyOnService('gameModels');
@@ -16,8 +17,7 @@ xdescribe('modelChargeMode model', function() {
                              models: 'models'
                            },
                      factions: 'factions',
-                     modes: 'modes',
-                     eventP: jasmine.createSpy('eventP')
+                     modes: 'modes'
                    };
     }
   ]));
@@ -27,7 +27,7 @@ xdescribe('modelChargeMode model', function() {
       .endCharge(this.state);
   }, function() {
     it('should end charge for model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels', [
                                 'endCharge',
@@ -37,7 +37,7 @@ xdescribe('modelChargeMode model', function() {
     });
 
     it('should switch to Model mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo','Model');
     });
   });
@@ -47,8 +47,8 @@ xdescribe('modelChargeMode model', function() {
       .setTargetModel(this.state, this.event);
   }, function() {
     beforeEach(function() {
-      this.gameModelsModel.findStampP
-        .resolveWith({
+      this.gameModelsModel.findStamp
+        .and.returnValue({
           state: { stamp: 'stamp' }
         });
       this.event = { 'click#': { target: { state: { stamp: 'target' } } } };
@@ -58,7 +58,7 @@ xdescribe('modelChargeMode model', function() {
       this.event['click#'].target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -66,7 +66,7 @@ xdescribe('modelChargeMode model', function() {
     context('when target is another model', function() {
     }, function() {
       it('should set charge target for model', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setChargeTargetP',
@@ -87,21 +87,21 @@ xdescribe('modelChargeMode model', function() {
       });
 
       it('should fetch charging model', function() {
-        expect(this.gameModelsModel.findStampP)
+        expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('stamp', 'models');
       });
 
       it('should get current charge target', function() {
-        expect(this.modelModel.chargeTargetP)
-          .toHaveBeenCalledWith('gameModels.findStampP.returnValue');
+        expect(this.modelModel.chargeTarget)
+          .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
       });
 
       context('when current target is not set', function() {
-        this.modelModel.chargeTargetP
-          .rejectWith('reason');
+        this.modelModel.chargeTarget
+          .and.returnValue(null);
       }, function() {
         it('should execute move without target', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     e.move+'ChargeP',
@@ -112,17 +112,17 @@ xdescribe('modelChargeMode model', function() {
       });
 
       it('should fetch charge target model', function() {
-          expect(this.gameModelsModel.findStampP)
-          .toHaveBeenCalledWith('model.chargeTargetP.returnValue', 'models');
+        expect(this.gameModelsModel.findStamp)
+          .toHaveBeenCalledWith('model.chargeTarget.returnValue', 'models');
       });
 
       it('should charge-move model with defined target', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   e.move+'ChargeP',
                                   ['factions',
-                                   'gameModels.findStampP.returnValue',
+                                   'gameModels.findStamp.returnValue',
                                    e.small],
                                   ['stamp']
                                 ]);
