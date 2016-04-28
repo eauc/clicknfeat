@@ -18,7 +18,7 @@
                                  gameModelSelectionModel) {
     const model_actions = Object.create(modelBaseModeModel.actions);
     model_actions.startCharge = modelStartCharge;
-    // model_actions.startPlace = modelStartPlace;
+    model_actions.startPlace = modelStartPlace;
 
     const model_default_bindings = {
       'startCharge': 'c',
@@ -56,15 +56,13 @@
                                   ['startChargeP', [], stamps]);
       appStateService.chainReduce('Modes.switchTo', 'ModelCharge');
     }
-    // function modelStartPlace(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP()(
-    //     () => state.eventP('Game.command.execute',
-    //                        'onModels',
-    //                        [ 'startPlaceP', [], stamps]),
-    //     () => state.eventP('Modes.switchTo', 'ModelPlace')
-    //   );
-    // }
+    function modelStartPlace(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      appStateService.chainReduce('Game.command.execute',
+                                  'onModels',
+                                  [ 'startPlaceP', [], stamps]);
+      appStateService.chainReduce('Modes.switchTo', 'ModelPlace');
+    }
   }
 })();

@@ -1,9 +1,10 @@
-xdescribe('modelPlaceMode model', function() {
+describe('modelPlaceMode model', function() {
   beforeEach(inject([
     'modelPlaceMode',
     function(modelPlaceModeModel) {
       this.modelPlaceModeModel = modelPlaceModeModel;
 
+      this.appStateService = spyOnService('appState');
       this.modesModel = spyOnService('modes');
       this.modelModel = spyOnService('model');
       this.gameModelsModel = spyOnService('gameModels');
@@ -16,8 +17,7 @@ xdescribe('modelPlaceMode model', function() {
                              models: 'models'
                            },
                      factions: 'factions',
-                     modes: 'modes',
-                     eventP: jasmine.createSpy('eventP')
+                     modes: 'modes'
                    };
     }
   ]));
@@ -27,7 +27,7 @@ xdescribe('modelPlaceMode model', function() {
       .endPlace(this.state);
   }, function() {
     it('should end place for model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels', [
                                 'endPlace',
@@ -37,7 +37,7 @@ xdescribe('modelPlaceMode model', function() {
     });
 
     it('should switch to Model mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo','Model');
     });
   });
@@ -47,7 +47,7 @@ xdescribe('modelPlaceMode model', function() {
       .setTargetModel(this.state, this.event);
   }, function() {
     beforeEach(function() {
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { stamp: 'stamp' }
       });
       this.target = { state: { stamp: 'target' } };
@@ -58,7 +58,7 @@ xdescribe('modelPlaceMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -67,7 +67,7 @@ xdescribe('modelPlaceMode model', function() {
       this.target.state.stamp = 'target';
     }, function() {
       it('should set place target for model', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setPlaceTargetP',
@@ -83,7 +83,7 @@ xdescribe('modelPlaceMode model', function() {
       .setOriginModel(this.state, this.event);
   }, function() {
     beforeEach(function() {
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { stamp: 'stamp' }
       });
       this.target = { state: { stamp: 'target' } };
@@ -94,7 +94,7 @@ xdescribe('modelPlaceMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -103,7 +103,7 @@ xdescribe('modelPlaceMode model', function() {
       this.target.state.stamp = 'origin';
     }, function() {
       it('should set place target for model', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setPlaceOriginP',
@@ -124,7 +124,7 @@ xdescribe('modelPlaceMode model', function() {
       });
 
       it('should place-move model', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   e.move+'PlaceP',

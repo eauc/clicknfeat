@@ -9,7 +9,7 @@
       'modelsMode',
       'modelMode',
       'modelChargeMode',
-      // 'modelPlaceMode',
+      'modelPlaceMode',
       'createTemplateMode',
       'aoeTemplateMode',
       'sprayTemplateMode',

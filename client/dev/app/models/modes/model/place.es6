@@ -3,6 +3,7 @@
     .factory('modelPlaceMode', modelPlaceModeModelFactory);
 
   modelPlaceModeModelFactory.$inject = [
+    'appState',
     'modes',
     'settings',
     'modelsMode',
@@ -10,7 +11,8 @@
     'gameModels',
     'gameModelSelection',
   ];
-  function modelPlaceModeModelFactory(modesModel,
+  function modelPlaceModeModelFactory(appStateService,
+                                      modesModel,
                                       settingsModel,
                                       modelsModeModel,
                                       modelBaseModeModel,
@@ -65,50 +67,56 @@
     function placeModelEnd(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      return R.threadP()(
-        () => state.eventP('Game.command.execute',
-                           'onModels', [
-                             'endPlace',
-                             [],
-                             stamps
-                           ]),
-        () => state.eventP('Modes.switchTo', 'Model')
-      );
+      appStateService.chainReduce('Game.command.execute',
+                                  'onModels', [
+                                    'endPlace',
+                                    [],
+                                    stamps
+                                  ]);
+      appStateService.chainReduce('Modes.switchTo', 'Model');
     }
     function placeModelSetTarget(state, event) {
       const stamps = gameModelSelectionModel
             .get('local', state.game.model_selection);
-      return R.threadP(state.game)(
+      R.thread(state.game)(
         R.prop('models'),
-        gameModelsModel.findStampP$(stamps[0]),
-        (model) => {
-          if(model.state.stamp === event['click#'].target.state.stamp) return null;
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          (model) => {
+            if(model.state.stamp === event['click#'].target.state.stamp) return;
 
-          return state.eventP('Game.command.execute',
-                              'onModels', [
-                                'setPlaceTargetP',
-                                [state.factions, event['click#'].target],
-                                stamps
-                              ]);
-        }
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'onModels', [
+                             'setPlaceTargetP',
+                             [state.factions, event['click#'].target],
+                             stamps
+                           ]);
+          }
+        )
       );
     }
     function placeModelSetOrigin(state, event) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      return R.threadP(state.game)(
+      R.thread(state.game)(
         R.prop('models'),
-        gameModelsModel.findStampP$(stamps[0]),
-        (model) => {
-          if(model.state.stamp === event['click#'].target.state.stamp) return null;
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          (model) => {
+            if(model.state.stamp === event['click#'].target.state.stamp) return;
 
-          return state.eventP('Game.command.execute',
-                              'onModels', [
-                                'setPlaceOriginP',
-                                [state.factions, event['click#'].target],
-                                stamps
-                              ]);
-        }
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'onModels', [
+                             'setPlaceOriginP',
+                             [state.factions, event['click#'].target],
+                             stamps
+                           ]);
+          }
+        )
       );
     }
     function placeModelMove(move, flip_move, small, state) {
@@ -118,12 +126,13 @@
                       ? flip_move
                       : move
                     );
-      return state.eventP('Game.command.execute',
-                          'onModels', [
-                            _move+'PlaceP',
-                            [state.factions, small],
-                            stamps
-                          ]);
+      appStateService
+        .chainReduce('Game.command.execute',
+                     'onModels', [
+                       _move+'PlaceP',
+                       [state.factions, small],
+                       stamps
+                     ]);
     }
     function buildPlaceMove([move, _keys_, flip_move]) {
       model_actions[move] = placeModelMove$(move, flip_move, false);

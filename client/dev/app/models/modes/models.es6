@@ -43,8 +43,8 @@
     models_actions.decrementSouls = modelsDecrementSouls;
     // models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
     models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
-    // models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
-    // models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
+    models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
+    models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
     models_actions.toggleLeaderDisplay = modelsToggleLeaderDisplay;
     models_actions.toggleIncorporealDisplay = modelsToggleIncorporealDisplay;
     models_actions.setOrientationUp = modelsSetOrientationUp;
@@ -444,41 +444,57 @@
         )
       );
     }
-    // function modelsSetPlaceMaxLength(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStampP$(stamps[0]),
-    //     modelModel.placeMaxLength,
-    //     R.defaultTo(0),
-    //     (value) => promptService
-    //       .promptP('prompt','Set place max length :', value)
-    //       .catch(R.always(null)),
-    //     (value) => (value === 0) ? null : value,
-    //     (value) => state.eventP('Game.command.execute',
-    //                             'onModels', [
-    //                               'setPlaceMaxLengthP',
-    //                               [state.factions, value],
-    //                               stamps
-    //                             ])
-    //   );
-    // }
-    // function modelsTogglePlaceWithin(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStampP$(stamps[0]),
-    //     modelModel.placeWithin,
-    //     (present) => state.eventP('Game.command.execute',
-    //                               'onModels', [
-    //                                 'setPlaceWithinP',
-    //                                 [state.factions, !present],
-    //                                 stamps
-    //                               ])
-    //   );
-    // }
+    function modelsSetPlaceMaxLength(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      return R.threadP(state.game)(
+        R.prop('models'),
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          (model) => R.threadP(model)(
+            modelModel.placeMaxLength,
+            R.defaultTo(0),
+            (value) => promptService
+              .promptP('prompt','Set place max length :', value)
+              .catch(R.always(null)),
+            (value) => (value === 0) ? null : value,
+            (value) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'onModels', [
+                               'setPlaceMaxLengthP',
+                               [state.factions, value],
+                               stamps
+                             ]);
+            }
+          )
+        )
+      );
+    }
+    function modelsTogglePlaceWithin(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      return R.threadP(state.game)(
+        R.prop('models'),
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          R.pipe(
+            modelModel.placeWithin,
+            (present) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'onModels', [
+                               'setPlaceWithinP',
+                               [state.factions, !present],
+                               stamps
+                             ]);
+            }
+          )
+        )
+      );
+    }
     function modelsToggleLeaderDisplay(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
@@ -902,15 +918,15 @@
         ret = R.append([ 'End', 'endCharge', 'charge' ], ret);
       }
       ret = R.append([ 'Max Len.', 'setChargeMaxLength', 'charge' ], ret);
-      // ret = R.append([ 'Place', 'toggle', 'place' ], ret);
-      // if(start_place) {
-      //   ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
-      // }
-      // if(end_place) {
-      //   ret = R.append([ 'End', 'endPlace', 'place' ], ret);
-      // }
-      // ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
-      // ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
+      ret = R.append([ 'Place', 'toggle', 'place' ], ret);
+      if(start_place) {
+        ret = R.append([ 'Start', 'startPlace', 'place' ], ret);
+      }
+      if(end_place) {
+        ret = R.append([ 'End', 'endPlace', 'place' ], ret);
+      }
+      ret = R.append([ 'Max Len.', 'setPlaceMaxLength', 'place' ], ret);
+      ret = R.append([ 'Within', 'togglePlaceWithin', 'place' ], ret);
       ret = R.concat(ret, [ [ 'Unit', 'toggle', 'unit' ],
                             [ 'Show/Hide', 'toggleUnitDisplay', 'unit' ],
                             [ 'Set #', 'setUnit', 'unit' ],

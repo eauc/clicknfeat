@@ -37,7 +37,7 @@ describe('modelMode model', function() {
     });
   });
 
-  xcontext('when user starts place on model', function() {
+  context('when user starts place on model', function() {
     return this.modelModeModel.actions
       .startPlace(this.state);
   }, function() {

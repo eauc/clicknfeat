@@ -60,14 +60,14 @@
         return R.head(R.view(PLACE_MAX_LENGTH_LENS, model));
       }
       function modelSetPlaceMaxLength(factions, value, model) {
-        model = R.set(PLACE_MAX_LENGTH_LENS, [value, R.view(PLACE_MAX_LENGTH_LENS, model)[1]], model);
+        model = R.set(PLACE_MAX_LENGTH_LENS, [value, R.viewOr([], PLACE_MAX_LENGTH_LENS, model)[1]], model);
         return modelModel.checkState(factions, null, model);
       }
       function modelPlaceWithin(model) {
-        return R.nth(1, R.defaulTo([], R.view(PLACE_MAX_LENGTH_LENS, model)));
+        return R.nth(1, R.viewOr([], PLACE_MAX_LENGTH_LENS, model));
       }
       function modelSetPlaceWithin(factions, value, model) {
-        model = R.set(PLACE_MAX_LENGTH_LENS, [R.set(PLACE_MAX_LENGTH_LENS, model)[0], value], model);
+        model = R.set(PLACE_MAX_LENGTH_LENS, [R.viewOr([], PLACE_MAX_LENGTH_LENS, model)[0], value], model);
         return modelModel.checkState(factions, null, model);
       }
       function modelMoveFrontPlaceP(factions, small, model) {

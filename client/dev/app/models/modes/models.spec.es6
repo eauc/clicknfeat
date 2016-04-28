@@ -999,7 +999,7 @@ describe('modelsMode model', function() {
     });
   });
 
-  xcontext('when user set place max length', function() {
+  context('when user set place max length', function() {
     return this.modelsModeModel.actions
       .setPlaceMaxLength(this.state);
   }, function() {
@@ -1061,7 +1061,7 @@ describe('modelsMode model', function() {
     ]);
   });
 
-  xcontext('when user toggles placeWithin on models', function() {
+  context('when user toggles placeWithin on models', function() {
     return this.modelsModeModel.actions
       .togglePlaceWithin(this.state);
   }, function() {
