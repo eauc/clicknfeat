@@ -11,7 +11,8 @@
         incrementCounter: modelIncrementCounter,
         decrementCounter: modelDecrementCounter,
         setCounterDisplay: modelSetCounterDisplay,
-        toggleCounterDisplay: modelToggleCounterDisplay
+        toggleCounterDisplay: modelToggleCounterDisplay,
+        renderCounter: modelRenderCounter
       };
       return modelCounterModel;
 
@@ -39,6 +40,37 @@
                          : R.append(counter)
                        );
         return R.over(DSP_LENS, update, model);
+      }
+      function modelRenderCounter({ base,
+                                    cx, cy,
+                                    is_flipped,
+                                    radius }, state) {
+        const counter_options = {
+          rotate: -state.r,
+          flipped: is_flipped,
+          flip_center: { x: cx, y: cy },
+          text_center: { x: cx, y: cy + 2 }
+        };
+        const counter = base
+                .renderText(counter_options, state.c);
+        counter.show = modelModel
+          .isCounterDisplayed('c', {state});
+        const souls_options = {
+          rotate: -state.r,
+          flip_center: { x: cx, y: cy },
+          text_center: { x: cx + radius * 0.8 + 5,
+                         y: cy - radius - 5 }
+        };
+        const souls = base
+                .renderText(souls_options, state.s);
+        souls.show = modelModel
+          .isCounterDisplayed('s', {state});
+        souls.cx = souls.x - 10;
+        souls.cy = souls.y - 10;
+        return {
+          counter,
+          souls
+        };
       }
     };
   }

@@ -13,7 +13,8 @@
         getImage: modelGetImage,
         setNextImage: modelSetNextImage,
         setImageDisplay: modelSetImageDisplay,
-        toggleImageDisplay: modelToggleImageDisplay
+        toggleImageDisplay: modelToggleImageDisplay,
+        renderImage: modelRenderImage
       };
       return modelImageModel;
 
@@ -70,6 +71,9 @@
                          : R.append('i')
                        );
         return R.over(DSP_LENS, update, model);
+      }
+      function modelRenderImage({ img }, _state_) {
+        return { img: img.link };
       }
     };
   }

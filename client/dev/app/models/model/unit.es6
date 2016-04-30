@@ -13,7 +13,8 @@
         unitIs: modelUnitIs,
         setUnit: modelSetUnit,
         setUnitDisplay: modelSetUnitDisplay,
-        toggleUnitDisplay: modelToggleUnitDisplay
+        toggleUnitDisplay: modelToggleUnitDisplay,
+        renderUnit: modelRenderUnit
       };
       return modelUnitModel;
 
@@ -42,6 +43,23 @@
                          : R.append('u')
                        );
         return R.over(DSP_LENS, update, model);
+      }
+      function modelRenderUnit({ base,
+                                 cx, cy,
+                                 radius }, state) {
+        const unit_options = {
+          rotate: -state.r,
+          flip_center: { x: cx, y: cy },
+          text_center: { x: cx - radius * 0.7 - 5,
+                         y: cy - radius * 0.7 - 5 }
+        };
+        const unit = base
+                .renderText(unit_options, `U${modelModel.unit({state})}`);
+        unit.show = modelModel
+          .isUnitDisplayed({state});
+        unit.cx = unit.x - 10;
+        unit.cy = unit.y - 10;
+        return { unit };
       }
     };
   }

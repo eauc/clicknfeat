@@ -12,7 +12,8 @@
         getImage: modelGetImage,
         setNextImage: modelSetNextImage,
         setImageDisplay: modelSetImageDisplay,
-        toggleImageDisplay: modelToggleImageDisplay
+        toggleImageDisplay: modelToggleImageDisplay,
+        renderImage: modelRenderImage
       };
       return modelImageModel;
 
@@ -46,6 +47,11 @@
       function modelToggleImageDisplay(model) {
         var update = modelModel.isImageDisplayed(model) ? R.reject(R.equals('i')) : R.append('i');
         return R.over(DSP_LENS, update, model);
+      }
+      function modelRenderImage(_ref, _state_) {
+        var img = _ref.img;
+
+        return { img: img.link };
       }
     };
   }

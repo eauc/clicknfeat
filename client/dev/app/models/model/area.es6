@@ -16,7 +16,8 @@
         isAreaDisplayed: modelIsAreaDisplayed,
         areaDisplay: modelAreaDisplay,
         setAreaDisplay: modelSetAreaDisplay,
-        toggleAreaDisplay: modelToggleAreaDisplay
+        toggleAreaDisplay: modelToggleAreaDisplay,
+        renderArea: modelRenderArea
       };
       return modelAreaModel;
 
@@ -66,6 +67,22 @@
           (are) => ((area === are) ? null : area),
           model
         );
+      }
+      function modelRenderArea({ info,
+                                 radius
+                               }, factions, state) {
+        const area = ( modelAreaModel.isAreaDisplayed({state})
+                       ? modelAreaModel.areaDisplay({state}) * 10 + radius
+                       : null
+                     );
+        const ctrl = ( modelAreaModel.isCtrlAreaDisplayed(factions, {state})
+                       ? (info.focus || info.fury) * 20 + radius
+                       : null
+                     );
+        return {
+          area,
+          ctrl
+        };
       }
     };
   }

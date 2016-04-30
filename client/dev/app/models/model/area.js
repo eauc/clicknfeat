@@ -15,7 +15,8 @@
         isAreaDisplayed: modelIsAreaDisplayed,
         areaDisplay: modelAreaDisplay,
         setAreaDisplay: modelSetAreaDisplay,
-        toggleAreaDisplay: modelToggleAreaDisplay
+        toggleAreaDisplay: modelToggleAreaDisplay,
+        renderArea: modelRenderArea
       };
       return modelAreaModel;
 
@@ -47,6 +48,17 @@
         return R.over(AREA_LENS, function (are) {
           return area === are ? null : area;
         }, model);
+      }
+      function modelRenderArea(_ref, factions, state) {
+        var info = _ref.info;
+        var radius = _ref.radius;
+
+        var area = modelAreaModel.isAreaDisplayed({ state: state }) ? modelAreaModel.areaDisplay({ state: state }) * 10 + radius : null;
+        var ctrl = modelAreaModel.isCtrlAreaDisplayed(factions, { state: state }) ? (info.focus || info.fury) * 20 + radius : null;
+        return {
+          area: area,
+          ctrl: ctrl
+        };
       }
     };
   }

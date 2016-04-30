@@ -9,7 +9,8 @@
       const modelLeaderModel = {
         isLeaderDisplayed: modelIsLeaderDisplayed,
         setLeaderDisplay: modelSetLeaderDisplay,
-        toggleLeaderDisplay: modelToggleLeaderDisplay
+        toggleLeaderDisplay: modelToggleLeaderDisplay,
+        renderLeader: modelRenderLeader
       };
       return modelLeaderModel;
 
@@ -29,6 +30,18 @@
                          : R.append('l')
                        );
         return R.over(DSP_LENS, update, model);
+      }
+      function modelRenderLeader({ cx, cy,
+                                   radius }, state) {
+        const effects = {
+          l: {
+            show: modelModel.isLeaderDisplayed({state}),
+            link: '/data/icons/Leader.png',
+            x: cx - radius * 0.7 - 5,
+            y: cy - radius * 0.7 - 5
+          }
+        };
+        return { effects };
       }
     };
   }

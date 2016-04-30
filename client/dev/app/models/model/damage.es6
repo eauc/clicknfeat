@@ -14,7 +14,8 @@
         setWarriorDamage: modelSetWarriorDamage,
         setFieldDamage: modelSetFieldDamage,
         setGridDamage: modelSetGridDamage,
-        setGridColDamage: modelSetGridColDamage
+        setGridColDamage: modelSetGridColDamage,
+        renderDamage: modelRenderDamage
       };
       return modelDamageModel;
 
@@ -121,6 +122,33 @@
             return mem + R.reduce(R.add, 0, damage[col]);
           }, 0)
         );
+      }
+      function modelRenderDamage({ cx, cy,
+                                   info,
+                                   radius }, state) {
+        const state_dmg = R.propOr({}, 'dmg', state);
+        const percent_damage = state_dmg.t / info.damage.total;
+        const damage_x = cx - radius + 2 * radius * percent_damage;
+        const dmg = {
+          show: !( info.damage.type === 'warrior' &&
+                   info.damage.n === 1),
+          lx: cx - radius,
+          ly: cy + radius + 2,
+          rx: cx + radius,
+          ry: cx + radius + 2,
+          x: damage_x
+        };
+        const percent_field = state_dmg.f / info.damage.field;
+        const field_x = cx - radius + 2 * radius * percent_field;
+        const field = {
+          show: R.exists(info.damage.field),
+          lx: dmg.lx,
+          ly: dmg.ly + 1,
+          rx: dmg.rx,
+          ry: dmg.ry + 1,
+          x: field_x
+        };
+        return { dmg, field };
       }
     };
   }

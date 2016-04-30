@@ -4,14 +4,24 @@
 
   modelEffectServiceFactory.$inject = [];
   function modelEffectServiceFactory() {
+    const EFFECTS = [
+      [ 'b' , '/data/icons/Blind.png'      ],
+      [ 'c' , '/data/icons/Corrosion.png'  ],
+      [ 'd' , '/data/icons/BoltBlue.png'   ],
+      [ 'f' , '/data/icons/Fire.png'       ],
+      [ 'e' , '/data/icons/BoltYellow.png' ],
+      [ 'k' , '/data/icons/KD.png'         ],
+      [ 't' , '/data/icons/Stationary.png' ],
+    ];
     const EFFECT_LENS = R.lensPath(['state','eff']);
     return (modelService) => {
-      const modelEffectService = {
+      const modelEffectModel = {
         isEffectDisplayed: modelIsEffectDisplayed,
         setEffectDisplay: modelSetEffectDisplay,
-        toggleEffectDisplay: modelToggleEffectDisplay
+        toggleEffectDisplay: modelToggleEffectDisplay,
+        renderEffect: modelRenderEffect
       };
-      return modelEffectService;
+      return modelEffectModel;
 
       function modelIsEffectDisplayed(effect, model) {
         return !!R.find(R.equals(effect), R.viewOr([], EFFECT_LENS, model));
@@ -29,6 +39,23 @@
                          : R.compose(R.append(effect), R.defaultTo([]))
                        );
         return R.over(EFFECT_LENS, update, model);
+      }
+      function modelRenderEffect({ img,
+                                   info }, state) {
+        const effects = R.thread(EFFECTS)(
+          R.filter(([key]) => modelEffectModel.isEffectDisplayed(key, {state})),
+          (actives) => {
+            const base_x = img.width / 2 - (R.length(actives) * 10 / 2);
+            const base_y = img.height / 2 + info.base_radius + 1;
+            return R.addIndex(R.reduce)((mem, [key, link], i) => {
+              return R.assoc(key, {
+                show: modelEffectModel.isEffectDisplayed(key, {state}),
+                x: base_x + i * 10, y: base_y, link
+              }, mem);
+            }, {}, actives);
+          }
+        );
+        return { effects };
       }
     };
   }

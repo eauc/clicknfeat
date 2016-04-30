@@ -10,7 +10,8 @@
         isAuraDisplayed: modelIsAuraDisplayed,
         auraDisplay: modelAuraDisplay,
         setAuraDisplay: modelSetAuraDisplay,
-        toggleAuraDisplay: modelToggleAuraDisplay
+        toggleAuraDisplay: modelToggleAuraDisplay,
+        renderAura: modelRenderAura
       };
       return modelAuraModel;
 
@@ -29,6 +30,14 @@
           (aur) => ((aura === aur) ? null : aura),
           model
         );
+      }
+      function modelRenderAura({ radius }, state) {
+        const aura = {
+          show: modelAuraModel.isAuraDisplayed({state}),
+          radius: radius * 1.2,
+          color: modelAuraModel.auraDisplay({state})
+        };
+        return { aura };
       }
     };
   }

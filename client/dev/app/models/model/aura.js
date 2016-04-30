@@ -11,7 +11,8 @@
         isAuraDisplayed: modelIsAuraDisplayed,
         auraDisplay: modelAuraDisplay,
         setAuraDisplay: modelSetAuraDisplay,
-        toggleAuraDisplay: modelToggleAuraDisplay
+        toggleAuraDisplay: modelToggleAuraDisplay,
+        renderAura: modelRenderAura
       };
       return modelAuraModel;
 
@@ -28,6 +29,16 @@
         return R.over(AURA_LENS, function (aur) {
           return aura === aur ? null : aura;
         }, model);
+      }
+      function modelRenderAura(_ref, state) {
+        var radius = _ref.radius;
+
+        var aura = {
+          show: modelAuraModel.isAuraDisplayed({ state: state }),
+          radius: radius * 1.2,
+          color: modelAuraModel.auraDisplay({ state: state })
+        };
+        return { aura: aura };
       }
     };
   }

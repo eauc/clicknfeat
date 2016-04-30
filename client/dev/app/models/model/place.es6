@@ -28,7 +28,8 @@
         shiftLeftPlaceP: modelShiftLeftPlaceP,
         shiftRightPlaceP: modelShiftRightPlaceP,
         shiftUpPlaceP: modelShiftUpPlaceP,
-        shiftDownPlaceP: modelShiftDownPlaceP
+        shiftDownPlaceP: modelShiftDownPlaceP,
+        renderPlace: modelRenderPlace
       };
       const ensurePlaceLength$ = R.curry(ensurePlaceLength);
       modelModel.state_checkers = R.append(ensurePlaceLength$, modelModel.state_checkers);
@@ -244,6 +245,38 @@
           }
         }
         return state;
+      }
+      function modelRenderPlace({ base,
+                                  info,
+                                  path }, state) {
+        if(modelModel.isPlacing({state})) {
+          path.show = true;
+
+          const place_dir = state.pla.s.r;
+          const place_middle = pointModel
+                  .translateInDirection(400, place_dir, state.pla.s);
+          path.x = place_middle.x - info.base_radius;
+          path.y = place_middle.y - 400;
+          path.transform = `rotate(${place_dir},${place_middle.x},${place_middle.y})`;
+
+          const place_length = pointModel.distanceTo(state, state.pla.s);
+          let place_text = `${Math.round(place_length*10)/100}"`;
+          const within = modelModel.placeWithin({state});
+          const place_max_dist = modelModel.placeMaxLength({state});
+          if(R.exists(place_max_dist)) {
+            place_text += `/${within ? 'w.' : ''}${place_max_dist}"`;
+          }
+          const place_options = {
+            rotate: 0,
+            flip_center: state.pla.s,
+            text_center: state.pla.s
+          };
+          const place_label = base
+                  .renderText(place_options, place_text);
+          place_label.show = true;
+          path.length = place_label;
+        }
+        return {};
       }
     };
   }

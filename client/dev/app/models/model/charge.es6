@@ -27,7 +27,8 @@
         shiftLeftChargeP: modelShiftLeftChargeP,
         shiftRightChargeP: modelShiftRightChargeP,
         shiftUpChargeP: modelShiftUpChargeP,
-        shiftDownChargeP: modelShiftDownChargeP
+        shiftDownChargeP: modelShiftDownChargeP,
+        renderCharge: modelRenderCharge
       };
       const ensureChargeLength$ = R.curry(ensureChargeLength);
       modelModel.state_checkers = R.append(ensureChargeLength$, modelModel.state_checkers);
@@ -236,6 +237,61 @@
           }
         }
         return state;
+      }
+      function modelRenderCharge({ base,
+                                   charge_target,
+                                   radius },
+                                 path, state) {
+        const charge_target_ = {};
+        if(modelModel.isCharging({state})) {
+          path.show = true;
+
+          const charge_dir = state.cha.s.r;
+          const charge_middle = pointModel
+                  .translateInDirection(400, charge_dir, state.cha.s);
+          path.x = charge_middle.x - radius;
+          path.y = charge_middle.y - 400;
+          path.transform = `rotate(${charge_dir},${charge_middle.x},${charge_middle.y})`;
+
+          const charge_length = pointModel.distanceTo(state, state.cha.s);
+          let charge_text = `${Math.round(charge_length*10)/100}"`;
+          const charge_max_dist = modelModel.chargeMaxLength({state});
+          if(R.exists(charge_max_dist)) {
+            charge_text += `/${charge_max_dist}"`;
+          }
+          const charge_options = {
+            rotate: 0,
+            flip_center: state.cha.s,
+            text_center: state.cha.s
+          };
+          const charge_label = base
+                  .renderText(charge_options, charge_text);
+          charge_label.show = true;
+          path.length = charge_label;
+
+          if(charge_target) {
+            charge_target_.show = true;
+            charge_target_.cx = charge_target.state.x;
+            charge_target_.cy = charge_target.state.y;
+            charge_target_.radius = charge_target.info.base_radius;
+
+            let melee_range = 0;
+            if(modelModel.isMeleeDisplayed('mm', {state})) {
+              melee_range = 5;
+            }
+            if(modelModel.isMeleeDisplayed('mr', {state})) {
+              melee_range = 20;
+            }
+            if(modelModel.isMeleeDisplayed('ms', {state})) {
+              melee_range = 40;
+            }
+            const distance_to_target = pointModel
+                    .distanceTo(charge_target.state, state);
+            charge_target_.reached = distance_to_target <=
+              melee_range + radius + charge_target.info.base_radius;
+          }
+        }
+        return { charge_target: charge_target_ };
       }
     };
   }
