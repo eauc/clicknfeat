@@ -30,7 +30,7 @@
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
-    // default_actions.enterRulerMode = enterRulerMode;
+    default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragStartMap;
     default_actions.dragMap = dragMap;
@@ -135,11 +135,11 @@
         )
       );
     }
-    // function enterRulerMode(state) {
-    //   return state.eventP('Modes.switchTo', 'Ruler');
-    // }
+    function enterRulerMode(_state_) {
+      return appStateService.chainReduce('Modes.switchTo', 'Ruler');
+    }
     // function enterLosMode(state) {
-    //   return state.eventP('Modes.switchTo', 'Los');
+    //   return appStateService.chainReduce('Modes.switchTo', 'Los');
     // }
     function dragStartMap(_state_, event) {
       appStateService.emit('Game.dragBox.enable', event.start, event.now);

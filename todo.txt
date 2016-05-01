@@ -13,3 +13,9 @@ los:
 - origin/target live update
 =================================
 - page trop grande en bas
+=================================
+FRP
+chainReduce -> method pour executer une action sur state
+b2b/scenario aura
+update max length buttons
+

@@ -227,6 +227,14 @@
         .onChange('Game.terrain_selection.change',
                   'Game.terrain_selection.local.change',
                   R.prop('local'));
+      appStateService
+        .onChange('Game.change',
+                  'Game.ruler.remote.change',
+                  R.path(['ruler','remote']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.ruler.local.change',
+                  R.path(['ruler','local']));
 
       return R.thread(state)(
         R.set(UI_STATE_LENS, { flipped: false }),

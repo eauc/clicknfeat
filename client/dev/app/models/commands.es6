@@ -20,7 +20,7 @@
       'setBoardCommand',
       'setLayersCommand',
       // 'setLosCommand',
-      // 'setRulerCommand',
+      'setRulerCommand',
       'setScenarioCommand',
       () => ({ })
     ]);

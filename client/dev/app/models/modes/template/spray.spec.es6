@@ -21,7 +21,7 @@ describe('sprayTemplateMode model', function() {
     }
   ]));
 
-  xcontext('when user set origin model', function() {
+  context('when user set origin model', function() {
     return this.sprayTemplateModeModel.actions
       .setOriginModel(this.state, this.event);
   }, function() {
@@ -35,7 +35,7 @@ describe('sprayTemplateMode model', function() {
     it('should set origin for current template selection', function() {
       expect(this.gameTemplateSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onTemplates',
                               [ 'setOriginP',
@@ -45,7 +45,7 @@ describe('sprayTemplateMode model', function() {
     });
   });
 
-  xcontext('when user set target model', function() {
+  context('when user set target model', function() {
     return this.sprayTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -61,10 +61,10 @@ describe('sprayTemplateMode model', function() {
     it('should check whether current spray selection has an origin', function() {
       expect(this.gameTemplateSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.gameTemplatesModel.findStampP)
+      expect(this.gameTemplatesModel.findStamp)
         .toHaveBeenCalledWith('stamp', 'templates');
       expect(this.sprayTemplateModel.origin)
-        .toHaveBeenCalledWith('gameTemplates.findStampP.returnValue');
+        .toHaveBeenCalledWith('gameTemplates.findStamp.returnValue');
     });
 
     context('when spray does not have an origin', function() {
@@ -72,7 +72,7 @@ describe('sprayTemplateMode model', function() {
         .and.returnValue(null);
     }, function() {
       it('should do nothing', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .not.toHaveBeenCalled();
       });
     });
@@ -82,14 +82,14 @@ describe('sprayTemplateMode model', function() {
         .and.returnValue('origin');
     }, function() {
       it('should set spray target to clicked model', function() {
-        expect(this.gameModelsModel.findStampP)
+        expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('origin', 'models');
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
                                 [ 'setTargetP',
                                   ['factions',
-                                   'gameModels.findStampP.returnValue',
+                                   'gameModels.findStamp.returnValue',
                                    this.target],
                                   ['stamp']
                                 ]);
@@ -98,7 +98,7 @@ describe('sprayTemplateMode model', function() {
   });
 
   example(function(e, d) {
-    xcontext('when user rotate left, '+d, function() {
+    context('when user rotate left, '+d, function() {
       return this.sprayTemplateModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -114,19 +114,19 @@ describe('sprayTemplateMode model', function() {
       it('should rotate spray left', function() {
         expect(this.gameTemplateSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameTemplatesModel.findStampP)
+        expect(this.gameTemplatesModel.findStamp)
           .toHaveBeenCalledWith('stamp', 'templates');
 
         expect(this.sprayTemplateModel.origin)
-          .toHaveBeenCalledWith('gameTemplates.findStampP.returnValue');
-        expect(this.gameModelsModel.findStampP)
+          .toHaveBeenCalledWith('gameTemplates.findStamp.returnValue');
+        expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('origin', 'models');
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
                                 [ 'rotateLeftP',
                                   ['factions',
-                                   'gameModels.findStampP.returnValue',
+                                   'gameModels.findStamp.returnValue',
                                    e.small],
                                   ['stamp']
                                 ]);

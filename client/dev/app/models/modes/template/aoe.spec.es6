@@ -129,7 +129,7 @@ describe('aoeTemplateMode model', function() {
     [ 'aoeSize5' , 5      ],
   ]);
 
-  xcontext('when user set target model', function() {
+  context('when user set target model', function() {
     return this.aoeTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -153,7 +153,7 @@ describe('aoeTemplateMode model', function() {
     });
   });
 
-  xcontext('when user set aoe to ruler target', function() {
+  context('when user set aoe to ruler target', function() {
     return this.aoeTemplateModeModel.actions
       .setToRulerTarget(this.state);
   }, function() {
@@ -184,7 +184,7 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should get ruler target position', function() {
-        expect(this.gameRulerModel.targetAoEPositionP)
+        expect(this.gameRulerModel.targetAoEPosition)
           .toHaveBeenCalledWith('models', 'ruler');
       });
 
@@ -193,7 +193,7 @@ describe('aoeTemplateMode model', function() {
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onTemplates',
                                 [ 'setToRulerP',
-                                  ['gameRuler.targetAoEPositionP.returnValue'],
+                                  ['gameRuler.targetAoEPosition.returnValue'],
                                   ['stamp']
                                 ]);
       });

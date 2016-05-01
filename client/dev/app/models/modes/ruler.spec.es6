@@ -2,6 +2,7 @@ describe('rulerMode model', function() {
   beforeEach(inject([ 'rulerMode', function(rulerMode) {
     this.rulerModeModel = rulerMode;
 
+    this.appStateService = spyOnService('appState');
     this.modesModel = spyOnService('modes');
     this.gameRulerModel = spyOnService('gameRuler');
     this.modelModel = spyOnService('model');
@@ -13,16 +14,8 @@ describe('rulerMode model', function() {
                   model_selection: 'selection'
                 };
     this.state = { modes: 'modes',
-                   game: this.game,
-                   eventP: jasmine.createSpy('eventP'),
-                   queueChangeEventP: jasmine.createSpy('queueChangeEventP')
+                   game: this.game
                  };
-    this.state.eventP.and.callFake((e, l, u) => {
-      if('Game.update' === e) {
-        this.state.game = R.over(l, u, this.state.game);
-      }
-      return 'state.eventP.returnValue';
-    });
   }]));
 
   context('when user set ruler max length', function() {
@@ -47,11 +40,11 @@ describe('rulerMode model', function() {
           .resolveWith(e.value);
       }, function() {
         it('should set ruler max length', function() {
-            expect(this.state.eventP)
+            expect(this.appStateService.chainReduce)
               .toHaveBeenCalledWith('Game.command.execute',
                                     'setRuler', [
                                       'setMaxLength',
-                                      [e.max]
+                                      [e.max, this.state]
                                     ]);
         });
 
@@ -60,7 +53,7 @@ describe('rulerMode model', function() {
             .and.returnValue('origin');
         }, function() {
           it('should set origin model\'s ruler max length', function() {
-            expect(this.state.eventP)
+            expect(this.appStateService.chainReduce)
               .toHaveBeenCalledWith('Game.command.execute',
                                     'onModels', [
                                       'setRulerMaxLength',
@@ -81,11 +74,11 @@ describe('rulerMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should reset ruler max length', function() {
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setRuler', [
                                   'setMaxLength',
-                                  [null]
+                                  [null, this.state]
                                 ]);
       });
 
@@ -94,7 +87,7 @@ describe('rulerMode model', function() {
           .and.returnValue('origin');
       }, function() {
         it('should reset origin model\'s ruler max length', function() {
-          expect(this.state.eventP)
+          expect(this.appStateService.chainReduce)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setRulerMaxLength',
@@ -116,11 +109,11 @@ describe('rulerMode model', function() {
     });
 
     it('should set ruler origin model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setRuler', [
                                 'setOrigin',
-                                [this.target]
+                                [this.target, this.state]
                               ]);
     });
   });
@@ -135,11 +128,11 @@ describe('rulerMode model', function() {
     });
 
     it('should set ruler target model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setRuler', [
                                 'setTarget',
-                                [this.target]
+                                [this.target, this.state]
                               ]);
     });
   });
@@ -149,19 +142,19 @@ describe('rulerMode model', function() {
       .createAoEOnTarget(this.state);
   }, function() {
     beforeEach(function() {
-      this.gameRulerModel.targetAoEPositionP
-        .resolveWith({
+      this.gameRulerModel.targetAoEPosition
+        .and.returnValue({
           x: 42, y: 71, r: 45
         });
     });
 
     it('should get ruler target position', function() {
-      expect(this.gameRulerModel.targetAoEPositionP)
+      expect(this.gameRulerModel.targetAoEPosition)
         .toHaveBeenCalledWith('models', 'ruler');
     });
 
     it('should execute createTemplate command', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'createTemplate', [
                                 { base: { x: 0, y: 0, r: 0 },

@@ -3,11 +3,13 @@
     .factory('rulerMode', rulerModeModelFactory);
 
   rulerModeModelFactory.$inject = [
+    'appState',
     'segmentMode',
     'gameRuler',
     'prompt',
   ];
-  function rulerModeModelFactory(segmentModeModel,
+  function rulerModeModelFactory(appStateService,
+                                 segmentModeModel,
                                  gameRulerModel,
                                  promptModel) {
     const ruler_default_bindings = {
@@ -35,21 +37,20 @@
     return ruler_mode;
 
     function rulerSetOriginModel(state, event) {
-      return R.threadP()(
-        () => state.eventP('Game.command.execute',
-                           'setRuler', [
-                             'setOrigin',
-                             [event['click#'].target]
-                           ]),
-        () => updateMaxLengthButton(state)
-      );
+      appStateService
+        .chainReduce('Game.command.execute',
+                     'setRuler', [
+                       'setOrigin',
+                       [event['click#'].target, state]
+                     ]);
     }
     function rulerSetTargetModel(state, event) {
-      return state.eventP('Game.command.execute',
-                          'setRuler', [
-                            'setTarget',
-                            [event['click#'].target]
-                          ]);
+      appStateService
+        .chainReduce('Game.command.execute',
+                     'setRuler', [
+                       'setTarget',
+                       [event['click#'].target, state]
+                     ]);
     }
     function rulerSetMaxLength(state) {
       return R.threadP()(
@@ -59,40 +60,46 @@
           .catch(R.always(null)),
         (value) => (value === 0) ? null : value,
         (value) => R.threadP()(
-            () => state.eventP('Game.command.execute',
-                               'setRuler', [
-                                 'setMaxLength', [value]
-                               ]),
+          () => {
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'setRuler', [
+                             'setMaxLength', [value, state]
+                           ]);
+          },
           () => {
             const origin = gameRulerModel.origin(state.game.ruler);
-            if(R.isNil(origin)) return null;
+            if(R.isNil(origin)) return;
 
-            return state.eventP('Game.command.execute',
-                                'onModels', [
-                                  'setRulerMaxLength',
-                                  [value],
-                                  [origin]
-                                ]);
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'onModels', [
+                             'setRulerMaxLength',
+                             [value],
+                             [origin]
+                           ]);
           }
-        ),
-        () => updateMaxLengthButton(state)
+        )
       );
     }
     function rulerCreateAoEOnTarget(state) {
-      return R.threadP(state.game.ruler)(
-        gameRulerModel
-          .targetAoEPositionP$(state.game.models),
+      R.thread(state.game.ruler)(
+        gameRulerModel.targetAoEPosition$(state.game.models),
         (position) => ({
           base: { x: 0, y: 0, r: 0 },
           templates: [ R.assoc('type', 'aoe', position) ]
         }),
-        (create) => state.eventP('Game.command.execute',
-                                 'createTemplate', [
-                                   create, false
-                                 ])
+        (create) => {
+          appStateService
+            .chainReduce('Game.command.execute',
+                         'createTemplate', [
+                           create, false
+                         ]);
+        }
       );
     }
-    function rulerOnEnter(state) {
+    function rulerOnEnter() {
+      const state = appStateService.current();
       return R.threadP()(
         () => baseOnEnter(state),
         () => updateMaxLengthButton(state)
@@ -101,7 +108,7 @@
     function updateMaxLengthButton(state) {
       const max = gameRulerModel.maxLength(state.game.ruler);
       ruler_mode.buttons[0][0] = `Set Max Len. (${max})`;
-      state.queueChangeEventP('Modes.buttons.update');
+      appStateService.emit('Modes.buttons.update');
     }
   }
 })();

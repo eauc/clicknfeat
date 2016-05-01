@@ -4,7 +4,8 @@
 
   gameSegmentModelFactory.$inject = [];
   function gameSegmentModelFactory() {
-    return function buildGameSegmentModel(type) {
+    const REMOTE_DISPLAY_LENS = R.lensPath(['remote','display']);
+    return function buildGameSegmentModel() {
       const gameSegmentModel = {
         create: gameSegmentCreate,
         isDisplayed: gameSegmentIsDisplayed,
@@ -33,52 +34,31 @@
         };
       }
       function gameSegmentIsDisplayed(segment) {
-        return R.path(['remote','display'], segment);
+        return R.view(REMOTE_DISPLAY_LENS, segment);
       }
-      function gameSegmentToggleDisplay(state, _game_, segment) {
-        return R.thread(segment)(
-          R.over(R.lensPath(['remote','display']), R.not),
-          (segment) => {
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return segment;
-          }
-        );
+      function gameSegmentToggleDisplay(segment) {
+        return R.over(REMOTE_DISPLAY_LENS, R.not, segment);
       }
-      function gameSegmentSetLocal(start, end, state, _game_, segment) {
+      function gameSegmentSetLocal(start, end, segment) {
         return R.over(R.lensProp('local'), R.pipe(
           R.assoc('start', R.clone(start)),
           R.assoc('end', R.clone(end)),
-          R.assoc('display', true),
-          (local) => {
-            state.queueChangeEventP(`Game.${type}.local.change`);
-            return local;
-          }
+          R.assoc('display', true)
         ), segment);
       }
-      function gameSegmentSetRemote(start, end, state, _game_, segment) {
+      function gameSegmentSetRemote(start, end, segment) {
         return R.thread(segment)(
           R.assocPath(['local','display'], false),
           R.assocPath(['remote','start'], R.clone(start)),
           R.assocPath(['remote','end'], R.clone(end)),
-          R.assocPath(['remote','display'], true),
-          (segment) => {
-            state.queueChangeEventP(`Game.${type}.local.change`);
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return segment;
-          }
+          R.assocPath(['remote','display'], true)
         );
       }
       function gameSegmentSaveRemoteState(segment) {
         return R.clone(R.prop('remote', segment));
       }
-      function gameSegmentResetRemote(remote, state, _game_, segment) {
-        return R.thread(segment)(
-          R.assoc('remote', R.clone(remote)),
-          (segment) => {
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return segment;
-          }
-        );
+      function gameSegmentResetRemote(remote, segment) {
+        return R.assoc('remote', R.clone(remote), segment);
       }
     };
   }

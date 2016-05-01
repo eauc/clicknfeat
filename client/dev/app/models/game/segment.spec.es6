@@ -1,15 +1,11 @@
 describe('gameSegment model', function() {
   beforeEach(inject([ 'gameSegment', function(gameSegmentModel) {
     this.gameSegmentModel = gameSegmentModel('type');
-
-    this.state = jasmine.createSpyObj('state', [
-      'queueChangeEventP'
-    ]);
   }]));
 
   context('toggleDisplay()', function() {
     return this.gameSegmentModel
-      .toggleDisplay(this.state, 'game', {
+      .toggleDisplay({
         remote: { display: false }
       });
   }, function() {
@@ -17,16 +13,11 @@ describe('gameSegment model', function() {
       expect(this.gameSegmentModel.isDisplayed(this.context))
         .toEqual(true);
     });
-
-    it('should emit changeRemote game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.remote.change');
-    });
   });
 
   context('setLocal(<start>, <end>, <state>)', function() {
     return this.gameSegmentModel
-      .setLocal(this.start, this.end, this.state, 'game', this.segment);
+      .setLocal(this.start, this.end, this.segment);
   }, function() {
     beforeEach(function() {
       this.start = { x: 100, y: 0 };
@@ -42,16 +33,11 @@ describe('gameSegment model', function() {
                           }
                  });
     });
-
-    it('should emit changeLocal game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.local.change');
-    });
   });
 
   context('setRemote(<start>, <end>, <state>)', function() {
     return this.gameSegmentModel
-      .setRemote(this.start, this.end, this.state, 'game', this.segment);
+      .setRemote(this.start, this.end, this.segment);
   }, function() {
     beforeEach(function() {
       this.start = { x: 100, y: 0 };
@@ -64,8 +50,6 @@ describe('gameSegment model', function() {
     it('should reset local segment state', function() {
       expect(this.context.local)
         .toEqual({ display: false });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.local.change');
     });
 
     it('should set remote segment state', function() {
@@ -74,14 +58,12 @@ describe('gameSegment model', function() {
                    end: { x: 100, y: 100 },
                    display: true
                  });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.remote.change');
     });
   });
 
   context('resetRemote(<remote>, <state>)', function() {
     return this.gameSegmentModel
-      .resetRemote(this.remote, this.state, 'game', this.segment);
+      .resetRemote(this.remote, this.segment);
   }, function() {
     beforeEach(function() {
       this.remote = { state: 'state' };
@@ -92,11 +74,6 @@ describe('gameSegment model', function() {
         .toEqual(this.remote);
       expect(this.context)
         .not.toBe(this.state);
-    });
-
-    it('should emit changeRemoteSegment game events', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.type.remote.change');
     });
   });
 

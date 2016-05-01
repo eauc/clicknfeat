@@ -41,7 +41,7 @@
     models_actions.toggleSoulsDisplay = modelsToggleSoulsDisplay;
     models_actions.incrementSouls = modelsIncrementSouls;
     models_actions.decrementSouls = modelsDecrementSouls;
-    // models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
+    models_actions.setRulerMaxLength = modelsSetRulerMaxLength;
     models_actions.setChargeMaxLength = modelsSetChargeMaxLength;
     models_actions.setPlaceMaxLength = modelsSetPlaceMaxLength;
     models_actions.togglePlaceWithin = modelsTogglePlaceWithin;
@@ -400,23 +400,31 @@
                      'onModels',
                      [ 'decrementCounter', ['s'], stamps]);
     }
-    // function modelsSetRulerMaxLength(state) {
-    //   const stamps = gameModelSelectionModel
-    //           .get('local', state.game.model_selection);
-    //   return R.threadP(state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStampP$(stamps[0]),
-    //     modelModel.rulerMaxLength,
-    //     R.defaultTo(0),
-    //     (value) => promptService
-    //       .promptP('prompt', 'Set ruler max length :', value)
-    //       .catch(R.always(null)),
-    //     (value) => (value === 0) ? null : value,
-    //     (value) => state.eventP('Game.command.execute',
-    //                             'onModels',
-    //                             [ 'setRulerMaxLength', [value], stamps])
-    //   );
-    // }
+    function modelsSetRulerMaxLength(state) {
+      const stamps = gameModelSelectionModel
+              .get('local', state.game.model_selection);
+      return R.thread(state.game)(
+        R.prop('models'),
+        gameModelsModel.findStamp$(stamps[0]),
+        R.unless(
+          R.isNil,
+          (model) => R.threadP(model)(
+            modelModel.rulerMaxLength,
+            R.defaultTo(0),
+            (value) => promptService
+              .promptP('prompt', 'Set ruler max length :', value)
+              .catch(R.always(null)),
+            (value) => (value === 0) ? null : value,
+            (value) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'onModels',
+                             [ 'setRulerMaxLength', [value], stamps]);
+            }
+          )
+        )
+      );
+    }
     function modelsSetChargeMaxLength(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);

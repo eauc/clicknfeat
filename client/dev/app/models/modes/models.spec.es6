@@ -1093,7 +1093,7 @@ describe('modelsMode model', function() {
     ]);
   });
 
-  xcontext('when user sets ruler max length', function() {
+  context('when user sets ruler max length', function() {
     return this.modelsModeModel.actions
       .setRulerMaxLength(this.state);
   }, function() {

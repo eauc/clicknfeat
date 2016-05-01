@@ -1,4 +1,4 @@
-xdescribe('gameRuler model', function() {
+describe('gameRuler model', function() {
   beforeEach(inject([ 'gameRuler', function(gameRulerModel) {
     this.gameRulerModel = gameRulerModel;
 
@@ -6,13 +6,11 @@ xdescribe('gameRuler model', function() {
     this.gameModelsModel = spyOnService('gameModels');
 
     this.game = 'game';
-    this.state = jasmine.createSpyObj('state', [
-      'queueChangeEventP'
-    ]);
-    this.state.factions = 'factions';
-    this.state.game = { models: 'models' };
-
-    this.gameModelsModel.findStampP.resolveWith((s) => {
+    this.state = {
+      factions: 'factions',
+      game: { models: 'models' }
+    };
+    this.gameModelsModel.findStamp.and.callFake((s) => {
       return ( s === 'origin' ? this.origin_model :
                ( s === 'target' ? this.target_model : null )
              );
@@ -20,7 +18,7 @@ xdescribe('gameRuler model', function() {
   }]));
 
   context('toggleDisplay()', function() {
-    return this.gameRulerModel.toggleDisplay(this.state, this.game, {
+    return this.gameRulerModel.toggleDisplay({
       remote: { display: false }
     });
   }, function() {
@@ -28,16 +26,11 @@ xdescribe('gameRuler model', function() {
       expect(this.context)
         .toEqual({ remote: { display: true } });
     });
-
-    it('should emit changeRemoteRuler game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.ruler.remote.change');
-    });
   });
 
   context('setMaxLength(<start>, <end>, <state>)', function() {
     return this.gameRulerModel
-      .setMaxLength(this.length, this.state, this.game, this.ruler);
+      .setMaxLength(this.length, this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = this.gameRulerModel.create();
@@ -56,9 +49,9 @@ xdescribe('gameRuler model', function() {
     });
 
     it('should look up ruler origin & target', function() {
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('origin', 'models');
-      expect(this.gameModelsModel.findStampP)
+      expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('target', 'models');
     });
 
@@ -115,7 +108,7 @@ xdescribe('gameRuler model', function() {
       this.target_model = 'target_model';
     }, function() {
       beforeEach(function() {
-        this.modelModel.shortestLineToP.resolveWith({
+        this.modelModel.shortestLineTo.and.returnValue({
           start: { x: 120, y: 120 },
           end:   { x: 120, y: 240 }
         });
@@ -126,7 +119,7 @@ xdescribe('gameRuler model', function() {
           this.length = e.max_length;
         }, function() {
           it('should set ruler according to origin/target models', function() {
-            expect(this.modelModel.shortestLineToP)
+            expect(this.modelModel.shortestLineTo)
               .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
 
             expect(this.context.remote.start)
@@ -150,7 +143,7 @@ xdescribe('gameRuler model', function() {
 
   context('setLocal(<start>, <end>, <state>)', function() {
     return this.gameRulerModel
-      .setLocal(this.start, this.end, this.state, this.game, this.ruler);
+      .setLocal(this.start, this.end, this.ruler);
   }, function() {
     beforeEach(function() {
       this.start = { x: 100, y: 0 };
@@ -167,11 +160,6 @@ xdescribe('gameRuler model', function() {
                  display: true
                }
       });
-    });
-
-    it('should emit changeLocalRuler game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.ruler.local.change');
     });
 
     context('with max length', function() {
@@ -193,7 +181,7 @@ xdescribe('gameRuler model', function() {
 
   context('setRemote(<start>, <end>, <state>)', function() {
     return this.gameRulerModel
-      .setRemote(this.start, this.end, this.state, this.game, this.ruler);
+      .setRemote(this.start, this.end, this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.pointModel = spyOnService('point');
@@ -211,8 +199,6 @@ xdescribe('gameRuler model', function() {
     it('should reset local ruler state', function() {
       expect(this.context.local)
         .toEqual({ display: false });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.ruler.remote.change');
     });
 
     it('should set remote ruler state', function() {
@@ -226,8 +212,6 @@ xdescribe('gameRuler model', function() {
                    reached: true,
                    display: true
                  });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.ruler.remote.change');
     });
 
     context('with max length', function() {
@@ -251,7 +235,7 @@ xdescribe('gameRuler model', function() {
 
   context('resetRemote(<state>, <state>)', function() {
     return this.gameRulerModel
-      .resetRemote(this.remote, this.state, this.ruler);
+      .resetRemote(this.remote, this.ruler);
   }, function() {
     beforeEach(function() {
       this.remote = { state: 'state' };
@@ -262,11 +246,6 @@ xdescribe('gameRuler model', function() {
         .toEqual({ remote: this.remote });
       expect(this.context.remote)
         .not.toBe(this.remote);
-    });
-
-    it('should emit changeRemoteRuler game events', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.ruler.remote.change');
     });
   });
 
@@ -290,7 +269,7 @@ xdescribe('gameRuler model', function() {
 
   context('clearOrigin(<state>)', function() {
     return this.gameRulerModel
-      .clearOrigin(this.state, this.game, this.ruler);
+      .clearOrigin(this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = {
@@ -323,7 +302,7 @@ xdescribe('gameRuler model', function() {
 
   context('clearTarget(<state>)', function() {
     return this.gameRulerModel
-      .clearTarget(this.state, this.game, this.ruler);
+      .clearTarget(this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = {
@@ -356,7 +335,7 @@ xdescribe('gameRuler model', function() {
 
   context('setOrigin(<origin>, <state>)', function() {
     return this.gameRulerModel
-      .setOrigin(this.origin, this.state, this.game, this.ruler);
+      .setOrigin(this.origin, this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.origin = { state: { stamp: 'origin' } };
@@ -414,7 +393,7 @@ xdescribe('gameRuler model', function() {
       this.target_model = 'target_model';
     }, function() {
       beforeEach(function() {
-        this.modelModel.shortestLineToP.resolveWith({
+        this.modelModel.shortestLineTo.and.returnValue({
           start: { x: 120, y: 120 },
           end:   { x: 120, y: 240 }
         });
@@ -425,7 +404,7 @@ xdescribe('gameRuler model', function() {
           this.ruler.remote.max = e.max_length;
         }, function() {
           it('should set ruler according to origin/target models', function() {
-            expect(this.modelModel.shortestLineToP)
+            expect(this.modelModel.shortestLineTo)
               .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
 
             expect(this.context.remote.start)
@@ -453,7 +432,7 @@ xdescribe('gameRuler model', function() {
             .and.returnValue(e.max_length);
         }, function() {
           it('should set ruler according to origin\'s rulerMaxLength', function() {
-            expect(this.modelModel.shortestLineToP)
+            expect(this.modelModel.shortestLineTo)
               .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
 
             expect(this.context.remote.max)
@@ -481,7 +460,7 @@ xdescribe('gameRuler model', function() {
 
   context('setOriginResetTarget(<origin>, <state>)', function() {
     return this.gameRulerModel
-      .setOriginResetTarget(this.origin, this.state, this.game, this.ruler);
+      .setOriginResetTarget(this.origin, this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.origin = { state: { stamp: 'origin' } };
@@ -523,7 +502,7 @@ xdescribe('gameRuler model', function() {
 
   context('setTarget(<target>, <state>)', function() {
     return this.gameRulerModel
-      .setTarget(this.target, this.state, this.game, this.ruler);
+      .setTarget(this.target, this.state, this.ruler);
   }, function() {
     beforeEach(function() {
       this.target = { state: { stamp: 'target' } };
@@ -579,7 +558,7 @@ xdescribe('gameRuler model', function() {
       this.target_model = 'target_model';
     }, function() {
       beforeEach(function() {
-        this.modelModel.shortestLineToP.resolveWith({
+        this.modelModel.shortestLineTo.and.returnValue({
           start: { x: 120, y: 120 },
           end:   { x: 120, y: 240 }
         });
@@ -590,7 +569,7 @@ xdescribe('gameRuler model', function() {
           this.ruler.remote.max = e.max_length;
         }, function() {
           it('should set ruler according to origin/target models', function() {
-            expect(this.modelModel.shortestLineToP)
+            expect(this.modelModel.shortestLineTo)
               .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
 
             expect(this.context.remote.start)
@@ -616,7 +595,7 @@ xdescribe('gameRuler model', function() {
 
   context('targetAoEPositionP(<models>)', function() {
     return this.gameRulerModel
-      .targetAoEPositionP('models', this.ruler);
+      .targetAoEPosition('models', this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = {
@@ -625,7 +604,7 @@ xdescribe('gameRuler model', function() {
                   length: 4.5
                 }
       };
-      this.gameModelsModel.findStampP.resolveWith({
+      this.gameModelsModel.findStamp.and.returnValue({
         state: { x: 320, y: 320 }
       });
     });

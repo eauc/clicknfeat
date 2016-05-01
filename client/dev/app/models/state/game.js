@@ -105,6 +105,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       appStateService.onChange('Game.change', 'Game.terrains.change', R.prop(['terrains']));
       appStateService.onChange('Game.change', 'Game.terrain_selection.change', R.prop('terrain_selection'));
       appStateService.onChange('Game.terrain_selection.change', 'Game.terrain_selection.local.change', R.prop('local'));
+      appStateService.onChange('Game.change', 'Game.ruler.remote.change', R.path(['ruler', 'remote']));
+      appStateService.onChange('Game.change', 'Game.ruler.local.change', R.path(['ruler', 'local']));
 
       return R.thread(state)(R.set(UI_STATE_LENS, { flipped: false }), R.set(GAME_LENS, {}), R.assocPath(['exports', 'game'], game_export_cell));
     }

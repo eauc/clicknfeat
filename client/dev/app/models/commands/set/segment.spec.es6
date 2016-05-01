@@ -1,21 +1,18 @@
 describe('setSegmentCommand model', function() {
   beforeEach(inject([ 'setSegmentCommand', function(setSegmentCommand) {
-    this.gameLosModel = spyOnService('gameLos');
-    this.gameLosModel.saveRemoteState.and.callFake((r) => {
+    this.gameRulerModel = spyOnService('gameRuler');
+    this.gameRulerModel.saveRemoteState.and.callFake((r) => {
       return r+'Save';
     });
 
-    this.setSegmentCommandModel = setSegmentCommand('type', this.gameLosModel);
+    this.setSegmentCommandModel = setSegmentCommand('type', this.gameRulerModel);
 
-    this.state = jasmine.createSpyObj('state', [
-      'queueChangeEventP'
-    ]);
     this.game = { type: 'type' };
   }]));
 
   context('executeP(<method>, <...args...>, <state>, <game>)', function() {
     return this.setSegmentCommandModel
-      .executeP(this.method, ['args'], this.state, this.game);
+      .executeP(this.method, ['args'], this.game);
   }, function() {
     context('<method> does not exist', function() {
       this.method = 'unknown';
@@ -36,22 +33,22 @@ describe('setSegmentCommand model', function() {
       });
 
       it('should apply <method> on game segment', function() {
-        expect(this.gameLosModel.setRemote)
-          .toHaveBeenCalledWith('args', this.state, this.game, 'type');
+        expect(this.gameRulerModel.setRemote)
+          .toHaveBeenCalledWith('args', 'type');
         expect(this.context[1].type)
-          .toBe('gameLos.setRemote.returnValue');
+          .toBe('gameRuler.setRemote.returnValue');
       });
 
       it('should save new remote segment state', function() {
         expect(this.context[0].after)
-          .toBe('gameLos.setRemote.returnValueSave');
+          .toBe('gameRuler.setRemote.returnValueSave');
       });
     });
   });
 
   example(function(e) {
     context(e.method+'(<ctxt>, <state>, <game>)', function() {
-      return this.setSegmentCommandModel[e.method](this.ctxt, this.state, this.game);
+      return this.setSegmentCommandModel[e.method](this.ctxt, this.game);
     }, function() {
       beforeEach(function() {
         this.ctxt = {
@@ -62,10 +59,10 @@ describe('setSegmentCommand model', function() {
       });
 
       it('should set game remote segment', function() {
-        expect(this.gameLosModel.resetRemote)
-          .toHaveBeenCalledWith(e.result, this.state, this.game, e.previous);
+        expect(this.gameRulerModel.resetRemote)
+          .toHaveBeenCalledWith(e.result, e.previous);
         expect(this.context.type)
-          .toBe('gameLos.resetRemote.returnValue');
+          .toBe('gameRuler.resetRemote.returnValue');
       });
     });
   }, [

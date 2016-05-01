@@ -260,17 +260,17 @@ describe('defaultMode model', function() {
       .actions.enterLosMode(this.state);
   }, function() {
     it('should switch to los mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo', 'Los');
     });
   });
 
-  xcontext('when user uses ruler', function() {
+  context('when user uses ruler', function() {
     return this.defaultModeModel
       .actions.enterRulerMode(this.state);
   }, function() {
     it('should switch to ruler mode', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Modes.switchTo', 'Ruler');
     });
   });

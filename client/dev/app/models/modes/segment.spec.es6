@@ -6,23 +6,15 @@ describe('segmentMode model', function() {
 
     this.segmentModeModel = segmentMode('type', this.gameLosModel, {});
 
+    this.appStateService = spyOnService('appState');
     this.game = { type: 'type',
                   models: 'models',
                   model_selection: 'selection'
                 };
-    this.state = { game: this.game,
-                   queueChangeEventP: jasmine.createSpy('queueChangeEventP'),
-                   eventP: jasmine.createSpy('eventP')
-                 };
-    this.state.eventP.and.callFake((e, l, u) => {
-      if('Game.update' === e) {
-        this.state.game = R.over(l, u, this.state.game);
-      }
-      return 'state.event.returnValue';
-    });
+    this.state = { game: this.game };
   }]));
 
-  xcontext('when user starts using segment', function() {
+  context('when user starts using segment', function() {
     return this.segmentModeModel
       .onEnter(this.state);
   }, function() {
@@ -33,14 +25,14 @@ describe('segmentMode model', function() {
       it('should set selected model as origin', function() {
         expect(this.gameModelSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.gameModelsModel.findStampP)
+        expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('stamp', 'models');
 
-        expect(this.state.eventP)
+        expect(this.appStateService.chainReduce)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setType', [
                                   'setOriginResetTarget',
-                                  ['gameModels.findStampP.returnValue']
+                                  ['gameModels.findStamp.returnValue', this.state]
                                 ]);
       });
     });
@@ -51,7 +43,7 @@ describe('segmentMode model', function() {
       .onLeave(this.state);
   }, function() {
     it('should update Segment state', function() {
-      expect(this.state.queueChangeEventP)
+      expect(this.appStateService.emit)
         .toHaveBeenCalledWith('Game.type.remote.change');
     });
   });
@@ -64,9 +56,8 @@ describe('segmentMode model', function() {
     }, function() {
       it('should init local segment', function() {
         expect(this.gameLosModel.setLocal)
-          .toHaveBeenCalledWith('start', 'now',
-                                this.state, this.game, 'type');
-        expect(this.state.game.type)
+          .toHaveBeenCalledWith('start', 'now', 'type');
+        expect(this.context.game.type)
           .toBe('gameLos.setLocal.returnValue');
       });
     });
@@ -82,11 +73,11 @@ describe('segmentMode model', function() {
       .dragEndMap(this.state, this.drag);
   }, function() {
     it('should execute setRemote command', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setType', [
                                 'setRemote',
-                                ['start', 'now']
+                                ['start', 'now', this.state]
                               ]);
     });
   });

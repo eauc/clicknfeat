@@ -13,7 +13,7 @@
       };
       return setSegmentCommandModel;
 
-      function setSegmentExecuteP(method, args, state, game) {
+      function setSegmentExecuteP(method, args, game) {
         const ctxt = {
           before: [],
           after: [],
@@ -21,16 +21,12 @@
         };
         return R.threadP(gameSegmentModel)(
           checkMethod,
-          R.always(game),
-          saveState('before'),
+          () => saveState('before', game),
           () => gameSegmentModel[method]
-            .apply(null, [...args, state, game, R.prop(type, game)]),
+            .apply(null, [...args, R.prop(type, game)]),
           (segment) => R.assoc(type, segment, game),
-          saveState('after'),
-          (game) => {
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return [ctxt, game];
-          }
+          (game) => saveState('after', game),
+          (game) => [ctxt, game]
         );
 
         function checkMethod(gameSegmentModel) {
@@ -41,30 +37,24 @@
                        `${s.capitalize(type)} unknown method "${method}"`)
           );
         }
-        function saveState(when) {
-          return (game) => {
-            ctxt[when] = gameSegmentModel.saveRemoteState(R.prop(type, game));
-            return game;
-          };
+        function saveState(when, game) {
+          ctxt[when] = gameSegmentModel.saveRemoteState(R.prop(type, game));
+          return game;
         }
       }
-      function setSegmentReplayP(ctxt, state, game) {
-        return R.over(R.lensProp(type), R.pipe(
-          gameSegmentModel.resetRemote$(ctxt.after, state, game),
-          (segment) => {
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return segment;
-          }
-        ), game);
+      function setSegmentReplayP(ctxt, game) {
+        return R.over(
+          R.lensProp(type),
+          gameSegmentModel.resetRemote$(ctxt.after),
+          game
+        );
       }
-      function setSegmentUndoP(ctxt, state, game) {
-        return R.over(R.lensProp(type), R.pipe(
-          gameSegmentModel.resetRemote$(ctxt.before, state, game),
-          (segment) => {
-            state.queueChangeEventP(`Game.${type}.remote.change`);
-            return segment;
-          }
-        ), game);
+      function setSegmentUndoP(ctxt, game) {
+        return R.over(
+          R.lensProp(type),
+          gameSegmentModel.resetRemote$(ctxt.before),
+          game
+        );
       }
     };
   }
