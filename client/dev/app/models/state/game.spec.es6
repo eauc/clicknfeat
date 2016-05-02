@@ -13,16 +13,16 @@ describe('stateGame model', function() {
     }
   ]));
 
-  xcontext('onInvitePlayer(<cmd>, <args>)', function() {
+  context('onInvitePlayer(<cmd>, <args>)', function() {
     return this.stateGameModel
-      .onGameInvitePlayer(this.state, 'event', 'player');
+      .onInvitePlayer(this.state, 'event', 'player');
   }, function() {
     beforeEach(function() {
       this.state.user = { state: { name: 'user' } };
     });
 
     it('should send chat msg', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('User.sendChatMsg', {
           to: [ 'player' ],
           msg: 'User has invited you to join a game',

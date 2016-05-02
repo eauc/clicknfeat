@@ -62,7 +62,7 @@
       onNewChatMsg: stateGameOnNewChatMsg,
       onUiStateFlip: stateGameOnUiStateFlip,
       // onUpdate: stateGameOnUpdate,
-      // onInvitePlayer: stateGameOnInvitePlayer,
+      onInvitePlayer: stateGameOnInvitePlayer,
       onModelCreate: stateGameOnModelCreate,
       onModelCopy: stateGameOnModelCopy,
       onModelImportList: stateGameOnModelImportList,
@@ -109,6 +109,7 @@
         .addReducer('Game.command.replayBatch' , stateGameModel.onCommandReplayBatch)
         .addReducer('Game.command.undoLast'    , stateGameModel.onCommandUndoLast)
         .addReducer('Game.command.replayNext'  , stateGameModel.onCommandReplayNext)
+        .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
         .addReducer('Game.setCmds'             , stateGameModel.onSetCmds)
         .addReducer('Game.setPlayers'          , stateGameModel.onSetPlayers)
         .addReducer('Game.newChatMsg'          , stateGameModel.onNewChatMsg)
@@ -134,7 +135,6 @@
                      stateGameModel.checkMode)
         .addListener('Game.model_selection.local.change',
                      stateGameModel.checkMode);
-        // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
         // .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
         // .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
         // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
@@ -386,17 +386,18 @@
     //     state
     //   );
     // }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   const msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   const link = self.window.location.hash;
-    //   console.log('Invite player', to, msg, link);
+    function stateGameOnInvitePlayer(state, _event_, to) {
+      const msg = [
+        s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
+        'has invited you to join a game'
+      ].join(' ');
+      const link = self.window.location.hash;
+      console.log('Invite player', to, msg, link);
 
-    //   return state.eventP('User.sendChatMsg',
-    //                       { to: [to], msg: msg, link: link });
-    // }
+      appStateService
+        .chainReduce('User.sendChatMsg',
+                     { to: [to], msg: msg, link: link });
+    }
     function stateGameOnModelCreate(state, _event_, [model_path, repeat]) {
       appStateService.chainReduce('Modes.switchTo', 'CreateModel');
       return R.assoc('create', {

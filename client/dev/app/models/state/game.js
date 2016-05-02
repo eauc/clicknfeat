@@ -39,7 +39,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onNewChatMsg: stateGameOnNewChatMsg,
       onUiStateFlip: stateGameOnUiStateFlip,
       // onUpdate: stateGameOnUpdate,
-      // onInvitePlayer: stateGameOnInvitePlayer,
+      onInvitePlayer: stateGameOnInvitePlayer,
       onModelCreate: stateGameOnModelCreate,
       onModelCopy: stateGameOnModelCopy,
       onModelImportList: stateGameOnModelImportList,
@@ -72,8 +72,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return stateGameModel;
 
     function stateGamesCreate(state) {
-      appStateService.addReducer('Game.update', stateGameModel.onUpdate).addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addReducer('Game.model.create', stateGameModel.onModelCreate).addReducer('Game.model.copy', stateGameModel.onModelCopy).addReducer('Game.model.importList', stateGameModel.onModelImportList).addReducer('Game.model.importFile', stateGameModel.onModelImportFile).addReducer('Game.model.importFileData', stateGameModel.onModelImportFileData).addReducer('Game.template.create', stateGameModel.onTemplateCreate).addReducer('Game.terrain.create', stateGameModel.onTerrainCreate).addReducer('Game.terrain.reset', stateGameModel.onTerrainReset).addListener('Game.change', stateGameModel.saveCurrent).addListener('Modes.change', stateGameModel.closeOsd).addListener('Game.template_selection.local.change', stateGameModel.checkMode).addListener('Game.terrain_selection.local.change', stateGameModel.checkMode).addListener('Game.model_selection.local.change', stateGameModel.checkMode);
-      // .addReducer('Game.invitePlayer'        , stateGameModel.onInvitePlayer)
+      appStateService.addReducer('Game.update', stateGameModel.onUpdate).addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.invitePlayer', stateGameModel.onInvitePlayer).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addReducer('Game.model.create', stateGameModel.onModelCreate).addReducer('Game.model.copy', stateGameModel.onModelCopy).addReducer('Game.model.importList', stateGameModel.onModelImportList).addReducer('Game.model.importFile', stateGameModel.onModelImportFile).addReducer('Game.model.importFileData', stateGameModel.onModelImportFileData).addReducer('Game.template.create', stateGameModel.onTemplateCreate).addReducer('Game.terrain.create', stateGameModel.onTerrainCreate).addReducer('Game.terrain.reset', stateGameModel.onTerrainReset).addListener('Game.change', stateGameModel.saveCurrent).addListener('Modes.change', stateGameModel.closeOsd).addListener('Game.template_selection.local.change', stateGameModel.checkMode).addListener('Game.terrain_selection.local.change', stateGameModel.checkMode).addListener('Game.model_selection.local.change', stateGameModel.checkMode);
       // .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
       // .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
       // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
@@ -279,17 +278,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //     state
     //   );
     // }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   const msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   const link = self.window.location.hash;
-    //   console.log('Invite player', to, msg, link);
+    function stateGameOnInvitePlayer(state, _event_, to) {
+      var msg = [s.capitalize(R.pathOr('Unknown', ['user', 'state', 'name'], state)), 'has invited you to join a game'].join(' ');
+      var link = self.window.location.hash;
+      console.log('Invite player', to, msg, link);
 
-    //   return state.eventP('User.sendChatMsg',
-    //                       { to: [to], msg: msg, link: link });
-    // }
+      appStateService.chainReduce('User.sendChatMsg', { to: [to], msg: msg, link: link });
+    }
     function stateGameOnModelCreate(state, _event_, _ref27) {
       var _ref28 = _slicedToArray(_ref27, 2);
 

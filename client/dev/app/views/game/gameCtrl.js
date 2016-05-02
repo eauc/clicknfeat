@@ -18,7 +18,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
-    // vm.doInvitePlayer = doInvitePlayer;
+    vm.doInvitePlayer = doInvitePlayer;
     self.window.gameUpdate = gameUpdate;
 
     activate();
@@ -28,31 +28,18 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       vm.invite_player = null;
 
       $scope.stateEvent('Game.load', is_online, is_private, id);
-      // $scope.digestOnStateChangeEvent('Game.load.success', $scope);
-      // $scope.onStateChangeEvent('Game.load.error', onGameLoadError, $scope);
 
       $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
       $scope.digestOnStateChangeEvent('Game.board.change', $scope);
       $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
-      // $scope.digestOnStateChangeEvent('Game.model.create.enable', $scope);
-      // $scope.digestOnStateChangeEvent('Game.template.create.enable', $scope);
-      // $scope.digestOnStateChangeEvent('Game.terrain.create.enable', $scope);
-      // $scope.digestOnStateChangeEvent('Game.players.change', $scope);
-      // $scope.digestOnStateChangeEvent('User.change', $scope);
+      $scope.digestOnStateChangeEvent('User.connection.change', $scope);
 
       $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
-      // $scope.onStateChangeEvent('Modes.buttons.update',
-      //                           updateCurrentModeBindings,
-      //                           $scope);
 
       $scope.$on('$destroy', function () {
         $scope.stateEvent('Modes.exit');
       });
     }
-
-    // function onGameLoadError() {
-    //   $scope.goToState('lounge');
-    // }
 
     function updateCurrentModeBindings() {
       vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeBindings, R.clone);
@@ -86,11 +73,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }
       $scope.stateEvent('Modes.current.action', action, [{}]);
     }
-    // function doInvitePlayer() {
-    //   if(R.isNil(vm.invite_player)) return;
+    function doInvitePlayer() {
+      if (R.isNil(vm.invite_player)) return;
 
-    //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    // }
+      $scope.stateEvent('Game.invitePlayer', vm.invite_player);
+    }
 
     function gameUpdate(fn) {
       $scope.stateEvent('Game.update', fn);
