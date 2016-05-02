@@ -340,10 +340,10 @@ a:not([href]):focus {
   stroke: #F90; }
 #game .los-target {
   stroke: #0FF; }
-#game .los-envelope, #game .los-darkness, #game .los-shadow {
+#game .los-enveloppe, #game .los-darkness, #game .los-shadow {
   fill-opacity: 0.5;
   stroke-width: 0.5px; }
-#game .los-envelope {
+#game .los-enveloppe {
   fill: #9F9;
   stroke: #3F3; }
 #game .los-darkness {

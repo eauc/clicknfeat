@@ -255,7 +255,7 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user uses los', function() {
+  context('when user uses los', function() {
     return this.defaultModeModel
       .actions.enterLosMode(this.state);
   }, function() {

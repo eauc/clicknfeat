@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('losMode', losModeModelFactory);
 
-  losModeModelFactory.$inject = ['segmentMode', 'gameLos'];
-  function losModeModelFactory(segmentModeModel, gameLosModel) {
+  losModeModelFactory.$inject = ['appState', 'segmentMode', 'gameLos'];
+  function losModeModelFactory(appStateService, segmentModeModel, gameLosModel) {
     var los_default_bindings = {
       exitLosMode: 'ctrl+l',
       toggleIgnoreModel: 'clickModel',
@@ -18,14 +18,14 @@
 
     return los_mode;
 
-    function losSetOriginModel(state, event) {
-      return state.eventP('Game.command.execute', 'setLos', ['setOrigin', [event['click#'].target]]);
+    function losSetOriginModel(_state_, event) {
+      return appStateService.chainReduce('Game.command.execute', 'setLos', ['setOrigin', [event['click#'].target]]);
     }
-    function losSetTargetModel(state, event) {
-      return state.eventP('Game.command.execute', 'setLos', ['setTarget', [event['click#'].target]]);
+    function losSetTargetModel(_state_, event) {
+      return appStateService.chainReduce('Game.command.execute', 'setLos', ['setTarget', [event['click#'].target]]);
     }
-    function losToggleIgnoreModel(state, event) {
-      return state.eventP('Game.command.execute', 'setLos', ['toggleIgnoreModel', [event['click#'].target]]);
+    function losToggleIgnoreModel(_state_, event) {
+      return appStateService.chainReduce('Game.command.execute', 'setLos', ['toggleIgnoreModel', [event['click#'].target]]);
     }
   }
 })();

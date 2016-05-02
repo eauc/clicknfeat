@@ -102,7 +102,7 @@
             />
           </marker>
           <clipPath id="los-clip">
-            <polygon click-game-los-clip>
+            <polygon>
             </polygon>
           </clipPath>
         </defs>
@@ -141,15 +141,20 @@
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
           <g click-game-under-models-list>
           </g>
-          <g click-game-los-refresh
-             style="clip-path: url(#los-clip);">
-            <polygon ng-repeat="envelope in state.game.los.computed.shadow"
-                     click-game-los-darkness
-                     class="los-shadow">
+          <g click-game-los-enveloppe
+             ng-show="render.display">
+            <polygon class="los-enveloppe"
+                     ng-attr-points="{{render.enveloppe}}">
             </polygon>
-            <polygon ng-repeat="envelope in state.game.los.computed.darkness"
-                     click-game-los-darkness
-                     class="los-darkness">
+            <polygon ng-repeat="shadow in render.shadow"
+                     class="los-shadow"
+                     style="clip-path: url(#los-clip);"
+                     ng-attr-points="{{shadow}}">
+            </polygon>
+            <polygon ng-repeat="darkness in render.darkness"
+                     class="los-darkness"
+                     style="clip-path: url(#los-clip);"
+                     ng-attr-points="{{darkness}}">
             </polygon>
           </g>
         </g>
@@ -206,6 +211,34 @@
         </g>
         <g id="game-los"
            click-game-los>
+          <line style="marker-start: url(#los-start);
+                       marker-end: url(#los-end);"
+                ng-show="render.local.show"
+                ng-attr-x1="{{render.local.x1}}"
+                ng-attr-y1="{{render.local.y1}}"
+                ng-attr-x2="{{render.local.x2}}"
+                ng-attr-y2="{{render.local.y2}}">
+          </line>
+          <line style="marker-start: url(#los-start);
+                       marker-end: url(#los-end);"
+                ng-show="render.remote.show"
+                ng-attr-x1="{{render.remote.x1}}"
+                ng-attr-y1="{{render.remote.y1}}"
+                ng-attr-x2="{{render.remote.x2}}"
+                ng-attr-y2="{{render.remote.y2}}">
+          </line>
+          <circle class="los-origin"
+                  ng-if="render.origin"
+                  ng-attr-cx="{{render.origin.cx}}"
+                  ng-attr-cy="{{render.origin.cy}}"
+                  ng-attr-r="{{render.origin.radius}}">
+          </circle>
+          <circle class="los-target"
+                  ng-if="render.target"
+                  ng-attr-cx="{{render.target.cx}}"
+                  ng-attr-cy="{{render.target.cy}}"
+                  ng-attr-r="{{render.target.radius}}">
+          </circle>
         </g>
         <g id="game-create-terrains">
           <g ng-repeat="(index, terrain) in state.create.terrains"

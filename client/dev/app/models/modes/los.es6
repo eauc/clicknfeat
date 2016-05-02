@@ -3,10 +3,12 @@
     .factory('losMode', losModeModelFactory);
 
   losModeModelFactory.$inject = [
+    'appState',
     'segmentMode',
     'gameLos',
   ];
-  function losModeModelFactory(segmentModeModel,
+  function losModeModelFactory(appStateService,
+                               segmentModeModel,
                                gameLosModel) {
     const los_default_bindings = {
       exitLosMode: 'ctrl+l',
@@ -21,26 +23,29 @@
 
     return los_mode;
 
-    function losSetOriginModel(state, event) {
-      return state.eventP('Game.command.execute',
-                          'setLos', [
-                            'setOrigin',
-                            [event['click#'].target]
-                          ]);
+    function losSetOriginModel(_state_, event) {
+      return appStateService
+        .chainReduce('Game.command.execute',
+                     'setLos', [
+                       'setOrigin',
+                       [event['click#'].target]
+                     ]);
     }
-    function losSetTargetModel(state, event) {
-      return state.eventP('Game.command.execute',
-                          'setLos', [
-                            'setTarget',
-                            [event['click#'].target]
-                          ]);
+    function losSetTargetModel(_state_, event) {
+      return appStateService
+        .chainReduce('Game.command.execute',
+                     'setLos', [
+                       'setTarget',
+                       [event['click#'].target]
+                     ]);
     }
-    function losToggleIgnoreModel(state, event) {
-      return state.eventP('Game.command.execute',
-                          'setLos', [
-                            'toggleIgnoreModel',
-                            [event['click#'].target]
-                          ]);
+    function losToggleIgnoreModel(_state_, event) {
+      return appStateService
+        .chainReduce('Game.command.execute',
+                     'setLos', [
+                       'toggleIgnoreModel',
+                       [event['click#'].target]
+                     ]);
     }
   }
 })();

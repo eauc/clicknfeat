@@ -235,6 +235,14 @@
         .onChange('Game.change',
                   'Game.ruler.local.change',
                   R.path(['ruler','local']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.los.remote.change',
+                  R.path(['los','remote']));
+      appStateService
+        .onChange('Game.change',
+                  'Game.los.local.change',
+                  R.path(['los','local']));
 
       return R.thread(state)(
         R.set(UI_STATE_LENS, { flipped: false }),

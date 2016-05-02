@@ -1,4 +1,4 @@
-xdescribe('gameLos model', function() {
+describe('gameLos model', function() {
   beforeEach(inject([ 'gameLos', function(gameLosModel) {
     this.gameLosModel = gameLosModel;
 
@@ -6,13 +6,12 @@ xdescribe('gameLos model', function() {
     this.gameModelsModel = spyOnService('gameModels');
 
     this.game = { models: 'models' };
-    this.state = jasmine.createSpyObj('state', [
-      'queueChangeEventP'
-    ]);
-    this.state.factions = 'factions';
-    this.state.game = this.game;
+    this.state = {
+      factions: 'factions',
+      game: this.game
+    };
 
-    this.gameModelsModel.findStampP.resolveWith((s) => {
+    this.gameModelsModel.findStamp.and.callFake((s) => {
       return ( s === 'origin' ? this.origin_model :
                ( s === 'target' ? this.target_model : null )
              );
@@ -21,7 +20,7 @@ xdescribe('gameLos model', function() {
 
   context('toggleDisplay()', function() {
     return this.gameLosModel
-      .toggleDisplay(this.state, this.game, {
+      .toggleDisplay({
         remote: { display: false }
       });
   }, function() {
@@ -29,16 +28,11 @@ xdescribe('gameLos model', function() {
       expect(this.gameLosModel.isDisplayed(this.context))
         .toEqual(true);
     });
-
-    it('should emit changeRemoteLos game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.los.remote.change');
-    });
   });
 
   context('setLocal(<start>, <end>, <state>)', function() {
     return this.gameLosModel
-      .setLocal(this.start, this.end, this.state, 'game', this.los);
+      .setLocal(this.start, this.end, this.los);
   }, function() {
     beforeEach(function() {
       this.start = { x: 100, y: 0 };
@@ -54,16 +48,11 @@ xdescribe('gameLos model', function() {
                           }
                  });
     });
-
-    it('should emit changeLocalLos game event', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.los.local.change');
-    });
   });
 
   context('setRemote(<start>, <end>, <state>)', function() {
     return this.gameLosModel
-      .setRemote(this.start, this.end, this.state, this.game, this.los);
+      .setRemote(this.start, this.end, this.state, this.los);
   }, function() {
     beforeEach(function() {
       this.pointModel = spyOnService('point');
@@ -81,8 +70,6 @@ xdescribe('gameLos model', function() {
     it('should reset local los state', function() {
       expect(this.context.local)
         .toEqual({ display: false });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.los.local.change');
     });
 
     it('should set remote los state', function() {
@@ -91,17 +78,18 @@ xdescribe('gameLos model', function() {
                    end: { x: 100, y: 100 },
                    display: true
                  });
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.los.remote.change');
     });
   });
 
   context('resetRemote(<remote>, <state>)', function() {
     return this.gameLosModel
-      .resetRemote(this.remote, this.state);
+      .resetRemote(this.remote, this.los);
   }, function() {
     beforeEach(function() {
       this.remote = { state: 'state' };
+      this.los = { local: {},
+                   remote: {}
+                 };
     });
 
     it('should reset remote state', function() {
@@ -109,11 +97,6 @@ xdescribe('gameLos model', function() {
         .toEqual(this.remote);
       expect(this.context)
         .not.toBe(this.state);
-    });
-
-    it('should emit changeRemoteLos game events', function() {
-      expect(this.state.queueChangeEventP)
-        .toHaveBeenCalledWith('Game.los.remote.change');
     });
   });
 
@@ -137,7 +120,7 @@ xdescribe('gameLos model', function() {
 
   context('clearOrigin(<state>)', function() {
     return this.gameLosModel
-      .clearOrigin(this.state, this.game, this.los);
+      .clearOrigin(this.los);
   }, function() {
     beforeEach(function() {
       this.los = this.gameLosModel.create();
@@ -148,22 +131,11 @@ xdescribe('gameLos model', function() {
       expect(this.gameLosModel.origin(this.context))
         .toBe(null);
     });
-
-    it('should reset envelopes', function() {
-      expect(this.context.computed.envelope)
-        .toBe(null);
-      expect(this.context.computed.darkness)
-        .toEqual([]);
-      expect(this.context.computed.shadow)
-        .toEqual([]);
-      expect(this.context.remote.ignore)
-        .toEqual([]);
-    });
   });
 
   context('clearTarget(<state>)', function() {
     return this.gameLosModel
-      .clearTarget(this.state, this.game, this.los);
+      .clearTarget(this.los);
   }, function() {
     beforeEach(function() {
       this.los = this.gameLosModel.create();
@@ -174,22 +146,11 @@ xdescribe('gameLos model', function() {
       expect(this.gameLosModel.target(this.context))
         .toBe(null);
     });
-
-    it('should reset envelopes', function() {
-      expect(this.context.computed.envelope)
-        .toBe(null);
-      expect(this.context.computed.darkness)
-        .toEqual([]);
-      expect(this.context.computed.shadow)
-        .toEqual([]);
-      expect(this.context.remote.ignore)
-        .toEqual([]);
-    });
   });
 
   context('setOriginResetTarget(<origin>, <state>)', function() {
     return this.gameLosModel
-      .setOriginResetTarget(this.origin, this.state, this.game, this.los);
+      .setOriginResetTarget(this.origin, this.state, this.los);
   }, function() {
     beforeEach(function() {
       this.los = this.gameLosModel.create();
@@ -201,17 +162,6 @@ xdescribe('gameLos model', function() {
         .toBe('origin');
       expect(this.gameLosModel.target(this.context))
         .toBe(null);
-    });
-
-    it('should reset envelopes', function() {
-      expect(this.context.computed.envelope)
-        .toBe(null);
-      expect(this.context.computed.darkness)
-        .toEqual([]);
-      expect(this.context.computed.shadow)
-        .toEqual([]);
-      expect(this.context.remote.ignore)
-        .toEqual([]);
     });
   });
 });

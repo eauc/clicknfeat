@@ -5,12 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['appState', 'jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
-  // 'gameLos',
-  'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'allTemplates'];
-  function gameModelFactory(appStateService, jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
-  // gameLosModel,
-  gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
+  gameModelFactory.$inject = ['appState', 'jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'allTemplates'];
+  function gameModelFactory(appStateService, jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var gameModel = {
       create: gameCreate,
       isOnline: gameIsOnline,
@@ -70,7 +66,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         undo_log: [],
         dice: [],
         ruler: gameRulerModel.create(),
-        // los: gameLosModel.create(),
+        los: gameLosModel.create(),
         models: gameModelsModel.create(),
         model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),

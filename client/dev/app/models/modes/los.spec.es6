@@ -2,6 +2,7 @@ describe('losMode model', function() {
   beforeEach(inject([ 'losMode', function(losMode) {
     this.losModeService = losMode;
 
+    this.appStateService = spyOnService('appState');
     this.gameLosService = spyOnService('gameLos');
     this.gameModelsService = spyOnService('gameModels');
     this.gameModelSelectionService = spyOnService('gameModelSelection');
@@ -10,16 +11,7 @@ describe('losMode model', function() {
                   models: 'models',
                   model_selection: 'selection'
                 };
-    this.state = { game: this.game,
-                   queueChangeEventP: jasmine.createSpy('queueChangeEventP'),
-                   eventP: jasmine.createSpy('eventP')
-                 };
-    this.state.eventP.and.callFake((e, l, u) => {
-      if('Game.update' === e) {
-        this.state.game = R.over(l, u, this.state.game);
-      }
-      return 'state.event.returnValue';
-    });
+    this.state = { game: this.game };
   }]));
 
   context('when user sets los origin', function() {
@@ -32,7 +24,7 @@ describe('losMode model', function() {
     });
 
     it('should set los origin model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setLos', [
                                 'setOrigin',
@@ -51,7 +43,7 @@ describe('losMode model', function() {
     });
 
     it('should set los target model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setLos', [
                                 'setTarget',
@@ -70,7 +62,7 @@ describe('losMode model', function() {
     });
 
     it('should toggle ignore model', function() {
-      expect(this.state.eventP)
+      expect(this.appStateService.chainReduce)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setLos', [
                                 'toggleIgnoreModel',
