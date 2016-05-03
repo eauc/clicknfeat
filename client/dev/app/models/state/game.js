@@ -50,12 +50,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       updateExport: stateGameUpdateExport,
       updateBoardExport: stateGameUpdateBoardExport,
+      updateModelsExport: stateGameUpdateModelsExport,
       saveCurrent: stateGameSaveCurrent,
       checkMode: stateGameCheckMode,
       closeOsd: stateGameCloseOsd
     };
-    // const exportCurrentGame = stateExportsModel
-    //         .exportP$('game', R.prop('game'));
     R.curryService(stateGameModel);
     stateModel.register(stateGameModel);
     return stateGameModel;
@@ -67,6 +66,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       appStateService.onChange('AppState.change', 'Game.change', R.view(GAME_LENS));
       var game_export_cell = appStateService.cell('Game.change', stateGameModel.updateExport, {});
       var board_export_cell = appStateService.cell(['Game.board.change', 'Game.terrains.change'], stateGameModel.updateBoardExport, {});
+      var models_export_cell = appStateService.cell(['Game.models.change', 'Game.model_selection.local.change'], stateGameModel.updateModelsExport, {});
       appStateService.onChange('Game.change', 'Game.layers.change', R.pipe(R.defaultTo({}), R.prop('layers')));
       appStateService.onChange('AppState.change', 'Modes.change', R.path(['modes', 'current', 'name']));
       appStateService.onChange('Game.change', 'Game.command.change', [R.prop('commands'), R.prop('commands_log'), R.prop('undo'), R.prop('undo_log')]);
@@ -89,14 +89,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       appStateService.onChange('Game.change', 'Game.los.remote.change', R.path(['los', 'remote']));
       appStateService.onChange('Game.change', 'Game.los.local.change', R.path(['los', 'local']));
 
-      return R.thread(state)(R.set(UI_STATE_LENS, { flipped: false }), R.set(GAME_LENS, {}), R.assocPath(['exports', 'game'], game_export_cell), R.assocPath(['exports', 'board'], board_export_cell));
+      return R.thread(state)(R.set(UI_STATE_LENS, { flipped: false }), R.set(GAME_LENS, {}), R.assocPath(['exports', 'game'], game_export_cell), R.assocPath(['exports', 'board'], board_export_cell), R.assocPath(['exports', 'models'], models_export_cell));
     }
-    // function stateGameSave(state) {
-    //   return R.thread()(
-    //     () => exportCurrentModelSelectionP(state),
-    //     () => exportCurrentBoard(state)
-    //   );
-    // }
     function stateGameOnUpdate(state, _event_, _ref) {
       var _ref2 = _slicedToArray(_ref, 1);
 
@@ -298,7 +292,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var file = _ref34[0];
 
       return R.threadP(file)(fileImportService.readP$('json'), function (create) {
-        appStateService.reduce('Game.model. importFileDate', [create]);
+        appStateService.reduce('Game.model.importFileData', create);
       }).catch(function (error) {
         return appStateService.emit('Game.error', error);
       });
@@ -538,18 +532,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         appStateService.reduce('Games.local.update', game);
       });
     }
-    // function exportCurrentModelSelectionP(state) {
-    //   return stateExportsModel
-    //     .exportP('models', (state) => R.threadP(state)(
-    //       R.path(['game','model_selection']),
-    //       R.rejectIfP(R.isNil, 'selection is nil'),
-    //       gameModelSelectionModel.get$('local'),
-    //       R.rejectIfP(R.isEmpty, 'selection is empty'),
-    //       (stamps) => gameModelsModel
-    //         .copyStampsP(stamps, R.path(['game', 'models'], state)),
-    //       R.rejectIfP(R.isEmpty, 'selection models not found')
-    //     ), state);
-    // }
+    function stateGameUpdateModelsExport(exp) {
+      fileExportService.cleanup(exp.url);
+      var state = appStateService.current();
+      var data = R.thread(state)(R.path(['game', 'model_selection']), gameModelSelectionModel.get$('local'), gameModelsModel.copyStamps$(R.__, R.path(['game', 'models'], state)));
+      return {
+        name: 'clicknfeat_models.json',
+        url: fileExportService.generate('json', data)
+      };
+    }
     function stateGameUpdateBoardExport(exp) {
       fileExportService.cleanup(exp.url);
       var state = appStateService.current();

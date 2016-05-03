@@ -78,12 +78,11 @@
       onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       updateExport: stateGameUpdateExport,
       updateBoardExport: stateGameUpdateBoardExport,
+      updateModelsExport: stateGameUpdateModelsExport,
       saveCurrent: stateGameSaveCurrent,
       checkMode: stateGameCheckMode,
       closeOsd: stateGameCloseOsd
     };
-    // const exportCurrentGame = stateExportsModel
-    //         .exportP$('game', R.prop('game'));
     R.curryService(stateGameModel);
     stateModel.register(stateGameModel);
     return stateGameModel;
@@ -146,6 +145,11 @@
               .cell([ 'Game.board.change',
                       'Game.terrains.change' ],
                     stateGameModel.updateBoardExport,
+                    {});
+      const models_export_cell = appStateService
+              .cell([ 'Game.models.change',
+                      'Game.model_selection.local.change' ],
+                    stateGameModel.updateModelsExport,
                     {});
       appStateService
         .onChange('Game.change',
@@ -240,15 +244,10 @@
         R.set(UI_STATE_LENS, { flipped: false }),
         R.set(GAME_LENS, {}),
         R.assocPath(['exports', 'game'], game_export_cell),
-        R.assocPath(['exports', 'board'], board_export_cell)
+        R.assocPath(['exports', 'board'], board_export_cell),
+        R.assocPath(['exports', 'models'], models_export_cell)
       );
     }
-    // function stateGameSave(state) {
-    //   return R.thread()(
-    //     () => exportCurrentModelSelectionP(state),
-    //     () => exportCurrentBoard(state)
-    //   );
-    // }
     function stateGameOnUpdate(state, _event_, [fn]) {
       return R.over(GAME_LENS, fn, state);
     }
@@ -411,7 +410,7 @@
       return R.threadP(file)(
         fileImportService.readP$('json'),
         (create) => {
-          appStateService.reduce('Game.model. importFileDate', [create]);
+          appStateService.reduce('Game.model.importFileData', create);
         }
       ).catch(error => appStateService.emit('Game.error', error));
     }
@@ -668,18 +667,20 @@
         appStateService.reduce('Games.local.update', game);
       });
     }
-    // function exportCurrentModelSelectionP(state) {
-    //   return stateExportsModel
-    //     .exportP('models', (state) => R.threadP(state)(
-    //       R.path(['game','model_selection']),
-    //       R.rejectIfP(R.isNil, 'selection is nil'),
-    //       gameModelSelectionModel.get$('local'),
-    //       R.rejectIfP(R.isEmpty, 'selection is empty'),
-    //       (stamps) => gameModelsModel
-    //         .copyStampsP(stamps, R.path(['game', 'models'], state)),
-    //       R.rejectIfP(R.isEmpty, 'selection models not found')
-    //     ), state);
-    // }
+    function stateGameUpdateModelsExport(exp) {
+      fileExportService.cleanup(exp.url);
+      const state = appStateService.current();
+      const data = R.thread(state)(
+         R.path(['game','model_selection']),
+         gameModelSelectionModel.get$('local'),
+         gameModelsModel
+           .copyStamps$(R.__, R.path(['game', 'models'], state))
+      );
+      return {
+        name: 'clicknfeat_models.json',
+        url: fileExportService.generate('json', data)
+      };
+    }
     function stateGameUpdateBoardExport(exp) {
       fileExportService.cleanup(exp.url);
       const state = appStateService.current();

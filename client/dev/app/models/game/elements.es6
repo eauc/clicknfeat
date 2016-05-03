@@ -103,7 +103,12 @@
         );
 
         function makeCreate(selection) {
-          const base = R.pick(['x','y','r'], selection[0].state);
+          const base = R.thread(selection)(
+            R.head,
+            R.defaultTo({ state: { x: 240, y: 240, r: 0 } }),
+            R.prop('state'),
+            R.pick(['x','y','r'])
+          );
           return {
             base: base,
             [`${type}s`]: R.map(R.compose(pointModel.differenceFrom$(base),

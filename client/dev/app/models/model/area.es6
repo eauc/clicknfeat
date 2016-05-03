@@ -32,7 +32,7 @@
                        ( 'Number' === R.type(info.focus) ||
                          'Number' === R.type(info.fury)
                        ) &&
-                       !!R.find(R.equals('a'), model.state.dsp)
+                       !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model))
                      );
             }
           )

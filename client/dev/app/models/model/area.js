@@ -24,7 +24,7 @@
         return R.thread(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.ifElse(R.isNil, function () {
           return false;
         }, function (info) {
-          return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), model.state.dsp);
+          return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model));
         }));
       }
       function modelSetCtrlAreaDisplay(set, model) {

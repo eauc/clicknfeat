@@ -16,7 +16,7 @@
       return modelMeleeModel;
 
       function modelIsMeleeDisplayed(melee, model) {
-        return !!R.find(R.equals(melee), model.state.dsp);
+        return !!R.find(R.equals(melee), R.viewOr([], DSP_LENS, model));
       }
       function modelSetMeleeDisplay(melee, set, model) {
         var update = set ? R.compose(R.uniq, R.append(melee)) : R.reject(R.equals(melee));

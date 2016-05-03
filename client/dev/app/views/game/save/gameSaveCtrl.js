@@ -19,6 +19,10 @@
         vm.board_export = board_exp;
         $scope.$digest();
       }, $scope);
+      $scope.bindCell($scope.state.exports.models, function (models_exp) {
+        vm.models_export = models_exp;
+        $scope.$digest();
+      }, $scope);
     }
   }
 })();

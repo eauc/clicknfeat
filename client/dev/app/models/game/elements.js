@@ -80,7 +80,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return R.thread(elements)(gameElementsModel.findAnyStamps$(stamps), R.reject(R.isNil), makeCreate);
 
         function makeCreate(selection) {
-          var base = R.pick(['x', 'y', 'r'], selection[0].state);
+          var base = R.thread(selection)(R.head, R.defaultTo({ state: { x: 240, y: 240, r: 0 } }), R.prop('state'), R.pick(['x', 'y', 'r']));
           return _defineProperty({
             base: base
           }, type + 's', R.map(R.compose(pointModel.differenceFrom$(base), model.saveState), selection));
