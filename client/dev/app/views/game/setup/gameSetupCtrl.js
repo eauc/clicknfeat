@@ -20,7 +20,7 @@
     vm.getTerrain = getTerrain;
     vm.doCreateTerrain = doCreateTerrain;
     vm.doResetTerrain = doResetTerrain;
-    // vm.doImportBoardFile = doImportBoardFile;
+    vm.doImportBoardFile = doImportBoardFile;
 
     activate();
 
@@ -110,9 +110,9 @@
       $scope.stateEvent('Game.terrain.reset');
     }
 
-    // function doImportBoardFile(files) {
-    //   $scope.stateEvent('Game.board.importFile', files[0]);
-    // }
+    function doImportBoardFile(files) {
+      $scope.stateEvent('Game.board.importFile', files[0]);
+    }
   }
 })();
 //# sourceMappingURL=gameSetupCtrl.js.map

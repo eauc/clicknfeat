@@ -98,17 +98,20 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         appStateService.emit.apply(appStateService, [emit_event].concat(_toConsumableArray(_value)));
       });
     }
-    function appStateCell(update_event, update, initial) {
+    function appStateCell(update_events, update, initial) {
+      update_events = R.unless(R.isArrayLike, R.of, update_events);
       var events = pubSubService.create();
       var value = initial;
-      appStateService.addListener(update_event, function (_event_, _ref3) {
-        var _ref4 = _slicedToArray(_ref3, 1);
+      R.forEach(function (event) {
+        appStateService.addListener(event, function (_event_, _ref3) {
+          var _ref4 = _slicedToArray(_ref3, 1);
 
-        var observable = _ref4[0];
+          var observable = _ref4[0];
 
-        value = update(value, observable);
-        pubSubService.emit('update', [value], events);
-      });
+          value = update(value, observable);
+          pubSubService.emit('update', [value], events);
+        });
+      }, update_events);
       return {
         bind: function bind(listener) {
           var _listener = function _listener(_event_, _ref5) {

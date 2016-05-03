@@ -83,13 +83,16 @@
           .apply(appStateService, [emit_event, ..._value]);
       });
     }
-    function appStateCell(update_event, update, initial) {
+    function appStateCell(update_events, update, initial) {
+      update_events = R.unless(R.isArrayLike, R.of, update_events);
       let events = pubSubService.create();
       let value = initial;
-      appStateService.addListener(update_event, (_event_, [observable]) => {
-        value = update(value, observable);
-        pubSubService.emit('update', [value], events);
-      });
+      R.forEach((event) => {
+        appStateService.addListener(event, (_event_, [observable]) => {
+          value = update(value, observable);
+          pubSubService.emit('update', [value], events);
+        });
+      }, update_events);
       return {
         bind: (listener) => {
           const _listener = (_event_, [value]) => {

@@ -71,20 +71,19 @@
       onTerrainReset: stateGameOnTerrainReset,
       onBoardSet: stateGameOnBoardSet,
       onBoardSetRandom: stateGameOnBoardSetRandom,
-      // onBoardImportFile: stateGameOnBoardImportFile,
+      onBoardImportFile: stateGameOnBoardImportFile,
       onScenarioSet: stateGameOnScenarioSet,
       onScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
       onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       updateExport: stateGameUpdateExport,
+      updateBoardExport: stateGameUpdateBoardExport,
       saveCurrent: stateGameSaveCurrent,
       checkMode: stateGameCheckMode,
       closeOsd: stateGameCloseOsd
     };
     // const exportCurrentGame = stateExportsModel
     //         .exportP$('game', R.prop('game'));
-    // const exportCurrentBoard = stateExportsModel
-    //         .exportP$('board', exportBoardData);
     R.curryService(stateGameModel);
     stateModel.register(stateGameModel);
     return stateGameModel;
@@ -123,6 +122,7 @@
         .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
         .addReducer('Game.terrain.create'      , stateGameModel.onTerrainCreate)
         .addReducer('Game.terrain.reset'       , stateGameModel.onTerrainReset)
+        .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
         .addListener('Game.change'             , stateGameModel.saveCurrent)
         .addListener('Modes.change',
                      stateGameModel.closeOsd)
@@ -132,7 +132,6 @@
                      stateGameModel.checkMode)
         .addListener('Game.model_selection.local.change',
                      stateGameModel.checkMode);
-        // .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
         // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
 
       appStateService
@@ -140,9 +139,14 @@
                   'Game.change',
                   R.view(GAME_LENS));
       const game_export_cell = appStateService
-        .cell('Game.change',
-              stateGameModel.updateExport,
-              {});
+              .cell('Game.change',
+                    stateGameModel.updateExport,
+                    {});
+      const board_export_cell = appStateService
+              .cell([ 'Game.board.change',
+                      'Game.terrains.change' ],
+                    stateGameModel.updateBoardExport,
+                    {});
       appStateService
         .onChange('Game.change',
                   'Game.layers.change',
@@ -235,7 +239,8 @@
       return R.thread(state)(
         R.set(UI_STATE_LENS, { flipped: false }),
         R.set(GAME_LENS, {}),
-        R.assocPath(['exports', 'game'], game_export_cell)
+        R.assocPath(['exports', 'game'], game_export_cell),
+        R.assocPath(['exports', 'board'], board_export_cell)
       );
     }
     // function stateGameSave(state) {
@@ -563,23 +568,34 @@
                                'setBoard', [board]);
       });
     }
-    // function stateGameOnBoardImportFile(state, _event_, file) {
-    //   return R.threadP(file)(
-    //     fileImportService.readP$('json'),
-    //     (data) => R.threadP(data)(
-    //       R.prop('board'),
-    //       R.rejectIfP(R.isNil, 'No board'),
-    //       () => state.eventP('Game.command.execute',
-    //                          'setBoard', [data.board]),
-    //       R.always(data),
-    //       R.path(['terrain', 'terrains']),
-    //       R.rejectIfP(R.isEmpty, 'No terrain'),
-    //       () => state.eventP('Game.terrain.reset'),
-    //       () => state.eventP('Game.command.execute',
-    //                          'createTerrain', [data.terrain, false])
-    //     )
-    //   ).catch(R.spyAndDiscardError('Import board file'));
-    // }
+    function stateGameOnBoardImportFile(_state_, _event_, [file]) {
+      R.threadP(file)(
+        fileImportService.readP$('json'),
+        R.spyWarn('import'),
+        R.tap(R.pipe(
+          R.prop('board'),
+          R.rejectIfP(R.isNil, 'No board'),
+          R.spyWarn('import'),
+          (board) => {
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'setBoard', [board]);
+          }
+        )),
+        R.tap((data) => R.thread(data)(
+          R.path(['terrain', 'terrains']),
+          R.rejectIfP(R.isEmpty, 'No terrain'),
+          R.spyWarn('import', data),
+          () => {
+            appStateService
+              .chainReduce('Game.terrain.reset');
+            appStateService
+              .chainReduce('Game.command.execute',
+                           'createTerrain', [data.terrain, false]);
+          }
+        ))
+      ).catch(R.spyAndDiscardError('Import board file'));
+    }
     function stateGameOnScenarioSet(_state_, _event_, [name, group]) {
       const scenario = gameScenarioModel.forName(name, group);
       self.window.requestAnimationFrame(() => {
@@ -664,22 +680,28 @@
     //       R.rejectIfP(R.isEmpty, 'selection models not found')
     //     ), state);
     // }
-    // function exportBoardData(state) {
-    //   return R.thread(state)(
-    //     R.prop('game'),
-    //     (game) => ({
-    //       board: game.board,
-    //       terrain: {
-    //         base: { x: 0, y: 0, r: 0 },
-    //         terrains: R.thread(game.terrains)(
-    //           gameTerrainsModel.all,
-    //           R.pluck('state'),
-    //           R.map(R.pick(['x','y','r','info','lk']))
-    //         )
-    //       }
-    //     })
-    //   );
-    // }
+    function stateGameUpdateBoardExport(exp) {
+      fileExportService.cleanup(exp.url);
+      const state = appStateService.current();
+      const data = R.thread(state)(
+        R.prop('game'),
+        (game) => ({
+          board: game.board,
+          terrain: {
+            base: { x: 0, y: 0, r: 0 },
+            terrains: R.thread(game.terrains)(
+              gameTerrainsModel.all,
+              R.pluck('state'),
+              R.map(R.pick(['x','y','r','info','lk']))
+            )
+          }
+        })
+      );
+      return {
+        name: 'clicknfeat_board.json',
+        url: fileExportService.generate('json', data)
+      };
+    }
     function stateGameCheckMode() {
       const state = appStateService.current();
       const game = R.propOr({}, 'game', state);
