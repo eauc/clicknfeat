@@ -13,7 +13,7 @@
     'gameBoard',
     'gameConnection',
     'gameFactions',
-    // 'gameModels',
+    'gameModels',
     'gameModelSelection',
     'gameScenario',
     'gameTerrains',
@@ -21,7 +21,6 @@
     'gameTemplateSelection',
     'gameTerrainSelection',
     'allCommands',
-    // 'allTemplates',
   ];
   function stateGameModelFactory(fileExportService,
                                  fileImportService,
@@ -33,7 +32,7 @@
                                  gameBoardModel,
                                  gameConnectionModel,
                                  gameFactionsModel,
-                                 // gameModelsModel,
+                                 gameModelsModel,
                                  gameModelSelectionModel,
                                  gameScenarioModel,
                                  gameTerrainsModel,
@@ -61,16 +60,13 @@
       onSetPlayers: stateGameOnSetPlayers,
       onNewChatMsg: stateGameOnNewChatMsg,
       onUiStateFlip: stateGameOnUiStateFlip,
-      // onUpdate: stateGameOnUpdate,
       onInvitePlayer: stateGameOnInvitePlayer,
       onModelCreate: stateGameOnModelCreate,
       onModelCopy: stateGameOnModelCopy,
       onModelImportList: stateGameOnModelImportList,
       onModelImportFile: stateGameOnModelImportFile,
       onModelImportFileData: stateGameOnModelImportFileData,
-      // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
       onTemplateCreate: stateGameOnTemplateCreate,
-      // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
       onTerrainCreate: stateGameOnTerrainCreate,
       onTerrainReset: stateGameOnTerrainReset,
       onBoardSet: stateGameOnBoardSet,
@@ -79,8 +75,7 @@
       onScenarioSet: stateGameOnScenarioSet,
       onScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
-      // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
-      // onSelectionLocalChange: stateGameOnSelectionLocalChange,
+      onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       updateExport: stateGameUpdateExport,
       saveCurrent: stateGameSaveCurrent,
       checkMode: stateGameCheckMode,
@@ -118,6 +113,8 @@
         .addReducer('Game.board.setRandom'     , stateGameModel.onBoardSetRandom)
         .addReducer('Game.scenario.set'        , stateGameModel.onScenarioSet)
         .addReducer('Game.scenario.setRandom'  , stateGameModel.onScenarioSetRandom)
+        .addReducer('Game.scenario.generateObjectives',
+                    stateGameModel.onScenarioGenerateObjectives)
         .addReducer('Game.model.create'        , stateGameModel.onModelCreate)
         .addReducer('Game.model.copy'          , stateGameModel.onModelCopy)
         .addReducer('Game.model.importList'    , stateGameModel.onModelImportList)
@@ -135,17 +132,8 @@
                      stateGameModel.checkMode)
         .addListener('Game.model_selection.local.change',
                      stateGameModel.checkMode);
-        // .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
         // .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
         // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
-        // .addReducer('Game.scenario.generateObjectives',
-        //             stateGameModel.onScenarioGenerateObjectives)
-        // .addListener('Game.model.selection.local.change',
-        //              stateGameModel.onModelSelectionLocalChange)
-        // .addListener('Game.template.selection.local.change',
-        //              stateGameModel.onGameTemplateSelectionLocalChange)
-        // .addListener('Game.selection.local.change',
-        //              stateGameModel.onGameSelectionLocalChange);
 
       appStateService
         .onChange('AppState.change',
@@ -379,13 +367,6 @@
         state
       );
     }
-    // function stateGameOnUpdate(state, _event_, [lens, update]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.over(lens, update),
-    //     state
-    //   );
-    // }
     function stateGameOnInvitePlayer(state, _event_, to) {
       const msg = [
         s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
@@ -621,40 +602,41 @@
     // function stateGameOnScenarioRefresh(state, _event_) {
     //   appStateService.emit('Game.scenario.refresh');
     // }
-    // function stateGameOnScenarioGenerateObjectives(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     deleteCurrentObjectivesP,
-    //     () => gameScenarioModel
-    //       .createObjectivesP(state.game.scenario),
-    //     (objectives) => {
-    //       const is_flipped = R.path(['ui_state','flip_map'], state);
-    //       return state.eventP('Game.command.execute',
-    //                           'createModel',
-    //                           [objectives, is_flipped]);
-    //     }
-    //   ).catch(gameModel.actionError$(state));
+    function stateGameOnScenarioGenerateObjectives(state, _event_) {
+      R.thread(state.game)(
+        deleteCurrentObjectives,
+        () => gameScenarioModel
+          .createObjectives(state.game.scenario),
+        (objectives) => {
+          const is_flipped = R.path(['ui_state','flip_map'], state);
+          return appStateService
+            .chainReduce('Game.command.execute',
+                         'createModel',
+                         [objectives, is_flipped]);
+        }
+      ).catch(gameModel.actionError$(state));
 
-    //   function deleteCurrentObjectivesP(game) {
-    //     return R.threadP(game)(
-    //       R.prop('models'),
-    //       gameModelsModel.all,
-    //       R.filter(R.pipe(
-    //         R.path(['state','info']),
-    //         R.head,
-    //         R.equals('scenario')
-    //       )),
-    //       R.map(R.path(['state','stamp'])),
-    //       R.unless(
-    //         R.isEmpty,
-    //         (stamps) => state.eventP('Game.command.execute',
-    //                                  'deleteModel', [stamps])
-    //       )
-    //     );
-    //   }
-    // }
-    // function stateGameOnSelectionLocalChange(state, _event_) {
-    //   state.queueEventP('Modes.switchTo', 'Default');
-    // }
+      function deleteCurrentObjectives(game) {
+        return R.threadP(game)(
+          R.prop('models'),
+          gameModelsModel.all,
+          R.filter(R.pipe(
+            R.path(['state','info']),
+            R.head,
+            R.equals('scenario')
+          )),
+          R.map(R.path(['state','stamp'])),
+          R.unless(
+            R.isEmpty,
+            (stamps) => {
+              appStateService
+                .chainReduce('Game.command.execute',
+                             'deleteModel', [stamps]);
+            }
+          )
+        );
+      }
+    }
     function stateGameUpdateExport(exp, current_game) {
       fileExportService.cleanup(exp.url);
       return {

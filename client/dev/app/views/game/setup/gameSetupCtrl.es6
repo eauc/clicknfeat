@@ -15,7 +15,7 @@
     vm.doSetRandomBoard = doSetRandomBoard;
     vm.doSetScenario = doSetScenario;
     vm.doSetRandomScenario = doSetRandomScenario;
-    // vm.doGenerateObjectives = doGenerateObjectives;
+    vm.doGenerateObjectives = doGenerateObjectives;
     vm.doToggleLayer = doToggleLayer;
     vm.onAmbianceChange = onAmbianceChange;
     vm.onCategoryChange = onCategoryChange;
@@ -80,9 +80,9 @@
     function doSetRandomScenario() {
       $scope.stateEvent('Game.scenario.setRandom');
     }
-    // function doGenerateObjectives() {
-    //   $scope.stateEvent('Game.scenario.generateObjectives');
-    // }
+    function doGenerateObjectives() {
+      $scope.stateEvent('Game.scenario.generateObjectives');
+    }
 
     function updateLayers() {
       vm.layers = R.path(['state','game','layers'], $scope);

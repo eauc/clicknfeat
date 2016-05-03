@@ -5,16 +5,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('stateGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['fileExport', 'fileImport', 'appState', 'state', 'modes', 'games', 'game', 'gameBoard', 'gameConnection', 'gameFactions',
-  // 'gameModels',
-  'gameModelSelection', 'gameScenario', 'gameTerrains',
+  stateGameModelFactory.$inject = ['fileExport', 'fileImport', 'appState', 'state', 'modes', 'games', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameModels', 'gameModelSelection', 'gameScenario', 'gameTerrains',
   // 'gameTemplates',
   'gameTemplateSelection', 'gameTerrainSelection', 'allCommands'];
-
-  // 'allTemplates',
-  function stateGameModelFactory(fileExportService, fileImportService, appStateService, stateModel, modesModel, gamesModel, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel,
-  // gameModelsModel,
-  gameModelSelectionModel, gameScenarioModel, gameTerrainsModel,
+  function stateGameModelFactory(fileExportService, fileImportService, appStateService, stateModel, modesModel, gamesModel, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameModelsModel, gameModelSelectionModel, gameScenarioModel, gameTerrainsModel,
   // gameTemplatesModel,
   gameTemplateSelectionModel, gameTerrainSelectionModel) {
     var GAME_LENS = R.lensProp('game');
@@ -38,16 +32,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onSetPlayers: stateGameOnSetPlayers,
       onNewChatMsg: stateGameOnNewChatMsg,
       onUiStateFlip: stateGameOnUiStateFlip,
-      // onUpdate: stateGameOnUpdate,
       onInvitePlayer: stateGameOnInvitePlayer,
       onModelCreate: stateGameOnModelCreate,
       onModelCopy: stateGameOnModelCopy,
       onModelImportList: stateGameOnModelImportList,
       onModelImportFile: stateGameOnModelImportFile,
       onModelImportFileData: stateGameOnModelImportFileData,
-      // onModelSelectionLocalChange: stateGameOnModelSelectionLocalChange,
       onTemplateCreate: stateGameOnTemplateCreate,
-      // onTemplateSelectionLocalChange: stateGameOnTemplateSelectionLocalChange,
       onTerrainCreate: stateGameOnTerrainCreate,
       onTerrainReset: stateGameOnTerrainReset,
       onBoardSet: stateGameOnBoardSet,
@@ -56,8 +47,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       onScenarioSet: stateGameOnScenarioSet,
       onScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
-      // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
-      // onSelectionLocalChange: stateGameOnSelectionLocalChange,
+      onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       updateExport: stateGameUpdateExport,
       saveCurrent: stateGameSaveCurrent,
       checkMode: stateGameCheckMode,
@@ -72,18 +62,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return stateGameModel;
 
     function stateGamesCreate(state) {
-      appStateService.addReducer('Game.update', stateGameModel.onUpdate).addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.invitePlayer', stateGameModel.onInvitePlayer).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addReducer('Game.model.create', stateGameModel.onModelCreate).addReducer('Game.model.copy', stateGameModel.onModelCopy).addReducer('Game.model.importList', stateGameModel.onModelImportList).addReducer('Game.model.importFile', stateGameModel.onModelImportFile).addReducer('Game.model.importFileData', stateGameModel.onModelImportFileData).addReducer('Game.template.create', stateGameModel.onTemplateCreate).addReducer('Game.terrain.create', stateGameModel.onTerrainCreate).addReducer('Game.terrain.reset', stateGameModel.onTerrainReset).addListener('Game.change', stateGameModel.saveCurrent).addListener('Modes.change', stateGameModel.closeOsd).addListener('Game.template_selection.local.change', stateGameModel.checkMode).addListener('Game.terrain_selection.local.change', stateGameModel.checkMode).addListener('Game.model_selection.local.change', stateGameModel.checkMode);
-      // .addReducer('Game.template.create'     , stateGameModel.onTemplateCreate)
+      appStateService.addReducer('Game.update', stateGameModel.onUpdate).addReducer('Game.set', stateGameModel.onSet).addReducer('Game.load', stateGameModel.onLoad).addReducer('Game.load.dataReady', stateGameModel.onLoadDataReady).addReducer('Game.load.dataLoaded', stateGameModel.onLoadDataLoaded).addReducer('Game.load.gameLoaded', stateGameModel.onLoadGameLoaded).addReducer('Game.connection.close', stateGameModel.onConnectionClose).addReducer('Game.command.execute', stateGameModel.onCommandExecute).addReducer('Game.command.undo', stateGameModel.onCommandUndo).addReducer('Game.command.replay', stateGameModel.onCommandReplay).addReducer('Game.command.replayBatch', stateGameModel.onCommandReplayBatch).addReducer('Game.command.undoLast', stateGameModel.onCommandUndoLast).addReducer('Game.command.replayNext', stateGameModel.onCommandReplayNext).addReducer('Game.invitePlayer', stateGameModel.onInvitePlayer).addReducer('Game.setCmds', stateGameModel.onSetCmds).addReducer('Game.setPlayers', stateGameModel.onSetPlayers).addReducer('Game.newChatMsg', stateGameModel.onNewChatMsg).addReducer('Game.uiState.flip', stateGameModel.onUiStateFlip).addReducer('Game.board.set', stateGameModel.onBoardSet).addReducer('Game.board.setRandom', stateGameModel.onBoardSetRandom).addReducer('Game.scenario.set', stateGameModel.onScenarioSet).addReducer('Game.scenario.setRandom', stateGameModel.onScenarioSetRandom).addReducer('Game.scenario.generateObjectives', stateGameModel.onScenarioGenerateObjectives).addReducer('Game.model.create', stateGameModel.onModelCreate).addReducer('Game.model.copy', stateGameModel.onModelCopy).addReducer('Game.model.importList', stateGameModel.onModelImportList).addReducer('Game.model.importFile', stateGameModel.onModelImportFile).addReducer('Game.model.importFileData', stateGameModel.onModelImportFileData).addReducer('Game.template.create', stateGameModel.onTemplateCreate).addReducer('Game.terrain.create', stateGameModel.onTerrainCreate).addReducer('Game.terrain.reset', stateGameModel.onTerrainReset).addListener('Game.change', stateGameModel.saveCurrent).addListener('Modes.change', stateGameModel.closeOsd).addListener('Game.template_selection.local.change', stateGameModel.checkMode).addListener('Game.terrain_selection.local.change', stateGameModel.checkMode).addListener('Game.model_selection.local.change', stateGameModel.checkMode);
       // .addReducer('Game.board.importFile'    , stateGameModel.onBoardImportFile)
       // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
-      // .addReducer('Game.scenario.generateObjectives',
-      //             stateGameModel.onScenarioGenerateObjectives)
-      // .addListener('Game.model.selection.local.change',
-      //              stateGameModel.onModelSelectionLocalChange)
-      // .addListener('Game.template.selection.local.change',
-      //              stateGameModel.onGameTemplateSelectionLocalChange)
-      // .addListener('Game.selection.local.change',
-      //              stateGameModel.onGameSelectionLocalChange);
 
       appStateService.onChange('AppState.change', 'Game.change', R.view(GAME_LENS));
       var game_export_cell = appStateService.cell('Game.change', stateGameModel.updateExport, {});
@@ -271,13 +252,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function stateGameOnUiStateFlip(state) {
       return R.over(UI_STATE_LENS, R.over(R.lensProp('flipped'), R.not), state);
     }
-    // function stateGameOnUpdate(state, _event_, [lens, update]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.over(lens, update),
-    //     state
-    //   );
-    // }
     function stateGameOnInvitePlayer(state, _event_, to) {
       var msg = [s.capitalize(R.pathOr('Unknown', ['user', 'state', 'name'], state)), 'has invited you to join a game'].join(' ');
       var link = self.window.location.hash;
@@ -535,40 +509,20 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // function stateGameOnScenarioRefresh(state, _event_) {
     //   appStateService.emit('Game.scenario.refresh');
     // }
-    // function stateGameOnScenarioGenerateObjectives(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     deleteCurrentObjectivesP,
-    //     () => gameScenarioModel
-    //       .createObjectivesP(state.game.scenario),
-    //     (objectives) => {
-    //       const is_flipped = R.path(['ui_state','flip_map'], state);
-    //       return state.eventP('Game.command.execute',
-    //                           'createModel',
-    //                           [objectives, is_flipped]);
-    //     }
-    //   ).catch(gameModel.actionError$(state));
+    function stateGameOnScenarioGenerateObjectives(state, _event_) {
+      R.thread(state.game)(deleteCurrentObjectives, function () {
+        return gameScenarioModel.createObjectives(state.game.scenario);
+      }, function (objectives) {
+        var is_flipped = R.path(['ui_state', 'flip_map'], state);
+        return appStateService.chainReduce('Game.command.execute', 'createModel', [objectives, is_flipped]);
+      }).catch(gameModel.actionError$(state));
 
-    //   function deleteCurrentObjectivesP(game) {
-    //     return R.threadP(game)(
-    //       R.prop('models'),
-    //       gameModelsModel.all,
-    //       R.filter(R.pipe(
-    //         R.path(['state','info']),
-    //         R.head,
-    //         R.equals('scenario')
-    //       )),
-    //       R.map(R.path(['state','stamp'])),
-    //       R.unless(
-    //         R.isEmpty,
-    //         (stamps) => state.eventP('Game.command.execute',
-    //                                  'deleteModel', [stamps])
-    //       )
-    //     );
-    //   }
-    // }
-    // function stateGameOnSelectionLocalChange(state, _event_) {
-    //   state.queueEventP('Modes.switchTo', 'Default');
-    // }
+      function deleteCurrentObjectives(game) {
+        return R.threadP(game)(R.prop('models'), gameModelsModel.all, R.filter(R.pipe(R.path(['state', 'info']), R.head, R.equals('scenario'))), R.map(R.path(['state', 'stamp'])), R.unless(R.isEmpty, function (stamps) {
+          appStateService.chainReduce('Game.command.execute', 'deleteModel', [stamps]);
+        }));
+      }
+    }
     function stateGameUpdateExport(exp, current_game) {
       fileExportService.cleanup(exp.url);
       return {
