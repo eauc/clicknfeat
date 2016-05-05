@@ -19,7 +19,7 @@ describe('user model', function() {
     }
   ]));
 
-  context('load()', function() {
+  context('loadP()', function() {
     return this.userModel.loadP();
   }, function() {
     it('should read user data from local storage', function() {
@@ -34,13 +34,23 @@ describe('user model', function() {
     });
   });
 
-  context('save()', function() {
-    return this.userModel.save(this.user);
+  context('saveP()', function() {
+    return this.userModel.saveP(this.user);
   }, function() {
     beforeEach(function() {
       this.user = { state: { name: 'exemple' },
                     connection: 'connection'
                   };
+    });
+
+    context('whenuser is online', function() {
+      this.user.state.online = true;
+      this.user.state.stamp = 'stamp';
+    }, function() {
+      it('should update user on server', function() {
+        expect(this.httpService.putP)
+          .toHaveBeenCalledWith('/api/users/stamp', this.user.state);
+      });
     });
 
     it('should save user in local storage', function() {
@@ -225,7 +235,7 @@ describe('user model', function() {
         .toHaveBeenCalledWith(this.context);
       expect(this.context.state.stamp)
         .toBe(this.user.state.stamp);
-      expect(this.userModel.online(this.context))
+      expect(this.userModel.isOnline(this.context))
         .toBeFalsy();
     });
   }
@@ -239,7 +249,7 @@ describe('user model', function() {
           },
           connection: 'connection'
         });
-      expect(this.userModel.online(this.context))
+      expect(this.userModel.isOnline(this.context))
         .toBeTruthy();
     });
   }

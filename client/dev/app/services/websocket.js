@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('websocket', websocketServiceFactory);
 
-  websocketServiceFactory.$inject = ['jsonParser', 'jsonStringifier'];
-  function websocketServiceFactory(jsonParserService, jsonStringifierService) {
+  websocketServiceFactory.$inject = ['appAction', 'appError', 'jsonParser', 'jsonStringifier'];
+  function websocketServiceFactory(appActionService, appErrorService, jsonParserService, jsonStringifierService) {
     var websocketService = {
       createP: websocketCreateP,
       send: websocketSend,
@@ -13,10 +13,10 @@
     R.curryService(websocketService);
     return websocketService;
 
-    function websocketCreateP(url, name, handlers) {
+    function websocketCreateP(url, name, actions) {
       return new self.Promise(function (resolve, reject) {
         name = R.defaultTo(url, name);
-        handlers = R.thread(handlers)(R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)), R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler)));
+        actions = R.thread(actions)(R.over(R.lensProp('error'), R.defaultTo('Websocket.error')), R.over(R.lensProp('close'), R.defaultTo('Websocket.close')));
 
         var scheme = 'ws://';
         var uri = scheme + self.document.location.host + url;
@@ -33,7 +33,7 @@
           resolved = true;
         }
         function websocketOnError(event) {
-          handlers.error('socketError', event);
+          appActionService.do(actions.error, event);
         }
         function websocketOnClose() /* event */{
           if (!resolved) {
@@ -41,23 +41,17 @@
             resolved = true;
             return;
           }
-          handlers.close();
+          appActionService.do(actions.close);
         }
         function websocketOnMessage(event) {
           // console.log('WebSocket message', name, event);
           R.threadP(event.data)(jsonParserService.parseP, R.ifElse(function (msg) {
-            return R.exists(handlers[msg.type]);
+            return R.exists(actions[msg.type]);
           }, function (msg) {
-            return handlers[msg.type](msg);
+            appActionService.do(actions[msg.type], msg);
           }, function (msg) {
-            return handlers.error('Unknown msg type', msg);
+            appErrorService.emit('Websocket: unknown msg type ' + msg.type, msg);
           }));
-        }
-        function defaultErrorHandler(reason, event) {
-          console.warn('WebSocket error', name, reason, event);
-        }
-        function defaultCloseHandler() {
-          console.warn('WebSocket close', name);
         }
       });
     }

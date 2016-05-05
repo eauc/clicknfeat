@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.models').factory('userConnection', userConnectionServiceFactory);
 
-  userConnectionServiceFactory.$inject = ['websocket', 'appState'];
-  function userConnectionServiceFactory(websocketService, appStateService) {
+  userConnectionServiceFactory.$inject = ['websocket'];
+  function userConnectionServiceFactory(websocketService) {
     var userConnectionService = {
       init: userConnectionInit,
       openP: userConnectionOpenP,
@@ -30,19 +30,17 @@
         return R.resolveP(user);
       }
 
-      var handlers = {
-        close: closeHandler,
-        users: usersMessageHandler,
-        games: gamesMessageHandler,
-        chat: chatMessageHandler
+      var actions = {
+        close: 'User.connection.close',
+        users: 'User.connection.users',
+        games: 'User.connection.games',
+        chat: 'User.connection.chat'
       };
 
       user = R.assocPath(['connection', 'state', 'socket'], null, user);
       return R.threadP()(function () {
-        return websocketService.createP('/api/users/' + user.state.stamp, 'user', handlers);
-      }, function (socket) {
-        return R.assocPath(['connection', 'state', 'socket'], socket, user);
-      });
+        return websocketService.createP('/api/users/' + user.state.stamp, actions);
+      }, R.assocPath(['connection', 'state', 'socket'], R.__, user));
     }
     function userConnectionClose(user) {
       if (userConnectionService.active(user)) {
@@ -74,27 +72,11 @@
     function cleanupConnection(connection) {
       return R.thread(connection)(R.assocPath(['state', 'socket'], null), R.assoc('users', []));
     }
-    function closeHandler() {
-      // console.error('User connection: close');
-      appStateService.reduce('User.connection.close');
-    }
-    function usersMessageHandler(msg) {
-      // console.log('User connection: users list', msg);
-      appStateService.reduce('User.setOnlineUsers', R.thread(msg)(R.propOr([], 'users'), R.sortBy(R.compose(R.toLower, R.prop('name')))));
-    }
-    function gamesMessageHandler(msg) {
-      // console.log('User connection: games list', msg);
-      appStateService.reduce('User.setOnlineGames', R.thread(msg)(R.propOr([], 'games')));
-    }
-    function chatMessageHandler(msg) {
-      // console.log('User connection: chat msg', msg);
-      appStateService.reduce('User.newChatMsg', msg);
-    }
     function userForStamp(stamp, connection) {
       return R.thread(connection)(R.prop('users'), R.find(R.propEq('stamp', stamp)));
     }
     function usersForStamps(stamps, connection) {
-      return R.thread(stamps)(R.map(R.flip(userForStamp$)(connection)), R.reject(R.isNil));
+      return R.thread(stamps)(R.map(userForStamp$(R.__, connection)), R.reject(R.isNil));
     }
   }
 })();

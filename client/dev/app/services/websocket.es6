@@ -3,10 +3,14 @@
     .factory('websocket', websocketServiceFactory);
 
   websocketServiceFactory.$inject = [
+    'appAction',
+    'appError',
     'jsonParser',
     'jsonStringifier',
   ];
-  function websocketServiceFactory(jsonParserService,
+  function websocketServiceFactory(appActionService,
+                                   appErrorService,
+                                   jsonParserService,
                                    jsonStringifierService) {
     const websocketService = {
       createP: websocketCreateP,
@@ -16,12 +20,12 @@
     R.curryService(websocketService);
     return websocketService;
 
-    function websocketCreateP(url, name, handlers) {
+    function websocketCreateP(url, name, actions) {
       return new self.Promise((resolve, reject) => {
         name = R.defaultTo(url, name);
-        handlers = R.thread(handlers)(
-          R.over(R.lensProp('error'), R.defaultTo(defaultErrorHandler)),
-          R.over(R.lensProp('close'), R.defaultTo(defaultCloseHandler))
+        actions = R.thread(actions)(
+          R.over(R.lensProp('error'), R.defaultTo('Websocket.error')),
+          R.over(R.lensProp('close'), R.defaultTo('Websocket.close'))
         );
 
         const scheme = 'ws://';
@@ -39,7 +43,7 @@
           resolved = true;
         }
         function websocketOnError(event) {
-          handlers.error('socketError', event);
+          appActionService.do(actions.error, event);
         }
         function websocketOnClose(/* event */) {
           if(!resolved) {
@@ -47,24 +51,23 @@
             resolved = true;
             return;
           }
-          handlers.close();
+          appActionService.do(actions.close);
         }
         function websocketOnMessage(event) {
           // console.log('WebSocket message', name, event);
           R.threadP(event.data)(
             jsonParserService.parseP,
             R.ifElse(
-              (msg) => R.exists(handlers[msg.type]),
-              (msg) => handlers[msg.type](msg),
-              (msg) => handlers.error('Unknown msg type', msg)
+              (msg) => R.exists(actions[msg.type]),
+              (msg) => {
+                appActionService.do(actions[msg.type], msg);
+              },
+              (msg) => {
+                appErrorService
+                  .emit(`Websocket: unknown msg type ${msg.type}`, msg);
+              }
             )
           );
-        }
-        function defaultErrorHandler(reason, event) {
-          console.warn('WebSocket error', name, reason, event);
-        }
-        function defaultCloseHandler() {
-          console.warn('WebSocket close', name);
         }
       });
     }

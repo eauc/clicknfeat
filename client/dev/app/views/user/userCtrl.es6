@@ -3,9 +3,11 @@
     .controller('userCtrl', userCtrl);
 
   userCtrl.$inject = [
-    '$scope'
+    '$scope',
+    'appUser',
   ];
-  function userCtrl($scope) {
+  function userCtrl($scope,
+                    appUserService) {
     const vm = this;
     console.log('init userCtrl');
 
@@ -13,18 +15,15 @@
     activate();
 
     function doSave() {
-      $scope.stateEvent('User.set', { state: vm.edit });
+      $scope.sendAction('User.updateState', vm.edit);
+      $scope.goToState('lounge');
     }
 
     function activate() {
-      $scope.state.user_ready.then(() => {
-        console.log('copy user for edition', $scope.state.user);
-        vm.edit = R.clone($scope.state.user.state);
-        $scope.$digest();
-      });
-      $scope.onStateChangeEvent('User.becomesValid',
-                                () => { $scope.goToState('lounge'); },
-                                $scope);
+      $scope.bindCell((user) => {
+        console.log('copy user for edition', user);
+        vm.edit = R.clone(user.state);
+      }, appUserService.user, $scope);
     }
   }
 })();

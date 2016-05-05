@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('userCtrl', userCtrl);
 
-  userCtrl.$inject = ['$scope'];
-  function userCtrl($scope) {
+  userCtrl.$inject = ['$scope', 'appUser'];
+  function userCtrl($scope, appUserService) {
     var vm = this;
     console.log('init userCtrl');
 
@@ -12,18 +12,15 @@
     activate();
 
     function doSave() {
-      $scope.stateEvent('User.set', { state: vm.edit });
+      $scope.sendAction('User.updateState', vm.edit);
+      $scope.goToState('lounge');
     }
 
     function activate() {
-      $scope.state.user_ready.then(function () {
-        console.log('copy user for edition', $scope.state.user);
-        vm.edit = R.clone($scope.state.user.state);
-        $scope.$digest();
-      });
-      $scope.onStateChangeEvent('User.becomesValid', function () {
-        $scope.goToState('lounge');
-      }, $scope);
+      $scope.bindCell(function (user) {
+        console.log('copy user for edition', user);
+        vm.edit = R.clone(user.state);
+      }, appUserService.user, $scope);
     }
   }
 })();

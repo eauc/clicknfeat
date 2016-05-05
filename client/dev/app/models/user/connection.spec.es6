@@ -27,7 +27,12 @@ describe('userConnection model', function() {
 
     it('should open websocket', function() {
       expect(this.websocketService.createP)
-        .toHaveBeenCalledWith('/api/users/stamp', 'user', jasmine.any(Object));
+        .toHaveBeenCalledWith('/api/users/stamp', {
+          close: 'User.connection.close',
+          users: 'User.connection.users',
+          games: 'User.connection.games',
+          chat: 'User.connection.chat'
+        });
     });
 
     context('when websocket creation fails', function() {
@@ -212,78 +217,6 @@ describe('userConnection model', function() {
       [ ['stamp2','stamp4','stamp1' ], ['Manu','ToTo']        ],
       [ ['stamp1','stamp2','stamp3' ], ['ToTo','Manu','Wood'] ],
     ]);
-  });
-
-  describe('socket event handlers', function() {
-    beforeEach(function() {
-      this.user = this.userConnectionModel.init({
-        state: { stamp: 'stamp' }
-      });
-      return this.userConnectionModel
-        .openP(this.user)
-        .then((user) => {
-          this.handlers = this.websocketService.createP
-            .calls.first().args[2];
-          this.user = user;
-        });
-    });
-
-    context('on users list message', function() {
-      this.handlers.users(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { users: [ { name: 'ToTo' },
-                              { name: 'Manu' },
-                              { name: 'wood' }
-                            ] };
-      });
-
-      it('should emit "setOnlineUsers" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('User.setOnlineUsers', [
-            { name: 'Manu' },
-            { name: 'ToTo' },
-            { name: 'wood' }
-          ]);
-      });
-    });
-
-    context('on games list message', function() {
-      this.handlers.games(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { games: 'games' };
-      });
-
-      it('should emit "User.setOnlineGames" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('User.setOnlineGames',
-                                this.msg.games);
-      });
-    });
-
-    context('on chat message', function() {
-      this.handlers.chat(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { msg: 'hello' };
-      });
-
-      it('should emit "User.newChatMsg" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('User.newChatMsg',
-                                this.msg);
-      });
-    });
-
-    context('close', function() {
-      this.handlers.close();
-    }, function() {
-      it('should emit "User.connection.close" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('User.connection.close');
-      });
-    });
   });
 });
 

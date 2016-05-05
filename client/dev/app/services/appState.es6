@@ -1,6 +1,6 @@
 (function() {
   angular.module('clickApp.services')
-    .factory('appState', appStateServiceFactory);
+    .factory('appStateOld', appStateServiceFactory);
 
   appStateServiceFactory.$inject = [
     'pubSub',

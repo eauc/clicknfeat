@@ -8,12 +8,12 @@
     var STORAGE_KEY = 'clickApp.user';
     var userModel = {
       isValid: userIsValid,
-      save: userSave,
+      saveP: userSaveP,
       loadP: userLoadP,
       initP: userInitP,
       description: userDescription,
       stateDescription: userStateDescription,
-      online: userOnline,
+      isOnline: userIsOnline,
       toggleOnlineP: userToggleOnlineP,
       checkOnlineP: userCheckOnlineP
     };
@@ -22,13 +22,13 @@
     return userModel;
 
     function userIsValid(user) {
-      return R.propEq('init', false, user) || R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
+      return R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
     }
-    function userSave(user) {
-      return R.thread(user)(R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user));
+    function userSaveP(user) {
+      return R.threadP(user)(R.when(userModel.isOnline, userUpdateOnlineP), R.prop('state'), R.spyWarn('User save'), localStorageService.save$(STORAGE_KEY), R.always(user));
     }
     function userLoadP() {
-      return R.threadP(STORAGE_KEY)(localStorageService.loadP, R.defaultTo({}), R.spyWarn('User load'), function (state) {
+      return R.threadP(STORAGE_KEY)(localStorageService.loadP, R.defaultTo({}), R.spyInfo('User load'), function (state) {
         return { state: state };
       }, userConnectionModel.init);
     }
@@ -73,14 +73,14 @@
       }
       return ret;
     }
-    function userOnline(user) {
+    function userIsOnline(user) {
       return R.path(['state', 'online'], user);
     }
     function userToggleOnlineP(user) {
-      return userModel.online(user) ? userGoOffline(user) : userGoOnlineP(user);
+      return userModel.isOnline(user) ? userGoOffline(user) : userGoOnlineP(user);
     }
     function userCheckOnlineP(user) {
-      return R.threadP(user)(R.rejectIfP(R.complement(userModel.online), 'No online flag'), function (user) {
+      return R.threadP(user)(R.rejectIfP(R.complement(userModel.isOnline), 'No online flag'), function (user) {
         return userUpdateOnlineP(user).catch(function () {
           return userCreateOnlineP(user);
         });

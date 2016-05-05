@@ -13,12 +13,12 @@
     const STORAGE_KEY = 'clickApp.user';
     const userModel = {
       isValid: userIsValid,
-      save: userSave,
+      saveP: userSaveP,
       loadP: userLoadP,
       initP: userInitP,
       description: userDescription,
       stateDescription: userStateDescription,
-      online: userOnline,
+      isOnline: userIsOnline,
       toggleOnlineP: userToggleOnlineP,
       checkOnlineP: userCheckOnlineP
     };
@@ -27,15 +27,19 @@
     return userModel;
 
     function userIsValid(user) {
-      return ( R.propEq('init', false, user) || R.thread(user)(
+      return R.thread(user)(
         R.pathOr('', ['state','name']),
         s.trim,
         R.length,
         R.lt(0)
-      ) );
+      );
     }
-    function userSave(user) {
-      return R.thread(user)(
+    function userSaveP(user) {
+      return R.threadP(user)(
+        R.when(
+          userModel.isOnline,
+          userUpdateOnlineP
+        ),
         R.prop('state'),
         R.spyWarn('User save'),
         localStorageService.save$(STORAGE_KEY),
@@ -46,7 +50,7 @@
       return R.threadP(STORAGE_KEY)(
         localStorageService.loadP,
         R.defaultTo({}),
-        R.spyWarn('User load'),
+        R.spyInfo('User load'),
         (state) => ({ state: state }),
         userConnectionModel.init
       );
@@ -101,18 +105,18 @@
       }
       return ret;
     }
-    function userOnline(user) {
+    function userIsOnline(user) {
       return R.path(['state','online'], user);
     }
     function userToggleOnlineP(user) {
-      return ( userModel.online(user)
+      return ( userModel.isOnline(user)
                ? userGoOffline(user)
                : userGoOnlineP(user)
              );
     }
     function userCheckOnlineP(user) {
       return R.threadP(user)(
-        R.rejectIfP(R.complement(userModel.online),
+        R.rejectIfP(R.complement(userModel.isOnline),
                    'No online flag'),
         (user) => userUpdateOnlineP(user)
           .catch(() => userCreateOnlineP(user)),
@@ -143,7 +147,7 @@
         R.rejectIfP(R.compose(R.isNil, R.path(['state','stamp'])),
                    'No valid stamp'),
         R.prop('state'),
-        httpService.putP$('/api/users/'+user.state.stamp),
+        httpService.putP$(`/api/users/${user.state.stamp}`),
         (state) => R.assoc('state', state, user)
       );
     }

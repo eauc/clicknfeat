@@ -12,10 +12,7 @@
       create: pubSubCreate,
       emit: pubSubEmit,
       addListener: pubSubAdd$('listeners'),
-      removeListener: pubSubRemove$('listeners'),
-      reduce: pubSubReduce,
-      addReducer: pubSubAdd$('reducers'),
-      removeReducer: pubSubRemove$('reducers')
+      removeListener: pubSubRemove$('listeners')
     };
     var warnOnEmptyWatchers$ = R.curry(warnOnEmptyWatchers);
     R.curryService(pubSubService);
@@ -43,28 +40,6 @@
           listener.apply(null, [event, args]);
         } catch (error) {
           console.error('xxx> ' + event + ' : listener error', error, listener);
-        }
-      }
-    }
-
-    function pubSubReduce(event, args, value, pubSub) {
-      console.info('===> ' + event, args);
-      console.trace();
-      return R.thread(value)(callReducers(event), callReducers(WATCH_EVENT));
-
-      function callReducers(event) {
-        return function (current_value) {
-          return R.thread(pubSub)(R.pathOr([], ['reducers', event]), warnOnEmptyWatchers$(event), R.reduce(callReducer, current_value));
-        };
-      }
-      function callReducer(mem, reducer) {
-        var ret = undefined;
-        try {
-          ret = reducer.apply(null, [mem, event, args]);
-          return R.exists(ret) && 'Promise' !== R.type(ret) ? ret : mem;
-        } catch (error) {
-          console.error('xxx> ' + event + ' : reducer error', error, reducer);
-          return mem;
         }
       }
     }

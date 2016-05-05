@@ -24,6 +24,7 @@
         console.error('Game Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return gameModel[method].apply(null, R.append(input, args));
     };
   }
@@ -36,6 +37,7 @@
         console.error('GameConnection Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return gameConnectionModel[method].apply(null, R.append(input, args));
     };
   }
@@ -48,6 +50,7 @@
         console.error('GameLayers Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return gameLayersModel[method].apply(null, R.append(input, args));
     };
   }
@@ -60,6 +63,7 @@
         console.error('GameLos Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return gameLosModel[method].apply(null, R.append(input, args));
     };
   }
@@ -72,6 +76,7 @@
         console.error('GameRuler Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return gameRulerModel[method].apply(null, R.append(input, args));
     };
   }
@@ -84,6 +89,7 @@
         console.error('User Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return userModel[method].apply(null, R.append(input, args));
     };
   }
@@ -96,6 +102,7 @@
         console.error('UserConnection Filter: method "'+method+'" does not exist');
         return null;
       }
+      if(R.isNil(input)) return null;
       return userConnectionModel[method].apply(null, R.append(input, args));
     };
   }
