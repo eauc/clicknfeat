@@ -6,6 +6,11 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
   );
 
 
+  $templateCache.put('app/components/error_toaster/error_toaster.html',
+    "<div class=error-toaster>{{ msg }}</div>"
+  );
+
+
   $templateCache.put('app/components/game/bad_dice_notification/bad_dice_notification.html',
     "<audio src=/data/sound/naindows-hahaha02.wav></audio>"
   );

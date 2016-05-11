@@ -34,7 +34,7 @@
         .removeListener('error', listener, event);
     }
 
-    function defaultErrorListener(...args) {
+    function defaultErrorListener(_event_, ...args) {
       console.error('APP ERROR ***', args);
     }
   }

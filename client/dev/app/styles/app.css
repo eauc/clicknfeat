@@ -66,6 +66,18 @@ a:not([href]):focus {
 #settings .vertical-center {
   vertical-align: middle; }
 
+.error-toaster {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: red;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  opacity: 0.8;
+  text-align: center; }
+
 #game #game-deploiement .extended-deploiement-line, #game #game-deploiement .extended-advance-deploiement-line, #game #game-deploiement .ambush-line, #game #game-deploiement .deploiement-line, #game #game-deploiement .advance-deploiement-line {
   stroke: #000;
   stroke-width: 1px; }

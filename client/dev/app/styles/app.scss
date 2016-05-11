@@ -8,6 +8,7 @@ $scrollbar-width: 15px;
 @import 'views/lounge/lounge';
 @import 'views/settings/settings';
 
+@import 'components/error_toaster/errorToaster';
 @import 'components/game/selection_osd/selectionOsd';
 @import 'components/game/deploiement/gameDeploiement';
 @import 'components/game/drag_box/dragBox';
