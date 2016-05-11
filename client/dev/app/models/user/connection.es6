@@ -41,7 +41,7 @@
       user = R.assocPath(['connection','state','socket'], null, user);
       return R.threadP()(
         () => websocketService
-          .createP(`/api/users/${user.state.stamp}`, actions),
+          .createP(`/api/users/${user.state.stamp}`, 'user', actions),
         R.assocPath(['connection','state','socket'], R.__, user)
       );
     }

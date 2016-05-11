@@ -4,16 +4,12 @@
 
   appUserServiceFactory.$inject=  [
     'prompt',
-    'behaviours',
-    'appError',
     'appAction',
     'appState',
     'user',
     'userConnection',
   ];
   function appUserServiceFactory(promptService,
-                                 behaviours,
-                                 appErrorService,
                                  appActionService,
                                  appStateService,
                                  userModel,
@@ -24,12 +20,23 @@
     const CONNECTION_CHAT_LENS = R.lensPath(['user', 'connection', 'chat']);
 
     const user = appStateService.state
-            .map(R.view(USER_LENS));
-    user.changes().listen(userModel.saveP);
+            .map(R.viewOr({}, USER_LENS));
+    user
+      .map(R.prop('state'))
+      .changes()
+      .listen((state) => userModel.saveP({state}));
     const valid = user.map(userModel.isValid);
-
+    const new_chat = appStateService.state
+            .map(R.pipe(
+              R.viewOr([], CONNECTION_CHAT_LENS),
+              R.last
+            ))
+            .changes()
+            .snapshot((user, chat) => [user, chat], user)
+            .filter(([user, chat]) => ( R.exists(chat) &&
+                                        !userModel.isChatAuthor(chat, user) ));
     const userService = {
-      user, valid,
+      user, valid, new_chat,
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,

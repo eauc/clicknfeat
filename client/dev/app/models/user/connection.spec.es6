@@ -27,7 +27,7 @@ describe('userConnection model', function() {
 
     it('should open websocket', function() {
       expect(this.websocketService.createP)
-        .toHaveBeenCalledWith('/api/users/stamp', {
+        .toHaveBeenCalledWith('/api/users/stamp', 'user', {
           close: 'User.connection.close',
           users: 'User.connection.users',
           games: 'User.connection.games',

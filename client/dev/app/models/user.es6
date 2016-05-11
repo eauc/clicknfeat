@@ -20,7 +20,8 @@
       stateDescription: userStateDescription,
       isOnline: userIsOnline,
       toggleOnlineP: userToggleOnlineP,
-      checkOnlineP: userCheckOnlineP
+      checkOnlineP: userCheckOnlineP,
+      isChatAuthor: userIsChatAuthor
     };
 
     R.curryService(userModel);
@@ -162,6 +163,9 @@
         R.assocPath(['state','online'], false),
         userConnectionModel.close
       );
+    }
+    function userIsChatAuthor(chat, user) {
+      return R.path(['state','stamp'], user) == R.prop('from', chat);
     }
   }
 })();

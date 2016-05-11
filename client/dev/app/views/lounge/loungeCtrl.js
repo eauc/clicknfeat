@@ -14,7 +14,7 @@
     // vm.doOpenLocalGameFile = doOpenLocalGameFile;
     // vm.doDeleteLocalGame = doDeleteLocalGame;
 
-    // vm.doUserToggleOnline = doUserToggleOnline;
+    vm.doUserToggleOnline = doUserToggleOnline;
 
     // vm.doCreateOnlineGame = doCreateOnlineGame;
     // vm.doLoadOnlineGame = doLoadOnlineGame;
@@ -66,9 +66,9 @@
     //   $scope.$digest();
     // }
 
-    // function doUserToggleOnline() {
-    //   $scope.stateEvent('User.toggleOnline');
-    // }
+    function doUserToggleOnline() {
+      $scope.sendAction('User.toggleOnline');
+    }
 
     // function doCreateOnlineGame() {
     //   $scope.stateEvent('Games.online.create');

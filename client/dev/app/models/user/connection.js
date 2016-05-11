@@ -39,7 +39,7 @@
 
       user = R.assocPath(['connection', 'state', 'socket'], null, user);
       return R.threadP()(function () {
-        return websocketService.createP('/api/users/' + user.state.stamp, actions);
+        return websocketService.createP('/api/users/' + user.state.stamp, 'user', actions);
       }, R.assocPath(['connection', 'state', 'socket'], R.__, user));
     }
     function userConnectionClose(user) {

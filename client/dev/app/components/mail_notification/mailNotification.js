@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.directives').directive('clickMailNotification', mailNotificationDirectiveFactory);
 
-  mailNotificationDirectiveFactory.$inject = ['$rootScope'];
-  function mailNotificationDirectiveFactory($rootScope) {
+  mailNotificationDirectiveFactory.$inject = ['appUser'];
+  function mailNotificationDirectiveFactory(appUserService) {
     return {
       restrict: 'E',
       scope: { type: '@' },
@@ -14,10 +14,10 @@
 
     function link(scope, element) {
       var audio = element[0].querySelector('audio');
-      $rootScope.onStateChangeEvent(s.capitalize(scope.type) + '.chat.receive', onChat, scope);
+      appUserService.new_chat.listen(onChat);
 
       function onChat() {
-        console.log(scope.type + 'MailNotification');
+        console.info(scope.type + 'MailNotification');
         audio.currentTime = 0;
         audio.play();
       }

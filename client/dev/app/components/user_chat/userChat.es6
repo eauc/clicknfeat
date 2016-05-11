@@ -17,10 +17,12 @@
 
   userChatCtrl.$inject = [
     '$scope',
+    'appUser',
   ];
-  function userChatCtrl($scope) {
+  function userChatCtrl($scope,
+                        appUserService) {
     const vm = this;
-    console.log('userChatCtrl', $scope.state.user);
+    console.log('userChatCtrl');
 
     vm.userIsInRecipients = userIsInRecipients;
     vm.doToggleRecipient = doToggleRecipient;
@@ -38,13 +40,9 @@
         msg: '',
         to: []
       };
-      $scope.onStateChangeEvent('User.state.change', updateUser, $scope);
-      $scope.onStateChangeEvent('User.connection.change', updateUser, $scope);
-      self.window.requestAnimationFrame(updateUser);
-    }
-    function updateUser() {
-      vm.user = R.clone($scope.state.user);
-      $scope.$digest();
+      $scope.bindCell((user) => {
+        vm.user = R.clone(user);
+      }, appUserService.user, $scope);
     }
     function setChatRecipients(to) {
       vm.chat.to = R.reject(R.equals(vm.user.state.stamp), to);
@@ -82,7 +80,7 @@
     function doSendChatMsg() {
       if(!vm.canSendChatMsg()) return;
 
-      $scope.stateEvent('User.sendChatMsg', R.clone(vm.chat));
+      $scope.sendAction('User.sendChat', R.clone(vm.chat));
       vm.chat.msg = '';
     }
     function doBroadcastChatMsg() {

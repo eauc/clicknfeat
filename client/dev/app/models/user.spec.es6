@@ -253,4 +253,26 @@ describe('user model', function() {
         .toBeTruthy();
     });
   }
+
+  context('isChatAuthor(<chat>)', function() {
+    return this.userModel
+      .isChatAuthor(this.chat, this.user);
+  }, function() {
+    example(function(e, d) {
+      context(d, function() {
+        this.user = { state: e.user };
+        this.chat = e.chat;
+      }, function() {
+        it('should check whether user is chat\'s author', function() {
+          expect(this.context).toBe(e.is_author);
+        });
+      });
+    }, [
+      [ 'chat'            , 'user'             , 'is_author' ],
+      [ { from: 'stamp' } , { stamp: 'stamp' } , true        ],
+      [ { from: 'other' } , { stamp: 'stamp' } , false       ],
+      [ { }               , { stamp: 'stamp' } , false       ],
+      [ { from: 'stamp' } , {  }               , false       ],
+    ]);
+  });
 });

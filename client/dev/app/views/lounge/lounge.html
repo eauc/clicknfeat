@@ -4,12 +4,12 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         {{ state.user | user:'description' }} /
-        {{ (state.user | user:'online') ? 'Online' : 'Offline' }}
+        {{ (state.user | user:'isOnline') ? 'Online' : 'Offline' }}
         <!-- ( {{ state.user.state.stamp }} ) -->
       </h4>
     </div>
     <div class="panel-body"
-         ng-show="state.user | user:'online'">
+         ng-show="state.user | user:'isOnline'">
       <click-user-chat>
       </click-user-chat>
     </div>
@@ -17,7 +17,7 @@
       <button type="button"
               class="btn btn-default"
               ng-click="lounge.doUserToggleOnline()">
-        Go {{ (state.user | user:'online') ? 'Offline' : 'Online' }}
+        Go {{ (state.user | user:'isOnline') ? 'Offline' : 'Online' }}
       </button>
     </div>
   </div>
