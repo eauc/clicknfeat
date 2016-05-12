@@ -1,4 +1,4 @@
-describe('stateUser model', function() {
+xdescribe('stateUser model', function() {
   beforeEach(inject([ 'stateUser', function(stateUserModel) {
     this.stateUserModel = stateUserModel;
 

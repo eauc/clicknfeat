@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('appError', appErrorServiceFactory);
 
-  appErrorServiceFactory.$inject = ['pubSub'];
-  function appErrorServiceFactory(pubSubService) {
+  appErrorServiceFactory.$inject = ['$rootScope', 'pubSub'];
+  function appErrorServiceFactory($rootScope, pubSubService) {
     var errorService = {
       emit: errorEmit,
       addListener: errorAddListener,
@@ -15,7 +15,7 @@
     var event = R.thread()(function () {
       return pubSubService.create();
     }, pubSubService.addListener$('error', defaultErrorListener));
-
+    self.window.onerror = uncaughtErrorHandler;
     return errorService;
 
     function errorEmit(message) {
@@ -30,12 +30,14 @@
       event = pubSubService.removeListener('error', listener, event);
     }
 
-    function defaultErrorListener(_event_) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
-
+    function defaultErrorListener(_event_, args) {
       console.error('APP ERROR ***', args);
+    }
+
+    function uncaughtErrorHandler(msg, url, line) {
+      errorEmit(msg + ' ' + url + ':' + line);
+      $rootScope.$digest();
+      return true;
     }
   }
 })();

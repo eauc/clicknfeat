@@ -3,14 +3,12 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appTick', 'appState', 'appAction', 'appUser'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appGames', 'appUser'];
 
   // 'stateData',
   // 'stateGame',
-  // 'stateGames',
   // 'stateModes',
-  // 'stateUser',
-  function appCtrl($rootScope, $state, appTickService, appStateService, appActionService) {
+  function appCtrl($rootScope, $state, appActionService, appStateService, appTickService) {
     console.log('init appCtrl');
 
     var vm = this;
@@ -26,6 +24,7 @@
     // $rootScope.onStateChangeEvent = onStateChangeEvent;
     // $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     $rootScope.bindCell = bindCell;
+    $rootScope.listenSignal = listenSignal;
 
     activate();
 
@@ -69,6 +68,10 @@
         appTickService.removeTickListener(listener);
       });
       listener();
+    }
+    function listenSignal(listener, signal, scope) {
+      var unsubscribe = signal.listen(listener);
+      scope.$on('$destroy', unsubscribe);
     }
 
     // function isNavHidden() {

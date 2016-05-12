@@ -65,7 +65,7 @@ describe('game model', function() {
     });
   });
 
-  context('loadP(<data>)', function() {
+  xcontext('loadP(<data>)', function() {
     return this.gameModel.loadP(this.data);
   }, function() {
     beforeEach(function() {
@@ -150,7 +150,7 @@ describe('game model', function() {
     });
   });
 
-  context('executeCommandP(<...args...>, <game>)', function() {
+  xcontext('executeCommandP(<...args...>, <game>)', function() {
     return this.gameModel
       .executeCommandP('cmd', ['arg1', 'arg2'], this.game);
   }, function() {
@@ -269,7 +269,7 @@ describe('game model', function() {
     });
   });
 
-  context('replayCommandP(<cmd>, <game>)', function() {
+  xcontext('replayCommandP(<cmd>, <game>)', function() {
     return this.gameModel
       .replayCommandP(this.cmd, this.game);
   }, function() {
@@ -334,7 +334,7 @@ describe('game model', function() {
 
   });
 
-  context('replayCommandsBatchP(<cmds>, <game>)', function() {
+  xcontext('replayCommandsBatchP(<cmds>, <game>)', function() {
     return this.gameModel
       .replayCommandsBatchP(this.cmds, 'game');
   }, function() {
@@ -357,7 +357,7 @@ describe('game model', function() {
     });
   });
 
-  context('replayNextCommandP(<game>)', function() {
+  xcontext('replayNextCommandP(<game>)', function() {
     return this.gameModel
       .replayNextCommandP(this.game);
   }, function() {
@@ -430,7 +430,7 @@ describe('game model', function() {
     });
   });
 
-  context('undoCommandP(<cmd>, <game>)', function() {
+  xcontext('undoCommandP(<cmd>, <game>)', function() {
     return this.gameModel
       .undoCommandP(this.cmd, this.game);
   }, function() {
@@ -489,7 +489,7 @@ describe('game model', function() {
     });
   });
 
-  context('undoLastCommandP(<game>)', function() {
+  xcontext('undoLastCommandP(<game>)', function() {
     return this.gameModel
       .undoLastCommandP(this.game);
   }, function() {
@@ -567,7 +567,7 @@ describe('game model', function() {
     });
   });
 
-  context('sendChat(<from>, <msg>)', function() {
+  xcontext('sendChat(<from>, <msg>)', function() {
     return this.gameModel
       .sendChat(this.from, this.msg, 'game');
   }, function() {

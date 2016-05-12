@@ -41,10 +41,15 @@
       const ret = fn();
 
       if(_in_transaction) return ret;
-        in_transaction = false;
 
-      doTick();
-      doEndTick();
+      try {
+        doTick();
+        doEndTick();
+      }
+      catch(e) {
+        console.error('appTickError', e);
+      }
+        in_transaction = false;
 
       return ret;
     }

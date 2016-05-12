@@ -3,9 +3,11 @@
     .factory('appError', appErrorServiceFactory);
 
   appErrorServiceFactory.$inject=  [
+    '$rootScope',
     'pubSub',
   ];
-  function appErrorServiceFactory(pubSubService) {
+  function appErrorServiceFactory($rootScope,
+                                  pubSubService) {
     const errorService = {
       emit: errorEmit,
       addListener: errorAddListener,
@@ -17,7 +19,7 @@
       () => pubSubService.create(),
       pubSubService.addListener$('error', defaultErrorListener)
     );
-
+    self.window.onerror = uncaughtErrorHandler;
     return errorService;
 
     function errorEmit(message) {
@@ -34,8 +36,14 @@
         .removeListener('error', listener, event);
     }
 
-    function defaultErrorListener(_event_, ...args) {
+    function defaultErrorListener(_event_, args) {
       console.error('APP ERROR ***', args);
+    }
+
+    function uncaughtErrorHandler(msg, url, line) {
+      errorEmit(`${msg} ${url}:${line}`);
+      $rootScope.$digest();
+      return true;
     }
   }
 })();

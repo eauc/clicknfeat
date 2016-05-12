@@ -1,4 +1,4 @@
-describe('commands model', function() {
+xdescribe('commands model', function() {
   beforeEach(inject([ 'commands', function(commandsModel) {
     this.commandsModel = commandsModel;
 
