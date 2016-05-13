@@ -16,7 +16,7 @@
 
     function doSave() {
       $scope.sendAction('User.updateState', vm.edit);
-      $scope.goToState('lounge');
+      $scope.app.goToState('lounge');
     }
 
     function activate() {

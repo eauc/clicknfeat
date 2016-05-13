@@ -1,11 +1,11 @@
-xdescribe('stateModes model', function() {
+describe('appModes service', function() {
   beforeEach(inject([
-    'stateModes',
-    function(stateModesModel) {
-      this.stateModesModel = stateModesModel;
+    'appModes',
+    function(appModesService) {
+      this.appModesService = appModesService;
 
+      this.appErrorService = spyOnService('appError');
       this.modesModel = spyOnService('modes');
-      this.appStateService = spyOnService('appState');
 
       this.state = { modes: 'modes' };
       this.event = { preventDefault: jasmine.createSpy('preventDefault')
@@ -14,8 +14,8 @@ xdescribe('stateModes model', function() {
   ]));
 
   context('onModesCurrentAction(<action>,<event>)', function() {
-    return this.stateModesModel
-      .onModesCurrentAction(this.state, 'event', ['action', [this.event]]);
+    return this.appModesService
+      .currentAction(this.state, 'action', [this.event]);
   }, function() {
     it('should dispatch mode action', function() {
       expect(this.modesModel.currentModeActionP)
@@ -32,15 +32,15 @@ xdescribe('stateModes model', function() {
         .rejectWith('reason');
     }, function() {
       it('should emit "Game.error" event', function() {
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.error','reason');
+        expect(this.appErrorService.emit)
+          .toHaveBeenCalledWith('reason');
       });
     });
   });
 
   context('onModesSwitchTo(<to>)', function() {
-    return this.stateModesModel
-      .onModesSwitchTo(this.state, 'event', ['to']);
+    return this.appModesService
+      .switchTo(this.state, 'to');
   }, function() {
     it('should switch modes', function() {
       expect(this.modesModel.switchToMode)
@@ -54,8 +54,8 @@ xdescribe('stateModes model', function() {
   });
 
   context('onModesReset()', function() {
-    return this.stateModesModel
-      .onModesReset(this.state);
+    return this.appModesService
+      .reset(this.state);
   }, function() {
     it('should reset modes', function() {
       expect(this.modesModel.init)
@@ -69,8 +69,8 @@ xdescribe('stateModes model', function() {
   });
 
   context('onModesExit()', function() {
-    return this.stateModesModel
-      .onModesExit(this.state);
+    return this.appModesService
+      .exit(this.state);
   }, function() {
     it('should exit modes', function() {
       expect(this.modesModel.exit)

@@ -7,10 +7,10 @@
     'modes',
     'settings',
     'commonMode',
-    'gameModels',
-    'gameModelSelection',
-    'gameTemplateSelection',
-    'gameTerrainSelection',
+    // 'gameModels',
+    // 'gameModelSelection',
+    // 'gameTemplateSelection',
+    // 'gameTerrainSelection',
   ];
   const MODEL_SELECTION_LENS = R.lensPath(['game','model_selection']);
   const TERRAIN_SELECTION_LENS = R.lensPath(['game','terrain_selection']);

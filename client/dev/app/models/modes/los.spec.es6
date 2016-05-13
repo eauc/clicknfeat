@@ -1,4 +1,4 @@
-describe('losMode model', function() {
+xdescribe('losMode model', function() {
   beforeEach(inject([ 'losMode', function(losMode) {
     this.losModeService = losMode;
 

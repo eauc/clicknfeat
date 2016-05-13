@@ -1,12 +1,10 @@
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 (function () {
   angular.module('clickApp.controllers').controller('gameCtrl', gameCtrl);
 
-  gameCtrl.$inject = ['$scope', '$stateParams', 'modes'];
-  function gameCtrl($scope, $stateParams, modesModel) {
+  gameCtrl.$inject = ['$scope', '$stateParams', 'appModes', 'modes'];
+  function gameCtrl($scope, $stateParams, appModesService, modesModel) {
     var vm = this;
     console.log('init gameCtrl', $stateParams);
 
@@ -16,10 +14,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     vm.currentModeName = currentModeName;
     vm.currentModeIs = currentModeIs;
-    vm.doModeAction = doModeAction;
-    vm.doActionButton = doActionButton;
-    vm.doInvitePlayer = doInvitePlayer;
-    self.window.gameUpdate = gameUpdate;
+    // vm.doModeAction = doModeAction;
+    // vm.doActionButton = doActionButton;
+    // vm.doInvitePlayer = doInvitePlayer;
 
     activate();
 
@@ -27,24 +24,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       vm.show_action_group = null;
       vm.invite_player = null;
 
-      $scope.stateEvent('Game.load', is_online, is_private, id);
-
-      $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.board.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
-      $scope.digestOnStateChangeEvent('User.connection.change', $scope);
-
-      $scope.onStateChangeEvent('Modes.change', updateCurrentModeBindings, $scope);
+      $scope.sendAction('Game.load', is_online, is_private, id);
+      $scope.bindCell(function (bindings) {
+        vm.action = bindings;
+      }, appModesService.bindings, $scope);
 
       $scope.$on('$destroy', function () {
-        $scope.stateEvent('Modes.exit');
+        $scope.sendAction('Modes.exit');
       });
-    }
-
-    function updateCurrentModeBindings() {
-      vm.action_bindings = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeBindings, R.clone);
-      vm.action_buttons = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeButtons, R.clone);
-      $scope.$digest();
     }
 
     function currentModeName() {
@@ -53,35 +40,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function currentModeIs(mode) {
       return currentModeName() === mode;
     }
-    function doModeAction(action) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
-      }
+    // function doModeAction(action, ...args) {
+    //   $scope.sendAction('Modes.current.action',
+    //                     action, [...args, {}]);
+    // }
+    // function doActionButton([_label_, action, group]) {
+    //   if(action === 'toggle') {
+    //     vm.show_action_group = ( vm.show_action_group === group
+    //                              ? null
+    //                              : group
+    //                            );
+    //     return;
+    //   }
+    //   $scope.sendAction('Modes.current.action',
+    //                     action, [{}]);
+    // }
+    // function doInvitePlayer() {
+    //   if(R.isNil(vm.invite_player)) return;
 
-      $scope.stateEvent('Modes.current.action', action, [].concat(args, [{}]));
-    }
-    function doActionButton(_ref) {
-      var _ref2 = _slicedToArray(_ref, 3);
+    //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
+    // }
 
-      var _label_ = _ref2[0];
-      var action = _ref2[1];
-      var group = _ref2[2];
-
-      if (action === 'toggle') {
-        vm.show_action_group = vm.show_action_group === group ? null : group;
-        return;
-      }
-      $scope.stateEvent('Modes.current.action', action, [{}]);
-    }
-    function doInvitePlayer() {
-      if (R.isNil(vm.invite_player)) return;
-
-      $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    }
-
-    function gameUpdate(fn) {
-      $scope.stateEvent('Game.update', fn);
-    }
+    // function gameUpdate(fn) {
+    //   $scope.stateEvent('Game.update', fn);
+    // }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {

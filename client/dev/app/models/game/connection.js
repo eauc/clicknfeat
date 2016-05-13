@@ -5,6 +5,8 @@
 
   gameConnectionModelFactory.$inject = ['websocket', 'appState'];
   function gameConnectionModelFactory(websocketModel, appStateService) {
+    var SOCKET_LENS = R.lensPath(['connection', 'state', 'socket']);
+
     var gameConnectionModel = {
       create: gameConnectionCreate,
       openP: gameConnectionOpenP,
@@ -29,25 +31,23 @@
         return R.resolveP(game);
       }
       user_name = s.trim(user_name);
-      var handlers = {
-        close: closeHandler,
-        chat: chatHandler,
-        replayCmd: replayCmdHandler,
-        undoCmd: undoCmdHandler,
-        cmdBatch: cmdBatchHandler,
-        setCmds: setCmdsHandler,
-        players: playersHandler
+      var action = {
+        close: 'Game.connection.close',
+        chat: 'Game.connection.chat',
+        replayCmd: 'Game.connection.replayCmd',
+        undoCmd: 'Game.connection.undoCmd',
+        cmdBatch: 'Game.connection.batchCmd',
+        setCmds: 'Game.connection.setCmds',
+        players: 'Game.connection.setPlayers'
       };
 
-      game = R.assocPath(['connection', 'state', 'socket'], null, game);
+      game = R.set(SOCKET_LENS, null, game);
       var url = ['/api/games', R.prop('private_stamp', game) ? 'private' : 'public', R.prop('private_stamp', game) ? R.prop('private_stamp', game) : R.prop('public_stamp', game)].join('/');
       url += '?name=' + user_name;
 
       return R.threadP()(function () {
-        return websocketModel.createP(url, 'game', handlers);
-      }, function (socket) {
-        return R.assocPath(['connection', 'state', 'socket'], socket, game);
-      });
+        return websocketModel.createP(url, 'game', action);
+      }, R.set(SOCKET_LENS, R.__, game));
     }
     function gameConnectionClose(game) {
       if (gameConnectionModel.active(game)) {
@@ -56,10 +56,10 @@
       return gameConnectionModel.cleanup(game);
     }
     function gameConnectionCleanup(game) {
-      return R.assocPath(['connection', 'state', 'socket'], null, game);
+      return R.set(SOCKET_LENS, null, game);
     }
     function gameConnectionActive(game) {
-      return R.thread(game)(R.path(['connection', 'state', 'socket']), R.exists);
+      return R.thread(game)(R.view(SOCKET_LENS), R.exists);
     }
     function gameConnectionSendReplayCommand(command, game) {
       return R.threadP(game)(gameConnectionModel.sendEvent$({
@@ -75,32 +75,32 @@
     }
     function gameConnectionSendEvent(event, game) {
       return R.thread(game)(R.ifElse(gameConnectionModel.active, function () {
-        return websocketModel.send(event, game.connection.state.socket);
+        return websocketModel.send(event, R.view(SOCKET_LENS, game));
       }, function () {
         return appStateService.emit('Error', 'gameConnection', 'sendEvent/not active');
       }), R.always(game));
     }
-    function closeHandler() {
-      appStateService.reduce('Game.connection.close');
-    }
-    function replayCmdHandler(msg) {
-      appStateService.reduce('Game.command.replay', msg.cmd);
-    }
-    function undoCmdHandler(msg) {
-      appStateService.reduce('Game.command.undo', msg.cmd);
-    }
-    function cmdBatchHandler(msg) {
-      appStateService.reduce('Game.command.replayBatch', msg.cmds);
-    }
-    function chatHandler(msg) {
-      appStateService.reduce('Game.newChatMsg', msg);
-    }
-    function setCmdsHandler(msg) {
-      appStateService.reduce('Game.setCmds', msg);
-    }
-    function playersHandler(msg) {
-      appStateService.reduce('Game.setPlayers', msg.players);
-    }
+    // function closeHandler() {
+    //   appStateService.reduce('Game.connection.close');
+    // }
+    // function replayCmdHandler(msg) {
+    //   appStateService.reduce('Game.command.replay', msg.cmd);
+    // }
+    // function undoCmdHandler(msg) {
+    //   appStateService.reduce('Game.command.undo', msg.cmd);
+    // }
+    // function cmdBatchHandler(msg) {
+    //   appStateService.reduce('Game.command.replayBatch', msg.cmds);
+    // }
+    // function chatHandler(msg) {
+    //   appStateService.reduce('Game.newChatMsg', msg);
+    // }
+    // function setCmdsHandler(msg) {
+    //   appStateService.reduce('Game.setCmds', msg);
+    // }
+    // function playersHandler(msg) {
+    //   appStateService.reduce('Game.setPlayers', msg.players);
+    // }
   }
 })();
 //# sourceMappingURL=connection.js.map

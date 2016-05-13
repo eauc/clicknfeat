@@ -33,7 +33,15 @@ describe('gameConnection model', function() {
       it('should open player websocket', function() {
         expect(this.websocketService.createP)
           .toHaveBeenCalledWith('/api/games/private/private_stamp?name=user',
-                                'game', jasmine.any(Object));
+                                'game', {
+                                  close: 'Game.connection.close',
+                                  chat: 'Game.connection.chat',
+                                  replayCmd: 'Game.connection.replayCmd',
+                                  undoCmd: 'Game.connection.undoCmd',
+                                  cmdBatch: 'Game.connection.batchCmd',
+                                  setCmds: 'Game.connection.setCmds',
+                                  players: 'Game.connection.setPlayers'
+                                });
       });
     });
 
@@ -43,7 +51,15 @@ describe('gameConnection model', function() {
       it('should open watcher websocket', function() {
         expect(this.websocketService.createP)
           .toHaveBeenCalledWith('/api/games/public/public_stamp?name=user',
-                                'game', jasmine.any(Object));
+                                'game', {
+                                  close: 'Game.connection.close',
+                                  chat: 'Game.connection.chat',
+                                  replayCmd: 'Game.connection.replayCmd',
+                                  undoCmd: 'Game.connection.undoCmd',
+                                  cmdBatch: 'Game.connection.batchCmd',
+                                  setCmds: 'Game.connection.setCmds',
+                                  players: 'Game.connection.setPlayers'
+                                });
       });
     });
 
@@ -129,107 +145,6 @@ describe('gameConnection model', function() {
         .toHaveBeenCalledWith(this.event, 'websocket.createP.returnValue');
       expect(this.context)
         .toBe(this.game);
-    });
-  });
-
-  describe('socket event handlers', function() {
-    beforeEach(function() {
-      this.game = this.gameConnectionModel.create({
-        public_stamp: 'public_stamp'
-      });
-      return this.gameConnectionModel
-        .openP('user', this.game)
-        .then(() => {
-          this.handlers = this.websocketService.createP
-            .calls.first().args[2];
-        });
-    });
-
-    context('on replayCmd message', function() {
-      return this.handlers.replayCmd(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { cmd: 'cmd' };
-      });
-
-      it('should send "Game.command.replay" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.command.replay', this.msg.cmd);
-      });
-    });
-
-    context('on cmdBatch message', function() {
-      return this.handlers.cmdBatch(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { cmds: 'cmds' };
-      });
-
-      it('should send "Game.command.replayBatch" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.command.replayBatch', this.msg.cmds);
-      });
-    });
-
-    context('on undoCmd message', function() {
-      return this.handlers.undoCmd(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { cmd: 'cmd' };
-      });
-
-      it('should send "Game.command.undo" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.command.undo', this.msg.cmd);
-      });
-    });
-
-    context('on chat message', function() {
-      return this.handlers.chat(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { chat: 'chat' };
-      });
-
-      it('should send "Game.newChatMsg" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.newChatMsg', this.msg);
-      });
-    });
-
-    context('on setCmds message', function() {
-      return this.handlers.setCmds(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { where: 'where', cmds: 'cmds' };
-      });
-
-      it('should send "Game.setCmds" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.setCmds', this.msg);
-      });
-    });
-
-    context('on players message', function() {
-      return this.handlers.players(this.msg);
-    }, function() {
-      beforeEach(function() {
-        this.msg = { players: 'players' };
-      });
-
-      it('should send "Game.setPlayers" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.setPlayers', this.msg.players);
-      });
-    });
-
-    context('on close', function() {
-      return this.handlers.close();
-    }, function() {
-      it('should send "Game.connection.close" event', function() {
-        expect(this.appStateService.reduce)
-          .toHaveBeenCalledWith('Game.connection.close');
-      });
     });
   });
 

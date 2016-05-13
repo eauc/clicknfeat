@@ -22,8 +22,8 @@
       viewZoomIn: viewZoomIn,
       viewZoomOut: viewZoomOut,
       viewZoomReset: viewZoomReset,
-      flipMap: flipMap,
-      toggleMenu: toggleMenu
+      viewFlipMap: viewFlipMap,
+      viewToggleMenu: viewToggleMenu
     };
     var common_bindings = {
       modeBackToDefault: 'esc',
@@ -56,41 +56,41 @@
     });
     return common_mode;
 
-    function modeBackToDefault() {
-      appStateService.chainReduce('Modes.switchTo', 'Default');
+    function modeBackToDefault(state) {
+      return appStateService.onAction(state, ['Modes.switchTo', 'Default']);
     }
-    function commandUndoLast() {
-      appStateService.chainReduce('Game.command.undoLast');
+    function commandUndoLast(state) {
+      return appStateService.onAction(state, ['Game.command.undoLast']);
     }
-    function commandReplayNext() {
-      appStateService.chainReduce('Game.command.replayNext');
+    function commandReplayNext(state) {
+      return appStateService.onAction(state, ['Game.command.replayNext']);
     }
-    function viewScrollLeft() {
-      appStateService.emit('Game.view.scrollLeft');
+    function viewScrollLeft(state) {
+      return appStateService.onAction(state, ['Game.view.scrollLeft']);
     }
-    function viewScrollRight() {
-      appStateService.emit('Game.view.scrollRight');
+    function viewScrollRight(state) {
+      return appStateService.onAction(state, ['Game.view.scrollRight']);
     }
-    function viewScrollUp() {
-      appStateService.emit('Game.view.scrollUp');
+    function viewScrollUp(state) {
+      return appStateService.onAction(state, ['Game.view.scrollUp']);
     }
-    function viewScrollDown() {
-      appStateService.emit('Game.view.scrollDown');
+    function viewScrollDown(state) {
+      return appStateService.onAction(state, ['Game.view.scrollDown']);
     }
-    function viewZoomIn() {
-      appStateService.emit('Game.view.zoomIn');
+    function viewZoomIn(state) {
+      return appStateService.onAction(state, ['Game.view.zoomIn']);
     }
-    function viewZoomOut() {
-      appStateService.emit('Game.view.zoomOut');
+    function viewZoomOut(state) {
+      return appStateService.onAction(state, ['Game.view.zoomOut']);
     }
-    function viewZoomReset() {
-      appStateService.emit('Game.view.zoomReset');
+    function viewZoomReset(state) {
+      return appStateService.onAction(state, ['Game.view.zoomReset']);
     }
-    function flipMap() {
-      appStateService.chainReduce('Game.uiState.flip');
+    function viewFlipMap(state) {
+      return appStateService.onAction(state, ['Game.view.flipMap']);
     }
-    function toggleMenu() {
-      appStateService.emit('Game.toggleMenu');
+    function viewToggleMenu(state) {
+      return appStateService.onAction(state, ['Game.view.toggleMenu']);
     }
   }
 })();

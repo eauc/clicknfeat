@@ -1,4 +1,4 @@
-describe('segmentMode model', function() {
+xdescribe('segmentMode model', function() {
   beforeEach(inject([ 'segmentMode', function(segmentMode) {
     this.gameLosModel = spyOnService('gameLos');
     this.gameModelsModel = spyOnService('gameModels');

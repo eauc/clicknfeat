@@ -3,26 +3,28 @@
     .factory('modes', modesModelFactory)
     .factory('allModes', [
       'defaultMode',
-      'rulerMode',
-      'losMode',
-      'createModelMode',
-      'modelsMode',
-      'modelMode',
-      'modelChargeMode',
-      'modelPlaceMode',
-      'createTemplateMode',
-      'aoeTemplateMode',
-      'sprayTemplateMode',
-      'wallTemplateMode',
-      'createTerrainMode',
-      'terrainMode',
+      // 'rulerMode',
+      // 'losMode',
+      // 'createModelMode',
+      // 'modelsMode',
+      // 'modelMode',
+      // 'modelChargeMode',
+      // 'modelPlaceMode',
+      // 'createTemplateMode',
+      // 'aoeTemplateMode',
+      // 'sprayTemplateMode',
+      // 'wallTemplateMode',
+      // 'createTerrainMode',
+      // 'terrainMode',
       () => ({})
     ]);
 
   modesModelFactory.$inject = [
-    'appState',
+    'appAction',
+    'appError',
   ];
-  function modesModelFactory(appStateService) {
+  function modesModelFactory(appActionService,
+                             appErrorService) {
     const MODES_REG = {};
     const modesModel = {
       registerMode: registerMode,
@@ -93,8 +95,7 @@
         R.ifElse(
           R.isNil,
           () => {
-            appStateService
-              .emit('Game.error', `Mode ${name} does not exist`);
+            appErrorService.emit(`Mode ${name} does not exist`);
             return modes;
           },
           () => R.thread(modes)(
@@ -158,7 +159,8 @@
         return (event, keys) => {
           console.warn('binding', name, keys, event);
 
-          appStateService.reduce('Modes.current.action', name, [event]);
+          appActionService
+            .do('Modes.current.action', name, [event]);
           return false;
         };
       }

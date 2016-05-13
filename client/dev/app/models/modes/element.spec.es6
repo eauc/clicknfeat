@@ -1,4 +1,4 @@
-describe('elementMode model', function() {
+xdescribe('elementMode model', function() {
   beforeEach(inject([
     'elementMode',
     function(elementModeModel) {

@@ -1,12 +1,26 @@
 'use strict';
 
 (function () {
-  angular.module('clickApp.services').factory('modes', modesModelFactory).factory('allModes', ['defaultMode', 'rulerMode', 'losMode', 'createModelMode', 'modelsMode', 'modelMode', 'modelChargeMode', 'modelPlaceMode', 'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
+  angular.module('clickApp.services').factory('modes', modesModelFactory).factory('allModes', ['defaultMode',
+  // 'rulerMode',
+  // 'losMode',
+  // 'createModelMode',
+  // 'modelsMode',
+  // 'modelMode',
+  // 'modelChargeMode',
+  // 'modelPlaceMode',
+  // 'createTemplateMode',
+  // 'aoeTemplateMode',
+  // 'sprayTemplateMode',
+  // 'wallTemplateMode',
+  // 'createTerrainMode',
+  // 'terrainMode',
+  function () {
     return {};
   }]);
 
-  modesModelFactory.$inject = ['appState'];
-  function modesModelFactory(appStateService) {
+  modesModelFactory.$inject = ['appAction', 'appError'];
+  function modesModelFactory(appActionService, appErrorService) {
     var MODES_REG = {};
     var modesModel = {
       registerMode: registerMode,
@@ -65,7 +79,7 @@
     function switchToMode(name, modes) {
       var previous_mode = currentMode(modes);
       return R.thread(modes)(R.path(['register', name]), R.ifElse(R.isNil, function () {
-        appStateService.emit('Game.error', 'Mode ' + name + ' does not exist');
+        appErrorService.emit('Mode ' + name + ' does not exist');
         return modes;
       }, function () {
         return R.thread(modes)(leaveMode, enterMode$(name), R.spy('Modes: switch mode from ' + previous_mode.name + ' to ' + name));
@@ -116,7 +130,7 @@
         return function (event, keys) {
           console.warn('binding', name, keys, event);
 
-          appStateService.reduce('Modes.current.action', name, [event]);
+          appActionService.do('Modes.current.action', name, [event]);
           return false;
         };
       }

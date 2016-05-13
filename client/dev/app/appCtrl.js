@@ -3,26 +3,19 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appGames', 'appUser'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appGame', 'appGames', 'appModes', 'appUser'];
 
   // 'stateData',
-  // 'stateGame',
-  // 'stateModes',
   function appCtrl($rootScope, $state, appActionService, appStateService, appTickService) {
     console.log('init appCtrl');
 
     var vm = this;
-    // vm.isNavHidden = isNavHidden;
+    vm.isNavHidden = isNavHidden;
     vm.stateIs = stateIs;
     vm.stateMatches = stateMatches;
-    // vm.goToState = goToState;
-
-    // $rootScope.stateIs = stateIs;
-    $rootScope.goToState = goToState;
+    vm.goToState = goToState;
 
     $rootScope.sendAction = sendAction;
-    // $rootScope.onStateChangeEvent = onStateChangeEvent;
-    // $rootScope.digestOnStateChangeEvent = digestOnStateChangeEvent;
     $rootScope.bindCell = bindCell;
     $rootScope.listenSignal = listenSignal;
 
@@ -32,8 +25,6 @@
       bindCell(function (state) {
         $rootScope.state = state;
       }, appStateService.state, $rootScope);
-      // $rootScope.onStateChangeEvent('User.becomesInvalid', onUserInvalid, $rootScope);
-      // $rootScope.state = appStateService.init();
     }
 
     // function onUserInvalid() {
@@ -48,17 +39,6 @@
 
       appActionService.action.send(args);
     }
-    // function onStateChangeEvent(event, listener, scope) {
-    //   appStateService.addListener(event, listener);
-    //   scope.$on('$destroy', () => {
-    //     appStateService.removeListener(event, listener);
-    //   });
-    // }
-    // function digestOnStateChangeEvent(event, scope) {
-    //   onStateChangeEvent(event, () => {
-    //     scope.$digest();
-    //   }, scope);
-    // }
     function bindCell(bind, cell, scope) {
       var listener = function listener() {
         bind(cell.sample());
@@ -74,9 +54,9 @@
       scope.$on('$destroy', unsubscribe);
     }
 
-    // function isNavHidden() {
-    //   return R.path(['current', 'data', 'hide_nav' ], $state);
-    // }
+    function isNavHidden() {
+      return R.path(['current', 'data', 'hide_nav'], $state);
+    }
     function stateIs(name) {
       return $state.is(name);
     }

@@ -8,6 +8,8 @@
   ];
   function gameConnectionModelFactory(websocketModel,
                                       appStateService) {
+    const SOCKET_LENS = R.lensPath(['connection','state','socket']);
+
     const gameConnectionModel = {
       create: gameConnectionCreate,
       openP: gameConnectionOpenP,
@@ -32,17 +34,17 @@
         return R.resolveP(game);
       }
       user_name = s.trim(user_name);
-      const handlers = {
-        close: closeHandler,
-        chat: chatHandler,
-        replayCmd: replayCmdHandler,
-        undoCmd: undoCmdHandler,
-        cmdBatch: cmdBatchHandler,
-        setCmds: setCmdsHandler,
-        players: playersHandler
+      const action = {
+        close: 'Game.connection.close',
+        chat: 'Game.connection.chat',
+        replayCmd: 'Game.connection.replayCmd',
+        undoCmd: 'Game.connection.undoCmd',
+        cmdBatch: 'Game.connection.batchCmd',
+        setCmds: 'Game.connection.setCmds',
+        players: 'Game.connection.setPlayers'
       };
 
-      game = R.assocPath(['connection','state','socket'], null, game);
+      game = R.set(SOCKET_LENS, null, game);
       let url = [
         '/api/games',
         ( R.prop('private_stamp', game)
@@ -58,9 +60,8 @@
 
       return R.threadP()(
         () => websocketModel
-          .createP(url, 'game', handlers),
-        (socket) => R.assocPath(['connection', 'state', 'socket'],
-                                socket, game)
+          .createP(url, 'game', action),
+        R.set(SOCKET_LENS, R.__, game)
       );
     }
     function gameConnectionClose(game) {
@@ -70,11 +71,11 @@
       return gameConnectionModel.cleanup(game);
     }
     function gameConnectionCleanup(game) {
-      return R.assocPath(['connection','state','socket'], null, game);
+      return R.set(SOCKET_LENS, null, game);
     }
     function gameConnectionActive(game) {
       return R.thread(game)(
-        R.path(['connection','state','socket']),
+        R.view(SOCKET_LENS),
         R.exists
       );
     }
@@ -103,33 +104,33 @@
         R.ifElse(
           gameConnectionModel.active,
           () => websocketModel
-            .send(event, game.connection.state.socket),
+            .send(event, R.view(SOCKET_LENS, game)),
           () => appStateService
             .emit('Error', 'gameConnection', 'sendEvent/not active')
         ),
         R.always(game)
       );
     }
-    function closeHandler() {
-      appStateService.reduce('Game.connection.close');
-    }
-    function replayCmdHandler(msg) {
-      appStateService.reduce('Game.command.replay', msg.cmd);
-    }
-    function undoCmdHandler(msg) {
-      appStateService.reduce('Game.command.undo', msg.cmd);
-    }
-    function cmdBatchHandler(msg) {
-      appStateService.reduce('Game.command.replayBatch', msg.cmds);
-    }
-    function chatHandler(msg) {
-      appStateService.reduce('Game.newChatMsg', msg);
-    }
-    function setCmdsHandler(msg) {
-      appStateService.reduce('Game.setCmds', msg);
-    }
-    function playersHandler(msg) {
-      appStateService.reduce('Game.setPlayers', msg.players);
-    }
+    // function closeHandler() {
+    //   appStateService.reduce('Game.connection.close');
+    // }
+    // function replayCmdHandler(msg) {
+    //   appStateService.reduce('Game.command.replay', msg.cmd);
+    // }
+    // function undoCmdHandler(msg) {
+    //   appStateService.reduce('Game.command.undo', msg.cmd);
+    // }
+    // function cmdBatchHandler(msg) {
+    //   appStateService.reduce('Game.command.replayBatch', msg.cmds);
+    // }
+    // function chatHandler(msg) {
+    //   appStateService.reduce('Game.newChatMsg', msg);
+    // }
+    // function setCmdsHandler(msg) {
+    //   appStateService.reduce('Game.setCmds', msg);
+    // }
+    // function playersHandler(msg) {
+    //   appStateService.reduce('Game.setPlayers', msg.players);
+    // }
   }
 })();

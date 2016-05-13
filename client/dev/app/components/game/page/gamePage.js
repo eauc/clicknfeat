@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.directives').directive('clickGamePage', clickGamePageDirectiveFactory);
 
-  clickGamePageDirectiveFactory.$inject = [];
-  function clickGamePageDirectiveFactory() {
+  clickGamePageDirectiveFactory.$inject = ['appGame'];
+  function clickGamePageDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
       link: link
@@ -15,7 +15,7 @@
       var menuToggle = buildMenuToggle(element);
 
       element.querySelector('#menu-toggle').addEventListener('click', menuToggle);
-      scope.onStateChangeEvent('Game.toggleMenu', menuToggle, scope);
+      scope.listenSignal(menuToggle, appGameService.view.filter(R.equals('Game.view.toggleMenu')), scope);
 
       var gameview = element.querySelector('#gameview');
       var rect = gameview.getBoundingClientRect();

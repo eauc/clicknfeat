@@ -1,4 +1,4 @@
-describe('rulerMode model', function() {
+xdescribe('rulerMode model', function() {
   beforeEach(inject([ 'rulerMode', function(rulerMode) {
     this.rulerModeModel = rulerMode;
 

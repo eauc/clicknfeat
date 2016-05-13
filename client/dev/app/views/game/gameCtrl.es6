@@ -5,10 +5,12 @@
   gameCtrl.$inject = [
     '$scope',
     '$stateParams',
+    'appModes',
     'modes',
   ];
   function gameCtrl($scope,
                     $stateParams,
+                    appModesService,
                     modesModel) {
     const vm = this;
     console.log('init gameCtrl', $stateParams);
@@ -19,10 +21,9 @@
 
     vm.currentModeName = currentModeName;
     vm.currentModeIs = currentModeIs;
-    vm.doModeAction = doModeAction;
-    vm.doActionButton = doActionButton;
-    vm.doInvitePlayer = doInvitePlayer;
-    self.window.gameUpdate = gameUpdate;
+    // vm.doModeAction = doModeAction;
+    // vm.doActionButton = doActionButton;
+    // vm.doInvitePlayer = doInvitePlayer;
 
     activate();
 
@@ -30,34 +31,14 @@
       vm.show_action_group = null;
       vm.invite_player = null;
 
-      $scope.stateEvent('Game.load', is_online, is_private, id);
-
-      $scope.digestOnStateChangeEvent('Game.layers.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.board.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.scenario.change', $scope);
-      $scope.digestOnStateChangeEvent('User.connection.change', $scope);
-
-      $scope.onStateChangeEvent('Modes.change',
-                                updateCurrentModeBindings,
-                                $scope);
+      $scope.sendAction('Game.load', is_online, is_private, id);
+      $scope.bindCell((bindings) =>{
+        vm.action = bindings;
+      }, appModesService.bindings, $scope);
 
       $scope.$on('$destroy', () => {
-        $scope.stateEvent('Modes.exit');
+        $scope.sendAction('Modes.exit');
       });
-    }
-
-    function updateCurrentModeBindings() {
-      vm.action_bindings = R.thread($scope)(
-        R.path(['state','modes']),
-        modesModel.currentModeBindings,
-        R.clone
-      );
-      vm.action_buttons = R.thread($scope)(
-        R.path(['state','modes']),
-        modesModel.currentModeButtons,
-        R.clone
-      );
-      $scope.$digest();
     }
 
     function currentModeName() {
@@ -69,30 +50,30 @@
     function currentModeIs(mode) {
       return currentModeName() === mode;
     }
-    function doModeAction(action, ...args) {
-      $scope.stateEvent('Modes.current.action',
-                        action, [...args, {}]);
-    }
-    function doActionButton([_label_, action, group]) {
-      if(action === 'toggle') {
-        vm.show_action_group = ( vm.show_action_group === group
-                                 ? null
-                                 : group
-                               );
-        return;
-      }
-      $scope.stateEvent('Modes.current.action',
-                        action, [{}]);
-    }
-    function doInvitePlayer() {
-      if(R.isNil(vm.invite_player)) return;
+    // function doModeAction(action, ...args) {
+    //   $scope.sendAction('Modes.current.action',
+    //                     action, [...args, {}]);
+    // }
+    // function doActionButton([_label_, action, group]) {
+    //   if(action === 'toggle') {
+    //     vm.show_action_group = ( vm.show_action_group === group
+    //                              ? null
+    //                              : group
+    //                            );
+    //     return;
+    //   }
+    //   $scope.sendAction('Modes.current.action',
+    //                     action, [{}]);
+    // }
+    // function doInvitePlayer() {
+    //   if(R.isNil(vm.invite_player)) return;
 
-      $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    }
+    //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
+    // }
 
-    function gameUpdate(fn) {
-      $scope.stateEvent('Game.update', fn);
-    }
+    // function gameUpdate(fn) {
+    //   $scope.stateEvent('Game.update', fn);
+    // }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {

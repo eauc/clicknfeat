@@ -6,7 +6,7 @@
     // 'appState',
     'jsonStringifier',
     // 'commands',
-    // 'gameConnection',
+    'gameConnection',
     // 'gameLayers',
     // 'gameLos',
     // 'gameModels',
@@ -19,9 +19,9 @@
     // 'allTemplates',
   ];
   function gameModelFactory(// appStateService,
-    jsonStringifierService){
+    jsonStringifierService,
                             // commandsModel,
-                            // gameConnectionModel,
+    gameConnectionModel) {
                             // gameLayersModel,
                             // gameLosModel,
                             // gameModelsModel,
@@ -32,12 +32,12 @@
                             // gameTerrainsModel,
                             // gameTerrainSelectionModel) {
     const gameModel = {
+      isOnline: gameIsOnline,
       description: gameDescription,
       pickForJson: gamePickForJson,
       toJson: gameToJson,
       create: gameCreate,
-      // isOnline: gameIsOnline,
-      // loadP: gameLoadP,
+      loadP: gameLoadP,
       // executeCommandP: gameExecuteCommandP,
       // undoCommandP: gameUndoCommandP,
       // undoLastCommandP: gameUndoLastCommandP,
@@ -56,6 +56,9 @@
     R.curryService(gameModel);
     return gameModel;
 
+    function gameIsOnline(game) {
+      return ( game.public_stamp || game.private_stamp );
+    }
     function gameDescription(game) {
       return [ s.capitalize(gamePlayerName('p1', game)),
                'vs',
@@ -83,45 +86,17 @@
       };
       return new_game;
     }
-    // function gameIsOnline(game) {
-    //   return ( game.public_stamp || game.private_stamp );
-    // }
-    // function gameLoadP(data) {
-    //   return R.threadP(Object.create(GAME_PROTO))(
-    //     extendGameDefaultWithData,
-    //     gameConnectionModel.create,
-    //     gameReplayAllP
-    //   );
+    function gameLoadP(data) {
+      return R.threadP(Object.create(GAME_PROTO))(
+        extendGameDefaultWithData,
+        gameConnectionModel.create
+        // gameReplayAllP
+      );
 
-    //   function extendGameDefaultWithData(game) {
-    //     return R.deepExtend(game, defaultGameState(), data);
-    //   }
-    // }
-    // function defaultGameState() {
-    //   return {
-    //     players: {
-    //       p1: { name: null },
-    //       p2: { name: null }
-    //     },
-    //     board: {},
-    //     scenario: {},
-    //     chat: [],
-    //     commands: [],
-    //     commands_log: [],
-    //     undo: [],
-    //     undo_log: [],
-    //     dice: [],
-    //     ruler: gameRulerModel.create(),
-    //     los: gameLosModel.create(),
-    //     models: gameModelsModel.create(),
-    //     model_selection: gameModelSelectionModel.create(),
-    //     templates: gameTemplatesModel.create(),
-    //     template_selection: gameTemplateSelectionModel.create(),
-    //     terrains: gameTerrainsModel.create(),
-    //     terrain_selection: gameTerrainSelectionModel.create(),
-    //     layers: gameLayersModel.create()
-    //   };
-    // }
+      function extendGameDefaultWithData(game) {
+        return R.deepExtend(game, defaultGameState(), data);
+      }
+    }
     // function gameExecuteCommandP(cmd, args, game) {
     //   return R.threadP(commandsModel.executeP(cmd, args, game))(
     //     stampCommand,
@@ -310,6 +285,34 @@
     //       }
     //     }, game);
     // }
+    function gamePlayerName(p, game) {
+      return R.pathOr('John Doe', ['players',p,'name'], game);
+    }
+    function defaultGameState() {
+      return {
+        players: {
+          p1: { name: null },
+          p2: { name: null }
+        },
+        board: {},
+        scenario: {},
+        chat: [],
+        commands: [],
+        commands_log: [],
+        undo: [],
+        undo_log: [],
+        dice: [],
+        // ruler: gameRulerModel.create(),
+        // los: gameLosModel.create(),
+        // models: gameModelsModel.create(),
+        // model_selection: gameModelSelectionModel.create(),
+        // templates: gameTemplatesModel.create(),
+        // template_selection: gameTemplateSelectionModel.create(),
+        // terrains: gameTerrainsModel.create(),
+        // terrain_selection: gameTerrainSelectionModel.create(),
+        // layers: gameLayersModel.create()
+      };
+    }
     // function gameReplayAllP(game) {
     //   return new self.Promise((resolve) => {
     //     if(R.isEmpty(game.commands)) {
@@ -341,8 +344,5 @@
     //     });
     //   }
     // }
-    function gamePlayerName(p, game) {
-      return R.pathOr('John Doe', ['players',p,'name'], game);
-    }
   }
 })();

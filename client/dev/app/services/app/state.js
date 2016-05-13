@@ -20,17 +20,19 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
     self.window.state = state;
 
     var stateService = {
-      state: state,
-      set: stateSet
+      state: state, set: stateSet,
+      onAction: onAction,
+      init: actionStateInit
     };
     R.curryService(stateService);
+    var handleActionError$ = R.curry(handleActionError);
 
     mount();
 
     return stateService;
 
     function mount() {
-      appActionService.register('State.Init', onStateInit);
+      appActionService.register('State.Init', actionStateInit);
     }
 
     function onAction(state, _ref) {
@@ -43,25 +45,33 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
       console.info('===> Action ' + action, args, state);
       console.trace();
 
-      var ret = null;
-
       var handler = R.prop(action, appActionService.handlers());
       if (R.isNil(handler)) {
         appErrorService.emit('Unknown action "' + action + '"');
-        return ret;
+        return null;
       }
+
+      var ret = null;
       try {
         ret = handler.apply(null, [state].concat(_toConsumableArray(args)));
       } catch (e) {
-        appErrorService.emit('Action "' + action + '" handler error', e);
+        handleActionError(action, e);
       }
-      return 'Promise' === R.type(ret) || R.isNil(ret) ? state : ret;
+
+      if ('Promise' === R.type(ret)) {
+        ret.catch(handleActionError$(action));
+        return null;
+      }
+
+      return ret;
     }
 
-    function onStateInit() {
-      var init = {};
-      console.info('State.Init', init);
-      return init;
+    function actionStateInit() {
+      return {};
+    }
+
+    function handleActionError(action, e) {
+      appErrorService.emit('Action "' + action + '" handler error', e);
     }
   }
 })();

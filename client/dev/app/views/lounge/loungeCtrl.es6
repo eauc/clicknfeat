@@ -67,7 +67,7 @@
     }
     function onGamesLocalLoadSuccess(id) {
       console.warn('load local game success', id);
-      $scope.goToState('game.main', {
+      $scope.app.goToState('game.main', {
         online: 'offline',
         private: 'private',
         id: id
@@ -92,7 +92,7 @@
     //   $scope.stateEvent('Games.online.loadFile', files[0]);
     // }
     // function onGamesOnlineLoad(_event_, [isPrivate, id]) {
-    //   $scope.goToState('game.main', {
+    //   $scope.app.goToState('game.main', {
     //     online: 'online',
     //     private: isPrivate,
     //     id: id

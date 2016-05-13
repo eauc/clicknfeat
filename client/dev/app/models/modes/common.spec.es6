@@ -11,9 +11,12 @@ describe('commonMode model', function() {
   example(function(e) {
     describe(e.action+'()', function() {
       it('should broadcast "'+e.event+'" event', function() {
-        this.commonModeModel.actions[e.action]();
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith(e.event);
+        const context = this.commonModeModel
+                .actions[e.action]('state');
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith('state', [e.event]);
+        expect(context)
+          .toBe('appState.onAction.returnValue');
       });
     });
   }, [
@@ -25,41 +28,40 @@ describe('commonMode model', function() {
     [ 'viewZoomIn', 'Game.view.zoomIn' ],
     [ 'viewZoomOut', 'Game.view.zoomOut' ],
     [ 'viewZoomReset', 'Game.view.zoomReset' ],
-    [ 'toggleMenu', 'Game.toggleMenu' ],
+    [ 'viewToggleMenu', 'Game.view.toggleMenu' ],
+    [ 'viewFlipMap', 'Game.view.flipMap' ],
   ]);
-
-  describe('flipMap()', function() {
-    it('should do Game.uiState.flip action', function() {
-      this.commonModeModel.actions.flipMap();
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.uiState.flip');
-    });
-  });
 
   describe('modeBackToDefault', function() {
     it('should switch to default mode', function() {
-      this.commonModeModel.actions
-        .modeBackToDefault();
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo', 'Default');
+      const context = this.commonModeModel.actions
+        .modeBackToDefault('state');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith('state', ['Modes.switchTo', 'Default']);
+      expect(context)
+        .toBe('appState.onAction.returnValue');
     });
   });
 
   describe('commandUndoLast', function() {
     it('should undo last command', function() {
-      this.commonModeModel.actions
-        .commandUndoLast();
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.undoLast');
+      const context = this.commonModeModel.actions
+        .commandUndoLast('state');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith('state', ['Game.command.undoLast']);
+      expect(context)
+        .toBe('appState.onAction.returnValue');
     });
   });
 
   describe('commandReplayNext', function() {
     it('should switch to default mode', function() {
-      this.commonModeModel.actions
-        .commandReplayNext();
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.replayNext');
+      const context = this.commonModeModel.actions
+        .commandReplayNext('state');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith('state', ['Game.command.replayNext']);
+      expect(context)
+        .toBe('appState.onAction.returnValue');
     });
   });
 });

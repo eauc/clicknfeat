@@ -1,4 +1,4 @@
-xdescribe('modes model', function() {
+describe('modes model', function() {
   beforeEach(inject([
     'modes',
     'defaultMode',
@@ -46,7 +46,7 @@ xdescribe('modes model', function() {
 
   describe('Mousetrap binding', function() {
     beforeEach(function() {
-      this.appStateService = spyOnService('appState');
+      this.appActionService = spyOnService('appAction');
       this.event = jasmine.createSpyObj('event', ['preventDefault']);
       this.modes = this.modesModel.init(this.state);
       this.actionBinding = findCallByArgs(Mousetrap.bind, (args) => {
@@ -58,7 +58,7 @@ xdescribe('modes model', function() {
       return this.actionBinding(this.event);
     }, function() {
       it('should should call associated mode action', function() {
-        expect(this.appStateService.reduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Modes.current.action', 'test', [this.event]);
       });
     });
@@ -69,7 +69,7 @@ xdescribe('modes model', function() {
       .switchToMode(this.to, this.modes);
   }, function() {
     beforeEach(function() {
-      this.appStateService = spyOnService('appState');
+      this.appErrorService = spyOnService('appError');
       this.state = { 'this': 'state' };
       this.modes = this.modesModel.init();
       this.modes.current = 'Default';
@@ -123,8 +123,8 @@ xdescribe('modes model', function() {
       });
 
       it('should emit Game.error event', function() {
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.error', 'Mode Unknown does not exist');
+        expect(this.appErrorService.emit)
+          .toHaveBeenCalledWith('Mode Unknown does not exist');
       });
     });
   });

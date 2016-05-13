@@ -269,19 +269,6 @@ a:not([href]):focus {
   width: 100%;
   font-size: 1.5em;
   opacity: 0.8; }
-#game #game-error {
-  z-index: 3000;
-  position: absolute;
-  top: 50%;
-  width: 100%;
-  color: #CCC;
-  background-color: #F00;
-  opacity: 0.8; }
-  #game #game-error .game-error-mode-name {
-    font-size: 3em;
-    font-weight: bold; }
-  #game #game-error .game-error-reason {
-    font-size: 2em; }
 #game #selection-osd {
   z-index: 2000;
   position: absolute; }

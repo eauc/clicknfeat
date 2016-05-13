@@ -2,20 +2,20 @@
   angular.module('clickApp.directives')
     .directive('clickGameLoading', gameLoadingDirectiveFactory);
 
-  gameLoadingDirectiveFactory.$inject = [];
-  function gameLoadingDirectiveFactory() {
+  gameLoadingDirectiveFactory.$inject = [
+    'appGame',
+  ];
+  function gameLoadingDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
       link: link
     };
-  }
-  function link(scope, element) {
-    console.log('gameLoading');
-    scope.onStateChangeEvent('Game.loading', () => {
-      element[0].style.display = 'block';
-    }, scope);
-    scope.onStateChangeEvent('Game.loaded', () => {
-      element[0].style.display = 'none';
-    }, scope);
+    function link(scope, element) {
+      console.log('gameLoading');
+      scope.listenSignal((is_loading) => {
+        // console.warn('Loading UI', is_loading);
+        element[0].style.display = is_loading ? 'block' : 'none';
+      }, appGameService.loading, scope);
+    }
   }
 })();

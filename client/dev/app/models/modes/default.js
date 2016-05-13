@@ -3,7 +3,12 @@
 (function () {
   angular.module('clickApp.services').factory('defaultMode', defaultModeModelFactory);
 
-  defaultModeModelFactory.$inject = ['appState', 'modes', 'settings', 'commonMode', 'gameModels', 'gameModelSelection', 'gameTemplateSelection', 'gameTerrainSelection'];
+  defaultModeModelFactory.$inject = ['appState', 'modes', 'settings', 'commonMode'];
+
+  // 'gameModels',
+  // 'gameModelSelection',
+  // 'gameTemplateSelection',
+  // 'gameTerrainSelection',
   var MODEL_SELECTION_LENS = R.lensPath(['game', 'model_selection']);
   var TERRAIN_SELECTION_LENS = R.lensPath(['game', 'terrain_selection']);
   var TEMPLATE_SELECTION_LENS = R.lensPath(['game', 'template_selection']);

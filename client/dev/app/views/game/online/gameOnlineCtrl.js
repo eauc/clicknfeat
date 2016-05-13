@@ -21,7 +21,7 @@
 
     function checkUserOnline() {
       if (!userModel.online($scope.state.user)) {
-        $scope.goToState('^.main');
+        $scope.app.goToState('^.main');
       }
     }
 
@@ -31,7 +31,7 @@
       });
     }
     function onGamesOnlineLoad(_event_, isPrivate, id) {
-      $scope.goToState('game.main', {
+      $scope.app.goToState('game.main', {
         online: 'online',
         private: isPrivate,
         id: id
