@@ -22,7 +22,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   'rollDiceCommand',
   // 'rollDeviationCommand',
   // 'setBoardCommand',
-  // 'setLayersCommand',
+  'setLayersCommand',
   // 'setLosCommand',
   // 'setRulerCommand',
   // 'setScenarioCommand',

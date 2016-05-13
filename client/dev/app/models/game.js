@@ -5,9 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection'];
+  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers'];
 
-  // 'gameLayers',
   // 'gameLos',
   // 'gameModels',
   // 'gameModelSelection',
@@ -17,16 +16,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   // 'gameTerrains',
   // 'gameTerrainSelection',
   // 'allTemplates',
-  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel) {
-    // gameLayersModel,
-    // gameLosModel,
-    // gameModelsModel,
-    // gameModelSelectionModel,
-    // gameRulerModel,
-    // gameTemplatesModel,
-    // gameTemplateSelectionModel,
-    // gameTerrainsModel,
-    // gameTerrainSelectionModel) {
+  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel
+  // gameLosModel,
+  // gameModelsModel,
+  // gameModelSelectionModel,
+  // gameRulerModel,
+  // gameTemplatesModel,
+  // gameTemplateSelectionModel,
+  // gameTerrainsModel,
+  // gameTerrainSelectionModel
+  ) {
     var DICE_LENS = R.lensProp('dice');
     var COMMANDS_LENS = R.lensProp('commands');
     var COMMANDS_LOG_LENS = R.lensProp('commands_log');
@@ -228,7 +227,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         commands_log: [],
         undo: [],
         undo_log: [],
-        dice: []
+        dice: [],
+        layers: gameLayersModel.create()
       };
     }
     // ruler: gameRulerModel.create(),
@@ -239,7 +239,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // template_selection: gameTemplateSelectionModel.create(),
     // terrains: gameTerrainsModel.create(),
     // terrain_selection: gameTerrainSelectionModel.create(),
-    // layers: gameLayersModel.create()
     function gameReplayAllP(game) {
       return new self.Promise(function (resolve) {
         if (R.isEmpty(game.commands)) {

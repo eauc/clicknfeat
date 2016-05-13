@@ -6,7 +6,7 @@
     'jsonStringifier',
     'commands',
     'gameConnection',
-    // 'gameLayers',
+    'gameLayers',
     // 'gameLos',
     // 'gameModels',
     // 'gameModelSelection',
@@ -19,8 +19,8 @@
   ];
   function gameModelFactory(jsonStringifierService,
                             commandsModel,
-                            gameConnectionModel) {
-                            // gameLayersModel,
+                            gameConnectionModel,
+                            gameLayersModel
                             // gameLosModel,
                             // gameModelsModel,
                             // gameModelSelectionModel,
@@ -28,7 +28,8 @@
                             // gameTemplatesModel,
                             // gameTemplateSelectionModel,
                             // gameTerrainsModel,
-                            // gameTerrainSelectionModel) {
+                            // gameTerrainSelectionModel
+                           ) {
     const DICE_LENS = R.lensProp('dice');
     const COMMANDS_LENS = R.lensProp('commands');
     const COMMANDS_LOG_LENS = R.lensProp('commands_log');
@@ -295,6 +296,7 @@
         undo: [],
         undo_log: [],
         dice: [],
+        layers: gameLayersModel.create(),
         // ruler: gameRulerModel.create(),
         // los: gameLosModel.create(),
         // models: gameModelsModel.create(),
@@ -303,7 +305,6 @@
         // template_selection: gameTemplateSelectionModel.create(),
         // terrains: gameTerrainsModel.create(),
         // terrain_selection: gameTerrainSelectionModel.create(),
-        // layers: gameLayersModel.create()
       };
     }
     function gameReplayAllP(game) {

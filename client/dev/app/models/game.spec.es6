@@ -93,6 +93,7 @@ describe('game model', function() {
           commands_log: [ ],
           undo_log: [],
           dice: [],
+          layers: ['b','d','s','m','t'],
           // ruler: {
           //   local: {
           //     display: false,
@@ -129,8 +130,7 @@ describe('game model', function() {
           //                       remote: []
           //                     },
           // terrains: { active: [], locked: [] },
-          // terrain_selection: { local: [], remote: [] },
-          // layers: ['b','d','s','m','t']
+          // terrain_selection: { local: [], remote: [] }
         });
     });
 
