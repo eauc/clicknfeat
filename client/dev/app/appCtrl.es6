@@ -12,6 +12,7 @@
     'appGames',
     'appModes',
     'appUser',
+    'allCommands',
     // 'stateData',
   ];
   function appCtrl($rootScope,

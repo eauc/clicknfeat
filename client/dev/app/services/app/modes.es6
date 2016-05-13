@@ -53,17 +53,14 @@
         event.preventDefault();
       }
 
-      return R.over(
-        MODES_LENS,
-        R.pipe(
-          modesModel.currentModeActionP$(action, [state, ...args]),
-          R.when(
-            (res) => ('Promise' === R.type(res)),
-            (res) => R.resolveP(res)
-              .catch((error) => appErrorService.emit(error))
-          )
-        ),
-        state
+      return R.thread(state)(
+        R.view(MODES_LENS),
+        modesModel.currentModeActionP$(action, [state, ...args]),
+        R.when(
+          (res) => ('Promise' === R.type(res)),
+          (res) => R.resolveP(res)
+            .catch(appErrorService.emit)
+        )
       );
     }
     function actionModesReset(state) {

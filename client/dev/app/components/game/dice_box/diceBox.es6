@@ -11,15 +11,9 @@
     console.log('gameDiceBoxCtrl');
 
     vm.doRollDice = doRollDice;
-    $scope.onStateChangeEvent('Game.dice.change', updateList, $scope);
-    self.requestAnimationFrame(updateList);
 
-    function updateList() {
-      vm.dice = R.clone(R.path(['state','game','dice'], $scope));
-      $scope.$digest();
-    }
     function doRollDice(sides, nb_dice) {
-      $scope.stateEvent('Game.command.execute',
+      $scope.sendAction('Game.command.execute',
                         'rollDice', [sides, nb_dice]);
     }
   }

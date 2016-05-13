@@ -1,38 +1,40 @@
 <div>
   <div class="btn-group">
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll1D6'] || ''}}"
+          title="{{game.action.bindings['roll1D6'] || ''}}"
           ng-click="dice_box.doRollDice(6, 1)">
     1D6
   </button>
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll2D6'] || ''}}"
+          title="{{game.action.bindings['roll2D6'] || ''}}"
           ng-click="dice_box.doRollDice(6, 2)">
     2D6
   </button>
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll3D6'] || ''}}"
+          title="{{game.action.bindings['roll3D6'] || ''}}"
           ng-click="dice_box.doRollDice(6, 3)">
     3D6
   </button>
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll4D6'] || ''}}"
+          title="{{game.action.bindings['roll4D6'] || ''}}"
           ng-click="dice_box.doRollDice(6, 4)">
     4D6
   </button>
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll5D6'] || ''}}"
+          title="{{game.action.bindings['roll5D6'] || ''}}"
           ng-click="dice_box.doRollDice(6, 5)">
     5D6
   </button>
   <button class="btn btn-default"
-          title="{{game.action_bindings['roll1D3'] || ''}}"
+          title="{{game.action.bindings['roll1D3'] || ''}}"
           ng-click="dice_box.doRollDice(3, 1)">
     1D3
   </button>
   </div>
   <div class="dice-list">
-    <div ng-repeat="(i,die) in dice_box.dice.slice(-10).reverse() track by die.stamp">
+    <div ng-repeat="(i, die)
+                    in state.game.dice.slice(-10).reverse()
+                    track by die.stamp">
       <span class="text-primary">[{{::die.user}}]</span>
       {{::die.desc}}
     </div>

@@ -3,7 +3,7 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appGame', 'appGames', 'appModes', 'appUser'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appGame', 'appGames', 'appModes', 'appUser', 'allCommands'];
 
   // 'stateData',
   function appCtrl($rootScope, $state, appActionService, appStateService, appTickService) {

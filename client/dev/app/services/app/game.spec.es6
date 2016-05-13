@@ -5,7 +5,11 @@ describe('appGame service', function() {
       this.appGameService = appGameService;
 
       this.appActionService = spyOnService('appAction');
+      this.appErrorService = spyOnService('appError');
       this.appGamesService = spyOnService('appGames');
+      this.appGamesService.localUpdate
+        .and.callFake(R.nthArg(0));
+      this.appModesService = spyOnService('appModes');
       this.appStateService = spyOnService('appState');
       this.appUserService = spyOnService('appUser');
 
@@ -14,7 +18,7 @@ describe('appGame service', function() {
       this.gamesModel = spyOnService('games');
 
       this.state = {
-        game: 'game',
+        game: { local_stamp: 'game' },
         local_games: 'local_games',
         user: { state: { name: 'user' } }
       };
@@ -23,11 +27,20 @@ describe('appGame service', function() {
 
   context('set(<game>)', function() {
     return this.appGameService
-      .set(this.state, 'new_game');
+      .set(this.state, this.game);
   }, function() {
+    beforeEach(function() {
+      this.game = { local_stamp: 'new_game' };
+    });
+
     it('should set state\'s game', function() {
       expect(this.context.game)
-        .toBe('new_game');
+        .toEqual(this.game);
+    });
+
+    it('should update local games', function() {
+      expect(this.appGamesService.localUpdate)
+        .toHaveBeenCalledWith(this.context, this.game);
     });
   });
 
@@ -98,6 +111,8 @@ describe('appGame service', function() {
   }, function() {
     beforeEach(function() {
       spyOn(this.appGameService.loading, 'send');
+      this.appModesService.reset
+        .and.callFake(R.assoc('modes', 'reset'));
     });
 
     it('should send loading signal', function() {
@@ -111,6 +126,18 @@ describe('appGame service', function() {
       expect(this.appActionService.do)
         .toHaveBeenCalledWith('Game.load.gameLoaded',
                               'game.loadP.returnValue');
+    });
+
+    it('should reset modes', function() {
+      expect(this.appModesService.reset)
+        .toHaveBeenCalledWith(this.state);
+      expect(this.context.modes)
+        .toBe('reset');
+    });
+
+    it('should update local games', function() {
+      expect(this.appGamesService.localUpdate)
+        .toHaveBeenCalledWith(this.context, this.context.game);
     });
   });
 
@@ -149,95 +176,137 @@ describe('appGame service', function() {
     return this.appGameService
       .connectionClose(this.state);
   }, function() {
+    beforeEach(function() {
+      this.gameConnectionModel.cleanup
+        .and.returnValue({ local_stamp: 'gameConnection.cleanup.returnValue' });
+    });
+
     it('should cleanup game connection', function() {
       expect(this.gameConnectionModel.cleanup)
-        .toHaveBeenCalledWith('game');
+        .toHaveBeenCalledWith(this.state.game);
       expect(this.context.game)
-        .toBe('gameConnection.cleanup.returnValue');
-    });
-  });
-
-  xcontext('onInvitePlayer(<cmd>, <args>)', function() {
-    return this.appGameService
-      .onInvitePlayer(this.state, 'event', 'player');
-  }, function() {
-    beforeEach(function() {
-      this.state.user = { state: { name: 'user' } };
+        .toEqual({ local_stamp: 'gameConnection.cleanup.returnValue' });
     });
 
-    it('should send chat msg', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('User.sendChatMsg', {
-          to: [ 'player' ],
-          msg: 'User has invited you to join a game',
-          link: self.window.location.hash
+    it('should update local games', function() {
+      expect(this.appGamesService.localUpdate)
+        .toHaveBeenCalledWith(this.context, {
+          local_stamp: 'gameConnection.cleanup.returnValue'
         });
     });
   });
 
-  xcontext('onCommandExecute(<cmd>, <args>)', function() {
+  context('onCommandExecute(<cmd>, <args>)', function() {
     return this.appGameService
-      .onCommandExecute(this.state, 'event', ['cmd', 'args']);
+      .commandExecute(this.state, 'cmd', 'args');
   }, function() {
     it('should execute game command', function() {
       expect(this.gameModel.executeCommandP)
-        .toHaveBeenCalledWith('cmd', 'args', 'game');
-      expectGameUpdate(this, 'game.executeCommandP.returnValue');
+        .toHaveBeenCalledWith('cmd', 'args', 'user', this.state.game);
+    });
+
+    expectGameUpdate('game.executeCommandP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.executeCommandP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
-  xcontext('onCommandReplay(<cmd>)', function() {
+  context('onCommandReplay(<cmd>)', function() {
     return this.appGameService
-      .onCommandReplay(this.state, 'event', ['cmd']);
+      .commandReplay(this.state, 'cmd');
   }, function() {
     it('should replay game command', function() {
       expect(this.gameModel.replayCommandP)
-        .toHaveBeenCalledWith('cmd', 'game');
-      expectGameUpdate(this, 'game.replayCommandP.returnValue');
+        .toHaveBeenCalledWith('cmd', this.state.game);
+    });
+
+    expectGameUpdate('game.replayCommandP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.replayCommandP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
   xcontext('onCommandReplayBatch(<cmds>)', function() {
     return this.appGameService
-      .onCommandReplayBatch(this.state, 'event', ['cmds']);
+      .commandReplayBatch(this.state, 'cmds');
   }, function() {
     it('should replay game command', function() {
       expect(this.gameModel.replayCommandsBatchP)
-        .toHaveBeenCalledWith('cmds', 'game');
-      expectGameUpdate(this, 'game.replayCommandsBatchP.returnValue');
+        .toHaveBeenCalledWith('cmds', this.state.game);
+    });
+
+    expectGameUpdate('game.replayCommandBatchP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.replayCommandBatchP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
-  xcontext('onCommandReplayNext()', function() {
+  context('onCommandReplayNext()', function() {
     return this.appGameService
-      .onCommandReplayNext(this.state);
+      .commandReplayNext(this.state);
   }, function() {
     it('should replay game next command', function() {
       expect(this.gameModel.replayNextCommandP)
-        .toHaveBeenCalledWith('game');
-      expectGameUpdate(this, 'game.replayNextCommandP.returnValue');
+        .toHaveBeenCalledWith(this.state.game);
+    });
+
+    expectGameUpdate('game.replayNextCommandP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.replayNextCommandP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
-  xcontext('onCommandUndo(<cmd>)', function() {
+  context('onCommandUndo(<cmd>)', function() {
     return this.appGameService
-      .onCommandUndo(this.state, 'event', ['cmd']);
+      .commandUndo(this.state, 'cmd');
   }, function() {
     it('should undo game command', function() {
       expect(this.gameModel.undoCommandP)
-        .toHaveBeenCalledWith('cmd', 'game');
-      expectGameUpdate(this, 'game.undoCommandP.returnValue');
+        .toHaveBeenCalledWith('cmd', this.state.game);
+    });
+
+    expectGameUpdate('game.undoCommandP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.undoCommandP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
-  xcontext('onCommandUndoLast()', function() {
+  context('onCommandUndoLast()', function() {
     return this.appGameService
-      .onCommandUndoLast(this.state);
+      .commandUndoLast(this.state);
   }, function() {
     it('should undo last game command', function() {
       expect(this.gameModel.undoLastCommandP)
-        .toHaveBeenCalledWith('game');
-      expectGameUpdate(this, 'game.undoLastCommandP.returnValue');
+        .toHaveBeenCalledWith(this.state.game);
+    });
+
+    expectGameUpdate('game.undoLastCommandP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.undoLastCommandP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
     });
   });
 
@@ -286,8 +355,35 @@ describe('appGame service', function() {
     });
   });
 
-  function expectGameUpdate(ctxt, game) {
-    expect(ctxt.appStateService.reduce)
-      .toHaveBeenCalledWith('Game.set', game);
+  xcontext('onInvitePlayer(<cmd>, <args>)', function() {
+    return this.appGameService
+      .onInvitePlayer(this.state, 'event', 'player');
+  }, function() {
+    beforeEach(function() {
+      this.state.user = { state: { name: 'user' } };
+    });
+
+    it('should send chat msg', function() {
+      expect(this.appStateService.chainReduce)
+        .toHaveBeenCalledWith('User.sendChatMsg', {
+          to: [ 'player' ],
+          msg: 'User has invited you to join a game',
+          link: self.window.location.hash
+        });
+    });
+  });
+
+  function expectGameUpdate(game) {
+    it('should set state game', function() {
+      expect(this.appActionService.do)
+        .toHaveBeenCalledWith('Game.set', game);
+    });
+  }
+
+  function expectGameError() {
+    it('should emit error', function() {
+      expect(this.appErrorService.emit)
+        .toHaveBeenCalledWith('reason');
+    });
   }
 });

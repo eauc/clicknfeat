@@ -17,7 +17,7 @@
       local: local, load: load, ready: ready,
       // create: stateGamesCreate,
       localSet: actionGamesLocalSet,
-      // onLocalUpdate: stateGamesOnLocalUpdate,
+      localUpdate: actionGamesLocalUpdate,
       localCreate: actionGamesLocalCreate,
       localLoadFile: actionGamesLocalLoadFile,
       localLoadNew: actionGamesLocalLoadNew,
@@ -35,9 +35,7 @@
     return gamesService;
 
     function mount() {
-      appActionService.register('Games.local.set', actionGamesLocalSet)
-      // .register('Games.local.update'    , stateGamesModel.onLocalUpdate)
-      .register('Games.local.create', actionGamesLocalCreate).register('Games.local.loadFile', actionGamesLocalLoadFile).register('Games.local.loadNew', actionGamesLocalLoadNew).register('Games.local.load', actionGamesLocalLoad).register('Games.local.delete', actionGamesLocalDelete);
+      appActionService.register('Games.local.set', actionGamesLocalSet).register('Games.local.update', actionGamesLocalUpdate).register('Games.local.create', actionGamesLocalCreate).register('Games.local.loadFile', actionGamesLocalLoadFile).register('Games.local.loadNew', actionGamesLocalLoadNew).register('Games.local.load', actionGamesLocalLoad).register('Games.local.delete', actionGamesLocalDelete);
       // .register('Games.online.create'   , stateGamesModel.onOnlineCreate)
       // .register('Games.online.load'     , stateGamesModel.onOnlineLoad)
       // .register('Games.online.loadFile' , stateGamesModel.onOnlineLoadFile);
@@ -49,13 +47,9 @@
     function actionGamesLocalSet(state, games) {
       return R.set(LOCAL_GAMES_LENS, games, state);
     }
-    // function stateGamesOnLocalUpdate(state, _event_, [game]) {
-    //   return R.over(
-    //     LOCAL_GAMES_LENS,
-    //     gamesModel.updateLocalGame$(game),
-    //     state
-    //   );
-    // }
+    function actionGamesLocalUpdate(state, game) {
+      return R.over(LOCAL_GAMES_LENS, gamesModel.updateLocalGame$(game), state);
+    }
     function actionGamesLocalCreate(state) {
       return R.thread(state.user.state)(gameModel.create, function (game) {
         return actionGamesLocalLoadNew(state, game);

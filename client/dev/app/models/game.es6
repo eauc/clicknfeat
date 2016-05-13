@@ -3,9 +3,8 @@
     .factory('game', gameModelFactory);
 
   gameModelFactory.$inject = [
-    // 'appState',
     'jsonStringifier',
-    // 'commands',
+    'commands',
     'gameConnection',
     // 'gameLayers',
     // 'gameLos',
@@ -18,10 +17,9 @@
     // 'gameTerrainSelection',
     // 'allTemplates',
   ];
-  function gameModelFactory(// appStateService,
-    jsonStringifierService,
-                            // commandsModel,
-    gameConnectionModel) {
+  function gameModelFactory(jsonStringifierService,
+                            commandsModel,
+                            gameConnectionModel) {
                             // gameLayersModel,
                             // gameLosModel,
                             // gameModelsModel,
@@ -31,6 +29,11 @@
                             // gameTemplateSelectionModel,
                             // gameTerrainsModel,
                             // gameTerrainSelectionModel) {
+    const DICE_LENS = R.lensProp('dice');
+    const COMMANDS_LENS = R.lensProp('commands');
+    const COMMANDS_LOG_LENS = R.lensProp('commands_log');
+    const UNDO_LENS = R.lensProp('undo');
+    const UNDO_LOG_LENS = R.lensProp('undo_log');
     const gameModel = {
       isOnline: gameIsOnline,
       description: gameDescription,
@@ -38,12 +41,12 @@
       toJson: gameToJson,
       create: gameCreate,
       loadP: gameLoadP,
-      // executeCommandP: gameExecuteCommandP,
-      // undoCommandP: gameUndoCommandP,
-      // undoLastCommandP: gameUndoLastCommandP,
-      // replayCommandP: gameReplayCommandP,
-      // replayCommandsBatchP: gameReplayCommandsBatchP,
-      // replayNextCommandP: gameReplayNextCommandP,
+      executeCommandP: gameExecuteCommandP,
+      undoCommandP: gameUndoCommandP,
+      undoLastCommandP: gameUndoLastCommandP,
+      replayCommandP: gameReplayCommandP,
+      replayCommandsBatchP: gameReplayCommandsBatchP,
+      replayNextCommandP: gameReplayNextCommandP,
       // sendChat: gameSendChat
     };
 
@@ -89,192 +92,182 @@
     function gameLoadP(data) {
       return R.threadP(Object.create(GAME_PROTO))(
         extendGameDefaultWithData,
-        gameConnectionModel.create
-        // gameReplayAllP
+        gameConnectionModel.create,
+        gameReplayAllP
       );
 
       function extendGameDefaultWithData(game) {
         return R.deepExtend(game, defaultGameState(), data);
       }
     }
-    // function gameExecuteCommandP(cmd, args, game) {
-    //   return R.threadP(commandsModel.executeP(cmd, args, game))(
-    //     stampCommand,
-    //     R.ifElse(
-    //       ([_c_, game]) => gameConnectionModel.active(game),
-    //       sendReplayCommand,
-    //       logLocalCommand
-    //     ),
-    //     ([ command, game ]) => R.when(
-    //       () => (command.type === 'rollDice' ||
-    //              command.type === 'rollDeviation'),
-    //       R.over(R.lensProp('dice'), R.append(command)),
-    //       game
-    //     ),
-    //     R.tap(() => {
-    //       appStateService.emit('Game.command.execute');
-    //     })
-    //   );
+    function gameExecuteCommandP(cmd, args, user_name, game) {
+      return R.threadP(commandsModel.executeP(cmd, args, game))(
+        stampCommand,
+        R.ifElse(
+          ([_c_, game]) => gameConnectionModel.active(game),
+          sendReplayCommand,
+          logLocalCommand
+        ),
+        ([ command, game ]) => R.when(
+          () => (command.type === 'rollDice' ||
+                 command.type === 'rollDeviation'),
+          R.over(DICE_LENS, R.append(command)),
+          game
+        )
+      );
 
-    //   function stampCommand([command, game]) {
-    //     const state = appStateService.current();
-    //     return [ R.thread(command)(
-    //       R.assoc('user', R.pathOr('Unknown', ['user','state','name'], state)),
-    //       R.assoc('stamp', R.guid())
-    //     ), game ];
-    //   }
-    //   function sendReplayCommand([command, game]) {
-    //     return R.thread(game)(
-    //       gameConnectionModel.sendReplayCommand$(command),
-    //       (game) => [ command, game ]
-    //     );
-    //   }
-    //   function logLocalCommand([command, game]) {
-    //     return [ command, R.unless(
-    //       () => command.do_not_log,
-    //       R.over(R.lensProp('commands'), R.append(command)),
-    //       game
-    //     ) ];
-    //   }
-    // }
-    // function gameUndoCommandP(command, game) {
-    //   return R.threadP(game)(
-    //     R.ifElse(
-    //       isInUndoLog,
-    //       removeFromUndoLog,
-    //       commandsModel.undoP$(command)
-    //     ),
-    //     updateLogs
-    //   );
+      function stampCommand([command, game]) {
+        return [ R.thread(command)(
+          R.assoc('user', user_name),
+          R.assoc('stamp', R.guid())
+        ), game ];
+      }
+      function sendReplayCommand([command, game]) {
+        return R.thread(game)(
+          gameConnectionModel.sendReplayCommand$(command),
+          (game) => [ command, game ]
+        );
+      }
+      function logLocalCommand([command, game]) {
+        return [ command, R.unless(
+          () => command.do_not_log,
+          R.over(COMMANDS_LENS, R.append(command)),
+          game
+        ) ];
+      }
+    }
+    function gameUndoCommandP(command, game) {
+      return R.threadP(game)(
+        R.ifElse(
+          isInUndoLog,
+          removeFromUndoLog,
+          commandsModel.undoP$(command)
+        ),
+        updateLogs
+      );
 
-    //   function isInUndoLog(game) {
-    //     return R.thread(game)(
-    //       R.propOr([], 'undo_log'),
-    //       R.find(R.propEq('stamp', command.stamp))
-    //     );
-    //   }
-    //   function removeFromUndoLog(game) {
-    //     return R.over(
-    //       R.lensProp('undo_log'),
-    //       R.compose(R.reject(R.propEq('stamp', command.stamp)),
-    //                 R.defaultTo([])),
-    //       game
-    //     );
-    //   }
-    //   function updateLogs(game) {
-    //     return R.thread(game)(
-    //       R.over(R.lensProp('commands'), R.reject(R.propEq('stamp', command.stamp))),
-    //       R.over(R.lensProp('undo'), R.append(command))
-    //     );
-    //   }
-    // }
-    // function gameUndoLastCommandP(game) {
-    //   return R.threadP(game)(
-    //     getLastCommandP,
-    //     undoCommandP,
-    //     updateLogs
-    //   );
+      function isInUndoLog(game) {
+        return R.thread(game)(
+          R.viewOr([], UNDO_LOG_LENS),
+          R.find(R.propEq('stamp', command.stamp))
+        );
+      }
+      function removeFromUndoLog(game) {
+        return R.over(
+          UNDO_LOG_LENS,
+          R.compose(R.reject(R.propEq('stamp', command.stamp)),
+                    R.defaultTo([])),
+          game
+        );
+      }
+      function updateLogs(game) {
+        return R.thread(game)(
+          R.over(COMMANDS_LENS, R.reject(R.propEq('stamp', command.stamp))),
+          R.over(UNDO_LENS, R.append(command))
+        );
+      }
+    }
+    function gameUndoLastCommandP(game) {
+      return R.threadP(game)(
+        getLastCommandP,
+        undoCommandP,
+        updateLogs
+      );
 
-    //   function getLastCommandP(game) {
-    //     return R.threadP(game)(
-    //       R.propOr([],'commands'),
-    //       R.last,
-    //       R.rejectIfP(R.isNil, 'Command history empty')
-    //     );
-    //   }
-    //   function undoCommandP(command) {
-    //     return R.threadP(game)(
-    //       commandsModel.undoP$(command),
-    //       (game) => [command, game]
-    //     );
-    //   }
-    //   function updateLogs([command, game]) {
-    //     return R.thread(game)(
-    //       R.over(R.lensProp('commands'), R.init),
-    //       R.ifElse(
-    //         gameConnectionModel.active,
-    //         gameConnectionModel.sendUndoCommand$(command),
-    //         R.over(R.lensProp('undo'), R.append(command))
-    //       )
-    //     );
-    //   }
-    // }
-    // function gameReplayCommandP(command, game) {
-    //   return R.threadP(game)(
-    //     R.ifElse(
-    //       isInCommandsLog,
-    //       removeFromCommandsLog,
-    //       commandsModel.replayP$(command)
-    //     ),
-    //     updateLogs
-    //   );
+      function getLastCommandP(game) {
+        return R.threadP(game)(
+          R.viewOr([], COMMANDS_LENS),
+          R.last,
+          R.rejectIfP(R.isNil, 'Command history empty')
+        );
+      }
+      function undoCommandP(command) {
+        return R.threadP(game)(
+          commandsModel.undoP$(command),
+          (game) => [command, game]
+        );
+      }
+      function updateLogs([command, game]) {
+        return R.thread(game)(
+          R.over(COMMANDS_LENS, R.init),
+          R.ifElse(
+            gameConnectionModel.active,
+            gameConnectionModel.sendUndoCommand$(command),
+            R.over(UNDO_LENS, R.append(command))
+          )
+        );
+      }
+    }
+    function gameReplayCommandP(command, game) {
+      return R.threadP(game)(
+        R.ifElse(
+          isInCommandsLog,
+          removeFromCommandsLog,
+          commandsModel.replayP$(command)
+        ),
+        updateLogs
+      );
 
-    //   function isInCommandsLog(game) {
-    //     return R.thread(game)(
-    //       R.propOr([], 'commands_log'),
-    //       R.find(R.propEq('stamp', command.stamp))
-    //     );
-    //   }
-    //   function removeFromCommandsLog(game) {
-    //     return R.over(
-    //       R.lensProp('commands_log'),
-    //       R.reject(R.propEq('stamp', command.stamp)),
-    //       game
-    //     );
-    //   }
-    //   function updateLogs(game) {
-    //     return R.thread(game)(
-    //       R.over(
-    //         R.lensProp('undo'),
-    //         R.reject(R.propEq('stamp', command.stamp))
-    //       ),
-    //       R.unless(
-    //         () => command.do_not_log,
-    //         R.over(R.lensProp('commands'), R.append(command))
-    //       )
-    //     );
-    //   }
-    // }
-    // function gameReplayCommandsBatchP(cmds, game) {
-    //   return R.threadP(game)(
-    //     commandsModel.replayBatchP$(cmds),
-    //     R.over(
-    //       R.lensProp('commands'),
-    //       R.flip(R.concat)(cmds)
-    //     )
-    //   );
-    // }
-    // function gameReplayNextCommandP(game) {
-    //   return R.threadP(game)(
-    //     getNextUndoP,
-    //     replayCommandP,
-    //     updateLogs
-    //   );
+      function isInCommandsLog(game) {
+        return R.thread(game)(
+          R.viewOr([], COMMANDS_LOG_LENS),
+          R.find(R.propEq('stamp', command.stamp))
+        );
+      }
+      function removeFromCommandsLog(game) {
+        return R.over(
+          COMMANDS_LOG_LENS,
+          R.reject(R.propEq('stamp', command.stamp)),
+          game
+        );
+      }
+      function updateLogs(game) {
+        return R.thread(game)(
+          R.over(UNDO_LENS, R.reject(R.propEq('stamp', command.stamp))),
+          R.unless(
+            () => command.do_not_log,
+            R.over(COMMANDS_LENS, R.append(command))
+          )
+        );
+      }
+    }
+    function gameReplayCommandsBatchP(cmds, game) {
+      return R.threadP(game)(
+        commandsModel.replayBatchP$(cmds),
+        R.over(COMMANDS_LENS, R.concat(R.__, cmds))
+      );
+    }
+    function gameReplayNextCommandP(game) {
+      return R.threadP(game)(
+        getNextUndoP,
+        replayCommandP,
+        updateLogs
+      );
 
-    //   function getNextUndoP(game) {
-    //     return R.threadP(game)(
-    //       R.propOr([], 'undo'),
-    //       R.last,
-    //       R.rejectIfP(R.isNil, 'Undo history empty')
-    //     );
-    //   }
-    //   function replayCommandP(command) {
-    //     return R.threadP(game)(
-    //       commandsModel.replayP$(command),
-    //       (game) => [command, game]
-    //     );
-    //   }
-    //   function updateLogs([command, game]) {
-    //     return R.threadP(game)(
-    //       R.over(R.lensProp('undo'), R.init),
-    //       R.ifElse(
-    //         gameConnectionModel.active,
-    //         gameConnectionModel.sendReplayCommand$(command),
-    //         R.over(R.lensProp('commands'), R.append(command))
-    //       )
-    //     );
-    //   }
-    // }
+      function getNextUndoP(game) {
+        return R.threadP(game)(
+          R.viewOr([], UNDO_LENS),
+          R.last,
+          R.rejectIfP(R.isNil, 'Undo history empty')
+        );
+      }
+      function replayCommandP(command) {
+        return R.threadP(game)(
+          commandsModel.replayP$(command),
+          (game) => [command, game]
+        );
+      }
+      function updateLogs([command, game]) {
+        return R.threadP(game)(
+          R.over(UNDO_LENS, R.init),
+          R.ifElse(
+            gameConnectionModel.active,
+            gameConnectionModel.sendReplayCommand$(command),
+            R.over(COMMANDS_LENS, R.append(command))
+          )
+        );
+      }
+    }
     // function gameSendChat(from, msg, game) {
     //   return gameConnectionModel
     //     .sendEvent({
@@ -313,36 +306,36 @@
         // layers: gameLayersModel.create()
       };
     }
-    // function gameReplayAllP(game) {
-    //   return new self.Promise((resolve) => {
-    //     if(R.isEmpty(game.commands)) {
-    //       resolve(game);
-    //     }
+    function gameReplayAllP(game) {
+      return new self.Promise((resolve) => {
+        if(R.isEmpty(game.commands)) {
+          resolve(game);
+        }
 
-    //     const batchs = R.splitEvery(game.commands.length, game.commands);
-    //     self.requestAnimationFrame(() => {
-    //       resolve(gameReplayBatchsP(batchs, game));
-    //     });
-    //   });
-    // }
-    // function gameReplayBatchsP(batchs, game) {
-    //   if(R.isEmpty(batchs)) {
-    //     return self.Promise.resolve(game);
-    //   }
+        const batchs = R.splitEvery(game.commands.length, game.commands);
+        self.requestAnimationFrame(() => {
+          resolve(gameReplayBatchsP(batchs, game));
+        });
+      });
+    }
+    function gameReplayBatchsP(batchs, game) {
+      if(R.isEmpty(batchs)) {
+        return R.resolveP(game);
+      }
 
-    //   console.log('Game: ReplayBatchs:', batchs);
-    //   return R.threadP(game)(
-    //     commandsModel.replayBatchP$(batchs[0]),
-    //     recurP
-    //   );
+      console.log('Game: ReplayBatchs:', batchs);
+      return R.threadP(game)(
+        commandsModel.replayBatchP$(batchs[0]),
+        recurP
+      );
 
-    //   function recurP(game) {
-    //     return new self.Promise((resolve) => {
-    //       self.requestAnimationFrame(() => {
-    //         resolve(gameReplayBatchsP(R.tail(batchs), game));
-    //       });
-    //     });
-    //   }
-    // }
+      function recurP(game) {
+        return new self.Promise((resolve) => {
+          self.requestAnimationFrame(() => {
+            resolve(gameReplayBatchsP(R.tail(batchs), game));
+          });
+        });
+      }
+    }
   }
 })();

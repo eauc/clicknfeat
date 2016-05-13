@@ -65,7 +65,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('loadP(<data>)', function() {
+  context('loadP(<data>)', function() {
     return this.gameModel.loadP(this.data);
   }, function() {
     beforeEach(function() {
@@ -93,44 +93,44 @@ describe('game model', function() {
           commands_log: [ ],
           undo_log: [],
           dice: [],
-          ruler: {
-            local: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 },
-              length: null
-            },
-            remote: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 },
-              length: null
-            }
-          },
-          los: {
-            local: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 }
-            },
-            remote: {
-              display: false,
-              start: { x:0, y: 0 },
-              end: { x:0, y: 0 }
-            },
-            computed: {}
-          },
-          models: { active: [], locked: [] },
-          model_selection: { local: [],
-                             remote: []
-                           },
-          templates: { active: [], locked: [] },
-          template_selection: { local: [],
-                                remote: []
-                              },
-          terrains: { active: [], locked: [] },
-          terrain_selection: { local: [], remote: [] },
-          layers: ['b','d','s','m','t']
+          // ruler: {
+          //   local: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 },
+          //     length: null
+          //   },
+          //   remote: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 },
+          //     length: null
+          //   }
+          // },
+          // los: {
+          //   local: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 }
+          //   },
+          //   remote: {
+          //     display: false,
+          //     start: { x:0, y: 0 },
+          //     end: { x:0, y: 0 }
+          //   },
+          //   computed: {}
+          // },
+          // models: { active: [], locked: [] },
+          // model_selection: { local: [],
+          //                    remote: []
+          //                  },
+          // templates: { active: [], locked: [] },
+          // template_selection: { local: [],
+          //                       remote: []
+          //                     },
+          // terrains: { active: [], locked: [] },
+          // terrain_selection: { local: [], remote: [] },
+          // layers: ['b','d','s','m','t']
         });
     });
 
@@ -150,18 +150,15 @@ describe('game model', function() {
     });
   });
 
-  xcontext('executeCommandP(<...args...>, <game>)', function() {
+  context('executeCommandP(<...args...>, <user_name>, <game>)', function() {
     return this.gameModel
-      .executeCommandP('cmd', ['arg1', 'arg2'], this.game);
+      .executeCommandP('cmd', ['arg1', 'arg2'], 'user', this.game);
   }, function() {
     beforeEach(function() {
       this.game = { commands: [],
                     commands_log: [],
                     dice: []
                   };
-      this.appStateService = spyOnService('appState');
-      this.appStateService.current
-        .and.returnValue({ user: { state: { name: 'user' } } });
 
       this.commandsModel = spyOnService('commands');
       this.commandsModel.executeP.resolveWith([
@@ -269,7 +266,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('replayCommandP(<cmd>, <game>)', function() {
+  context('replayCommandP(<cmd>, <game>)', function() {
     return this.gameModel
       .replayCommandP(this.cmd, this.game);
   }, function() {
@@ -334,7 +331,7 @@ describe('game model', function() {
 
   });
 
-  xcontext('replayCommandsBatchP(<cmds>, <game>)', function() {
+  context('replayCommandsBatchP(<cmds>, <game>)', function() {
     return this.gameModel
       .replayCommandsBatchP(this.cmds, 'game');
   }, function() {
@@ -357,7 +354,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('replayNextCommandP(<game>)', function() {
+  context('replayNextCommandP(<game>)', function() {
     return this.gameModel
       .replayNextCommandP(this.game);
   }, function() {
@@ -430,7 +427,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('undoCommandP(<cmd>, <game>)', function() {
+  context('undoCommandP(<cmd>, <game>)', function() {
     return this.gameModel
       .undoCommandP(this.cmd, this.game);
   }, function() {
@@ -489,7 +486,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('undoLastCommandP(<game>)', function() {
+  context('undoLastCommandP(<game>)', function() {
     return this.gameModel
       .undoLastCommandP(this.game);
   }, function() {

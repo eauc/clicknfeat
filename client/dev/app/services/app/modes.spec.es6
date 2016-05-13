@@ -22,6 +22,16 @@ describe('appModes service', function() {
         .toHaveBeenCalledWith('action', [this.state, this.event], 'modes');
     });
 
+    context('when action returns state', function() {
+      this.modesModel.currentModeActionP
+        .and.returnValue('new_state');
+    }, function() {
+      it('should return new state', function() {
+        expect(this.context)
+          .toBe('new_state');
+      });
+    });
+
     it('should prevent <event> default', function() {
       expect(this.event.preventDefault)
         .toHaveBeenCalled();

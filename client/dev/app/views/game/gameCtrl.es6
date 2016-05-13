@@ -21,8 +21,8 @@
 
     vm.currentModeName = currentModeName;
     vm.currentModeIs = currentModeIs;
-    // vm.doModeAction = doModeAction;
-    // vm.doActionButton = doActionButton;
+    vm.doModeAction = doModeAction;
+    vm.doActionButton = doActionButton;
     // vm.doInvitePlayer = doInvitePlayer;
 
     activate();
@@ -50,29 +50,25 @@
     function currentModeIs(mode) {
       return currentModeName() === mode;
     }
-    // function doModeAction(action, ...args) {
-    //   $scope.sendAction('Modes.current.action',
-    //                     action, [...args, {}]);
-    // }
-    // function doActionButton([_label_, action, group]) {
-    //   if(action === 'toggle') {
-    //     vm.show_action_group = ( vm.show_action_group === group
-    //                              ? null
-    //                              : group
-    //                            );
-    //     return;
-    //   }
-    //   $scope.sendAction('Modes.current.action',
-    //                     action, [{}]);
-    // }
+    function doModeAction(action, ...args) {
+      $scope.sendAction('Modes.current.action',
+                        action, [...args, {}]);
+    }
+    function doActionButton([_label_, action, group]) {
+      if(action === 'toggle') {
+        vm.show_action_group = ( vm.show_action_group === group
+                                 ? null
+                                 : group
+                               );
+        return;
+      }
+      $scope.sendAction('Modes.current.action',
+                        action, [{}]);
+    }
     // function doInvitePlayer() {
     //   if(R.isNil(vm.invite_player)) return;
 
     //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    // }
-
-    // function gameUpdate(fn) {
-    //   $scope.stateEvent('Game.update', fn);
     // }
 
     ////////////////////////////////////////////////////

@@ -4,22 +4,22 @@
   </div>
   <div class="btn-group-vertical">
     <button class="btn btn-default"
-            title="{{game.action_bindings['modeBackToDefault'] || ''}}"
+            title="{{game.action.bindings['modeBackToDefault'] || ''}}"
             ng-click="game.doModeAction('modeBackToDefault')">
       Back To Default
     </button>
     <button class="btn btn-default"
-            title="{{game.action_bindings['flipMap'] || ''}}"
+            title="{{game.action.bindings['flipMap'] || ''}}"
             ng-click="game.doModeAction('flipMap')">
       Flip Map
     </button>
-    <button ng-repeat="action in game.action_buttons"
+    <button ng-repeat="action in game.action.buttons"
             class="btn {{::
                    (action.length === 3 && action[1] !== 'toggle')
                     ? 'btn-info'
                     : 'btn-default'
                     }}"
-            title="{{::game.action_bindings[action[1]] || ''}}"
+            title="{{::game.action.bindings[action[1]] || ''}}"
             ng-click="game.doActionButton(action)"
             ng-show="action[1] === 'toggle' ||
                      action.length === 2 ||

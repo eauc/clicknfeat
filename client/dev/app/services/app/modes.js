@@ -37,13 +37,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         event.preventDefault();
       }
 
-      return R.over(MODES_LENS, R.pipe(modesModel.currentModeActionP$(action, [state].concat(_toConsumableArray(args))), R.when(function (res) {
+      return R.thread(state)(R.view(MODES_LENS), modesModel.currentModeActionP$(action, [state].concat(_toConsumableArray(args))), R.when(function (res) {
         return 'Promise' === R.type(res);
       }, function (res) {
-        return R.resolveP(res).catch(function (error) {
-          return appErrorService.emit(error);
-        });
-      })), state);
+        return R.resolveP(res).catch(appErrorService.emit);
+      }));
     }
     function actionModesReset(state) {
       return R.set(MODES_LENS, modesModel.init(), state);

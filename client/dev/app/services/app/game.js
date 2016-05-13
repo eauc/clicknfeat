@@ -3,7 +3,7 @@
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appGames', 'appModes', 'appState', 'appUser', 'game', 'gameConnection', 'games'];
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'game', 'gameConnection', 'games'];
 
   // 'fileExport',
   // 'fileImport',
@@ -20,7 +20,7 @@
   // 'gameTemplateSelection',
   // 'gameTerrainSelection',
   // 'allCommands',
-  function stateGameModelFactory(behavioursModel, appActionService, appGamesService, appModesService, appStateService, appUserService, gameModel, gameConnectionModel, gamesModel
+  function stateGameModelFactory(behavioursModel, appActionService, appErrorService, appGamesService, appModesService, appStateService, appUserService, gameModel, gameConnectionModel, gamesModel
   // fileExportService,
   // fileImportService,
   // appStateService,
@@ -50,13 +50,13 @@
       loadDataReady: actionGameLoadDataReady,
       loadDataLoaded: actionGameLoadDataLoaded,
       loadGameLoaded: actionGameLoadGameLoaded,
-      connectionClose: actionGameConnectionClose
+      connectionClose: actionGameConnectionClose,
+      commandExecute: actionGameCommandExecute,
+      commandUndo: actionGameCommandUndo,
+      commandUndoLast: actionGameCommandUndoLast,
+      commandReplay: actionGameCommandReplay,
+      commandReplayNext: actionGameCommandReplayNext
     };
-    // onCommandExecute: stateGameOnCommandExecute,
-    // onCommandUndo: stateGameOnCommandUndo,
-    // onCommandUndoLast: stateGameOnCommandUndoLast,
-    // onCommandReplay: stateGameOnCommandReplay,
-    // onCommandReplayNext: stateGameOnCommandReplayNext,
     // onCommandReplayBatch: stateGameOnCommandReplayBatch,
     // onSetCmds: stateGameOnSetCmds,
     // onSetPlayers: stateGameOnSetPlayers,
@@ -93,13 +93,9 @@
     function mount() {
       appActionService
       // .register('Game.update'              , actionGameUpdate)
-      .register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose)
-      // .register('Game.command.execute'     , actionGameCommandExecute)
-      // .register('Game.command.undo'        , actionGameCommandUndo)
-      // .register('Game.command.replay'      , actionGameCommandReplay)
+      .register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay)
       // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
-      // .register('Game.command.undoLast'    , actionGameCommandUndoLast)
-      // .register('Game.command.replayNext'  , actionGameCommandReplayNext)
+      .register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext)
       // .register('Game.invitePlayer'        , actionGameInvitePlayer)
       // .register('Game.setCmds'             , actionGameSetCmds)
       // .register('Game.setPlayers'          , actionGameSetPlayers)
@@ -239,7 +235,7 @@
     //   return R.over(GAME_LENS, fn, state);
     // }
     function actionGameSet(state, game) {
-      return R.set(GAME_LENS, game, state);
+      return R.thread(state)(R.set(GAME_LENS, game), stateGameSaveCurrent);
     }
     function actionGameLoad(_state_, is_online, is_private, id) {
       return waitForDataReady().then(function () {
@@ -268,7 +264,7 @@
       R.threadP(data)(gameModel.loadP, function (game) {
         return appActionService.do('Game.load.gameLoaded', game);
       });
-      return appModesService.reset(state);
+      return R.thread(state)(appModesService.reset, stateGameSaveCurrent);
     }
     function actionGameLoadGameLoaded(state, game) {
       loading.send(false);
@@ -278,44 +274,40 @@
       });
     }
     function actionGameConnectionClose(state) {
-      return R.over(GAME_LENS, gameConnectionModel.cleanup, state);
+      return R.thread(state)(R.over(GAME_LENS, gameConnectionModel.cleanup), stateGameSaveCurrent);
     }
-    // function stateGameOnCommandExecute(state, _event_, [cmd, args]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.executeCommandP$(cmd, args),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnCommandUndo(state, _event_, [cmd]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.undoCommandP$(cmd),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnCommandUndoLast(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     gameModel.undoLastCommandP,
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnCommandReplay(state, _event_, [cmd]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.replayCommandP$(cmd),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
+    function actionGameCommandExecute(state, cmd, args) {
+      var user_name = R.view(USER_NAME_LENS, state);
+      return R.threadP(state.game)(gameModel.executeCommandP$(cmd, args, user_name), function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
+    function actionGameCommandUndo(state, cmd) {
+      return R.threadP(state.game)(gameModel.undoCommandP$(cmd), function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
+    function actionGameCommandUndoLast(state) {
+      return R.threadP(state.game)(gameModel.undoLastCommandP, function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
+    function actionGameCommandReplay(state, cmd) {
+      return R.threadP(state.game)(gameModel.replayCommandP$(cmd), function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
     // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
     //   return R.threadP(state.game)(
     //     gameModel.replayCommandsBatchP$(cmds),
     //     (game) => appStateService.reduce('Game.set', game)
     //   ).catch((error) => appStateService.emit('Game.error', error));
     // }
-    // function stateGameOnCommandReplayNext(state, _event_) {
-    //   return R.threadP(state.game)(
-    //     gameModel.replayNextCommandP,
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
+    function actionGameCommandReplayNext(state) {
+      return R.threadP(state.game)(gameModel.replayNextCommandP, function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
     // function stateGameOnSetCmds(state, _event_, [set]) {
     //   return R.over(
     //     GAME_LENS,
@@ -633,14 +625,9 @@
     //     url: fileExportService.generate('json', current_game)
     //   };
     // }
-    // function stateGameSaveCurrent(_event_, [game]) {
-    //   if(R.isNil(R.prop('local_stamp', R.defaultTo({}, game)))) {
-    //     return;
-    //   }
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Games.local.update', game);
-    //   });
-    // }
+    function stateGameSaveCurrent(state) {
+      return R.thread(state)(R.unless(R.pipe(R.viewOr({}, GAME_LENS), R.prop('local_stamp'), R.isNil), appGamesService.localUpdate$(R.__, state.game)));
+    }
     // function stateGameUpdateModelsExport(exp) {
     //   fileExportService.cleanup(exp.url);
     //   const state = appStateService.current();

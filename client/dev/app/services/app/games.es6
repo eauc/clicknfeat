@@ -29,7 +29,7 @@
       local, load, ready,
       // create: stateGamesCreate,
       localSet: actionGamesLocalSet,
-      // onLocalUpdate: stateGamesOnLocalUpdate,
+      localUpdate: actionGamesLocalUpdate,
       localCreate: actionGamesLocalCreate,
       localLoadFile: actionGamesLocalLoadFile,
       localLoadNew: actionGamesLocalLoadNew,
@@ -49,7 +49,7 @@
     function mount() {
       appActionService
         .register('Games.local.set'       , actionGamesLocalSet)
-        // .register('Games.local.update'    , stateGamesModel.onLocalUpdate)
+        .register('Games.local.update'    , actionGamesLocalUpdate)
         .register('Games.local.create'    , actionGamesLocalCreate)
         .register('Games.local.loadFile'  , actionGamesLocalLoadFile)
         .register('Games.local.loadNew'   , actionGamesLocalLoadNew)
@@ -68,13 +68,13 @@
     function actionGamesLocalSet(state, games) {
       return R.set(LOCAL_GAMES_LENS, games, state);
     }
-    // function stateGamesOnLocalUpdate(state, _event_, [game]) {
-    //   return R.over(
-    //     LOCAL_GAMES_LENS,
-    //     gamesModel.updateLocalGame$(game),
-    //     state
-    //   );
-    // }
+    function actionGamesLocalUpdate(state, game) {
+      return R.over(
+        LOCAL_GAMES_LENS,
+        gamesModel.updateLocalGame$(game),
+        state
+      );
+    }
     function actionGamesLocalCreate(state) {
       return R.thread(state.user.state)(
         gameModel.create,
