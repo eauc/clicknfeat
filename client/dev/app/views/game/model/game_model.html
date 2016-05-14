@@ -11,7 +11,7 @@
             <th>Faction</th>
             <td>
               <select class="form-control"
-                      ng-options="k as f.name for (k,f) in game_model.factions"
+                      ng-options="k as f.name for (k,f) in state.factions.current"
                       ng-model="game_model.faction"
                       ng-change="game_model.onFactionChange()">
               </select>
@@ -22,7 +22,7 @@
             <td>
               <select class="form-control"
                       ng-options="k as k for (k,s) in
-                                  game_model.factions[game_model.faction].models"
+                                  state.factions.current[game_model.faction].models"
                       ng-model="game_model.section"
                       ng-change="game_model.onSectionChange()">
               </select>
@@ -33,31 +33,31 @@
             <td>
               <select class="form-control"
                       ng-options="k as e.name for (k,e) in
-                                  game_model.factions[game_model.faction].models[game_model.section]"
+                                  state.factions.current[game_model.faction].models[game_model.section]"
                       ng-model="game_model.entry"
                       ng-change="game_model.onEntryChange()">
               </select>
             </td>
           </tr>
-          <tr ng-show="game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries">
+          <tr ng-show="state.factions.current[game_model.faction].models[game_model.section][game_model.entry].entries">
             <th>Type</th>
             <td>
               <select class="form-control"
                       ng-options="k as k for (k,t) in
-                                  game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries
+                                  state.factions.current[game_model.faction].models[game_model.section][game_model.entry].entries
                                   "
                       ng-model="game_model.type"
                       ng-change="game_model.onTypeChange()">
               </select>
             </td>
           </tr>
-          <tr ng-show="game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries">
+          <tr ng-show="state.factions.current[game_model.faction].models[game_model.section][game_model.entry].entries">
             <th>Model</th>
             <td>
               <select class="form-control"
                       ng-options="
                                   k as m.name for (k,m) in
-                                  game_model.factions[game_model.faction].models[game_model.section][game_model.entry].entries[game_model.type]
+                                  state.factions.current[game_model.faction].models[game_model.section][game_model.entry].entries[game_model.type]
                                   "
                       ng-model="game_model.model"
                       ng-change="game_model.onModelChange()">
@@ -81,9 +81,9 @@
       <br />
       <table ng-show="game_model.getModel()">
         <tr ng-show="game_model.getModel() !==
-                     game_model.factions[game_model.faction].models[game_model.section][game_model.entry]">
+                     state.factions.current[game_model.faction].models[game_model.section][game_model.entry]">
           <th>Unit</th>
-          <td>{{game_model.factions[game_model.faction].models[game_model.section][game_model.entry].name}}</td>
+          <td>{{state.factions.current[game_model.faction].models[game_model.section][game_model.entry].name}}</td>
         </tr>
         <tr>
           <th>Name</th>

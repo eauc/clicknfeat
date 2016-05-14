@@ -14,10 +14,13 @@ describe('appGame service', function() {
       this.appUserService = spyOnService('appUser');
 
       this.gameModel = spyOnService('game');
+      this.gameBoardModel = spyOnService('gameBoard');
+      this.gameScenarioModel = spyOnService('gameScenario');
       this.gameConnectionModel = spyOnService('gameConnection');
       this.gamesModel = spyOnService('games');
 
       this.state = {
+        boards: 'boards',
         game: { local_stamp: 'game' },
         local_games: 'local_games',
         user: { state: { name: 'user' } }
@@ -370,6 +373,40 @@ describe('appGame service', function() {
           msg: 'User has invited you to join a game',
           link: self.window.location.hash
         });
+    });
+  });
+
+  context('boardSet(<name>)', function() {
+    return this.appGameService
+      .boardSet(this.state, 'board_name');
+  }, function() {
+    it('should setBoard on game', function() {
+      expect(this.gameBoardModel.forName)
+        .toHaveBeenCalledWith('board_name', 'boards');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setBoard', [ 'gameBoard.forName.returnValue' ]
+        ]);
+      expect(this.context)
+        .toBe('appState.onAction.returnValue');
+    });
+  });
+
+  context('scenarioSet(<name>, <group>)', function() {
+    return this.appGameService
+      .scenarioSet(this.state, 'name', 'group');
+  }, function() {
+    it('should setScenario on game', function() {
+      expect(this.gameScenarioModel.forName)
+        .toHaveBeenCalledWith('name', 'group');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setScenario', [ 'gameScenario.forName.returnValue' ]
+        ]);
+      expect(this.context)
+        .toBe('appState.onAction.returnValue');
     });
   });
 

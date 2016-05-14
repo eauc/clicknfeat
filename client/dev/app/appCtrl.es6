@@ -8,12 +8,12 @@
     'appAction',
     'appState',
     'appTick',
+    'appData',
     'appGame',
     'appGames',
     'appModes',
     'appUser',
     'allCommands',
-    // 'stateData',
   ];
   function appCtrl($rootScope,
                    $state,

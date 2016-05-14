@@ -313,7 +313,7 @@
           resolve(game);
         }
 
-        const batchs = R.splitEvery(game.commands.length, game.commands);
+        const batchs = R.splitEvery(Math.max(game.commands.length, 1), game.commands);
         self.requestAnimationFrame(() => {
           resolve(gameReplayBatchsP(batchs, game));
         });

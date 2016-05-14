@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('gameBoard', gameBoardModelFactory);
 
-  gameBoardModelFactory.$inject = ['http'];
-  function gameBoardModelFactory(httpService) {
+  gameBoardModelFactory.$inject = ['appError', 'http'];
+  function gameBoardModelFactory(appErrorService, httpService) {
     var gameBoardModel = {
       initP: gameBoardInitP,
       name: gameBoardName,
@@ -15,7 +15,7 @@
 
     function gameBoardInitP() {
       return httpService.getP('/data/boards.json').catch(function (error) {
-        R.spyError('Error getting boards.json')(error);
+        appErrorService.emit('Error getting boards.json', error);
         return [];
       });
     }

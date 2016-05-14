@@ -22,7 +22,10 @@
         if (timeout) {
           self.window.clearTimeout(timeout);
         }
-        scope.msg = msg;
+        self.window.requestAnimationFrame(function () {
+          scope.msg = msg;
+          scope.$digest();
+        });
         timeout = self.window.setTimeout(hide, 2000);
       }
       function hide() {

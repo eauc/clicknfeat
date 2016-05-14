@@ -11,18 +11,18 @@
     'appState',
     'appUser',
     'game',
+    'gameBoard',
     'gameConnection',
+    'gameScenario',
     'games',
     // 'fileExport',
     // 'fileImport',
     // 'appState',
     // 'state',
     // 'modes',
-    // 'gameBoard',
     // 'gameFactions',
     // 'gameModels',
     // 'gameModelSelection',
-    // 'gameScenario',
     // 'gameTerrains',
     // 'gameTemplates',
     // 'gameTemplateSelection',
@@ -37,18 +37,18 @@
                                  appStateService,
                                  appUserService,
                                  gameModel,
+                                 gameBoardModel,
                                  gameConnectionModel,
+                                 gameScenarioModel,
                                  gamesModel
                                  // fileExportService,
                                  // fileImportService,
                                  // appStateService,
                                  // stateModel,
                                  // modesModel,
-                                 // gameBoardModel,
                                  // gameFactionsModel,
                                  // gameModelsModel,
                                  // gameModelSelectionModel,
-                                 // gameScenarioModel,
                                  // gameTerrainsModel,
                                  // gameTemplatesModel,
                                  // gameTemplateSelectionModel,
@@ -75,6 +75,10 @@
       commandUndoLast: actionGameCommandUndoLast,
       commandReplay: actionGameCommandReplay,
       commandReplayNext: actionGameCommandReplayNext,
+      boardSet: actionGameBoardSet,
+      boardSetRandom: actionGameBoardSetRandom,
+      scenarioSet: actionGameScenarioSet,
+      scenarioSetRandom: actionGameScenarioSetRandom,
       // onCommandReplayBatch: stateGameOnCommandReplayBatch,
       // onSetCmds: stateGameOnSetCmds,
       // onSetPlayers: stateGameOnSetPlayers,
@@ -89,11 +93,7 @@
       // onTemplateCreate: stateGameOnTemplateCreate,
       // onTerrainCreate: stateGameOnTerrainCreate,
       // onTerrainReset: stateGameOnTerrainReset,
-      // onBoardSet: stateGameOnBoardSet,
-      // onBoardSetRandom: stateGameOnBoardSetRandom,
       // onBoardImportFile: stateGameOnBoardImportFile,
-      // onScenarioSet: stateGameOnScenarioSet,
-      // onScenarioSetRandom: stateGameOnScenarioSetRandom,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
       // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
       // updateExport: stateGameUpdateExport,
@@ -121,18 +121,18 @@
         .register('Game.command.execute'     , actionGameCommandExecute)
         .register('Game.command.undo'        , actionGameCommandUndo)
         .register('Game.command.replay'      , actionGameCommandReplay)
-        // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
         .register('Game.command.undoLast'    , actionGameCommandUndoLast)
         .register('Game.command.replayNext'  , actionGameCommandReplayNext)
+        .register('Game.board.set'           , actionGameBoardSet)
+        .register('Game.board.setRandom'     , actionGameBoardSetRandom)
+        .register('Game.scenario.set'        , actionGameScenarioSet)
+        .register('Game.scenario.setRandom'  , actionGameScenarioSetRandom)
+        // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
         // .register('Game.invitePlayer'        , actionGameInvitePlayer)
         // .register('Game.setCmds'             , actionGameSetCmds)
         // .register('Game.setPlayers'          , actionGameSetPlayers)
         // .register('Game.newChatMsg'          , actionGameNewChatMsg)
         // .register('Game.uiState.flip'        , actionGameUiStateFlip)
-        // .register('Game.board.set'           , actionGameBoardSet)
-        // .register('Game.board.setRandom'     , actionGameBoardSetRandom)
-        // .register('Game.scenario.set'        , actionGameScenarioSet)
-        // .register('Game.scenario.setRandom'  , actionGameScenarioSetRandom)
         // .register('Game.scenario.generateObjectives',
         //             actionGameScenarioGenerateObjectives)
         // .register('Game.model.create'        , actionGameModelCreate)
@@ -348,18 +348,51 @@
         (game) => appActionService.do('Game.set', game)
       ).catch(appErrorService.emit);
     }
-    // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.replayCommandsBatchP$(cmds),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
     function actionGameCommandReplayNext(state) {
       return R.threadP(state.game)(
         gameModel.replayNextCommandP,
         (game) => appActionService.do('Game.set', game)
       ).catch(appErrorService.emit);
     }
+    function actionGameBoardSet(state, name) {
+      const board = gameBoardModel.forName(name, state.boards);
+      return appStateService
+        .onAction(state, [ 'Game.command.execute',
+                           'setBoard', [board] ]);
+    }
+    function actionGameBoardSetRandom(state) {
+      let board, name = gameBoardModel.name(state.game.board);
+      while(name === gameBoardModel.name(state.game.board)) {
+        board = state.boards[R.randomRange(0, state.boards.length-1)];
+        name = gameBoardModel.name(board);
+      }
+      return appStateService
+        .onAction(state, [ 'Game.command.execute',
+                           'setBoard', [board] ]);
+    }
+    function actionGameScenarioSet(state, name, group) {
+      const scenario = gameScenarioModel.forName(name, group);
+      return appStateService
+        .onAction(state, [ 'Game.command.execute',
+                           'setScenario', [scenario] ]);
+    }
+    function actionGameScenarioSetRandom(state) {
+      const group = gameScenarioModel.group('SR15', state.scenarios);
+      let scenario, name = gameScenarioModel.name(state.game.scenario);
+      while(name === gameScenarioModel.name(state.game.scenario)) {
+        scenario = group[1][R.randomRange(0, group[1].length-1)];
+        name = gameScenarioModel.name(scenario);
+      }
+      return appStateService
+        .onAction(state, [ 'Game.command.execute',
+                           'setScenario', [scenario] ]);
+    }
+    // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
+    //   return R.threadP(state.game)(
+    //     gameModel.replayCommandsBatchP$(cmds),
+    //     (game) => appStateService.reduce('Game.set', game)
+    //   ).catch((error) => appStateService.emit('Game.error', error));
+    // }
     // function stateGameOnSetCmds(state, _event_, [set]) {
     //   return R.over(
     //     GAME_LENS,
@@ -567,24 +600,6 @@
     //     }
     //   ).catch((error) => appStateService.emit('Game.error', error));
     // }
-    // function stateGameOnBoardSet(state, _event_, [name]) {
-    //   const board = gameBoardModel.forName(name, state.boards);
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setBoard', [board]);
-    //   });
-    // }
-    // function stateGameOnBoardSetRandom(state, _event_) {
-    //   let board, name = gameBoardModel.name(state.game.board);
-    //   while(name === gameBoardModel.name(state.game.board)) {
-    //     board = state.boards[R.randomRange(0, state.boards.length-1)];
-    //     name = gameBoardModel.name(board);
-    //   }
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setBoard', [board]);
-    //   });
-    // }
     // function stateGameOnBoardImportFile(_state_, _event_, [file]) {
     //   R.threadP(file)(
     //     fileImportService.readP$('json'),
@@ -612,25 +627,6 @@
     //       }
     //     ))
     //   ).catch(R.spyAndDiscardError('Import board file'));
-    // }
-    // function stateGameOnScenarioSet(_state_, _event_, [name, group]) {
-    //   const scenario = gameScenarioModel.forName(name, group);
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setScenario', [scenario]);
-    //   });
-    // }
-    // function stateGameOnScenarioSetRandom(state, _event_) {
-    //   const group = gameScenarioModel.group('SR15', state.scenarios);
-    //   let scenario, name = gameScenarioModel.name(state.game.scenario);
-    //   while(name === gameScenarioModel.name(state.game.scenario)) {
-    //     scenario = group[1][R.randomRange(0, group[1].length-1)];
-    //     name = gameScenarioModel.name(scenario);
-    //   }
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setScenario', [scenario]);
-    //   });
     // }
     // // function stateGameOnScenarioRefresh(state, _event_) {
     // //   appStateService.emit('Game.scenario.refresh');

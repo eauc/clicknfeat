@@ -3,34 +3,30 @@
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'game', 'gameConnection', 'games'];
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'game', 'gameBoard', 'gameConnection', 'gameScenario', 'games'];
 
   // 'fileExport',
   // 'fileImport',
   // 'appState',
   // 'state',
   // 'modes',
-  // 'gameBoard',
   // 'gameFactions',
   // 'gameModels',
   // 'gameModelSelection',
-  // 'gameScenario',
   // 'gameTerrains',
   // 'gameTemplates',
   // 'gameTemplateSelection',
   // 'gameTerrainSelection',
   // 'allCommands',
-  function stateGameModelFactory(behavioursModel, appActionService, appErrorService, appGamesService, appModesService, appStateService, appUserService, gameModel, gameConnectionModel, gamesModel
+  function stateGameModelFactory(behavioursModel, appActionService, appErrorService, appGamesService, appModesService, appStateService, appUserService, gameModel, gameBoardModel, gameConnectionModel, gameScenarioModel, gamesModel
   // fileExportService,
   // fileImportService,
   // appStateService,
   // stateModel,
   // modesModel,
-  // gameBoardModel,
   // gameFactionsModel,
   // gameModelsModel,
   // gameModelSelectionModel,
-  // gameScenarioModel,
   // gameTerrainsModel,
   // gameTemplatesModel,
   // gameTemplateSelectionModel,
@@ -55,7 +51,11 @@
       commandUndo: actionGameCommandUndo,
       commandUndoLast: actionGameCommandUndoLast,
       commandReplay: actionGameCommandReplay,
-      commandReplayNext: actionGameCommandReplayNext
+      commandReplayNext: actionGameCommandReplayNext,
+      boardSet: actionGameBoardSet,
+      boardSetRandom: actionGameBoardSetRandom,
+      scenarioSet: actionGameScenarioSet,
+      scenarioSetRandom: actionGameScenarioSetRandom
     };
     // onCommandReplayBatch: stateGameOnCommandReplayBatch,
     // onSetCmds: stateGameOnSetCmds,
@@ -71,11 +71,7 @@
     // onTemplateCreate: stateGameOnTemplateCreate,
     // onTerrainCreate: stateGameOnTerrainCreate,
     // onTerrainReset: stateGameOnTerrainReset,
-    // onBoardSet: stateGameOnBoardSet,
-    // onBoardSetRandom: stateGameOnBoardSetRandom,
     // onBoardImportFile: stateGameOnBoardImportFile,
-    // onScenarioSet: stateGameOnScenarioSet,
-    // onScenarioSetRandom: stateGameOnScenarioSetRandom,
     // onScenarioRefresh: stateGameOnScenarioRefresh,
     // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
     // updateExport: stateGameUpdateExport,
@@ -93,18 +89,13 @@
     function mount() {
       appActionService
       // .register('Game.update'              , actionGameUpdate)
-      .register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay)
+      .register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom)
       // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
-      .register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext)
       // .register('Game.invitePlayer'        , actionGameInvitePlayer)
       // .register('Game.setCmds'             , actionGameSetCmds)
       // .register('Game.setPlayers'          , actionGameSetPlayers)
       // .register('Game.newChatMsg'          , actionGameNewChatMsg)
       // .register('Game.uiState.flip'        , actionGameUiStateFlip)
-      // .register('Game.board.set'           , actionGameBoardSet)
-      // .register('Game.board.setRandom'     , actionGameBoardSetRandom)
-      // .register('Game.scenario.set'        , actionGameScenarioSet)
-      // .register('Game.scenario.setRandom'  , actionGameScenarioSetRandom)
       // .register('Game.scenario.generateObjectives',
       //             actionGameScenarioGenerateObjectives)
       // .register('Game.model.create'        , actionGameModelCreate)
@@ -297,17 +288,44 @@
         return appActionService.do('Game.set', game);
       }).catch(appErrorService.emit);
     }
+    function actionGameCommandReplayNext(state) {
+      return R.threadP(state.game)(gameModel.replayNextCommandP, function (game) {
+        return appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
+    function actionGameBoardSet(state, name) {
+      var board = gameBoardModel.forName(name, state.boards);
+      return appStateService.onAction(state, ['Game.command.execute', 'setBoard', [board]]);
+    }
+    function actionGameBoardSetRandom(state) {
+      var board = undefined,
+          name = gameBoardModel.name(state.game.board);
+      while (name === gameBoardModel.name(state.game.board)) {
+        board = state.boards[R.randomRange(0, state.boards.length - 1)];
+        name = gameBoardModel.name(board);
+      }
+      return appStateService.onAction(state, ['Game.command.execute', 'setBoard', [board]]);
+    }
+    function actionGameScenarioSet(state, name, group) {
+      var scenario = gameScenarioModel.forName(name, group);
+      return appStateService.onAction(state, ['Game.command.execute', 'setScenario', [scenario]]);
+    }
+    function actionGameScenarioSetRandom(state) {
+      var group = gameScenarioModel.group('SR15', state.scenarios);
+      var scenario = undefined,
+          name = gameScenarioModel.name(state.game.scenario);
+      while (name === gameScenarioModel.name(state.game.scenario)) {
+        scenario = group[1][R.randomRange(0, group[1].length - 1)];
+        name = gameScenarioModel.name(scenario);
+      }
+      return appStateService.onAction(state, ['Game.command.execute', 'setScenario', [scenario]]);
+    }
     // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
     //   return R.threadP(state.game)(
     //     gameModel.replayCommandsBatchP$(cmds),
     //     (game) => appStateService.reduce('Game.set', game)
     //   ).catch((error) => appStateService.emit('Game.error', error));
     // }
-    function actionGameCommandReplayNext(state) {
-      return R.threadP(state.game)(gameModel.replayNextCommandP, function (game) {
-        return appActionService.do('Game.set', game);
-      }).catch(appErrorService.emit);
-    }
     // function stateGameOnSetCmds(state, _event_, [set]) {
     //   return R.over(
     //     GAME_LENS,
@@ -515,24 +533,6 @@
     //     }
     //   ).catch((error) => appStateService.emit('Game.error', error));
     // }
-    // function stateGameOnBoardSet(state, _event_, [name]) {
-    //   const board = gameBoardModel.forName(name, state.boards);
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setBoard', [board]);
-    //   });
-    // }
-    // function stateGameOnBoardSetRandom(state, _event_) {
-    //   let board, name = gameBoardModel.name(state.game.board);
-    //   while(name === gameBoardModel.name(state.game.board)) {
-    //     board = state.boards[R.randomRange(0, state.boards.length-1)];
-    //     name = gameBoardModel.name(board);
-    //   }
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setBoard', [board]);
-    //   });
-    // }
     // function stateGameOnBoardImportFile(_state_, _event_, [file]) {
     //   R.threadP(file)(
     //     fileImportService.readP$('json'),
@@ -560,25 +560,6 @@
     //       }
     //     ))
     //   ).catch(R.spyAndDiscardError('Import board file'));
-    // }
-    // function stateGameOnScenarioSet(_state_, _event_, [name, group]) {
-    //   const scenario = gameScenarioModel.forName(name, group);
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setScenario', [scenario]);
-    //   });
-    // }
-    // function stateGameOnScenarioSetRandom(state, _event_) {
-    //   const group = gameScenarioModel.group('SR15', state.scenarios);
-    //   let scenario, name = gameScenarioModel.name(state.game.scenario);
-    //   while(name === gameScenarioModel.name(state.game.scenario)) {
-    //     scenario = group[1][R.randomRange(0, group[1].length-1)];
-    //     name = gameScenarioModel.name(scenario);
-    //   }
-    //   self.window.requestAnimationFrame(() => {
-    //     appStateService.reduce('Game.command.execute',
-    //                            'setScenario', [scenario]);
-    //   });
     // }
     // // function stateGameOnScenarioRefresh(state, _event_) {
     // //   appStateService.emit('Game.scenario.refresh');

@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('gameScenario', gameScenarioModelFactory);
 
-  gameScenarioModelFactory.$inject = ['http', 'point', 'line', 'circle'];
-  function gameScenarioModelFactory(httpModel, pointModel, lineModel, circleModel) {
+  gameScenarioModelFactory.$inject = ['appError', 'http', 'point', 'line', 'circle'];
+  function gameScenarioModelFactory(appErrorService, httpModel, pointModel, lineModel, circleModel) {
     var gameScenarioModel = {
       initP: gameScenarioInitP,
       name: gameScenarioName,
@@ -20,7 +20,7 @@
 
     function gameScenarioInitP() {
       return httpModel.getP('/data/scenarios.json').catch(function (reason) {
-        console.log('error getting scenarios.json', reason);
+        appErrorService.emit('Error getting scenarios.json', reason);
         return [];
       });
     }

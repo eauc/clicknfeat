@@ -3,9 +3,11 @@
     .factory('gameBoard', gameBoardModelFactory);
 
   gameBoardModelFactory.$inject = [
+    'appError',
     'http',
   ];
-  function gameBoardModelFactory(httpService) {
+  function gameBoardModelFactory(appErrorService,
+                                 httpService) {
     const gameBoardModel = {
       initP: gameBoardInitP,
       name: gameBoardName,
@@ -18,7 +20,7 @@
       return httpService
         .getP('/data/boards.json')
         .catch((error) => {
-          R.spyError('Error getting boards.json')(error);
+          appErrorService.emit('Error getting boards.json', error);
           return [];
         });
     }

@@ -67,6 +67,7 @@ a:not([href]):focus {
   vertical-align: middle; }
 
 .error-toaster {
+  z-index: 1000;
   position: fixed;
   left: 0;
   right: 0;

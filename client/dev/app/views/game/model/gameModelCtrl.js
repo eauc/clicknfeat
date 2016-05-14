@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('gameModelCtrl', gameModelCtrl);
 
-  gameModelCtrl.$inject = ['$scope'];
-  function gameModelCtrl($scope) {
+  gameModelCtrl.$inject = ['$scope', 'appData'];
+  function gameModelCtrl($scope, appDataService) {
     var vm = this;
     console.log('init gameModelCtrl');
 
@@ -17,29 +17,28 @@
     vm.getEntries = getEntries;
     vm.getModel = getModel;
 
-    vm.doCreateModel = doCreateModel;
-    vm.doImportList = doImportList;
-    vm.doImportModelsFile = doImportModelsFile;
+    // vm.doCreateModel = doCreateModel;
+    // vm.doImportList = doImportList;
+    // vm.doImportModelsFile = doImportModelsFile;
 
     activate();
 
     function activate() {
       vm.import_list = null;
+      $scope.bindCell(function (factions) {
+        if (R.isNil(factions)) return;
+        vm.faction = R.head(R.keys(factions.current));
+        if (R.isNil(vm.faction)) return;
+        vm.onFactionChange();
+      }, appDataService.factions, $scope);
+    }
 
-      $scope.state.data_ready.then(updateFactions);
-    }
-    function updateFactions() {
-      vm.factions = R.path(['state', 'factions', 'current'], $scope);
-      vm.faction = R.head(R.keys(vm.factions));
-      vm.onFactionChange();
-      $scope.$digest();
-    }
     function onFactionChange() {
-      vm.section = R.head(R.keys(vm.factions[vm.faction].models));
+      vm.section = R.head(R.keys($scope.state.factions.current[vm.faction].models));
       vm.onSectionChange();
     }
     function onSectionChange() {
-      vm.entry = R.head(R.keys(vm.factions[vm.faction].models[vm.section]));
+      vm.entry = R.head(R.keys($scope.state.factions.current[vm.faction].models[vm.section]));
       vm.onEntryChange();
     }
     function onEntryChange() {
@@ -61,12 +60,12 @@
       vm.repeat = 1;
     }
     function getEntries() {
-      return R.path([vm.faction, 'models', vm.section, vm.entry, 'entries'], vm.factions);
+      return R.path([vm.faction, 'models', vm.section, vm.entry, 'entries'], R.pathOr({}, ['state', 'factions', 'current'], $scope));
     }
     function getModel() {
       var entries = vm.getEntries();
       if (R.isNil(entries)) {
-        return R.path([vm.faction, 'models', vm.section, vm.entry], vm.factions);
+        return R.path([vm.faction, 'models', vm.section, vm.entry], R.pathOr({}, ['state', 'factions', 'current'], $scope));
       } else {
         return R.path([vm.type, vm.model], entries);
       }
@@ -79,17 +78,18 @@
         return [vm.faction, 'models', vm.section, vm.entry, 'entries', vm.type, vm.model];
       }
     }
-    function doCreateModel() {
-      var model_path = getModelPath();
-      $scope.stateEvent('Game.model.create', model_path, vm.repeat);
-    }
-    function doImportList() {
-      // TODO : find min unit number for user
-      $scope.stateEvent('Game.model.importList', vm.import_list);
-    }
-    function doImportModelsFile(files) {
-      $scope.stateEvent('Game.model.importFile', files[0]);
-    }
+    // function doCreateModel() {
+    //   const model_path = getModelPath();
+    //   $scope.sendAction('Game.model.create',
+    //                     model_path, vm.repeat);
+    // }
+    // function doImportList() {
+    //   // TODO : find min unit number for user
+    //   $scope.sendAction('Game.model.importList', vm.import_list);
+    // }
+    // function doImportModelsFile(files) {
+    //   $scope.sendAction('Game.model.importFile', files[0]);
+    // }
   }
 })();
 //# sourceMappingURL=gameModelCtrl.js.map

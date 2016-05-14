@@ -245,7 +245,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           resolve(game);
         }
 
-        var batchs = R.splitEvery(game.commands.length, game.commands);
+        var batchs = R.splitEvery(Math.max(game.commands.length, 1), game.commands);
         self.requestAnimationFrame(function () {
           resolve(gameReplayBatchsP(batchs, game));
         });

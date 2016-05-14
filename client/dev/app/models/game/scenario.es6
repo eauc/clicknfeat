@@ -3,15 +3,17 @@
     .factory('gameScenario', gameScenarioModelFactory);
 
   gameScenarioModelFactory.$inject = [
+    'appError',
     'http',
     'point',
     'line',
     'circle',
   ];
-  function gameScenarioModelFactory(httpModel,
-                                      pointModel,
-                                      lineModel,
-                                      circleModel) {
+  function gameScenarioModelFactory(appErrorService,
+                                    httpModel,
+                                    pointModel,
+                                    lineModel,
+                                    circleModel) {
     const gameScenarioModel = {
       initP: gameScenarioInitP,
       name: gameScenarioName,
@@ -28,7 +30,7 @@
     function gameScenarioInitP() {
       return httpModel.getP('/data/scenarios.json')
         .catch((reason) => {
-          console.log('error getting scenarios.json', reason);
+          appErrorService.emit('Error getting scenarios.json', reason);
           return [];
         });
     }
