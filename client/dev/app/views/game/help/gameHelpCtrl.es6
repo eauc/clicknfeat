@@ -4,23 +4,24 @@
 
   gameHelpCtrl.$inject = [
     '$scope',
+    'appModes',
     'modes',
   ];
   function gameHelpCtrl($scope,
+                        appModesService,
                         modesModel) {
     const vm = this;
     console.log('init gameHelpCtrl');
 
-    $scope.onStateChangeEvent('Modes.change', updateBindings, $scope);
-    self.requestAnimationFrame(updateBindings);
+    activate();
 
-    function updateBindings() {
-      vm.bindings_pairs = R.thread($scope)(
-        R.path(['state','modes']),
-        modesModel.currentModeBindingsPairs,
-        R.sortBy(R.head)
-      );
-      $scope.$digest();
+    function activate() {
+      $scope.bindCell((modes) => {
+        vm.bindings_pairs = R.thread(modes)(
+          modesModel.currentModeBindingsPairs,
+          R.sortBy(R.head)
+        );
+      }, appModesService.modes, $scope);
     }
   }
 })();

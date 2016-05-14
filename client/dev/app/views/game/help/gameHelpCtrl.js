@@ -3,17 +3,17 @@
 (function () {
   angular.module('clickApp.controllers').controller('gameHelpCtrl', gameHelpCtrl);
 
-  gameHelpCtrl.$inject = ['$scope', 'modes'];
-  function gameHelpCtrl($scope, modesModel) {
+  gameHelpCtrl.$inject = ['$scope', 'appModes', 'modes'];
+  function gameHelpCtrl($scope, appModesService, modesModel) {
     var vm = this;
     console.log('init gameHelpCtrl');
 
-    $scope.onStateChangeEvent('Modes.change', updateBindings, $scope);
-    self.requestAnimationFrame(updateBindings);
+    activate();
 
-    function updateBindings() {
-      vm.bindings_pairs = R.thread($scope)(R.path(['state', 'modes']), modesModel.currentModeBindingsPairs, R.sortBy(R.head));
-      $scope.$digest();
+    function activate() {
+      $scope.bindCell(function (modes) {
+        vm.bindings_pairs = R.thread(modes)(modesModel.currentModeBindingsPairs, R.sortBy(R.head));
+      }, appModesService.modes, $scope);
     }
   }
 })();
