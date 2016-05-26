@@ -14,6 +14,7 @@
     'appModes',
     'appUser',
     'allCommands',
+    'allModes',
   ];
   function appCtrl($rootScope,
                    $state,
@@ -37,6 +38,7 @@
     function activate() {
       bindCell((state) => { $rootScope.state = state; },
                appStateService.state, $rootScope);
+      $rootScope.sendAction('Modes.reset');
     }
 
     // function onUserInvalid() {

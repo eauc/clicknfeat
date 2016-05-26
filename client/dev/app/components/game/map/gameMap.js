@@ -7,8 +7,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.directives').directive('clickGameMap', clickGameMapDirectiveFactory);
 
-  clickGameMapDirectiveFactory.$inject = ['appState', 'gameMap', 'terrain', 'commonMode'];
-  function clickGameMapDirectiveFactory(appStateService, gameMapService, terrainModel, commonModeModel) {
+  clickGameMapDirectiveFactory.$inject = ['appAction', 'appGame',
+  // 'appState',
+  'gameMap',
+  // 'terrain',
+  'commonMode'];
+  function clickGameMapDirectiveFactory(appActionService, appGameService,
+  // appStateService,
+  gameMapService,
+  // terrainModel,
+  commonModeModel) {
     var log = true // eslint-disable-line
     ? R.bind(console.log, console) : function () {};
     return {
@@ -34,16 +42,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       });
       map.addEventListener('contextmenu', mouseEvents.rightClick);
 
-      scope.onStateChangeEvent('Game.view.flipMap', flipMap, scope);
-      scope.onStateChangeEvent('Game.moveMap.enable', moveEvents.enable, scope);
-      scope.onStateChangeEvent('Game.moveMap.disable', moveEvents.disable, scope);
-      scope.onStateChangeEvent('Game.view.zoomIn', zoomEvents.in, scope);
-      scope.onStateChangeEvent('Game.view.zoomOut', zoomEvents.out, scope);
-      scope.onStateChangeEvent('Game.view.zoomReset', zoomEvents.reset, scope);
-      scope.onStateChangeEvent('Game.view.scrollLeft', scrollEvents.left, scope);
-      scope.onStateChangeEvent('Game.view.scrollRight', scrollEvents.right, scope);
-      scope.onStateChangeEvent('Game.view.scrollUp', scrollEvents.up, scope);
-      scope.onStateChangeEvent('Game.view.scrollDown', scrollEvents.down, scope);
+      scope.listenSignal(scrollEvents.left, appGameService.view.scroll_left, scope);
+      scope.listenSignal(scrollEvents.right, appGameService.view.scroll_right, scope);
+      scope.listenSignal(scrollEvents.up, appGameService.view.scroll_up, scope);
+      scope.listenSignal(scrollEvents.down, appGameService.view.scroll_down, scope);
+      scope.listenSignal(zoomEvents.in, appGameService.view.zoom_in, scope);
+      scope.listenSignal(zoomEvents.out, appGameService.view.zoom_out, scope);
+      scope.listenSignal(zoomEvents.reset, appGameService.view.zoom_reset, scope);
+      scope.listenSignal(flipMap, appGameService.view.flip_map, scope);
+      scope.listenSignal(moveEvents.enable, appGameService.view.move_map, scope);
 
       self.window.requestAnimationFrame(zoomEvents.reset);
 
@@ -56,7 +63,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         };
         return {
           down: mouseDownMap,
-          // drag: dragMap,
           leave: mouseLeaveMap,
           click: clickMap,
           rightClick: rightClickMap,
@@ -69,34 +75,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           event.preventDefault();
           if (event.which !== 1) return;
 
-          var state = appStateService.current();
+          var game = appGameService.game.sample();
           var start = gameMapService.eventToMapCoordinates(map, event);
-          var target = gameMapService.findEventTarget(state.game, event);
+          var target = gameMapService.findEventTarget(game, event);
           dragStart(start, target);
           map.addEventListener('mousemove', dragMap);
-        }
-
-        function dragMap(event) {
-          log('dragMap', event);
-          event.preventDefault();
-          if (event.which !== 1) return;
-
-          drag.now = gameMapService.eventToMapCoordinates(map, event);
-          if (!drag.active && currentDragIsBellowThreshold()) {
-            return;
-          }
-          var emit = drag.active ? 'drag' : 'dragStart';
-          drag.active = true;
-
-          if ('Terrain' === drag.target.type && terrainModel.isLocked(drag.target.target)) {
-            drag.target = { type: 'Map',
-              target: null
-            };
-          }
-          scope.stateEvent('Modes.current.action', emit + drag.target.type, [{ target: drag.target.target,
-            start: drag.start,
-            now: drag.now
-          }, event]);
         }
 
         function mouseLeaveMap(event) {
@@ -114,13 +97,13 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           map.removeEventListener('mousemove', dragMap);
 
-          var state = appStateService.current();
+          var game = appGameService.game.sample();
           var now = gameMapService.eventToMapCoordinates(map, event);
           if (drag.active) {
             drag.now = now;
             dragEnd(event);
           } else {
-            var target = gameMapService.findEventTarget(state.game, event);
+            var target = gameMapService.findEventTarget(game, event);
             emitClickEvent('click', event, now, target);
           }
         }
@@ -129,9 +112,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           log('rightClickMap', event);
           event.preventDefault();
 
-          var state = appStateService.current();
+          var game = appGameService.game.sample();
           var now = gameMapService.eventToMapCoordinates(map, event);
-          var target = gameMapService.findEventTarget(state.game, event);
+          var target = gameMapService.findEventTarget(game, event);
           emitClickEvent('rightClick', event, now, target);
         }
 
@@ -140,7 +123,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           event.preventDefault();
 
           var now = gameMapService.eventToMapCoordinates(map, event);
-          scope.stateEvent('Modes.current.action', 'moveMap', [now, event]);
+          appActionService.do('Modes.current.action', 'moveMap', [now, event]);
         }
 
         function blurInputs() {
@@ -149,6 +132,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             e.blur();
           }, inputs);
         }
+
         function emitClickEvent(type, event, now, target) {
           var event_name = R.thread(event)(_eventModifiers, R.append(type + target.type), R.join('+'));
           event['click#'] = {
@@ -156,9 +140,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             x: now.x,
             y: now.y
           };
-          // state.queueChangeEventP('Game.selectionDetail.close');
-          // state.queueChangeEventP('Game.editLabel.close');
-          // state.queueChangeEventP('Game.editDamage.close');
           Mousetrap.trigger(event_name, undefined, event);
         }
 
@@ -170,8 +151,31 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             now: null
           };
         }
+        function dragMap(event) {
+          log('dragMap', event);
+          event.preventDefault();
+          if (event.which !== 1) return;
+
+          drag.now = gameMapService.eventToMapCoordinates(map, event);
+          if (!drag.active && currentDragIsBellowThreshold()) {
+            return;
+          }
+          var emit = drag.active ? 'drag' : 'dragStart';
+          drag.active = true;
+
+          // if('Terrain' === drag.target.type &&
+          //    terrainModel.isLocked(drag.target.target)) {
+          //   drag.target = { type: 'Map',
+          //                   target: null
+          //                 };
+          // }
+          appActionService.do('Modes.current.action', emit + drag.target.type, [{ target: drag.target.target,
+            start: drag.start,
+            now: drag.now
+          }, event]);
+        }
         function dragEnd(event) {
-          scope.stateEvent('Modes.current.action', 'dragEnd' + drag.target.type, [{ target: drag.target.target,
+          appActionService.do('Modes.current.action', 'dragEnd' + drag.target.type, [{ target: drag.target.target,
             start: drag.start,
             now: drag.now
           }, event]);
@@ -191,20 +195,18 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       function buildMoveEvents() {
         var move_enabled = false;
         return {
-          enable: onEnableMove,
-          disable: onDisableMove
+          enable: onEnableMove
         };
 
-        function onEnableMove() {
-          if (move_enabled) return;
-          map.addEventListener('mousemove', mouseEvents.move);
-          move_enabled = true;
-        }
-
-        function onDisableMove() {
-          if (!move_enabled) return;
-          map.removeEventListener('mousemove', mouseEvents.move);
-          move_enabled = false;
+        function onEnableMove(enable) {
+          if (enable && !move_enabled) {
+            map.addEventListener('mousemove', mouseEvents.move);
+            move_enabled = true;
+          }
+          if (!enable && move_enabled) {
+            map.removeEventListener('mousemove', mouseEvents.move);
+            move_enabled = false;
+          }
         }
       }
 
@@ -217,12 +219,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           map.classList.remove('flipped');
         }
 
-        function onFlipMap(_event_, _ref) {
-          var _ref2 = _slicedToArray(_ref, 1);
-
-          var flipped = _ref2[0];
-
+        function onFlipMap(flipped) {
           deploiement_labels = document.querySelector('#deploiement-labels');
+          if (R.isNil(deploiement_labels)) return;
           if (flipped) {
             map.classList.add('flipped');
             deploiement_labels.setAttribute('transform', 'rotate(180,240,240)');

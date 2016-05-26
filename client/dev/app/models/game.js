@@ -5,24 +5,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers'];
-
+  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
   // 'gameLos',
   // 'gameModels',
   // 'gameModelSelection',
   // 'gameRuler',
-  // 'gameTemplates',
-  // 'gameTemplateSelection',
+  'gameTemplates', 'gameTemplateSelection'];
+
   // 'gameTerrains',
   // 'gameTerrainSelection',
-  // 'allTemplates',
-  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel
+  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
   // gameLosModel,
   // gameModelsModel,
   // gameModelSelectionModel,
   // gameRulerModel,
-  // gameTemplatesModel,
-  // gameTemplateSelectionModel,
+  gameTemplatesModel, gameTemplateSelectionModel
   // gameTerrainsModel,
   // gameTerrainSelectionModel
   ) {
@@ -228,15 +225,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         undo: [],
         undo_log: [],
         dice: [],
-        layers: gameLayersModel.create()
+        layers: gameLayersModel.create(),
+        // ruler: gameRulerModel.create(),
+        // los: gameLosModel.create(),
+        // models: gameModelsModel.create(),
+        // model_selection: gameModelSelectionModel.create(),
+        templates: gameTemplatesModel.create(),
+        template_selection: gameTemplateSelectionModel.create()
       };
     }
-    // ruler: gameRulerModel.create(),
-    // los: gameLosModel.create(),
-    // models: gameModelsModel.create(),
-    // model_selection: gameModelSelectionModel.create(),
-    // templates: gameTemplatesModel.create(),
-    // template_selection: gameTemplateSelectionModel.create(),
     // terrains: gameTerrainsModel.create(),
     // terrain_selection: gameTerrainSelectionModel.create(),
     function gameReplayAllP(game) {

@@ -1,4 +1,4 @@
-xdescribe('elementMode model', function() {
+describe('elementMode model', function() {
   beforeEach(inject([
     'elementMode',
     function(elementModeModel) {
@@ -12,7 +12,14 @@ xdescribe('elementMode model', function() {
                          this.gameElementsModel,
                          this.gameElementSelectionModel);
 
+      this.appGameService = spyOnService('appGame');
+      this.appGameService.types = {
+        force_changes: jasmine.createSpyObj('force_changes', [ 'send' ])
+      };
       this.appStateService = spyOnService('appState');
+      this.appStateService.onAction
+        .and.callFake(R.nthArg(0));
+
       this.state = {
         create: {},
         game: { types: 'elements',
@@ -20,6 +27,34 @@ xdescribe('elementMode model', function() {
       };
     }
   ]));
+
+  example(function(e) {
+    context(`when user ${e.action}`, function() {
+      return this.elementModeModel
+        .actions[e.action](this.state);
+    }, function() {
+      it('should close selection/edit OSD', function() {
+        expect(this.context.view.detail)
+          .toBe(null);
+        // expect(this.state.queueChangeEventP)
+        //   .toHaveBeenCalledWith('Game.editDamage.close');
+        // expect(this.state.queueChangeEventP)
+        //   .toHaveBeenCalledWith('Game.editLabel.close');
+      });
+
+      it('should clear local element selection', function() {
+        expect(this.gameElementSelectionModel.clear)
+          .toHaveBeenCalledWith('local', 'selection');
+        expect(this.context.game.type_selection)
+          .toBe('gameTerrainSelection.clear.returnValue');
+      });
+    });
+  }, [
+    [ 'action'            ],
+    [ 'modeBackToDefault' ],
+    [ 'clickMap'          ],
+    [ 'rightClickMap'     ],
+  ]);
 
   context('when use copies element', function() {
     return this.elementModeModel.actions
@@ -35,8 +70,9 @@ xdescribe('elementMode model', function() {
     it('should enter createElement mode', function() {
       expect(this.context.create)
         .toBe('gameTerrains.copyStamps.returnValue');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo','CreateType');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context,
+                              ['Modes.switchTo','CreateType']);
     });
   });
 
@@ -52,14 +88,14 @@ xdescribe('elementMode model', function() {
     it('should execute deleteElementCommand', function() {
       expect(this.gameElementSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'deleteType', ['stamps']);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                              'deleteType', ['stamps'] ]);
     });
   });
 
   example(function(e) {
-    context('when user '+e.action+' element selection', function() {
+    context(`when user ${e.action} element selection`, function() {
       return this.elementModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -73,17 +109,18 @@ xdescribe('elementMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onElements/'+e.action+' command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes',
-                                [ `${e.action}P`, [false], 'stamps' ]);
+      it(`should execute onElements/${e.action} command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                'onTypes',
+                                                [ `${e.action}P`, [false], 'stamps' ]
+                                              ]);
       });
     });
 
-    context('when user '+e.action+'Small element selection', function() {
+    context(`when user ${e.action}Small element selection`, function() {
       return this.elementModeModel
-        .actions[e.action+'Small'](this.state);
+        .actions[`${e.action}Small`](this.state);
     }, function() {
       beforeEach(function() {
         this.gameElementSelectionModel.get
@@ -96,10 +133,11 @@ xdescribe('elementMode model', function() {
       });
 
       it('should execute onElements/'+e.action+'Small command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes',
-                                [ `${e.action}P`, [true], 'stamps' ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                'onTypes',
+                                                [ `${e.action}P`, [true], 'stamps' ]
+                                              ]);
       });
     });
   }, [
@@ -111,7 +149,7 @@ xdescribe('elementMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user '+e.action+' element selection', function() {
+    context(`when user ${e.action} element selection`, function() {
       return this.elementModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -125,28 +163,31 @@ xdescribe('elementMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onElements/'+e.action+' command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes',
-                                [ `${e.action}P`, [false], 'stamps' ]);
+      it(`should execute onElements/${e.action} command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                'onTypes',
+                                                [ `${e.action}P`, [false], 'stamps' ]
+                                              ]);
       });
 
       context('when map is flipped', function() {
-        this.state.ui_state = { flip_map: true };
+        this.state.view = { flip_map: true };
       }, function() {
-        it('should execute onElements/'+e.flipped_action+' command', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onTypes',
-                                  [ `${e.flipped_action}P`, [false], 'stamps' ]);
+        it(`should execute onElements/${e.flipped_action} command`, function() {
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                  'onTypes',
+                                                  [ `${e.flipped_action}P`,
+                                                    [false], 'stamps' ]
+                                                ]);
         });
       });
     });
 
-    context('when user '+e.action+'Small element selection', function() {
+    context(`when user ${e.action}Small element selection`, function() {
       return this.elementModeModel
-        .actions[e.action+'Small'](this.state);
+        .actions[`${e.action}Small`](this.state);
     }, function() {
       beforeEach(function() {
         this.gameElementSelectionModel.get
@@ -158,21 +199,24 @@ xdescribe('elementMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onElements/'+e.action+'Small command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes',
-                                [ `${e.action}P`, [true], 'stamps' ]);
+      it(`should execute onElements/${e.action}Small command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                'onTypes',
+                                                [ `${e.action}P`, [true], 'stamps' ]
+                                              ]);
       });
 
       context('when map is flipped', function() {
-        this.state.ui_state = { flip_map: true };
+        this.state.view = { flip_map: true };
       }, function() {
-        it('should execute onElements/'+e.flipped_action+'Small command', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onTypes',
-                                  [ `${e.flipped_action}P`, [true], 'stamps' ]);
+        it(`should execute onElements/${e.flipped_action}Small command`, function() {
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.context, [ 'Game.command.execute',
+                                                  'onTypes',
+                                                  [ `${e.flipped_action}P`,
+                                                    [true], 'stamps' ]
+                                                ]);
         });
       });
     });
@@ -183,6 +227,43 @@ xdescribe('elementMode model', function() {
     [ 'shiftLeft'  , 'shiftRight'     ],
     [ 'shiftRight' , 'shiftLeft'      ],
   ]);
+
+  context('when user toggles lock on elements', function() {
+    return this.elementModeModel.actions
+      .toggleLock(this.state);
+  }, function() {
+    example(function(e, d) {
+      context('when first selected element\'s isLocked === '+e.first, function() {
+        this.elementModel.isLocked
+          .and.returnValue(e.first);
+      }, function() {
+        beforeEach(function() {
+          this.gameElementSelectionModel.get
+            .and.returnValue(['stamp1','stamp2']);
+        });
+
+        it('should toggle lock on local selection, '+d, function() {
+          expect(this.gameElementSelectionModel.get)
+            .toHaveBeenCalledWith('local', 'selection');
+          expect(this.gameElementsModel.findStamp)
+            .toHaveBeenCalledWith('stamp1', 'elements');
+
+          expect(this.elementModel.isLocked)
+            .toHaveBeenCalledWith('gameTerrains.findStamp.returnValue');
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.context, [
+              'Game.command.execute',
+              'lockTypes',
+              [ e.set, ['stamp1','stamp2'] ]
+            ]);
+        });
+      });
+    }, [
+      [ 'first' , 'set' ],
+      [ true    , false ],
+      [ false   , true  ],
+    ]);
+  });
 
   describe('drag', function() {
     beforeEach(function() {
@@ -263,8 +344,8 @@ xdescribe('elementMode model', function() {
       });
 
       it('should emit change event', function() {
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.type.change.stamp');
+        expect(this.appGameService.types.force_changes.send)
+          .toHaveBeenCalledWith(['stamp']);
       });
     });
 
@@ -293,13 +374,15 @@ xdescribe('elementMode model', function() {
       });
 
       it('should execute onElements/setPosition command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTypes', [
-                                  'setPositionP',
-                                  [ { stamp: 'stamp', x: 270, y: 230, r: 180 } ],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.context, [
+            'Game.command.execute',
+            'onTypes', [
+              'setPositionP',
+              [ { stamp: 'stamp', x: 270, y: 230, r: 180 } ],
+              ['stamp']
+            ]
+          ]);
       });
     });
 
@@ -317,68 +400,4 @@ xdescribe('elementMode model', function() {
       });
     }
   });
-
-  context('when user toggles lock on elements', function() {
-    return this.elementModeModel.actions
-      .toggleLock(this.state);
-  }, function() {
-    example(function(e, d) {
-      context('when first selected element\'s isLocked === '+e.first, function() {
-        this.elementModel.isLocked
-          .and.returnValue(e.first);
-      }, function() {
-        beforeEach(function() {
-          this.gameElementSelectionModel.get
-            .and.returnValue(['stamp1','stamp2']);
-        });
-
-        it('should toggle lock on local selection, '+d, function() {
-          expect(this.gameElementSelectionModel.get)
-            .toHaveBeenCalledWith('local', 'selection');
-          expect(this.gameElementsModel.findStamp)
-            .toHaveBeenCalledWith('stamp1', 'elements');
-
-          expect(this.elementModel.isLocked)
-            .toHaveBeenCalledWith('gameTerrains.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith(
-              'Game.command.execute',
-              'lockTypes',
-              [ e.set, ['stamp1','stamp2'] ]
-            );
-        });
-      });
-    }, [
-      [ 'first' , 'set' ],
-      [ true    , false ],
-      [ false   , true  ],
-    ]);
-  });
-
-  example(function(e) {
-    context('when user '+e.action, function() {
-      return this.elementModeModel
-        .actions[e.action](this.state, 'event');
-    }, function() {
-      // it('should close edit OSD', function() {
-      //   expect(this.state.queueChangeEventP)
-      //     .toHaveBeenCalledWith('Game.selectionDetail.close');
-      //   expect(this.state.queueChangeEventP)
-      //     .toHaveBeenCalledWith('Game.editDamage.close');
-      //   expect(this.state.queueChangeEventP)
-      //     .toHaveBeenCalledWith('Game.editLabel.close');
-      // });
-
-      it('should clear local element selection', function() {
-        expect(this.gameElementSelectionModel.clear)
-          .toHaveBeenCalledWith('local', 'selection');
-        expect(this.context.game.type_selection)
-          .toBe('gameTerrainSelection.clear.returnValue');
-      });
-    });
-  }, [
-    [ 'action'        ],
-    [ 'clickMap'      ],
-    [ 'rightClickMap' ],
-  ]);
 });

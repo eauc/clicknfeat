@@ -3,7 +3,7 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appData', 'appGame', 'appGames', 'appModes', 'appUser', 'allCommands'];
+  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appData', 'appGame', 'appGames', 'appModes', 'appUser', 'allCommands', 'allModes'];
   function appCtrl($rootScope, $state, appActionService, appStateService, appTickService) {
     console.log('init appCtrl');
 
@@ -23,6 +23,7 @@
       bindCell(function (state) {
         $rootScope.state = state;
       }, appStateService.state, $rootScope);
+      $rootScope.sendAction('Modes.reset');
     }
 
     // function onUserInvalid() {

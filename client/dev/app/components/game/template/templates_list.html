@@ -5,38 +5,38 @@
              'local': selection.local,
              'remote': selection.remote
              }">
-  <circle ng-show="render.type==='aoe'"
+  <circle ng-show="template.render.type==='aoe'"
           class="template aoe"
-          data-stamp="{{render.stamp}}"
-          ng-attr-cx="{{render.x}}" ng-attr-cy="{{render.y}}"
-          ng-attr-r="{{render.radius}}">
+          data-stamp="{{template.render.stamp}}"
+          ng-attr-cx="{{template.render.x}}" ng-attr-cy="{{template.render.y}}"
+          ng-attr-r="{{template.render.radius}}">
   </circle>
-  <line ng-show="render.type==='aoe'"
+  <line ng-show="template.render.type==='aoe'"
         class="template-aoe-direction"
         style="marker-end: url(#aoe-direction-end);"
-        ng-attr-x1="{{render.x}}" ng-attr-y1="{{render.y}}"
-        ng-attr-x2="{{render.dx}}" ng-attr-y2="{{render.dy}}"
-        ng-attr-transform="{{render.dtransform}}">
+        ng-attr-x1="{{template.render.x}}" ng-attr-y1="{{template.render.y}}"
+        ng-attr-x2="{{template.render.dx}}" ng-attr-y2="{{template.render.dy}}"
+        ng-attr-transform="{{template.render.dtransform}}">
   </line>
-  <polygon ng-show="render.type==='spray'"
+  <polygon ng-show="template.render.type==='spray'"
            class="template spray"
-           data-stamp="{{render.stamp}}"
-           ng-attr-points="{{render.points}}"
-           ng-attr-transform="{{render.transform}}">
+           data-stamp="{{template.render.stamp}}"
+           ng-attr-points="{{template.render.points}}"
+           ng-attr-transform="{{template.render.transform}}">
   </polygon>
-  <rect ng-show="render.type==='wall'"
+  <rect ng-show="template.render.type==='wall'"
         class="template wall"
-        data-stamp="{{render.stamp}}"
-        ng-attr-x="{{render.x}}" ng-attr-y="{{render.y}}"
+        data-stamp="{{template.render.stamp}}"
+        ng-attr-x="{{template.render.x}}" ng-attr-y="{{template.render.y}}"
         width="40" height="7.5"
-        ng-attr-transform="{{render.transform}}">
+        ng-attr-transform="{{template.render.transform}}">
   </rect>
-  <g click-game-element-label="render.label">
+  <g click-game-element-label="template.render.label">
   </g>
   <circle class="spray-origin"
-          ng-if="render.origin"
-          ng-attr-cx="{{render.origin.cx}}"
-          ng-attr-cy="{{render.origin.cy}}"
-          ng-attr-r="{{render.origin.radius}}">
+          ng-if="template.render.origin"
+          ng-attr-cx="{{template.render.origin.cx}}"
+          ng-attr-cy="{{template.render.origin.cy}}"
+          ng-attr-r="{{template.render.origin.radius}}">
   </circle>
 </g>

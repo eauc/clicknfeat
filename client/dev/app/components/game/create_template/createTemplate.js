@@ -3,10 +3,11 @@
 (function () {
   angular.module('clickApp.directives').directive('clickGameCreateTemplate', gameCreateTemplateDirectiveFactory);
 
-  gameCreateTemplateDirectiveFactory.$inject = ['template'];
-  function gameCreateTemplateDirectiveFactory(templateModel) {
+  gameCreateTemplateDirectiveFactory.$inject = ['appGame', 'template'];
+  function gameCreateTemplateDirectiveFactory(appGameService, templateModel) {
     var gameCreateTemplateDirective = {
       restrict: 'A',
+      templateUrl: 'app/components/game/create_template/create_template.html',
       link: link
     };
     return gameCreateTemplateDirective;
@@ -14,19 +15,15 @@
     function link(scope) {
       console.log('clickCreateTemplate', scope.template);
 
-      scope.onStateChangeEvent('Create.base.change', onUpdate, scope);
-      setPosition(scope);
+      scope.bindCell(onCreateUpdate, appGameService.create, scope);
 
-      function onUpdate() {
-        var state = scope.state;
-        if (R.isNil(R.path(['create', 'templates'], state))) return;
-        setPosition(scope);
-        scope.$digest();
+      function onCreateUpdate(create) {
+        if (R.isNil(create) || R.isNil(R.prop('templates', create))) return;
+        setPosition(scope, create);
       }
     }
-    function setPosition(scope) {
-      var state = scope.state;
-      var base = R.pathOr({ x: 0, y: 0 }, ['create', 'base'], state);
+    function setPosition(scope, create) {
+      var base = R.propOr({ x: 0, y: 0 }, 'base', create);
       var template = scope.template;
       scope.pos = templateModel.render(false, R.thread(template)(R.assoc('x', base.x), R.assoc('y', base.y)));
     }

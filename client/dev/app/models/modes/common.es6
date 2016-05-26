@@ -39,8 +39,8 @@
       viewZoomIn: 'alt++',
       viewZoomOut: 'alt+-',
       viewZoomReset: 'alt+z',
-      flipMap: 'ctrl+shift+f',
-      toggleMenu: 'ctrl+shift+m'
+      viewFlipMap: 'ctrl+shift+f',
+      viewToggleMenu: 'ctrl+shift+m'
     };
     const common_mode = {
       name: 'Common',

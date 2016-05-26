@@ -17,22 +17,17 @@
       const new_label = s.trim(vm.new_label);
       if(R.length(new_label) === 0) return;
 
-      $scope
-        .stateEvent('Game.command.execute',
-                    vm.cmd, [
-                      'addLabel',
-                      [new_label],
-                      [vm.selection.state.stamp]
-                    ]);
+      $scope.sendAction('Game.view.editLabel', vm.new_label);
       vm.new_label = '';
-      vm.doClose();
     }
   }
 
   gameEditLabelDirectiveFactory.$inject = [
+    'appGame',
     'gameMap',
   ];
-  function gameEditLabelDirectiveFactory(gameMapService) {
+  function gameEditLabelDirectiveFactory(appGameService,
+                                         gameMapService) {
     return {
       restrict: 'A',
       templateUrl: 'app/components/game/edit_label/edit_label.html',
@@ -49,8 +44,14 @@
       const input = container.querySelector('input');
 
       closeEditLabel();
-      scope.onStateChangeEvent('Game.editLabel.open', openEditLabel, scope);
-      scope.onStateChangeEvent('Game.editLabel.close', closeEditLabel, scope);
+      scope.bindCell((edit_label) => {
+        if(R.isNil(edit_label)) {
+          closeEditLabel();
+        }
+        else {
+          openEditLabel(edit_label);
+        }
+      }, appGameService.view.edit_label, scope);
       input.addEventListener('keydown', closeOnEscape);
       scope.edit_label.doRefresh = refreshEditLabel;
       scope.edit_label.doClose = closeEditLabel;
@@ -62,7 +63,7 @@
         }
       }
       function closeEditLabel() {
-        // console.log('closeEditLabel');
+        console.warn('closeEditLabel');
         scope.edit_label.selection = {};
 
         container.style.display = 'none';
@@ -70,12 +71,11 @@
         container.style.left = 0+'px';
         container.style.top = 0+'px';
       }
-      function openEditLabel(_event_, [cmd, selection]) {
-        // console.log('openEditLabel');
-        scope.edit_label.cmd = cmd;
-        scope.edit_label.selection = selection;
+      function openEditLabel({ type, element }) {
+        console.warn('openEditLabel');
+        scope.edit_label.type = type;
+        scope.edit_label.element = element;
         scope.edit_label.new_label = '';
-        scope.$digest();
 
         self.window.requestAnimationFrame(displayEditLabel);
       }
@@ -102,7 +102,7 @@
       function placeEditLabel() {
         const detail_rect = input.getBoundingClientRect();
         const screen_pos = gameMapService
-                .mapToScreenCoordinates(map, scope.edit_label.selection.state);
+                .mapToScreenCoordinates(map, scope.edit_label.element.state);
 
         container.style.left = (screen_pos.x - detail_rect.width / 2) + 'px';
         container.style.top = (screen_pos.y - detail_rect.height / 2) + 'px';

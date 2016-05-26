@@ -22,8 +22,8 @@
     self.window.onerror = uncaughtErrorHandler;
     return errorService;
 
-    function errorEmit(message) {
-      pubSubService.emit('error', message, event);
+    function errorEmit(...args) {
+      pubSubService.emit('error', args, event);
     }
 
     function errorAddListener(listener) {

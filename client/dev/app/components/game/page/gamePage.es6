@@ -18,9 +18,7 @@
       element
         .querySelector('#menu-toggle')
         .addEventListener('click', menuToggle);
-      scope.listenSignal(menuToggle,
-                         appGameService.view.filter(R.equals('Game.view.toggleMenu')),
-                         scope);
+      scope.listenSignal(menuToggle, appGameService.view.toggle_menu, scope);
 
       const gameview = element.querySelector('#gameview');
       const rect = gameview.getBoundingClientRect();

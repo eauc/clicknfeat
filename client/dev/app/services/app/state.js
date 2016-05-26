@@ -67,7 +67,9 @@ function _toArray(arr) { return Array.isArray(arr) ? arr : Array.from(arr); }
     }
 
     function actionStateInit() {
-      return {};
+      return {
+        ui_state: { flip_map: false }
+      };
     }
 
     function handleActionError(action, e) {

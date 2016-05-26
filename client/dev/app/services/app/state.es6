@@ -64,7 +64,9 @@
     }
 
     function actionStateInit() {
-      return {};
+      return {
+        ui_state: { flip_map: false }
+      };
     }
 
     function handleActionError(action, e) {

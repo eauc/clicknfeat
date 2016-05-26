@@ -3,9 +3,10 @@
 (function () {
   angular.module('clickApp.services').factory('createElementMode', createElementModeModelFactory);
 
-  createElementModeModelFactory.$inject = ['appState', 'commonMode'];
-  function createElementModeModelFactory(appStateService, commonModeModel) {
+  createElementModeModelFactory.$inject = ['appAction', 'appState', 'commonMode'];
+  function createElementModeModelFactory(appActionService, appStateService, commonModeModel) {
     var CREATE_LENS = R.lensProp('create');
+    var BASE_LENS = R.lensProp('base');
     return function createElementModeModel(type) {
       var createElement_actions = Object.create(commonModeModel.actions);
       createElement_actions.modeBackToDefault = modeBackToDefault;
@@ -30,26 +31,24 @@
       return createElement_mode;
 
       function onEnter() {
-        appStateService.emit('Game.moveMap.enable');
+        appActionService.defer('Game.view.moveMap', true);
       }
       function onLeave() {
-        appStateService.emit('Game.moveMap.disable');
+        appActionService.defer('Game.view.moveMap', false);
       }
       function modeBackToDefault(state) {
-        commonModeModel.actions.modeBackToDefault();
-        return R.set(CREATE_LENS, {}, state);
+        return R.thread(state)(R.set(CREATE_LENS, null), commonModeModel.actions.modeBackToDefault);
       }
       function moveMap(state, coord) {
         return R.over(CREATE_LENS, updateCreateBase$(coord), state);
       }
       function create(state, event) {
-        var is_flipped = R.path(['ui_state', 'flip_map'], state);
+        var is_flipped = R.pathOr(false, ['view', 'flip_map'], state);
         var create = R.thread(state)(R.view(CREATE_LENS), updateCreateBase$(event['click#']), R.assoc('factions', state.factions));
-        appStateService.chainReduce('Game.command.execute', 'create' + s.capitalize(type), [create, is_flipped]);
-        return R.set(CREATE_LENS, {}, state);
+        return R.thread(state)(appStateService.onAction$(R.__, ['Game.command.execute', 'create' + s.capitalize(type), [create, is_flipped]]), R.defaultTo(state), appStateService.onAction$(R.__, ['Modes.switchTo', 'Default']), R.set(CREATE_LENS, null));
       }
       function updateCreateBase(coord, create) {
-        return R.over(R.lensProp('base'), R.pipe(R.assoc('x', coord.x), R.assoc('y', coord.y)), create);
+        return R.over(BASE_LENS, R.pipe(R.assoc('x', coord.x), R.assoc('y', coord.y)), create);
       }
     };
   }

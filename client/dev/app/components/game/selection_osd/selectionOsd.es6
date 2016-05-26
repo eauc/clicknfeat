@@ -5,13 +5,15 @@
 
   gameSelectionDetailCtrl.$inject = [
     '$scope',
-    'gameFactions',
-    'gameModels',
+    'appGame',
+    // 'gameFactions',
+    // 'gameModels',
     'gameTemplates',
   ];
   function gameSelectionDetailCtrl($scope,
-                                   gameFactionsModel,
-                                   gameModelsModel,
+                                   appGameService,
+                                   // gameFactionsModel,
+                                   // gameModelsModel,
                                    gameTemplatesModel) {
     const vm = this;
     console.log('init clickGameSelectionDetailCtrl');
@@ -21,7 +23,6 @@
               };
     vm.show = { info: false };
     vm.onOpen = onOpen;
-    vm.updateElement = updateElement;
     vm.labelDisplay = labelDisplay;
 
     vm.doSetMaxDeviation = doSetMaxDeviation;
@@ -31,51 +32,52 @@
     activate();
 
     function activate() {
-      $scope.onStateChangeEvent('Game.templates.change',
-                                updateElement,
-                                $scope);
-      $scope.onStateChangeEvent('Game.models.change',
-                                updateElement,
-                                $scope);
+      $scope.listenSignal(updateTemplateElement,
+                          appGameService.templates.changes,
+                          $scope);
+      // $scope.onStateChangeEvent('Game.models.change',
+      //                           updateElement,
+      //                           $scope);
     }
-    const updateOnOpenType = {
-      template: updateTemplateElement,
-      model: updateModelElement
-    };
     function onOpen() {
       vm.show.info = false;
-      updateElement();
-    }
-    function updateElement() {
       if(R.isNil(vm.type)) return;
 
-      updateOnOpenType[vm.type]();
-      $scope.$digest();
+      if('template' === vm.type) {
+        const templates = appGameService.templates
+                .templates.sample();
+        updateTemplateElement([templates, [vm.element.stamp]]);
+      }
     }
-    function updateTemplateElement() {
-      return R.thread($scope.state.game)(
-        R.prop('templates'),
+    function updateTemplateElement([templates, stamps]) {
+      if(!R.find(R.equals(vm.element.stamp), stamps)) {
+        return;
+      }
+      R.thread(templates)(
         gameTemplatesModel.findStamp$(vm.element.stamp),
-        (template) => {
-          vm.element = template.state;
-          vm.edit.max_deviation = R.propOr(0, 'm', vm.element);
-        }
+        R.when(
+          R.exists,
+          (template) => {
+            vm.element = template.state;
+            vm.edit.max_deviation = R.propOr(0, 'm', vm.element);
+          }
+        )
       );
     }
-    function updateModelElement() {
-      return R.thread($scope.state.game)(
-        R.prop('models'),
-        gameModelsModel.findStamp$(vm.element.stamp),
-        (model) => {
-          vm.element = model.state;
-        },
-        () => gameFactionsModel
-          .getModelInfo(vm.element.info, $scope.state.factions),
-        (info) => {
-          vm.info = info;
-        }
-      );
-    }
+    // function updateModelElement() {
+    //   return R.thread($scope.state.game)(
+    //     R.prop('models'),
+    //     gameModelsModel.findStamp$(vm.element.stamp),
+    //     (model) => {
+    //       vm.element = model.state;
+    //     },
+    //     () => gameFactionsModel
+    //       .getModelInfo(vm.element.info, $scope.state.factions),
+    //     (info) => {
+    //       vm.info = info;
+    //     }
+    //   );
+    // }
     function labelDisplay(l) {
       return s.truncate(l, 12);
     }
@@ -84,7 +86,7 @@
                     ? vm.edit.max_deviation
                     : null
                   );
-      $scope.stateEvent('Game.command.execute',
+      $scope.sendAction('Game.command.execute',
                         'onTemplates',
                         [ 'setMaxDeviation', [max],
                           [vm.element.stamp]
@@ -98,7 +100,7 @@
       const new_label = s.trim(vm.edit.label);
       if(R.length(new_label) === 0) return;
 
-      $scope.stateEvent('Game.command.execute',
+      $scope.sendAction('Game.command.execute',
                         cmd,
                         [ 'addLabel', [new_label],
                           [vm.element.stamp]
@@ -110,7 +112,7 @@
                     ? 'onTemplates'
                     : 'onModels'
                   );
-      $scope.stateEvent('Game.command.execute',
+      $scope.sendAction('Game.command.execute',
                         cmd,
                         [ 'removeLabel', [label],
                           [vm.element.stamp]
@@ -119,9 +121,11 @@
   }
 
   gameSelectionDetailDirectiveFactory.$inject = [
+    'appGame',
     'gameMap',
   ];
-  function gameSelectionDetailDirectiveFactory(gameMapService) {
+  function gameSelectionDetailDirectiveFactory(appGameService,
+                                               gameMapService) {
     const gameSelectionDetailDirective = {
       restrict: 'A',
       scope: true,
@@ -140,14 +144,18 @@
 
       vm.type = 'model';
       closeSelectionDetail();
-      scope.onStateChangeEvent('Game.selectionDetail.open',
-                               openSelectionDetail, scope);
-      scope.onStateChangeEvent('Game.selectionDetail.close',
-                               closeSelectionDetail, scope);
+      scope.bindCell((detail) => {
+        if(R.isNil(detail)) {
+          closeSelectionDetail();
+        }
+        else {
+          openSelectionDetail(detail);
+        }
+      }, appGameService.view.detail, scope);
       vm.doClose = closeSelectionDetail;
 
-      function openSelectionDetail(_event_, [type, element]) {
-        // console.log('openSelectionDetail');
+      function openSelectionDetail({type, element }) {
+        console.info('openSelectionDetail');
         vm.type = type;
         vm.element = element.state;
         vm.edit = { label: '',

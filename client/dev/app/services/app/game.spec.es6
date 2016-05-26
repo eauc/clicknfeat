@@ -11,6 +11,8 @@ describe('appGame service', function() {
         .and.callFake(R.nthArg(0));
       this.appModesService = spyOnService('appModes');
       this.appStateService = spyOnService('appState');
+      this.appStateService.onAction
+        .and.callFake(R.nthArg(0));
       this.appUserService = spyOnService('appUser');
 
       this.gameModel = spyOnService('game');
@@ -18,10 +20,12 @@ describe('appGame service', function() {
       this.gameScenarioModel = spyOnService('gameScenario');
       this.gameConnectionModel = spyOnService('gameConnection');
       this.gamesModel = spyOnService('games');
+      this.gameTemplatesModel = spyOnService('gameTemplates');
 
       this.state = {
         boards: 'boards',
-        game: { local_stamp: 'game' },
+        game: { local_stamp: 'game',
+                templates: 'templates' },
         local_games: 'local_games',
         user: { state: { name: 'user' } }
       };
@@ -388,8 +392,6 @@ describe('appGame service', function() {
           'Game.command.execute',
           'setBoard', [ 'gameBoard.forName.returnValue' ]
         ]);
-      expect(this.context)
-        .toBe('appState.onAction.returnValue');
     });
   });
 
@@ -405,8 +407,99 @@ describe('appGame service', function() {
           'Game.command.execute',
           'setScenario', [ 'gameScenario.forName.returnValue' ]
         ]);
-      expect(this.context)
-        .toBe('appState.onAction.returnValue');
+    });
+  });
+
+  example(function(e) {
+    const action = `view${s.capitalize(e.action)}`;
+    context(`${action}()`, function() {
+      return this.appGameService[action](this.state);
+    }, function() {
+      beforeEach(function() {
+        this.listener = jasmine.createSpy('listener');
+        this.appGameService.view[e.signal]
+          .listen(this.listener);
+      });
+      it(`should emit "view.${e.signal}" signal`, function() {
+        expect(this.listener)
+          .toHaveBeenCalled();
+      });
+    });
+  }, [
+    [ 'action'      , 'signal'       ],
+    [ 'scrollLeft'  , 'scroll_left'  ],
+    [ 'scrollRight' , 'scroll_right' ],
+    [ 'scrollUp'    , 'scroll_up'    ],
+    [ 'scrollDown'  , 'scroll_down'  ],
+    [ 'zoomIn'      , 'zoom_in'      ],
+    [ 'zoomOut'     , 'zoom_out'     ],
+    [ 'zoomReset'   , 'zoom_reset'   ],
+    [ 'toggleMenu'  , 'toggle_menu'  ],
+  ]);
+
+  context('viewMoveMap(<set>)', function() {
+    return this.appGameService
+      .viewMoveMap(this.state, 'set');
+  }, function() {
+    it('should set view.move_map', function(){
+      expect(this.context.view.move_map)
+        .toBe('set');
+    });
+  });
+
+  describe('viewFlipMap()', function() {
+    it('should toggle view.flip_map', function() {
+      this.state = this.appGameService
+        .viewFlipMap(this.state);
+      expect(this.state.view.flip_map)
+        .toBe(true);
+
+      this.state = this.appGameService
+        .viewFlipMap(this.state);
+      expect(this.state.view.flip_map)
+        .toBe(false);
+    });
+  });
+
+  context('templateCreate(<type>)', function() {
+    return this.appGameService
+      .templateCreate(this.state, 'type');
+  }, function() {
+    it('should set create description', function(){
+      expect(this.context.create)
+        .toEqual({ base: { x: 240, y: 240, r: 0 },
+                   templates: [ { type: 'type', x: 0, y: 0, r: 0 } ]
+                 });
+    });
+
+    it('should switch to createTemplate mode', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, ['Modes.switchTo',
+                                             'CreateTemplate']);
+    });
+  });
+
+  context('templatesSet(<set>)', function() {
+    return this.appGameService
+      .templatesSet(this.state, 'set');
+  }, function() {
+    it('should set game templates', function(){
+      expect(this.context.game.templates)
+        .toBe('set');
+    });
+  });
+
+  context('templatesSetDeviationMax(<stamps>, <set>)', function() {
+    return this.appGameService
+      .templatesSetDeviationMax(this.state, 'stamps', 'max');
+  }, function() {
+    it('should set <max> deviation on <stamp> templates', function(){
+      expect(this.gameTemplatesModel.onStampsP)
+        .toHaveBeenCalledWith('setMaxDeviation', ['max'],
+                              'stamps', 'templates');
+      expect(this.appActionService.do)
+        .toHaveBeenCalledWith('Game.templates.set',
+                              'gameTemplates.onStampsP.returnValue');
     });
   });
 

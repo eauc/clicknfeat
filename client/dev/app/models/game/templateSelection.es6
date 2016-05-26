@@ -3,12 +3,10 @@
     .factory('gameTemplateSelection', gameTemplateSelectionModelFactory);
 
   gameTemplateSelectionModelFactory.$inject = [
-    'appState',
     'gameElementSelection',
     'gameTemplates',
   ];
-  function gameTemplateSelectionModelFactory(appStateService,
-                                             gameElementSelectionModel,
+  function gameTemplateSelectionModelFactory(gameElementSelectionModel,
                                              gameTemplatesModel) {
     const base = gameElementSelectionModel('template');
     const gameTemplateSelectionModel = Object.create(base);
@@ -18,20 +16,16 @@
     R.curryService(gameTemplateSelectionModel);
     return gameTemplateSelectionModel;
 
-    function templateSelectionCheckMode(selection) {
-      const state = appStateService.current();
-      return R.thread(selection)(
-        gameTemplateSelectionModel.get$('local'),
-        R.ifElse(
-          R.isEmpty,
-          () => null,
-          (local) => R.thread(local)(
-            R.head,
-            gameTemplatesModel.findStamp$(R.__, state.game.templates),
-            (template) => `${template.state.type}Template`
-          )
-        )
-      );
+    function templateSelectionCheckMode(templates, selection) {
+      const local = gameTemplateSelectionModel
+              .get('local', selection);
+      if(R.isEmpty(local)) return null;
+
+      const template = gameTemplatesModel
+              .findStamp$(R.head(local), templates);
+      if(R.isNil(template)) return null;
+
+      return `${template.state.type}Template`;
     }
   }
 })();

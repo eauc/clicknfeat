@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('templateMode', templateModeModelFactory);
 
-  templateModeModelFactory.$inject = ['elementMode', 'modes', 'settings', 'template', 'gameTemplates', 'gameTemplateSelection'];
-  function templateModeModelFactory(elementModeModel, modesModel, settingsModel, templateModel, gameTemplatesModel, gameTemplateSelectionModel) {
+  templateModeModelFactory.$inject = ['appGame', 'elementMode', 'modes', 'settings', 'template', 'gameTemplates', 'gameTemplateSelection'];
+  function templateModeModelFactory(appGameService, elementModeModel, modesModel, settingsModel, templateModel, gameTemplatesModel, gameTemplateSelectionModel) {
     var template_mode = elementModeModel('template', templateModel, gameTemplatesModel, gameTemplateSelectionModel);
     template_mode.actions.openEditLabel = templateOpenEditLabel;
     template_mode.bindings.openEditLabel = 'shift+l';
@@ -17,9 +17,11 @@
 
     function templateOpenEditLabel(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      return R.threadP(state.game)(R.prop('templates'), gameTemplatesModel.findStampP$(stamps[0]), function (template) {
-        state.queueChangeEventP('Game.editLabel.open', 'onTemplates', template);
-      });
+      var template = R.thread(state)(R.path(['game', 'templates']), gameTemplatesModel.findStamp$(stamps[0]));
+      if (R.isNil(template)) return null;
+      return R.assocPath(['view', 'edit_label'], {
+        type: 'template', element: template
+      }, state);
     }
   }
 })();

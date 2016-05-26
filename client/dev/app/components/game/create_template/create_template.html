@@ -1,0 +1,17 @@
+<g>
+  <circle ng-show="pos.type==='aoe'"
+          class="create-template-aoe"
+          ng-attr-cx="{{pos.x}}" ng-attr-cy="{{pos.y}}"
+          r="15">
+  </circle>
+  <polygon ng-show="pos.type==='spray'"
+           class="create-template-spray"
+           points="8.75,0 5.125,-59 10,-60 14.875,-59 11.25,0"
+           ng-attr-transform="{{pos.transform}}">
+  </polygon>
+  <rect ng-show="pos.type==='wall'"
+        class="create-template-wall"
+        ng-attr-x="{{pos.x}}" ng-attr-y="{{pos.y}}"
+        width="40" height="7.5">
+  </rect>
+</g>

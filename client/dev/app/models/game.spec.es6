@@ -125,10 +125,10 @@ describe('game model', function() {
           // model_selection: { local: [],
           //                    remote: []
           //                  },
-          // templates: { active: [], locked: [] },
-          // template_selection: { local: [],
-          //                       remote: []
-          //                     },
+          templates: { active: [], locked: [] },
+          template_selection: { local: [],
+                                remote: []
+                              },
           // terrains: { active: [], locked: [] },
           // terrain_selection: { local: [], remote: [] }
         });

@@ -3,6 +3,7 @@
     .factory('templateMode', templateModeModelFactory);
 
   templateModeModelFactory.$inject = [
+    'appGame',
     'elementMode',
     'modes',
     'settings',
@@ -10,7 +11,8 @@
     'gameTemplates',
     'gameTemplateSelection',
   ];
-  function templateModeModelFactory(elementModeModel,
+  function templateModeModelFactory(appGameService,
+                                    elementModeModel,
                                     modesModel,
                                     settingsModel,
                                     templateModel,
@@ -35,14 +37,14 @@
     function templateOpenEditLabel(state) {
       const stamps = gameTemplateSelectionModel
               .get('local', state.game.template_selection);
-      return R.threadP(state.game)(
-        R.prop('templates'),
-        gameTemplatesModel.findStampP$(stamps[0]),
-        (template) => {
-          state.queueChangeEventP('Game.editLabel.open',
-                                  'onTemplates', template);
-        }
+      const template = R.thread(state)(
+        R.path(['game','templates']),
+        gameTemplatesModel.findStamp$(stamps[0])
       );
+      if(R.isNil(template)) return null;
+      return R.assocPath(['view','edit_label'], {
+        type: 'template', element: template
+      }, state);
     }
   }
 })();

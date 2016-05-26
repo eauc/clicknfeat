@@ -11,6 +11,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
   gameElementsModelFactory.$inject = ['point'];
   function gameElementsModelFactory(pointModel) {
+    var ACTIVE_LENS = R.lensProp('active');
+    var LOCKED_LENS = R.lensProp('locked');
+    var STAMP_PATH = R.path(['state', 'stamp']);
     return function buildGameElementsModel(type, model) {
       var gameElementsModel = {
         create: elementsCreate,
@@ -66,14 +69,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return R.thread(elements)(gameElementsModel.findAnyStamps$(stamps), R.reject(R.isNil), R.map(model.setLock$(lock)), updateElements$(elements));
       }
       function elementsAdd(news, elements) {
-        var new_stamps = R.map(R.path(['state', 'stamp']), news);
+        var new_stamps = R.map(STAMP_PATH, news);
         return R.thread(elements)(gameElementsModel.removeStamps$(new_stamps), updateElements$(R.__, news));
       }
       function elementsRemoveStamps(stamps, elements) {
-        return R.thread(elements)(R.over(R.lensProp('active'), R.reject(inStamps)), R.over(R.lensProp('locked'), R.reject(inStamps)));
+        return R.thread(elements)(R.over(ACTIVE_LENS, R.reject(inStamps)), R.over(LOCKED_LENS, R.reject(inStamps)));
 
         function inStamps(element) {
-          return R.find(R.equals(R.path(['state', 'stamp'], element)), stamps);
+          return R.find(R.equals(STAMP_PATH(element)), stamps);
         }
       }
       function elementsCopyStamps(stamps, elements) {
@@ -99,7 +102,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       }
       function updateElements(elements, news) {
-        return R.thread(elements)(gameElementsModel.all, R.concat(news), R.uniqBy(R.path(['state', 'stamp'])), R.partition(model.isLocked), function (_ref2) {
+        return R.thread(elements)(gameElementsModel.all, R.concat(news), R.uniqBy(STAMP_PATH), R.partition(model.isLocked), function (_ref2) {
           var _ref3 = _slicedToArray(_ref2, 2);
 
           var locked = _ref3[0];

@@ -52,9 +52,6 @@
         .panel {
             margin-bottom:0px;
         }
-        .panel-heading {
-            @extend .clickable;
-        }
         .panel-content {
             min-width: 300px;
             padding: 10px;

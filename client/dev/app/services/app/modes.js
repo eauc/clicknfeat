@@ -5,7 +5,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.services').factory('appModes', appModesModelFactory);
 
-  appModesModelFactory.$inject = ['appAction', 'appError', 'appState', 'modes', 'allModes'];
+  appModesModelFactory.$inject = ['appAction', 'appError', 'appState', 'modes'];
   function appModesModelFactory(appActionService, appErrorService, appStateService, modesModel) {
     var MODES_LENS = R.lensProp('modes');
 

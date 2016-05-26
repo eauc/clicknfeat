@@ -11,6 +11,8 @@
                                                    gameElementsModel,
                                                    gameElementSelectionModel,
                                                    createElementFn) {
+      const GAME_TYPES_LENS = R.lensProp(`${type}s`);
+      const GAME_SELECTION_LENS = R.lensProp(`${type}_selection`);
       const createElementCommandModel = {
         executeP: createElementExecuteP,
         replayP: createElementReplayP,
@@ -26,7 +28,7 @@
       function createElementExecuteP(create, is_flipped, game) {
         const add$ = pointModel.addToWithFlip$(is_flipped);
         return R.threadP(create)(
-          R.prop(`${type}s`),
+          R.view(GAME_TYPES_LENS),
           R.map(addElement),
           R.reject(R.isNil),
           R.rejectIfP(R.isEmpty, `No valid ${type} definition`),
@@ -57,7 +59,7 @@
       }
       function createElementReplayP(ctxt, game) {
         return R.threadP(ctxt)(
-          R.prop(`${type}s`),
+          R.view(GAME_TYPES_LENS),
           R.map(createElementFn),
           R.reject(R.isNil),
           R.rejectIfP(R.isEmpty, `No valid ${type} definition`),
@@ -65,13 +67,13 @@
         );
       }
       function createElementUndoP(ctxt, game) {
-        const stamps = R.pluck('stamp', R.prop(`${type}s`, ctxt));
+        const stamps = R.pluck('stamp', R.view(GAME_TYPES_LENS, ctxt));
         return R.thread(game)(
-          R.over(R.lensProp(`${type}s`),
+          R.over(GAME_TYPES_LENS,
                  gameElementsModel.removeStamps$(stamps)),
-          R.over(R.lensProp(`${type}_selection`),
+          R.over(GAME_SELECTION_LENS,
                  gameElementSelectionModel.removeFrom$('local', stamps)),
-          R.over(R.lensProp(`${type}_selection`),
+          R.over(GAME_SELECTION_LENS,
                  gameElementSelectionModel.removeFrom$('remote', stamps))
         );
       }
@@ -86,7 +88,7 @@
 
         function addToGameElements(game) {
           return R.over(
-            R.lensProp(`${type}s`),
+            GAME_TYPES_LENS,
             gameElementsModel.add$(elements),
             game
           );
@@ -94,7 +96,7 @@
         function addToGameElementSelection(game) {
           const stamps = R.map(R.path(['state','stamp']), elements);
           return R.over(
-            R.lensProp(`${type}_selection`),
+            GAME_SELECTION_LENS,
             gameElementSelectionModel.set$(selection, stamps),
             game
           );

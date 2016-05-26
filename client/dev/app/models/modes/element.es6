@@ -3,11 +3,14 @@
     .factory('elementMode', elementModeModelFactory);
 
   elementModeModelFactory.$inject = [
+    'appGame',
     'appState',
     'defaultMode',
   ];
-  function elementModeModelFactory(appStateService,
+  function elementModeModelFactory(appGameService,
+                                   appStateService,
                                    defaultModeModel) {
+    const FLIP_MAP_LENS = R.lensPath(['view','flip_map']);
     return function buildElementModeModel(type,
                                           elementModel,
                                           gameElementsModel,
@@ -66,13 +69,9 @@
       return element_mode;
 
       function clearElementSelection(state) {
-        // appStateService.emit('Game.selectionDetail.close');
-        // appStateService.emit('Game.editDamage.close');
-        // appStateService.emit('Game.editLabel.close');
-        return R.over(
-          SELECTION_LENS,
-          gameElementSelectionModel.clear$('local'),
-          state
+        return R.thread(state)(
+          R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local')),
+          R.assocPath(['view','detail'], null)
         );
       }
       function copySelection(state) {
@@ -84,10 +83,9 @@
           R.view(ELEMENTS_LENS),
           gameElementsModel.copyStamps$(stamps),
           R.assoc('create', R.__, state),
-          R.tap(() => {
-            appStateService
-              .chainReduce('Modes.switchTo', `Create${s.capitalize(type)}`);
-          })
+          appStateService
+            .onAction$(R.__, [ 'Modes.switchTo',
+                               `Create${s.capitalize(type)}` ])
         );
       }
       function doDelete(state) {
@@ -95,9 +93,10 @@
           R.view(SELECTION_LENS),
           gameElementSelectionModel.get$('local')
         );
-        appStateService.chainReduce('Game.command.execute',
-                                    `delete${s.capitalize(type)}`,
-                                    [stamps]);
+        return  appStateService
+          .onAction(state,  [ 'Game.command.execute',
+                              `delete${s.capitalize(type)}`,
+                              [stamps] ]);
       }
       function toggleLock(state) {
         const stamps = R.thread(state)(
@@ -107,14 +106,16 @@
         return R.thread(state)(
           R.view(ELEMENTS_LENS),
           gameElementsModel.findStamp$(stamps[0]),
-          R.when(
+          R.ifElse(
             R.exists,
             (element) => {
               const is_locked = elementModel.isLocked(element);
-              appStateService.chainReduce('Game.command.execute',
-                                          `lock${s.capitalize(type)}s`,
-                                          [!is_locked, stamps]);
-            }
+              return appStateService
+                .onAction(state, [ 'Game.command.execute',
+                                   `lock${s.capitalize(type)}s`,
+                                   [!is_locked, stamps] ]);
+            },
+            () => state
           )
         );
       }
@@ -124,18 +125,20 @@
             R.view(SELECTION_LENS),
             gameElementSelectionModel.get$('local')
           );
-          appStateService.chainReduce('Game.command.execute',
-                                      `on${s.capitalize(type)}s`,
-                                      [ `${move}P`, [false], stamps ]);
+          return appStateService
+            .onAction(state, [ 'Game.command.execute',
+                               `on${s.capitalize(type)}s`,
+                               [ `${move}P`, [false], stamps ] ]);
         };
         element_actions[move+'Small'] = (state) => {
           const stamps = R.thread(state)(
             R.view(SELECTION_LENS),
             gameElementSelectionModel.get$('local')
           );
-          appStateService.chainReduce('Game.command.execute',
-                                      `on${s.capitalize(type)}s`,
-                                      [ `${move}P`, [true], stamps ]);
+          return appStateService
+            .onAction(state, [ 'Game.command.execute',
+                               `on${s.capitalize(type)}s`,
+                               [ `${move}P`, [true], stamps ] ]);
         };
       }
       function buildShift([shift, _key_, flip_shift]) {
@@ -144,26 +147,28 @@
             R.view(SELECTION_LENS),
             gameElementSelectionModel.get$('local')
           );
-          const element_shift = ( R.path(['ui_state', 'flip_map'], state)
+          const element_shift = ( R.view(FLIP_MAP_LENS, state)
                                   ? flip_shift
                                   : shift
                                 );
-          appStateService.chainReduce('Game.command.execute',
-                                      `on${s.capitalize(type)}s`,
-                                      [ `${element_shift}P`, [false], stamps ]);
+          return appStateService
+            .onAction(state, [ 'Game.command.execute',
+                               `on${s.capitalize(type)}s`,
+                               [ `${element_shift}P`, [false], stamps ] ]);
         };
         element_actions[shift+'Small'] = (state) => {
           const stamps = R.thread(state)(
             R.view(SELECTION_LENS),
             gameElementSelectionModel.get$('local')
           );
-          const element_shift = ( R.path(['ui_state', 'flip_map'], state)
+          const element_shift = ( R.view(FLIP_MAP_LENS, state)
                                   ? flip_shift
                                   : shift
                                 );
-          appStateService.chainReduce('Game.command.execute',
-                                      `on${s.capitalize(type)}s`,
-                                      [ `${element_shift}P`, [true], stamps ]);
+          return appStateService
+            .onAction(state, [ 'Game.command.execute',
+                               `on${s.capitalize(type)}s`,
+                               [ `${element_shift}P`, [true], stamps ] ]);
         };
       }
 
@@ -190,29 +195,28 @@
           );
         }
         function dragElement(_state_, event) {
-          return R.threadP(event.target)(
-            R.rejectIfP(elementModel.isLocked, `${s.capitalize(type)} is locked`),
-            () => {
-              updateStateWithDelta(event, event.target.state);
-              appStateService.emit(`Game.${type}.change.${event.target.state.stamp}`);
-            }
-          );
+          if(elementModel.isLocked(event.target)) {
+            return R.rejectP(`${s.capitalize(type)} is locked`);
+          }
+          updateStateWithDelta(event, event.target.state);
+          appGameService[`${type}s`].force_changes
+            .send([event.target.state.stamp]);
+          return null;
         }
-        function dragEndElement(_state_, event) {
-          return R.threadP(event.target)(
-            R.rejectIfP(elementModel.isLocked, `${s.capitalize(type)} is locked`),
-            () => {
-              event.target.state = R.clone(drag_element_start_state);
-              const end_state = R.clone(drag_element_start_state);
-              updateStateWithDelta(event, end_state);
-              appStateService.chainReduce('Game.command.execute',
-                                          `on${s.capitalize(type)}s`,
-                                          [ 'setPositionP',
-                                            [end_state],
-                                            [event.target.state.stamp]
-                                          ]);
-            }
-          );
+        function dragEndElement(state, event) {
+          if(elementModel.isLocked(event.target)) {
+            return R.rejectP(`${s.capitalize(type)} is locked`);
+          }
+          event.target.state = R.clone(drag_element_start_state);
+          const end_state = R.clone(drag_element_start_state);
+          updateStateWithDelta(event, end_state);
+          return appStateService
+            .onAction(state, [ 'Game.command.execute',
+                               `on${s.capitalize(type)}s`,
+                               [ 'setPositionP',
+                                 [end_state],
+                                 [event.target.state.stamp]
+                               ] ]);
         }
         function updateStateWithDelta(event, state) {
           const dx = event.now.x - event.start.x;

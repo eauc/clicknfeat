@@ -3,8 +3,12 @@
 (function () {
   angular.module('clickApp.services').factory('aoeTemplateMode', aoeTemplateModeModelFactory);
 
-  aoeTemplateModeModelFactory.$inject = ['appState', 'modes', 'settings', 'templateMode', 'gameTemplates', 'gameTemplateSelection', 'gameRuler', 'prompt'];
-  function aoeTemplateModeModelFactory(appStateService, modesModel, settingsModel, templateModeModel, gameTemplatesModel, gameTemplateSelectionModel, gameRulerModel, promptService) {
+  aoeTemplateModeModelFactory.$inject = ['appAction', 'appError', 'appState', 'modes', 'settings', 'templateMode', 'gameTemplates', 'gameTemplateSelection',
+  // 'gameRuler',
+  'prompt'];
+  function aoeTemplateModeModelFactory(appActionService, appErrorService, appStateService, modesModel, settingsModel, templateModeModel, gameTemplatesModel, gameTemplateSelectionModel,
+  // gameRulerModel,
+  promptService) {
     var template_actions = Object.create(templateModeModel.actions);
     template_actions.aoeSize3 = aoeSize3;
     template_actions.aoeSize4 = aoeSize4;
@@ -24,7 +28,7 @@
       setToRulerTarget: 'shift+r'
     };
     var template_bindings = R.extend(Object.create(templateModeModel.bindings), template_default_bindings);
-    var template_buttons = R.concat([['Size', 'toggle', 'size'], ['Aoe3', 'aoeSize3', 'size'], ['Aoe4', 'aoeSize4', 'size'], ['Aoe5', 'aoeSize5', 'size'], ['Deviate', 'deviate'], ['Set to Ruler', 'setToRulerTarget']], templateModeModel.buttons);
+    var template_buttons = R.concat([['Size', 'toggle', 'size'], ['Aoe3', 'aoeSize3', 'size'], ['Aoe4', 'aoeSize4', 'size'], ['Aoe5', 'aoeSize5', 'size'], ['Deviate', 'deviate'], ['Set Max Dev.', 'setMaxDeviation'], ['Set to Ruler', 'setToRulerTarget']], templateModeModel.buttons);
 
     var template_mode = {
       onEnter: function onEnter() {},
@@ -42,50 +46,54 @@
 
     function aoeSize3(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setSizeP', [3], stamps]);
+      return appStateService.onAction(state, ['Game.command.execute', 'onTemplates', ['setSizeP', [3], stamps]]);
     }
     function aoeSize4(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setSizeP', [4], stamps]);
+      return appStateService.onAction(state, ['Game.command.execute', 'onTemplates', ['setSizeP', [4], stamps]]);
     }
     function aoeSize5(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setSizeP', [5], stamps]);
+      return appStateService.onAction(state, ['Game.command.execute', 'onTemplates', ['setSizeP', [5], stamps]]);
     }
     function setTargetModel(state, event) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setTargetP', [state.factions, null, event['click#'].target], stamps]);
+      return appStateService.onAction(state, ['Game.command.execute', 'onTemplates', ['setTargetP', [state.factions, null, event['click#'].target], stamps]]);
     }
     function setMaxDeviation(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
       return R.threadP(state.game)(R.prop('templates'), gameTemplatesModel.fromStampsP$('maxDeviation', [], stamps), askForMaxP, function (value) {
         return value === 0 ? null : value;
-      }, function (value) {
-        var state = appStateService.current();
-        var game = R.prop('game', state);
-        return gameTemplatesModel.onStampsP$('setMaxDeviation', [value], stamps, game.templates);
-      }, function (templates) {
-        var state = appStateService.current();
-        var game = R.prop('game', state);
-        appStateService.reduce('Game.set', R.assoc('templates', templates, game));
+      }, R.defaultTo(null), function (max) {
+        return appActionService.do('Game.templates.setDeviationMax', stamps, max);
       });
 
       function askForMaxP(maxes) {
         var max = maxes[0];
-        return promptService.promptP('prompt', 'Set AoE max deviation :', max).catch(R.spyAndDiscardError());
+        return promptService.promptP('prompt', 'Set AoE max deviation :', max).catch(appErrorService.emit);
       }
     }
     function deviate(state) {
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      appStateService.chainReduce('Game.command.execute', 'rollDeviation', [stamps]);
+      return appStateService.onAction(state, ['Game.command.execute', 'rollDeviation', [stamps]]);
     }
-    function setToRulerTarget(state) {
-      if (!gameRulerModel.isDisplayed(state.game.ruler)) return;
+    function setToRulerTarget(_state_) {
+      // if(!gameRulerModel.isDisplayed(state.game.ruler)) return;
 
-      var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
-      R.thread(state.game)(R.prop('ruler'), gameRulerModel.targetAoEPosition$(state.game.models), function (position) {
-        appStateService.chainReduce('Game.command.execute', 'onTemplates', ['setToRulerP', [position], stamps]);
-      });
+      // const stamps = gameTemplateSelectionModel
+      //       .get('local', state.game.template_selection);
+      // R.thread(state.game)(
+      //   R.prop('ruler'),
+      //   gameRulerModel.targetAoEPosition$(state.game.models),
+      //   (position) => {
+      // return appStateService.onAction(state, [ 'Game.command.execute',
+      //                    'onTemplates',
+      //                    [ 'setToRulerP',
+      //                      [position],
+      //                      stamps
+      //                    ]);
+      //   }
+      // );
     }
   }
 })();

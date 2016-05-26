@@ -10,53 +10,46 @@
     const vm = this;
     console.log('gameToolBoxCtrl');
 
-    vm.doUseRuler = doUseRuler;
-    vm.doToggleShowRuler = doToggleShowRuler;
-    vm.doUseLos = doUseLos;
-    vm.doToggleShowLos = doToggleShowLos;
+    // vm.doUseRuler = doUseRuler;
+    // vm.doToggleShowRuler = doToggleShowRuler;
+    // vm.doUseLos = doUseLos;
+    // vm.doToggleShowLos = doToggleShowLos;
     vm.doCreateTemplate = doCreateTemplate;
 
-    activate();
+    // function doUseRuler() {
+    //   if($scope.game.currentModeIs('Ruler')) {
+    //     $scope.game.doModeAction('modeBackToDefault');
+    //   }
+    //   else {
+    //     $scope.game.doModeAction('enterRulerMode');
+    //   }
+    // }
+    // function doToggleShowRuler() {
+    //   $scope.sendAction('Game.command.execute',
+    //                     'setRuler', [
+    //                       'toggleDisplay',
+    //                       []
+    //                     ]);
+    // }
 
-    function activate() {
-      $scope.digestOnStateChangeEvent('Game.ruler.remote.change', $scope);
-      $scope.digestOnStateChangeEvent('Game.los.remote.change', $scope);
-    }
-
-    function doUseRuler() {
-      if($scope.game.currentModeIs('Ruler')) {
-        $scope.game.doModeAction('modeBackToDefault');
-      }
-      else {
-        $scope.game.doModeAction('enterRulerMode');
-      }
-    }
-    function doToggleShowRuler() {
-      $scope.stateEvent('Game.command.execute',
-                        'setRuler', [
-                          'toggleDisplay',
-                          []
-                        ]);
-    }
-
-    function doUseLos() {
-      if($scope.game.currentModeIs('Los')) {
-        $scope.game.doModeAction('modeBackToDefault');
-      }
-      else {
-        $scope.game.doModeAction('enterLosMode');
-      }
-    }
-    function doToggleShowLos() {
-      $scope.stateEvent('Game.command.execute',
-                        'setLos', [
-                          'toggleDisplay',
-                          []
-                        ]);
-    }
+    // function doUseLos() {
+    //   if($scope.game.currentModeIs('Los')) {
+    //     $scope.game.doModeAction('modeBackToDefault');
+    //   }
+    //   else {
+    //     $scope.game.doModeAction('enterLosMode');
+    //   }
+    // }
+    // function doToggleShowLos() {
+    //   $scope.sendAction('Game.command.execute',
+    //                     'setLos', [
+    //                       'toggleDisplay',
+    //                       []
+    //                     ]);
+    // }
 
     function doCreateTemplate(type) {
-      $scope.stateEvent('Game.template.create', type);
+      $scope.sendAction('Game.template.create', type);
     }
   }
 

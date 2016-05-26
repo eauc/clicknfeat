@@ -23,7 +23,7 @@
           self.window.clearTimeout(timeout);
         }
         self.window.requestAnimationFrame(function () {
-          scope.msg = msg;
+          scope.msg = R.head(R.unless(R.isArrayLike, R.of)(msg));
           scope.$digest();
         });
         timeout = self.window.setTimeout(hide, 2000);

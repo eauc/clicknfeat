@@ -15,7 +15,7 @@
       var menuToggle = buildMenuToggle(element);
 
       element.querySelector('#menu-toggle').addEventListener('click', menuToggle);
-      scope.listenSignal(menuToggle, appGameService.view.filter(R.equals('Game.view.toggleMenu')), scope);
+      scope.listenSignal(menuToggle, appGameService.view.toggle_menu, scope);
 
       var gameview = element.querySelector('#gameview');
       var rect = gameview.getBoundingClientRect();

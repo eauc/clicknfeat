@@ -5,8 +5,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('elementMode', elementModeModelFactory);
 
-  elementModeModelFactory.$inject = ['appState', 'defaultMode'];
-  function elementModeModelFactory(appStateService, defaultModeModel) {
+  elementModeModelFactory.$inject = ['appGame', 'appState', 'defaultMode'];
+  function elementModeModelFactory(appGameService, appStateService, defaultModeModel) {
+    var FLIP_MAP_LENS = R.lensPath(['view', 'flip_map']);
     return function buildElementModeModel(type, elementModel, gameElementsModel, gameElementSelectionModel) {
       var ELEMENTS_LENS = R.lensPath(['game', type + 's']);
       var SELECTION_LENS = R.lensPath(['game', type + '_selection']);
@@ -48,26 +49,23 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return element_mode;
 
       function clearElementSelection(state) {
-        // appStateService.emit('Game.selectionDetail.close');
-        // appStateService.emit('Game.editDamage.close');
-        // appStateService.emit('Game.editLabel.close');
-        return R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local'), state);
+        return R.thread(state)(R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local')), R.assocPath(['view', 'detail'], null));
       }
       function copySelection(state) {
         var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-        return R.thread(state)(R.view(ELEMENTS_LENS), gameElementsModel.copyStamps$(stamps), R.assoc('create', R.__, state), R.tap(function () {
-          appStateService.chainReduce('Modes.switchTo', 'Create' + s.capitalize(type));
-        }));
+        return R.thread(state)(R.view(ELEMENTS_LENS), gameElementsModel.copyStamps$(stamps), R.assoc('create', R.__, state), appStateService.onAction$(R.__, ['Modes.switchTo', 'Create' + s.capitalize(type)]));
       }
       function doDelete(state) {
         var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-        appStateService.chainReduce('Game.command.execute', 'delete' + s.capitalize(type), [stamps]);
+        return appStateService.onAction(state, ['Game.command.execute', 'delete' + s.capitalize(type), [stamps]]);
       }
       function toggleLock(state) {
         var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-        return R.thread(state)(R.view(ELEMENTS_LENS), gameElementsModel.findStamp$(stamps[0]), R.when(R.exists, function (element) {
+        return R.thread(state)(R.view(ELEMENTS_LENS), gameElementsModel.findStamp$(stamps[0]), R.ifElse(R.exists, function (element) {
           var is_locked = elementModel.isLocked(element);
-          appStateService.chainReduce('Game.command.execute', 'lock' + s.capitalize(type) + 's', [!is_locked, stamps]);
+          return appStateService.onAction(state, ['Game.command.execute', 'lock' + s.capitalize(type) + 's', [!is_locked, stamps]]);
+        }, function () {
+          return state;
         }));
       }
       function buildMove(_ref) {
@@ -77,11 +75,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         element_actions[move] = function (state) {
           var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-          appStateService.chainReduce('Game.command.execute', 'on' + s.capitalize(type) + 's', [move + 'P', [false], stamps]);
+          return appStateService.onAction(state, ['Game.command.execute', 'on' + s.capitalize(type) + 's', [move + 'P', [false], stamps]]);
         };
         element_actions[move + 'Small'] = function (state) {
           var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-          appStateService.chainReduce('Game.command.execute', 'on' + s.capitalize(type) + 's', [move + 'P', [true], stamps]);
+          return appStateService.onAction(state, ['Game.command.execute', 'on' + s.capitalize(type) + 's', [move + 'P', [true], stamps]]);
         };
       }
       function buildShift(_ref3) {
@@ -93,13 +91,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         element_actions[shift] = function (state) {
           var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-          var element_shift = R.path(['ui_state', 'flip_map'], state) ? flip_shift : shift;
-          appStateService.chainReduce('Game.command.execute', 'on' + s.capitalize(type) + 's', [element_shift + 'P', [false], stamps]);
+          var element_shift = R.view(FLIP_MAP_LENS, state) ? flip_shift : shift;
+          return appStateService.onAction(state, ['Game.command.execute', 'on' + s.capitalize(type) + 's', [element_shift + 'P', [false], stamps]]);
         };
         element_actions[shift + 'Small'] = function (state) {
           var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));
-          var element_shift = R.path(['ui_state', 'flip_map'], state) ? flip_shift : shift;
-          appStateService.chainReduce('Game.command.execute', 'on' + s.capitalize(type) + 's', [element_shift + 'P', [true], stamps]);
+          var element_shift = R.view(FLIP_MAP_LENS, state) ? flip_shift : shift;
+          return appStateService.onAction(state, ['Game.command.execute', 'on' + s.capitalize(type) + 's', [element_shift + 'P', [true], stamps]]);
         };
       }
 
@@ -120,18 +118,21 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           return R.over(SELECTION_LENS, gameElementSelectionModel.set$('local', [event.target.state.stamp]), state);
         }
         function dragElement(_state_, event) {
-          return R.threadP(event.target)(R.rejectIfP(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
-            updateStateWithDelta(event, event.target.state);
-            appStateService.emit('Game.' + type + '.change.' + event.target.state.stamp);
-          });
+          if (elementModel.isLocked(event.target)) {
+            return R.rejectP(s.capitalize(type) + ' is locked');
+          }
+          updateStateWithDelta(event, event.target.state);
+          appGameService[type + 's'].force_changes.send([event.target.state.stamp]);
+          return null;
         }
-        function dragEndElement(_state_, event) {
-          return R.threadP(event.target)(R.rejectIfP(elementModel.isLocked, s.capitalize(type) + ' is locked'), function () {
-            event.target.state = R.clone(drag_element_start_state);
-            var end_state = R.clone(drag_element_start_state);
-            updateStateWithDelta(event, end_state);
-            appStateService.chainReduce('Game.command.execute', 'on' + s.capitalize(type) + 's', ['setPositionP', [end_state], [event.target.state.stamp]]);
-          });
+        function dragEndElement(state, event) {
+          if (elementModel.isLocked(event.target)) {
+            return R.rejectP(s.capitalize(type) + ' is locked');
+          }
+          event.target.state = R.clone(drag_element_start_state);
+          var end_state = R.clone(drag_element_start_state);
+          updateStateWithDelta(event, end_state);
+          return appStateService.onAction(state, ['Game.command.execute', 'on' + s.capitalize(type) + 's', ['setPositionP', [end_state], [event.target.state.stamp]]]);
         }
         function updateStateWithDelta(event, state) {
           var dx = event.now.x - event.start.x;

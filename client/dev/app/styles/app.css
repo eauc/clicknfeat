@@ -2,7 +2,7 @@ input.ng-invalid-required {
   border-color: #A94442;
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset; }
 
-.clickable, ul.nav-tabs li, #game #selection-osd .panel-heading {
+.clickable, ul.nav-tabs li {
   cursor: pointer; }
 
 .hint {

@@ -4,6 +4,7 @@ describe('aoeTemplateMode model', function() {
     function(aoeTemplateModeModel) {
       this.aoeTemplateModeModel = aoeTemplateModeModel;
 
+      this.appActionService = spyOnService('appAction');
       this.appStateService = spyOnService('appState');
       this.gameTemplatesModel = spyOnService('gameTemplates');
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
@@ -34,9 +35,9 @@ describe('aoeTemplateMode model', function() {
     });
 
     it('should execute rollDeviation command', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'rollDeviation', [['stamp']]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [ 'Game.command.execute',
+                                            'rollDeviation', [['stamp']] ]);
     });
   });
 
@@ -51,8 +52,6 @@ describe('aoeTemplateMode model', function() {
         .resolveWith([42]);
       this.promptService.promptP
         .resolveWith(71);
-      this.appStateService.current
-        .and.returnValue(this.state);
     });
 
     it('should get current selection max deviation', function() {
@@ -74,8 +73,9 @@ describe('aoeTemplateMode model', function() {
         .resolveWith(42);
     }, function() {
       it('should set max deviation', function() {
-        expect(this.gameTemplatesModel.onStampsP)
-          .toHaveBeenCalledWith('setMaxDeviation', [42], ['stamp'], 'templates');
+        expect(this.appActionService.do)
+          .toHaveBeenCalledWith('Game.templates.setDeviationMax',
+                                ['stamp'], 42);
       });
     });
 
@@ -84,8 +84,9 @@ describe('aoeTemplateMode model', function() {
         .resolveWith(0);
     }, function() {
       it('should set max deviation', function() {
-        expect(this.gameTemplatesModel.onStampsP)
-          .toHaveBeenCalledWith('setMaxDeviation', [null], ['stamp'], 'templates');
+        expect(this.appActionService.do)
+          .toHaveBeenCalledWith('Game.templates.setDeviationMax',
+                                ['stamp'], null);
       });
     });
 
@@ -94,14 +95,15 @@ describe('aoeTemplateMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should reset max deviation', function() {
-        expect(this.gameTemplatesModel.onStampsP)
-          .toHaveBeenCalledWith('setMaxDeviation', [null], ['stamp'], 'templates');
+        expect(this.appActionService.do)
+          .toHaveBeenCalledWith('Game.templates.setDeviationMax',
+                                ['stamp'], null);
       });
     });
   });
 
   example(function(e) {
-    context('when user set '+e.action+' on template selection', function() {
+    context(`when user set ${e.action} on template selection`, function() {
       return this.aoeTemplateModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -116,10 +118,12 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should execute onTemplates/setSize command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTemplates',
-                                [ 'setSizeP', [e.size], ['stamp'] ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onTemplates',
+            [ 'setSizeP', [e.size], ['stamp'] ]
+          ]);
       });
     });
   }, [
@@ -143,17 +147,19 @@ describe('aoeTemplateMode model', function() {
     it('should set target for current template selection', function() {
       expect(this.gameTemplateSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onTemplates',
-                              [ 'setTargetP',
-                                ['factions', null, this.target],
-                                ['stamp']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'onTemplates',
+          [ 'setTargetP',
+            ['factions', null, this.target],
+            ['stamp']
+          ]
+        ]);
     });
   });
 
-  context('when user set aoe to ruler target', function() {
+  xcontext('when user set aoe to ruler target', function() {
     return this.aoeTemplateModeModel.actions
       .setToRulerTarget(this.state);
   }, function() {
@@ -169,7 +175,7 @@ describe('aoeTemplateMode model', function() {
         .and.returnValue(false);
     }, function() {
       it('should not execute command', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -189,13 +195,15 @@ describe('aoeTemplateMode model', function() {
       });
 
       it('should execute onTemplates/setToRuler command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTemplates',
-                                [ 'setToRulerP',
-                                  ['gameRuler.targetAoEPosition.returnValue'],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onTemplates',
+            [ 'setToRulerP',
+              ['gameRuler.targetAoEPosition.returnValue'],
+              ['stamp']
+            ]
+          ]);
       });
     });
   });

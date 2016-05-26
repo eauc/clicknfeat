@@ -6,6 +6,9 @@
     'point',
   ];
   function gameElementsModelFactory(pointModel) {
+    const ACTIVE_LENS = R.lensProp('active');
+    const LOCKED_LENS = R.lensProp('locked');
+    const STAMP_PATH = R.path(['state','stamp']);
     return function buildGameElementsModel(type, model) {
       const gameElementsModel = {
         create: elementsCreate,
@@ -79,7 +82,7 @@
         );
       }
       function elementsAdd(news, elements) {
-        const new_stamps = R.map(R.path(['state','stamp']), news);
+        const new_stamps = R.map(STAMP_PATH, news);
         return R.thread(elements)(
           gameElementsModel.removeStamps$(new_stamps),
           updateElements$(R.__, news)
@@ -87,12 +90,12 @@
       }
       function elementsRemoveStamps(stamps, elements) {
         return R.thread(elements)(
-          R.over(R.lensProp('active'), R.reject(inStamps)),
-          R.over(R.lensProp('locked'), R.reject(inStamps))
+          R.over(ACTIVE_LENS, R.reject(inStamps)),
+          R.over(LOCKED_LENS, R.reject(inStamps))
         );
 
         function inStamps(element) {
-          return R.find(R.equals(R.path(['state', 'stamp'], element)), stamps);
+          return R.find(R.equals(STAMP_PATH(element)), stamps);
         }
       }
       function elementsCopyStamps(stamps, elements) {
@@ -143,7 +146,7 @@
         return R.thread(elements)(
           gameElementsModel.all,
           R.concat(news),
-          R.uniqBy(R.path(['state','stamp'])),
+          R.uniqBy(STAMP_PATH),
           R.partition(model.isLocked),
           ([locked, active]) => ({
             active: active,

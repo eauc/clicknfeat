@@ -6,6 +6,14 @@
     'point',
   ];
   function elementModelFactory(pointModel) {
+    const STATE_LENS = R.lensProp('state');
+    const STAMP_LENS = R.lensPath(['state', 'stamp']);
+    const LOCK_LENS = R.lensPath(['state', 'lk']);
+    const LABEL_LENS = R.lensPath(['state', 'l']);
+    const X_LENS = R.lensPath(['state', 'x']);
+    const Y_LENS = R.lensPath(['state', 'y']);
+    const R_LENS = R.lensPath(['state', 'y']);
+    const saturateXY = R.compose(R.max(0), R.min(480));
     return function buildElementModel(type, MOVES) {
       const elementModel = {
         createDefault: elementCreateDefault,
@@ -52,38 +60,35 @@
       function elementCreate(temp) {
         return R.thread(temp)(
           this.createDefault,
-          (element) => {
+          R.tap((element) => {
             R.deepExtend(element.state, temp);
-            return element;
-          },
+          }),
           this.checkState
         );
       }
       function elementStamp(element) {
-        return R.path(['state','stamp'], element);
+        return R.set(STAMP_LENS, element);
       }
       function elementState(element) {
-        return R.prop('state', element);
+        return R.view(STATE_LENS, element);
       }
       function elementSaveState(element) {
-        return R.clone(R.prop('state', element));
+        return R.clone(R.view(STATE_LENS, element));
       }
       function elementSetState(state, element) {
-        return R.assoc('state', R.clone(state), element);
+        return R.set(STATE_LENS, R.clone(state), element);
       }
       function elementCheckState(element) {
         return R.thread(element)(
-          R.over(R.lensPath(['state','x']),
-                 R.compose(R.max(0), R.min(480))),
-          R.over(R.lensPath(['state','y']),
-                 R.compose(R.max(0), R.min(480)))
+          R.over(X_LENS, saturateXY),
+          R.over(Y_LENS, saturateXY)
         );
       }
       function elementIsLocked(element) {
-        return R.path(['state', 'lk'], element);
+        return R.view(LOCK_LENS, element);
       }
       function elementSetLock(set, element) {
-        return R.assocPath(['state','lk'], set, element);
+        return R.set(LOCK_LENS, set, element);
       }
       function moveElementP(move) {
         return function(...args) {
@@ -92,99 +97,109 @@
           return R.threadP(element)(
             R.rejectIfP(this.isLocked,
                        `${s.capitalize(type)} is locked`),
-            (element) => move.apply(null, [...params, element]),
+            (element) => move(...params, element),
             this.checkState
           );
         };
       }
       function elementSetPosition(pos, element) {
         return R.thread(element)(
-          R.assocPath(['state','x'], pos.x),
-          R.assocPath(['state','y'], pos.y)
+          R.set(X_LENS, pos.x),
+          R.set(Y_LENS, pos.y)
         );
       }
       function elementShiftPosition(shift, element) {
         return R.thread(element)(
-          R.assocPath(['state','x'], element.state.x + shift.x),
-          R.assocPath(['state','y'], element.state.y + shift.y)
+          R.set(X_LENS, element.state.x + shift.x),
+          R.set(Y_LENS, element.state.y + shift.y)
         );
       }
       function elementSetOrientation(orientation, element) {
-        return R.thread(element)(
-          R.assocPath(['state','r'], orientation)
-        );
+        return R.set(R_LENS, orientation, element);
       }
       function elementMoveFront(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.moveFront$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.moveFront$(dist),
+          element
         );
       }
       function elementMoveBack(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.moveBack$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.moveBack$(dist),
+          element
         );
       }
       function elementRotateLeft(small, element) {
         const angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.rotateLeft$(angle))
+        return R.over(
+          STATE_LENS,
+          pointModel.rotateLeft$(angle),
+          element
         );
       }
       function elementRotateRight(small, element) {
         const angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.rotateRight$(angle))
+        return R.over(
+          STATE_LENS,
+          pointModel.rotateRight$(angle),
+          element
         );
       }
       function elementShiftLeft(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.shiftLeft$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.shiftLeft$(dist),
+          element
         );
       }
       function elementShiftRight(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.shiftRight$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.shiftRight$(dist),
+          element
         );
       }
       function elementShiftUp(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.shiftUp$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.shiftUp$(dist),
+          element
         );
       }
       function elementShiftDown(small, element) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
-        return R.thread(element)(
-          R.over(R.lensProp('state'),
-                 pointModel.shiftDown$(dist))
+        return R.over(
+          STATE_LENS,
+          pointModel.shiftDown$(dist),
+          element
         );
       }
       function elementAddLabel(label, element) {
-        return R.over(R.lensPath(['state','l']),
-                      R.compose(R.uniq, R.append(label)),
-                      element);
+        return R.over(
+          LABEL_LENS,
+          R.compose(R.uniq, R.append(label)),
+          element
+        );
       }
       function elementRemoveLabel(label, element) {
-        return R.over(R.lensPath(['state','l']),
-                      R.reject(R.equals(label)),
-                      element);
+        return R.over(
+          LABEL_LENS,
+          R.reject(R.equals(label)),
+          element
+        );
       }
       function elementClearLabel(element) {
-        return R.assocPath(['state','l'], [], element);
+        return R.set(LABEL_LENS, [], element);
       }
       function elementFullLabel(element) {
-        return R.pathOr([], ['state','l'], element).join(' ');
+        return R.viewOr([], LABEL_LENS, element).join(' ');
       }
       function elementRenderLabel({ rotate_with_model = false,
                                     flipped = false,

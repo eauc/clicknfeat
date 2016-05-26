@@ -5,6 +5,8 @@
 
   aoeTemplateModelFactory.$inject = ['template', 'point'];
   function aoeTemplateModelFactory(templateModel, pointModel) {
+    var SIZE_LENS = R.lensPath(['state', 's']);
+    var MAX_DEVIATION_LENS = R.lensPath(['state', 'm']);
     var aoeTemplateModel = Object.create(templateModel);
     R.deepExtend(aoeTemplateModel, {
       _create: aoeTemplateCreate,
@@ -23,31 +25,31 @@
     return aoeTemplateModel;
 
     function aoeTemplateCreate(temp) {
-      return R.assocPath(['state', 's'], 15, temp);
+      return R.set(SIZE_LENS, 15, temp);
     }
     function aoeTemplateSetSizeP(size, temp) {
       return R.threadP(size)(function (size) {
         return R.find(R.equals(size), [3, 4, 5]);
       }, R.rejectIfP(R.isNil, 'Invalid size for an AoE'), function () {
-        return R.assocPath(['state', 's'], size * 5, temp);
+        return R.set(SIZE_LENS, size * 5, temp);
       });
     }
     function aoeTemplateSize(temp) {
-      return R.path(['state', 's'], temp);
+      return R.view(SIZE_LENS, temp);
     }
     function aoeTemplateDeviateP(dir, len, temp) {
       return R.threadP(temp)(R.rejectIfP(templateModel.isLocked, 'Template is locked'), function (temp) {
         dir = temp.state.r + 60 * (dir - 1);
-        var max_len = R.defaultTo(len, R.path(['state', 'm'], temp));
+        var max_len = R.viewOr(len, MAX_DEVIATION_LENS, temp);
         len = Math.min(len, max_len);
         return R.thread(temp)(R.over(R.lensProp('state'), pointModel.translateInDirection$(len * 10, dir)), R.assocPath(['state', 'r'], dir), templateModel.checkState);
       });
     }
     function aoeTemplateMaxDeviation(temp) {
-      return R.pathOr(0, ['state', 'm'], temp);
+      return R.viewOr(0, MAX_DEVIATION_LENS, temp);
     }
     function aoeTemplateSetMaxDeviation(max, temp) {
-      return R.assocPath(['state', 'm'], max, temp);
+      return R.set(MAX_DEVIATION_LENS, max, temp);
     }
     function aoeTemplateSetToRulerP(pos, temp) {
       return R.threadP(temp)(R.rejectIfP(templateModel.isLocked, 'Template is locked'), function (temp) {

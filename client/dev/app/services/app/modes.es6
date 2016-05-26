@@ -7,7 +7,6 @@
     'appError',
     'appState',
     'modes',
-    'allModes',
   ];
   function appModesModelFactory(appActionService,
                                 appErrorService,
