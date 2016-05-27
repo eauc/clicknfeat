@@ -3,9 +3,11 @@
     .factory('gameTerrainInfo', gameTerrainInfoModelFactory);
 
   gameTerrainInfoModelFactory.$inject = [
+    'appError',
     'http',
   ];
-  function gameTerrainInfoModelFactory(httpService) {
+  function gameTerrainInfoModelFactory(appErrorService,
+                                       httpService) {
     const gameTerrainInfoModel = {
       initP: gameTerrainInfoInitP,
       getInfo: gameTerrainInfoGetInfo
@@ -18,8 +20,8 @@
       return httpService
         .getP('/data/terrains.json')
         .catch((error) => {
-          R.spyError('Error getting terrains.json')(error);
-          return [];
+          appErrorService
+            .emit('Error getting terrains.json', error);
         })
         .then(updateTerrains);
     }

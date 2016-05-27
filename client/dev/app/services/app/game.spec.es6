@@ -14,6 +14,8 @@ describe('appGame service', function() {
       this.appStateService.onAction
         .and.callFake(R.nthArg(0));
       this.appUserService = spyOnService('appUser');
+      this.fileExportService = spyOnService('fileExport');
+      this.fileImportService = spyOnService('fileImport');
 
       this.gameModel = spyOnService('game');
       this.gameBoardModel = spyOnService('gameBoard');
@@ -21,16 +23,66 @@ describe('appGame service', function() {
       this.gameConnectionModel = spyOnService('gameConnection');
       this.gamesModel = spyOnService('games');
       this.gameTemplatesModel = spyOnService('gameTemplates');
+      this.gameTerrainsModel = spyOnService('gameTerrains');
 
       this.state = {
         boards: 'boards',
+        terrains: 'terrains_info',
         game: { local_stamp: 'game',
-                templates: 'templates' },
+                board: 'board',
+                templates: 'templates',
+                terrains: 'terrains' },
         local_games: 'local_games',
         user: { state: { name: 'user' } }
       };
     }
   ]));
+
+  context('exportCurrent(<previous>, <game>)', function() {
+    return this.appGameService
+      .exportCurrent({ url: 'previous_url' }, 'game');
+  }, function() {
+    it('should cleanup previous url', function() {
+      expect(this.fileExportService.cleanup)
+        .toHaveBeenCalledWith('previous_url');
+    });
+
+    it('should return export object', function() {
+      expect(this.fileExportService.generate)
+        .toHaveBeenCalledWith('json','game');
+      expect(this.context)
+        .toEqual({ name: 'clicknfeat_game.json',
+                   url: 'fileExport.generate.returnValue'
+                 });
+    });
+  });
+
+  context('saveCurrent()', function() {
+    return this.appGameService
+      .saveCurrent(this.state);
+  }, function() {
+    context('when current game has a local stamp', function() {
+      this.state.game.local_stamp = 'stamp';
+    }, function() {
+      it('should update local games', function() {
+        expect(this.appGamesService.localUpdate)
+          .toHaveBeenCalledWith(this.state, this.state.game);
+        expect(this.context)
+          .toEqual(this.state);
+      });
+    });
+
+    context('when current game does not have a local stamp', function() {
+      this.state.game.local_stamp = null;
+    }, function() {
+      it('should not update local games', function() {
+        expect(this.appGamesService.localUpdate)
+          .not.toHaveBeenCalled();
+        expect(this.context)
+          .toBe(this.state);
+      });
+    });
+  });
 
   context('set(<game>)', function() {
     return this.appGameService
@@ -395,6 +447,44 @@ describe('appGame service', function() {
     });
   });
 
+  context('boardImportFile(<file>)', function() {
+    return this.appGameService
+      .boardImportFile(this.state, 'file');
+  }, function() {
+    it('should import file data', function() {
+      expect(this.fileImportService.readP)
+        .toHaveBeenCalledWith('json', 'file');
+    });
+
+    it('should execute setBoardData command', function() {
+      expect(this.appActionService.do)
+        .toHaveBeenCalledWith('Game.command.execute',
+                              'setBoardData',
+                              [ 'fileImport.readP.returnValue' ]);
+    });
+  });
+
+  context('boardExport(<previous>, <game>)', function() {
+    return this.appGameService
+      .boardExport({ url: 'previous_url' }, this.state.game);
+  }, function() {
+    it('should export board & terrain data', function() {
+      expect(this.gameTerrainsModel.copyAll)
+        .toHaveBeenCalledWith('terrains');
+      expect(this.fileExportService.generate)
+        .toHaveBeenCalledWith('json', {
+          board: 'board',
+          terrain: {
+            base: { x: 0, y: 0, r: 0 },
+            terrains: 'gameTerrains.copyAll.returnValue'
+          }
+        });
+      expect(this.context)
+        .toEqual({ name: 'clicknfeat_board.json',
+                   url: 'fileExport.generate.returnValue' });
+    });
+  });
+
   context('scenarioSet(<name>, <group>)', function() {
     return this.appGameService
       .scenarioSet(this.state, 'name', 'group');
@@ -500,6 +590,56 @@ describe('appGame service', function() {
       expect(this.appActionService.do)
         .toHaveBeenCalledWith('Game.templates.set',
                               'gameTemplates.onStampsP.returnValue');
+    });
+  });
+
+  context('terrainCreate(<info>)', function() {
+    return this.appGameService
+      .terrainCreate(this.state, 'info');
+  }, function() {
+    it('should set create description', function(){
+      expect(this.context.create)
+        .toEqual({ base: { x: 240, y: 240, r: 0 },
+                   terrains: [ { info: 'info', x: 0, y: 0, r: 0 } ],
+                   infos: 'terrains_info'
+                 });
+    });
+
+    it('should switch to createTerrain mode', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, ['Modes.switchTo',
+                                             'CreateTerrain']);
+    });
+  });
+
+  context('terrainsSet(<set>)', function() {
+    return this.appGameService
+      .terrainsSet(this.state, 'set');
+  }, function() {
+    it('should set game terrains', function(){
+      expect(this.context.game.terrains)
+        .toBe('set');
+    });
+  });
+
+  context('terrainsReset()', function() {
+    return this.appGameService
+      .terrainsReset(this.state);
+  }, function() {
+    beforeEach(function() {
+      this.gameTerrainsModel.all.and.returnValue([
+        { state: { stamp: 'stamp1' } },
+        { state: { stamp: 'stamp2' } },
+      ]);
+    });
+
+    it('should delete all game terrains', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'deleteTerrain',
+          [ [ 'stamp1', 'stamp2' ] ]
+        ]);
     });
   });
 

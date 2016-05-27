@@ -3,13 +3,15 @@
     .factory('deleteTerrainCommand', deleteTerrainCommandModelFactory);
 
   deleteTerrainCommandModelFactory.$inject = [
+    'appData',
     'deleteElementCommand',
     'commands',
     'terrain',
     'gameTerrains',
     'gameTerrainSelection',
   ];
-  function deleteTerrainCommandModelFactory(deleteElementCommandModel,
+  function deleteTerrainCommandModelFactory(appDataService,
+                                            deleteElementCommandModel,
                                             commandsModel,
                                             terrainModel,
                                             gameTerrainsModel,
@@ -18,8 +20,15 @@
             deleteElementCommandModel('terrain',
                                       terrainModel,
                                       gameTerrainsModel,
-                                      gameTerrainSelectionModel);
+                                      gameTerrainSelectionModel,
+                                      tryToCreateTerrain);
     commandsModel.registerCommand('deleteTerrain', deleteTerrainCommandModel);
     return deleteTerrainCommandModel;
+
+    function tryToCreateTerrain(terrain) {
+      const terrains = appDataService.terrains.sample();
+      return terrainModel
+        .create(terrains, terrain);
+    }
   }
 })();

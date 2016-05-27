@@ -9,14 +9,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   clickGameMapDirectiveFactory.$inject = ['appAction', 'appGame',
   // 'appState',
-  'gameMap',
-  // 'terrain',
-  'commonMode'];
+  'gameMap', 'terrain', 'commonMode'];
   function clickGameMapDirectiveFactory(appActionService, appGameService,
   // appStateService,
-  gameMapService,
-  // terrainModel,
-  commonModeModel) {
+  gameMapService, terrainModel, commonModeModel) {
     var log = true // eslint-disable-line
     ? R.bind(console.log, console) : function () {};
     return {
@@ -163,12 +159,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           var emit = drag.active ? 'drag' : 'dragStart';
           drag.active = true;
 
-          // if('Terrain' === drag.target.type &&
-          //    terrainModel.isLocked(drag.target.target)) {
-          //   drag.target = { type: 'Map',
-          //                   target: null
-          //                 };
-          // }
+          if ('Terrain' === drag.target.type && terrainModel.isLocked(drag.target.target)) {
+            drag.target = { type: 'Map',
+              target: null
+            };
+          }
           appActionService.do('Modes.current.action', emit + drag.target.type, [{ target: drag.target.target,
             start: drag.start,
             now: drag.now

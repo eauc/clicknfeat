@@ -4,26 +4,25 @@
 
   gameSaveCtrl.$inject = [
     '$scope',
+    'appGame',
   ];
-  function gameSaveCtrl($scope) {
+  function gameSaveCtrl($scope,
+                       appGameService) {
     const vm = this;
     console.log('init gameSaveCtrl');
 
     self.window.requestAnimationFrame(activate);
 
     function activate() {
-      $scope.bindCell($scope.state.exports.game, (game_exp) => {
+      $scope.bindCell((game_exp) => {
         vm.game_export = game_exp;
-        $scope.$digest();
-      }, $scope);
-      $scope.bindCell($scope.state.exports.board, (board_exp) => {
+      }, appGameService.export.game, $scope);
+      $scope.bindCell((board_exp) => {
         vm.board_export = board_exp;
-        $scope.$digest();
-      }, $scope);
-      $scope.bindCell($scope.state.exports.models, (models_exp) => {
-        vm.models_export = models_exp;
-        $scope.$digest();
-      }, $scope);
+      }, appGameService.export.board, $scope);
+      // $scope.bindCell((models_exp) => {
+      //   vm.models_export = models_exp;
+      // }, $scope);
     }
   }
 })();

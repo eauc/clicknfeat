@@ -29,14 +29,23 @@
     const base = elementModel('terrain', MOVES);
     const terrainModel = Object.create(base);
     R.deepExtend(terrainModel, {
+      create: terrainCreate,
       render: terrainModelRender
     });
     R.curryService(terrainModel);
     return terrainModel;
 
-    function terrainModelRender(infos, state) {
+    function terrainCreate(terrains, terr) {
       const info = gameTerrainInfoModel
-              .getInfo(state.info, infos);
+              .getInfo(terr.info, terrains);
+      if(R.isNil(info)) return null;
+
+      return R.thread(terr)(
+        (terr) => base.create(terr),
+        R.assoc('info', info)
+      );
+    }
+    function terrainModelRender(info, state) {
       return {
         stamp: state.stamp,
         img_link: info.img.link,

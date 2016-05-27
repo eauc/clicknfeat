@@ -13,8 +13,8 @@
     // 'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
-    // 'gameTerrains',
-    // 'gameTerrainSelection',
+    'gameTerrains',
+    'gameTerrainSelection',
   ];
   function gameModelFactory(jsonStringifierService,
                             commandsModel,
@@ -25,9 +25,9 @@
                             // gameModelSelectionModel,
                             // gameRulerModel,
                             gameTemplatesModel,
-                            gameTemplateSelectionModel
-                            // gameTerrainsModel,
-                            // gameTerrainSelectionModel
+                            gameTemplateSelectionModel,
+                            gameTerrainsModel,
+                            gameTerrainSelectionModel
                            ) {
     const DICE_LENS = R.lensProp('dice');
     const COMMANDS_LENS = R.lensProp('commands');
@@ -302,8 +302,8 @@
         // model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),
         template_selection: gameTemplateSelectionModel.create(),
-        // terrains: gameTerrainsModel.create(),
-        // terrain_selection: gameTerrainSelectionModel.create(),
+        terrains: gameTerrainsModel.create(),
+        terrain_selection: gameTerrainSelectionModel.create()
       };
     }
     function gameReplayAllP(game) {

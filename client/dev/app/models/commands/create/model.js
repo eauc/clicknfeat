@@ -9,9 +9,8 @@
     commandsModel.registerCommand('createModel', createModelCommandModel);
     return createModelCommandModel;
 
-    function tryToCreateModel(model) {
-      var state = appStateService.current();
-      return modelModel.create(state.factions, model);
+    function tryToCreateModel(create, model) {
+      return modelModel.create(create.infos, model);
     }
   }
 })();

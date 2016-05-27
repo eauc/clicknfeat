@@ -1,17 +1,21 @@
 <g ng-repeat="(i,terrain) in state.game.terrains[type] track by terrain.state.stamp"
    click-game-terrain
-   ng-attr-transform="{{pos.transform}}"
+   ng-attr-transform="{{terrain.render.transform}}"
    ng-class="{
              'local-selection': selection.local,
              'remote-selection': selection.remote
              }">
   <image class="terrain-image"
-         data-stamp="null"
+         data-stamp="{{::terrain.render.stamp}}"
          x="0" y="0"
-         width="0" height="0">
+         xlink:href=""
+         ng-attr-xlink:href="{{::terrain.render.img_link}}"
+         ng-attr-width="{{::terrain.render.width}}"
+         ng-attr-height="{{::terrain.render.height}}">
   </image>
   <rect class="terrain-edge"
         x="0" y="0"
-        width="0" height="0">
+         ng-attr-width="{{::terrain.render.width}}"
+         ng-attr-height="{{::terrain.render.height}}">
   </rect>
 </g>

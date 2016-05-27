@@ -7,14 +7,14 @@
     'appGame',
     // 'appState',
     'gameMap',
-    // 'terrain',
+    'terrain',
     'commonMode',
   ];
   function clickGameMapDirectiveFactory(appActionService,
                                         appGameService,
                                         // appStateService,
                                         gameMapService,
-                                        // terrainModel,
+                                        terrainModel,
                                         commonModeModel
   ) {
     const log = true // eslint-disable-line
@@ -174,12 +174,12 @@
           const emit = drag.active ? 'drag' : 'dragStart';
           drag.active = true;
 
-          // if('Terrain' === drag.target.type &&
-          //    terrainModel.isLocked(drag.target.target)) {
-          //   drag.target = { type: 'Map',
-          //                   target: null
-          //                 };
-          // }
+          if('Terrain' === drag.target.type &&
+             terrainModel.isLocked(drag.target.target)) {
+            drag.target = { type: 'Map',
+                            target: null
+                          };
+          }
           appActionService.do('Modes.current.action',
                               emit+drag.target.type,
                               [ { target: drag.target.target,

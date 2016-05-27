@@ -10,19 +10,19 @@
     // 'gameModels',
     // 'gameModelSelection',
     'gameTemplateSelection',
-    // 'gameTerrainSelection',
+    'gameTerrainSelection',
   ];
   // const MODEL_SELECTION_LENS = R.lensPath(['game','model_selection']);
-  // const TERRAIN_SELECTION_LENS = R.lensPath(['game','terrain_selection']);
   const TEMPLATE_SELECTION_LENS = R.lensPath(['game','template_selection']);
+  const TERRAIN_SELECTION_LENS = R.lensPath(['game','terrain_selection']);
   function defaultModeModelFactory(// appStateService,
                                    modesModel,
                                    settingsModel,
                                    commonModeModel,
                                    // gameModelsModel,
                                    // gameModelSelectionModel,
-                                   gameTemplateSelectionModel// ,
-                                   // gameTerrainSelectionModel
+                                   gameTemplateSelectionModel,
+                                   gameTerrainSelectionModel
                                   ) {
     const default_actions = Object.create(commonModeModel.actions);
     // default_actions.setModelSelection = setModelSelection;
@@ -30,7 +30,7 @@
     // default_actions.modelSelectionDetail = modelSelectionDetail;
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
-    // default_actions.selectTerrain = selectTerrain;
+    default_actions.selectTerrain = selectTerrain;
     // default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     // default_actions.dragStartMap = dragStartMap;
@@ -106,7 +106,7 @@
     // }
     function selectTemplate(state, event) {
       return R.thread(state)(
-        // clearTerrainSelection,
+        clearTerrainSelection,
         R.over(
           TEMPLATE_SELECTION_LENS,
           gameTemplateSelectionModel.set$(
@@ -125,18 +125,18 @@
         })
       );
     }
-    // function selectTerrain(state, event) {
-    //   return R.thread(state)(
-    //     clearTemplateSelection,
-    //     R.over(
-    //       TERRAIN_SELECTION_LENS,
-    //       gameTerrainSelectionModel.set$(
-    //         'local',
-    //         [event['click#'].target.state.stamp]
-    //       )
-    //     )
-    //   );
-    // }
+    function selectTerrain(state, event) {
+      return R.thread(state)(
+        clearTemplateSelection,
+        R.over(
+          TERRAIN_SELECTION_LENS,
+          gameTerrainSelectionModel.set$(
+            'local',
+            [event['click#'].target.state.stamp]
+          )
+        )
+      );
+    }
     // function enterRulerMode(_state_) {
     //   return appStateService.chainReduce('Modes.switchTo', 'Ruler');
     // }
@@ -182,15 +182,15 @@
         state
       );
     }
-    // function clearTerrainSelection(state) {
-    //   return R.over(
-    //     TERRAIN_SELECTION_LENS,
-    //     R.unless(
-    //       gameTerrainSelectionModel.isEmpty$('local'),
-    //       gameTerrainSelectionModel.clear$('local')
-    //     ),
-    //     state
-    //   );
-    // }
+    function clearTerrainSelection(state) {
+      return R.over(
+        TERRAIN_SELECTION_LENS,
+        R.unless(
+          gameTerrainSelectionModel.isEmpty$('local'),
+          gameTerrainSelectionModel.clear$('local')
+        ),
+        state
+      );
+    }
   }
 })();

@@ -1,73 +1,62 @@
 'use strict';
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 (function () {
   angular.module('clickApp.directives').directive('clickGameTerrain', clickGameTerrainDirectiveFactory).directive('clickGameTerrainsList', clickGameTerrainsListDirectiveFactory);
 
-  clickGameTerrainDirectiveFactory.$inject = ['$rootScope', 'terrain', 'gameTerrainSelection'];
-  function clickGameTerrainDirectiveFactory($rootScope, terrainModel, gameTerrainSelectionModel) {
+  clickGameTerrainDirectiveFactory.$inject = ['appGame', 'terrain', 'gameTerrains', 'gameTerrainSelection'];
+  function clickGameTerrainDirectiveFactory(appGameService, terrainModel, gameTerrainsModel, gameTerrainSelectionModel) {
     return {
       restrict: 'A',
       link: link
     };
 
-    function link(scope, parent) {
-      parent = parent[0];
-      console.log('gameTerrain', scope.terrain);
-      return buildTerrainElement(scope, parent);
-    }
-    function buildTerrainElement(scope, parent) {
-      var state = $rootScope.state;
-      var render = terrainModel.render(state.terrains, scope.terrain.state);
-      initTerrainElement(render, parent);
-      scope.pos = render;
-      updateTerrainSelection(state.game.terrain_selection, scope.terrain, scope);
+    function link(scope) {
+      console.warn('gameTerrain', scope.terrain);
 
-      var updateTerrain = gameTerrainOnUpdate(scope);
-      scope.onStateChangeEvent('Game.terrains.change', updateTerrain, scope);
-      scope.onStateChangeEvent('Game.terrain.change.' + scope.terrain.state.stamp, gameTerrainOnUpdate_(scope), scope);
-      scope.onStateChangeEvent('Game.terrain_selection.change', updateTerrain, scope);
-    }
-    function initTerrainElement(render, parent) {
-      var image = parent.querySelector('image');
-      image.setAttribute('data-stamp', render.stamp);
-      image.setAttribute('width', render.width + '');
-      image.setAttribute('height', render.height + '');
-      image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', render.img_link);
+      var stamp = scope.terrain.state.stamp;
+      scope.listenSignal(refreshSelection, appGameService.terrains.selection_changes, scope);
+      scope.listenSignal(onTerrainsChanges, appGameService.terrains.changes, scope);
+      mount();
 
-      var edge = parent.querySelector('rect');
-      edge.setAttribute('width', render.width + '');
-      edge.setAttribute('height', render.height + '');
-    }
-    function gameTerrainOnUpdate(scope) {
-      var onUpdate_ = gameTerrainOnUpdate_(scope);
-      var _terrain = scope.terrain;
-      var _selection = R.path(['game', 'terrain_selection'], $rootScope.state);
-      return function () {
-        var current_selection = R.path(['game', 'terrain_selection'], $rootScope.state);
-        if (scope.terrain === _terrain && current_selection === _selection) {
-          return;
-        }
-        _terrain = scope.terrain;
-        _selection = current_selection;
-        onUpdate_();
-      };
-    }
-    function gameTerrainOnUpdate_(scope) {
-      return function () {
-        console.warn('RENDER TERRAIN', scope.terrain.state.stamp);
-        var state = $rootScope.state;
-        var render = terrainModel.render(state.terrains, scope.terrain.state);
-        scope.pos = render;
-        updateTerrainSelection(state.game.terrain_selection, scope.terrain, scope);
-        scope.$digest();
-      };
-    }
-    function updateTerrainSelection(selection, terrain, scope) {
-      var stamp = terrain.state.stamp;
-      scope.selection = {
-        local: gameTerrainSelectionModel.in('local', stamp, selection),
-        remote: gameTerrainSelectionModel.in('remote', stamp, selection)
-      };
+      function onTerrainsChanges(_ref) {
+        var _ref2 = _slicedToArray(_ref, 2);
+
+        var terrains = _ref2[0];
+        var stamps = _ref2[1];
+
+        if (!R.find(R.equals(stamp), stamps)) return;
+
+        refreshRender(terrains);
+      }
+      function mount() {
+        var terrains = appGameService.terrains.terrains.sample();
+        refreshRender(terrains);
+
+        var selection = appGameService.terrains.selection.sample();
+        refreshSelection(selection);
+      }
+      function refreshRender(terrains) {
+        var terrain = gameTerrainsModel.findStamp(stamp, terrains);
+        if (R.isNil(terrain)) return;
+        scope.terrain = terrain;
+
+        terrain.render = terrainModel.render(terrain.info, terrain.state);
+
+        console.warn('RENDER TERRAIN', stamp, terrain.state, terrain.render);
+      }
+      function refreshSelection(selection) {
+        var local = gameTerrainSelectionModel.in('local', stamp, selection);
+        var remote = gameTerrainSelectionModel.in('remote', stamp, selection);
+        var selected = local || remote;
+        scope.selection = {
+          local: local,
+          remote: remote,
+          selected: selected
+        };
+        console.warn('SELECTION TERRAIN', stamp, selection, scope.selection);
+      }
     }
   }
 
@@ -82,7 +71,6 @@
 
     function link(scope, _element_, attrs) {
       scope.type = attrs.clickGameTerrainsList;
-      scope.digestOnStateChangeEvent('Game.terrains.change', scope);
       console.log('clickGameTerrainsList', scope.type);
     }
   }

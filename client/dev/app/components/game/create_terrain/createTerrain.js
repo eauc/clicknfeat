@@ -3,48 +3,30 @@
 (function () {
   angular.module('clickApp.directives').directive('clickGameCreateTerrain', clickGameCreateTerrainDirectiveFactory);
 
-  clickGameCreateTerrainDirectiveFactory.$inject = ['$rootScope', 'terrain', 'gameMap'];
-  function clickGameCreateTerrainDirectiveFactory($rootScope, terrainModel, gameMapService) {
+  clickGameCreateTerrainDirectiveFactory.$inject = ['$rootScope', 'appGame', 'terrain', 'gameTerrainInfo', 'gameMap'];
+  function clickGameCreateTerrainDirectiveFactory($rootScope, appGameService, terrainModel, gameTerrainInfoModel) {
     return {
       restrict: 'A',
+      templateUrl: 'app/components/game/create_terrain/create_terrain.html',
       link: link
     };
 
     function link(scope, parent) {
       parent = parent[0];
-      console.log('clickCreateTerrain', scope.index, scope.terrain);
+      console.log('clickCreateTerrain', scope.terrain);
 
-      var state = $rootScope.state;
-      var render = terrainModel.render(state.terrains, scope.terrain);
-      initTerrainElement(render, parent);
-      setTerrainPosition(R.path(['create', 'base'], state), render, scope);
+      var info = gameTerrainInfoModel.getInfo(scope.terrain.info, $rootScope.state.terrains);
+      scope.bindCell(onCreateUpdate, appGameService.create, scope);
+      setRender(scope, info, scope.state.create);
 
-      $rootScope.onStateChangeEvent('Create.base.change', updateTerrainElement(scope), scope);
+      function onCreateUpdate(create) {
+        if (R.isNil(create) || R.isNil(R.prop('terrains', create))) return;
+        setRender(scope, info, create);
+      }
     }
-    function initTerrainElement(render, parent) {
-      var element = parent.querySelector('rect');
-      element.setAttribute('width', render.width);
-      element.setAttribute('height', render.height);
-    }
-    function updateTerrainElement(scope) {
-      return function () {
-        var state = $rootScope.state;
-        var base = R.path(['create', 'base'], state);
-        if (R.isNil(base)) return;
-
-        var render = terrainModel.render(state.terrains, scope.terrain);
-        setTerrainPosition(base, render, scope);
-        scope.$digest();
-      };
-    }
-    function setTerrainPosition(base, render, scope) {
-      var map = document.getElementById('map');
-      var is_flipped = gameMapService.isFlipped(map);
-      var coeff = is_flipped ? -1 : 1;
-      scope.pos = {
-        x: base.x + coeff * render.x,
-        y: base.y + coeff * render.y
-      };
+    function setRender(scope, info, create) {
+      var base = R.propOr({ x: 0, y: 0 }, 'base', create);
+      scope.render = terrainModel.render(info, R.thread(scope.template)(R.assoc('x', base.x), R.assoc('y', base.y)));
     }
   }
 })();

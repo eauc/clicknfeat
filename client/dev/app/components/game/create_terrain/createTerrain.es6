@@ -4,57 +4,43 @@
 
   clickGameCreateTerrainDirectiveFactory.$inject = [
     '$rootScope',
+    'appGame',
     'terrain',
+    'gameTerrainInfo',
     'gameMap',
   ];
   function clickGameCreateTerrainDirectiveFactory($rootScope,
+                                                  appGameService,
                                                   terrainModel,
-                                                  gameMapService) {
+                                                  gameTerrainInfoModel) {
     return {
       restrict: 'A',
+      templateUrl: 'app/components/game/create_terrain/create_terrain.html',
       link: link
     };
 
     function link(scope, parent) {
       parent = parent[0];
-      console.log('clickCreateTerrain', scope.index, scope.terrain);
+      console.log('clickCreateTerrain', scope.terrain);
 
-      const state = $rootScope.state;
-      const render = terrainModel
-              .render(state.terrains, scope.terrain);
-      initTerrainElement(render, parent);
-      setTerrainPosition(R.path(['create','base'], state),
-                         render, scope);
+      const info = gameTerrainInfoModel
+              .getInfo(scope.terrain.info,
+                       $rootScope.state.terrains);
+      scope.bindCell(onCreateUpdate, appGameService.create, scope);
+      setRender(scope, info, scope.state.create);
 
-      $rootScope.onStateChangeEvent('Create.base.change',
-                                    updateTerrainElement(scope),
-                                    scope);
+      function onCreateUpdate(create) {
+        if(R.isNil(create) ||
+           R.isNil(R.prop('terrains', create))) return;
+        setRender(scope, info, create);
+      }
     }
-    function initTerrainElement(render, parent) {
-      const element = parent.querySelector('rect');
-      element.setAttribute('width', render.width);
-      element.setAttribute('height', render.height);
-    }
-    function updateTerrainElement(scope) {
-      return () => {
-        const state = $rootScope.state;
-        const base = R.path(['create','base'], state);
-        if(R.isNil(base)) return;
-
-        const render = terrainModel
-                .render(state.terrains, scope.terrain);
-        setTerrainPosition(base, render, scope);
-        scope.$digest();
-      };
-    }
-    function setTerrainPosition(base, render, scope) {
-      const map = document.getElementById('map');
-      const is_flipped = gameMapService.isFlipped(map);
-      const coeff = is_flipped ? -1 : 1;
-      scope.pos = {
-        x: base.x + coeff * render.x,
-        y: base.y + coeff * render.y
-      };
+    function setRender(scope, info, create) {
+      const base = R.propOr({ x: 0, y: 0 }, 'base', create);
+      scope.render = terrainModel.render(info, R.thread(scope.template)(
+        R.assoc('x', base.x),
+        R.assoc('y', base.y)
+      ));
     }
   }
 })();

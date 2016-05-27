@@ -21,13 +21,21 @@
     var base = elementModel('terrain', MOVES);
     var terrainModel = Object.create(base);
     R.deepExtend(terrainModel, {
+      create: terrainCreate,
       render: terrainModelRender
     });
     R.curryService(terrainModel);
     return terrainModel;
 
-    function terrainModelRender(infos, state) {
-      var info = gameTerrainInfoModel.getInfo(state.info, infos);
+    function terrainCreate(terrains, terr) {
+      var info = gameTerrainInfoModel.getInfo(terr.info, terrains);
+      if (R.isNil(info)) return null;
+
+      return R.thread(terr)(function (terr) {
+        return base.create(terr);
+      }, R.assoc('info', info));
+    }
+    function terrainModelRender(info, state) {
       return {
         stamp: state.stamp,
         img_link: info.img.link,

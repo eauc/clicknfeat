@@ -3,13 +3,15 @@
     .factory('createTerrainCommand', createTerrainCommandModelFactory);
 
   createTerrainCommandModelFactory.$inject = [
+    'appData',
     'createElementCommand',
     'commands',
     'terrain',
     'gameTerrains',
     'gameTerrainSelection',
   ];
-  function createTerrainCommandModelFactory(createElementCommandModel,
+  function createTerrainCommandModelFactory(appDataService,
+                                            createElementCommandModel,
                                             commandsModel,
                                             terrainModel,
                                             gameTerrainsModel,
@@ -18,8 +20,15 @@
             createElementCommandModel('terrain',
                                       terrainModel,
                                       gameTerrainsModel,
-                                      gameTerrainSelectionModel);
+                                      gameTerrainSelectionModel,
+                                      tryToCreateTerrain);
     commandsModel.registerCommand('createTerrain', createTerrainCommandModel);
     return createTerrainCommandModel;
+
+    function tryToCreateTerrain(terrain) {
+      const terrains = appDataService.terrains.sample();
+      return terrainModel
+        .create(terrains, terrain);
+    }
   }
 })();

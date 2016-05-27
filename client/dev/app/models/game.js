@@ -10,19 +10,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
   // 'gameModels',
   // 'gameModelSelection',
   // 'gameRuler',
-  'gameTemplates', 'gameTemplateSelection'];
-
-  // 'gameTerrains',
-  // 'gameTerrainSelection',
+  'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
   function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
   // gameLosModel,
   // gameModelsModel,
   // gameModelSelectionModel,
   // gameRulerModel,
-  gameTemplatesModel, gameTemplateSelectionModel
-  // gameTerrainsModel,
-  // gameTerrainSelectionModel
-  ) {
+  gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var DICE_LENS = R.lensProp('dice');
     var COMMANDS_LENS = R.lensProp('commands');
     var COMMANDS_LOG_LENS = R.lensProp('commands_log');
@@ -231,11 +225,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         // models: gameModelsModel.create(),
         // model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),
-        template_selection: gameTemplateSelectionModel.create()
+        template_selection: gameTemplateSelectionModel.create(),
+        terrains: gameTerrainsModel.create(),
+        terrain_selection: gameTerrainSelectionModel.create()
       };
     }
-    // terrains: gameTerrainsModel.create(),
-    // terrain_selection: gameTerrainSelectionModel.create(),
     function gameReplayAllP(game) {
       return new self.Promise(function (resolve) {
         if (R.isEmpty(game.commands)) {

@@ -9,10 +9,7 @@
   // 'modelMode',
   // 'modelChargeMode',
   // 'modelPlaceMode',
-  'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode',
-  // 'createTerrainMode',
-  // 'terrainMode',
-  function () {
+  'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
     return {};
   }]);
 

@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('gameTerrainInfo', gameTerrainInfoModelFactory);
 
-  gameTerrainInfoModelFactory.$inject = ['http'];
-  function gameTerrainInfoModelFactory(httpService) {
+  gameTerrainInfoModelFactory.$inject = ['appError', 'http'];
+  function gameTerrainInfoModelFactory(appErrorService, httpService) {
     var gameTerrainInfoModel = {
       initP: gameTerrainInfoInitP,
       getInfo: gameTerrainInfoGetInfo
@@ -15,8 +15,7 @@
 
     function gameTerrainInfoInitP() {
       return httpService.getP('/data/terrains.json').catch(function (error) {
-        R.spyError('Error getting terrains.json')(error);
-        return [];
+        appErrorService.emit('Error getting terrains.json', error);
       }).then(updateTerrains);
     }
     function gameTerrainInfoGetInfo(path, infos) {

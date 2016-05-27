@@ -25,9 +25,9 @@
     vm.onCategoryChange = onCategoryChange;
     vm.onEntryChange = onEntryChange;
     vm.getTerrain = getTerrain;
-    // vm.doCreateTerrain = doCreateTerrain;
-    // vm.doResetTerrain = doResetTerrain;
-    // vm.doImportBoardFile = doImportBoardFile;
+    vm.doCreateTerrain = doCreateTerrain;
+    vm.doResetTerrain = doResetTerrain;
+    vm.doImportBoardFile = doImportBoardFile;
 
     activate();
 
@@ -103,16 +103,16 @@
     function getTerrain() {
       return R.path(getTerrainPath(), $scope.state.terrains);
     }
-    // function doCreateTerrain() {
-    //   const terrain_path = getTerrainPath();
-    //   $scope.sendAction('Game.terrain.create', terrain_path);
-    // }
-    // function doResetTerrain() {
-    //   $scope.sendAction('Game.terrain.reset');
-    // }
+    function doCreateTerrain() {
+      const terrain_path = getTerrainPath();
+      $scope.sendAction('Game.terrain.create', terrain_path);
+    }
+    function doResetTerrain() {
+      $scope.sendAction('Game.terrains.reset');
+    }
 
-    // function doImportBoardFile(files) {
-    //   $scope.sendAction('Game.board.importFile', files[0]);
-    // }
+    function doImportBoardFile(files) {
+      $scope.sendAction('Game.board.importFile', files[0]);
+    }
   }
 })();

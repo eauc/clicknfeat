@@ -25,7 +25,7 @@ describe('defaultMode model', function() {
     }
   ]));
 
-  xcontext('when user sets terrain selection', function() {
+  context('when user sets terrain selection', function() {
     return this.defaultModeModel.actions
       .selectTerrain(this.state, this.event);
   }, function() {
@@ -55,7 +55,7 @@ describe('defaultMode model', function() {
         .toBe('gameTemplateSelection.set.returnValue');
     });
 
-    xit('should clear gameTerrainSelection', function() {
+    it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
         .toHaveBeenCalledWith('local', 'terrain_selection');
       expect(this.context.game.terrain_selection)
@@ -80,7 +80,7 @@ describe('defaultMode model', function() {
         .toBe('gameTemplateSelection.set.returnValue');
     });
 
-    xit('should clear gameTerrainSelection', function() {
+    it('should clear gameTerrainSelection', function() {
       expect(this.gameTerrainSelectionModel.clear)
         .toHaveBeenCalledWith('local', 'terrain_selection');
       expect(this.context.game.terrain_selection)
