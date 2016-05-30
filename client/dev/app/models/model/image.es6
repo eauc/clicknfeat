@@ -2,10 +2,8 @@
   angular.module('clickApp.services')
     .factory('modelImage', modelImageModelFactory);
 
-  modelImageModelFactory.$inject = [
-    'gameFactions',
-  ];
-  function modelImageModelFactory(gameFactionsModel) {
+  modelImageModelFactory.$inject = [];
+  function modelImageModelFactory() {
     const DSP_LENS = R.lensPath(['state','dsp']);
     return (modelModel) => {
       const modelImageModel = {
@@ -21,37 +19,32 @@
       function modelIsImageDisplayed(model) {
         return !!R.find(R.equals('i'), R.viewOr([], DSP_LENS, model));
       }
-      function modelGetImage(factions, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.prop('img'),
-          (info_img) => {
-            let img = R.thread(info_img)(
-              R.filter(R.propEq('type','default')),
-              R.prop(model.state.img)
-            );
-            if(modelModel.isLeaderDisplayed(model)) {
-              img = R.thread(info_img)(
-                R.filter(R.propEq('type','leader')),
-                R.head,
-                R.defaultTo(img)
-              );
-            }
-            if(modelModel.isIncorporealDisplayed(model)) {
-              img = R.thread(info_img)(
-                R.filter(R.propEq('type','incorporeal')),
-                R.head,
-                R.defaultTo(img)
-              );
-            }
-            const link = modelModel.isImageDisplayed(model) ? img.link : null;
-            return R.assoc('link', link, img);
-          }
+      function modelGetImage(model) {
+        const info = model.info;
+        const info_img = info.img;
+        let img = R.thread(info_img)(
+          R.filter(R.propEq('type','default')),
+          R.prop(model.state.img)
         );
+        if(modelModel.isLeaderDisplayed(model)) {
+          img = R.thread(info_img)(
+            R.filter(R.propEq('type','leader')),
+            R.head,
+            R.defaultTo(img)
+          );
+        }
+        if(modelModel.isIncorporealDisplayed(model)) {
+          img = R.thread(info_img)(
+            R.filter(R.propEq('type','incorporeal')),
+            R.head,
+            R.defaultTo(img)
+          );
+        }
+        const link = modelModel.isImageDisplayed(model) ? img.link : null;
+        return R.assoc('link', link, img);
       }
-      function modelSetNextImage(factions, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
+      function modelSetNextImage(model) {
+        return R.thread(model.info)(
           R.prop('img'),
           R.filter(R.propEq('type','default')),
           (imgs) => (model.state.img >= imgs.length-1) ? 0 : model.state.img + 1,

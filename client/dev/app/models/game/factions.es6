@@ -161,8 +161,8 @@
         (s) => { return parseFloat(s); }
       );
     }
-    function gameFactionsBuildModelsList(list, user, references) {
-      const info = gameFactionsModel.getListInfo(list, references);
+    function gameFactionsBuildModelsList(list, user, factions) {
+      const info = gameFactionsModel.getListInfo(list, factions.references);
       const MAX_X = 240;
       let x = 0, y = 0, y_offset = 0;
       const last_unit = {

@@ -3,15 +3,17 @@ describe('model move model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
+
       spyOn(this.modelModel, 'checkState')
-        .and.callFake((_f_,_t_,m) => m);
-      this.modelModel.checkState$ = R.curryN(3, this.modelModel.checkState);
+        .and.callFake(R.nthArg(1));
+      this.modelModel
+        .checkState$ = R.curryN(2, this.modelModel.checkState);
     }
   ]));
 
   context('setPositionP(<pos>)', function() {
     return this.modelModel
-      .setPositionP('factions', this.target, { x: 15, y: 42 }, this.model);
+      .setPositionP(this.target, { x: 15, y: 42 }, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -28,7 +30,7 @@ describe('model move model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', 'target', this.context);
+        .toHaveBeenCalledWith('target', this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
@@ -36,7 +38,7 @@ describe('model move model', function() {
 
   context('setPositionP_(<pos>)', function() {
     return this.modelModel
-      .setPositionP_('factions', this.target, { x: 15, y: 42 }, this.model);
+      .setPositionP_(this.target, { x: 15, y: 42 }, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -53,7 +55,7 @@ describe('model move model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', 'target', this.model);
+        .toHaveBeenCalledWith('target', this.model);
     });
 
     whenModelIsLockedShouldRejectMove();
@@ -61,7 +63,7 @@ describe('model move model', function() {
 
   context('shiftPosition(<pos>)', function() {
     return this.modelModel
-      .shiftPositionP('factions', this.target, { x: 15, y: 20 }, this.model);
+      .shiftPositionP(this.target, { x: 15, y: 20 }, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -78,7 +80,7 @@ describe('model move model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', 'target', this.context);
+        .toHaveBeenCalledWith('target', this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
@@ -87,7 +89,7 @@ describe('model move model', function() {
   example(function(e) {
     example(function(ee, dd) {
       context(e.move+'(<small>)', function() {
-        return this.modelModel[e.move]('factions', ee.small, this.model);
+        return this.modelModel[e.move](ee.small, this.model);
       }, function() {
         beforeEach(function() {
           this.model = {
@@ -102,7 +104,7 @@ describe('model move model', function() {
 
         it('should check state', function() {
           expect(this.modelModel.checkState)
-            .toHaveBeenCalledWith('factions', null, this.context);
+            .toHaveBeenCalledWith(null, this.context);
         });
 
         whenModelIsLockedShouldRejectMove();
@@ -142,7 +144,7 @@ describe('model move model', function() {
 
   context('setOrientation(<dir>)', function() {
     return this.modelModel
-      .setOrientationP('factions', 15, this.model);
+      .setOrientationP(15, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -157,15 +159,15 @@ describe('model move model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
   });
 
-  context('orientTo(<factions>, <other>)', function() {
+  context('orientTo(<other>)', function() {
     return this.modelModel
-      .orientToP('factions', this.other, this.model);
+      .orientToP(this.other, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -183,7 +185,7 @@ describe('model move model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
 
     whenModelIsLockedShouldRejectMove();

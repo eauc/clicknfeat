@@ -9,17 +9,14 @@
     'template',
     'gameTemplates',
     'gameTemplateSelection',
-    // 'gameModels',
-    'gameFactions',
+    'gameModels',
   ];
   function gameTemplateDirectiveFactory(appGameService,
                                         gameMapService,
                                         templateModel,
                                         gameTemplatesModel,
-                                        gameTemplateSelectionModel // ,
-                                        // gameModelsModel,
-                                        // gameFactionsModel
-                                       ) {
+                                        gameTemplateSelectionModel ,
+                                        gameModelsModel) {
     const gameTemplateDirective = {
       restrict: 'A',
       scope: true,
@@ -54,29 +51,6 @@
 
         const selection = appGameService.templates.selection.sample();
         refreshSelection(selection);
-
-      //   if(local &&
-      //      R.exists(template.state.o)) {
-      //     R.thread(state.game.models)(
-      //       gameModelsModel.findStamp$(template.state.o),
-      //       R.unless(
-      //         R.isNil,
-      //         R.pipe(
-      //         (origin) => [
-      //           origin,
-      //           gameFactionsModel.getModelInfo(origin.state.info, state.factions)
-      //         ],
-      //         ([origin, info]) => {
-      //           scope.render.origin = {
-      //             cx: origin.state.x,
-      //             cy: origin.state.y,
-      //             radius: info.base_radius
-      //           };
-      //         }
-      //       )
-      //     )
-      //   );
-      // }
       }
 
       function refreshRender(templates) {
@@ -88,6 +62,22 @@
         const is_flipped = gameMapService.isFlipped(map);
         template.render = templateModel.render(is_flipped, template.state);
 
+        if(R.exists(template.state.o)) {
+          const models = appGameService.models.models.sample();
+          R.thread(models)(
+            gameModelsModel.findStamp$(template.state.o),
+            R.unless(
+              R.isNil,
+              (origin) => {
+                template.render.origin = {
+                  cx: origin.state.x,
+                  cy: origin.state.y,
+                  radius: origin.info.base_radius
+                };
+              }
+            )
+          );
+        }
         console.warn('RENDER TEMPLATE',
                      stamp, template.state, template.render);
       }

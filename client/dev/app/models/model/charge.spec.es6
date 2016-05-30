@@ -3,9 +3,11 @@ describe('model charge model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
+
       spyOn(this.modelModel, 'checkState')
-        .and.callFake((_f_,_t_,m) => m);
-      this.modelModel.checkState$ = R.curryN(3, this.modelModel.checkState);
+        .and.callFake(R.nthArg(1));
+      this.modelModel
+        .checkState$ = R.curryN(2, this.modelModel.checkState);
     }
   ]));
 
@@ -55,9 +57,9 @@ describe('model charge model', function() {
     });
   });
 
-  context('setChargeTargetP(<factions>, <target>)', function() {
+  context('setChargeTargetP(<target>)', function() {
     return this.modelModel
-      .setChargeTargetP('factions', this.target, this.model);
+      .setChargeTargetP(this.target, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -90,7 +92,7 @@ describe('model charge model', function() {
 
   context('setChargeMaxLength(<length>)', function() {
     return this.modelModel
-      .setChargeMaxLength('factions', 42, this.model);
+      .setChargeMaxLength(42, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -105,13 +107,13 @@ describe('model charge model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
   });
 
   example(function(e) {
     context(e.move+'(<small>)', function() {
-      return this.modelModel[e.move]('factions', this.target, this.small, this.model);
+      return this.modelModel[e.move](this.target, this.small, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -136,7 +138,7 @@ describe('model charge model', function() {
 
           it('should check state', function() {
             expect(this.modelModel.checkState)
-              .toHaveBeenCalledWith('factions', this.target, this.context);
+              .toHaveBeenCalledWith(this.target, this.context);
           });
         });
       }, [
@@ -159,7 +161,7 @@ describe('model charge model', function() {
 
         it('should check state', function() {
           expect(this.modelModel.checkState)
-            .toHaveBeenCalledWith('factions', this.target, this.context);
+            .toHaveBeenCalledWith(this.target, this.context);
         });
       });
 

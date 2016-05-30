@@ -1,45 +1,44 @@
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 (function () {
   angular.module('clickApp.directives').directive('clickGameDragbox', gameDragboxDirectiveFactory);
 
-  gameDragboxDirectiveFactory.$inject = [];
-  function gameDragboxDirectiveFactory() {
+  gameDragboxDirectiveFactory.$inject = ['appGame'];
+  function gameDragboxDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
+      scope: true,
       link: link
     };
 
-    function link(scope, element) {
+    function link(scope) {
       console.log('gameDragbox');
 
-      var box = element[0];
-      hideDragbox();
+      scope.render = { x: 0, y: 0,
+        width: 0, height: 0
+      };
 
-      scope.onStateChangeEvent('Game.dragBox.enable', updateDragbox, scope);
-      scope.onStateChangeEvent('Game.dragBox.disable', hideDragbox, scope);
+      scope.listenSignal(updateDragbox, appGameService.view.drag_box, scope);
 
-      function hideDragbox() {
-        box.style.visibility = 'hidden';
-      }
-      function updateDragbox(_event_, _ref) {
-        var _ref2 = _slicedToArray(_ref, 2);
+      function updateDragbox(drag_box) {
+        if (R.isNil(drag_box.top_left)) {
+          scope.render = { x: 0, y: 0,
+            width: 0, height: 0
+          };
+          return;
+        }
 
-        var start = _ref2[0];
-        var end = _ref2[1];
+        var top_left = drag_box.top_left;
+        var bottom_right = drag_box.bottom_right;
 
-        var x = Math.min(start.x, end.x);
-        var y = Math.min(start.y, end.y);
-        var width = Math.abs(start.x - end.x);
-        var height = Math.abs(start.y - end.y);
+        var width = Math.abs(bottom_right.x - top_left.x);
+        var height = Math.abs(bottom_right.y - top_left.y);
 
-        box.style.visibility = 'visible';
-        box.setAttribute('x', x + '');
-        box.setAttribute('y', y + '');
-        box.setAttribute('width', width + '');
-        box.setAttribute('height', height + '');
+        scope.render.x = top_left.x;
+        scope.render.y = top_left.y;
+        scope.render.width = width;
+        scope.render.height = height;
+        console.warn('RENDER DRAG_BOX', arguments, scope.render);
       }
     }
   }

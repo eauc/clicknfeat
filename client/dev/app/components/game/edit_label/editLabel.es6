@@ -44,14 +44,14 @@
       const input = container.querySelector('input');
 
       closeEditLabel();
-      scope.bindCell((edit_label) => {
-        if(R.isNil(edit_label)) {
+      scope.listenSignal((edit_label) => {
+        if(R.isNil(edit_label.type)) {
           closeEditLabel();
         }
         else {
           openEditLabel(edit_label);
         }
-      }, appGameService.view.edit_label, scope);
+      }, appGameService.view.edit_label_changes, scope);
       input.addEventListener('keydown', closeOnEscape);
       scope.edit_label.doRefresh = refreshEditLabel;
       scope.edit_label.doClose = closeEditLabel;

@@ -1,5 +1,4 @@
-<g ng-repeat="(i,model) in state.game.models.active track by model.state.stamp"
-   click-game-over-model>
+<g ng-repeat="(i,model) in state.game.models[type] track by model.state.stamp">
   <g ng-attr-transform="{{model.render.transform}}"
      ng-class="{
                'remote-selection': model.selection.remote,
@@ -59,8 +58,6 @@
             ng-attr-x2="{{model.render.field.rx}}" ng-attr-y2="{{model.render.field.ry}}">
       </line>
     </g>
-    <g click-game-element-label="model.render.label">
-    </g>
     <g click-game-element-label="model.render.counter">
     </g>
     <image class="model-image"
@@ -75,6 +72,9 @@
     </g>
     <g click-game-element-label="model.render.unit">
     </g>
+  </g>
+  <g click-game-element-label="model.render.label"
+     ng-attr-transform="{{model.render.label_transform}}">
   </g>
   <g click-game-element-label="model.render.path.length">
   </g>

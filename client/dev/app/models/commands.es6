@@ -2,11 +2,11 @@
   angular.module('clickApp.services')
     .factory('commands', commandsModelFactory)
     .factory('allCommands', [
-      // 'createModelCommand',
-      // 'deleteModelCommand',
-      // 'setModelSelectionCommand',
-      // 'lockModelsCommand',
-      // 'onModelsCommand',
+      'createModelCommand',
+      'deleteModelCommand',
+      'setModelSelectionCommand',
+      'lockModelsCommand',
+      'onModelsCommand',
       'createTemplateCommand',
       'deleteTemplateCommand',
       'lockTemplatesCommand',
@@ -23,6 +23,7 @@
       // 'setLosCommand',
       // 'setRulerCommand',
       'setScenarioCommand',
+      'createObjectivesCommand',
       () => ({ })
     ]);
 

@@ -6,9 +6,9 @@ describe('gameFactionsModel', function() {
     }
   ]));
 
-  context('buildModelsList(<list>, <user>, <references>)', function() {
+  context('buildModelsList(<list>, <user>, <factions>)', function() {
     return this.gameFactionsModel
-      .buildModelsList(this.list, this.user, this.references);
+      .buildModelsList(this.list, this.user, { references: this.references });
   }, function() {
     beforeEach(function() {
       this.list = '';

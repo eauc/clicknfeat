@@ -1,4 +1,4 @@
-describe('model model', function() {
+describe('model unit model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {

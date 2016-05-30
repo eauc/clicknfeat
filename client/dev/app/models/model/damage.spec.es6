@@ -3,8 +3,6 @@ describe('model damage model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 
@@ -41,17 +39,18 @@ describe('model damage model', function() {
     });
   });
 
-  context('setWarriorDamage(<factions>, <i>)', function() {
+  context('setWarriorDamage(<i>)', function() {
     return this.modelModel
-      .setWarriorDamage('factions', this.i, this.model);
+      .setWarriorDamage(this.i, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({ damage: { n: 10 } });
+      this.model = {
+        info: { damage: { n: 10 } }
+      };
     });
 
     context('when <i> is different from current damage', function() {
-      this.model = { state: { info: ['info'], dmg: { n: 3, t: 3 } } };
+      this.model.state = { dmg: { n: 3, t: 3 } };
       this.i = 5;
     }, function() {
       it('should set current damage to <i>', function() {
@@ -61,80 +60,88 @@ describe('model damage model', function() {
     });
 
     context('when <i> equals from current damage', function() {
-      this.model = { state: { info: ['info'], dmg: { n: 3, t: 3 } } };
+      this.model.state = { dmg: { n: 3, t: 3 } };
       this.i = 3;
     }, function() {
       it('should reset current damage', function() {
-        expect(this.context.state.dmg).toEqual({ n: 0, t: 0 });
+        expect(this.context.state.dmg)
+          .toEqual({ n: 0, t: 0 });
       });
     });
 
     context('<i> exceeds info damage', function() {
-      this.model = { state: { info: ['info'], dmg: { n: 3, t: 3 } } };
+      this.model.state = { dmg: { n: 3, t: 3 } };
       this.i = 15;
     }, function() {
       it('should set maximum info damage', function() {
-        expect(this.context.state.dmg).toEqual({ n: 10, t: 10 });
+        expect(this.context.state.dmg)
+          .toEqual({ n: 10, t: 10 });
       });
     });
   });
 
-  context('setFieldDamage(<factions>, <i>)', function() {
+  context('setFieldDamage(<i>)', function() {
     return this.modelModel
-      .setFieldDamage('factions', this.i, this.model);
+      .setFieldDamage(this.i, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({ damage: { field: 10 } });
+      this.model = {
+        info: { damage: { field: 10 } }
+      };
     });
 
     context('when <i> is different from current field damage', function() {
-      this.model = { state: { info: ['info'], dmg: { f: 3 } } };
+      this.model.state = { dmg: { f: 3 } };
       this.i = 5;
     }, function() {
       it('should set current field damage to <i>', function() {
-        expect(this.context.state.dmg).toEqual({ f: 5 });
+        expect(this.context.state.dmg)
+          .toEqual({ f: 5 });
       });
     });
 
     context('<i> equals from current field damage', function() {
-      this.model = { state: { info: ['info'], dmg: { f: 3 } } };
+      this.model.state = { dmg: { f: 3 } };
       this.i = 3;
     }, function() {
       it('should reset current damage', function() {
-        expect(this.context.state.dmg).toEqual({ f: 0 });
+        expect(this.context.state.dmg)
+          .toEqual({ f: 0 });
       });
     });
 
     context('<i> exceeds info field damage', function() {
-      this.model = { state: { info: ['info'], dmg: { f: 3 } } };
+      this.model.state = { dmg: { f: 3 } };
       this.i = 15;
     }, function() {
       it('should set maximum info damage', function() {
-        expect(this.context.state.dmg).toEqual({ f: 10 });
+        expect(this.context.state.dmg)
+          .toEqual({ f: 10 });
       });
     });
   });
 
-  context('setGridDamage(<factions>, <line>, <col>)', function() {
+  context('setGridDamage(<line>, <col>)', function() {
     return this.modelModel
-      .setGridDamage('factions', this.line, this.col, this.model);
+      .setGridDamage(this.line, this.col, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({ damage: { 'col': [ null, 'b', 'b', null ] } });
+      this.model = {
+        info: { damage: { 'col': [ null, 'b', 'b', null ] } }
+      };
       this.col = 'col';
     });
 
     example(function(e, d) {
       context('when <line,col> is a valid box, '+d, function() {
         this.line = e.line;
-        this.model = { state: { info: ['info'], dmg: {
+        this.model.state = { dmg: {
           col: e.current
-        } } };
+        } };
       }, function() {
         it('should set current box damage', function() {
-          expect(this.context.state.dmg).toEqual(e.result);
+          expect(this.context.state.dmg)
+            .toEqual(e.result);
         });
       });
     }, [
@@ -147,12 +154,13 @@ describe('model damage model', function() {
     example(function(e, d) {
       context('when <line,col> is not a valid box, '+d, function() {
         this.line = e.line;
-        this.model = { state: { info: ['info'], dmg: {
+        this.model.state = { dmg: {
           col: e.current
-        } } };
+        } };
       }, function() {
         it('should not set current box damage', function() {
-          expect(this.context.state.dmg).toEqual(e.result);
+          expect(this.context.state.dmg)
+            .toEqual(e.result);
         });
       });
     }, [
@@ -162,26 +170,28 @@ describe('model damage model', function() {
     ]);
   });
 
-  context('setGridColDamage(<factions>, <col>)', function() {
+  context('setGridColDamage(<col>)', function() {
     return this.modelModel
-      .setGridColDamage('factions', this.col, this.model);
+      .setGridColDamage(this.col, this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
+      this.model= {
+        info: {
           damage: { 'col1': [ null, 'b', 'b', null ],
                     'col2': [  'b', 'b', 'b', null ],
                     'col3': [ null, 'b', 'b',  'b' ] }
-        });
+        }
+      };
     });
 
     example(function(e, d) {
       context('when <col> is not full, '+d, function() {
         this.col = e.col;
-        this.model = { state: { info: ['info'], dmg: e.current } };
+        this.model.state = { dmg: e.current };
       }, function() {
         it('should set full damage to <col>', function() {
-          expect(this.context.state.dmg).toEqual(e.result);
+          expect(this.context.state.dmg)
+            .toEqual(e.result);
         });
       });
     }, [
@@ -241,10 +251,11 @@ describe('model damage model', function() {
     example(function(e, d) {
       context('when <col> is full, '+d, function() {
         this.col = e.col;
-        this.model = { state: { info: ['info'], dmg: e.current } };
+        this.model.state = { dmg: e.current };
       }, function() {
         it('should clear all damage from <col>', function() {
-          expect(this.context.state.dmg).toEqual(e.result);
+          expect(this.context.state.dmg)
+            .toEqual(e.result);
         });
       });
     }, [

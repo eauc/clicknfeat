@@ -17,9 +17,9 @@
       $scope.bindCell(function (board_exp) {
         vm.board_export = board_exp;
       }, appGameService.export.board, $scope);
-      // $scope.bindCell((models_exp) => {
-      //   vm.models_export = models_exp;
-      // }, $scope);
+      $scope.bindCell(function (models_exp) {
+        vm.models_export = models_exp;
+      }, appGameService.export.models, $scope);
     }
   }
 })();

@@ -4,6 +4,7 @@ describe('defaultMode model', function() {
     function(defaultModeModel) {
       this.defaultModeModel = defaultModeModel;
 
+      this.appActionService = spyOnService('appAction');
       this.appStateService = spyOnService('appState');
       this.gameModel = spyOnService('game');
       this.gameModelsModel = spyOnService('gameModels');
@@ -88,12 +89,12 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user set model selection', function() {
+  context('when user set model selection', function() {
     return this.defaultModeModel.actions
       .setModelSelection(this.state, this.event);
   }, function() {
     it('should set gameModelSelection', function() {
-      expect(this.appStateService.chainReduce)
+      expect(this.appActionService.defer)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection',
                               ['set', ['stamp']]);
@@ -114,7 +115,7 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user toggle model selection', function() {
+  context('when user toggle model selection', function() {
     return this.defaultModeModel.actions
       .toggleModelSelection(this.state, this.event);
   }, function() {
@@ -128,7 +129,7 @@ describe('defaultMode model', function() {
         .and.returnValue(false);
     }, function() {
       it('should add model to selection', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.defer)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 [ 'addTo', ['stamp'] ]);
@@ -140,7 +141,7 @@ describe('defaultMode model', function() {
         .and.returnValue(true);
     }, function() {
       it('should remove model from selection', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.defer)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 ['removeFrom', ['stamp']]);
@@ -162,27 +163,31 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user starts dragging on map', function() {
+  context('when user starts dragging on map', function() {
     return this.defaultModeModel.actions
-      .dragStartMap(this.state, { start: 'start', now: 'now' });
+      .dragStartMap(this.state, { start: { x: 42, y: 71},
+                                  now: { x: 34, y: 92 } });
   }, function() {
     it('should enable dragbox', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
+      expect(this.context.view.drag_box)
+        .toEqual({ top_left: { x: 34, y: 71 },
+                   bottom_right: { x: 42, y: 92 } });
     });
   });
 
-  xcontext('when user drags on map', function() {
-    this.defaultModeModel.actions
-      .dragMap(this.state, { start: 'start', now: 'now' });
+  context('when user drags on map', function() {
+    return this.defaultModeModel.actions
+      .dragMap(this.state, { start: { x: 42, y: 71},
+                             now: { x: 34, y: 92 } });
   }, function() {
     it('should update dragbox', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.dragBox.enable', 'start', 'now');
+      expect(this.context.view.drag_box)
+        .toEqual({ top_left: { x: 34, y: 71 },
+                   bottom_right: { x: 42, y: 92 } });
     });
   });
 
-  xcontext('when user selects box', function() {
+  context('when user selects box', function() {
     return this.defaultModeModel.actions
       .dragEndMap(this.state, {
         start: { x: 180, y: 150 },
@@ -190,8 +195,8 @@ describe('defaultMode model', function() {
       });
   }, function() {
     it('should disable dragbox', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.dragBox.disable');
+      expect(this.context.view.drag_box)
+        .toEqual({});
     });
 
     it('should lookup models inside the dragbox', function() {
@@ -206,7 +211,7 @@ describe('defaultMode model', function() {
         .and.returnValue([]);
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.defer)
           .not.toHaveBeenCalled();
       });
     });
@@ -216,7 +221,7 @@ describe('defaultMode model', function() {
         .and.returnValue(['stamp1', 'stamp2']);
     }, function() {
       it('should set selection to those models', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.defer)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setModelSelection',
                                 [ 'set', [ 'stamp1', 'stamp2' ] ]);
@@ -224,18 +229,17 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user right-click on model', function() {
+  context('when user right-click on model', function() {
     return this.defaultModeModel.actions
       .modelSelectionDetail(this.state, this.event);
   }, function() {
     it('should open model selection detail', function() {
-        expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.selectionDetail.open', 'model',
-                              { state: { stamp: 'stamp' } });
+        expect(this.context.view.detail)
+        .toEqual({ type: 'model', element: { state: { stamp: 'stamp' } } });
     });
 
     it('should set gameModelSelection', function() {
-      expect(this.appStateService.chainReduce)
+      expect(this.appActionService.defer)
         .toHaveBeenCalledWith('Game.command.execute',
                               'setModelSelection', ['set', ['stamp']]);
     });

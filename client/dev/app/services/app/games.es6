@@ -23,10 +23,9 @@
     const load = {
       local: behavioursModel.signalModel.create()
     };
-    let ready;
 
     const gamesService = {
-      local, load, ready,
+      local, load,
       // create: stateGamesCreate,
       localSet: actionGamesLocalSet,
       localUpdate: actionGamesLocalUpdate,
@@ -59,7 +58,7 @@
         // .register('Games.online.load'     , stateGamesModel.onOnlineLoad)
         // .register('Games.online.loadFile' , stateGamesModel.onOnlineLoadFile);
 
-      ready = gamesModel.loadLocalGamesP()
+      gamesService.ready = gamesModel.loadLocalGamesP()
         .then((games) => {
           return appActionService.action
             .send(['Games.local.set', games]);

@@ -4,46 +4,47 @@ describe('model area model', function() {
     function(modelModel) {
       this.modelModel = modelModel;
 
-      this.gameFactionsModel = spyOnService('gameFactions');
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          type: 'wardude',
-          focus: 8
-        });
+      this.info = {
+        type: 'wardude',
+        focus: 8
+      };
     }
   ]));
 
   describe('toggleCtrlAreaDisplay()', function() {
     it('should toggle ctrlArea display for <model>', function() {
-      this.model = { state: { dsp: [] } };
+      this.model = { info: this.info,
+                     state: { dsp: [] } };
 
       this.model = this.modelModel.toggleCtrlAreaDisplay(this.model);
-      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+      expect(this.modelModel.isCtrlAreaDisplayed(this.model))
         .toBeTruthy();
 
       this.model = this.modelModel.toggleCtrlAreaDisplay(this.model);
-      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+      expect(this.modelModel.isCtrlAreaDisplayed(this.model))
         .toBeFalsy();
     });
   });
 
   describe('setCtrlAreaDisplay(<set>)', function() {
     it('should set ctrlArea display for <model>', function() {
-      this.model = { state: { dsp: [] } };
+      this.model = { info: this.info,
+                     state: { dsp: [] } };
 
       this.model = this.modelModel.setCtrlAreaDisplay(true, this.model);
-      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+      expect(this.modelModel.isCtrlAreaDisplayed(this.model))
         .toBeTruthy();
 
       this.model = this.modelModel.setCtrlAreaDisplay(false, this.model);
-      expect(this.modelModel.isCtrlAreaDisplayed('factions', this.model))
+      expect(this.modelModel.isCtrlAreaDisplayed(this.model))
         .toBeFalsy();
     });
   });
 
   describe('toggleAreaDisplay()', function() {
     it('should toggle area display for <model>', function() {
-      this.model = { state: { dsp: [] } };
+      this.model = { info: this.info,
+                     state: { dsp: [] } };
 
       this.model = this.modelModel.toggleAreaDisplay('area', this.model);
       expect(this.modelModel.areaDisplay(this.model))
@@ -61,7 +62,8 @@ describe('model area model', function() {
 
   describe('setAreaDisplay(<set>)', function() {
     it('should set area display for <model>', function() {
-      this.model = { state: { dsp: [] } };
+      this.model = { info: this.info,
+                     state: { dsp: [] } };
 
       this.model = this.modelModel.setAreaDisplay('area', this.model);
       expect(this.modelModel.areaDisplay(this.model))

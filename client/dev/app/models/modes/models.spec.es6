@@ -1,9 +1,11 @@
-xdescribe('modelsMode model', function() {
+describe('modelsMode model', function() {
   beforeEach(inject([
     'modelsMode',
     function(modelsModeModel) {
       this.modelsModeModel = modelsModeModel;
 
+      this.appActionService = spyOnService('appAction');
+      this.appGameService = spyOnService('appGame');
       this.appStateService = spyOnService('appState');
       this.gameModel = spyOnService('game');
       this.gameModelsModel = spyOnService('gameModels');
@@ -13,8 +15,7 @@ xdescribe('modelsMode model', function() {
       this.modelModel = spyOnService('model');
 
       this.state = { game: { models: 'models',
-                             model_selection: 'selection' },
-                     factions: 'factions'
+                             model_selection: 'selection' }
                    };
     }
   ]));
@@ -24,25 +25,27 @@ xdescribe('modelsMode model', function() {
       .toggleCtrlAreaDisplay(this.state);
   }, function() {
     example(function(ee, dd) {
-      context('when first selected model\'s ctrlAreaDisplay is '+ee.first, function() {
+      context(`when first selected model\'s ctrlAreaDisplay is ${ee.first}`, function() {
         this.modelModel.isCtrlAreaDisplayed
           .and.returnValue(ee.first);
       }, function() {
-        it('should toggle ctrlArea display on local selection, '+dd, function() {
+        it(`should toggle ctrlArea display on local selection, ${dd}`, function() {
           expect(this.gameModelSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsModel.findStamp)
             .toHaveBeenCalledWith('stamp1', 'models');
 
           expect(this.modelModel.isCtrlAreaDisplayed)
-            .toHaveBeenCalledWith('factions', 'gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setCtrlAreaDisplay',
-                                    [ee.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setCtrlAreaDisplay',
+                [ee.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -53,16 +56,16 @@ xdescribe('modelsMode model', function() {
   });
 
   example(function(e) {
-    context('when user toggles '+e.area+'" area display on models', function() {
+    context(`when user toggles ${e.area}" area display on models`, function() {
       return this.modelsModeModel
-        .actions['toggle'+e.area+'InchesAreaDisplay'](this.state);
+        .actions[`toggle${e.area}InchesAreaDisplay`](this.state);
     }, function() {
       example(function(ee, dd) {
-        context('when first selected model\'s areaDisplay is '+ee.first, function() {
+        context(`when first selected model\'s areaDisplay is ${ee.first}`, function() {
           this.modelModel.areaDisplay
             .and.returnValue(ee.first);
         }, function() {
-          it('should toggle '+e.area+' area display on local selection, '+dd, function() {
+          it(`should toggle ${e.area} area display on local selection, ${dd}`, function() {
             expect(this.gameModelSelectionModel.get)
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsModel.findStamp)
@@ -70,13 +73,15 @@ xdescribe('modelsMode model', function() {
 
             expect(this.modelModel.areaDisplay)
               .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.appStateService.chainReduce)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onModels', [
-                                      'setAreaDisplay',
-                                      [ee.set],
-                                      ['stamp1','stamp2']
-                                    ]);
+            expect(this.appStateService.onAction)
+              .toHaveBeenCalledWith(this.state, [
+                'Game.command.execute',
+                'onModels', [
+                  'setAreaDisplay',
+                  [ee.set],
+                  ['stamp1','stamp2']
+                ]
+              ]);
           });
         });
       }, [
@@ -92,16 +97,16 @@ xdescribe('modelsMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user toggles '+e.aura+' aura display on models', function() {
+    context(`when user toggles ${e.aura} aura display on models`, function() {
       return this.modelsModeModel
-        .actions['toggle'+e.aura+'AuraDisplay'](this.state);
+        .actions[`toggle${e.aura}AuraDisplay`](this.state);
     }, function() {
       example(function(ee, dd) {
-        context('when first selected model\'s auraDisplay is '+ee.first, function() {
+        context(`when first selected model\'s auraDisplay is ${ee.first}`, function() {
           this.modelModel.auraDisplay
             .and.returnValue(ee.first);
         }, function() {
-          it(`should toggle ${e.aura} aura display on local selection, `+dd, function() {
+          it(`should toggle ${e.aura} aura display on local selection, ${dd}`, function() {
             expect(this.gameModelSelectionModel.get)
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsModel.findStamp)
@@ -109,13 +114,15 @@ xdescribe('modelsMode model', function() {
 
             expect(this.modelModel.auraDisplay)
               .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-            expect(this.appStateService.chainReduce)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onModels', [
-                                      'setAuraDisplay',
-                                      [ee.set],
-                                      ['stamp1','stamp2']
-                                    ]);
+            expect(this.appStateService.onAction)
+              .toHaveBeenCalledWith(this.state, [
+                'Game.command.execute',
+                'onModels', [
+                  'setAuraDisplay',
+                  [ee.set],
+                  ['stamp1','stamp2']
+                ]
+              ]);
           });
         });
       }, [
@@ -165,27 +172,27 @@ xdescribe('modelsMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should reset model\'s charge max length', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setChargeMaxLength',
-                                  ['factions', null],
+                                  [null],
                                   ['stamp1','stamp2']
                                 ]);
       });
     });
 
     example(function(e, d) {
-      context('when user validates prompt, '+d, function() {
+      context(`when user validates prompt, ${d}`, function() {
         this.promptService.promptP
           .resolveWith(e.value);
       }, function() {
         it('should set model\'s charge max length', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.do)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setChargeMaxLength',
-                                    ['factions', e.max],
+                                    [e.max],
                                     ['stamp1','stamp2']
                                   ]);
         });
@@ -209,9 +216,9 @@ xdescribe('modelsMode model', function() {
     });
 
     it('should enter createModel mode', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.model.copy',
-                              'gameModels.copyStamps.returnValue');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Game.model.copy',
+                                           'gameModels.copyStamps.returnValue']);
     });
   });
 
@@ -222,24 +229,24 @@ xdescribe('modelsMode model', function() {
     it('should execute deleteModelCommand', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'deleteModel',
-                              [['stamp1','stamp2']]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [ 'Game.command.execute',
+                                            'deleteModel',
+                                            [['stamp1','stamp2']] ]);
     });
   });
 
   example(function(e) {
-    context('when user toggles '+e.type+' display on models', function() {
+    context(`when user toggles ${e.type} display on models`, function() {
       return this.modelsModeModel
-        .actions['toggle'+e.type+'Display'](this.state);
+        .actions[`toggle${e.type}Display`](this.state);
     }, function() {
       example(function(ee, dd) {
-        context('first selected model\'s counterDisplayed is '+ee.first, function() {
+        context(`first selected model\'s counterDisplayed is ${ee.first}`, function() {
           this.modelModel.isCounterDisplayed
             .and.returnValue(ee.first);
         }, function() {
-          it('should toggle wreck display on local selection, '+dd, function() {
+          it(`should toggle wreck display on local selection, ${dd}`, function() {
             expect(this.gameModelSelectionModel.get)
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsModel.findStamp)
@@ -247,13 +254,15 @@ xdescribe('modelsMode model', function() {
 
             expect(this.modelModel.isCounterDisplayed)
               .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-            expect(this.appStateService.chainReduce)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onModels', [
-                                      'setCounterDisplay',
-                                      [e.flag, ee.set],
-                                      ['stamp1','stamp2']
-                                    ]);
+            expect(this.appStateService.onAction)
+              .toHaveBeenCalledWith(this.state, [
+                'Game.command.execute',
+                'onModels', [
+                  'setCounterDisplay',
+                  [e.flag, ee.set],
+                  ['stamp1','stamp2']
+                ]
+              ]);
           });
         });
       }, [
@@ -263,37 +272,41 @@ xdescribe('modelsMode model', function() {
       ]);
     });
 
-    context('when user increments '+e.type+' on models', function() {
+    context(`when user increments ${e.type} on models`, function() {
       return this.modelsModeModel
-        .actions['increment'+e.type](this.state);
+        .actions[`increment${e.type}`](this.state);
     }, function() {
       it('should increment counter on local selection', function() {
         expect(this.gameModelSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'incrementCounter',
-                                  [e.flag],
-                                  ['stamp1','stamp2']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              'incrementCounter',
+              [e.flag],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
     });
 
-    context('when user decrements '+e.type+' on models', function() {
+    context(`when user decrements ${e.type} on models`, function() {
       return this.modelsModeModel
-        .actions['decrement'+e.type](this.state);
+        .actions[`decrement${e.type}`](this.state);
     }, function() {
-      it('should decrement '+e.type+' on local selection', function() {
+      it(`should decrement ${e.type} on local selection`, function() {
         expect(this.gameModelSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'decrementCounter',
-                                  [e.flag],
-                                  ['stamp1','stamp2']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              'decrementCounter',
+              [e.flag],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
     });
   }, [
@@ -323,13 +336,11 @@ xdescribe('modelsMode model', function() {
         }, ss);
       });
 
-      this.modelModel.setPositionP.resolveWith((_f_, _t_, _p_, m) => {
-        return m;
-      });
+      this.modelModel.setPositionP.resolveWith(R.nthArg(2));
       spyReturnPromise(this.modelModel.setPositionP_);
-      this.modelModel.setPositionP_.resolveWith((_f_, _t_, _p_, m) => {
-        return m;
-      });
+      this.modelModel.setPositionP_.resolveWith(R.nthArg(2));
+
+      spyOn(this.appGameService.models.force_changes, 'send');
     });
 
     context('when user starts dragging model', function() {
@@ -349,7 +360,7 @@ xdescribe('modelsMode model', function() {
           .and.returnValue(false);
       }, function() {
         it('should set current selection', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.defer)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'setModelSelection',
                                   ['set', ['stamp']]);
@@ -370,7 +381,7 @@ xdescribe('modelsMode model', function() {
         it('should reject drag', function() {
           expect(this.modelModel.setPositionP)
             .not.toHaveBeenCalled();
-          expect(this.appStateService.emit)
+          expect(this.appGameService.models.force_changes.send)
             .not.toHaveBeenCalled();
         });
       });
@@ -392,8 +403,7 @@ xdescribe('modelsMode model', function() {
             expect(this.gameModelsModel.findStamp)
               .not.toHaveBeenCalled();
             expect(this.modelModel.setPositionP_)
-              .toHaveBeenCalledWith('factions',
-                                    null,
+              .toHaveBeenCalledWith(null,
                                     { x: 250, y: 241 },
                                     this.state.game.models[0]);
           });
@@ -404,8 +414,7 @@ xdescribe('modelsMode model', function() {
             .toHaveBeenCalledWith('model.chargeTarget.returnValue',
                                   this.state.game.models);
           expect(this.modelModel.setPositionP_)
-            .toHaveBeenCalledWith('factions',
-                                  'gameModels.findStamp.returnValue',
+            .toHaveBeenCalledWith('gameModels.findStamp.returnValue',
                                   { x: 250, y: 241 },
                                   this.state.game.models[0]);
         });
@@ -413,13 +422,11 @@ xdescribe('modelsMode model', function() {
 
       it('should update selection positions', function() {
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { x: 250, y: 241 },
                                 this.state.game.models[0]);
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { x: 210, y: 301 },
                                 this.state.game.models[1]);
       });
@@ -430,16 +437,14 @@ xdescribe('modelsMode model', function() {
         this.expectContextError();
       }, function() {
         it('should reject drag', function() {
-          expect(this.appStateService.emit)
+          expect(this.appGameService.models.force_changes.send)
             .not.toHaveBeenCalled();
         });
       });
 
-      it('should emit changeModel event', function() {
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.model.change.stamp1');
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.model.change.stamp2');
+      it('should emit models.force_changes event', function() {
+        expect(this.appGameService.models.force_changes.send)
+          .toHaveBeenCalledWith(['stamp1','stamp2']);
       });
     });
 
@@ -457,7 +462,7 @@ xdescribe('modelsMode model', function() {
           .dragStartModel(this.state, this.event)
           .then(() => {
             this.modelModel.setPositionP_.calls.reset();
-            this.appStateService.emit.calls.reset();
+            this.appGameService.models.force_changes.send.calls.reset();
 
             this.event = {
               target: { state: { stamp: 'stamp', x: 240, y: 240, r:180 } },
@@ -469,22 +474,18 @@ xdescribe('modelsMode model', function() {
 
       it('should update target position', function() {
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { x: 270, y: 230 },
                                 this.state.game.models[0]);
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { x: 230, y: 290 },
                                 this.state.game.models[1]);
       });
 
       it('should emit changeModel event', function() {
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.model.change.stamp1');
-        expect(this.appStateService.emit)
-          .toHaveBeenCalledWith('Game.model.change.stamp2');
+        expect(this.appGameService.models.force_changes.send)
+          .toHaveBeenCalledWith(['stamp1', 'stamp2']);
       });
     });
 
@@ -501,7 +502,7 @@ xdescribe('modelsMode model', function() {
         return this.modelsModeModel.actions
           .dragStartModel(this.state, this.event)
           .then(() => {
-            this.appStateService.emit.calls.reset();
+            this.appGameService.models.force_changes.send.calls.reset();
             this.modelModel.setPositionP_.calls.reset();
 
             this.event = {
@@ -514,23 +515,21 @@ xdescribe('modelsMode model', function() {
 
       it('should restore dragStart model position', function() {
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { stamp: 'stamp1', x: 240, y: 240, r: 180 },
                                 this.state.game.models[0]);
         expect(this.modelModel.setPositionP_)
-          .toHaveBeenCalledWith('factions',
-                                null,
+          .toHaveBeenCalledWith(null,
                                 { stamp: 'stamp2', x: 200, y: 300, r:  90 },
                                 this.state.game.models[1]);
       });
 
       it('should execute onModels/shiftPosition command', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'shiftPositionP',
-                                  ['factions', null, { x: 30, y: -10 }],
+                                  [null, { x: 30, y: -10 }],
                                   ['stamp1','stamp2']
                                 ]);
       });
@@ -542,7 +541,7 @@ xdescribe('modelsMode model', function() {
       .toggleLeaderDisplay(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s leaderDisplayed is '+e.first, function() {
+      context(`when first selected model\'s leaderDisplayed is ${e.first}`, function() {
         this.modelModel.isLeaderDisplayed
           .and.returnValue(e.first);
       }, function() {
@@ -554,13 +553,15 @@ xdescribe('modelsMode model', function() {
 
           expect(this.modelModel.isLeaderDisplayed)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setLeaderDisplay',
-                                    [e.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setLeaderDisplay',
+                [e.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -575,7 +576,7 @@ xdescribe('modelsMode model', function() {
       .toggleIncorporealDisplay(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s incorporealDisplayed is '+e.first, function() {
+      context(`when first selected model\'s incorporealDisplayed is ${e.first}`, function() {
         this.modelModel.isIncorporealDisplayed
           .and.returnValue(e.first);
       }, function() {
@@ -587,13 +588,15 @@ xdescribe('modelsMode model', function() {
 
           expect(this.modelModel.isIncorporealDisplayed)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setIncorporealDisplay',
-                                    [e.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setIncorporealDisplay',
+                [e.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -604,16 +607,16 @@ xdescribe('modelsMode model', function() {
   });
 
   example(function(e) {
-    context('when user toggles '+e.effect+' display on models', function() {
+    context(`when user toggles ${e.effect} display on models`, function() {
       return this.modelsModeModel
-        .actions['toggle'+e.effect+'EffectDisplay'](this.state);
+        .actions[`toggle${e.effect}EffectDisplay`](this.state);
     }, function() {
       example(function(ee, dd) {
-        context('when first selected model\'s '+e.effect+'EffectDisplayed is '+ee.first, function() {
+        context(`when first selected model\'s ${e.effect}EffectDisplayed is ${ee.first}`, function() {
           this.modelModel.isEffectDisplayed
             .and.returnValue(ee.first);
         }, function() {
-          it('should toggle '+e.effect+' display on local selection, '+dd, function() {
+          it(`should toggle ${e.effect} display on local selection, ${dd}`, function() {
             expect(this.gameModelSelectionModel.get)
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsModel.findStamp)
@@ -621,13 +624,15 @@ xdescribe('modelsMode model', function() {
 
             expect(this.modelModel.isEffectDisplayed)
               .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-            expect(this.appStateService.chainReduce)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onModels', [
-                                      'setEffectDisplay',
-                                      [e.flag, ee.set],
-                                      ['stamp1','stamp2']
-                                    ]);
+            expect(this.appStateService.onAction)
+              .toHaveBeenCalledWith(this.state, [
+                'Game.command.execute',
+                'onModels', [
+                  'setEffectDisplay',
+                  [e.flag, ee.set],
+                  ['stamp1','stamp2']
+                ]
+              ]);
           });
         });
       }, [
@@ -652,7 +657,7 @@ xdescribe('modelsMode model', function() {
       .toggleImageDisplay(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s imageDisplayed is '+e.first, function() {
+      context(`when first selected model\'s imageDisplayed is ${e.first}`, function() {
         this.modelModel.isImageDisplayed
           .and.returnValue(e.first);
       }, function() {
@@ -663,12 +668,14 @@ xdescribe('modelsMode model', function() {
             .toHaveBeenCalledWith('stamp1', 'models');
           expect(this.modelModel.isImageDisplayed)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [ 'setImageDisplay',
-                                                [e.set],
-                                                ['stamp1','stamp2']
-                                              ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [ 'setImageDisplay',
+                            [e.set],
+                            ['stamp1','stamp2']
+                          ]
+            ]);
         });
       });
     }, [
@@ -685,13 +692,15 @@ xdescribe('modelsMode model', function() {
     it('should set next image on local selection', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onModels', [
-                                'setNextImage',
-                                ['factions'],
-                                ['stamp1','stamp2']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'onModels', [
+            'setNextImage',
+            [],
+            ['stamp1','stamp2']
+          ]
+        ]);
     });
   });
 
@@ -700,24 +709,26 @@ xdescribe('modelsMode model', function() {
       .toggleWreckDisplay(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s wreckDisplayed is '+e.first, function() {
+      context(`when first selected model\'s wreckDisplayed is ${e.first}`, function() {
         this.modelModel.isWreckDisplayed
           .and.returnValue(e.first);
       }, function() {
-        it('should toggle wreck display on local selection, '+d, function() {
+        it(`should toggle wreck display on local selection, ${d}`, function() {
           expect(this.gameModelSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsModel.findStamp)
             .toHaveBeenCalledWith('stamp1', 'models');
           expect(this.modelModel.isWreckDisplayed)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setWreckDisplay',
-                                    [e.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setWreckDisplay',
+                [e.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -735,13 +746,15 @@ xdescribe('modelsMode model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
 
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onModels', [
-                                'clearLabel',
-                                [],
-                                ['stamp1','stamp2']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'onModels', [
+            'clearLabel',
+            [],
+            ['stamp1','stamp2']
+          ]
+        ]);
     });
   });
 
@@ -750,11 +763,11 @@ xdescribe('modelsMode model', function() {
       .toggleLock(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s isLocked === '+e.first, function() {
+      context(`when first selected model\'s isLocked === ${e.first}`, function() {
         this.modelModel.isLocked
           .and.returnValue(e.first);
       }, function() {
-        it('should toggle lock on local selection, '+d, function() {
+        it(`should toggle lock on local selection, ${d}`, function() {
           expect(this.gameModelSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsModel.findStamp)
@@ -762,12 +775,14 @@ xdescribe('modelsMode model', function() {
 
           expect(this.modelModel.isLocked)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'lockModels', [
-                                    e.set,
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'lockModels', [
+                e.set,
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -778,29 +793,31 @@ xdescribe('modelsMode model', function() {
   });
 
   example(function(e, d) {
-    context('when user toggles melee display on models, '+d, function() {
+    context(`when user toggles melee display on models, ${d}`, function() {
       return this.modelsModeModel
-        .actions['toggle'+e.melee+'Display'](this.state);
+        .actions[`toggle${e.melee}Display`](this.state);
     }, function() {
       example(function(ee, dd) {
-        context('when first selected model\'s meleeDisplay is '+ee.first, function() {
+        context(`when first selected model\'s meleeDisplay is ${ee.first}`, function() {
           this.modelModel.isMeleeDisplayed
             .and.returnValue(ee.first);
         }, function() {
-          it('should toggle '+e.melee+' melee display on local selection, '+dd, function() {
+          it(`should toggle ${e.melee} melee display on local selection, ${dd}`, function() {
             expect(this.gameModelSelectionModel.get)
               .toHaveBeenCalledWith('local', 'selection');
             expect(this.gameModelsModel.findStamp)
               .toHaveBeenCalledWith('stamp1', 'models');
             expect(this.modelModel.isMeleeDisplayed)
               .toHaveBeenCalledWith(e.flag, 'gameModels.findStamp.returnValue');
-            expect(this.appStateService.chainReduce)
-              .toHaveBeenCalledWith('Game.command.execute',
-                                    'onModels', [
-                                      'setMeleeDisplay',
-                                      [e.flag, ee.set],
-                                      ['stamp1','stamp2']
-                                    ]);
+            expect(this.appStateService.onAction)
+              .toHaveBeenCalledWith(this.state, [
+                'Game.command.execute',
+                'onModels', [
+                  'setMeleeDisplay',
+                  [e.flag, ee.set],
+                  ['stamp1','stamp2']
+                ]
+              ]);
           });
         });
       }, [
@@ -817,7 +834,7 @@ xdescribe('modelsMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user '+e.action+' model selection', function() {
+    context(`when user ${e.action} model selection`, function() {
       return this.modelsModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -826,34 +843,38 @@ xdescribe('modelsMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onModels/'+e.action+' command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.action+'P',
-                                  ['factions', false],
-                                  ['stamp1','stamp2']
-                                ]);
+      it(`should execute onModels/${e.action} command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              `${e.action}P`,
+              [false],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
     });
 
-    context('when user '+e.action+'Small model selection', function() {
+    context(`when user ${e.action}Small model selection`, function() {
       return this.modelsModeModel
-        .actions[e.action+'Small'](this.state);
+        .actions[`${e.action}Small`](this.state);
     }, function() {
       it('should get current selection', function() {
         expect(this.gameModelSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onModels/'+e.action+'Small command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.action+'P',
-                                  ['factions', true],
-                                  ['stamp1','stamp2']
-                                ]);
+      it(`should execute onModels/${e.action}Small command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              e.action+'P',
+              [true],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
     });
   }, [
@@ -865,7 +886,7 @@ xdescribe('modelsMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user '+e.action+' model selection', function() {
+    context(`when user ${e.action} model selection`, function() {
       return this.modelsModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -874,61 +895,69 @@ xdescribe('modelsMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onModels/'+e.action+' command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.action+'P',
-                                  ['factions', false],
-                                  ['stamp1','stamp2']
-                                ]);
+      it(`should execute onModels/${e.action} command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              e.action+'P',
+              [false],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
 
       context('map is flipped', function() {
-        this.state.ui_state = { flip_map: true };
+        this.state.view = { flip_map: true };
       }, function() {
-        it('should execute onModels/'+e.flipped_action+' command', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    e.flipped_action+'P',
-                                    ['factions', false],
-                                    ['stamp1','stamp2']
-                                  ]);
+        it(`should execute onModels/${e.flipped_action} command`, function() {
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                e.flipped_action+'P',
+                [false],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     });
 
-    context('when user '+e.action+'Small model selection', function() {
+    context(`when user ${e.action}Small model selection`, function() {
       return this.modelsModeModel
-        .actions[e.action+'Small'](this.state);
+        .actions[`${e.action}Small`](this.state);
     }, function() {
       it('should get current selection', function() {
         expect(this.gameModelSelectionModel.get)
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      it('should execute onModels/'+e.action+'Small command', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.action+'P',
-                                  ['factions', true],
-                                  ['stamp1','stamp2']
-                                ]);
+      it(`should execute onModels/${e.action}Small command`, function() {
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              `${e.action}P`,
+              [true],
+              ['stamp1','stamp2']
+            ]
+          ]);
       });
 
       context('map is flipped', function() {
-        this.state.ui_state = { flip_map: true };
+        this.state.view = { flip_map: true };
       }, function() {
-        it('should execute onModels/'+e.flipped_action+'Small command', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    e.flipped_action+'P',
-                                    [ 'factions', true],
-                                    ['stamp1','stamp2']
-                                  ]);
+        it(`should execute onModels/${e.flipped_action}Small command`, function() {
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                `${e.flipped_action}P`,
+                [true],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     });
@@ -941,7 +970,7 @@ xdescribe('modelsMode model', function() {
   ]);
 
   example(function(e) {
-    context('when user '+e.action+' on model selection', function() {
+    context(`when user ${e.action} on model selection`, function() {
       return this.modelsModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -954,17 +983,19 @@ xdescribe('modelsMode model', function() {
           .toHaveBeenCalledWith('local', 'selection');
       });
 
-      context('when map is '+(e.flipped?'':'not ')+'flipped', function() {
-        this.state.ui_state = { flip_map: e.flipped };
+      context(`when map is ${e.flipped?'':'not '}flipped`, function() {
+        this.state.view = { flip_map: e.flipped };
       }, function() {
         it('should execute onModels/setOrientation command', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setOrientationP',
-                                    ['factions', e.dir],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setOrientationP',
+                [e.dir],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     });
@@ -989,13 +1020,15 @@ xdescribe('modelsMode model', function() {
       expect(this.gameModelSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
 
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onModels', [
-                                'orientToP',
-                                [ 'factions', this.target],
-                                ['stamp1','stamp2']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'onModels', [
+            'orientToP',
+            [this.target],
+            ['stamp1','stamp2']
+          ]
+        ]);
     });
   });
 
@@ -1029,27 +1062,27 @@ xdescribe('modelsMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should reset model\'s place max length', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setPlaceMaxLengthP',
-                                  ['factions', null],
+                                  [null],
                                   ['stamp1','stamp2']
                                 ]);
       });
     });
 
     example(function(e, d) {
-      context('when user validates prompt, '+d, function() {
+      context(`when user validates prompt, ${d}`, function() {
         this.promptService.promptP
           .resolveWith(e.value);
       }, function() {
         it('should set model\'s place max length', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.do)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setPlaceMaxLengthP',
-                                    ['factions', e.max],
+                                    [e.max],
                                     ['stamp1','stamp2']
                                   ]);
         });
@@ -1066,24 +1099,26 @@ xdescribe('modelsMode model', function() {
       .togglePlaceWithin(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s placeWithin is '+e.first, function() {
+      context(`when first selected model\'s placeWithin is ${e.first}`, function() {
         this.modelModel.placeWithin
           .and.returnValue(e.first);
       }, function() {
-        it('should toggle placeWithin on local selection, '+d, function() {
+        it(`should toggle placeWithin on local selection, ${d}`, function() {
           expect(this.gameModelSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsModel.findStamp)
             .toHaveBeenCalledWith('stamp1', 'models');
           expect(this.modelModel.placeWithin)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setPlaceWithinP',
-                                    ['factions', e.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setPlaceWithinP',
+                [e.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -1121,12 +1156,12 @@ xdescribe('modelsMode model', function() {
     });
 
     example(function(e, d) {
-      context('when user validates prompt, '+d, function() {
+      context(`when user validates prompt, ${d}`, function() {
         this.promptService.promptP
           .resolveWith(e.value);
       }, function() {
         it('should set model\'s ruler max length', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.do)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setRulerMaxLength',
@@ -1146,7 +1181,7 @@ xdescribe('modelsMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should set model\'s ruler max length', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setRulerMaxLength',
@@ -1158,15 +1193,17 @@ xdescribe('modelsMode model', function() {
   });
 
   example(function(e) {
-    context('when user '+e.action, function() {
+    context(`when user ${e.action}`, function() {
       return this.modelsModeModel
         .actions[e.action](this.state, 'event');
     }, function() {
       it('should clear local model selection', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'setModelSelection',
-                                ['clear', null]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'setModelSelection',
+            ['clear', null]
+          ]);
       });
     });
   }, [
@@ -1180,24 +1217,26 @@ xdescribe('modelsMode model', function() {
       .toggleUnitDisplay(this.state);
   }, function() {
     example(function(e, d) {
-      context('when first selected model\'s unitDisplayed is '+e.first, function() {
+      context(`when first selected model\'s unitDisplayed is ${e.first}`, function() {
         this.modelModel.isUnitDisplayed
           .and.returnValue(e.first);
       }, function() {
-        it('should toggle unit display on local selection, '+d, function() {
+        it(`should toggle unit display on local selection, ${d}`, function() {
           expect(this.gameModelSelectionModel.get)
             .toHaveBeenCalledWith('local', 'selection');
           expect(this.gameModelsModel.findStamp)
             .toHaveBeenCalledWith('stamp1', 'models');
           expect(this.modelModel.isUnitDisplayed)
             .toHaveBeenCalledWith('gameModels.findStamp.returnValue');
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    'setUnitDisplay',
-                                    [e.set],
-                                    ['stamp1','stamp2']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                'setUnitDisplay',
+                [e.set],
+                ['stamp1','stamp2']
+              ]
+            ]);
         });
       });
     }, [
@@ -1237,7 +1276,7 @@ xdescribe('modelsMode model', function() {
         this.promptService.promptP.resolveWith(e.value);
       }, function() {
         it('should set model\'s unit number', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.do)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setUnit',
@@ -1256,7 +1295,7 @@ xdescribe('modelsMode model', function() {
       this.promptService.promptP.rejectWith('canceled');
     }, function() {
       it('should reset model\'s unit', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'onModels', [
                                   'setUnit',

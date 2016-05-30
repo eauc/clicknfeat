@@ -1,5 +1,4 @@
-<g ng-repeat="(i,model) in state.game.models.active track by model.state.stamp"
-   click-game-under-model>
+<g ng-repeat="(i,model) in state.game.models[type] track by model.state.stamp">
   <rect class="model-charge-path"
         ng-show="model.render.path.show"
         ng-attr-x="{{model.render.path.x}}"

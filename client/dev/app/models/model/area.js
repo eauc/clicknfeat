@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('modelArea', modelAreaModelFactory);
 
-  modelAreaModelFactory.$inject = ['gameFactions'];
-  function modelAreaModelFactory(gameFactionsModel) {
+  modelAreaModelFactory.$inject = [];
+  function modelAreaModelFactory() {
     var DSP_LENS = R.lensPath(['state', 'dsp']);
     var AREA_LENS = R.lensPath(['state', 'are']);
     return function () {
@@ -20,12 +20,9 @@
       };
       return modelAreaModel;
 
-      function modelIsCtrlAreaDisplayed(factions, model) {
-        return R.thread(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.ifElse(R.isNil, function () {
-          return false;
-        }, function (info) {
-          return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model));
-        }));
+      function modelIsCtrlAreaDisplayed(model) {
+        var info = model.info;
+        return info.type === 'wardude' && ('Number' === R.type(info.focus) || 'Number' === R.type(info.fury)) && !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model));
       }
       function modelSetCtrlAreaDisplay(set, model) {
         var update = set ? R.compose(R.uniq, R.append('a')) : R.reject(R.equals('a'));
@@ -49,12 +46,12 @@
           return area === are ? null : area;
         }, model);
       }
-      function modelRenderArea(_ref, factions, state) {
+      function modelRenderArea(_ref, state) {
         var info = _ref.info;
         var radius = _ref.radius;
 
         var area = modelAreaModel.isAreaDisplayed({ state: state }) ? modelAreaModel.areaDisplay({ state: state }) * 10 + radius : null;
-        var ctrl = modelAreaModel.isCtrlAreaDisplayed(factions, { state: state }) ? (info.focus || info.fury) * 20 + radius : null;
+        var ctrl = modelAreaModel.isCtrlAreaDisplayed({ info: info, state: state }) ? (info.focus || info.fury) * 20 + radius : null;
         return {
           area: area,
           ctrl: ctrl

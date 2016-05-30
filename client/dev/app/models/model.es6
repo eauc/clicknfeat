@@ -42,6 +42,7 @@
                              modelUnitModel,
                              modelWreckModel,
                              modelRulerModel) {
+    const USER_LENS = R.lensPath(['state','user']);
     const DEFAULT_MOVES = {
       Move: 10,
       MoveSmall: 5,
@@ -102,6 +103,7 @@
           R.isNil,
           (info) => {
             const model = {
+              info,
               state: {
                 x: 0, y: 0, r: 0,
                 img: 0,
@@ -130,39 +132,31 @@
               model.state.lk = true;
             }
             model.state = R.deepExtend(model.state, temp);
-            return modelModel.checkState(factions, null, model);
+            return modelModel.checkState(null, model);
           }
         )
       );
     }
     function modelUser(model) {
-      return R.path(['state', 'user'], model);
+      return R.view(USER_LENS, model);
     }
     function modelUserIs(user, model) {
-      return R.pathEq(['state', 'user'], user, model);
+      return R.equals(user, R.view(USER_LENS, model));
     }
-    function modelCheckState(factions, target, model) {
-      return R.thread(factions)(
-        gameFactionsModel.getModelInfo$(model.state.info),
-        R.ifElse(
-          R.isNil,
-          () => R.prop('state', model),
-          (info) => {
-            const radius = info.base_radius;
-            return R.thread(model.state)(
-              R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
-              R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
-              (state) => R.reduce((state, checker) => {
-                return checker(info, target, state);
-              }, state, modelModel.state_checkers),
-              (state) => R.reduce(function(state, updater) {
-                return updater(state);
-              }, state, modelModel.state_updaters)
-            );
-          }
-        ),
-        (state) => R.assoc('state', state, model)
+    function modelCheckState(target, model) {
+      const info = model.info;
+      const radius = info.base_radius;
+      const state = R.thread(model.state)(
+        R.assoc('x', Math.max(0+radius, Math.min(480-radius, model.state.x))),
+        R.assoc('y', Math.max(0+radius, Math.min(480-radius, model.state.y))),
+        (state) => R.reduce((state, checker) => {
+          return checker(target, info, state);
+        }, state, modelModel.state_checkers),
+        (state) => R.reduce((state, updater) => {
+          return updater(state);
+        }, state, modelModel.state_updaters)
       );
+      return R.assoc('state', state, model);
     }
     function modelModeFor(model) {
       if(modelModel.isCharging(model)) {
@@ -173,8 +167,8 @@
       }
       return 'Model';
     }
-    function modelDescriptionFromInfo(info, model) {
-      return R.thread(info)(
+    function modelDescriptionFromInfo(model) {
+      return R.thread(model.info)(
         R.props(['unit_name', 'name']),
         R.prepend(modelModel.user(model)),
         R.reject(R.isNil),
@@ -200,15 +194,11 @@
     }
     function modelRender({ is_flipped,
                            charge_target
-                         }, factions, state) {
-      const info = R.thread(factions)(
-        gameFactionsModel.getModelInfo$(state.info),
-        R.defaultTo({ base_radius: 5.905 })
-      );
+                         }, info, state) {
       const is_wreck = modelModel.isWreckDisplayed({state});
       const img = (is_wreck
-                   ? modelModel.getWreckImage(factions, {state})
-                   : modelModel.getImage(factions, {state}));
+                   ? modelModel.getWreckImage({info, state})
+                   : modelModel.getImage({info, state}));
       const cx = img.width / 2;
       const cy = img.height / 2;
       const radius = info.base_radius;
@@ -227,10 +217,18 @@
         y: cy - 5
       };
       const path = { show: false, x: 0, y: 0, transform: '', length: {} };
+      let r = state.r % 360;
+      r = r > 0 ? r : 360 + r;
+      const text_y_top = cx + radius + 8;
+      const text_y_bottom = cx - radius - 2;
+      const text_center_y = ( r > 90 && r < 270
+                              ? (is_flipped ? text_y_bottom : text_y_top)
+                              : (is_flipped ? text_y_top : text_y_bottom)
+                            );
       const label_options = {
         flipped: is_flipped,
         flip_center: { x: cx, y: cy },
-        text_center: { x: cx, y: cx + radius + 8 }
+        text_center: { x: cx, y: text_center_y }
       };
       const label = base
               .renderLabel(label_options, state);
@@ -244,10 +242,11 @@
           cx, cy, radius, dx, dy, frx, flx, los,
           width: img.width, height: img.height,
           base_color: info.base_color,
-          title: modelModel.descriptionFromInfo(info, {state}),
+          title: modelModel.descriptionFromInfo({info, state}),
+          label_transform: `translate(${state.x-cx},${state.y-cy})`,
           label, lock, path
         },
-        modelModel.renderArea({ info, radius }, factions, state),
+        modelModel.renderArea({ info, radius }, state),
         modelModel.renderAura({ radius }, state),
         modelModel.renderCharge({ base, charge_target, radius }, path, state),
         modelModel.renderCounter({ base, cx, cy, is_flipped, radius }, state),

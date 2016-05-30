@@ -53,75 +53,75 @@
       function modelEndCharge(model) {
         return R.set(CHARGE_LENS, null, model);
       }
-      function modelSetChargeTargetP(factions, other, model) {
+      function modelSetChargeTargetP(other, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           if (R.exists(other)) {
             return R.thread(model)(R.over(CHARGE_LENS, R.assoc('t', other.state.stamp)), R.over(STATE_LENS, R.assoc('r', pointModel.directionTo(other.state, model.state))));
           } else {
             return R.set(CHARGE_TARGET_LENS, null, model);
           }
-        }, modelModel.checkState$(factions, other));
+        }, modelModel.checkState$(other));
       }
       function modelChargeMaxLength(model) {
         return R.view(CHARGE_MAX_LENGTH_LENS, model);
       }
-      function modelSetChargeMaxLength(factions, value, model) {
+      function modelSetChargeMaxLength(value, model) {
         model = R.set(CHARGE_MAX_LENGTH_LENS, value, model);
-        return modelModel.checkState(factions, null, model);
+        return modelModel.checkState(null, model);
       }
-      function modelMoveFrontChargeP(factions, target, small, model) {
+      function modelMoveFrontChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.cha.s.r;
           return R.over(STATE_LENS, pointModel.translateInDirection$(dist, direction), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelMoveBackChargeP(factions, target, small, model) {
+      function modelMoveBackChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.cha.s.r + 180;
           var distance = pointModel.distanceTo(model.state, model.state.cha.s);
           if (dist > distance) dist = distance;
           return R.over(STATE_LENS, pointModel.translateInDirection$(dist, direction), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelRotateLeftChargeP(factions, target, small, model) {
+      function modelRotateLeftChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateLeftAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.subtract(R.__, angle)));
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelRotateRightChargeP(factions, target, small, model) {
+      function modelRotateRightChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateRightAround$(angle, model.state.cha.s)), R.over(R.lensPath(['state', 'cha', 's', 'r']), R.add(angle)));
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelShiftLeftChargeP(factions, target, small, model) {
+      function modelShiftLeftChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftLeft$(dist), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelShiftRightChargeP(factions, target, small, model) {
+      function modelShiftRightChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftRight$(dist), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelShiftUpChargeP(factions, target, small, model) {
+      function modelShiftUpChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftUp$(dist), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function modelShiftDownChargeP(factions, target, small, model) {
+      function modelShiftDownChargeP(target, small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function (model) {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftDown$(dist), model);
-        }, modelModel.checkState$(factions, target));
+        }, modelModel.checkState$(target));
       }
-      function ensureChargeLength(_info_, _target_, state) {
+      function ensureChargeLength(_target_, _info_, state) {
         if (R.exists(state.cha) && R.exists(state.cml) && state.cml > 0) {
           var distance = pointModel.distanceTo(state, state.cha.s);
           if (distance > state.cml * 10) {
@@ -132,7 +132,7 @@
         }
         return state;
       }
-      function ensureChargeOrientation(_info_, target, state) {
+      function ensureChargeOrientation(target, _info_, state) {
         if (R.exists(state.cha)) {
           if (R.exists(target)) {
             return R.assoc('r', pointModel.directionTo(target.state, state), state);

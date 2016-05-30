@@ -145,8 +145,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return parseFloat(s);
       });
     }
-    function gameFactionsBuildModelsList(list, user, references) {
-      var info = gameFactionsModel.getListInfo(list, references);
+    function gameFactionsBuildModelsList(list, user, factions) {
+      var info = gameFactionsModel.getListInfo(list, factions.references);
       var MAX_X = 240;
       var x = 0,
           y = 0,

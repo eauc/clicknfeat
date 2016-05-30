@@ -16,6 +16,8 @@
                                      modelModel,
                                      gameModelsModel,
                                      gameModelSelectionModel) {
+    const FLIP_MAP_LENS = R.lensPath(['view','flip_map']);
+    const MODELS_LENS = R.lensPath(['game', 'models']);
     const model_actions = Object.create(modelsModeModel.actions);
     model_actions.createAoEOnModel = modelCreateAoEOnModel;
     model_actions.createSprayOnModel = modelCreateSprayOnModel;
@@ -56,8 +58,8 @@
     function modelCreateAoEOnModel(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
+      return R.thread(state)(
+        R.view(MODELS_LENS),
         gameModelsModel.findStamp$(stamps[0]),
         R.unless(
           R.isNil,
@@ -69,11 +71,11 @@
               templates: [ R.assoc('r', 0, position) ]
             }),
             (create) => {
-              const is_flipped = R.path(['ui_state','flip_map'], state);
-              appStateService
-                .chainReduce('Game.command.execute',
-                             'createTemplate',
-                             [create, is_flipped]);
+              const is_flipped = R.viewOr(false, FLIP_MAP_LENS, state);
+              return appStateService
+                .onAction(state, [ 'Game.command.execute',
+                                   'createTemplate',
+                                   [create, is_flipped] ]);
             }
           )
         )
@@ -82,14 +84,14 @@
     function modelCreateSprayOnModel(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      return R.thread(state.game)(
-        R.prop('models'),
+      return R.thread(state)(
+        R.view(MODELS_LENS),
         gameModelsModel.findStamp$(stamps[0]),
         R.unless(
           R.isNil,
           R.pipe(
             (model) => R.thread(model)(
-              modelModel.baseEdgeInDirection$(state.factions, model.state.r),
+              modelModel.baseEdgeInDirection$(model.state.r),
               R.assoc('o', model.state.stamp),
               R.assoc('r', model.state.r),
               R.assoc('type', 'spray'),
@@ -98,11 +100,11 @@
                 templates: [ position ]
               }),
               (create) => {
-                const is_flipped = R.path(['ui_state','flip_map'], state);
-                appStateService
-                  .chainReduce('Game.command.execute',
-                               'createTemplate',
-                               [create, is_flipped]);
+                const is_flipped = R.viewOr(false, FLIP_MAP_LENS, state);
+                return appStateService
+                  .onAction(state, [ 'Game.command.execute',
+                                     'createTemplate',
+                                     [create, is_flipped] ]);
               }
             )
           )
@@ -112,8 +114,8 @@
     function modelSelectAllFriendly(state) {
       const selection = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
+      return R.thread(state)(
+        R.view(MODELS_LENS),
         gameModelsModel.findStamp$(selection[0]),
         R.unless(
           R.isNil,
@@ -123,14 +125,12 @@
               R.prop('models'),
               gameModelsModel.all,
               R.filter(modelModel.userIs$(user)),
-              R.map(modelModel.stamp)
+              R.map(R.path(['state','stamp']))
             ),
-            (stamps) => {
-              appStateService
-                .chainReduce('Game.command.execute',
-                             'setModelSelection',
-                             ['set', stamps]);
-            }
+            (stamps) => appStateService
+              .onAction(state, [ 'Game.command.execute',
+                                 'setModelSelection',
+                                 ['set', stamps] ])
           )
         )
       );
@@ -138,8 +138,8 @@
     function modelSelectAllUnit(state) {
       const selection = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
+      return R.thread(state)(
+        R.view(MODELS_LENS),
         gameModelsModel.findStamp$(selection[0]),
         R.unless(
           R.isNil,
@@ -149,19 +149,21 @@
               R.unless(
                 R.equals(0),
                 R.pipe(
-                  (unit) => R.thread(state.game)(
-                    R.prop('models'),
+                  (unit) => R.thread(state)(
+                    R.view(MODELS_LENS),
                     gameModelsModel.all,
+                    R.spyError('toto'),
                     R.filter(modelModel.userIs$(modelModel.user(model))),
+                    R.spyError('toto'),
                     R.filter(modelModel.unitIs$(unit)),
-                    R.map(modelModel.stamp)
+                    R.spyError('toto'),
+                    R.map(R.path(['state','stamp'])),
+                    R.spyError('toto')
                   ),
-                  (stamps) => {
-                    appStateService
-                      .chainReduce('Game.command.execute',
-                                   'setModelSelection',
-                                   ['set', stamps]);
-                  }
+                  (stamps) => appStateService
+                    .onAction(state, [ 'Game.command.execute',
+                                       'setModelSelection',
+                                       ['set', stamps] ])
                 )
               )
             )
@@ -172,21 +174,22 @@
     function modelSetB2B(state, event) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
+      return R.thread(state)(
+        R.view(MODELS_LENS),
         gameModelsModel.findStamp$(stamps[0]),
         R.unless(
           R.isNil,
           (model) => {
-            if(model.state.stamp === event['click#'].target.state.stamp) return;
+            if(model.state.stamp === event['click#'].target.state.stamp) return state;
 
-            appStateService
-              .chainReduce('Game.command.execute',
-                           'onModels', [
-                             'setB2BP',
-                             [state.factions, event['click#'].target],
-                             stamps
-                           ]);
+            return appStateService
+              .onAction(state, [ 'Game.command.execute',
+                                 'onModels', [
+                                   'setB2BP',
+                                   [event['click#'].target],
+                                   stamps
+                                 ]
+                               ]);
           }
         )
       );
@@ -194,29 +197,26 @@
     function modelOpenEditLabel(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
-        gameModelsModel.findStamp$(stamps[0]),
-        (model) => {
-          appStateService
-            .emit('Game.editLabel.open', 'onModels', model);
-        }
+      const model = R.thread(state)(
+        R.view(MODELS_LENS),
+        gameModelsModel.findStamp$(stamps[0])
       );
+      if(R.isNil(model)) return null;
+      return R.assocPath(['view','edit_label'], {
+        type: 'model', element: model
+      }, state);
     }
     function modelOpenEditDamage(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      R.thread(state.game)(
-        R.prop('models'),
-        gameModelsModel.findStamp$(stamps[0]),
-        R.unless(
-          R.isNil,
-          (model) => {
-            appStateService
-              .emit('Game.editDamage.toggle', model);
-          }
-        )
+      const model = R.thread(state)(
+        R.view(MODELS_LENS),
+        gameModelsModel.findStamp$(stamps[0])
       );
+      if(R.isNil(model)) return null;
+      return R.assocPath(['view','edit_damage'], {
+        selection: model
+      }, state);
     }
   }
 })();

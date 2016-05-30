@@ -4,6 +4,7 @@ describe('modelPlaceMode model', function() {
     function(modelPlaceModeModel) {
       this.modelPlaceModeModel = modelPlaceModeModel;
 
+      this.appActionService = spyOnService('appAction');
       this.appStateService = spyOnService('appState');
       this.modesModel = spyOnService('modes');
       this.modelModel = spyOnService('model');
@@ -27,7 +28,7 @@ describe('modelPlaceMode model', function() {
       .endPlace(this.state);
   }, function() {
     it('should end place for model', function() {
-      expect(this.appStateService.chainReduce)
+      expect(this.appActionService.defer)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels', [
                                 'endPlace',
@@ -37,8 +38,8 @@ describe('modelPlaceMode model', function() {
     });
 
     it('should switch to Model mode', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo','Model');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Modes.switchTo','Model']);
     });
   });
 
@@ -58,7 +59,7 @@ describe('modelPlaceMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -67,13 +68,15 @@ describe('modelPlaceMode model', function() {
       this.target.state.stamp = 'target';
     }, function() {
       it('should set place target for model', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'setPlaceTargetP',
-                                  ['factions', this.target],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              'setPlaceTargetP',
+              [this.target],
+              ['stamp']
+            ]
+          ]);
       });
     });
   });
@@ -94,7 +97,7 @@ describe('modelPlaceMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -103,13 +106,15 @@ describe('modelPlaceMode model', function() {
       this.target.state.stamp = 'origin';
     }, function() {
       it('should set place target for model', function() {
-          expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'setPlaceOriginP',
-                                  ['factions', this.target],
-                                  ['stamp']
-                                ]);
+          expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              'setPlaceOriginP',
+              [this.target],
+              ['stamp']
+            ]
+          ]);
       });
     });
   });
@@ -120,17 +125,19 @@ describe('modelPlaceMode model', function() {
         .actions[e.action](this.state);
     }, function() {
       beforeEach(function() {
-        this.state.ui_state = { flip_map : e.flipped };
+        this.state.view = { flip_map : e.flipped };
       });
 
       it('should place-move model', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.move+'PlaceP',
-                                  ['factions', e.small],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              e.move+'PlaceP',
+              [e.small],
+              ['stamp']
+            ]
+          ]);
       });
     });
   }, [

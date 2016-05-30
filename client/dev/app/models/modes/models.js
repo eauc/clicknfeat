@@ -5,8 +5,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelsMode', modelsModeModelFactory);
 
-  modelsModeModelFactory.$inject = ['appState', 'modes', 'settings', 'defaultMode', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
-  function modelsModeModelFactory(appStateService, modesModel, settingsModel, defaultModeModel, modelModel, gameModelsModel, gameModelSelectionModel, promptService) {
+  modelsModeModelFactory.$inject = ['$rootScope', 'appAction', 'appGame', 'appState', 'modes', 'settings', 'defaultMode', 'model', 'gameModels', 'gameModelSelection', 'prompt'];
+  function modelsModeModelFactory($rootScope, appActionService, appGameService, appStateService, modesModel, settingsModel, defaultModeModel, modelModel, gameModelsModel, gameModelSelectionModel, promptService) {
+    var FLIP_MAP_LENS = R.lensPath(['view', 'flip_map']);
+    var MODELS_LENS = R.lensPath(['game', 'models']);
+    var MODEL_SELECTION_LENS = R.lensPath(['game', 'model_selection']);
     var models_actions = Object.create(defaultModeModel.actions);
     models_actions.clickMap = modelsClearSelection;
     models_actions.rightClickMap = modelsClearSelection;
@@ -110,155 +113,155 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     return models_mode;
 
-    function modelsClearSelection() {
-      appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['clear', null]);
+    function modelsClearSelection(state) {
+      return appStateService.onAction(state, ['Game.command.execute', 'setModelSelection', ['clear', null]]);
     }
     function modelsDeleteSelection(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'deleteModel', [stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'deleteModel', [stamps]]);
     }
     function modelsCopySelection(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.copyStamps$(stamps), function (copy) {
-        appStateService.chainReduce('Game.model.copy', copy);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.copyStamps$(stamps), function (copy) {
+        return appStateService.onAction(state, ['Game.model.copy', copy]);
       });
     }
     function modelsToggleLock(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLocked, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'lockModels', [!present, stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLocked, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'lockModels', [!present, stamps]]);
       })));
     }
     function modelsToggleImageDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isImageDisplayed, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setImageDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), modelModel.isImageDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setImageDisplay', [!present], stamps]]);
       });
     }
     function modelsSetNextImage(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['setNextImage', [state.factions], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setNextImage', [], stamps]]);
     }
     function modelsToggleWreckDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isWreckDisplayed, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setWreckDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), modelModel.isWreckDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setWreckDisplay', [!present], stamps]]);
       });
     }
     function modelsToggleUnitDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isUnitDisplayed, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setUnitDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isUnitDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setUnitDisplay', [!present], stamps]]);
       })));
     }
     function modelsSetUnit(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
         return R.threadP(model)(modelModel.unit, R.defaultTo(0), function (value) {
           return promptService.promptP('prompt', 'Set unit number :', value).catch(R.always(null));
         }, function (value) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setUnit', [value], stamps]);
+          return appActionService.do('Game.command.execute', 'onModels', ['setUnit', [value], stamps]);
         });
       }));
     }
     function modelsToggleMeleeDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mm'), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mm', !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mm'), function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setMeleeDisplay', ['mm', !present], stamps]]);
       })));
     }
     function modelsToggleReachDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mr'), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['mr', !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('mr'), function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setMeleeDisplay', ['mr', !present], stamps]]);
       })));
     }
     function modelsToggleStrikeDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('ms'), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setMeleeDisplay', ['ms', !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isMeleeDisplayed$('ms'), function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setMeleeDisplay', ['ms', !present], stamps]]);
       })));
     }
     function modelsToggleCounterDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('c'), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCounterDisplay', ['c', !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('c'), function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setCounterDisplay', ['c', !present], stamps]]);
       });
     }
     function modelsIncrementCounter(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['incrementCounter', ['c'], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['incrementCounter', ['c'], stamps]]);
     }
     function modelsDecrementCounter(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['decrementCounter', ['c'], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['decrementCounter', ['c'], stamps]]);
     }
     function modelsToggleSoulsDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('s'), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCounterDisplay', ['s', !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), modelModel.isCounterDisplayed$('s'), function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setCounterDisplay', ['s', !present], stamps]]);
       });
     }
     function modelsIncrementSouls(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['incrementCounter', ['s'], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['incrementCounter', ['s'], stamps]]);
     }
     function modelsDecrementSouls(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['decrementCounter', ['s'], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['decrementCounter', ['s'], stamps]]);
     }
     function modelsSetRulerMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
         return R.threadP(model)(modelModel.rulerMaxLength, R.defaultTo(0), function (value) {
           return promptService.promptP('prompt', 'Set ruler max length :', value).catch(R.always(null));
         }, function (value) {
           return value === 0 ? null : value;
         }, function (value) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setRulerMaxLength', [value], stamps]);
+          appActionService.do('Game.command.execute', 'onModels', ['setRulerMaxLength', [value], stamps]);
         });
       }));
     }
     function modelsSetChargeMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
-        return R.threadP(model)(modelModel.chargeMaxLength, function (value) {
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.threadP(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        return R.threadP(model)(modelModel.chargeMaxLength, R.defaultTo(0), function (value) {
           return promptService.promptP('prompt', 'Set charge max length :', value).catch(R.always(null));
         }, function (value) {
           return value === 0 ? null : value;
         }, function (value) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setChargeMaxLength', [state.factions, value], stamps]);
+          appActionService.do('Game.command.execute', 'onModels', ['setChargeMaxLength', [value], stamps]);
         });
       }));
     }
     function modelsSetPlaceMaxLength(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.threadP(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
         return R.threadP(model)(modelModel.placeMaxLength, R.defaultTo(0), function (value) {
           return promptService.promptP('prompt', 'Set place max length :', value).catch(R.always(null));
         }, function (value) {
           return value === 0 ? null : value;
         }, function (value) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setPlaceMaxLengthP', [state.factions, value], stamps]);
+          appActionService.do('Game.command.execute', 'onModels', ['setPlaceMaxLengthP', [value], stamps]);
         });
       }));
     }
     function modelsTogglePlaceWithin(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.threadP(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.placeWithin, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setPlaceWithinP', [state.factions, !present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.placeWithin, function (present) {
+        appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setPlaceWithinP', [!present], stamps]]);
       })));
     }
     function modelsToggleLeaderDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLeaderDisplayed, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setLeaderDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isLeaderDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setLeaderDisplay', [!present], stamps]]);
       })));
     }
     function modelsToggleIncorporealDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), modelModel.isIncorporealDisplayed, function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setIncorporealDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), modelModel.isIncorporealDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setIncorporealDisplay', [!present], stamps]]);
       });
     }
     function modelsToggleEffect(_ref) {
@@ -270,9 +273,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       models_actions['toggle' + effect + 'EffectDisplay'] = modelsToggleEffect_;
 
       function modelsToggleEffect_(state) {
-        var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-        R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isEffectDisplayed$(flag), function (present) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setEffectDisplay', [flag, !present], stamps]);
+        var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+        return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isEffectDisplayed$(flag), function (present) {
+          return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setEffectDisplay', [flag, !present], stamps]]);
         })));
       }
     }
@@ -285,16 +288,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       models_actions['toggle' + aura + 'AuraDisplay'] = modelsToggleAura_;
 
       function modelsToggleAura_(state) {
-        var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-        R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.auraDisplay, function (present) {
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setAuraDisplay', [present === hex ? null : hex], stamps]);
+        var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+        return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.auraDisplay, function (present) {
+          return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setAuraDisplay', [present === hex ? null : hex], stamps]]);
         })));
       }
     }
     function modelsToggleCtrlAreaDisplay(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isCtrlAreaDisplayed$(state.factions), function (present) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setCtrlAreaDisplay', [!present], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.isCtrlAreaDisplayed, function (present) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setCtrlAreaDisplay', [!present], stamps]]);
       })));
     }
     function modelsToggleAreaDisplay(area) {
@@ -305,9 +308,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       function modelsToggleAreaDisplay_(size) {
         return function modelsToggleSizeAreaDisplay(state) {
-          var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-          return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.areaDisplay, function (present) {
-            appStateService.chainReduce('Game.command.execute', 'onModels', ['setAreaDisplay', [present === size ? null : size], stamps]);
+          var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+          return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.areaDisplay, function (present) {
+            return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setAreaDisplay', [present === size ? null : size], stamps]]);
           })));
         };
       }
@@ -323,8 +326,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       function modelsMove_(small) {
         return function modelsSmallMove(state) {
-          var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-          appStateService.chainReduce('Game.command.execute', 'onModels', [move + 'P', [state.factions, small], stamps]);
+          var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+          return appStateService.onAction(state, ['Game.command.execute', 'onModels', [move + 'P', [small], stamps]]);
         };
       }
     }
@@ -340,29 +343,29 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       function modelsShift_(small) {
         return function modelsShiftSmall(state) {
-          var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-          var model_shift = R.path(['ui_state', 'flip_map'], state) ? flip_shift : shift;
-          appStateService.chainReduce('Game.command.execute', 'onModels', [model_shift + 'P', [state.factions, small], stamps]);
+          var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+          var model_shift = R.viewOr(false, FLIP_MAP_LENS, state) ? flip_shift : shift;
+          return appStateService.onAction(state, ['Game.command.execute', 'onModels', [model_shift + 'P', [small], stamps]]);
         };
       }
     }
     function modelsSetOrientationUp(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      var orientation = state.ui_state.flip_map ? 180 : 0;
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      var orientation = R.viewOr(false, FLIP_MAP_LENS, state) ? 180 : 0;
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setOrientationP', [orientation], stamps]]);
     }
     function modelsSetOrientationDown(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      var orientation = state.ui_state.flip_map ? 0 : 180;
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['setOrientationP', [state.factions, orientation], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      var orientation = R.viewOr(false, FLIP_MAP_LENS, state) ? 0 : 180;
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setOrientationP', [orientation], stamps]]);
     }
     function modelsSetTargetModel(state, event) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['orientToP', [state.factions, event['click#'].target], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['orientToP', [event['click#'].target], stamps]]);
     }
     function modelsClearLabel(state) {
-      var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['clearLabel', [], stamps]);
+      var stamps = gameModelSelectionModel.get('local', R.view(MODEL_SELECTION_LENS, state));
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['clearLabel', [], stamps]]);
     }
 
     function modelsDrag() {
@@ -388,8 +391,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         });
 
         function resolveModelSelection() {
-          return R.thread(state.game)(R.prop('model_selection'), R.ifElse(gameModelSelectionModel.in$('local', stamp), gameModelSelectionModel.get$('local'), function () {
-            appStateService.chainReduce('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
+          return R.thread(state)(R.view(MODEL_SELECTION_LENS), R.ifElse(gameModelSelectionModel.in$('local', stamp), gameModelSelectionModel.get$('local'), function () {
+            appActionService.defer('Game.command.execute', 'setModelSelection', ['set', [stamp]]);
             return [stamp];
           }));
         }
@@ -402,27 +405,27 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           })));
         }
       }
-      function modelsDragContinue(state, event) {
-        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPositionP), R.allP, R.reject(R.isNil), R.forEach(emitModelChangeEvent));
+      function modelsDragContinue(_state_, event) {
+        return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(updateDragedModelPositionP), R.allP, R.reject(R.equals(null)), R.unless(R.isEmpty, function () {
+          appGameService.models.force_changes.send(R.map(R.path(['state', 'stamp']), drag_models_start_selection));
+          $rootScope.$digest();
+        }));
 
         function updateDragedModelPositionP(model, index) {
           var pos = {
             x: drag_models_start_states[index].x + event.now.x - event.start.x,
             y: drag_models_start_states[index].y + event.now.y - event.start.y
           };
-          return modelModel.setPositionP_(state.factions, drag_charge_target, pos, model).catch(function () {
+          return modelModel.setPositionP_(drag_charge_target, pos, model).catch(function () {
             return null;
           });
         }
-        function emitModelChangeEvent(model) {
-          appStateService.emit('Game.model.change.' + model.state.stamp);
-        }
       }
-      function modelsDragEnd(state, event) {
+      function modelsDragEnd(_state_, event) {
         return R.threadP(drag_models_start_selection)(R.addIndex(R.map)(resetDragedModelPositionP), R.allP, R.reject(R.isNil), R.map(R.path(['state', 'stamp'])), setFinalPositions);
 
         function resetDragedModelPositionP(model, index) {
-          return modelModel.setPositionP_(state.factions, drag_charge_target, drag_models_start_states[index], model).catch(function () {
+          return modelModel.setPositionP_(drag_charge_target, drag_models_start_states[index], model).catch(function () {
             return null;
           });
         }
@@ -431,7 +434,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             x: event.now.x - event.start.x,
             y: event.now.y - event.start.y
           };
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['shiftPositionP', [state.factions, drag_charge_target, shift], stamps]);
+          appActionService.do('Game.command.execute', 'onModels', ['shiftPositionP', [drag_charge_target, shift], stamps]);
         }
       }
     }

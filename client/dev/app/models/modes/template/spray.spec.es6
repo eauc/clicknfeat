@@ -12,7 +12,6 @@ describe('sprayTemplateMode model', function() {
       this.gameModelsModel = spyOnService('gameModels');
 
       this.state = {
-        factions: 'factions',
         game: { template_selection: 'selection',
                 templates: 'templates',
                 models: 'models'
@@ -21,7 +20,7 @@ describe('sprayTemplateMode model', function() {
     }
   ]));
 
-  xcontext('when user set origin model', function() {
+  context('when user set origin model', function() {
     return this.sprayTemplateModeModel.actions
       .setOriginModel(this.state, this.event);
   }, function() {
@@ -35,17 +34,19 @@ describe('sprayTemplateMode model', function() {
     it('should set origin for current template selection', function() {
       expect(this.gameTemplateSelectionModel.get)
         .toHaveBeenCalledWith('local', 'selection');
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'onTemplates',
-                              [ 'setOriginP',
-                                ['factions', this.target],
-                                ['stamp']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'onTemplates',
+          [ 'setOriginP',
+            [this.target],
+            ['stamp']
+          ]
+        ]);
     });
   });
 
-  xcontext('when user set target model', function() {
+  context('when user set target model', function() {
     return this.sprayTemplateModeModel.actions
       .setTargetModel(this.state, this.event);
   }, function() {
@@ -72,7 +73,7 @@ describe('sprayTemplateMode model', function() {
         .and.returnValue(null);
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -84,21 +85,22 @@ describe('sprayTemplateMode model', function() {
       it('should set spray target to clicked model', function() {
         expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('origin', 'models');
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onTemplates',
-                                [ 'setTargetP',
-                                  ['factions',
-                                   'gameModels.findStamp.returnValue',
-                                   this.target],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onTemplates',
+            [ 'setTargetP',
+              ['gameModels.findStamp.returnValue',
+               this.target],
+              ['stamp']
+            ]
+          ]);
       });
     });
   });
 
   example(function(e, d) {
-    context('when user rotate left, '+d, function() {
+    context(`when user rotate left, ${d}`, function() {
       return this.sprayTemplateModeModel
         .actions[e.action](this.state);
     }, function() {
@@ -119,15 +121,14 @@ describe('sprayTemplateMode model', function() {
 
         expect(this.sprayTemplateModel.origin)
           .toHaveBeenCalledWith('gameTemplates.findStamp.returnValue');
-        // expect(this.gameModelsModel.findStamp)
-        //   .toHaveBeenCalledWith('origin', 'models');
+        expect(this.gameModelsModel.findStamp)
+          .toHaveBeenCalledWith('origin', 'models');
         expect(this.appStateService.onAction)
           .toHaveBeenCalledWith(this.state, [
             'Game.command.execute',
             'onTemplates',
             [ 'rotateLeftP',
-              [// 'gameModels.findStamp.returnValue',
-               null,
+              ['gameModels.findStamp.returnValue',
                e.small],
               ['stamp']
             ]

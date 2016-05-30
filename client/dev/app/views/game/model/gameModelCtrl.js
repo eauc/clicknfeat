@@ -17,9 +17,9 @@
     vm.getEntries = getEntries;
     vm.getModel = getModel;
 
-    // vm.doCreateModel = doCreateModel;
-    // vm.doImportList = doImportList;
-    // vm.doImportModelsFile = doImportModelsFile;
+    vm.doCreateModel = doCreateModel;
+    vm.doImportList = doImportList;
+    vm.doImportModelsFile = doImportModelsFile;
 
     activate();
 
@@ -78,18 +78,17 @@
         return [vm.faction, 'models', vm.section, vm.entry, 'entries', vm.type, vm.model];
       }
     }
-    // function doCreateModel() {
-    //   const model_path = getModelPath();
-    //   $scope.sendAction('Game.model.create',
-    //                     model_path, vm.repeat);
-    // }
-    // function doImportList() {
-    //   // TODO : find min unit number for user
-    //   $scope.sendAction('Game.model.importList', vm.import_list);
-    // }
-    // function doImportModelsFile(files) {
-    //   $scope.sendAction('Game.model.importFile', files[0]);
-    // }
+    function doCreateModel() {
+      var model_path = getModelPath();
+      $scope.sendAction('Game.model.create', model_path, vm.repeat);
+    }
+    function doImportList() {
+      // TODO : find min unit number for user
+      $scope.sendAction('Game.model.importList', vm.import_list);
+    }
+    function doImportModelsFile(files) {
+      $scope.sendAction('Game.model.importFile', files[0]);
+    }
   }
 })();
 //# sourceMappingURL=gameModelCtrl.js.map

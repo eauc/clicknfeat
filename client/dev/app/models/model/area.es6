@@ -2,10 +2,8 @@
   angular.module('clickApp.services')
     .factory('modelArea', modelAreaModelFactory);
 
-  modelAreaModelFactory.$inject = [
-    'gameFactions',
-  ];
-  function modelAreaModelFactory(gameFactionsModel) {
+  modelAreaModelFactory.$inject = [];
+  function modelAreaModelFactory() {
     const DSP_LENS = R.lensPath(['state','dsp']);
     const AREA_LENS = R.lensPath(['state','are']);
     return () => {
@@ -21,22 +19,14 @@
       };
       return modelAreaModel;
 
-      function modelIsCtrlAreaDisplayed(factions, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.ifElse(
-            R.isNil,
-            () => false,
-            (info) => {
-              return ( info.type === 'wardude' &&
-                       ( 'Number' === R.type(info.focus) ||
-                         'Number' === R.type(info.fury)
-                       ) &&
-                       !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model))
-                     );
-            }
-          )
-        );
+      function modelIsCtrlAreaDisplayed(model) {
+        const info = model.info;
+        return ( info.type === 'wardude' &&
+                 ( 'Number' === R.type(info.focus) ||
+                   'Number' === R.type(info.fury)
+                 ) &&
+                 !!R.find(R.equals('a'), R.viewOr([], DSP_LENS, model))
+               );
       }
       function modelSetCtrlAreaDisplay(set, model) {
         const update = ( set
@@ -70,12 +60,12 @@
       }
       function modelRenderArea({ info,
                                  radius
-                               }, factions, state) {
+                               }, state) {
         const area = ( modelAreaModel.isAreaDisplayed({state})
                        ? modelAreaModel.areaDisplay({state}) * 10 + radius
                        : null
                      );
-        const ctrl = ( modelAreaModel.isCtrlAreaDisplayed(factions, {state})
+        const ctrl = ( modelAreaModel.isCtrlAreaDisplayed({info, state})
                        ? (info.focus || info.fury) * 20 + radius
                        : null
                      );

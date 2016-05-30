@@ -4,6 +4,7 @@ describe('modelChargeMode model', function() {
     function(modelChargeModeModel) {
       this.modelChargeModeModel = modelChargeModeModel;
 
+      this.appActionService = spyOnService('appAction');
       this.appStateService = spyOnService('appState');
       this.modesModel = spyOnService('modes');
       this.modelModel = spyOnService('model');
@@ -16,7 +17,6 @@ describe('modelChargeMode model', function() {
       this.state = { game: { model_selection: 'selection',
                              models: 'models'
                            },
-                     factions: 'factions',
                      modes: 'modes'
                    };
     }
@@ -27,7 +27,7 @@ describe('modelChargeMode model', function() {
       .endCharge(this.state);
   }, function() {
     it('should end charge for model', function() {
-      expect(this.appStateService.chainReduce)
+      expect(this.appActionService.defer)
         .toHaveBeenCalledWith('Game.command.execute',
                               'onModels', [
                                 'endCharge',
@@ -37,8 +37,8 @@ describe('modelChargeMode model', function() {
     });
 
     it('should switch to Model mode', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo','Model');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Modes.switchTo','Model']);
     });
   });
 
@@ -58,7 +58,7 @@ describe('modelChargeMode model', function() {
       this.event['click#'].target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -66,24 +66,26 @@ describe('modelChargeMode model', function() {
     context('when target is another model', function() {
     }, function() {
       it('should set charge target for model', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'setChargeTargetP',
-                                  [this.state.factions, this.event['click#'].target],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              'setChargeTargetP',
+              [this.event['click#'].target],
+              ['stamp']
+            ]
+          ]);
       });
     });
   });
 
   example(function(e, d) {
-    context('when user '+e.action+' on model, '+d, function() {
+    context(`when user ${e.action} on model, ${d}`, function() {
       return this.modelChargeModeModel
         .actions[e.action](this.state);
     }, function() {
       beforeEach(function() {
-        this.state.ui_state = { flip_map: e.flipped };
+        this.state.view = { flip_map: e.flipped };
       });
 
       it('should fetch charging model', function() {
@@ -101,13 +103,15 @@ describe('modelChargeMode model', function() {
           .and.returnValue(null);
       }, function() {
         it('should execute move without target', function() {
-          expect(this.appStateService.chainReduce)
-            .toHaveBeenCalledWith('Game.command.execute',
-                                  'onModels', [
-                                    e.move+'ChargeP',
-                                    ['factions', null, e.small],
-                                    ['stamp']
-                                  ]);
+          expect(this.appStateService.onAction)
+            .toHaveBeenCalledWith(this.state, [
+              'Game.command.execute',
+              'onModels', [
+                `${e.move}ChargeP`,
+                [null, e.small],
+                ['stamp']
+              ]
+            ]);
         });
       });
 
@@ -117,15 +121,16 @@ describe('modelChargeMode model', function() {
       });
 
       it('should charge-move model with defined target', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  e.move+'ChargeP',
-                                  ['factions',
-                                   'gameModels.findStamp.returnValue',
-                                   e.small],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [
+            'Game.command.execute',
+            'onModels', [
+              `${e.move}ChargeP`,
+              ['gameModels.findStamp.returnValue',
+               e.small],
+              ['stamp']
+            ]
+          ]);
       });
     });
   }, [

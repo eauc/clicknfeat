@@ -10,7 +10,6 @@ describe('aoeTemplateMode model', function() {
       this.gameTemplateSelectionModel = spyOnService('gameTemplateSelection');
 
       this.state = {
-        factions: 'factions',
         game: { template_selection: 'selection',
                 templates: 'templates',
                 models: 'models',
@@ -152,7 +151,7 @@ describe('aoeTemplateMode model', function() {
           'Game.command.execute',
           'onTemplates',
           [ 'setTargetP',
-            ['factions', null, this.target],
+            [this.target],
             ['stamp']
           ]
         ]);

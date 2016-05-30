@@ -8,9 +8,9 @@ describe('sprayTemplate model', function() {
     }
   ]));
 
-  xcontext('setOriginP(<factions>, <origin>), ', function() {
+  context('setOriginP(<origin>), ', function() {
     return this.sprayTemplateModel
-      .setOriginP('factions', this.origin, this.template);
+      .setOriginP(this.origin, this.template);
   }, function() {
     beforeEach(function() {
       this.template = {
@@ -27,7 +27,7 @@ describe('sprayTemplate model', function() {
 
     it('should set template position to <origin> base edge', function() {
       expect(this.modelModel.baseEdgeInDirection)
-        .toHaveBeenCalledWith('factions', 42, this.origin);
+        .toHaveBeenCalledWith(42, this.origin);
 
       expect(R.pick(['x','y','r'], this.context.state))
         .toEqual({ x: 124, y: 124, r: 42 });
@@ -41,9 +41,9 @@ describe('sprayTemplate model', function() {
     whenSprayIsLockedShouldRejectAction();
   });
 
-  xcontext('setTargetP(<factions>, <origin>, <target>), ', function() {
+  context('setTargetP(<origin>, <target>), ', function() {
     return this.sprayTemplateModel
-      .setTargetP('factions', this.origin, this.target, this.template);
+      .setTargetP(this.origin, this.target, this.template);
   }, function() {
     beforeEach(function() {
       this.template = {
@@ -63,7 +63,7 @@ describe('sprayTemplate model', function() {
 
     it('should center template on <target>', function() {
       expect(this.modelModel.baseEdgeInDirection)
-        .toHaveBeenCalledWith('factions', -45, this.origin);
+        .toHaveBeenCalledWith(-45, this.origin);
 
       expect(this.context.state)
         .toEqual({ x: 236, y: 236, r: -45 });
@@ -105,7 +105,7 @@ describe('sprayTemplate model', function() {
   ]);
 
   example(function(e) {
-    context(`${e.move}(<factions>, <origin>, <small>)`, function() {
+    context(`${e.move}(<origin>, <small>)`, function() {
       return this.sprayTemplateModel[e.move](this.origin,
                                              true, this.template);
     }, function() {
@@ -126,12 +126,12 @@ describe('sprayTemplate model', function() {
           .toEqual({ x: 240, y: 240, r: e.new_dir });
       });
 
-      xcontext('when <origin> exists', function() {
+      context('when <origin> exists', function() {
         this.origin = 'origin';
       }, function() {
         it('should rotate <template> around <origin> base edge', function() {
           expect(this.modelModel.baseEdgeInDirection)
-            .toHaveBeenCalledWith('factions', e.new_dir, 'origin');
+            .toHaveBeenCalledWith(e.new_dir, 'origin');
           expect(R.pick(['x','y','r'], this.context.state))
             .toEqual({ x: 42, y: 71, r: e.new_dir });
         });
@@ -146,7 +146,7 @@ describe('sprayTemplate model', function() {
   ]);
 
   example(function(e, d) {
-    context('setSizeP(<size>), '+d, function() {
+    context(`setSizeP(<size>), ${d}`, function() {
       return this.sprayTemplateModel
         .setSizeP(e.size, this.template);
     }, function() {

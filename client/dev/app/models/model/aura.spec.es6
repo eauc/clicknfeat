@@ -1,4 +1,4 @@
-describe('model aura service', function() {
+describe('model aura model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {

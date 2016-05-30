@@ -28,9 +28,10 @@
     function modelsModeForStamp(stamp, models) {
       return R.thread(models)(
         gameModelsModel.findStamp$(stamp),
-        R.when(
+        R.ifElse(
           R.exists,
-          modelModel.modeFor
+          modelModel.modeFor,
+          () => 'Model'
         )
       );
     }

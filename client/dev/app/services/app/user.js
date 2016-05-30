@@ -26,9 +26,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var chat = _ref2[1];
       return R.exists(chat) && !userModel.isChatAuthor(chat, user);
     });
-    var ready = undefined;
     var userService = {
-      user: user, valid: valid, new_chat: new_chat, ready: ready,
+      user: user, valid: valid, new_chat: new_chat,
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,
@@ -46,7 +45,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function mount() {
       appActionService.register('User.connection.chat', actionUserConnectionChat).register('User.connection.close', actionUserConnectionClose).register('User.connection.games', actionUserConnectionGames).register('User.connection.users', actionUserConnectionUsers).register('User.sendChat', actionUserSendChat).register('User.set', actionUserSet).register('User.toggleOnline', actionUserToggleOnline).register('User.updateState', actionUserUpdateState);
-      ready = userModel.initP().then(function (user) {
+      userService.ready = userModel.initP().then(function (user) {
         return appActionService.action.send(['User.set', user]);
       });
     }

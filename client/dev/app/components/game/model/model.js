@@ -1,10 +1,12 @@
 'use strict';
 
-(function () {
-  angular.module('clickApp.directives').directive('clickGameModel', gameModelDirectiveFactory).directive('clickGameModelsList', gameModelsListDirectiveFactory).directive('clickGameUnderModel', gameUnderModelDirectiveFactory).directive('clickGameUnderModelsList', gameUnderModelsListDirectiveFactory).directive('clickGameOverModel', gameOverModelDirectiveFactory).directive('clickGameOverModelsList', gameOverModelsListDirectiveFactory);
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-  gameModelDirectiveFactory.$inject = ['appState', 'gameMap', 'gameFactions', 'model', 'gameModels', 'gameModelSelection'];
-  function gameModelDirectiveFactory(appStateService, gameMapService, gameFactionsModel, modelModel, gameModelsModel, gameModelSelectionModel) {
+(function () {
+  angular.module('clickApp.directives').directive('clickGameModel', gameModelDirectiveFactory).directive('clickGameModelsList', gameModelsListDirectiveFactory).directive('clickGameUnderModelsList', gameUnderModelsListDirectiveFactory).directive('clickGameOverModelsList', gameOverModelsListDirectiveFactory);
+
+  gameModelDirectiveFactory.$inject = ['appGame', 'gameMap', 'model', 'gameModels', 'gameModelSelection'];
+  function gameModelDirectiveFactory(appGameService, gameMapService, modelModel, gameModelsModel, gameModelSelectionModel) {
     var clickGameModelDirective = {
       restrict: 'A',
       link: link
@@ -12,72 +14,72 @@
     return clickGameModelDirective;
 
     function link(scope, _parent_) {
-      var state = scope.state;
-      var model = scope.model;
-      var info = R.thread(state.factions)(gameFactionsModel.getModelInfo$(model.state.info), R.defaultTo({ base_radius: 5.905 }));
-      console.log('gameModel', scope.model, info);
+      console.log('gameModel', scope.model);
 
-      scope.onStateChangeEvent('Game.view.flipMap', onUpdate, scope);
-      scope.onStateChangeEvent('Game.models.change', onUpdate, scope);
-      scope.onStateChangeEvent('Game.model_selection.change', onUpdate, scope);
-      scope.onStateChangeEvent('Game.model.change.' + model.state.stamp, _onUpdate, scope);
-      updateModel(scope);
+      var stamp = scope.model.state.stamp;
+      scope.listenSignal(refreshRender, appGameService.models.flip_map, scope);
+      scope.listenSignal(onModelSelectionChanges, appGameService.models.selection_changes, scope);
+      scope.listenSignal(onModelsChanges, appGameService.models.changes, scope);
+      mount();
 
-      var _model = undefined;
-      var _selection = undefined;
-      var _is_flipped = undefined;
-      function onUpdate() {
+      function onModelsChanges(_ref) {
+        var _ref2 = _slicedToArray(_ref, 2);
+
+        var models = _ref2[0];
+        var stamps = _ref2[1];
+
+        if (!R.find(R.equals(stamp), stamps)) return;
+
+        refreshRender(models);
+      }
+      function onModelSelectionChanges(_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2);
+
+        var selection = _ref4[0];
+        var stamps = _ref4[1];
+
+        if (!R.find(R.equals(stamp), stamps)) return;
+
+        refreshSelection(selection);
+      }
+
+      function mount() {
+        var models = appGameService.models.models.sample();
+        refreshRender(models);
+
+        var selection = appGameService.models.selection.sample();
+        refreshSelection(selection);
+      }
+
+      function refreshRender(models) {
+        var model = gameModelsModel.findStamp(stamp, models);
+        if (R.isNil(model)) return;
+        scope.model = model;
+
         var map = document.getElementById('map');
         var is_flipped = gameMapService.isFlipped(map);
-        var state = appStateService.current();
-        var selection = R.path(['game', 'model_selection'], state);
-        var model = scope.model;
-        if (_model === model && _selection === selection && _is_flipped === is_flipped) {
-          return;
-        }
-        _model = model;
-        _selection = selection;
-        _is_flipped = is_flipped;
 
-        _onUpdate();
-      }
-      function _onUpdate() {
-        updateModel(scope);
-        scope.$digest();
-      }
-    }
-    function updateModel(scope) {
-      var map = document.getElementById('map');
-      var is_flipped = gameMapService.isFlipped(map);
-      var model = scope.model;
-      var stamp = model.state.stamp;
-      var state = appStateService.current();
-
-      var selection = R.path(['game', 'model_selection'], state);
-      var local = gameModelSelectionModel.in('local', stamp, selection);
-      var remote = gameModelSelectionModel.in('remote', stamp, selection);
-      var single_local = gameModelSelectionModel.inSingle('local', stamp, selection);
-      var single_remote = gameModelSelectionModel.inSingle('remote', stamp, selection);
-      model.selection = {
-        local: local,
-        remote: remote,
-        single_local: single_local,
-        single_remote: single_remote
-      };
-
-      var charge_target = undefined;
-      if (single_local) {
+        var charge_target = undefined;
         var target_stamp = R.path(['state', 'cha', 't'], model);
         if (R.exists(target_stamp)) {
-          charge_target = gameModelsModel.findStamp(target_stamp, state.game.models);
-          charge_target.info = gameFactionsModel.getModelInfo(charge_target.state.info, state.factions);
+          charge_target = gameModelsModel.findStamp(target_stamp, models);
         }
+        model.render = modelModel.render({ is_flipped: is_flipped, charge_target: charge_target }, model.info, model.state);
+        console.warn('RENDER MODEL', stamp, model.state, model.render);
       }
-
-      model.render = modelModel.render({ is_flipped: is_flipped, charge_target: charge_target }, state.factions, model.state);
-
-      appStateService.emit('Game.model.change.' + stamp + '.render');
-      console.warn('RENDER MODEL', model.state.stamp, model.render, scope.selection);
+      function refreshSelection(selection) {
+        var local = gameModelSelectionModel.in('local', stamp, selection);
+        var remote = gameModelSelectionModel.in('remote', stamp, selection);
+        var single_local = gameModelSelectionModel.inSingle('local', stamp, selection);
+        var single_remote = gameModelSelectionModel.inSingle('remote', stamp, selection);
+        scope.model.selection = {
+          local: local,
+          remote: remote,
+          single_local: single_local,
+          single_remote: single_remote
+        };
+        console.warn('SELECTION MODEL', stamp, selection, scope.selection);
+      }
     }
   }
 
@@ -92,25 +94,7 @@
 
     function link(scope, element) {
       scope.type = element[0].getAttribute('click-game-models-list');
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
       console.log('clickGameModelsList', scope.type);
-    }
-  }
-
-  gameUnderModelDirectiveFactory.$inject = [];
-  function gameUnderModelDirectiveFactory() {
-    var clickGameUnderModelDirective = {
-      restrict: 'A',
-      link: link
-    };
-    return clickGameUnderModelDirective;
-
-    function link(scope, _parent_) {
-      var stamp = scope.model.state.stamp;
-      console.log('gameUnderModel', stamp);
-
-      scope.digestOnStateChangeEvent('Game.view.flipMap', scope);
-      scope.digestOnStateChangeEvent('Game.model.change.' + stamp + '.render', scope);
     }
   }
 
@@ -123,26 +107,9 @@
       link: link
     };
 
-    function link(scope) {
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
-      console.log('clickGameModelsList', scope.type);
-    }
-  }
-
-  gameOverModelDirectiveFactory.$inject = [];
-  function gameOverModelDirectiveFactory() {
-    var clickGameOverModelDirective = {
-      restrict: 'A',
-      link: link
-    };
-    return clickGameOverModelDirective;
-
-    function link(scope, _parent_) {
-      var stamp = scope.model.state.stamp;
-      console.log('gameOverModel', stamp);
-
-      scope.digestOnStateChangeEvent('Game.view.flipMap', scope);
-      scope.digestOnStateChangeEvent('Game.model.change.' + stamp + '.render', scope);
+    function link(scope, element) {
+      scope.type = element[0].getAttribute('click-game-under-models-list');
+      console.log('clickGameUnderModelsList', scope.type);
     }
   }
 
@@ -155,9 +122,9 @@
       link: link
     };
 
-    function link(scope) {
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
-      console.log('clickGameModelsList', scope.type);
+    function link(scope, element) {
+      scope.type = element[0].getAttribute('click-game-over-models-list');
+      console.log('clickGameOverModelsList', scope.type);
     }
   }
 })();

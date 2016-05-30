@@ -5,28 +5,19 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameScenario', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes',
-  // 'appState',
-  // 'state',
-  // 'gameFactions',
-  // 'gameModels',
-  // 'gameModelSelection',
-  // 'allCommands',
-  'allTemplates'];
-  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameScenarioModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel
-  // appStateService,
-  // stateModel,
-  // gameFactionsModel,
-  // gameModelsModel,
-  // gameModelSelectionModel
-  ) {
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameModels', 'gameModelSelection', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
+  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameModelsModel, gameModelSelectionModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
+    var DRAG_BOX_LENS = R.lensPath(['view', 'drag_box']);
     var FLIP_MAP_LENS = R.lensPath(['view', 'flip_map']);
     var MOVE_MAP_LENS = R.lensPath(['view', 'move_map']);
     var DETAIL_LENS = R.lensPath(['view', 'detail']);
+    var EDIT_DAMAGE_LENS = R.lensPath(['view', 'edit_damage']);
     var EDIT_LABEL_LENS = R.lensPath(['view', 'edit_label']);
+    var MODELS_LENS = R.lensProp('models');
+    var MODEL_SELECTION_LENS = R.lensProp('model_selection');
     var TEMPLATES_LENS = R.lensProp('templates');
     var TEMPLATE_SELECTION_LENS = R.lensProp('template_selection');
     var TERRAINS_LENS = R.lensProp('terrains');
@@ -51,9 +42,39 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var zoom_reset = view.filter(R.equals('zoomReset'));
     var toggle_menu = view.filter(R.equals('toggleMenu'));
     var move_map = appStateService.state.map(R.viewOr(false, MOVE_MAP_LENS)).changes();
+    var drag_box = appStateService.state.map(R.viewOr({}, DRAG_BOX_LENS)).changes();
     var flip_map = appStateService.state.map(R.viewOr(false, FLIP_MAP_LENS)).changes();
     var detail = appStateService.state.map(R.viewOr(null, DETAIL_LENS));
+    var edit_damage = appStateService.state.map(R.viewOr(null, EDIT_DAMAGE_LENS));
+    var edit_damage_changes = edit_damage.changes();
     var edit_label = appStateService.state.map(R.viewOr(null, EDIT_LABEL_LENS));
+    var edit_label_changes = edit_label.changes();
+
+    var models = game.map(R.viewOr(gameModelsModel.create(), MODELS_LENS));
+    var previous_models = models.delay();
+    var model_selection = game.map(R.viewOr(gameModelSelectionModel.create(), MODEL_SELECTION_LENS));
+    var previous_model_selection = model_selection.delay();
+
+    var models_force_changes = behavioursModel.signalModel.create();
+    var models_changes = models.changes().snapshot(observeModelsChanges, previous_models).orElse(models_force_changes).snapshot(function (models, stamps) {
+      return [models, stamps];
+    }, models).filter(function (_ref) {
+      var _ref2 = _slicedToArray(_ref, 2);
+
+      var _models_ = _ref2[0];
+      var stamps = _ref2[1];
+      return !R.isEmpty(stamps);
+    });
+    var model_selection_changes = model_selection.changes().snapshot(observeModelSelectionChanges, previous_model_selection).snapshot(function (sel, stamps) {
+      return [sel, stamps];
+    }, model_selection).filter(function (_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2);
+
+      var _sel_ = _ref4[0];
+      var stamps = _ref4[1];
+      return !R.isEmpty(stamps);
+    });
+    var models_flip_map = flip_map.snapshot(R.nthArg(0), models);
 
     var templates = game.map(R.viewOr(gameTemplatesModel.create(), TEMPLATES_LENS));
     var previous_templates = templates.delay();
@@ -62,11 +83,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var templates_force_changes = behavioursModel.signalModel.create();
     var templates_changes = templates.changes().snapshot(observeTemplatesChanges, previous_templates).orElse(templates_force_changes).snapshot(function (templates, stamps) {
       return [templates, stamps];
-    }, templates).filter(function (_ref) {
-      var _ref2 = _slicedToArray(_ref, 2);
+    }, templates).filter(function (_ref5) {
+      var _ref6 = _slicedToArray(_ref5, 2);
 
-      var _templates_ = _ref2[0];
-      var stamps = _ref2[1];
+      var _templates_ = _ref6[0];
+      var stamps = _ref6[1];
       return !R.isEmpty(stamps);
     });
     var template_selection_changes = template_selection.changes();
@@ -79,30 +100,44 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var terrains_force_changes = behavioursModel.signalModel.create();
     var terrains_changes = terrains.changes().snapshot(observeTerrainsChanges, previous_terrains).orElse(terrains_force_changes).snapshot(function (terrains, stamps) {
       return [terrains, stamps];
-    }, terrains).filter(function (_ref3) {
-      var _ref4 = _slicedToArray(_ref3, 2);
+    }, terrains).filter(function (_ref7) {
+      var _ref8 = _slicedToArray(_ref7, 2);
 
-      var _terrains_ = _ref4[0];
-      var stamps = _ref4[1];
+      var _terrains_ = _ref8[0];
+      var stamps = _ref8[1];
       return !R.isEmpty(stamps);
     });
     var terrain_selection_changes = terrain_selection.changes();
 
-    template_selection_changes.orElse(terrain_selection_changes).listen(appGameCheckMode);
+    model_selection_changes.orElse(template_selection_changes).orElse(terrain_selection_changes).listen(appGameCheckMode);
 
     var board_export = game.map(R.viewOr({}, BOARD_LENS)).changes().orElse(terrains.changes()).snapshot(R.nthArg(0), game).snapshot(gameBoardExport, function () {
       return board_export_previous;
     }).hold({});
     var board_export_previous = board_export.delay({});
+    var model_selection_export = model_selection_changes.snapshot(R.nthArg(0), game).snapshot(gameModelSelectionExport, function () {
+      return model_selection_export_previous;
+    }).hold({});
+    var model_selection_export_previous = model_selection_export.delay({});
 
     var appGameService = {
       game: game, create: create, loading: loading,
       export: { board: board_export,
-        game: game_export
+        game: game_export,
+        models: model_selection_export
       },
       view: { scroll_left: scroll_left, scroll_right: scroll_right, scroll_up: scroll_up, scroll_down: scroll_down,
         zoom_in: zoom_in, zoom_out: zoom_out, zoom_reset: zoom_reset,
-        detail: detail, edit_label: edit_label, flip_map: flip_map, move_map: move_map, toggle_menu: toggle_menu
+        detail: detail.changes(), drag_box: drag_box, flip_map: flip_map, move_map: move_map, toggle_menu: toggle_menu,
+        edit_damage: edit_damage, edit_damage_changes: edit_damage_changes,
+        edit_label: edit_label, edit_label_changes: edit_label_changes
+      },
+      models: { models: models,
+        changes: models_changes,
+        force_changes: models_force_changes,
+        flip_map: models_flip_map,
+        selection: model_selection,
+        selection_changes: model_selection_changes
       },
       templates: { templates: templates,
         changes: templates_changes,
@@ -140,6 +175,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       viewFlipMap: actionGameViewFlipMap,
       viewMoveMap: actionGameViewMoveMap,
       viewToggleMenu: actionGameViewToggleMenu,
+      viewEditDamageReset: actionGameViewEditDamageReset,
       viewEditLabel: actionGameViewEditLabel,
       boardSet: actionGameBoardSet,
       boardSetRandom: actionGameBoardSetRandom,
@@ -147,6 +183,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       boardExport: gameBoardExport,
       scenarioSet: actionGameScenarioSet,
       scenarioSetRandom: actionGameScenarioSetRandom,
+      scenarioGenerateObjectives: actionGameScenarioGenerateObjectives,
+      modelCreate: actionGameModelCreate,
+      modelCopy: actionGameModelCopy,
+      modelImportList: actionGameModelImportList,
+      modelImportFile: actionGameModelImportFile,
+      modelSelectionExport: gameModelSelectionExport,
       templateCreate: actionGameTemplateCreate,
       templatesSet: actionGameTemplatesSet,
       templatesSetDeviationMax: actionGameTemplatesSetDeviationMax,
@@ -159,17 +201,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       // onNewChatMsg: stateGameOnNewChatMsg,
       // onUiStateFlip: stateGameOnUiStateFlip,
       // onInvitePlayer: stateGameOnInvitePlayer,
-      // onModelCreate: stateGameOnModelCreate,
-      // onModelCopy: stateGameOnModelCopy,
-      // onModelImportList: stateGameOnModelImportList,
-      // onModelImportFile: stateGameOnModelImportFile,
-      // onModelImportFileData: stateGameOnModelImportFileData,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
-      // onScenarioGenerateObjectives: stateGameOnScenarioGenerateObjectives,
-      // updateExport: stateGameUpdateExport,
-      // updateBoardExport: stateGameUpdateBoardExport,
-      // updateModelsExport: stateGameUpdateModelsExport,
-      // checkMode: stateGameCheckMode,
       // closeOsd: stateGameCloseOsd
       checkMode: appGameCheckMode
     };
@@ -180,136 +212,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return appGameService;
 
     function mount() {
-      appActionService
-      // .register('Game.update'              , actionGameUpdate)
-      .register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.view.scrollLeft', actionGameViewScrollLeft).register('Game.view.scrollRight', actionGameViewScrollRight).register('Game.view.scrollUp', actionGameViewScrollUp).register('Game.view.scrollDown', actionGameViewScrollDown).register('Game.view.zoomIn', actionGameViewZoomIn).register('Game.view.zoomOut', actionGameViewZoomOut).register('Game.view.zoomReset', actionGameViewZoomReset).register('Game.view.flipMap', actionGameViewFlipMap).register('Game.view.moveMap', actionGameViewMoveMap).register('Game.view.toggleMenu', actionGameViewToggleMenu).register('Game.view.editLabel', actionGameViewEditLabel).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.board.importFile', actionGameBoardImportFile).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom).register('Game.template.create', actionGameTemplateCreate).register('Game.templates.set', actionGameTemplatesSet).register('Game.templates.setDeviationMax', actionGameTemplatesSetDeviationMax).register('Game.terrain.create', actionGameTerrainCreate).register('Game.terrains.set', actionGameTerrainsSet).register('Game.terrains.reset', actionGameTerrainsReset)
+      appActionService.register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.view.scrollLeft', actionGameViewScrollLeft).register('Game.view.scrollRight', actionGameViewScrollRight).register('Game.view.scrollUp', actionGameViewScrollUp).register('Game.view.scrollDown', actionGameViewScrollDown).register('Game.view.zoomIn', actionGameViewZoomIn).register('Game.view.zoomOut', actionGameViewZoomOut).register('Game.view.zoomReset', actionGameViewZoomReset).register('Game.view.flipMap', actionGameViewFlipMap).register('Game.view.moveMap', actionGameViewMoveMap).register('Game.view.toggleMenu', actionGameViewToggleMenu).register('Game.view.editDamage.reset', actionGameViewEditDamageReset).register('Game.view.editLabel', actionGameViewEditLabel).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.board.importFile', actionGameBoardImportFile).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom).register('Game.scenario.generateObjectives', actionGameScenarioGenerateObjectives).register('Game.model.create', actionGameModelCreate).register('Game.model.copy', actionGameModelCopy).register('Game.model.importList', actionGameModelImportList).register('Game.model.importFile', actionGameModelImportFile).register('Game.template.create', actionGameTemplateCreate).register('Game.templates.set', actionGameTemplatesSet).register('Game.templates.setDeviationMax', actionGameTemplatesSetDeviationMax).register('Game.terrain.create', actionGameTerrainCreate).register('Game.terrains.set', actionGameTerrainsSet).register('Game.terrains.reset', actionGameTerrainsReset)
       // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
       // .register('Game.invitePlayer'        , actionGameInvitePlayer)
       // .register('Game.setCmds'             , actionGameSetCmds)
       // .register('Game.setPlayers'          , actionGameSetPlayers)
       // .register('Game.newChatMsg'          , actionGameNewChatMsg)
-      // .register('Game.uiState.flip'        , actionGameUiStateFlip)
       // .register('Game.scenario.generateObjectives',
       //             actionGameScenarioGenerateObjectives)
-      // .register('Game.model.create'        , actionGameModelCreate)
-      // .register('Game.model.copy'          , actionGameModelCopy)
-      // .register('Game.model.importList'    , actionGameModelImportList)
-      // .register('Game.model.importFile'    , actionGameModelImportFile)
-      // .register('Game.model.importFileData', actionGameModelImportFileData)
       ;
-      // .addListener('Game.change'             , stateGameModel.saveCurrent)
-      // .addListener('Modes.change',
-      //              stateGameModel.closeOsd)
-      // .addListener('Game.template_selection.local.change',
-      //              stateGameModel.checkMode)
-      // .addListener('Game.terrain_selection.local.change',
-      //              stateGameModel.checkMode)
-      // .addListener('Game.model_selection.local.change',
-      //              stateGameModel.checkMode);
-      // .addReducer('Game.scenario.refresh'    , stateGameModel.onScenarioRefresh)
-
-      // const game_export_cell = appStateService
-      //         .cell('Game.change',
-      //               stateGameModel.updateExport,
-      //               {});
-      // const board_export_cell = appStateService
-      //         .cell([ 'Game.board.change',
-      //                 'Game.terrains.change' ],
-      //               stateGameModel.updateBoardExport,
-      //               {});
-      // const models_export_cell = appStateService
-      //         .cell([ 'Game.models.change',
-      //                 'Game.model_selection.local.change' ],
-      //               stateGameModel.updateModelsExport,
-      //               {});
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.layers.change',
-      //             R.pipe(R.defaultTo({}), R.prop('layers')));
-      // appStateService
-      //   .onChange('AppState.change',
-      //             'Modes.change',
-      //             R.path(['modes','current','name']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.command.change',
-      //             [ R.prop('commands'),
-      //               R.prop('commands_log'),
-      //               R.prop('undo'),
-      //               R.prop('undo_log')
-      //             ]);
-      // appStateService
-      //   .onChange('AppState.change',
-      //             'Game.view.flipMap',
-      //             R.pipe(R.view(UI_STATE_LENS), R.prop('flipped')));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.dice.change',
-      //             R.prop('dice'));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.board.change',
-      //             R.prop('board'));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.scenario.change',
-      //             R.prop('scenario'));
-      // appStateService
-      //   .onChange('AppState.change',
-      //             'Create.base.change',
-      //             R.path(['create','base']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.models.change',
-      //             R.prop(['models']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.model_selection.change',
-      //             R.prop('model_selection'));
-      // appStateService
-      //   .onChange('Game.model_selection.change',
-      //             'Game.model_selection.local.change',
-      //             R.prop('local'));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.templates.change',
-      //             R.prop(['templates']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.template_selection.change',
-      //             R.prop('template_selection'));
-      // appStateService
-      //   .onChange('Game.template_selection.change',
-      //             'Game.template_selection.local.change',
-      //             R.prop('local'));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.terrains.change',
-      //             R.prop(['terrains']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.terrain_selection.change',
-      //             R.prop('terrain_selection'));
-      // appStateService
-      //   .onChange('Game.terrain_selection.change',
-      //             'Game.terrain_selection.local.change',
-      //             R.prop('local'));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.ruler.remote.change',
-      //             R.path(['ruler','remote']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.ruler.local.change',
-      //             R.path(['ruler','local']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.los.remote.change',
-      //             R.path(['los','remote']));
-      // appStateService
-      //   .onChange('Game.change',
-      //             'Game.los.local.change',
-      //             R.path(['los','local']));
     }
     function gameExportCurrent(previous, game) {
       console.warn('Export Game', arguments);
@@ -418,10 +329,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function actionGameViewToggleMenu() {
       view.send('toggleMenu');
     }
+    function actionGameViewEditDamageReset(state) {
+      return R.set(EDIT_DAMAGE_LENS, {}, state);
+    }
     function actionGameViewEditLabel(state, new_label) {
       var edit_label = R.view(EDIT_LABEL_LENS, state);
       appActionService.defer('Game.command.execute', 'on' + s.capitalize(edit_label.type) + 's', ['addLabel', [new_label], [edit_label.element.state.stamp]]);
-      return R.set(EDIT_LABEL_LENS, null, state);
+      return R.set(EDIT_LABEL_LENS, {}, state);
     }
     function actionGameBoardSet(state, name) {
       var board = gameBoardModel.forName(name, state.boards);
@@ -469,6 +383,43 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         name = gameScenarioModel.name(scenario);
       }
       return appStateService.onAction(state, ['Game.command.execute', 'setScenario', [scenario]]);
+    }
+    function actionGameScenarioGenerateObjectives(state) {
+      return appStateService.onAction(state, ['Game.command.execute', 'createObjectives', []]);
+    }
+    function actionGameModelCreate(state, model_path, repeat) {
+      return R.thread(state)(R.set(CREATE_LENS, {
+        base: { x: 240, y: 240, r: 0 },
+        models: R.times(function (i) {
+          return {
+            info: model_path,
+            x: 20 * i, y: 0, r: 0
+          };
+        }, R.defaultTo(1, repeat))
+      }), appStateService.onAction$(R.__, ['Modes.switchTo', 'CreateModel']));
+    }
+    function actionGameModelCopy(state, create) {
+      return R.thread(state)(R.set(CREATE_LENS, create), appStateService.onAction$(R.__, ['Modes.switchTo', 'CreateModel']));
+    }
+    function actionGameModelImportList(state, list) {
+      var user = R.viewOr('Unknown', USER_NAME_LENS, state);
+      return R.thread(state)(R.set(CREATE_LENS, gameFactionsModel.buildModelsList(list, user, state.factions)), appStateService.onAction$(R.__, ['Modes.switchTo', 'CreateModel']));
+    }
+    function actionGameModelImportFile(_state_, file) {
+      return R.threadP(file)(fileImportService.readP$('json'), function (create) {
+        return appActionService.do('Game.model.copy', create);
+      }).catch(appErrorService.emit);
+    }
+    function gameModelSelectionExport(previous, game) {
+      fileExportService.cleanup(previous.url);
+      var data = R.thread(game)(R.view(MODEL_SELECTION_LENS), gameModelSelectionModel.get$('local'), R.ifElse(R.isEmpty, function () {
+        return null;
+      }, gameModelsModel.copyStamps$(R.__, R.view(MODELS_LENS, game))));
+      console.warn('Export models', arguments, data);
+      return {
+        name: 'clicknfeat_models.json',
+        url: data ? fileExportService.generate('json', data) : null
+      };
     }
     function actionGameTemplateCreate(state, type) {
       return R.thread(state)(R.set(CREATE_LENS, {
@@ -527,13 +478,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //     state
     //   );
     // }
-    // function stateGameOnUiStateFlip(state) {
-    //   return R.over(
-    //     UI_STATE_LENS,
-    //     R.over(R.lensProp('flipped'), R.not),
-    //     state
-    //   );
-    // }
     // function stateGameOnInvitePlayer(state, _event_, to) {
     //   const msg = [
     //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
@@ -545,41 +489,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     //   appStateService
     //     .chainReduce('User.sendChatMsg',
     //                  { to: [to], msg: msg, link: link });
-    // }
-    // function stateGameOnModelCreate(state, _event_, [model_path, repeat]) {
-    //   appStateService.chainReduce('Modes.switchTo', 'CreateModel');
-    //   return R.assoc('create', {
-    //     base: { x: 240, y: 240, r: 0 },
-    //     models: R.times((i) => ({
-    //       info: model_path,
-    //       x: 20*i, y: 0, r: 0
-    //     }), R.defaultTo(1, repeat))
-    //   }, state);
-    // }
-    // function stateGameOnModelCopy(state, _event_, [create]) {
-    //   appStateService.chainReduce('Modes.switchTo', 'CreateModel');
-    //   return R.assoc('create', create, state);
-    // }
-    // function stateGameOnModelImportList(state, _event_, [list]) {
-    //   const user = R.pathOr('Unknown', ['user','state','name'], state);
-    //   appStateService.chainReduce('Modes.switchTo', 'CreateModel');
-    //   return R.assoc(
-    //     'create',
-    //     gameFactionsModel.buildModelsList(list, user, state.factions.references),
-    //     state
-    //   );
-    // }
-    // function stateGameOnModelImportFile(_state_, _event_, [file]) {
-    //   return R.threadP(file)(
-    //     fileImportService.readP$('json'),
-    //     (create) => {
-    //       appStateService.reduce('Game.model.importFileData', create);
-    //     }
-    //   ).catch(error => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnModelImportFileData(state, _event_, [create]) {
-    //   appStateService.chainReduce('Modes.switchTo', 'CreateModel');
-    //   return R.assoc('create', create, state);
     // }
     // // function stateGameOnModelSelectionLocalChange(state, _event_) {
     // //   // console.warn('onModelSelectionLocalChange', arguments);
@@ -685,84 +594,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     // // function stateGameOnScenarioRefresh(state, _event_) {
     // //   appStateService.emit('Game.scenario.refresh');
     // // }
-    // function stateGameOnScenarioGenerateObjectives(state, _event_) {
-    //   R.thread(state.game)(
-    //     deleteCurrentObjectives,
-    //     () => gameScenarioModel
-    //       .createObjectives(state.game.scenario),
-    //     (objectives) => {
-    //       const is_flipped = R.path(['ui_state','flip_map'], state);
-    //       return appStateService
-    //         .chainReduce('Game.command.execute',
-    //                      'createModel',
-    //                      [objectives, is_flipped]);
-    //     }
-    //   ).catch(gameModel.actionError$(state));
-
-    //   function deleteCurrentObjectives(game) {
-    //     return R.threadP(game)(
-    //       R.prop('models'),
-    //       gameModelsModel.all,
-    //       R.filter(R.pipe(
-    //         R.path(['state','info']),
-    //         R.head,
-    //         R.equals('scenario')
-    //       )),
-    //       R.map(R.path(['state','stamp'])),
-    //       R.unless(
-    //         R.isEmpty,
-    //         (stamps) => {
-    //           appStateService
-    //             .chainReduce('Game.command.execute',
-    //                          'deleteModel', [stamps]);
-    //         }
-    //       )
-    //     );
-    //   }
-    // }
-    // function stateGameUpdateExport(exp, current_game) {
-    //   fileExportService.cleanup(exp.url);
-    //   return {
-    //     name: 'clicknfeat_game.json',
-    //     url: fileExportService.generate('json', current_game)
-    //   };
-    // }
-    // function stateGameUpdateModelsExport(exp) {
-    //   fileExportService.cleanup(exp.url);
-    //   const state = appStateService.current();
-    //   const data = R.thread(state)(
-    //      R.path(['game','model_selection']),
-    //      gameModelSelectionModel.get$('local'),
-    //      gameModelsModel
-    //        .copyStamps$(R.__, R.path(['game', 'models'], state))
-    //   );
-    //   return {
-    //     name: 'clicknfeat_models.json',
-    //     url: fileExportService.generate('json', data)
-    //   };
-    // }
-    // function stateGameUpdateBoardExport(exp) {
-    //   fileExportService.cleanup(exp.url);
-    //   const state = appStateService.current();
-    //   const data = R.thread(state)(
-    //     R.prop('game'),
-    //     (game) => ({
-    //       board: game.board,
-    //       terrain: {
-    //         base: { x: 0, y: 0, r: 0 },
-    //         terrains: R.thread(game.terrains)(
-    //           gameTerrainsModel.all,
-    //           R.pluck('state'),
-    //           R.map(R.pick(['x','y','r','info','lk']))
-    //         )
-    //       }
-    //     })
-    //   );
-    //   return {
-    //     name: 'clicknfeat_board.json',
-    //     url: fileExportService.generate('json', data)
-    //   };
-    // }
     function appGameCheckMode() {
       var game = appGameService.game.sample();
       var modes = appModesService.modes.sample();
@@ -771,17 +602,19 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return gameTerrainSelectionModel.checkMode(R.viewOr({}, TERRAIN_SELECTION_LENS, game));
       }, R.unless(R.exists, function () {
         return gameTemplateSelectionModel.checkMode(R.viewOr({}, TEMPLATES_LENS, game), R.viewOr({}, TEMPLATE_SELECTION_LENS, game));
-      }),
-      // R.unless(
-      //   R.exists,
-      //   () => gameModelSelectionModel
-      //     .checkMode(game.models, R.propOr({}, 'model_selection', game))
-      // )
-      R.defaultTo('Default'));
+      }), R.unless(R.exists, function () {
+        return gameModelSelectionModel.checkMode(R.viewOr({}, MODELS_LENS, game), R.viewOr({}, MODEL_SELECTION_LENS, game));
+      }), R.defaultTo('Default'));
       console.warn('CheckMode', mode);
       if (R.exists(mode) && mode !== current_mode) {
         appActionService.defer('Modes.switchTo', mode);
       }
+    }
+    function observeModelsChanges(olds, news) {
+      return R.thread(gameModelsModel.all(news))(R.symmetricDifference(gameModelsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
+    }
+    function observeModelSelectionChanges(old, sel) {
+      return R.concat(R.symmetricDifference(R.propOr([], 'local', old), R.propOr([], 'local', sel)), R.symmetricDifference(R.propOr([], 'remote', old), R.propOr([], 'remote', sel)), R.uniq);
     }
     function observeTemplatesChanges(olds, news) {
       return R.thread(gameTemplatesModel.all(news))(R.symmetricDifference(gameTemplatesModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);

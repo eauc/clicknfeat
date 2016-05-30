@@ -10,8 +10,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     console.log('init clickGameEditDamageCtrl');
   }
 
-  gameEditDamageDirectiveFactory.$inject = ['gameFactions', 'gameMap'];
-  function gameEditDamageDirectiveFactory(gameFactionsModel, gameMapService) {
+  gameEditDamageDirectiveFactory.$inject = ['appAction', 'appGame', 'gameMap', 'gameModelSelection'];
+  function gameEditDamageDirectiveFactory(appActionService, appGameService, gameMapService, gameModelSelectionModel) {
     return {
       restrict: 'A',
       templateUrl: 'app/components/game/edit_damage/edit_damage.html',
@@ -25,27 +25,29 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       console.log('gameEditDamage');
       var viewport = document.getElementById('viewport');
       var map = document.getElementById('map');
-      var state = scope.state;
       var container = element[0];
 
-      var opened = false;
+      // let opened = false;
       closeEditDamage();
-      scope.onStateChangeEvent('Game.editDamage.toggle', toggleEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.open', openEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.close', closeEditDamage, scope);
-      scope.doClose = closeEditDamage;
-
-      function toggleEditDamage(event, selection) {
-        console.log('toggleEditDamage');
-        if (opened) {
+      scope.listenSignal(function (edit_damage) {
+        if (R.isNil(edit_damage.selection)) {
           closeEditDamage();
         } else {
-          openEditDamage(event, selection);
+          openEditDamage(edit_damage);
         }
-      }
+      }, appGameService.view.edit_damage_changes, scope);
+      scope.listenSignal(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 1);
+
+        var sel = _ref2[0];
+
+        if (scope.selection.state && !gameModelSelectionModel.in('local', scope.selection.state.stamp, sel)) {
+          appActionService.defer('Game.view.editDamage.reset');
+        }
+      }, appGameService.models.selection_changes, scope);
       function closeEditDamage() {
-        // console.log('closeEditDamage');
-        opened = false;
+        console.log('closeEditDamage');
+        // opened = false;
         scope.selection = {};
 
         container.style.display = 'none';
@@ -53,17 +55,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         container.style.left = 0 + 'px';
         container.style.top = 0 + 'px';
       }
-      function openEditDamage(_event_, _ref) {
-        var _ref2 = _slicedToArray(_ref, 1);
-
-        var selection = _ref2[0];
-
-        // console.log('openEditDamage');
-        opened = true;
-        scope.selection = selection;
-        var info = gameFactionsModel.getModelInfo(scope.selection.state.info, state.factions);
-        scope.info = info;
-        scope.$digest();
+      function openEditDamage(edit_damage) {
+        console.log('openEditDamage');
+        // opened = true;
+        scope.selection = edit_damage.selection;
+        scope.info = scope.selection.info;
 
         self.window.requestAnimationFrame(displayEditDamage);
       }

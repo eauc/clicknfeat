@@ -3,6 +3,7 @@
     .factory('modelMode', modelModeModelFactory);
 
   modelModeModelFactory.$inject = [
+    'appAction',
     'appState',
     'modes',
     'settings',
@@ -10,7 +11,8 @@
     'modelBaseMode',
     'gameModelSelection',
   ];
-  function modelModeModelFactory(appStateService,
+  function modelModeModelFactory(appActionService,
+                                 appStateService,
                                  modesModel,
                                  settingsModel,
                                  modelsModeModel,
@@ -51,18 +53,22 @@
     function modelStartCharge(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute',
-                                  'onModels',
-                                  ['startChargeP', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'ModelCharge');
+      appActionService
+        .defer('Game.command.execute',
+               'onModels',
+               ['startChargeP', [], stamps]);
+      return appStateService
+        .onAction(state, ['Modes.switchTo', 'ModelCharge']);
     }
     function modelStartPlace(state) {
       const stamps = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute',
-                                  'onModels',
-                                  [ 'startPlaceP', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'ModelPlace');
+      appActionService
+        .defer('Game.command.execute',
+               'onModels',
+               [ 'startPlaceP', [], stamps]);
+      return appStateService
+        .onAction(state, ['Modes.switchTo', 'ModelPlace']);
     }
   }
 })();

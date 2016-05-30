@@ -7,14 +7,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
   gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
   // 'gameLos',
-  // 'gameModels',
-  // 'gameModelSelection',
+  'gameModels', 'gameModelSelection',
   // 'gameRuler',
   'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
   function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
   // gameLosModel,
-  // gameModelsModel,
-  // gameModelSelectionModel,
+  gameModelsModel, gameModelSelectionModel,
   // gameRulerModel,
   gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var DICE_LENS = R.lensProp('dice');
@@ -222,8 +220,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         layers: gameLayersModel.create(),
         // ruler: gameRulerModel.create(),
         // los: gameLosModel.create(),
-        // models: gameModelsModel.create(),
-        // model_selection: gameModelSelectionModel.create(),
+        models: gameModelsModel.create(),
+        model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),
         template_selection: gameTemplateSelectionModel.create(),
         terrains: gameTerrainsModel.create(),

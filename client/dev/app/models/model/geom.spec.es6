@@ -3,32 +3,23 @@ describe('model geom model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 
-  context('distanceTo(<factions>, <other>)', function() {
+  context('distanceTo(<other>)', function() {
     return this.modelModel
-      .distanceTo('factions', this.other, this.model);
+      .distanceTo(this.other, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
+        info: { base_radius: 9.842 },
         state: { info: 'info'}
       };
       this.other = {
+        info: { base_radius: 7.874 },
         state: { info: 'other_info',
                  x: 260, y: 260 }
       };
-      this.fake_info = {
-        info: { base_radius: 9.842 },
-        other_info: { base_radius: 7.874 }
-      };
-
-      this.gameFactionsModel.getModelInfo
-        .and.callFake((i) => {
-          return this.fake_info[i];
-        });
     });
 
     example(function(e, d) {
@@ -47,28 +38,21 @@ describe('model geom model', function() {
     ]);
   });
 
-  context('setB2B(<factions>, <other>)', function() {
+  context('setB2B(<other>)', function() {
     return this.modelModel
-      .setB2BP('factions', this.other, this.model);
+      .setB2BP(this.other, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
+        info: { base_radius: 9.842 },
         state: { info: 'info',
                  x: 240, y: 240 }
       };
       this.other = {
+        info: { base_radius: 7.874 },
         state: { info: 'other_info',
                  x: 260, y: 260 }
       };
-      this.fake_info = {
-        info: { base_radius: 9.842 },
-        other_info: { base_radius: 7.874 }
-      };
-
-      this.gameFactionsModel.getModelInfo
-        .and.callFake((i) => {
-          return this.fake_info[i];
-        });
     });
 
     it('should move model B2B with <other>', function() {
@@ -88,22 +72,19 @@ describe('model geom model', function() {
     });
   });
 
-  context('shortestLineTo(<factions>, <other>)', function() {
+  context('shortestLineTo(<other>)', function() {
     return this.modelModel
-      .shortestLineTo('factions', this.other, this.model);
+      .shortestLineTo(this.other, this.model);
   }, function() {
     beforeEach(function() {
-      const info = {
-        'model': { base_radius: 7.874 },
-        'other': { base_radius: 9.842 }
+      this.model = {
+        info: { base_radius: 7.874 },
+        state: { info: 'model', x: 240, y: 240 }
       };
-      this.model = { state: { info: 'model', x: 240, y: 240 } };
-      this.other = { state: { info: 'other', x: 120, y: 120 } };
-
-      this.gameFactionsModel.getModelInfo
-        .and.callFake((i) =>{
-          return info[i];
-        });
+      this.other = {
+        info: { base_radius: 9.842 },
+        state: { info: 'other', x: 120, y: 120 }
+      };
     });
 
     it('should compute the shortest line between both models', function() {
@@ -115,18 +96,12 @@ describe('model geom model', function() {
     });
   });
 
-  context('baseEdgeInDirection(<factions>, <dir>)', function() {
-    return this.modelModel.baseEdgeInDirection('factions', 42, {
+  context('baseEdgeInDirection(<dir>)', function() {
+    return this.modelModel.baseEdgeInDirection(42, {
+      info: { base_radius: 7.874 },
       state: { x: 140, y: 340 }
     });
   }, function() {
-    beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          base_radius: 7.874
-        });
-    });
-
     it('should compute the point on model\s base edge in <direction>', function() {
       expect(this.context).toEqual({
         x: 145.26873439446965,
@@ -159,22 +134,16 @@ describe('model geom model', function() {
     ]);
   });
 
-  context('distanceToAoEP(<factions>, <aoe>)', function() {
+  context('distanceToAoEP(<aoe>)', function() {
     return this.modelModel
-      .distanceToAoE('factions', this.aoe, this.model);
+      .distanceToAoE(this.aoe, this.model);
   }, function() {
     beforeEach(function() {
-      this.fake_info = {
-        info: { base_radius: 9.842 }
-      };
-      this.gameFactionsModel.getModelInfo
-        .and.callFake((i) => {
-          return this.fake_info[i];
-        });
       this.aoe = {
         state: { s: 20, x: 270, y: 270 }
       };
       this.model = {
+        info: { base_radius: 9.842 },
         state: { info: 'info'}
       };
     });

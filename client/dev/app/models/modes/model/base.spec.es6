@@ -11,8 +11,7 @@ describe('modelBaseMode model', function() {
 
       this.state = { game: { model_selection: 'selection',
                              models: 'models' },
-                     ui_state: { flip_map: 'flip' },
-                     factions: 'factions'
+                     view: { flip_map: 'flip' }
                    };
       this.gameModelSelectionModel.get
         .and.returnValue(['stamp']);
@@ -38,7 +37,7 @@ describe('modelBaseMode model', function() {
       this.target.state.stamp = 'stamp';
     }, function() {
       it('should do nothing', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appStateService.onAction)
           .not.toHaveBeenCalled();
       });
     });
@@ -47,13 +46,13 @@ describe('modelBaseMode model', function() {
       this.target.state.stamp = 'target';
     }, function() {
       it('should place selected model B2B with target', function() {
-        expect(this.appStateService.chainReduce)
-          .toHaveBeenCalledWith('Game.command.execute',
-                                'onModels', [
-                                  'setB2BP',
-                                  ['factions', this.target],
-                                  ['stamp']
-                                ]);
+        expect(this.appStateService.onAction)
+          .toHaveBeenCalledWith(this.state, [ 'Game.command.execute',
+                                              'onModels', [
+                                                'setB2BP',
+                                                [this.target],
+                                                ['stamp']
+                                              ] ]);
       });
     });
   });
@@ -74,14 +73,16 @@ describe('modelBaseMode model', function() {
       expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp', 'models');
 
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'createTemplate', [
-                                { base: { x: 0, y: 0, r: 0 },
-                                  templates: [ { x: 42, y: 71, r: 0, type: 'aoe' } ]
-                                },
-                                'flip'
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'createTemplate', [
+            { base: { x: 0, y: 0, r: 0 },
+              templates: [ { x: 42, y: 71, r: 0, type: 'aoe' } ]
+            },
+            'flip'
+          ]
+        ]);
     });
   });
 
@@ -108,17 +109,19 @@ describe('modelBaseMode model', function() {
       expect(this.gameModelsModel.findStamp)
         .toHaveBeenCalledWith('stamp', 'models');
       expect(this.modelModel.baseEdgeInDirection)
-        .toHaveBeenCalledWith('factions', 36, this.model);
+        .toHaveBeenCalledWith(36, this.model);
 
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'createTemplate', [
-                                { base: { x: 0, y: 0, r: 0 },
-                                  templates: [ { x: 42, y: 71, r: 36,
-                                                 o: 'stamp', type: 'spray' } ]
-                                },
-                                'flip'
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'createTemplate', [
+            { base: { x: 0, y: 0, r: 0 },
+              templates: [ { x: 42, y: 71, r: 36,
+                             o: 'stamp', type: 'spray' } ]
+            },
+            'flip'
+          ]
+        ]);
     });
   });
 
@@ -126,10 +129,13 @@ describe('modelBaseMode model', function() {
     return this.modelBaseModeModel.actions
       .openEditDamage(this.state);
   }, function() {
-    it('should emit toggleEditDamage event', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.editDamage.toggle',
-                              'gameModels.findStamp.returnValue');
+    it('should set edit_damage state', function() {
+      expect(this.gameModelSelectionModel.get)
+        .toHaveBeenCalledWith('local', 'selection');
+      expect(this.gameModelsModel.findStamp)
+        .toHaveBeenCalledWith('stamp', 'models');
+      expect(this.context.view.edit_damage)
+        .toEqual({ selection: 'gameModels.findStamp.returnValue' });
     });
   });
 
@@ -137,10 +143,14 @@ describe('modelBaseMode model', function() {
     return this.modelBaseModeModel.actions
       .openEditLabel(this.state);
   }, function() {
-    it('should emit openEditLabel event', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.editLabel.open', 'onModels',
-                              'gameModels.findStamp.returnValue');
+    it('should set edit_label state', function() {
+      expect(this.gameModelSelectionModel.get)
+        .toHaveBeenCalledWith('local', 'selection');
+      expect(this.gameModelsModel.findStamp)
+        .toHaveBeenCalledWith('stamp', 'models');
+      expect(this.context.view.edit_label)
+        .toEqual({ type: 'model',
+                   element: 'gameModels.findStamp.returnValue' });
     });
   });
 
@@ -180,12 +190,14 @@ describe('modelBaseMode model', function() {
     });
 
     it('should select all models with the same user', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setModelSelection', [
-                                'set',
-                                [ 'a1', 'a3', 'l1', 'l3' ]
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setModelSelection', [
+            'set',
+            [ 'a1', 'a3', 'l1', 'l3' ]
+          ]
+        ]);
     });
   });
 
@@ -224,12 +236,14 @@ describe('modelBaseMode model', function() {
     });
 
     it('should select all models with the same user & unit number', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setModelSelection', [
-                                'set',
-                                ['a1', 'l1']
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setModelSelection', [
+            'set',
+            ['a1', 'l1']
+          ]
+        ]);
     });
   });
 });

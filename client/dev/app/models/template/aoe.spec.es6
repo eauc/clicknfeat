@@ -78,9 +78,9 @@ describe('aoeTemplate model', function() {
     });
   });
 
-  context('setTarget(<factions>, <origin>, <target>), ', function() {
+  context('setTarget(<target>), ', function() {
     return this.aoeTemplateModel
-      .setTargetP('factions', null, this.target, this.template);
+      .setTargetP(this.target, this.template);
   }, function() {
     beforeEach(function() {
       this.template = {

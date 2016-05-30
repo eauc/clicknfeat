@@ -35,60 +35,59 @@
           }
 
           var model = R.last(args);
-          var factions = R.head(args);
-          var target = withTarget ? R.nth(1, args) : null;
+          var target = withTarget ? R.head(args) : null;
           return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
             return move.apply(_this, args);
-          }, modelModel.checkState$(factions, target));
+          }, modelModel.checkState$(target));
         };
       }
-      function modelSetPosition(_factions_, _target_, pos, model) {
+      function modelSetPosition(_target_, pos, model) {
         return R.pipe(R.set(X_LENS, pos.x), R.set(Y_LENS, pos.y))(model);
       }
-      function modelSetPositionP_(factions, target, pos, model) {
-        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), R.set(X_LENS, pos.x), R.set(Y_LENS, pos.y), modelModel.checkState$(factions, target), function (check) {
+      function modelSetPositionP_(target, pos, model) {
+        return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), R.set(X_LENS, pos.x), R.set(Y_LENS, pos.y), modelModel.checkState$(target), function (check) {
           model.state = check.state;
           return model;
         });
       }
-      function modelShiftPosition(_factions_, _target_, shift, model) {
+      function modelShiftPosition(_target_, shift, model) {
         return R.pipe(R.over(X_LENS, R.add(shift.x)), R.over(Y_LENS, R.add(shift.y)))(model);
       }
-      function modelSetOrientation(_factions_, orientation, model) {
+      function modelSetOrientation(orientation, model) {
         return R.assocPath(['state', 'r'], orientation, model);
       }
-      function modelOrientTo(_factions_, other, model) {
+      function modelOrientTo(other, model) {
         return R.assocPath(['state', 'r'], pointModel.directionTo(other.state, model.state), model);
       }
-      function modelMoveFront(_factions_, small, model) {
+      function modelMoveFront(small, model) {
         var dist = MOVES[small ? 'MoveSmall' : 'Move'];
         return R.over(STATE_LENS, pointModel.moveFront$(dist), model);
       }
-      function modelMoveBack(_factions_, small, model) {
+      function modelMoveBack(small, model) {
         var dist = MOVES[small ? 'MoveSmall' : 'Move'];
         return R.over(STATE_LENS, pointModel.moveBack$(dist), model);
       }
-      function modelRotateLeft(_factions_, small, model) {
+      function modelRotateLeft(small, model) {
         var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
         return R.over(STATE_LENS, pointModel.rotateLeft$(angle), model);
       }
-      function modelRotateRight(_factions_, small, model) {
+      function modelRotateRight(small, model) {
         var angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
         return R.over(STATE_LENS, pointModel.rotateRight$(angle), model);
       }
-      function modelShiftLeft(_factions_, small, model) {
+      function modelShiftLeft(small, model) {
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(STATE_LENS, pointModel.shiftLeft$(dist), model);
       }
-      function modelShiftRight(_factions_, small, model) {
+      function modelShiftRight(small, model) {
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(STATE_LENS, pointModel.shiftRight$(dist), model);
       }
-      function modelShiftUp(_factions_, small, model) {
+      function modelShiftUp(small, model) {
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(STATE_LENS, pointModel.shiftUp$(dist), model);
       }
-      function modelShiftDown(_factions_, small, model) {
+      function modelShiftDown(small, model) {
         var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(STATE_LENS, pointModel.shiftDown$(dist), model);
       }

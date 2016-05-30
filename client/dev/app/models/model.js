@@ -5,6 +5,7 @@
 
   modelModelFactory.$inject = ['settings', 'element', 'gameFactions', 'modelArea', 'modelAura', 'modelCharge', 'modelCounter', 'modelDamage', 'modelEffect', 'modelGeom', 'modelImage', 'modelIncorporeal', 'modelLeader', 'modelMelee', 'modelMove', 'modelPlace', 'modelRuler', 'modelUnit', 'modelWreck'];
   function modelModelFactory(settingsModel, elementModel, gameFactionsModel, modelAreaModel, modelAuraModel, modelChargeModel, modelCounterModel, modelDamageModel, modelEffectModel, modelGeomModel, modelImageModel, modelIncorporealModel, modelLeaderModel, modelMeleeModel, modelMoveModel, modelPlaceModel, modelUnitModel, modelWreckModel, modelRulerModel) {
+    var USER_LENS = R.lensPath(['state', 'user']);
     var DEFAULT_MOVES = {
       Move: 10,
       MoveSmall: 5,
@@ -40,6 +41,7 @@
     function modelCreate(factions, temp) {
       return R.thread(factions)(gameFactionsModel.getModelInfo$(temp.info), R.unless(R.isNil, function (info) {
         var model = {
+          info: info,
           state: {
             x: 0, y: 0, r: 0,
             img: 0,
@@ -66,32 +68,28 @@
           model.state.lk = true;
         }
         model.state = R.deepExtend(model.state, temp);
-        return modelModel.checkState(factions, null, model);
+        return modelModel.checkState(null, model);
       }));
     }
     function modelUser(model) {
-      return R.path(['state', 'user'], model);
+      return R.view(USER_LENS, model);
     }
     function modelUserIs(user, model) {
-      return R.pathEq(['state', 'user'], user, model);
+      return R.equals(user, R.view(USER_LENS, model));
     }
-    function modelCheckState(factions, target, model) {
-      return R.thread(factions)(gameFactionsModel.getModelInfo$(model.state.info), R.ifElse(R.isNil, function () {
-        return R.prop('state', model);
-      }, function (info) {
-        var radius = info.base_radius;
-        return R.thread(model.state)(R.assoc('x', Math.max(0 + radius, Math.min(480 - radius, model.state.x))), R.assoc('y', Math.max(0 + radius, Math.min(480 - radius, model.state.y))), function (state) {
-          return R.reduce(function (state, checker) {
-            return checker(info, target, state);
-          }, state, modelModel.state_checkers);
-        }, function (state) {
-          return R.reduce(function (state, updater) {
-            return updater(state);
-          }, state, modelModel.state_updaters);
-        });
-      }), function (state) {
-        return R.assoc('state', state, model);
+    function modelCheckState(target, model) {
+      var info = model.info;
+      var radius = info.base_radius;
+      var state = R.thread(model.state)(R.assoc('x', Math.max(0 + radius, Math.min(480 - radius, model.state.x))), R.assoc('y', Math.max(0 + radius, Math.min(480 - radius, model.state.y))), function (state) {
+        return R.reduce(function (state, checker) {
+          return checker(target, info, state);
+        }, state, modelModel.state_checkers);
+      }, function (state) {
+        return R.reduce(function (state, updater) {
+          return updater(state);
+        }, state, modelModel.state_updaters);
       });
+      return R.assoc('state', state, model);
     }
     function modelModeFor(model) {
       if (modelModel.isCharging(model)) {
@@ -102,8 +100,8 @@
       }
       return 'Model';
     }
-    function modelDescriptionFromInfo(info, model) {
-      return R.thread(info)(R.props(['unit_name', 'name']), R.prepend(modelModel.user(model)), R.reject(R.isNil), R.join('/'));
+    function modelDescriptionFromInfo(model) {
+      return R.thread(model.info)(R.props(['unit_name', 'name']), R.prepend(modelModel.user(model)), R.reject(R.isNil), R.join('/'));
     }
     function initDamage(info) {
       if (info.type === 'warrior') {
@@ -113,13 +111,12 @@
         return R.assoc(key, R.map(R.always(0), info[key]), mem);
       }, {}), R.assoc('f', 0), R.assoc('t', 0));
     }
-    function modelRender(_ref, factions, state) {
+    function modelRender(_ref, info, state) {
       var is_flipped = _ref.is_flipped;
       var charge_target = _ref.charge_target;
 
-      var info = R.thread(factions)(gameFactionsModel.getModelInfo$(state.info), R.defaultTo({ base_radius: 5.905 }));
       var is_wreck = modelModel.isWreckDisplayed({ state: state });
-      var img = is_wreck ? modelModel.getWreckImage(factions, { state: state }) : modelModel.getImage(factions, { state: state });
+      var img = is_wreck ? modelModel.getWreckImage({ info: info, state: state }) : modelModel.getImage({ info: info, state: state });
       var cx = img.width / 2;
       var cy = img.height / 2;
       var radius = info.base_radius;
@@ -138,10 +135,15 @@
         y: cy - 5
       };
       var path = { show: false, x: 0, y: 0, transform: '', length: {} };
+      var r = state.r % 360;
+      r = r > 0 ? r : 360 + r;
+      var text_y_top = cx + radius + 8;
+      var text_y_bottom = cx - radius - 2;
+      var text_center_y = r > 90 && r < 270 ? is_flipped ? text_y_bottom : text_y_top : is_flipped ? text_y_top : text_y_bottom;
       var label_options = {
         flipped: is_flipped,
         flip_center: { x: cx, y: cy },
-        text_center: { x: cx, y: cx + radius + 8 }
+        text_center: { x: cx, y: text_center_y }
       };
       var label = base.renderLabel(label_options, state);
       return R.deepExtend({
@@ -151,9 +153,10 @@
         cx: cx, cy: cy, radius: radius, dx: dx, dy: dy, frx: frx, flx: flx, los: los,
         width: img.width, height: img.height,
         base_color: info.base_color,
-        title: modelModel.descriptionFromInfo(info, { state: state }),
+        title: modelModel.descriptionFromInfo({ info: info, state: state }),
+        label_transform: 'translate(' + (state.x - cx) + ',' + (state.y - cy) + ')',
         label: label, lock: lock, path: path
-      }, modelModel.renderArea({ info: info, radius: radius }, factions, state), modelModel.renderAura({ radius: radius }, state), modelModel.renderCharge({ base: base, charge_target: charge_target, radius: radius }, path, state), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped, radius: radius }, state), modelModel.renderDamage({ cx: cx, cy: cy, info: info, radius: radius }, state), modelModel.renderEffect({ img: img, info: info }, state), modelModel.renderImage({ img: img }, state), modelModel.renderLeader({ cx: cx, cy: cy, radius: radius }, state), modelModel.renderMelee({ img: img, info: info }, state), modelModel.renderPlace({ base: base, info: info, path: path }, state), modelModel.renderUnit({ base: base, cx: cx, cy: cy, radius: radius }, state));
+      }, modelModel.renderArea({ info: info, radius: radius }, state), modelModel.renderAura({ radius: radius }, state), modelModel.renderCharge({ base: base, charge_target: charge_target, radius: radius }, path, state), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped, radius: radius }, state), modelModel.renderDamage({ cx: cx, cy: cy, info: info, radius: radius }, state), modelModel.renderEffect({ img: img, info: info }, state), modelModel.renderImage({ img: img }, state), modelModel.renderLeader({ cx: cx, cy: cy, radius: radius }, state), modelModel.renderMelee({ img: img, info: info }, state), modelModel.renderPlace({ base: base, info: info, path: path }, state), modelModel.renderUnit({ base: base, cx: cx, cy: cy, radius: radius }, state));
     }
   }
 })();

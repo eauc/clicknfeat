@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelChargeMode', modelChargeModeModelFactory);
 
-  modelChargeModeModelFactory.$inject = ['appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'model', 'gameModels', 'gameModelSelection'];
-  function modelChargeModeModelFactory(appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
+  modelChargeModeModelFactory.$inject = ['appAction', 'appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'model', 'gameModels', 'gameModelSelection'];
+  function modelChargeModeModelFactory(appActionService, appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, modelModel, gameModelsModel, gameModelSelectionModel) {
     var charge_actions = Object.create(modelBaseModeModel.actions);
     charge_actions.endCharge = chargeModelEnd;
     charge_actions.setTargetModel = chargeModelSetTarget;
@@ -38,28 +38,28 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function chargeModelEnd(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['endCharge', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'Model');
+      appActionService.defer('Game.command.execute', 'onModels', ['endCharge', [], stamps]);
+      return appStateService.onAction(state, ['Modes.switchTo', 'Model']);
     }
     function chargeModelSetTarget(state, event) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(function (model) {
-        return R.threadP(model)(modelModel.chargeTarget, function (target_stamp) {
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(function (model) {
+        return R.thread(model)(modelModel.chargeTarget, function (target_stamp) {
           return target_stamp === event['click#'].target.state.stamp ? null : event['click#'].target;
         }, function (set_target) {
-          if (R.exists(set_target) && model.state.stamp === set_target.state.stamp) return;
+          if (R.exists(set_target) && model.state.stamp === set_target.state.stamp) return state;
 
-          appStateService.chainReduce('Game.command.execute', 'onModels', ['setChargeTargetP', [state.factions, set_target], stamps]);
+          return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setChargeTargetP', [set_target], stamps]]);
         });
       })));
     }
     function chargeModelMove(move, flip_move, small, state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      var _move = R.path(['ui_state', 'flip_map'], state) ? flip_move : move;
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.chargeTarget, function (target_stamp) {
+      var _move = R.path(['view', 'flip_map'], state) ? flip_move : move;
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, R.pipe(modelModel.chargeTarget, function (target_stamp) {
         return R.exists(target_stamp) ? gameModelsModel.findStamp(target_stamp, state.game.models) : null;
       }, function (target_model) {
-        appStateService.chainReduce('Game.command.execute', 'onModels', [_move + 'ChargeP', [state.factions, target_model, small], stamps]);
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', [_move + 'ChargeP', [target_model, small], stamps]]);
       })));
     }
     function buildChargeMove(_ref) {

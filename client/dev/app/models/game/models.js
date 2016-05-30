@@ -19,7 +19,9 @@
       return R.thread(models)(gameModelsModel.all, R.filter(modelModel.isBetweenPoints$(top_left, bottom_right)), R.map(R.path(['state', 'stamp'])));
     }
     function modelsModeForStamp(stamp, models) {
-      return R.thread(models)(gameModelsModel.findStamp$(stamp), R.when(R.exists, modelModel.modeFor));
+      return R.thread(models)(gameModelsModel.findStamp$(stamp), R.ifElse(R.exists, modelModel.modeFor, function () {
+        return 'Model';
+      }));
     }
   }
 })();

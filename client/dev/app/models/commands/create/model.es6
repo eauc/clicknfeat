@@ -3,14 +3,14 @@
     .factory('createModelCommand', createModelCommandModelFactory);
 
   createModelCommandModelFactory.$inject = [
-    'appState',
+    'appData',
     'createElementCommand',
     'commands',
     'model',
     'gameModels',
     'gameModelSelection',
   ];
-  function createModelCommandModelFactory(appStateService,
+  function createModelCommandModelFactory(appDataService,
                                           createElementCommandModel,
                                           commandsModel,
                                           modelModel,
@@ -25,9 +25,10 @@
     commandsModel.registerCommand('createModel', createModelCommandModel);
     return createModelCommandModel;
 
-    function tryToCreateModel(create, model) {
+    function tryToCreateModel(model) {
+      const factions = appDataService.factions.sample();
       return modelModel
-        .create(create.infos, model);
+        .create(factions, model);
     }
   }
 })();

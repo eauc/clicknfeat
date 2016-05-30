@@ -133,7 +133,9 @@
         </g>
         <g id="game-under-models"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
-          <g click-game-under-models-list>
+          <g click-game-under-models-list="locked">
+          </g>
+          <g click-game-under-models-list="active">
           </g>
           <g click-game-los-enveloppe
              ng-show="render.display">
@@ -162,7 +164,9 @@
         </g>
         <g id="game-over-models"
            ng-show="state.game.layers | gameLayers:'isDisplayed':'m'">
-          <g click-game-over-models-list>
+          <g click-game-over-models-list="locked">
+          </g>
+          <g click-game-over-models-list="active">
           </g>
         </g>
         <g id="game-templates"
@@ -254,7 +258,11 @@
           </g>
         </g>
         <rect id="game-dragbox"
-              click-game-dragbox>
+              click-game-dragbox
+              ng-attr-x="{{render.x}}"
+              ng-attr-y="{{render.y}}"
+              ng-attr-width="{{render.width}}"
+              ng-attr-height="{{render.height}}">
         </rect>
       </svg>
     </div>

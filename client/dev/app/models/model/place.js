@@ -45,85 +45,85 @@
       function modelEndPlace(model) {
         return R.set(PLACE_LENS, null, model);
       }
-      function modelSetPlaceOriginP(factions, other, model) {
+      function modelSetPlaceOriginP(other, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var direction = pointModel.directionTo(model.state.pla.s, other.state);
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateAroundTo$(direction, model.state.pla.s)), R.assocPath(['state', 'pla', 's', 'r'], direction));
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelSetPlaceTargetP(factions, other, model) {
+      function modelSetPlaceTargetP(other, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var direction = pointModel.directionTo(other.state, model.state.pla.s);
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateAroundTo$(direction, model.state.pla.s)), R.assocPath(['state', 'pla', 's', 'r'], direction));
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
       function modelPlaceMaxLength(model) {
         return R.head(R.view(PLACE_MAX_LENGTH_LENS, model));
       }
-      function modelSetPlaceMaxLength(factions, value, model) {
+      function modelSetPlaceMaxLength(value, model) {
         model = R.set(PLACE_MAX_LENGTH_LENS, [value, R.viewOr([], PLACE_MAX_LENGTH_LENS, model)[1]], model);
-        return modelModel.checkState(factions, null, model);
+        return modelModel.checkState(null, model);
       }
       function modelPlaceWithin(model) {
         return R.nth(1, R.viewOr([], PLACE_MAX_LENGTH_LENS, model));
       }
-      function modelSetPlaceWithin(factions, value, model) {
+      function modelSetPlaceWithin(value, model) {
         model = R.set(PLACE_MAX_LENGTH_LENS, [R.viewOr([], PLACE_MAX_LENGTH_LENS, model)[0], value], model);
-        return modelModel.checkState(factions, null, model);
+        return modelModel.checkState(null, model);
       }
-      function modelMoveFrontPlaceP(factions, small, model) {
+      function modelMoveFrontPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.pla.s.r;
           return R.over(STATE_LENS, pointModel.translateInDirection$(dist, direction), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelMoveBackPlaceP(factions, small, model) {
+      function modelMoveBackPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'MoveSmall' : 'Move'];
           var direction = model.state.pla.s.r + 180;
           var distance = pointModel.distanceTo(model.state, model.state.pla.s);
           if (dist > distance) dist = distance;
           return R.over(STATE_LENS, pointModel.translateInDirection$(dist, direction), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelRotateLeftPlaceP(factions, small, model) {
+      function modelRotateLeftPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateLeftAround$(angle, model.state.pla.s)), R.over(R.lensPath(['state', 'pla', 's', 'r']), R.subtract(R.__, angle)));
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelRotateRightPlaceP(factions, small, model) {
+      function modelRotateRightPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var angle = MOVES[small ? 'RotateChargeSmall' : 'RotateCharge'];
           return R.thread(model)(R.over(STATE_LENS, pointModel.rotateRightAround$(angle, model.state.pla.s)), R.over(R.lensPath(['state', 'pla', 's', 'r']), R.add(angle)));
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelShiftLeftPlaceP(factions, small, model) {
+      function modelShiftLeftPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftLeft$(dist), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelShiftRightPlaceP(factions, small, model) {
+      function modelShiftRightPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftRight$(dist), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelShiftUpPlaceP(factions, small, model) {
+      function modelShiftUpPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftUp$(dist), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function modelShiftDownPlaceP(factions, small, model) {
+      function modelShiftDownPlaceP(small, model) {
         return R.threadP(model)(R.rejectIfP(modelModel.isLocked, 'Model is locked'), function () {
           var dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
           return R.over(STATE_LENS, pointModel.shiftDown$(dist), model);
-        }, modelModel.checkState$(factions, null));
+        }, modelModel.checkState$(null));
       }
-      function ensurePlaceLength(info, _target_, state) {
+      function ensurePlaceLength(_target_, info, state) {
         if (R.exists(state.pla) && R.exists(state.pml) && state.pml[0] > 0) {
           var distance = pointModel.distanceTo(state, state.pla.s);
           var max_dist = state.pml[0] * 10 + (state.pml[1] ? info.base_radius * 2 : 0);

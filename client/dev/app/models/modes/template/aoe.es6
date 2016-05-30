@@ -102,7 +102,7 @@
         .onAction(state, [ 'Game.command.execute',
                            'onTemplates',
                            [ 'setTargetP',
-                             [state.factions, null, event['click#'].target],
+                             [event['click#'].target],
                              stamps
                            ] ]);
     }

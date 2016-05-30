@@ -5,6 +5,7 @@ describe('appGame service', function() {
       this.appGameService = appGameService;
 
       this.appActionService = spyOnService('appAction');
+      this.appDataService = spyOnService('appData');
       this.appErrorService = spyOnService('appError');
       this.appGamesService = spyOnService('appGames');
       this.appGamesService.localUpdate
@@ -19,17 +20,23 @@ describe('appGame service', function() {
 
       this.gameModel = spyOnService('game');
       this.gameBoardModel = spyOnService('gameBoard');
+      this.gameFactionsModel = spyOnService('gameFactions');
       this.gameScenarioModel = spyOnService('gameScenario');
       this.gameConnectionModel = spyOnService('gameConnection');
       this.gamesModel = spyOnService('games');
+      this.gameModelSelectionModel = spyOnService('gameModelSelection');
+      this.gameModelsModel = spyOnService('gameModels');
       this.gameTemplatesModel = spyOnService('gameTemplates');
       this.gameTerrainsModel = spyOnService('gameTerrains');
 
       this.state = {
         boards: 'boards',
+        factions: 'factions',
         terrains: 'terrains_info',
         game: { local_stamp: 'game',
                 board: 'board',
+                models: 'models',
+                model_selection: 'model_selection',
                 templates: 'templates',
                 terrains: 'terrains' },
         local_games: 'local_games',
@@ -105,6 +112,9 @@ describe('appGame service', function() {
 
   describe('load(<is_online>, <is_private>, <id>)', function() {
     beforeEach(function() {
+      this.appDataService.ready = new self.Promise((resolve) => {
+        this.resolveData = resolve;
+      });
       this.appGamesService.ready = new self.Promise((resolve) => {
         this.resolveGames = resolve;
       });
@@ -116,6 +126,11 @@ describe('appGame service', function() {
     it('should emit "Game.load.dataReady" when data is ready', function() {
       const ret = this.appGameService
         .load(this.state, 'is_online', 'is_private', 'id');
+
+      expect(this.appActionService.do)
+        .not.toHaveBeenCalled();
+
+      this.resolveData();
 
       expect(this.appActionService.do)
         .not.toHaveBeenCalled();
@@ -231,7 +246,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onConnectionClose()', function() {
+  context('connectionClose()', function() {
     return this.appGameService
       .connectionClose(this.state);
   }, function() {
@@ -255,7 +270,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onCommandExecute(<cmd>, <args>)', function() {
+  context('commandExecute(<cmd>, <args>)', function() {
     return this.appGameService
       .commandExecute(this.state, 'cmd', 'args');
   }, function() {
@@ -274,7 +289,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onCommandReplay(<cmd>)', function() {
+  context('commandReplay(<cmd>)', function() {
     return this.appGameService
       .commandReplay(this.state, 'cmd');
   }, function() {
@@ -293,7 +308,7 @@ describe('appGame service', function() {
     });
   });
 
-  xcontext('onCommandReplayBatch(<cmds>)', function() {
+  xcontext('commandReplayBatch(<cmds>)', function() {
     return this.appGameService
       .commandReplayBatch(this.state, 'cmds');
   }, function() {
@@ -312,7 +327,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onCommandReplayNext()', function() {
+  context('commandReplayNext()', function() {
     return this.appGameService
       .commandReplayNext(this.state);
   }, function() {
@@ -331,7 +346,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onCommandUndo(<cmd>)', function() {
+  context('commandUndo(<cmd>)', function() {
     return this.appGameService
       .commandUndo(this.state, 'cmd');
   }, function() {
@@ -350,7 +365,7 @@ describe('appGame service', function() {
     });
   });
 
-  context('onCommandUndoLast()', function() {
+  context('commandUndoLast()', function() {
     return this.appGameService
       .commandUndoLast(this.state);
   }, function() {
@@ -432,6 +447,57 @@ describe('appGame service', function() {
     });
   });
 
+  example(function(e) {
+    const action = `view${s.capitalize(e.action)}`;
+    context(`${action}()`, function() {
+      return this.appGameService[action](this.state);
+    }, function() {
+      beforeEach(function() {
+        this.listener = jasmine.createSpy('listener');
+        this.appGameService.view[e.signal]
+          .listen(this.listener);
+      });
+      it(`should emit "view.${e.signal}" signal`, function() {
+        expect(this.listener)
+          .toHaveBeenCalled();
+      });
+    });
+  }, [
+    [ 'action'      , 'signal'       ],
+    [ 'scrollLeft'  , 'scroll_left'  ],
+    [ 'scrollRight' , 'scroll_right' ],
+    [ 'scrollUp'    , 'scroll_up'    ],
+    [ 'scrollDown'  , 'scroll_down'  ],
+    [ 'zoomIn'      , 'zoom_in'      ],
+    [ 'zoomOut'     , 'zoom_out'     ],
+    [ 'zoomReset'   , 'zoom_reset'   ],
+    [ 'toggleMenu'  , 'toggle_menu'  ],
+  ]);
+
+  context('viewMoveMap(<set>)', function() {
+    return this.appGameService
+      .viewMoveMap(this.state, 'set');
+  }, function() {
+    it('should set view.move_map', function(){
+      expect(this.context.view.move_map)
+        .toBe('set');
+    });
+  });
+
+  describe('viewFlipMap()', function() {
+    it('should toggle view.flip_map', function() {
+      this.state = this.appGameService
+        .viewFlipMap(this.state);
+      expect(this.state.view.flip_map)
+        .toBe(true);
+
+      this.state = this.appGameService
+        .viewFlipMap(this.state);
+      expect(this.state.view.flip_map)
+        .toBe(false);
+    });
+  });
+
   context('boardSet(<name>)', function() {
     return this.appGameService
       .boardSet(this.state, 'board_name');
@@ -500,54 +566,109 @@ describe('appGame service', function() {
     });
   });
 
-  example(function(e) {
-    const action = `view${s.capitalize(e.action)}`;
-    context(`${action}()`, function() {
-      return this.appGameService[action](this.state);
-    }, function() {
-      beforeEach(function() {
-        this.listener = jasmine.createSpy('listener');
-        this.appGameService.view[e.signal]
-          .listen(this.listener);
-      });
-      it(`should emit "view.${e.signal}" signal`, function() {
-        expect(this.listener)
-          .toHaveBeenCalled();
-      });
-    });
-  }, [
-    [ 'action'      , 'signal'       ],
-    [ 'scrollLeft'  , 'scroll_left'  ],
-    [ 'scrollRight' , 'scroll_right' ],
-    [ 'scrollUp'    , 'scroll_up'    ],
-    [ 'scrollDown'  , 'scroll_down'  ],
-    [ 'zoomIn'      , 'zoom_in'      ],
-    [ 'zoomOut'     , 'zoom_out'     ],
-    [ 'zoomReset'   , 'zoom_reset'   ],
-    [ 'toggleMenu'  , 'toggle_menu'  ],
-  ]);
-
-  context('viewMoveMap(<set>)', function() {
+  context('scenarioGenerateObjectives()', function() {
     return this.appGameService
-      .viewMoveMap(this.state, 'set');
+      .scenarioGenerateObjectives(this.state);
   }, function() {
-    it('should set view.move_map', function(){
-      expect(this.context.view.move_map)
-        .toBe('set');
+    it('should execute createObjectives command', function() {
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'createObjectives', []
+        ]);
     });
   });
 
-  describe('viewFlipMap()', function() {
-    it('should toggle view.flip_map', function() {
-      this.state = this.appGameService
-        .viewFlipMap(this.state);
-      expect(this.state.view.flip_map)
-        .toBe(true);
+  context('modelCreate(<info>, <repeat>)', function() {
+    return this.appGameService
+      .modelCreate(this.state, 'info', 3);
+  }, function() {
+    it('should set create description', function(){
+      expect(this.context.create)
+        .toEqual({ base: { x: 240, y: 240, r: 0 },
+                   models: [ { info: 'info', x: 0, y: 0, r: 0 },
+                             { info: 'info', x: 20, y: 0, r: 0 },
+                             { info: 'info', x: 40, y: 0, r: 0 } ]
+                 });
+    });
 
-      this.state = this.appGameService
-        .viewFlipMap(this.state);
-      expect(this.state.view.flip_map)
-        .toBe(false);
+    it('should switch to createModel mode', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, ['Modes.switchTo',
+                                             'CreateModel']);
+    });
+  });
+
+  context('modelCopy(<create>)', function() {
+    return this.appGameService
+      .modelCopy(this.state, 'create');
+  }, function() {
+    it('should set create description', function(){
+      expect(this.context.create)
+        .toBe('create');
+    });
+
+    it('should switch to createModel mode', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, ['Modes.switchTo',
+                                             'CreateModel']);
+    });
+  });
+
+  context('modelImportList(<list>)', function() {
+    return this.appGameService
+      .modelImportList(this.state, 'list');
+  }, function() {
+    it('should set create description', function(){
+      expect(this.gameFactionsModel.buildModelsList)
+        .toHaveBeenCalledWith('list', 'user', 'factions');
+      expect(this.context.create)
+        .toBe('gameFactions.buildModelsList.returnValue');
+    });
+
+    it('should switch to createModel mode', function(){
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.context, ['Modes.switchTo',
+                                             'CreateModel']);
+    });
+  });
+
+  context('modelImportFile(<file>)', function() {
+    return this.appGameService
+      .modelImportFile(this.state, 'file');
+  }, function() {
+    it('should read file data', function(){
+      expect(this.fileImportService.readP)
+        .toHaveBeenCalledWith('json', 'file');
+    });
+
+    it('should copy model data', function(){
+      expect(this.appActionService.do)
+        .toHaveBeenCalledWith('Game.model.copy',
+                              'fileImport.readP.returnValue');
+    });
+  });
+
+  context('modelSelectionExport(<previous>, <game>)', function() {
+    return this.appGameService
+      .modelSelectionExport({ url: 'previous_url' }, this.state.game);
+  }, function() {
+    it('should cleanup previous url', function() {
+      expect(this.fileExportService.cleanup)
+        .toHaveBeenCalledWith('previous_url');
+    });
+
+    it('should return model selection export object', function() {
+      expect(this.gameModelSelectionModel.get)
+        .toHaveBeenCalledWith('local', 'model_selection');
+      expect(this.gameModelsModel.copyStamps)
+        .toHaveBeenCalledWith('gameModelSelection.get.returnValue', 'models');
+      expect(this.fileExportService.generate)
+        .toHaveBeenCalledWith('json','gameModels.copyStamps.returnValue');
+      expect(this.context)
+        .toEqual({ name: 'clicknfeat_models.json',
+                   url: 'fileExport.generate.returnValue'
+                 });
     });
   });
 

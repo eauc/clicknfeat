@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('templateMode', templateModeModelFactory);
 
-  templateModeModelFactory.$inject = ['appGame', 'elementMode', 'modes', 'settings', 'template', 'gameTemplates', 'gameTemplateSelection'];
-  function templateModeModelFactory(appGameService, elementModeModel, modesModel, settingsModel, templateModel, gameTemplatesModel, gameTemplateSelectionModel) {
+  templateModeModelFactory.$inject = ['elementMode', 'modes', 'settings', 'template', 'gameTemplates', 'gameTemplateSelection'];
+  function templateModeModelFactory(elementModeModel, modesModel, settingsModel, templateModel, gameTemplatesModel, gameTemplateSelectionModel) {
     var template_mode = elementModeModel('template', templateModel, gameTemplatesModel, gameTemplateSelectionModel);
     template_mode.actions.openEditLabel = templateOpenEditLabel;
     template_mode.bindings.openEditLabel = 'shift+l';

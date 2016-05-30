@@ -2,10 +2,8 @@
   angular.module('clickApp.services')
     .factory('modelWreck', modelWreckModelFactory);
 
-  modelWreckModelFactory.$inject = [
-    'gameFactions',
-  ];
-  function modelWreckModelFactory(gameFactionsModel) {
+  modelWreckModelFactory.$inject = [];
+  function modelWreckModelFactory() {
     const DSP_LENS = R.lensPath(['state','dsp']);
     return (modelModel) => {
       const modelWreckModel = {
@@ -19,9 +17,8 @@
       function modelIsWreckDisplayed(model) {
         return !!R.find(R.equals('w'), R.viewOr([], DSP_LENS, model));
       }
-      function modelGetWreckImage(factions, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
+      function modelGetWreckImage(model) {
+        return R.thread(model.info)(
           R.prop('img'),
           (info_img) => R.thread(info_img)(
             R.find(R.propEq('type','wreck')),

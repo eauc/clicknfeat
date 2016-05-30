@@ -3,34 +3,24 @@ describe('model wreck model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 
-  context('getWreckImage(<factions>)', function() {
-    return this.modelModel.getWreckImage('factions', this.model);
+  context('getWreckImage()', function() {
+    return this.modelModel.getWreckImage(this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
+        info: { img: [ { type: 'default', width: 60, height: 60, link: 'link' } ] },
         state: { dsp:[], img: 0, info: 'info' }
       };
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
-        });
-    });
-
-    it('should fetch model info from <factions>', function() {
-      expect(this.gameFactionsModel.getModelInfo)
-        .toHaveBeenCalledWith('info', 'factions');
     });
 
     example(function(e, d) {
       describe(d, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfo
-            .and.returnValue({ img: e.info_img });
           this.model = {
+            info: { img: e.info_img },
             state: { dsp: e.dsp, info: 'info' }
           };
         });

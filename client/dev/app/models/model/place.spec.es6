@@ -4,8 +4,9 @@ describe('model place model', function() {
     function(modelModel) {
       this.modelModel = modelModel;
       spyOn(this.modelModel, 'checkState')
-        .and.callFake((_f_,_t_,m) => m);
-      this.modelModel.checkState$ = R.curryN(3, this.modelModel.checkState);
+        .and.callFake(R.nthArg(1));
+      this.modelModel
+        .checkState$ = R.curryN(2, this.modelModel.checkState);
     }
   ]));
 
@@ -53,9 +54,9 @@ describe('model place model', function() {
     });
   });
 
-  context('setPlaceTargetP(<factions>, <target>)', function() {
+  context('setPlaceTargetP(<target>)', function() {
     return this.modelModel
-      .setPlaceTargetP('factions', this.target, this.model);
+      .setPlaceTargetP(this.target, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -80,15 +81,15 @@ describe('model place model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
   });
 
-  context('setPlaceOriginP(<factions>, <origin>)', function() {
+  context('setPlaceOriginP(<origin>)', function() {
     return this.modelModel
-      .setPlaceOriginP('factions', this.origin, this.model);
+      .setPlaceOriginP(this.origin, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -113,7 +114,7 @@ describe('model place model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
 
     whenModelIsLockedShouldRejectMove();
@@ -121,7 +122,7 @@ describe('model place model', function() {
 
   context('setPlaceMaxLengthP(<length>)', function() {
     return this.modelModel
-      .setPlaceMaxLengthP('factions', 42, this.model);
+      .setPlaceMaxLengthP(42, this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
@@ -136,13 +137,13 @@ describe('model place model', function() {
 
     it('should check state', function() {
       expect(this.modelModel.checkState)
-        .toHaveBeenCalledWith('factions', null, this.context);
+        .toHaveBeenCalledWith(null, this.context);
     });
   });
 
   example(function(e) {
-    context(e.move+'(<small>)', function() {
-      return this.modelModel[e.move]('factions', this.small, this.model);
+    context(`${e.move}(<small>)`, function() {
+      return this.modelModel[e.move](this.small, this.model);
     }, function() {
       beforeEach(function() {
         this.model = {
@@ -156,7 +157,7 @@ describe('model place model', function() {
         context(dd, function() {
           this.small = ee.small;
         }, function() {
-          it('should '+e.move+' model', function() {
+          it(`should ${e.move} model`, function() {
             expect(R.pick(['x','y','r'], this.context.state))
               .toEqual(ee.result);
             expect(this.context.state.pla.s)
@@ -171,7 +172,7 @@ describe('model place model', function() {
 
       it('should check state', function() {
         expect(this.modelModel.checkState)
-          .toHaveBeenCalledWith('factions', null, this.context);
+          .toHaveBeenCalledWith(null, this.context);
       });
 
       whenModelIsLockedShouldRejectMove();

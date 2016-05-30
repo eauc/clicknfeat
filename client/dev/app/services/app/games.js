@@ -11,10 +11,9 @@
     var load = {
       local: behavioursModel.signalModel.create()
     };
-    var ready = undefined;
 
     var gamesService = {
-      local: local, load: load, ready: ready,
+      local: local, load: load,
       // create: stateGamesCreate,
       localSet: actionGamesLocalSet,
       localUpdate: actionGamesLocalUpdate,
@@ -40,7 +39,7 @@
       // .register('Games.online.load'     , stateGamesModel.onOnlineLoad)
       // .register('Games.online.loadFile' , stateGamesModel.onOnlineLoadFile);
 
-      ready = gamesModel.loadLocalGamesP().then(function (games) {
+      gamesService.ready = gamesModel.loadLocalGamesP().then(function (games) {
         return appActionService.action.send(['Games.local.set', games]);
       });
     }

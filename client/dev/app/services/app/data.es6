@@ -41,10 +41,9 @@
             .map(R.viewOr({}, SCENARIOS_LENS));
     const terrains = appStateService.state
             .map(R.viewOr({}, TERRAINS_LENS));
-    let ready;
 
     const appDataService = {
-      boards, factions, scenarios, terrains, ready,
+      boards, factions, scenarios, terrains,
       boardsSet: actionDataBoardsSet,
       factionsSet: actionDataFactionsSet,
       scenariosSet: actionDataScenariosSet,
@@ -94,7 +93,7 @@
       // const settings_ready = settingsModel.initP()
       //         .then((settings) => appActionService.do('Settings.set', settings));
 
-      ready = R.allP([
+      appDataService.ready = R.allP([
         boards_ready,
         factions_ready,
         scenarios_ready,

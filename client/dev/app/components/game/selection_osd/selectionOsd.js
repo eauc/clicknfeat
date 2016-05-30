@@ -5,14 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.directives').controller('clickGameSelectionDetailCtrl', gameSelectionDetailCtrl).directive('clickGameSelectionDetail', gameSelectionDetailDirectiveFactory);
 
-  gameSelectionDetailCtrl.$inject = ['$scope', 'appGame',
-  // 'gameFactions',
-  // 'gameModels',
-  'gameTemplates'];
-  function gameSelectionDetailCtrl($scope, appGameService,
-  // gameFactionsModel,
-  // gameModelsModel,
-  gameTemplatesModel) {
+  gameSelectionDetailCtrl.$inject = ['$scope', 'appGame', 'gameModels', 'gameTemplates'];
+  function gameSelectionDetailCtrl($scope, appGameService, gameModelsModel, gameTemplatesModel) {
     var vm = this;
     console.log('init clickGameSelectionDetailCtrl');
 
@@ -31,9 +25,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function activate() {
       $scope.listenSignal(updateTemplateElement, appGameService.templates.changes, $scope);
-      // $scope.onStateChangeEvent('Game.models.change',
-      //                           updateElement,
-      //                           $scope);
+      $scope.listenSignal(updateModelElement, appGameService.models.changes, $scope);
     }
     function onOpen() {
       vm.show.info = false;
@@ -42,6 +34,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       if ('template' === vm.type) {
         var templates = appGameService.templates.templates.sample();
         updateTemplateElement([templates, [vm.element.stamp]]);
+      }
+      if ('model' === vm.type) {
+        var models = appGameService.models.models.sample();
+        updateModelElement([models, [vm.element.stamp]]);
       }
     }
     function updateTemplateElement(_ref) {
@@ -58,20 +54,20 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         vm.edit.max_deviation = R.propOr(0, 'm', vm.element);
       }));
     }
-    // function updateModelElement() {
-    //   return R.thread($scope.state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStamp$(vm.element.stamp),
-    //     (model) => {
-    //       vm.element = model.state;
-    //     },
-    //     () => gameFactionsModel
-    //       .getModelInfo(vm.element.info, $scope.state.factions),
-    //     (info) => {
-    //       vm.info = info;
-    //     }
-    //   );
-    // }
+    function updateModelElement(_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2);
+
+      var models = _ref4[0];
+      var stamps = _ref4[1];
+
+      if (!R.find(R.equals(vm.element.stamp), stamps)) {
+        return;
+      }
+      R.thread(models)(gameModelsModel.findStamp$(vm.element.stamp), function (model) {
+        vm.element = model.state;
+        vm.info = model.info;
+      });
+    }
     function labelDisplay(l) {
       return s.truncate(l, 12);
     }
@@ -113,7 +109,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
       vm.type = 'model';
       closeSelectionDetail();
-      scope.bindCell(function (detail) {
+      scope.listenSignal(function (detail) {
         if (R.isNil(detail)) {
           closeSelectionDetail();
         } else {
@@ -122,9 +118,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }, appGameService.view.detail, scope);
       vm.doClose = closeSelectionDetail;
 
-      function openSelectionDetail(_ref3) {
-        var type = _ref3.type;
-        var element = _ref3.element;
+      function openSelectionDetail(_ref5) {
+        var type = _ref5.type;
+        var element = _ref5.element;
 
         console.info('openSelectionDetail');
         vm.type = type;

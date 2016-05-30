@@ -1,10 +1,10 @@
-xdescribe('model model', function() {
+describe('model model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
       spyOn(this.modelModel, 'checkState')
-        .and.callFake(function(_f_,_t_,m) { return m; });
+        .and.callFake(R.nthArg(1));
       this.gameFactionsModel = spyOnService('gameFactions');
       spyOn(R, 'guid').and.returnValue('newGuid');
     }
@@ -15,10 +15,11 @@ xdescribe('model model', function() {
   }, function() {
     beforeEach(function() {
       this.state = { info: ['info'] };
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
+      this.info = {
           damage: { type: 'warrior', n: 1 }
-        });
+      };
+      this.gameFactionsModel.getModelInfo
+        .and.returnValue(this.info);
     });
 
     it('should get model info exists', function() {
@@ -44,7 +45,8 @@ xdescribe('model model', function() {
     }, function() {
       it('should check <state>', function() {
         expect(this.modelModel.checkState)
-          .toHaveBeenCalledWith('factions', null, {
+          .toHaveBeenCalledWith(null, {
+            info: this.info,
             state: { x: 240, y: 0, r: 0,
                      dmg: { n: 0, t: 0 },
                      dsp: ['i'],
@@ -69,6 +71,7 @@ xdescribe('model model', function() {
       it('should extend <state> with default values', function() {
         expect(this.context)
           .toEqual({
+            info: this.info,
             state: { x: 240, y: 0, r: 0,
                      dmg: { n: 0, t: 0 },
                      dsp: ['i'],
@@ -160,44 +163,11 @@ xdescribe('model model', function() {
     });
   });
 
-  describe('setLock(<set>)', function() {
-    it('should set lock for <model>', function() {
-      this.model = { state: { dsp: [] } };
-
-      this.model = this.modelModel.setLock(true, this.model);
-      expect(this.modelModel.isLocked(this.model))
-        .toBeTruthy();
-
-      this.model = this.modelModel.setLock(false, this.model);
-      expect(this.modelModel.isLocked(this.model))
-        .toBeFalsy();
-    });
-  });
-
-  describe('saveState()', function() {
-    it('should return a copy of model\'s state', function() {
-      const model = { state: { stamp: 'stamp' } };
-      const ret = this.modelModel.saveState(model);
-      expect(ret).toEqual({ stamp: 'stamp' });
-      expect(ret).not.toBe(model.state);
-    });
-  });
-
-  describe('setState(<state>)', function() {
-    it('should set a copy of <state> as model\'s state', function() {
-      let model = { state: null };
-      const state = { stamp: 'stamp' };
-      model = this.modelModel.setState(state, model);
-      expect(model.state).toEqual(state);
-      expect(model.state).not.toBe(state);
-    });
-  });
-
   describe('descriptionFromInfo', function() {
     example(function(e, d) {
       it('should give model\'s description, '+d, function() {
         const desc = this.modelModel
-              .descriptionFromInfo(e.info, { state: e.state });
+                .descriptionFromInfo({ info: e.info, state: e.state });
         expect(desc).toBe(e.desc);
       });
     }, [
@@ -207,14 +177,6 @@ xdescribe('model model', function() {
       [ { unit_name: 'Unit', name: 'Name' }, { }, 'Unit/Name' ],
       [ { unit_name: 'Unit' }, { user: 'User' }, 'User/Unit' ],
     ]);
-  });
-
-  describe('stamp', function() {
-    it('should return model\'s stamp', function() {
-      expect(this.modelModel.stamp({
-        state: { stamp: 'stamp' }
-      })).toBe('stamp');
-    });
   });
 
   describe('user', function() {
@@ -269,23 +231,15 @@ xdescribe('model model', function() {
     });
   });
 
-  context('checkState(<factions>, <target>)', function() {
+  context('checkState(<target>)', function() {
     return this.modelModel
-      .checkState('factions', this.target, this.model);
+      .checkState(this.target, this.model);
   }, function() {
     beforeEach(function() {
       this.modelModel.checkState.and.callThrough();
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          base_radius: 7.874
-        });
-      this.model = { state: { info: 'info' } };
+      this.model = { info: { base_radius: 7.874 },
+                     state: { info: 'info' } };
       this.target = null;
-    });
-
-    it('should fetch model info', function() {
-      expect(this.gameFactionsModel.getModelInfo)
-        .toHaveBeenCalledWith('info', 'factions');
     });
 
     example(function(e, d) {

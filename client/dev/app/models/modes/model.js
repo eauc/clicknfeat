@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('modelMode', modelModeModelFactory);
 
-  modelModeModelFactory.$inject = ['appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'gameModelSelection'];
-  function modelModeModelFactory(appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, gameModelSelectionModel) {
+  modelModeModelFactory.$inject = ['appAction', 'appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'gameModelSelection'];
+  function modelModeModelFactory(appActionService, appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, gameModelSelectionModel) {
     var model_actions = Object.create(modelBaseModeModel.actions);
     model_actions.startCharge = modelStartCharge;
     model_actions.startPlace = modelStartPlace;
@@ -34,13 +34,13 @@
 
     function modelStartCharge(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['startChargeP', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'ModelCharge');
+      appActionService.defer('Game.command.execute', 'onModels', ['startChargeP', [], stamps]);
+      return appStateService.onAction(state, ['Modes.switchTo', 'ModelCharge']);
     }
     function modelStartPlace(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['startPlaceP', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'ModelPlace');
+      appActionService.defer('Game.command.execute', 'onModels', ['startPlaceP', [], stamps]);
+      return appStateService.onAction(state, ['Modes.switchTo', 'ModelPlace']);
     }
   }
 })();

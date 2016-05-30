@@ -2,23 +2,19 @@
   angular.module('clickApp.directives')
     .directive('clickGameModel', gameModelDirectiveFactory)
     .directive('clickGameModelsList', gameModelsListDirectiveFactory)
-    .directive('clickGameUnderModel', gameUnderModelDirectiveFactory)
     .directive('clickGameUnderModelsList', gameUnderModelsListDirectiveFactory)
-    .directive('clickGameOverModel', gameOverModelDirectiveFactory)
     .directive('clickGameOverModelsList', gameOverModelsListDirectiveFactory);
 
   gameModelDirectiveFactory.$inject = [
-    'appState',
+    'appGame',
     'gameMap',
-    'gameFactions',
     'model',
     'gameModels',
     'gameModelSelection',
   ];
   function gameModelDirectiveFactory(
-    appStateService,
+    appGameService,
     gameMapService,
-    gameFactionsModel,
     modelModel,
     gameModelsModel,
     gameModelSelectionModel
@@ -30,89 +26,77 @@
     return clickGameModelDirective;
 
     function link(scope, _parent_) {
-      const state = scope.state;
-      const model = scope.model;
-      const info = R.thread(state.factions)(
-        gameFactionsModel.getModelInfo$(model.state.info),
-        R.defaultTo({ base_radius: 5.905 })
-      );
-      console.log('gameModel', scope.model, info);
+      console.log('gameModel', scope.model);
 
-      scope.onStateChangeEvent('Game.view.flipMap', onUpdate, scope);
-      scope.onStateChangeEvent('Game.models.change', onUpdate, scope);
-      scope.onStateChangeEvent('Game.model_selection.change', onUpdate, scope);
-      scope.onStateChangeEvent(`Game.model.change.${model.state.stamp}`,
-                               _onUpdate, scope);
-      updateModel(scope);
+      const stamp = scope.model.state.stamp;
+      scope.listenSignal(refreshRender,
+                         appGameService.models.flip_map,
+                         scope);
+      scope.listenSignal(onModelSelectionChanges,
+                         appGameService.models.selection_changes,
+                         scope);
+      scope.listenSignal(onModelsChanges,
+                         appGameService.models.changes,
+                         scope);
+      mount();
 
-      let _model;
-      let _selection;
-      let _is_flipped;
-      function onUpdate() {
+      function onModelsChanges([models, stamps]) {
+        if(!R.find(R.equals(stamp), stamps)) return;
+
+        refreshRender(models);
+      }
+      function onModelSelectionChanges([selection, stamps]) {
+        if(!R.find(R.equals(stamp), stamps)) return;
+
+        refreshSelection(selection);
+      }
+
+      function mount() {
+        const models = appGameService.models.models.sample();
+        refreshRender(models);
+
+        const selection = appGameService.models.selection.sample();
+        refreshSelection(selection);
+      }
+
+      function refreshRender(models) {
+        const model = gameModelsModel.findStamp(stamp, models);
+        if(R.isNil(model)) return;
+        scope.model = model;
+
         const map = document.getElementById('map');
         const is_flipped = gameMapService.isFlipped(map);
-        const state = appStateService.current();
-        const selection = R.path(['game','model_selection'], state);
-        const model = scope.model;
-        if(_model === model &&
-           _selection === selection &&
-           _is_flipped === is_flipped) {
-          return;
-        }
-        _model = model;
-        _selection = selection;
-        _is_flipped = is_flipped;
 
-        _onUpdate();
-      }
-      function _onUpdate() {
-        updateModel(scope);
-        scope.$digest();
-      }
-    }
-    function updateModel(scope) {
-      const map = document.getElementById('map');
-      const is_flipped = gameMapService.isFlipped(map);
-      const model = scope.model;
-      const stamp = model.state.stamp;
-      const state = appStateService.current();
-
-      const selection = R.path(['game','model_selection'], state);
-      const local = gameModelSelectionModel
-              .in('local', stamp, selection);
-      const remote = gameModelSelectionModel
-              .in('remote', stamp, selection);
-      const single_local = gameModelSelectionModel
-              .inSingle('local', stamp, selection);
-      const single_remote = gameModelSelectionModel
-              .inSingle('remote', stamp, selection);
-      model.selection = {
-        local,
-        remote,
-        single_local,
-        single_remote
-      };
-
-      let charge_target;
-      if(single_local) {
+        let charge_target;
         const target_stamp = R.path(['state','cha','t'], model);
         if(R.exists(target_stamp)) {
           charge_target = gameModelsModel
-            .findStamp(target_stamp, state.game.models);
-          charge_target.info = gameFactionsModel
-            .getModelInfo(charge_target.state.info, state.factions);
+            .findStamp(target_stamp, models);
         }
+        model.render = modelModel
+          .render({is_flipped, charge_target},
+                  model.info, model.state);
+        console.warn('RENDER MODEL',
+                     stamp, model.state, model.render);
       }
-
-      model.render = modelModel
-        .render({is_flipped, charge_target},
-                state.factions, model.state);
-
-      appStateService.emit(`Game.model.change.${stamp}.render`);
-      console.warn('RENDER MODEL',
-                   model.state.stamp,
-                   model.render,
-                   scope.selection);
+      function refreshSelection(selection) {
+        const local = gameModelSelectionModel
+                .in('local', stamp, selection);
+        const remote = gameModelSelectionModel
+                .in('remote', stamp, selection);
+        const single_local = gameModelSelectionModel
+                .inSingle('local', stamp, selection);
+        const single_remote = gameModelSelectionModel
+                .inSingle('remote', stamp, selection);
+        scope.model.selection = {
+          local,
+          remote,
+          single_local,
+          single_remote
+        };
+        console.warn('SELECTION MODEL',
+                     stamp, selection, scope.selection);
+      }
     }
   }
 
@@ -127,25 +111,7 @@
 
     function link(scope, element) {
       scope.type = element[0].getAttribute('click-game-models-list');
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
       console.log('clickGameModelsList', scope.type);
-    }
-  }
-
-  gameUnderModelDirectiveFactory.$inject = [];
-  function gameUnderModelDirectiveFactory() {
-    const clickGameUnderModelDirective = {
-      restrict: 'A',
-      link: link
-    };
-    return clickGameUnderModelDirective;
-
-    function link(scope, _parent_) {
-      const stamp = scope.model.state.stamp;
-      console.log('gameUnderModel', stamp);
-
-      scope.digestOnStateChangeEvent('Game.view.flipMap', scope);
-      scope.digestOnStateChangeEvent(`Game.model.change.${stamp}.render`, scope);
     }
   }
 
@@ -158,26 +124,9 @@
       link: link
     };
 
-    function link(scope) {
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
-      console.log('clickGameModelsList', scope.type);
-    }
-  }
-
-  gameOverModelDirectiveFactory.$inject = [];
-  function gameOverModelDirectiveFactory() {
-    const clickGameOverModelDirective = {
-      restrict: 'A',
-      link: link
-    };
-    return clickGameOverModelDirective;
-
-    function link(scope, _parent_) {
-      const stamp = scope.model.state.stamp;
-      console.log('gameOverModel', stamp);
-
-      scope.digestOnStateChangeEvent('Game.view.flipMap', scope);
-      scope.digestOnStateChangeEvent(`Game.model.change.${stamp}.render`, scope);
+    function link(scope, element) {
+      scope.type = element[0].getAttribute('click-game-under-models-list');
+      console.log('clickGameUnderModelsList', scope.type);
     }
   }
 
@@ -190,9 +139,9 @@
       link: link
     };
 
-    function link(scope) {
-      scope.digestOnStateChangeEvent('Game.models.change', scope);
-      console.log('clickGameModelsList', scope.type);
+    function link(scope, element) {
+      scope.type = element[0].getAttribute('click-game-over-models-list');
+      console.log('clickGameOverModelsList', scope.type);
     }
   }
 })();

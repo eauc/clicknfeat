@@ -29,10 +29,9 @@
     var factions = appStateService.state.map(R.viewOr({}, FACTIONS_LENS));
     var scenarios = appStateService.state.map(R.viewOr({}, SCENARIOS_LENS));
     var terrains = appStateService.state.map(R.viewOr({}, TERRAINS_LENS));
-    var ready = undefined;
 
     var appDataService = {
-      boards: boards, factions: factions, scenarios: scenarios, terrains: terrains, ready: ready,
+      boards: boards, factions: factions, scenarios: scenarios, terrains: terrains,
       boardsSet: actionDataBoardsSet,
       factionsSet: actionDataFactionsSet,
       scenariosSet: actionDataScenariosSet,
@@ -82,7 +81,7 @@
       // const settings_ready = settingsModel.initP()
       //         .then((settings) => appActionService.do('Settings.set', settings));
 
-      ready = R.allP([boards_ready, factions_ready, scenarios_ready,
+      appDataService.ready = R.allP([boards_ready, factions_ready, scenarios_ready,
       // settings_ready,
       terrains_ready]);
     }

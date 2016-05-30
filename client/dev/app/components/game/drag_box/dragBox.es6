@@ -2,36 +2,42 @@
   angular.module('clickApp.directives')
     .directive('clickGameDragbox', gameDragboxDirectiveFactory);
 
-  gameDragboxDirectiveFactory.$inject = [];
-  function gameDragboxDirectiveFactory() {
+  gameDragboxDirectiveFactory.$inject = [
+    'appGame',
+  ];
+  function gameDragboxDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
+      scope: true,
       link: link
     };
 
-    function link(scope, element) {
+    function link(scope) {
       console.log('gameDragbox');
 
-      const box = element[0];
-      hideDragbox();
+      scope.render = { x: 0, y: 0,
+                       width: 0, height: 0
+                     };
 
-      scope.onStateChangeEvent('Game.dragBox.enable', updateDragbox, scope);
-      scope.onStateChangeEvent('Game.dragBox.disable', hideDragbox, scope);
+      scope.listenSignal(updateDragbox, appGameService.view.drag_box, scope);
 
-      function hideDragbox() {
-        box.style.visibility = 'hidden';
-      }
-      function updateDragbox(_event_, [start, end]) {
-        const x = Math.min(start.x, end.x);
-        const y = Math.min(start.y, end.y);
-        const width = Math.abs(start.x - end.x);
-        const height = Math.abs(start.y - end.y);
+      function updateDragbox(drag_box) {
+        if(R.isNil(drag_box.top_left)) {
+          scope.render = { x: 0, y: 0,
+                           width: 0, height: 0
+                         };
+          return;
+        }
 
-        box.style.visibility = 'visible';
-        box.setAttribute('x', x+'');
-        box.setAttribute('y', y+'');
-        box.setAttribute('width', width+'');
-        box.setAttribute('height', height+'');
+        const { top_left, bottom_right } = drag_box;
+        const width = Math.abs(bottom_right.x - top_left.x);
+        const height = Math.abs(bottom_right.y - top_left.y);
+
+        scope.render.x = top_left.x;
+        scope.render.y = top_left.y;
+        scope.render.width = width;
+        scope.render.height = height;
+        console.warn('RENDER DRAG_BOX', arguments, scope.render);
       }
     }
   }

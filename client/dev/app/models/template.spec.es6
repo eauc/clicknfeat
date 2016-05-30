@@ -1,4 +1,4 @@
-xdescribe('template model', function() {
+describe('template model', function() {
   beforeEach(inject([
     'template',
     'allTemplates',

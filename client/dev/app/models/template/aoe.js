@@ -57,7 +57,7 @@
         return R.thread(temp)(R.assoc('state', state), templateModel.checkState);
       });
     }
-    function aoeTemplateSetTargetP(_factions_, _origin_, target, temp) {
+    function aoeTemplateSetTargetP(target, temp) {
       return templateModel.setPositionP(target.state, temp);
     }
     function aoeTemplateRender(temp_state, base_render) {

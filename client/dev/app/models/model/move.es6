@@ -30,50 +30,49 @@
       function moveModel(move, withTarget) {
         return function(...args) {
           const model = R.last(args);
-          const factions = R.head(args);
-          const target = (withTarget ? R.nth(1, args) : null);
+          const target = (withTarget ? R.head(args) : null);
           return R.threadP(model)(
             R.rejectIfP(modelModel.isLocked,
                        'Model is locked'),
             () => move.apply(this, args),
-            modelModel.checkState$(factions, target)
+            modelModel.checkState$(target)
           );
         };
       }
-      function modelSetPosition(_factions_, _target_, pos, model) {
+      function modelSetPosition(_target_, pos, model) {
         return R.pipe(
           R.set(X_LENS, pos.x),
           R.set(Y_LENS, pos.y)
         )(model);
       }
-      function modelSetPositionP_(factions, target, pos, model) {
+      function modelSetPositionP_(target, pos, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
           R.set(X_LENS, pos.x),
           R.set(Y_LENS, pos.y),
-          modelModel.checkState$(factions, target),
+          modelModel.checkState$(target),
           (check) => {
             model.state = check.state;
             return model;
           }
         );
       }
-      function modelShiftPosition(_factions_, _target_, shift, model) {
+      function modelShiftPosition(_target_, shift, model) {
         return R.pipe(
           R.over(X_LENS, R.add(shift.x)),
           R.over(Y_LENS, R.add(shift.y))
         )(model);
       }
-      function modelSetOrientation(_factions_, orientation, model) {
+      function modelSetOrientation(orientation, model) {
         return R.assocPath(['state','r'], orientation, model);
       }
-      function modelOrientTo(_factions_, other, model) {
+      function modelOrientTo(other, model) {
         return R.assocPath(['state','r'],
                            pointModel.directionTo(other.state, model.state),
                            model);
       }
-      function modelMoveFront(_factions_, small, model) {
+      function modelMoveFront(small, model) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
         return R.over(
           STATE_LENS,
@@ -81,7 +80,7 @@
           model
         );
       }
-      function modelMoveBack(_factions_, small, model) {
+      function modelMoveBack(small, model) {
         const dist = MOVES[small ? 'MoveSmall' : 'Move'];
         return R.over(
           STATE_LENS,
@@ -89,7 +88,7 @@
           model
         );
       }
-      function modelRotateLeft(_factions_, small, model) {
+      function modelRotateLeft(small, model) {
         const angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
         return R.over(
           STATE_LENS,
@@ -97,7 +96,7 @@
           model
         );
       }
-      function modelRotateRight(_factions_, small, model) {
+      function modelRotateRight(small, model) {
         const angle = MOVES[small ? 'RotateSmall' : 'Rotate'];
         return R.over(
           STATE_LENS,
@@ -105,7 +104,7 @@
           model
         );
       }
-      function modelShiftLeft(_factions_, small, model) {
+      function modelShiftLeft(small, model) {
         const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(
           STATE_LENS,
@@ -113,7 +112,7 @@
           model
         );
       }
-      function modelShiftRight(_factions_, small, model) {
+      function modelShiftRight(small, model) {
         const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(
           STATE_LENS,
@@ -121,7 +120,7 @@
           model
         );
       }
-      function modelShiftUp(_factions_, small, model) {
+      function modelShiftUp(small, model) {
         const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(
           STATE_LENS,
@@ -129,7 +128,7 @@
           model
         );
       }
-      function modelShiftDown(_factions_, small, model) {
+      function modelShiftDown(small, model) {
         const dist = MOVES[small ? 'ShiftSmall' : 'Shift'];
         return R.over(
           STATE_LENS,

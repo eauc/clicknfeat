@@ -3,7 +3,6 @@
     .factory('templateMode', templateModeModelFactory);
 
   templateModeModelFactory.$inject = [
-    'appGame',
     'elementMode',
     'modes',
     'settings',
@@ -11,8 +10,7 @@
     'gameTemplates',
     'gameTemplateSelection',
   ];
-  function templateModeModelFactory(appGameService,
-                                    elementModeModel,
+  function templateModeModelFactory(elementModeModel,
                                     modesModel,
                                     settingsModel,
                                     templateModel,

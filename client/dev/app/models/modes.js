@@ -4,12 +4,7 @@
   angular.module('clickApp.services').factory('modes', modesModelFactory).factory('allModes', ['defaultMode',
   // 'rulerMode',
   // 'losMode',
-  // 'createModelMode',
-  // 'modelsMode',
-  // 'modelMode',
-  // 'modelChargeMode',
-  // 'modelPlaceMode',
-  'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
+  'createModelMode', 'modelsMode', 'modelMode', 'modelChargeMode', 'modelPlaceMode', 'createTemplateMode', 'aoeTemplateMode', 'sprayTemplateMode', 'wallTemplateMode', 'createTerrainMode', 'terrainMode', function () {
     return {};
   }]);
 

@@ -6,14 +6,12 @@
   gameSelectionDetailCtrl.$inject = [
     '$scope',
     'appGame',
-    // 'gameFactions',
-    // 'gameModels',
+    'gameModels',
     'gameTemplates',
   ];
   function gameSelectionDetailCtrl($scope,
                                    appGameService,
-                                   // gameFactionsModel,
-                                   // gameModelsModel,
+                                   gameModelsModel,
                                    gameTemplatesModel) {
     const vm = this;
     console.log('init clickGameSelectionDetailCtrl');
@@ -35,9 +33,9 @@
       $scope.listenSignal(updateTemplateElement,
                           appGameService.templates.changes,
                           $scope);
-      // $scope.onStateChangeEvent('Game.models.change',
-      //                           updateElement,
-      //                           $scope);
+      $scope.listenSignal(updateModelElement,
+                          appGameService.models.changes,
+                          $scope);
     }
     function onOpen() {
       vm.show.info = false;
@@ -47,6 +45,11 @@
         const templates = appGameService.templates
                 .templates.sample();
         updateTemplateElement([templates, [vm.element.stamp]]);
+      }
+      if('model' === vm.type) {
+        const models = appGameService.models
+                .models.sample();
+        updateModelElement([models, [vm.element.stamp]]);
       }
     }
     function updateTemplateElement([templates, stamps]) {
@@ -64,20 +67,18 @@
         )
       );
     }
-    // function updateModelElement() {
-    //   return R.thread($scope.state.game)(
-    //     R.prop('models'),
-    //     gameModelsModel.findStamp$(vm.element.stamp),
-    //     (model) => {
-    //       vm.element = model.state;
-    //     },
-    //     () => gameFactionsModel
-    //       .getModelInfo(vm.element.info, $scope.state.factions),
-    //     (info) => {
-    //       vm.info = info;
-    //     }
-    //   );
-    // }
+    function updateModelElement([models, stamps]) {
+      if(!R.find(R.equals(vm.element.stamp), stamps)) {
+        return;
+      }
+      R.thread(models)(
+        gameModelsModel.findStamp$(vm.element.stamp),
+        (model) => {
+          vm.element = model.state;
+          vm.info = model.info;
+        }
+      );
+    }
     function labelDisplay(l) {
       return s.truncate(l, 12);
     }
@@ -144,7 +145,7 @@
 
       vm.type = 'model';
       closeSelectionDetail();
-      scope.bindCell((detail) => {
+      scope.listenSignal((detail) => {
         if(R.isNil(detail)) {
           closeSelectionDetail();
         }

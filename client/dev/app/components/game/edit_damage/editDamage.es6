@@ -11,11 +11,15 @@
   }
 
   gameEditDamageDirectiveFactory.$inject = [
-    'gameFactions',
+    'appAction',
+    'appGame',
     'gameMap',
+    'gameModelSelection',
   ];
-  function gameEditDamageDirectiveFactory(gameFactionsModel,
-                                          gameMapService) {
+  function gameEditDamageDirectiveFactory(appActionService,
+                                          appGameService,
+                                          gameMapService,
+                                          gameModelSelectionModel) {
     return {
       restrict: 'A',
       templateUrl: 'app/components/game/edit_damage/edit_damage.html',
@@ -29,28 +33,27 @@
       console.log('gameEditDamage');
       const viewport = document.getElementById('viewport');
       const map = document.getElementById('map');
-      const state = scope.state;
       const container = element[0];
 
-      let opened = false;
+      // let opened = false;
       closeEditDamage();
-      scope.onStateChangeEvent('Game.editDamage.toggle', toggleEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.open', openEditDamage, scope);
-      scope.onStateChangeEvent('Game.editDamage.close', closeEditDamage, scope);
-      scope.doClose = closeEditDamage;
-
-      function toggleEditDamage(event, selection) {
-        console.log('toggleEditDamage');
-        if(opened) {
+      scope.listenSignal((edit_damage) => {
+        if(R.isNil(edit_damage.selection)) {
           closeEditDamage();
         }
         else {
-          openEditDamage(event, selection);
+          openEditDamage(edit_damage);
         }
-      }
+      }, appGameService.view.edit_damage_changes, scope);
+      scope.listenSignal(([sel]) => {
+        if(scope.selection.state &&
+           !gameModelSelectionModel.in('local', scope.selection.state.stamp, sel)) {
+          appActionService.defer('Game.view.editDamage.reset');
+        }
+      }, appGameService.models.selection_changes, scope);
       function closeEditDamage() {
-        // console.log('closeEditDamage');
-        opened = false;
+        console.log('closeEditDamage');
+        // opened = false;
         scope.selection = {};
 
         container.style.display = 'none';
@@ -58,14 +61,11 @@
         container.style.left = 0+'px';
         container.style.top = 0+'px';
       }
-      function openEditDamage(_event_, [selection]) {
-        // console.log('openEditDamage');
-        opened = true;
-        scope.selection = selection;
-        const info = gameFactionsModel
-                .getModelInfo(scope.selection.state.info, state.factions);
-        scope.info = info;
-        scope.$digest();
+      function openEditDamage(edit_damage) {
+        console.log('openEditDamage');
+        // opened = true;
+        scope.selection = edit_damage.selection;
+        scope.info = scope.selection.info;
 
         self.window.requestAnimationFrame(displayEditDamage);
       }

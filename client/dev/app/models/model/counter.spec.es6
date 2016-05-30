@@ -3,7 +3,6 @@ describe('model counter model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 

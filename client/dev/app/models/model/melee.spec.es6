@@ -1,9 +1,8 @@
-describe('model model', function() {
+describe('model melee model', function() {
   beforeEach(inject([
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 

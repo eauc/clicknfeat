@@ -2,10 +2,8 @@
   angular.module('clickApp.services')
     .factory('modelDamage', modelDamageModelFactory);
 
-  modelDamageModelFactory.$inject = [
-    'gameFactions',
-  ];
-  function modelDamageModelFactory(gameFactionsModel) {
+  modelDamageModelFactory.$inject = [];
+  function modelDamageModelFactory() {
     const DMG_LENS = R.lensPath(['state','dmg']);
     const DMG_FIELD_LENS = R.lensPath(['state','dmg','f']);
     return () => {
@@ -36,81 +34,49 @@
           return R.assoc(key, value, mem);
         }
       }
-      function modelSetWarriorDamage(factions, i, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.ifElse(
-            R.isNil,
-            () => model,
-            (info) => {
-              let value = R.defaultTo(0, model.state.dmg.n);
-              value = (value === i) ? 0 : i;
-              value = Math.min(value, info.damage.n);
-              return R.over(DMG_LENS, R.pipe(
-                R.assoc('n', value),
-                R.assoc('t', value)
-              ), model);
-            }
-          )
-        );
+      function modelSetWarriorDamage(i, model) {
+        const info = model.info;
+        let value = R.defaultTo(0, model.state.dmg.n);
+        value = (value === i) ? 0 : i;
+        value = Math.min(value, info.damage.n);
+        return R.over(DMG_LENS, R.pipe(
+          R.assoc('n', value),
+          R.assoc('t', value)
+        ), model);
       }
-      function modelSetFieldDamage(factions, i, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.ifElse(
-            R.isNil,
-            () => model,
-            (info) => {
-              let value = R.defaultTo(0, model.state.dmg.f);
-              value = (value === i) ? 0 : i;
-              value = Math.min(value, info.damage.field);
-              return R.set(DMG_FIELD_LENS, value, model);
-            }
-          )
-        );
+      function modelSetFieldDamage(i, model) {
+        const info = model.info;
+        let value = R.defaultTo(0, model.state.dmg.f);
+        value = (value === i) ? 0 : i;
+        value = Math.min(value, info.damage.field);
+        return R.set(DMG_FIELD_LENS, value, model);
       }
-      function modelSetGridDamage(factions, line, col, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.ifElse(
-            R.isNil,
-            () => model,
-            (info) => {
-              let value = model.state.dmg[col][line];
-              value = (value === 0) ? 1 : 0;
-              value = R.exists(info.damage[col][line]) ? value : 0;
-              return R.over(DMG_LENS, R.pipe(
-                R.over(R.lensProp(col), R.update(line, value)),
-                (dmg) => R.assoc('t', computeTotalGridDamage(dmg), dmg)
-              ), model);
-            }
-          )
-        );
+      function modelSetGridDamage(line, col, model) {
+        const info = model.info;
+        let value = model.state.dmg[col][line];
+        value = (value === 0) ? 1 : 0;
+        value = R.exists(info.damage[col][line]) ? value : 0;
+        return R.over(DMG_LENS, R.pipe(
+          R.over(R.lensProp(col), R.update(line, value)),
+          (dmg) => R.assoc('t', computeTotalGridDamage(dmg), dmg)
+        ), model);
       }
-      function modelSetGridColDamage(factions, col, model) {
-        return R.thread(factions)(
-          gameFactionsModel.getModelInfo$(model.state.info),
-          R.ifElse(
-            R.isNil,
-            () => model,
-            (info) => {
-              const full = R.thread(model.state.dmg[col])(
-                R.addIndex(R.filter)((_val_, line) => R.exists(info.damage[col][line])),
-                R.reject(R.equals(1)),
-                R.isEmpty
-              );
-              const value = full ? 0 : 1;
-              return R.over(DMG_LENS, R.pipe(
-                R.over(R.lensProp(col),
-                       R.addIndex(R.map)((_val_, line) => {
-                         return R.exists(info.damage[col][line]) ? value : 0;
-                       })
-                      ),
-                (dmg) => R.assoc('t', computeTotalGridDamage(dmg), dmg)
-              ), model);
-            }
-          )
+      function modelSetGridColDamage(col, model) {
+        const info = model.info;
+        const full = R.thread(model.state.dmg[col])(
+          R.addIndex(R.filter)((_val_, line) => R.exists(info.damage[col][line])),
+          R.reject(R.equals(1)),
+          R.isEmpty
         );
+        const value = full ? 0 : 1;
+        return R.over(DMG_LENS, R.pipe(
+          R.over(R.lensProp(col),
+                 R.addIndex(R.map)((_val_, line) => {
+                   return R.exists(info.damage[col][line]) ? value : 0;
+                 })
+                ),
+          (dmg) => R.assoc('t', computeTotalGridDamage(dmg), dmg)
+        ), model);
       }
       function computeTotalGridDamage(damage) {
         return R.thread(damage)(

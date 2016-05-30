@@ -35,9 +35,8 @@
             .snapshot((user, chat) => [user, chat], user)
             .filter(([user, chat]) => ( R.exists(chat) &&
                                         !userModel.isChatAuthor(chat, user) ));
-    let ready;
     const userService = {
-      user, valid, new_chat, ready,
+      user, valid, new_chat,
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,
@@ -63,7 +62,7 @@
         .register('User.set', actionUserSet)
         .register('User.toggleOnline', actionUserToggleOnline)
         .register('User.updateState', actionUserUpdateState);
-      ready = userModel.initP()
+      userService.ready = userModel.initP()
         .then((user) => appActionService.action.send(['User.set', user]));
     }
 

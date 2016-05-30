@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('modelPlaceMode', modelPlaceModeModelFactory);
 
-  modelPlaceModeModelFactory.$inject = ['appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'gameModels', 'gameModelSelection'];
-  function modelPlaceModeModelFactory(appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, gameModelsModel, gameModelSelectionModel) {
+  modelPlaceModeModelFactory.$inject = ['appAction', 'appState', 'modes', 'settings', 'modelsMode', 'modelBaseMode', 'gameModels', 'gameModelSelection'];
+  function modelPlaceModeModelFactory(appActionService, appStateService, modesModel, settingsModel, modelsModeModel, modelBaseModeModel, gameModelsModel, gameModelSelectionModel) {
     var model_actions = Object.create(modelBaseModeModel.actions);
     model_actions.endPlace = placeModelEnd;
     model_actions.setTargetModel = placeModelSetTarget;
@@ -41,29 +41,29 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     function placeModelEnd(state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      appStateService.chainReduce('Game.command.execute', 'onModels', ['endPlace', [], stamps]);
-      appStateService.chainReduce('Modes.switchTo', 'Model');
+      appActionService.defer('Game.command.execute', 'onModels', ['endPlace', [], stamps]);
+      return appStateService.onAction(state, ['Modes.switchTo', 'Model']);
     }
     function placeModelSetTarget(state, event) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
-        if (model.state.stamp === event['click#'].target.state.stamp) return;
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        if (model.state.stamp === event['click#'].target.state.stamp) return state;
 
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setPlaceTargetP', [state.factions, event['click#'].target], stamps]);
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setPlaceTargetP', [event['click#'].target], stamps]]);
       }));
     }
     function placeModelSetOrigin(state, event) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
-        if (model.state.stamp === event['click#'].target.state.stamp) return;
+      return R.thread(state.game)(R.prop('models'), gameModelsModel.findStamp$(stamps[0]), R.unless(R.isNil, function (model) {
+        if (model.state.stamp === event['click#'].target.state.stamp) return state;
 
-        appStateService.chainReduce('Game.command.execute', 'onModels', ['setPlaceOriginP', [state.factions, event['click#'].target], stamps]);
+        return appStateService.onAction(state, ['Game.command.execute', 'onModels', ['setPlaceOriginP', [event['click#'].target], stamps]]);
       }));
     }
     function placeModelMove(move, flip_move, small, state) {
       var stamps = gameModelSelectionModel.get('local', state.game.model_selection);
-      var _move = R.path(['ui_state', 'flip_map'], state) ? flip_move : move;
-      appStateService.chainReduce('Game.command.execute', 'onModels', [_move + 'PlaceP', [state.factions, small], stamps]);
+      var _move = R.path(['view', 'flip_map'], state) ? flip_move : move;
+      return appStateService.onAction(state, ['Game.command.execute', 'onModels', [_move + 'PlaceP', [small], stamps]]);
     }
     function buildPlaceMove(_ref) {
       var _ref2 = _slicedToArray(_ref, 3);

@@ -58,7 +58,7 @@
       function modelEndCharge(model) {
         return R.set(CHARGE_LENS, null, model);
       }
-      function modelSetChargeTargetP(factions, other, model) {
+      function modelSetChargeTargetP(other, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -75,17 +75,17 @@
               return R.set(CHARGE_TARGET_LENS, null, model);
             }
           },
-          modelModel.checkState$(factions, other)
+          modelModel.checkState$(other)
         );
       }
       function modelChargeMaxLength(model) {
         return R.view(CHARGE_MAX_LENGTH_LENS, model);
       }
-      function modelSetChargeMaxLength(factions, value, model) {
+      function modelSetChargeMaxLength(value, model) {
         model = R.set(CHARGE_MAX_LENGTH_LENS, value, model);
-        return modelModel.checkState(factions, null, model);
+        return modelModel.checkState(null, model);
       }
-      function modelMoveFrontChargeP(factions, target, small, model) {
+      function modelMoveFrontChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -96,10 +96,10 @@
                           pointModel.translateInDirection$(dist, direction),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelMoveBackChargeP(factions, target, small, model) {
+      function modelMoveBackChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -112,10 +112,10 @@
                           pointModel.translateInDirection$(dist, direction),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelRotateLeftChargeP(factions, target, small, model) {
+      function modelRotateLeftChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -128,10 +128,10 @@
                      R.subtract(R.__, angle))
             );
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelRotateRightChargeP(factions, target, small, model) {
+      function modelRotateRightChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -143,10 +143,10 @@
               R.over(R.lensPath(['state','cha','s','r']), R.add(angle))
             );
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelShiftLeftChargeP(factions, target, small, model) {
+      function modelShiftLeftChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -156,10 +156,10 @@
                           pointModel.shiftLeft$(dist),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelShiftRightChargeP(factions, target, small, model) {
+      function modelShiftRightChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -169,10 +169,10 @@
                           pointModel.shiftRight$(dist),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelShiftUpChargeP(factions, target, small, model) {
+      function modelShiftUpChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -182,10 +182,10 @@
                           pointModel.shiftUp$(dist),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function modelShiftDownChargeP(factions, target, small, model) {
+      function modelShiftDownChargeP(target, small, model) {
         return R.threadP(model)(
           R.rejectIfP(modelModel.isLocked,
                      'Model is locked'),
@@ -195,10 +195,10 @@
                           pointModel.shiftDown$(dist),
                           model);
           },
-          modelModel.checkState$(factions, target)
+          modelModel.checkState$(target)
         );
       }
-      function ensureChargeLength(_info_, _target_, state) {
+      function ensureChargeLength(_target_, _info_, state) {
         if(R.exists(state.cha) &&
            R.exists(state.cml) &&
            state.cml > 0) {
@@ -215,7 +215,7 @@
         }
         return state;
       }
-      function ensureChargeOrientation(_info_, target, state) {
+      function ensureChargeOrientation(target, _info_, state) {
         if(R.exists(state.cha)) {
           if(R.exists(target)) {
             return R.assoc('r', pointModel.directionTo(target.state, state), state);

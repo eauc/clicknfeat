@@ -3,34 +3,25 @@ describe('model image model', function() {
     'model',
     function(modelModel) {
       this.modelModel = modelModel;
-      this.gameFactionsModel = spyOnService('gameFactions');
     }
   ]));
 
-  context('getImage(<factions>)', function() {
-    return this.modelModel.getImage('factions', this.model);
+  context('getImage()', function() {
+    return this.modelModel
+      .getImage(this.model);
   }, function() {
     beforeEach(function() {
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
-        });
       this.model = {
+        info: { img: [ { type: 'default', width: 60, height: 60, link: 'link' } ] },
         state: { dsp:[], img: 0, info: 'info' }
       };
-    });
-
-    it('should fetch model info from <factions>', function() {
-      expect(this.gameFactionsModel.getModelInfo)
-        .toHaveBeenCalledWith('info', 'factions');
     });
 
     example(function(e, d) {
       describe(d, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfo
-            .and.returnValue({ img: e.info_img });
           this.model = {
+            info: { img: e.info_img },
             state: { dsp: e.dsp, img: e.img, info: 'info' }
           };
         });
@@ -73,16 +64,15 @@ describe('model image model', function() {
     ]);
 
     example(function(e, d) {
-      context('when model is '+(e.is_leader ? '':'not ')+'a unit leader', function() {
+      context(`when model is ${e.is_leader ? '':'not '}a unit leader`, function() {
         this.model = this.modelModel.setLeaderDisplay(e.is_leader, this.model);
         this.model = this.modelModel.setImageDisplay(e.is_displayed, this.model);
       }, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfo
-            .and.returnValue({ img: e.info_img });
+          this.model.info.img = e.info_img;
         });
 
-        it('should return leader image info for <model> if it exists, '+d, function() {
+        it(`should return leader image info for <model> if it exists, ${d}`, function() {
           expect(this.context).toEqual(e.result);
         });
       });
@@ -118,11 +108,10 @@ describe('model image model', function() {
         this.model = this.modelModel.setImageDisplay(e.is_displayed, this.model);
       }, function() {
         beforeEach(function() {
-          this.gameFactionsModel.getModelInfo
-            .and.returnValue({ img: e.info_img });
+          this.model.info.img = e.info_img;
         });
 
-        it('should return incorporeal image info for <model> if it exists, '+d, function() {
+        it(`should return incorporeal image info for <model> if it exists, ${d}`, function() {
           expect(this.context).toEqual(e.result);
         });
       });
@@ -149,35 +138,26 @@ describe('model image model', function() {
     ]);
   });
 
-  context('setNextImage(<factions>)', function() {
-    return this.modelModel.setNextImage('factions', this.model);
+  context('setNextImage()', function() {
+    return this.modelModel.setNextImage(this.model);
   }, function() {
     beforeEach(function() {
       this.model = {
+        info: { img: [ { type: 'default', width: 60, height: 60, link: 'link' } ] },
         state: { dsp:[], img: 0, info: 'info' }
       };
-      this.gameFactionsModel.getModelInfo
-        .and.returnValue({
-          img: [ { type: 'default', width: 60, height: 60, link: 'link' } ]
-        });
-    });
-
-    it('should fetch model info from <factions>', function() {
-      expect(this.gameFactionsModel.getModelInfo)
-        .toHaveBeenCalledWith('info', 'factions');
     });
 
     example(function(e, d) {
       describe(d, function() {
         beforeEach(function() {
           this.model = {
+            info: { img: e.info_img },
             state: { img: e.img, info: 'info' }
           };
-          this.gameFactionsModel.getModelInfo
-            .and.returnValue({ img: e.info_img });
         });
 
-        it('should set next image <model>, '+d, function() {
+        it(`should set next image <model>, ${d}`, function() {
           expect(this.context.state.img).toBe(e.next_img);
         });
       });
