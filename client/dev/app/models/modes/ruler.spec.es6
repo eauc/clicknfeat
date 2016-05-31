@@ -1,7 +1,8 @@
-xdescribe('rulerMode model', function() {
+describe('rulerMode model', function() {
   beforeEach(inject([ 'rulerMode', function(rulerMode) {
     this.rulerModeModel = rulerMode;
 
+    this.appActionService = spyOnService('appAction');
     this.appStateService = spyOnService('appState');
     this.modesModel = spyOnService('modes');
     this.gameRulerModel = spyOnService('gameRuler');
@@ -40,11 +41,11 @@ xdescribe('rulerMode model', function() {
           .resolveWith(e.value);
       }, function() {
         it('should set ruler max length', function() {
-            expect(this.appStateService.chainReduce)
+            expect(this.appActionService.do)
               .toHaveBeenCalledWith('Game.command.execute',
                                     'setRuler', [
                                       'setMaxLength',
-                                      [e.max, this.state]
+                                      [e.max, 'models']
                                     ]);
         });
 
@@ -53,7 +54,7 @@ xdescribe('rulerMode model', function() {
             .and.returnValue('origin');
         }, function() {
           it('should set origin model\'s ruler max length', function() {
-            expect(this.appStateService.chainReduce)
+            expect(this.appActionService.defer)
               .toHaveBeenCalledWith('Game.command.execute',
                                     'onModels', [
                                       'setRulerMaxLength',
@@ -74,11 +75,11 @@ xdescribe('rulerMode model', function() {
         .rejectWith('canceled');
     }, function() {
       it('should reset ruler max length', function() {
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.do)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setRuler', [
                                   'setMaxLength',
-                                  [null, this.state]
+                                  [null, 'models']
                                 ]);
       });
 
@@ -87,7 +88,7 @@ xdescribe('rulerMode model', function() {
           .and.returnValue('origin');
       }, function() {
         it('should reset origin model\'s ruler max length', function() {
-          expect(this.appStateService.chainReduce)
+          expect(this.appActionService.defer)
             .toHaveBeenCalledWith('Game.command.execute',
                                   'onModels', [
                                     'setRulerMaxLength',
@@ -109,12 +110,14 @@ xdescribe('rulerMode model', function() {
     });
 
     it('should set ruler origin model', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setRuler', [
-                                'setOrigin',
-                                [this.target, this.state]
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setRuler', [
+            'setOrigin',
+            [this.target, 'models']
+          ]
+        ]);
     });
   });
 
@@ -128,12 +131,14 @@ xdescribe('rulerMode model', function() {
     });
 
     it('should set ruler target model', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setRuler', [
-                                'setTarget',
-                                [this.target, this.state]
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setRuler', [
+            'setTarget',
+            [this.target, 'models']
+          ]
+        ]);
     });
   });
 
@@ -154,15 +159,17 @@ xdescribe('rulerMode model', function() {
     });
 
     it('should execute createTemplate command', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'createTemplate', [
-                                { base: { x: 0, y: 0, r: 0 },
-                                  templates: [ { x: 42, y: 71, r: 45,
-                                                 type: 'aoe' } ]
-                                },
-                                false
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'createTemplate', [
+            { base: { x: 0, y: 0, r: 0 },
+              templates: [ { x: 42, y: 71, r: 45,
+                             type: 'aoe' } ]
+            },
+            false
+          ]
+        ]);
     });
   });
 });

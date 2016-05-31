@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameModels', 'gameModelSelection', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
-  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameModelsModel, gameModelSelectionModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
+  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
@@ -23,6 +23,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var TERRAINS_LENS = R.lensProp('terrains');
     var TERRAIN_SELECTION_LENS = R.lensProp('terrain_selection');
     var BOARD_LENS = R.lensProp('board');
+    var RULER_LENS = R.lensProp('ruler');
 
     var game = appStateService.state.map(R.viewOr({}, GAME_LENS));
     var game_export = game.changes().snapshot(gameExportCurrent, function () {
@@ -43,7 +44,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var toggle_menu = view.filter(R.equals('toggleMenu'));
     var move_map = appStateService.state.map(R.viewOr(false, MOVE_MAP_LENS)).changes();
     var drag_box = appStateService.state.map(R.viewOr({}, DRAG_BOX_LENS)).changes();
-    var flip_map = appStateService.state.map(R.viewOr(false, FLIP_MAP_LENS)).changes();
+    var flip_map = appStateService.state.map(R.viewOr(false, FLIP_MAP_LENS));
+    var flip_map_changes = flip_map.changes();
     var detail = appStateService.state.map(R.viewOr(null, DETAIL_LENS));
     var edit_damage = appStateService.state.map(R.viewOr(null, EDIT_DAMAGE_LENS));
     var edit_damage_changes = edit_damage.changes();
@@ -74,7 +76,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var stamps = _ref4[1];
       return !R.isEmpty(stamps);
     });
-    var models_flip_map = flip_map.snapshot(R.nthArg(0), models);
+    var models_flip_map = flip_map_changes.snapshot(R.nthArg(0), models);
 
     var templates = game.map(R.viewOr(gameTemplatesModel.create(), TEMPLATES_LENS));
     var previous_templates = templates.delay();
@@ -91,7 +93,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return !R.isEmpty(stamps);
     });
     var template_selection_changes = template_selection.changes();
-    var templates_flip_map = flip_map.snapshot(R.nthArg(0), templates);
+    var templates_flip_map = flip_map_changes.snapshot(R.nthArg(0), templates);
 
     var terrains = game.map(R.viewOr(gameTerrainsModel.create(), TERRAINS_LENS));
     var previous_terrains = terrains.delay();
@@ -109,7 +111,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     });
     var terrain_selection_changes = terrain_selection.changes();
 
-    model_selection_changes.orElse(template_selection_changes).orElse(terrain_selection_changes).listen(appGameCheckMode);
+    var ruler = game.map(R.viewOr(gameRulerModel.create(), RULER_LENS));
+    var ruler_changes = ruler.changes().snapshot(function (flip, ruler) {
+      return [flip, ruler];
+    }, flip_map).orElse(flip_map_changes.snapshot(function (ruler, flip) {
+      return [flip, ruler];
+    }, ruler)).snapshot(R.prepend, models).snapshot(R.prepend, appModesService.modes);
+
+    appModesService.modes.changes().filter(function (modes) {
+      return 'Default' === modesModel.currentModeName(modes);
+    }).orElse(model_selection_changes).orElse(template_selection_changes).orElse(terrain_selection_changes).listen(appGameCheckMode);
 
     var board_export = game.map(R.viewOr({}, BOARD_LENS)).changes().orElse(terrains.changes()).snapshot(R.nthArg(0), game).snapshot(gameBoardExport, function () {
       return board_export_previous;
@@ -128,7 +139,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       },
       view: { scroll_left: scroll_left, scroll_right: scroll_right, scroll_up: scroll_up, scroll_down: scroll_down,
         zoom_in: zoom_in, zoom_out: zoom_out, zoom_reset: zoom_reset,
-        detail: detail.changes(), drag_box: drag_box, flip_map: flip_map, move_map: move_map, toggle_menu: toggle_menu,
+        detail: detail.changes(), drag_box: drag_box,
+        flip_map: flip_map_changes, move_map: move_map, toggle_menu: toggle_menu,
         edit_damage: edit_damage, edit_damage_changes: edit_damage_changes,
         edit_label: edit_label, edit_label_changes: edit_label_changes
       },
@@ -138,6 +150,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         flip_map: models_flip_map,
         selection: model_selection,
         selection_changes: model_selection_changes
+      },
+      ruler: { ruler: ruler,
+        changes: ruler_changes
       },
       templates: { templates: templates,
         changes: templates_changes,

@@ -3,6 +3,8 @@
     .factory('segmentMode', segmentModeModelFactory);
 
   segmentModeModelFactory.$inject = [
+    'appAction',
+    'appGame',
     'appState',
     'modes',
     'settings',
@@ -10,7 +12,9 @@
     'gameModels',
     'gameModelSelection',
   ];
-  function segmentModeModelFactory(appStateService,
+  function segmentModeModelFactory(appActionService,
+                                   appGameService,
+                                   appStateService,
                                    modesModel,
                                    settingsModel,
                                    commonModeModel,
@@ -18,6 +22,7 @@
                                    gameModelSelectionModel) {
     return function buildSegmentModeModel(type, gameSegmentModel, default_bindings) {
       const TYPE_LENS = R.lensPath(['game',type]);
+      const MODELS_LENS = R.lensPath(['game','models']);
       const segment_actions = Object.create(commonModeModel.actions);
       segment_actions[`exit${s.capitalize(type)}Mode`] =
         commonModeModel.actions.modeBackToDefault;
@@ -36,7 +41,6 @@
       const segment_buttons = [];
       const segment_mode = {
         onEnter: segmentOnEnter,
-        onLeave: segmentOnLeave,
         name: s.capitalize(type),
         actions: segment_actions,
         buttons: segment_buttons,
@@ -52,47 +56,53 @@
       return segment_mode;
 
       function segmentDragStartMap(state, drag) {
-        return R.over(TYPE_LENS,
-                      gameSegmentModel.setLocal$(drag.start, drag.now),
-                      state);
+        return R.over(
+          TYPE_LENS,
+          gameSegmentModel.setLocal$(drag.start, drag.now),
+          state
+        );
       }
       function segmentDragMap(state, drag) {
-        return R.over(TYPE_LENS,
-                      gameSegmentModel.setLocal$(drag.start, drag.now),
-                      state);
+        return R.over(
+          TYPE_LENS,
+          gameSegmentModel.setLocal$(drag.start, drag.now),
+          state
+        );
       }
       function segmentDragEndMap(state, drag) {
-        appStateService
-          .chainReduce('Game.command.execute',
-                       `set${s.capitalize(type)}`, [
-                         'setRemote',
-                         [drag.start, drag.now, state]
-                       ]);
+        return appStateService
+          .onAction(state, [
+            'Game.command.execute',
+            `set${s.capitalize(type)}`, [
+              'setRemote',
+              [drag.start, drag.now, R.view(MODELS_LENS, state)]
+            ]
+          ]);
       }
-      function segmentOnEnter(state) {
-        R.thread(state)(
-          R.path(['game','model_selection']),
+      function segmentOnEnter() {
+        const selection = appGameService.models
+                .selection.sample();
+        const models = appGameService.models
+                .models.sample();
+        return R.thread(selection)(
           gameModelSelectionModel.get$('local'),
           (stamps) => {
             if(R.length(stamps) !== 1) return null;
 
             return gameModelsModel
-              .findStamp(stamps[0], state.game.models);
+              .findStamp(stamps[0], models);
           },
           (model) => {
             if(R.isNil(model)) return;
 
-            appStateService
-              .chainReduce('Game.command.execute',
-                           `set${s.capitalize(type)}`, [
-                             'setOriginResetTarget',
-                             [model, state]
-                           ]);
+            appActionService
+              .defer('Game.command.execute',
+                     `set${s.capitalize(type)}`, [
+                       'setOriginResetTarget',
+                       [model, models]
+                     ]);
           }
         );
-      }
-      function segmentOnLeave() {
-        appStateService.emit(`Game.${type}.remote.change`);
       }
     };
   }

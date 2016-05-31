@@ -1,0 +1,33 @@
+<g>
+  <line style="marker-start: url(#ruler-start);
+               marker-end: url(#ruler-end);"
+        ng-show="render.local.show"
+        ng-attr-x1="{{render.local.x1}}"
+        ng-attr-y1="{{render.local.y1}}"
+        ng-attr-x2="{{render.local.x2}}"
+        ng-attr-y2="{{render.local.y2}}">
+  </line>
+  <line style="marker-start: url(#ruler-start);
+               marker-end: url(#ruler-end);"
+        ng-show="render.remote.show"
+        ng-attr-x1="{{render.remote.x1}}"
+        ng-attr-y1="{{render.remote.y1}}"
+        ng-attr-x2="{{render.remote.x2}}"
+        ng-attr-y2="{{render.remote.y2}}">
+  </line>
+  <circle class="ruler-origin"
+          ng-if="render.origin"
+          ng-attr-cx="{{render.origin.cx}}"
+          ng-attr-cy="{{render.origin.cy}}"
+          ng-attr-r="{{render.origin.radius}}">
+  </circle>
+  <circle class="ruler-target"
+          ng-if="render.target"
+          ng-class="{ reached: render.target.reached }"
+          ng-attr-cx="{{render.target.cx}}"
+          ng-attr-cy="{{render.target.cy}}"
+          ng-attr-r="{{render.target.radius}}">
+  </circle>
+  <g click-game-element-label="render.label">
+  </g>
+</g>

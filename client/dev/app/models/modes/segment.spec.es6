@@ -1,4 +1,4 @@
-xdescribe('segmentMode model', function() {
+describe('segmentMode model', function() {
   beforeEach(inject([ 'segmentMode', function(segmentMode) {
     this.gameLosModel = spyOnService('gameLos');
     this.gameModelsModel = spyOnService('gameModels');
@@ -6,10 +6,15 @@ xdescribe('segmentMode model', function() {
 
     this.segmentModeModel = segmentMode('type', this.gameLosModel, {});
 
+    this.appActionService = spyOnService('appAction');
+    this.appGameService = spyOnService('appGame');
+    spyOn(this.appGameService.models.selection, 'sample')
+      .and.returnValue('selection');
+    spyOn(this.appGameService.models.models, 'sample')
+      .and.returnValue('models');
     this.appStateService = spyOnService('appState');
     this.game = { type: 'type',
-                  models: 'models',
-                  model_selection: 'selection'
+                  models: 'models'
                 };
     this.state = { game: this.game };
   }]));
@@ -28,23 +33,13 @@ xdescribe('segmentMode model', function() {
         expect(this.gameModelsModel.findStamp)
           .toHaveBeenCalledWith('stamp', 'models');
 
-        expect(this.appStateService.chainReduce)
+        expect(this.appActionService.defer)
           .toHaveBeenCalledWith('Game.command.execute',
                                 'setType', [
                                   'setOriginResetTarget',
-                                  ['gameModels.findStamp.returnValue', this.state]
+                                  ['gameModels.findStamp.returnValue', 'models']
                                 ]);
       });
-    });
-  });
-
-  context('when user stops using segment', function() {
-    return this.segmentModeModel
-      .onLeave(this.state);
-  }, function() {
-    it('should update Segment state', function() {
-      expect(this.appStateService.emit)
-        .toHaveBeenCalledWith('Game.type.remote.change');
     });
   });
 
@@ -73,12 +68,14 @@ xdescribe('segmentMode model', function() {
       .dragEndMap(this.state, this.drag);
   }, function() {
     it('should execute setRemote command', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setType', [
-                                'setRemote',
-                                ['start', 'now', this.state]
-                              ]);
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'Game.command.execute',
+          'setType', [
+            'setRemote',
+            ['start', 'now', 'models']
+          ]
+        ]);
     });
   });
 });

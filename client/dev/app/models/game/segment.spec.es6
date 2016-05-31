@@ -61,19 +61,22 @@ describe('gameSegment model', function() {
     });
   });
 
-  context('resetRemote(<remote>, <state>)', function() {
+  context('resetRemote(<remote>, <segment>)', function() {
     return this.gameSegmentModel
       .resetRemote(this.remote, this.segment);
   }, function() {
     beforeEach(function() {
       this.remote = { state: 'state' };
+      this.segment = {
+        remote: { state: 'old' }
+      };
     });
 
     it('should reset remote state', function() {
       expect(R.pick(['state'], this.context.remote))
         .toEqual(this.remote);
       expect(this.context)
-        .not.toBe(this.state);
+        .not.toBe(this.segment);
     });
   });
 

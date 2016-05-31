@@ -8,6 +8,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   setSegmentCommandModelFactory.$inject = [];
   function setSegmentCommandModelFactory() {
     return function buildSetSegmentCommandModel(type, gameSegmentModel) {
+      var TYPE_LENS = R.lensProp(type);
       var setSegmentCommandModel = {
         executeP: setSegmentExecuteP,
         replayP: setSegmentReplayP,
@@ -24,9 +25,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return R.threadP(gameSegmentModel)(checkMethod, function () {
           return saveState('before', game);
         }, function () {
-          return gameSegmentModel[method].apply(null, [].concat(_toConsumableArray(args), [R.prop(type, game)]));
+          return gameSegmentModel[method].apply(gameSegmentModel, _toConsumableArray(args).concat([R.view(TYPE_LENS, game)]));
         }, function (segment) {
-          return R.assoc(type, segment, game);
+          return R.set(TYPE_LENS, segment, game);
         }, function (game) {
           return saveState('after', game);
         }, function (game) {
@@ -37,15 +38,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           return R.threadP(gameSegmentModel)(R.prop(method), R.type, R.rejectIfP(R.complement(R.equals('Function')), s.capitalize(type) + ' unknown method "' + method + '"'));
         }
         function saveState(when, game) {
-          ctxt[when] = gameSegmentModel.saveRemoteState(R.prop(type, game));
+          ctxt[when] = gameSegmentModel.saveRemoteState(R.view(TYPE_LENS, game));
           return game;
         }
       }
       function setSegmentReplayP(ctxt, game) {
-        return R.over(R.lensProp(type), gameSegmentModel.resetRemote$(ctxt.after), game);
+        return R.over(TYPE_LENS, gameSegmentModel.resetRemote$(ctxt.after), game);
       }
       function setSegmentUndoP(ctxt, game) {
-        return R.over(R.lensProp(type), gameSegmentModel.resetRemote$(ctxt.before), game);
+        return R.over(TYPE_LENS, gameSegmentModel.resetRemote$(ctxt.before), game);
       }
     };
   }

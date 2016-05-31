@@ -4,6 +4,7 @@
 
   defaultModeModelFactory.$inject = [
     'appAction',
+    'appState',
     'modes',
     'settings',
     'commonMode',
@@ -13,6 +14,7 @@
     'gameTerrainSelection',
   ];
   function defaultModeModelFactory(appActionService,
+                                   appStateService,
                                    modesModel,
                                    settingsModel,
                                    commonModeModel,
@@ -32,7 +34,7 @@
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
-    // default_actions.enterRulerMode = enterRulerMode;
+    default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragMap;
     default_actions.dragMap = dragMap;
@@ -140,9 +142,10 @@
         )
       );
     }
-    // function enterRulerMode(_state_) {
-    //   return appStateService.chainReduce('Modes.switchTo', 'Ruler');
-    // }
+    function enterRulerMode(state) {
+      return appStateService
+        .onAction(state, ['Modes.switchTo', 'Ruler']);
+    }
     // function enterLosMode(_state_) {
     //   return appStateService.chainReduce('Modes.switchTo', 'Los');
     // }

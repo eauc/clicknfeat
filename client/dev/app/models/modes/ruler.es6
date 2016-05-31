@@ -3,15 +3,19 @@
     .factory('rulerMode', rulerModeModelFactory);
 
   rulerModeModelFactory.$inject = [
+    'appAction',
     'appState',
     'segmentMode',
     'gameRuler',
     'prompt',
   ];
-  function rulerModeModelFactory(appStateService,
+  function rulerModeModelFactory(appActionService,
+                                 appStateService,
                                  segmentModeModel,
                                  gameRulerModel,
                                  promptModel) {
+    const MODELS_LENS = R.lensPath(['game','models']);
+    const RULER_LENS = R.lensPath(['game','ruler']);
     const ruler_default_bindings = {
       exitRulerMode: 'ctrl+r',
       setMaxLength: 'shift+r',
@@ -31,84 +35,90 @@
       [ 'Set Max Len.', 'setMaxLength' ],
       [ 'AoE on Target', 'createAoEOnTarget' ],
     ]);
-    const baseOnEnter = ruler_mode.onEnter;
-    ruler_mode.onEnter = rulerOnEnter;
+    // const baseOnEnter = ruler_mode.onEnter;
+    // ruler_mode.onEnter = rulerOnEnter;
 
     return ruler_mode;
 
     function rulerSetOriginModel(state, event) {
-      appStateService
-        .chainReduce('Game.command.execute',
-                     'setRuler', [
-                       'setOrigin',
-                       [event['click#'].target, state]
-                     ]);
+      return appStateService
+        .onAction(state, [
+          'Game.command.execute',
+          'setRuler', [
+            'setOrigin',
+            [event['click#'].target, R.view(MODELS_LENS, state)]
+          ]
+        ]);
     }
     function rulerSetTargetModel(state, event) {
-      appStateService
-        .chainReduce('Game.command.execute',
-                     'setRuler', [
-                       'setTarget',
-                       [event['click#'].target, state]
-                     ]);
+      return appStateService
+        .onAction(state, [
+          'Game.command.execute',
+          'setRuler', [
+            'setTarget',
+            [event['click#'].target, R.view(MODELS_LENS, state)]
+          ]
+        ]);
     }
     function rulerSetMaxLength(state) {
       return R.threadP()(
         () => promptModel
           .promptP('prompt', 'Set ruler max length :',
-                   gameRulerModel.maxLength(state.game.ruler))
+                   gameRulerModel.maxLength(R.view(RULER_LENS, state)))
           .catch(R.always(null)),
         (value) => (value === 0) ? null : value,
         (value) => R.threadP()(
           () => {
-            appStateService
-              .chainReduce('Game.command.execute',
-                           'setRuler', [
-                             'setMaxLength', [value, state]
-                           ]);
+            appActionService
+              .do('Game.command.execute',
+                  'setRuler', [
+                    'setMaxLength', [value, R.view(MODELS_LENS, state)]
+                  ]);
           },
           () => {
-            const origin = gameRulerModel.origin(state.game.ruler);
+            const origin = gameRulerModel.origin(R.view(RULER_LENS, state));
             if(R.isNil(origin)) return;
 
-            appStateService
-              .chainReduce('Game.command.execute',
-                           'onModels', [
-                             'setRulerMaxLength',
-                             [value],
-                             [origin]
-                           ]);
+            appActionService
+              .defer('Game.command.execute',
+                     'onModels', [
+                       'setRulerMaxLength',
+                       [value],
+                       [origin]
+                     ]);
           }
         )
       );
     }
     function rulerCreateAoEOnTarget(state) {
-      R.thread(state.game.ruler)(
-        gameRulerModel.targetAoEPosition$(state.game.models),
+      return R.thread(state.game.ruler)(
+        gameRulerModel.targetAoEPosition$(R.view(MODELS_LENS, state)),
         (position) => ({
           base: { x: 0, y: 0, r: 0 },
           templates: [ R.assoc('type', 'aoe', position) ]
         }),
         (create) => {
           appStateService
-            .chainReduce('Game.command.execute',
-                         'createTemplate', [
-                           create, false
-                         ]);
+            .onAction(state, [
+              'Game.command.execute',
+              'createTemplate', [
+                create, false
+              ]
+            ]);
         }
       );
     }
-    function rulerOnEnter() {
-      const state = appStateService.current();
-      return R.threadP()(
-        () => baseOnEnter(state),
-        () => updateMaxLengthButton(state)
-      );
-    }
-    function updateMaxLengthButton(state) {
-      const max = gameRulerModel.maxLength(state.game.ruler);
-      ruler_mode.buttons[0][0] = `Set Max Len. (${max})`;
-      appStateService.emit('Modes.buttons.update');
-    }
+    // function rulerOnEnter() {
+    //   const state = appStateService.current();
+    //   return R.threadP()(
+    //     () => baseOnEnter(state),
+    //     () => updateMaxLengthButton(state)
+    //   );
+    // }
+    // function updateMaxLengthButton(state) {
+    //   const max = gameRulerModel.maxLength(R.view(RULER_LENS, state));
+    //   ruler_mode.buttons[0][0] = `Set Max Len. (${max})`;
+    //   appStateService.emit('Modes.buttons.update');
+    // }
   }
 })();

@@ -20,6 +20,7 @@
     'gameScenario',
     'gameModels',
     'gameModelSelection',
+    'gameRuler',
     'gameTemplates',
     'gameTemplateSelection',
     'gameTerrains',
@@ -45,6 +46,7 @@
                                  gameScenarioModel,
                                  gameModelsModel,
                                  gameModelSelectionModel,
+                                 gameRulerModel,
                                  gameTemplatesModel,
                                  gameTemplateSelectionModel,
                                  gameTerrainsModel,
@@ -67,6 +69,7 @@
     const TERRAINS_LENS = R.lensProp('terrains');
     const TERRAIN_SELECTION_LENS = R.lensProp('terrain_selection');
     const BOARD_LENS = R.lensProp('board');
+    const RULER_LENS = R.lensProp('ruler');
 
     const game = appStateService.state
             .map(R.viewOr({}, GAME_LENS));
@@ -93,7 +96,8 @@
     const drag_box = appStateService.state
             .map(R.viewOr({}, DRAG_BOX_LENS)).changes();
     const flip_map = appStateService.state
-            .map(R.viewOr(false, FLIP_MAP_LENS)).changes();
+            .map(R.viewOr(false, FLIP_MAP_LENS));
+    const flip_map_changes = flip_map.changes();
     const detail = appStateService.state
             .map(R.viewOr(null, DETAIL_LENS));
     const edit_damage = appStateService.state
@@ -123,7 +127,7 @@
             .snapshot(observeModelSelectionChanges, previous_model_selection)
             .snapshot((sel, stamps) => [sel, stamps], model_selection)
             .filter(([_sel_, stamps]) => !R.isEmpty(stamps));
-    const models_flip_map = flip_map
+    const models_flip_map = flip_map_changes
             .snapshot(R.nthArg(0), models);
 
     const templates = game
@@ -142,7 +146,7 @@
             .filter(([_templates_, stamps]) => !R.isEmpty(stamps));
     const template_selection_changes = template_selection
             .changes();
-    const templates_flip_map = flip_map
+    const templates_flip_map = flip_map_changes
             .snapshot(R.nthArg(0), templates);
 
     const terrains = game
@@ -162,7 +166,18 @@
     const terrain_selection_changes = terrain_selection
             .changes();
 
-    model_selection_changes
+    const ruler = game
+            .map(R.viewOr(gameRulerModel.create(), RULER_LENS));
+    const ruler_changes = ruler
+            .changes()
+            .snapshot((flip, ruler) => [flip, ruler], flip_map)
+            .orElse(flip_map_changes.snapshot((ruler, flip) => [flip, ruler], ruler))
+            .snapshot(R.prepend, models)
+            .snapshot(R.prepend, appModesService.modes);
+
+    appModesService.modes
+      .changes().filter((modes) => 'Default' === modesModel.currentModeName(modes))
+      .orElse(model_selection_changes)
       .orElse(template_selection_changes)
       .orElse(terrain_selection_changes)
       .listen(appGameCheckMode);
@@ -189,7 +204,8 @@
               },
       view: { scroll_left, scroll_right, scroll_up, scroll_down,
               zoom_in, zoom_out, zoom_reset,
-              detail: detail.changes(), drag_box, flip_map, move_map, toggle_menu,
+              detail: detail.changes(), drag_box,
+              flip_map: flip_map_changes, move_map, toggle_menu,
               edit_damage, edit_damage_changes,
               edit_label, edit_label_changes
             },
@@ -200,6 +216,9 @@
                 selection: model_selection,
                 selection_changes: model_selection_changes
               },
+      ruler: { ruler,
+               changes: ruler_changes
+             },
       templates: { templates,
                    changes: templates_changes,
                    force_changes: templates_force_changes,

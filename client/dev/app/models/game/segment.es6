@@ -5,6 +5,8 @@
   gameSegmentModelFactory.$inject = [];
   function gameSegmentModelFactory() {
     const REMOTE_DISPLAY_LENS = R.lensPath(['remote','display']);
+    const LOCAL_LENS = R.lensProp('local');
+    const REMOTE_LENS = R.lensProp('remote');
     return function buildGameSegmentModel() {
       const gameSegmentModel = {
         create: gameSegmentCreate,
@@ -40,7 +42,7 @@
         return R.over(REMOTE_DISPLAY_LENS, R.not, segment);
       }
       function gameSegmentSetLocal(start, end, segment) {
-        return R.over(R.lensProp('local'), R.pipe(
+        return R.over(LOCAL_LENS, R.pipe(
           R.assoc('start', R.clone(start)),
           R.assoc('end', R.clone(end)),
           R.assoc('display', true)
@@ -55,10 +57,10 @@
         );
       }
       function gameSegmentSaveRemoteState(segment) {
-        return R.clone(R.prop('remote', segment));
+        return R.clone(R.view(REMOTE_LENS, segment));
       }
       function gameSegmentResetRemote(remote, segment) {
-        return R.assoc('remote', R.clone(remote), segment);
+        return R.set(REMOTE_LENS, R.clone(remote), segment);
       }
     };
   }

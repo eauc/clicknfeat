@@ -6,6 +6,7 @@
   function setSegmentCommandModelFactory() {
     return function buildSetSegmentCommandModel(type,
                                                 gameSegmentModel) {
+      const TYPE_LENS = R.lensProp(type);
       const setSegmentCommandModel = {
         executeP: setSegmentExecuteP,
         replayP: setSegmentReplayP,
@@ -22,9 +23,8 @@
         return R.threadP(gameSegmentModel)(
           checkMethod,
           () => saveState('before', game),
-          () => gameSegmentModel[method]
-            .apply(null, [...args, R.prop(type, game)]),
-          (segment) => R.assoc(type, segment, game),
+          () => gameSegmentModel[method](...args, R.view(TYPE_LENS, game)),
+          (segment) => R.set(TYPE_LENS, segment, game),
           (game) => saveState('after', game),
           (game) => [ctxt, game]
         );
@@ -38,20 +38,20 @@
           );
         }
         function saveState(when, game) {
-          ctxt[when] = gameSegmentModel.saveRemoteState(R.prop(type, game));
+          ctxt[when] = gameSegmentModel.saveRemoteState(R.view(TYPE_LENS, game));
           return game;
         }
       }
       function setSegmentReplayP(ctxt, game) {
         return R.over(
-          R.lensProp(type),
+          TYPE_LENS,
           gameSegmentModel.resetRemote$(ctxt.after),
           game
         );
       }
       function setSegmentUndoP(ctxt, game) {
         return R.over(
-          R.lensProp(type),
+          TYPE_LENS,
           gameSegmentModel.resetRemote$(ctxt.before),
           game
         );

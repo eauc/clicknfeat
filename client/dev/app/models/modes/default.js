@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.services').factory('defaultMode', defaultModeModelFactory);
 
-  defaultModeModelFactory.$inject = ['appAction', 'modes', 'settings', 'commonMode', 'gameModels', 'gameModelSelection', 'gameTemplateSelection', 'gameTerrainSelection'];
-  function defaultModeModelFactory(appActionService, modesModel, settingsModel, commonModeModel, gameModelsModel, gameModelSelectionModel, gameTemplateSelectionModel, gameTerrainSelectionModel) {
+  defaultModeModelFactory.$inject = ['appAction', 'appState', 'modes', 'settings', 'commonMode', 'gameModels', 'gameModelSelection', 'gameTemplateSelection', 'gameTerrainSelection'];
+  function defaultModeModelFactory(appActionService, appStateService, modesModel, settingsModel, commonModeModel, gameModelsModel, gameModelSelectionModel, gameTemplateSelectionModel, gameTerrainSelectionModel) {
     var DRAG_BOX_LENS = R.lensPath(['view', 'drag_box']);
     var MODEL_SELECTION_LENS = R.lensPath(['game', 'model_selection']);
     var TEMPLATE_SELECTION_LENS = R.lensPath(['game', 'template_selection']);
@@ -17,7 +17,7 @@
     default_actions.selectTemplate = selectTemplate;
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
-    // default_actions.enterRulerMode = enterRulerMode;
+    default_actions.enterRulerMode = enterRulerMode;
     // default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragMap;
     default_actions.dragMap = dragMap;
@@ -84,9 +84,9 @@
     function selectTerrain(state, event) {
       return R.thread(state)(clearTemplateSelection, R.over(TERRAIN_SELECTION_LENS, gameTerrainSelectionModel.set$('local', [event['click#'].target.state.stamp])));
     }
-    // function enterRulerMode(_state_) {
-    //   return appStateService.chainReduce('Modes.switchTo', 'Ruler');
-    // }
+    function enterRulerMode(state) {
+      return appStateService.onAction(state, ['Modes.switchTo', 'Ruler']);
+    }
     // function enterLosMode(_state_) {
     //   return appStateService.chainReduce('Modes.switchTo', 'Los');
     // }

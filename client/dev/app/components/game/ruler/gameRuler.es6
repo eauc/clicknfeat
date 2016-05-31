@@ -3,32 +3,25 @@
     .directive('clickGameRuler', gameRulerDirectiveFactory);
 
   gameRulerDirectiveFactory.$inject = [
-    'gameMap',
+    'appGame',
     'gameRuler',
     'gameModels',
-    'gameFactions',
     'modes',
   ];
-  function gameRulerDirectiveFactory(gameMapModel,
+  function gameRulerDirectiveFactory(appGameService,
                                      gameRulerModel,
                                      gameModelsModel,
-                                     gameFactionsModel,
                                      modesModel) {
     return {
       restrict: 'A',
       scope: true,
+      templateUrl: 'app/components/game/ruler/ruler.html',
       link: link
     };
     function link(scope) {
-      scope.onStateChangeEvent('Game.ruler.local.change', updateRuler, scope);
-      scope.onStateChangeEvent('Game.ruler.remote.change', updateRuler, scope);
-      scope.onStateChangeEvent('Game.map.flipped', updateRuler, scope);
+      scope.listenSignal(updateRuler, appGameService.ruler.changes, scope);
 
-      function updateRuler() {
-        const map = document.getElementById('map');
-        const map_flipped = gameMapModel.isFlipped(map);
-        const state = scope.state;
-        const ruler = state.game.ruler;
+      function updateRuler([modes, models, flipped, ruler]) {
         const label_center = {
           x: (ruler.remote.end.x - ruler.remote.start.x) / 2 + ruler.remote.start.x,
           y: (ruler.remote.end.y - ruler.remote.start.y) / 2 + ruler.remote.start.y
@@ -46,18 +39,19 @@
                     x2: ruler.remote.end.x,
                     y2: ruler.remote.end.y
                   },
-          label: renderText({ flipped: map_flipped,
+          label: renderText({ flipped,
                               flip_center: label_center,
                               text_center: label_center
                             }, ruler.remote.length)
         };
         scope.render.label.show = ruler.remote.display;
-        const in_ruler_mode = modesModel.currentModeName(state.modes) === 'Ruler';
+        const in_ruler_mode = modesModel.currentModeName(modes) === 'Ruler';
         scope.render.origin =
-          updateOrigin(state.factions, state.game.models, in_ruler_mode, ruler.remote);
+          updateOrigin(models, in_ruler_mode, ruler.remote);
         scope.render.target =
-          updateTarget(state.factions, state.game.models, in_ruler_mode, ruler.remote);
+          updateTarget(models, in_ruler_mode, ruler.remote);
         scope.$digest();
+        console.warn('RENDER RULER', arguments, scope.render);
       }
     }
     function renderText({ rotate = 0,
@@ -79,7 +73,7 @@
         bkg_x, bkg_y, bkg_width
       };
     }
-    function updateOrigin(factions, models, in_ruler_mode, remote) {
+    function updateOrigin(models, in_ruler_mode, remote) {
       if(R.isNil(remote.origin) ||
          (!remote.display && !in_ruler_mode)) return null;
 
@@ -87,17 +81,14 @@
               .findStamp(remote.origin, models);
       if(R.isNil(origin_model)) return null;
 
-      const origin_info = gameFactionsModel
-              .getModelInfo(origin_model.state.info, factions);
-      if(R.isNil(origin_info)) return null;
-
+      const origin_info = origin_model.info;
       return {
         cx: origin_model.state.x,
         cy: origin_model.state.y,
         radius: origin_info.base_radius
       };
     }
-    function updateTarget(factions, models, in_ruler_mode, remote) {
+    function updateTarget(models, in_ruler_mode, remote) {
       if(R.isNil(remote.target) ||
          (!remote.display && !in_ruler_mode)) return null;
 
@@ -105,12 +96,8 @@
               .findStamp(remote.target, models);
       if(R.isNil(target_model)) return null;
 
-      const target_info = gameFactionsModel
-              .getModelInfo(target_model.state.info, factions);
-      if(R.isNil(target_info)) return null;
-
+      const target_info = target_model.info;
       const reached = gameRulerModel.targetReached({ remote });
-
       return {
         cx: target_model.state.x,
         cy: target_model.state.y,

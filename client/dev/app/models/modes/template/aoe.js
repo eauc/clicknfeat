@@ -70,7 +70,9 @@
 
       function askForMaxP(maxes) {
         var max = maxes[0];
-        return promptService.promptP('prompt', 'Set AoE max deviation :', max).catch(appErrorService.emit);
+        return promptService.promptP('prompt', 'Set AoE max deviation :', max).catch(function () {
+          return null;
+        });
       }
     }
     function deviate(state) {

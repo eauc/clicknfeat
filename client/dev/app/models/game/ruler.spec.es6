@@ -6,10 +6,7 @@ describe('gameRuler model', function() {
     this.gameModelsModel = spyOnService('gameModels');
 
     this.game = 'game';
-    this.state = {
-      factions: 'factions',
-      game: { models: 'models' }
-    };
+    this.models = 'models';
     this.gameModelsModel.findStamp.and.callFake((s) => {
       return ( s === 'origin' ? this.origin_model :
                ( s === 'target' ? this.target_model : null )
@@ -30,7 +27,7 @@ describe('gameRuler model', function() {
 
   context('setMaxLength(<start>, <end>, <state>)', function() {
     return this.gameRulerModel
-      .setMaxLength(this.length, this.state, this.ruler);
+      .setMaxLength(this.length, this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = this.gameRulerModel.create();
@@ -83,14 +80,14 @@ describe('gameRuler model', function() {
     });
 
     example(function(e) {
-      context('when only '+e.only+' is set', function() {
-        this[e.only+'_model'] = { state: { x: 120, y: 120 } };
+      context(`when only ${e.only} is set`, function() {
+        this[`${e.only}_model`] = { state: { x: 120, y: 120 } };
       }, function() {
-        it('should set ruler on '+e.only, function() {
+        it(`should set ruler on ${e.only}`, function() {
           expect(this.context.remote.start)
-            .toEqual(this[e.only+'_model'].state);
+            .toEqual(this[`${e.only}_model`].state);
           expect(this.context.remote.end)
-            .toEqual(this[e.only+'_model'].state);
+            .toEqual(this[`${e.only}_model`].state);
           expect(this.context.remote.length)
             .toEqual(0);
           expect(this.context.remote.reached)
@@ -120,7 +117,7 @@ describe('gameRuler model', function() {
         }, function() {
           it('should set ruler according to origin/target models', function() {
             expect(this.modelModel.shortestLineTo)
-              .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+              .toHaveBeenCalledWith('target_model', 'origin_model');
 
             expect(this.context.remote.start)
               .toEqual({ x: 120, y: 120 });
@@ -181,7 +178,7 @@ describe('gameRuler model', function() {
 
   context('setRemote(<start>, <end>, <state>)', function() {
     return this.gameRulerModel
-      .setRemote(this.start, this.end, this.state, this.ruler);
+      .setRemote(this.start, this.end, this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.pointModel = spyOnService('point');
@@ -239,6 +236,7 @@ describe('gameRuler model', function() {
   }, function() {
     beforeEach(function() {
       this.remote = { state: 'state' };
+      this.ruler = { remote: 'old' };
     });
 
     it('should reset remote state', function() {
@@ -269,7 +267,7 @@ describe('gameRuler model', function() {
 
   context('clearOrigin(<state>)', function() {
     return this.gameRulerModel
-      .clearOrigin(this.state, this.ruler);
+      .clearOrigin(this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = {
@@ -302,7 +300,7 @@ describe('gameRuler model', function() {
 
   context('clearTarget(<state>)', function() {
     return this.gameRulerModel
-      .clearTarget(this.state, this.ruler);
+      .clearTarget(this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.ruler = {
@@ -335,7 +333,7 @@ describe('gameRuler model', function() {
 
   context('setOrigin(<origin>, <state>)', function() {
     return this.gameRulerModel
-      .setOrigin(this.origin, this.state, this.ruler);
+      .setOrigin(this.origin, this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.origin = { state: { stamp: 'origin' } };
@@ -405,7 +403,7 @@ describe('gameRuler model', function() {
         }, function() {
           it('should set ruler according to origin/target models', function() {
             expect(this.modelModel.shortestLineTo)
-              .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+              .toHaveBeenCalledWith('target_model', 'origin_model');
 
             expect(this.context.remote.start)
               .toEqual({ x: 120, y: 120 });
@@ -433,7 +431,7 @@ describe('gameRuler model', function() {
         }, function() {
           it('should set ruler according to origin\'s rulerMaxLength', function() {
             expect(this.modelModel.shortestLineTo)
-              .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+              .toHaveBeenCalledWith('target_model', 'origin_model');
 
             expect(this.context.remote.max)
               .toBe(e.max_length);
@@ -460,7 +458,7 @@ describe('gameRuler model', function() {
 
   context('setOriginResetTarget(<origin>, <state>)', function() {
     return this.gameRulerModel
-      .setOriginResetTarget(this.origin, this.state, this.ruler);
+      .setOriginResetTarget(this.origin, this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.origin = { state: { stamp: 'origin' } };
@@ -502,7 +500,7 @@ describe('gameRuler model', function() {
 
   context('setTarget(<target>, <state>)', function() {
     return this.gameRulerModel
-      .setTarget(this.target, this.state, this.ruler);
+      .setTarget(this.target, this.models, this.ruler);
   }, function() {
     beforeEach(function() {
       this.target = { state: { stamp: 'target' } };
@@ -570,7 +568,7 @@ describe('gameRuler model', function() {
         }, function() {
           it('should set ruler according to origin/target models', function() {
             expect(this.modelModel.shortestLineTo)
-              .toHaveBeenCalledWith('factions', 'target_model', 'origin_model');
+              .toHaveBeenCalledWith('target_model', 'origin_model');
 
             expect(this.context.remote.start)
               .toEqual({ x: 120, y: 120 });

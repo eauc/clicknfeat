@@ -10,27 +10,27 @@
     const vm = this;
     console.log('gameToolBoxCtrl');
 
-    // vm.doUseRuler = doUseRuler;
-    // vm.doToggleShowRuler = doToggleShowRuler;
+    vm.doUseRuler = doUseRuler;
+    vm.doToggleShowRuler = doToggleShowRuler;
     // vm.doUseLos = doUseLos;
     // vm.doToggleShowLos = doToggleShowLos;
     vm.doCreateTemplate = doCreateTemplate;
 
-    // function doUseRuler() {
-    //   if($scope.game.currentModeIs('Ruler')) {
-    //     $scope.game.doModeAction('modeBackToDefault');
-    //   }
-    //   else {
-    //     $scope.game.doModeAction('enterRulerMode');
-    //   }
-    // }
-    // function doToggleShowRuler() {
-    //   $scope.sendAction('Game.command.execute',
-    //                     'setRuler', [
-    //                       'toggleDisplay',
-    //                       []
-    //                     ]);
-    // }
+    function doUseRuler() {
+      if($scope.game.currentModeIs('Ruler')) {
+        $scope.game.doModeAction('modeBackToDefault');
+      }
+      else {
+        $scope.game.doModeAction('enterRulerMode');
+      }
+    }
+    function doToggleShowRuler() {
+      $scope.sendAction('Game.command.execute',
+                        'setRuler', [
+                          'toggleDisplay',
+                          []
+                        ]);
+    }
 
     // function doUseLos() {
     //   if($scope.game.currentModeIs('Los')) {

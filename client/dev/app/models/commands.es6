@@ -21,7 +21,7 @@
       'setBoardDataCommand',
       'setLayersCommand',
       // 'setLosCommand',
-      // 'setRulerCommand',
+      'setRulerCommand',
       'setScenarioCommand',
       'createObjectivesCommand',
       () => ({ })

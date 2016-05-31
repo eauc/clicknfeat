@@ -264,18 +264,18 @@ describe('defaultMode model', function() {
       .actions.enterLosMode(this.state);
   }, function() {
     it('should switch to los mode', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo', 'Los');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state ['Modes.switchTo', 'Los']);
     });
   });
 
-  xcontext('when user uses ruler', function() {
+  context('when user uses ruler', function() {
     return this.defaultModeModel
       .actions.enterRulerMode(this.state);
   }, function() {
     it('should switch to ruler mode', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Modes.switchTo', 'Ruler');
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Modes.switchTo', 'Ruler']);
     });
   });
 });

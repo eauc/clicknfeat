@@ -7,8 +7,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.services').factory('commands', commandsModelFactory).factory('allCommands', ['createModelCommand', 'deleteModelCommand', 'setModelSelectionCommand', 'lockModelsCommand', 'onModelsCommand', 'createTemplateCommand', 'deleteTemplateCommand', 'lockTemplatesCommand', 'onTemplatesCommand', 'createTerrainCommand', 'deleteTerrainCommand', 'lockTerrainsCommand', 'onTerrainsCommand', 'rollDiceCommand', 'rollDeviationCommand', 'setBoardCommand', 'setBoardDataCommand', 'setLayersCommand',
   // 'setLosCommand',
-  // 'setRulerCommand',
-  'setScenarioCommand', 'createObjectivesCommand', function () {
+  'setRulerCommand', 'setScenarioCommand', 'createObjectivesCommand', function () {
     return {};
   }]);
 

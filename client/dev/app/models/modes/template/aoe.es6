@@ -123,7 +123,7 @@
         const max = maxes[0];
         return promptService
           .promptP('prompt', 'Set AoE max deviation :', max)
-          .catch(appErrorService.emit);
+          .catch(() => null);
       }
     }
     function deviate(state) {
