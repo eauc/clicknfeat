@@ -71,13 +71,13 @@
           return mem + R.reduce(R.add, 0, damage[col]);
         }, 0));
       }
-      function modelRenderDamage(_ref, state) {
+      function modelRenderDamage(_ref, model) {
         var cx = _ref.cx;
         var cy = _ref.cy;
-        var info = _ref.info;
-        var radius = _ref.radius;
 
-        var state_dmg = R.propOr({}, 'dmg', state);
+        var info = model.info;
+        var radius = info.base_radius;
+        var state_dmg = R.propOr({}, 'dmg', model.state);
         var percent_damage = state_dmg.t / info.damage.total;
         var damage_x = cx - radius + 2 * radius * percent_damage;
         var dmg = {

@@ -65,7 +65,7 @@
                        );
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderImage({ img }, _state_) {
+      function modelRenderImage({ img }, _model_) {
         return { img: img.link };
       }
     };

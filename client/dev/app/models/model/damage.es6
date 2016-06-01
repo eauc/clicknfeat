@@ -89,10 +89,10 @@
           }, 0)
         );
       }
-      function modelRenderDamage({ cx, cy,
-                                   info,
-                                   radius }, state) {
-        const state_dmg = R.propOr({}, 'dmg', state);
+      function modelRenderDamage({ cx, cy }, model) {
+        const info = model.info;
+        const radius = info.base_radius;
+        const state_dmg = R.propOr({}, 'dmg', model.state);
         const percent_damage = state_dmg.t / info.damage.total;
         const damage_x = cx - radius + 2 * radius * percent_damage;
         const dmg = {

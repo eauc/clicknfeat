@@ -46,12 +46,11 @@
           return area === are ? null : area;
         }, model);
       }
-      function modelRenderArea(_ref, state) {
-        var info = _ref.info;
-        var radius = _ref.radius;
-
-        var area = modelAreaModel.isAreaDisplayed({ state: state }) ? modelAreaModel.areaDisplay({ state: state }) * 10 + radius : null;
-        var ctrl = modelAreaModel.isCtrlAreaDisplayed({ info: info, state: state }) ? (info.focus || info.fury) * 20 + radius : null;
+      function modelRenderArea(model) {
+        var info = model.info;
+        var radius = info.base_radius;
+        var area = modelAreaModel.isAreaDisplayed(model) ? modelAreaModel.areaDisplay(model) * 10 + radius : null;
+        var ctrl = modelAreaModel.isCtrlAreaDisplayed(model) ? (info.focus || info.fury) * 20 + radius : null;
         return {
           area: area,
           ctrl: ctrl

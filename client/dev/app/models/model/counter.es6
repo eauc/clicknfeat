@@ -43,8 +43,9 @@
       }
       function modelRenderCounter({ base,
                                     cx, cy,
-                                    is_flipped,
-                                    radius }, state) {
+                                    is_flipped }, model) {
+        const state = model.state;
+        const radius= model.info.base_radius;
         const counter_options = {
           rotate: -state.r,
           flipped: is_flipped,
@@ -54,7 +55,7 @@
         const counter = base
                 .renderText(counter_options, state.c);
         counter.show = modelModel
-          .isCounterDisplayed('c', {state});
+          .isCounterDisplayed('c', model);
         const souls_options = {
           rotate: -state.r,
           flip_center: { x: cx, y: cy },
@@ -64,7 +65,7 @@
         const souls = base
                 .renderText(souls_options, state.s);
         souls.show = modelModel
-          .isCounterDisplayed('s', {state});
+          .isCounterDisplayed('s', model);
         souls.cx = souls.x - 10;
         souls.cy = souls.y - 10;
         return {

@@ -74,8 +74,7 @@
             .findStamp(target_stamp, models);
         }
         model.render = modelModel
-          .render({is_flipped, charge_target},
-                  model.info, model.state);
+          .render({is_flipped, charge_target}, model);
         console.warn('RENDER MODEL',
                      stamp, model.state, model.render);
       }

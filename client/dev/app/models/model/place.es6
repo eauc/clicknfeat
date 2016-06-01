@@ -246,23 +246,22 @@
         }
         return state;
       }
-      function modelRenderPlace({ base,
-                                  info,
-                                  path }, state) {
-        if(modelModel.isPlacing({state})) {
+      function modelRenderPlace({ base, path }, model) {
+        if(modelModel.isPlacing(model)) {
           path.show = true;
 
+          const state = model.state;
           const place_dir = state.pla.s.r;
           const place_middle = pointModel
                   .translateInDirection(400, place_dir, state.pla.s);
-          path.x = place_middle.x - info.base_radius;
+          path.x = place_middle.x - model.info.base_radius;
           path.y = place_middle.y - 400;
           path.transform = `rotate(${place_dir},${place_middle.x},${place_middle.y})`;
 
           const place_length = pointModel.distanceTo(state, state.pla.s);
           let place_text = `${Math.round(place_length*10)/100}"`;
-          const within = modelModel.placeWithin({state});
-          const place_max_dist = modelModel.placeMaxLength({state});
+          const within = modelModel.placeWithin(model);
+          const place_max_dist = modelModel.placeMaxLength(model);
           if(R.exists(place_max_dist)) {
             place_text += `/${within ? 'w.' : ''}${place_max_dist}"`;
           }

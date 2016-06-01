@@ -40,16 +40,15 @@
                        );
         return R.over(EFFECT_LENS, update, model);
       }
-      function modelRenderEffect({ img,
-                                   info }, state) {
+      function modelRenderEffect({ img }, model) {
         const effects = R.thread(EFFECTS)(
-          R.filter(([key]) => modelEffectModel.isEffectDisplayed(key, {state})),
+          R.filter(([key]) => modelEffectModel.isEffectDisplayed(key, model)),
           (actives) => {
             const base_x = img.width / 2 - (R.length(actives) * 10 / 2);
-            const base_y = img.height / 2 + info.base_radius + 1;
+            const base_y = img.height / 2 + model.info.base_radius + 1;
             return R.addIndex(R.reduce)((mem, [key, link], i) => {
               return R.assoc(key, {
-                show: modelEffectModel.isEffectDisplayed(key, {state}),
+                show: modelEffectModel.isEffectDisplayed(key, model),
                 x: base_x + i * 10, y: base_y, link
               }, mem);
             }, {}, actives);

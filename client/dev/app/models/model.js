@@ -61,10 +61,10 @@
             stamp: R.guid()
           }
         };
-        if (info.type === 'wardude' || info.type === 'beast' || info.type === 'jack') {
+        if (model.info.type === 'wardude' || model.info.type === 'beast' || model.info.type === 'jack') {
           model.state.dsp = R.append('c', model.state.dsp);
         }
-        if (info.immovable) {
+        if (model.info.immovable) {
           model.state.lk = true;
         }
         model.state = R.deepExtend(model.state, temp);
@@ -111,12 +111,14 @@
         return R.assoc(key, R.map(R.always(0), info[key]), mem);
       }, {}), R.assoc('f', 0), R.assoc('t', 0));
     }
-    function modelRender(_ref, info, state) {
+    function modelRender(_ref, model) {
       var is_flipped = _ref.is_flipped;
       var charge_target = _ref.charge_target;
 
-      var is_wreck = modelModel.isWreckDisplayed({ state: state });
-      var img = is_wreck ? modelModel.getWreckImage({ info: info, state: state }) : modelModel.getImage({ info: info, state: state });
+      var state = model.state;
+      var info = model.info;
+      var is_wreck = modelModel.isWreckDisplayed(model);
+      var img = is_wreck ? modelModel.getWreckImage(model) : modelModel.getImage(model);
       var cx = img.width / 2;
       var cy = img.height / 2;
       var radius = info.base_radius;
@@ -130,7 +132,7 @@
         rx: cx + 700
       };
       var lock = {
-        show: modelModel.isLocked({ state: state }),
+        show: modelModel.isLocked(model),
         x: cx + radius - 5,
         y: cy - 5
       };
@@ -145,7 +147,7 @@
         flip_center: { x: cx, y: cy },
         text_center: { x: cx, y: text_center_y }
       };
-      var label = base.renderLabel(label_options, state);
+      var label = base.renderLabel(label_options, model);
       return R.deepExtend({
         stamp: state.stamp,
         x: state.x, y: state.y,
@@ -153,10 +155,10 @@
         cx: cx, cy: cy, radius: radius, dx: dx, dy: dy, frx: frx, flx: flx, los: los,
         width: img.width, height: img.height,
         base_color: info.base_color,
-        title: modelModel.descriptionFromInfo({ info: info, state: state }),
+        title: modelModel.descriptionFromInfo(model),
         label_transform: 'translate(' + (state.x - cx) + ',' + (state.y - cy) + ')',
         label: label, lock: lock, path: path
-      }, modelModel.renderArea({ info: info, radius: radius }, state), modelModel.renderAura({ radius: radius }, state), modelModel.renderCharge({ base: base, charge_target: charge_target, radius: radius }, path, state), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped, radius: radius }, state), modelModel.renderDamage({ cx: cx, cy: cy, info: info, radius: radius }, state), modelModel.renderEffect({ img: img, info: info }, state), modelModel.renderImage({ img: img }, state), modelModel.renderLeader({ cx: cx, cy: cy, radius: radius }, state), modelModel.renderMelee({ img: img, info: info }, state), modelModel.renderPlace({ base: base, info: info, path: path }, state), modelModel.renderUnit({ base: base, cx: cx, cy: cy, radius: radius }, state));
+      }, modelModel.renderArea(model), modelModel.renderAura(model), modelModel.renderCharge({ base: base, charge_target: charge_target }, path, model), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped }, model), modelModel.renderDamage({ cx: cx, cy: cy }, model), modelModel.renderEffect({ img: img }, model), modelModel.renderImage({ img: img }, model), modelModel.renderLeader({ cx: cx, cy: cy }, model), modelModel.renderMelee({ img: img }, model), modelModel.renderPlace({ base: base, path: path }, model), modelModel.renderUnit({ base: base, cx: cx, cy: cy }, model));
     }
   }
 })();

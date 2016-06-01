@@ -101,16 +101,17 @@
         });
       }
     }
-    function sprayTemplateRender(temp_state, base_render) {
+    function sprayTemplateRender(temp, base_render) {
+      var state = temp.state;
       R.deepExtend(base_render, {
-        points: POINTS[temp_state.s || 6],
-        transform: ['rotate(' + temp_state.r + ',' + temp_state.x + ',' + temp_state.y + ')', 'translate(' + (temp_state.x - 10) + ',' + temp_state.y + ')'].join(' ')
+        points: POINTS[state.s || 6],
+        transform: ['rotate(' + state.r + ',' + state.x + ',' + state.y + ')', 'translate(' + (state.x - 10) + ',' + state.y + ')'].join(' ')
       });
       return {
-        text_center: { x: temp_state.x,
-          y: temp_state.y + 5
+        text_center: { x: state.x,
+          y: state.y + 5
         },
-        flip_center: temp_state,
+        flip_center: state,
         rotate_with_model: false
       };
     }

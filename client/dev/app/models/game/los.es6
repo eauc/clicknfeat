@@ -137,8 +137,7 @@
 
       return los;
     }
-    function gameLosRender({ in_los_mode,
-                             models }, los) {
+    function gameLosRender({ in_los_mode, models }, los) {
       const local = {
         show: los.local.display,
         x1: los.local.start.x,

@@ -48,8 +48,7 @@
         if(R.isNil(terrain)) return;
         scope.terrain = terrain;
 
-        terrain.render = terrainModel
-          .render(terrain.info, terrain.state);
+        terrain.render = terrainModel.render(terrain);
 
         console.warn('RENDER TERRAIN',
                      stamp, terrain.state, terrain.render);

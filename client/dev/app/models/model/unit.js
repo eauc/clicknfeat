@@ -39,20 +39,20 @@
         var update = modelModel.isUnitDisplayed(model) ? R.reject(R.equals('u')) : R.append('u');
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderUnit(_ref, state) {
+      function modelRenderUnit(_ref, model) {
         var base = _ref.base;
         var cx = _ref.cx;
         var cy = _ref.cy;
-        var radius = _ref.radius;
 
+        var radius = model.info.base_radius;
         var unit_options = {
-          rotate: -state.r,
+          rotate: -model.state.r,
           flip_center: { x: cx, y: cy },
           text_center: { x: cx - radius * 0.7 - 5,
             y: cy - radius * 0.7 - 5 }
         };
-        var unit = base.renderText(unit_options, 'U' + modelModel.unit({ state: state }));
-        unit.show = modelModel.isUnitDisplayed({ state: state });
+        var unit = base.renderText(unit_options, 'U' + modelModel.unit(model));
+        unit.show = modelModel.isUnitDisplayed(model);
         unit.cx = unit.x - 10;
         unit.cy = unit.y - 10;
         return { unit: unit };

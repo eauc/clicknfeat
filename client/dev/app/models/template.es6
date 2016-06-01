@@ -77,19 +77,19 @@
                  [...args, template])
       );
     }
-    function templateRender(is_flipped, temp_state) {
+    function templateRender({is_flipped}, temp) {
       const render = {
-        stamp: temp_state.stamp,
-        type: temp_state.type,
+        stamp: temp.state.stamp,
+        type: temp.state.type,
         x: 0,
         y: 0,
         transform: ''
       };
-      const label_options = TEMPS_REG[temp_state.type]
-              .render(temp_state, render);
+      const label_options = TEMPS_REG[temp.state.type]
+              .render(temp, render);
       label_options.flipped = is_flipped;
       render.label = base
-        .renderLabel(label_options, temp_state);
+        .renderLabel(label_options, temp);
       return render;
     }
   }

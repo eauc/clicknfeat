@@ -49,7 +49,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
         var map = document.getElementById('map');
         var is_flipped = gameMapService.isFlipped(map);
-        template.render = templateModel.render(is_flipped, template.state);
+        template.render = templateModel.render({ is_flipped: is_flipped }, template);
 
         if (R.exists(template.state.o)) {
           var models = appGameService.models.models.sample();
@@ -61,7 +61,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             };
           }));
         }
-        console.warn('RENDER TEMPLATE', stamp, template.state, template.render);
+        console.warn('RENDER TEMPLATE', stamp, template.state, is_flipped, template.render);
       }
       function refreshSelection(selection) {
         var local = gameTemplateSelectionModel.in('local', stamp, selection);

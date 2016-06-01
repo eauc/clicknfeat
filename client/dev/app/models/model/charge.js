@@ -153,13 +153,14 @@
         }
         return state;
       }
-      function modelRenderCharge(_ref, path, state) {
+      function modelRenderCharge(_ref, path, model) {
         var base = _ref.base;
         var charge_target = _ref.charge_target;
-        var radius = _ref.radius;
 
+        var state = model.state;
+        var radius = model.info.base_radius;
         var charge_target_ = {};
-        if (modelModel.isCharging({ state: state })) {
+        if (modelModel.isCharging(model)) {
           path.show = true;
 
           var charge_dir = state.cha.s.r;
@@ -170,7 +171,7 @@
 
           var charge_length = pointModel.distanceTo(state, state.cha.s);
           var charge_text = Math.round(charge_length * 10) / 100 + '"';
-          var charge_max_dist = modelModel.chargeMaxLength({ state: state });
+          var charge_max_dist = modelModel.chargeMaxLength(model);
           if (R.exists(charge_max_dist)) {
             charge_text += '/' + charge_max_dist + '"';
           }
@@ -190,13 +191,13 @@
             charge_target_.radius = charge_target.info.base_radius;
 
             var melee_range = 0;
-            if (modelModel.isMeleeDisplayed('mm', { state: state })) {
+            if (modelModel.isMeleeDisplayed('mm', model)) {
               melee_range = 5;
             }
-            if (modelModel.isMeleeDisplayed('mr', { state: state })) {
+            if (modelModel.isMeleeDisplayed('mr', model)) {
               melee_range = 20;
             }
-            if (modelModel.isMeleeDisplayed('ms', { state: state })) {
+            if (modelModel.isMeleeDisplayed('ms', model)) {
               melee_range = 40;
             }
             var distance_to_target = pointModel.distanceTo(charge_target.state, state);

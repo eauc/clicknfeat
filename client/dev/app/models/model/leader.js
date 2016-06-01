@@ -26,14 +26,14 @@
         var update = modelModel.isLeaderDisplayed(model) ? R.reject(R.equals('l')) : R.append('l');
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderLeader(_ref, state) {
+      function modelRenderLeader(_ref, model) {
         var cx = _ref.cx;
         var cy = _ref.cy;
-        var radius = _ref.radius;
 
+        var radius = model.info.base_radius;
         var effects = {
           l: {
-            show: modelModel.isLeaderDisplayed({ state: state }),
+            show: modelModel.isLeaderDisplayed(model),
             link: '/data/icons/Leader.png',
             x: cx - radius * 0.7 - 5,
             y: cy - radius * 0.7 - 5

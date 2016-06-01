@@ -205,11 +205,11 @@
                                     flipped = false,
                                     flip_center = { x: 240, y: 240 },
                                     text_center = { x: 240, y: 240 },
-                                  }, element_state) {
-        const text = R.propOr([], 'l', element_state).join(' ');
+                                  }, element) {
+        const text = R.propOr([], 'l', element.state).join(' ');
         const show = R.length(text) > 0 ? true : false;
         let rotate = (rotate_with_model
-                      ? element_state.r
+                      ? element.state.r
                       : 0
                      );
         const label = elementModel.renderText({

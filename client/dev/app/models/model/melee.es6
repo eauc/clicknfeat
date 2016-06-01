@@ -32,19 +32,19 @@
                        );
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderMelee({ img,
-                                  info }, state) {
+      function modelRenderMelee({ img }, model) {
+        const info = model.info;
         const melee = {
           melee: {
-            show: modelMeleeModel.isMeleeDisplayed('mm', {state}),
+            show: modelMeleeModel.isMeleeDisplayed('mm', model),
             path: computeMeleePath(5, img, info)
           },
           reach: {
-            show: modelMeleeModel.isMeleeDisplayed('mr', {state}),
+            show: modelMeleeModel.isMeleeDisplayed('mr', model),
             path: computeMeleePath(20, img, info)
           },
           strike: {
-            show: modelMeleeModel.isMeleeDisplayed('ms', {state}),
+            show: modelMeleeModel.isMeleeDisplayed('ms', model),
             path: computeMeleePath(40, img, info)
           }
         };

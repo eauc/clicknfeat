@@ -29,18 +29,17 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var update = modelService.isEffectDisplayed(effect, model) ? R.compose(R.reject(R.equals(effect)), R.defaultTo([])) : R.compose(R.append(effect), R.defaultTo([]));
         return R.over(EFFECT_LENS, update, model);
       }
-      function modelRenderEffect(_ref, state) {
+      function modelRenderEffect(_ref, model) {
         var img = _ref.img;
-        var info = _ref.info;
 
         var effects = R.thread(EFFECTS)(R.filter(function (_ref2) {
           var _ref3 = _slicedToArray(_ref2, 1);
 
           var key = _ref3[0];
-          return modelEffectModel.isEffectDisplayed(key, { state: state });
+          return modelEffectModel.isEffectDisplayed(key, model);
         }), function (actives) {
           var base_x = img.width / 2 - R.length(actives) * 10 / 2;
-          var base_y = img.height / 2 + info.base_radius + 1;
+          var base_y = img.height / 2 + model.info.base_radius + 1;
           return R.addIndex(R.reduce)(function (mem, _ref4, i) {
             var _ref5 = _slicedToArray(_ref4, 2);
 
@@ -48,7 +47,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
             var link = _ref5[1];
 
             return R.assoc(key, {
-              show: modelEffectModel.isEffectDisplayed(key, { state: state }),
+              show: modelEffectModel.isEffectDisplayed(key, model),
               x: base_x + i * 10, y: base_y, link: link
             }, mem);
           }, {}, actives);

@@ -64,7 +64,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         if (R.exists(target_stamp)) {
           charge_target = gameModelsModel.findStamp(target_stamp, models);
         }
-        model.render = modelModel.render({ is_flipped: is_flipped, charge_target: charge_target }, model.info, model.state);
+        model.render = modelModel.render({ is_flipped: is_flipped, charge_target: charge_target }, model);
         console.warn('RENDER MODEL', stamp, model.state, model.render);
       }
       function refreshSelection(selection) {

@@ -37,10 +37,13 @@
     }
     function setRender(scope, info, create) {
       const base = R.propOr({ x: 0, y: 0 }, 'base', create);
-      scope.render = terrainModel.render(info, R.thread(scope.template)(
-        R.assoc('x', base.x),
-        R.assoc('y', base.y)
-      ));
+      scope.render = terrainModel.render({
+        info,
+        state: R.thread(scope.terrain)(
+          R.assoc('x', base.x),
+          R.assoc('y', base.y)
+        )
+      });
     }
   }
 })();

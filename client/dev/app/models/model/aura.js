@@ -30,13 +30,11 @@
           return aura === aur ? null : aura;
         }, model);
       }
-      function modelRenderAura(_ref, state) {
-        var radius = _ref.radius;
-
+      function modelRenderAura(model) {
         var aura = {
-          show: modelAuraModel.isAuraDisplayed({ state: state }),
-          radius: radius * 1.2,
-          color: modelAuraModel.auraDisplay({ state: state })
+          show: modelAuraModel.isAuraDisplayed(model),
+          radius: model.info.base_radius * 1.2,
+          color: modelAuraModel.auraDisplay(model)
         };
         return { aura: aura };
       }

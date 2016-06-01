@@ -44,19 +44,18 @@
                        );
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderUnit({ base,
-                                 cx, cy,
-                                 radius }, state) {
+      function modelRenderUnit({ base, cx, cy }, model) {
+        const radius = model.info.base_radius;
         const unit_options = {
-          rotate: -state.r,
+          rotate: -model.state.r,
           flip_center: { x: cx, y: cy },
           text_center: { x: cx - radius * 0.7 - 5,
                          y: cy - radius * 0.7 - 5 }
         };
         const unit = base
-                .renderText(unit_options, `U${modelModel.unit({state})}`);
+                .renderText(unit_options, `U${modelModel.unit(model)}`);
         unit.show = modelModel
-          .isUnitDisplayed({state});
+          .isUnitDisplayed(model);
         unit.cx = unit.x - 10;
         unit.cy = unit.y - 10;
         return { unit };

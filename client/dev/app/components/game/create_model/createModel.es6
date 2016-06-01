@@ -41,10 +41,13 @@
       const model = scope.model;
       const is_flipped = gameMapService.isFlipped(map);
       const coeff = is_flipped ? -1 : 1;
-      scope.render = modelModel.render({is_flipped}, info, R.thread(model)(
-        R.assoc('x', base.x + coeff * model.x),
-        R.assoc('y', base.y + coeff * model.y)
-      ));
+      scope.render = modelModel.render({is_flipped}, {
+        info,
+        state: R.thread(model)(
+          R.assoc('x', base.x + coeff * model.x),
+          R.assoc('y', base.y + coeff * model.y)
+        )
+      });
       console.warn('createModel.update', scope.render);
     }
   }

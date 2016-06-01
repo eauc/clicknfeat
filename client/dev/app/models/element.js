@@ -150,7 +150,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       function elementFullLabel(element) {
         return R.viewOr([], LABEL_LENS, element).join(' ');
       }
-      function elementRenderLabel(_ref, element_state) {
+      function elementRenderLabel(_ref, element) {
         var _ref$rotate_with_mode = _ref.rotate_with_model;
         var rotate_with_model = _ref$rotate_with_mode === undefined ? false : _ref$rotate_with_mode;
         var _ref$flipped = _ref.flipped;
@@ -160,9 +160,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         var _ref$text_center = _ref.text_center;
         var text_center = _ref$text_center === undefined ? { x: 240, y: 240 } : _ref$text_center;
 
-        var text = R.propOr([], 'l', element_state).join(' ');
+        var text = R.propOr([], 'l', element.state).join(' ');
         var show = R.length(text) > 0 ? true : false;
-        var rotate = rotate_with_model ? element_state.r : 0;
+        var rotate = rotate_with_model ? element.state.r : 0;
         var label = elementModel.renderText({
           rotate: rotate, flipped: flipped, flip_center: flip_center, text_center: text_center
         }, text);

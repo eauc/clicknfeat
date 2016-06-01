@@ -239,11 +239,12 @@
         return state;
       }
       function modelRenderCharge({ base,
-                                   charge_target,
-                                   radius },
-                                 path, state) {
+                                   charge_target },
+                                 path, model) {
+        const state = model.state;
+        const radius = model.info.base_radius;
         const charge_target_ = {};
-        if(modelModel.isCharging({state})) {
+        if(modelModel.isCharging(model)) {
           path.show = true;
 
           const charge_dir = state.cha.s.r;
@@ -255,7 +256,7 @@
 
           const charge_length = pointModel.distanceTo(state, state.cha.s);
           let charge_text = `${Math.round(charge_length*10)/100}"`;
-          const charge_max_dist = modelModel.chargeMaxLength({state});
+          const charge_max_dist = modelModel.chargeMaxLength(model);
           if(R.exists(charge_max_dist)) {
             charge_text += `/${charge_max_dist}"`;
           }
@@ -276,13 +277,13 @@
             charge_target_.radius = charge_target.info.base_radius;
 
             let melee_range = 0;
-            if(modelModel.isMeleeDisplayed('mm', {state})) {
+            if(modelModel.isMeleeDisplayed('mm', model)) {
               melee_range = 5;
             }
-            if(modelModel.isMeleeDisplayed('mr', {state})) {
+            if(modelModel.isMeleeDisplayed('mr', model)) {
               melee_range = 20;
             }
-            if(modelModel.isMeleeDisplayed('ms', {state})) {
+            if(modelModel.isMeleeDisplayed('ms', model)) {
               melee_range = 40;
             }
             const distance_to_target = pointModel

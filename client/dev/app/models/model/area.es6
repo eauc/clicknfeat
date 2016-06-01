@@ -58,14 +58,14 @@
           model
         );
       }
-      function modelRenderArea({ info,
-                                 radius
-                               }, state) {
-        const area = ( modelAreaModel.isAreaDisplayed({state})
-                       ? modelAreaModel.areaDisplay({state}) * 10 + radius
+      function modelRenderArea(model) {
+        const info = model.info;
+        const radius = info.base_radius;
+        const area = ( modelAreaModel.isAreaDisplayed(model)
+                       ? modelAreaModel.areaDisplay(model) * 10 + radius
                        : null
                      );
-        const ctrl = ( modelAreaModel.isCtrlAreaDisplayed({info, state})
+        const ctrl = ( modelAreaModel.isCtrlAreaDisplayed(model)
                        ? (info.focus || info.fury) * 20 + radius
                        : null
                      );

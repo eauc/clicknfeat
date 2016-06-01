@@ -26,21 +26,21 @@
         var update = modelService.isMeleeDisplayed(melee, model) ? R.reject(R.equals(melee)) : R.append(melee);
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderMelee(_ref, state) {
+      function modelRenderMelee(_ref, model) {
         var img = _ref.img;
-        var info = _ref.info;
 
+        var info = model.info;
         var melee = {
           melee: {
-            show: modelMeleeModel.isMeleeDisplayed('mm', { state: state }),
+            show: modelMeleeModel.isMeleeDisplayed('mm', model),
             path: computeMeleePath(5, img, info)
           },
           reach: {
-            show: modelMeleeModel.isMeleeDisplayed('mr', { state: state }),
+            show: modelMeleeModel.isMeleeDisplayed('mr', model),
             path: computeMeleePath(20, img, info)
           },
           strike: {
-            show: modelMeleeModel.isMeleeDisplayed('ms', { state: state }),
+            show: modelMeleeModel.isMeleeDisplayed('ms', model),
             path: computeMeleePath(40, img, info)
           }
         };

@@ -145,24 +145,24 @@
         }
         return state;
       }
-      function modelRenderPlace(_ref, state) {
+      function modelRenderPlace(_ref, model) {
         var base = _ref.base;
-        var info = _ref.info;
         var path = _ref.path;
 
-        if (modelModel.isPlacing({ state: state })) {
+        if (modelModel.isPlacing(model)) {
           path.show = true;
 
+          var state = model.state;
           var place_dir = state.pla.s.r;
           var place_middle = pointModel.translateInDirection(400, place_dir, state.pla.s);
-          path.x = place_middle.x - info.base_radius;
+          path.x = place_middle.x - model.info.base_radius;
           path.y = place_middle.y - 400;
           path.transform = 'rotate(' + place_dir + ',' + place_middle.x + ',' + place_middle.y + ')';
 
           var place_length = pointModel.distanceTo(state, state.pla.s);
           var place_text = Math.round(place_length * 10) / 100 + '"';
-          var within = modelModel.placeWithin({ state: state });
-          var place_max_dist = modelModel.placeMaxLength({ state: state });
+          var within = modelModel.placeWithin(model);
+          var place_max_dist = modelModel.placeMaxLength(model);
           if (R.exists(place_max_dist)) {
             place_text += '/' + (within ? 'w.' : '') + place_max_dist + '"';
           }

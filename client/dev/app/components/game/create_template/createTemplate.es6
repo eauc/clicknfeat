@@ -29,10 +29,12 @@
     function setPosition(scope, create) {
       const base = R.propOr({ x: 0, y: 0 }, 'base', create);
       const template = scope.template;
-      scope.pos = templateModel.render(false, R.thread(template)(
-        R.assoc('x', base.x),
-        R.assoc('y', base.y)
-      ));
+      scope.pos = templateModel.render({ is_flipped: false }, {
+        state: R.thread(template)(
+          R.assoc('x', base.x),
+          R.assoc('y', base.y)
+        )
+      });
     }
   }
 })();

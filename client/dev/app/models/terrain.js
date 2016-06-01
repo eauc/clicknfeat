@@ -35,15 +35,16 @@
         return base.create(terr);
       }, R.assoc('info', info));
     }
-    function terrainModelRender(info, state) {
+    function terrainModelRender(terr) {
+      var info = terr.info;
       return {
-        stamp: state.stamp,
+        stamp: terr.state.stamp,
         img_link: info.img.link,
         width: info.img.width,
         height: info.img.height,
-        x: state.x - info.img.width / 2,
-        y: state.y - info.img.height / 2,
-        transform: ['translate(', state.x - info.img.width / 2, ',', state.y - info.img.height / 2, ') rotate(', state.r, ',', info.img.width / 2, ',', info.img.height / 2, ')'].join('')
+        x: terr.state.x - info.img.width / 2,
+        y: terr.state.y - info.img.height / 2,
+        transform: ['translate(', terr.state.x - info.img.width / 2, ',', terr.state.y - info.img.height / 2, ') rotate(', terr.state.r, ',', info.img.width / 2, ',', info.img.height / 2, ')'].join('')
       };
     }
   }

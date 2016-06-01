@@ -58,17 +58,19 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return TEMPS_REG[template.state.type][method].apply(TEMPS_REG[template.state.type], [].concat(_toConsumableArray(args), [template]));
       });
     }
-    function templateRender(is_flipped, temp_state) {
+    function templateRender(_ref, temp) {
+      var is_flipped = _ref.is_flipped;
+
       var render = {
-        stamp: temp_state.stamp,
-        type: temp_state.type,
+        stamp: temp.state.stamp,
+        type: temp.state.type,
         x: 0,
         y: 0,
         transform: ''
       };
-      var label_options = TEMPS_REG[temp_state.type].render(temp_state, render);
+      var label_options = TEMPS_REG[temp.state.type].render(temp, render);
       label_options.flipped = is_flipped;
-      render.label = base.renderLabel(label_options, temp_state);
+      render.label = base.renderLabel(label_options, temp);
       return render;
     }
   }

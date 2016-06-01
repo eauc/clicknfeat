@@ -60,7 +60,7 @@
 
         const map = document.getElementById('map');
         const is_flipped = gameMapService.isFlipped(map);
-        template.render = templateModel.render(is_flipped, template.state);
+        template.render = templateModel.render({is_flipped}, template);
 
         if(R.exists(template.state.o)) {
           const models = appGameService.models.models.sample();
@@ -79,7 +79,7 @@
           );
         }
         console.warn('RENDER TEMPLATE',
-                     stamp, template.state, template.render);
+                     stamp, template.state, is_flipped, template.render);
       }
       function refreshSelection(selection) {
         const local = gameTemplateSelectionModel

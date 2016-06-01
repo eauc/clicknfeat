@@ -31,11 +31,11 @@
                        );
         return R.over(DSP_LENS, update, model);
       }
-      function modelRenderLeader({ cx, cy,
-                                   radius }, state) {
+      function modelRenderLeader({ cx, cy }, model) {
+        const radius = model.info.base_radius;
         const effects = {
           l: {
-            show: modelModel.isLeaderDisplayed({state}),
+            show: modelModel.isLeaderDisplayed(model),
             link: '/data/icons/Leader.png',
             x: cx - radius * 0.7 - 5,
             y: cy - radius * 0.7 - 5

@@ -82,20 +82,21 @@
     function aoeTemplateSetTargetP(target, temp) {
       return templateModel.setPositionP(target.state, temp);
     }
-    function aoeTemplateRender(temp_state, base_render) {
+    function aoeTemplateRender(temp, base_render) {
+      const state = temp.state;
       R.deepExtend(base_render, {
-        x: temp_state.x,
-        y: temp_state.y,
-        radius: temp_state.s || 15,
-        dx: temp_state.x,
-        dy: temp_state.y - (temp_state.s || 15),
-        dtransform: `rotate(${temp_state.r},${temp_state.x},${temp_state.y})`
+        x: state.x,
+        y: state.y,
+        radius: state.s || 15,
+        dx: state.x,
+        dy: state.y - (state.s || 15),
+        dtransform: `rotate(${state.r},${state.x},${state.y})`
       });
       return {
-        text_center: { x: temp_state.x,
-                       y: temp_state.y + temp_state.s + 5
+        text_center: { x: state.x,
+                       y: state.y + state.s + 5
                      },
-        flip_center: temp_state,
+        flip_center: temp.state,
         rotate_with_model: false
       };
     }
