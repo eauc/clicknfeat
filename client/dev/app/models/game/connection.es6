@@ -9,6 +9,8 @@
   function gameConnectionModelFactory(websocketModel,
                                       appStateService) {
     const SOCKET_LENS = R.lensPath(['connection','state','socket']);
+    const COMMANDS_LOG_LENS = R.lensProp('commands_log');
+    const UNDO_LOG_LENS = R.lensProp('undo_log');
 
     const gameConnectionModel = {
       create: gameConnectionCreate,
@@ -80,12 +82,12 @@
       );
     }
     function gameConnectionSendReplayCommand(command, game) {
-      return R.threadP(game)(
+      return R.thread(game)(
         gameConnectionModel.sendEvent$({
           type: 'replayCmd',
           cmd: command
         }),
-        R.over(R.lensProp('commands_log'),
+        R.over(COMMANDS_LOG_LENS,
                R.compose(R.append(command), R.defaultTo([])))
       );
     }
@@ -95,7 +97,7 @@
           type: 'undoCmd',
           cmd: command
         }),
-        R.over(R.lensProp('undo_log'),
+        R.over(UNDO_LOG_LENS,
                R.compose(R.append(command), R.defaultTo([])))
       );
     }
@@ -111,26 +113,5 @@
         R.always(game)
       );
     }
-    // function closeHandler() {
-    //   appStateService.reduce('Game.connection.close');
-    // }
-    // function replayCmdHandler(msg) {
-    //   appStateService.reduce('Game.command.replay', msg.cmd);
-    // }
-    // function undoCmdHandler(msg) {
-    //   appStateService.reduce('Game.command.undo', msg.cmd);
-    // }
-    // function cmdBatchHandler(msg) {
-    //   appStateService.reduce('Game.command.replayBatch', msg.cmds);
-    // }
-    // function chatHandler(msg) {
-    //   appStateService.reduce('Game.newChatMsg', msg);
-    // }
-    // function setCmdsHandler(msg) {
-    //   appStateService.reduce('Game.setCmds', msg);
-    // }
-    // function playersHandler(msg) {
-    //   appStateService.reduce('Game.setPlayers', msg.players);
-    // }
   }
 })();

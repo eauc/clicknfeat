@@ -10,6 +10,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
+    var CHAT_LENS = R.lensProp('chat');
     var DRAG_BOX_LENS = R.lensPath(['view', 'drag_box']);
     var FLIP_MAP_LENS = R.lensPath(['view', 'flip_map']);
     var MOVE_MAP_LENS = R.lensPath(['view', 'move_map']);
@@ -33,6 +34,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var game_export_previous = game_export.delay({});
     var loading = behavioursModel.signalModel.create();
     var create = appStateService.state.map(R.view(CREATE_LENS));
+
+    var chat = game.map(R.viewOr([], CHAT_LENS));
 
     var view = behavioursModel.signalModel.create();
     var scroll_left = view.filter(R.equals('scrollLeft'));
@@ -137,7 +140,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var model_selection_export_previous = model_selection_export.delay({});
 
     var appGameService = {
-      game: game, create: create, loading: loading,
+      game: game, chat: chat, create: create, loading: loading,
       export: { board: board_export,
         game: game_export,
         models: model_selection_export
@@ -182,6 +185,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       loadDataReady: actionGameLoadDataReady,
       loadDataLoaded: actionGameLoadDataLoaded,
       loadGameLoaded: actionGameLoadGameLoaded,
+      connectionBatchCmd: actionGameConnectionBatchCmd,
+      connectionChat: actionGameConnectionChat,
+      connectionReplayCmd: actionGameConnectionReplayCmd,
+      connectionSendChat: actionGameConnectionSendChat,
+      connectionSetCmds: actionGameConnectionSetCmds,
+      connectionSetPlayers: actionGameConnectionSetPlayers,
+      connectionUndoCmd: actionGameConnectionUndoCmd,
+      invitePlayer: actionGameInvitePlayer,
       connectionClose: actionGameConnectionClose,
       commandExecute: actionGameCommandExecute,
       commandUndo: actionGameCommandUndo,
@@ -218,14 +229,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       terrainCreate: actionGameTerrainCreate,
       terrainsSet: actionGameTerrainsSet,
       terrainsReset: actionGameTerrainsReset,
-      // onCommandReplayBatch: stateGameOnCommandReplayBatch,
-      // onSetCmds: stateGameOnSetCmds,
-      // onSetPlayers: stateGameOnSetPlayers,
-      // onNewChatMsg: stateGameOnNewChatMsg,
-      // onUiStateFlip: stateGameOnUiStateFlip,
-      // onInvitePlayer: stateGameOnInvitePlayer,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
-      // closeOsd: stateGameCloseOsd
       checkMode: appGameCheckMode
     };
     R.curryService(appGameService);
@@ -235,15 +239,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     return appGameService;
 
     function mount() {
-      appActionService.register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.undo', actionGameCommandUndo).register('Game.command.replay', actionGameCommandReplay).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.view.scrollLeft', actionGameViewScrollLeft).register('Game.view.scrollRight', actionGameViewScrollRight).register('Game.view.scrollUp', actionGameViewScrollUp).register('Game.view.scrollDown', actionGameViewScrollDown).register('Game.view.zoomIn', actionGameViewZoomIn).register('Game.view.zoomOut', actionGameViewZoomOut).register('Game.view.zoomReset', actionGameViewZoomReset).register('Game.view.flipMap', actionGameViewFlipMap).register('Game.view.moveMap', actionGameViewMoveMap).register('Game.view.toggleMenu', actionGameViewToggleMenu).register('Game.view.editDamage.reset', actionGameViewEditDamageReset).register('Game.view.editLabel', actionGameViewEditLabel).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.board.importFile', actionGameBoardImportFile).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom).register('Game.scenario.generateObjectives', actionGameScenarioGenerateObjectives).register('Game.model.create', actionGameModelCreate).register('Game.model.copy', actionGameModelCopy).register('Game.model.importList', actionGameModelImportList).register('Game.model.importFile', actionGameModelImportFile).register('Game.template.create', actionGameTemplateCreate).register('Game.templates.set', actionGameTemplatesSet).register('Game.templates.setDeviationMax', actionGameTemplatesSetDeviationMax).register('Game.terrain.create', actionGameTerrainCreate).register('Game.terrains.set', actionGameTerrainsSet).register('Game.terrains.reset', actionGameTerrainsReset)
-      // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
-      // .register('Game.invitePlayer'        , actionGameInvitePlayer)
-      // .register('Game.setCmds'             , actionGameSetCmds)
-      // .register('Game.setPlayers'          , actionGameSetPlayers)
-      // .register('Game.newChatMsg'          , actionGameNewChatMsg)
-      // .register('Game.scenario.generateObjectives',
-      //             actionGameScenarioGenerateObjectives)
-      ;
+      appActionService.register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.batchCmd', actionGameConnectionBatchCmd).register('Game.connection.chat', actionGameConnectionChat).register('Game.connection.replayCmd', actionGameConnectionReplayCmd).register('Game.connection.sendChat', actionGameConnectionSendChat).register('Game.connection.setCmds', actionGameConnectionSetCmds).register('Game.connection.setPlayers', actionGameConnectionSetPlayers).register('Game.connection.undoCmd', actionGameConnectionUndoCmd).register('Game.invitePlayer', actionGameInvitePlayer).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.replay', actionGameCommandReplay).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.command.undo', actionGameCommandUndo).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.view.scrollLeft', actionGameViewScrollLeft).register('Game.view.scrollRight', actionGameViewScrollRight).register('Game.view.scrollUp', actionGameViewScrollUp).register('Game.view.scrollDown', actionGameViewScrollDown).register('Game.view.zoomIn', actionGameViewZoomIn).register('Game.view.zoomOut', actionGameViewZoomOut).register('Game.view.zoomReset', actionGameViewZoomReset).register('Game.view.flipMap', actionGameViewFlipMap).register('Game.view.moveMap', actionGameViewMoveMap).register('Game.view.toggleMenu', actionGameViewToggleMenu).register('Game.view.editDamage.reset', actionGameViewEditDamageReset).register('Game.view.editLabel', actionGameViewEditLabel).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.board.importFile', actionGameBoardImportFile).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom).register('Game.scenario.generateObjectives', actionGameScenarioGenerateObjectives).register('Game.model.create', actionGameModelCreate).register('Game.model.copy', actionGameModelCopy).register('Game.model.importList', actionGameModelImportList).register('Game.model.importFile', actionGameModelImportFile).register('Game.template.create', actionGameTemplateCreate).register('Game.templates.set', actionGameTemplatesSet).register('Game.templates.setDeviationMax', actionGameTemplatesSetDeviationMax).register('Game.terrain.create', actionGameTerrainCreate).register('Game.terrains.set', actionGameTerrainsSet).register('Game.terrains.reset', actionGameTerrainsReset);
     }
     function gameExportCurrent(previous, game) {
       console.warn('Export Game', arguments);
@@ -259,10 +255,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function actionGameSet(state, game) {
       return R.thread(state)(R.set(GAME_LENS, game), gameSaveCurrent);
     }
-    function actionGameLoad(_state_, is_online, is_private, id) {
-      return waitForDataReady().then(function () {
+    function actionGameLoad(state, is_online, is_private, id) {
+      waitForDataReady().then(function () {
         return appActionService.do('Game.load.dataReady', is_online, is_private, id);
       });
+      return R.set(GAME_LENS, {}, state);
 
       function waitForDataReady() {
         return R.allP([appDataService.ready, appUserService.ready, appGamesService.ready]);
@@ -277,13 +274,13 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return gamesModel.loadLocalGameP(id, state.local_games);
       }), function (data) {
         return appActionService.do('Game.load.dataLoaded', data);
-      });
+      }).catch(appErrorService.emit);
     }
     function actionGameLoadDataLoaded(state, data) {
       loading.send(true);
       R.threadP(data)(gameModel.loadP, function (game) {
         return appActionService.do('Game.load.gameLoaded', game);
-      });
+      }).catch(appErrorService.emit);
       return R.thread(state)(appModesService.reset, gameSaveCurrent);
     }
     function actionGameLoadGameLoaded(state, game) {
@@ -291,7 +288,39 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var user = R.view(USER_NAME_LENS, state);
       return R.threadP(game)(R.when(gameModel.isOnline, gameConnectionModel.openP$(user)), function (game) {
         return appActionService.do('Game.set', game);
-      });
+      }).catch(appErrorService.emit);
+    }
+    function actionGameConnectionBatchCmd(state, msg) {
+      return R.threadP(state)(R.view(GAME_LENS), gameModel.replayCommandsBatchP$(msg.cmds), function (game) {
+        appActionService.do('Game.set', game);
+      }).catch(appErrorService.emit);
+    }
+    function actionGameConnectionChat(state, msg) {
+      return R.over(GAME_LENS, R.over(CHAT_LENS, R.compose(R.append(msg.chat), R.defaultTo([]))), state);
+    }
+    function actionGameConnectionReplayCmd(state, msg) {
+      return appStateService.onAction(state, ['Game.command.replay', msg.cmd]);
+    }
+    function actionGameConnectionSendChat(state, msg) {
+      var user_name = R.viewOr('Unknown', USER_NAME_LENS, state);
+      return R.over(GAME_LENS, gameModel.sendChat$(user_name, msg), state);
+    }
+    function actionGameConnectionSetCmds(state, set) {
+      return R.over(GAME_LENS, R.assoc(set.where, set.cmds), state);
+    }
+    function actionGameConnectionSetPlayers(state, msg) {
+      return R.over(GAME_LENS, R.assoc('players', msg.players), state);
+    }
+    function actionGameConnectionUndoCmd(state, msg) {
+      return appStateService.onAction(state, ['Game.command.undo', msg.cmd]);
+    }
+    function actionGameInvitePlayer(state, to) {
+      var user_name = s.capitalize(R.viewOr('Unknown', USER_NAME_LENS, state));
+      var msg = user_name + ' has invited you to join a game';
+      var link = self.window.location.hash;
+      console.warn('Invite player', to, msg, link);
+
+      return appStateService.onAction(state, ['User.sendChat', { to: [to], msg: msg, link: link }]);
     }
     function actionGameConnectionClose(state) {
       return R.thread(state)(R.over(GAME_LENS, gameConnectionModel.cleanup), gameSaveCurrent);
@@ -473,46 +502,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appStateService.onAction(state, ['Game.command.execute', 'deleteTerrain', [stamps]]);
       });
     }
-    // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.replayCommandsBatchP$(cmds),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnSetCmds(state, _event_, [set]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.assoc(set.where, set.cmds),
-    //     state
-    //   );
-    // }
-    // function stateGameOnSetPlayers(state, _event_, [players]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.assoc('players', players),
-    //     state
-    //   );
-    // }
-    // function stateGameOnNewChatMsg(state, _event_, [msg]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.over(R.lensProp('chat'),
-    //            R.compose(R.append(msg.chat), R.defaultTo([]))),
-    //     state
-    //   );
-    // }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   const msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   const link = self.window.location.hash;
-    //   console.log('Invite player', to, msg, link);
-
-    //   appStateService
-    //     .chainReduce('User.sendChatMsg',
-    //                  { to: [to], msg: msg, link: link });
-    // }
     // // function stateGameOnModelSelectionLocalChange(state, _event_) {
     // //   // console.warn('onModelSelectionLocalChange', arguments);
     // //   const local_model_selection = gameModelSelectionModel

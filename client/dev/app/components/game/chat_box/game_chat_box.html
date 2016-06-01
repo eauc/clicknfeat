@@ -15,7 +15,7 @@
   </form>
   <div class="chat-list">
     <div class="chat"
-         ng-repeat="c in game_chat.chat.slice(-10).reverse() track by c.stamp">
+         ng-repeat="c in game_chat.chat track by c.stamp">
       {{ c.from }}
       ➝
       {{c.msg}}

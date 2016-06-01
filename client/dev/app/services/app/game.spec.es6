@@ -110,7 +110,10 @@ describe('appGame service', function() {
     });
   });
 
-  describe('load(<is_online>, <is_private>, <id>)', function() {
+  context('load(<is_online>, <is_private>, <id>)', function() {
+    return this.appGameService
+      .load(this.state, 'is_online', 'is_private', 'id');
+  }, function() {
     beforeEach(function() {
       this.appDataService.ready = new self.Promise((resolve) => {
         this.resolveData = resolve;
@@ -124,9 +127,6 @@ describe('appGame service', function() {
     });
 
     it('should emit "Game.load.dataReady" when data is ready', function() {
-      const ret = this.appGameService
-        .load(this.state, 'is_online', 'is_private', 'id');
-
       expect(this.appActionService.do)
         .not.toHaveBeenCalled();
 
@@ -142,11 +142,19 @@ describe('appGame service', function() {
 
       this.resolveUser();
 
-      return ret.then(() => {
-        expect(this.appActionService.do)
-          .toHaveBeenCalledWith('Game.load.dataReady',
-                                'is_online', 'is_private', 'id');
+      return new self.Promise((resolve) => {
+        self.setTimeout(() => {
+          expect(this.appActionService.do)
+            .toHaveBeenCalledWith('Game.load.dataReady',
+                                  'is_online', 'is_private', 'id');
+          resolve();
+        }, 200);
       });
+    });
+
+    it('should reset game', function() {
+      expect(this.context.game)
+        .toEqual({});
     });
   });
 
@@ -246,6 +254,110 @@ describe('appGame service', function() {
     });
   });
 
+  context('connectionBatchCmd(<msg>)', function() {
+    return this.appGameService
+      .connectionBatchCmd(this.state, { cmds: 'cmds' });
+  }, function() {
+    it('should replay game command', function() {
+      expect(this.gameModel.replayCommandsBatchP)
+        .toHaveBeenCalledWith('cmds', this.state.game);
+    });
+
+    expectGameUpdate('game.replayCommandsBatchP.returnValue');
+
+    context('when command fails', function() {
+      this.gameModel.replayCommandsBatchP
+        .rejectWith('reason');
+    }, function() {
+      expectGameError();
+    });
+  });
+
+  context('connectionChat(<msg>)', function() {
+    return this.appGameService
+      .connectionChat(this.state, { chat: 'chat' });
+  }, function() {
+    it('should append <msg> to game chat', function() {
+      expect(this.context.game.chat)
+        .toEqual(['chat']);
+    });
+  });
+
+  context('connectionReplayCmd(<msg>)', function() {
+    return this.appGameService
+      .connectionReplayCmd(this.state, { cmd: 'cmd' });
+  }, function() {
+    it('should replay cmd', function() {
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Game.command.replay','cmd']);
+    });
+  });
+
+  context('connectionUndoCmd(<msg>)', function() {
+    return this.appGameService
+      .connectionUndoCmd(this.state, { cmd: 'cmd' });
+  }, function() {
+    it('should undo cmd', function() {
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, ['Game.command.undo','cmd']);
+    });
+  });
+
+  context('connectionSendChat(<msg>)', function() {
+    return this.appGameService
+      .connectionSendChat(this.state, 'msg');
+  }, function() {
+    it('should send game chat', function() {
+      expect(this.gameModel.sendChat)
+        .toHaveBeenCalledWith('user', 'msg', this.state.game);
+      expect(this.context.game)
+        .toBe('game.sendChat.returnValue');
+    });
+  });
+
+  context('connectionSetCmds(<msg>)', function() {
+    return this.appGameService
+      .connectionSetCmds(this.state, {
+        where: 'where',
+        cmds: 'cmds'
+      });
+  }, function() {
+    it('should set game.<msg.where> to <msg.cmds>', function() {
+      expect(this.context.game.where)
+        .toEqual('cmds');
+    });
+  });
+
+  context('connectionSetPlayers(<players>)', function() {
+    return this.appGameService
+      .connectionSetPlayers(this.state, { players: 'players' });
+  }, function() {
+    it('should set game.players to <players>', function() {
+      expect(this.context.game.players)
+        .toEqual('players');
+    });
+  });
+
+  context('invitePlayer(<player>)', function() {
+    return this.appGameService
+      .invitePlayer(this.state, 'player');
+  }, function() {
+    beforeEach(function() {
+      this.state.user = { state: { name: 'user' } };
+    });
+
+    it('should send chat msg', function() {
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state, [
+          'User.sendChat', {
+            to: [ 'player' ],
+            msg: 'User has invited you to join a game',
+            link: self.window.location.hash
+          }
+        ]);
+    });
+  });
+
   context('connectionClose()', function() {
     return this.appGameService
       .connectionClose(this.state);
@@ -308,25 +420,6 @@ describe('appGame service', function() {
     });
   });
 
-  xcontext('commandReplayBatch(<cmds>)', function() {
-    return this.appGameService
-      .commandReplayBatch(this.state, 'cmds');
-  }, function() {
-    it('should replay game command', function() {
-      expect(this.gameModel.replayCommandsBatchP)
-        .toHaveBeenCalledWith('cmds', this.state.game);
-    });
-
-    expectGameUpdate('game.replayCommandBatchP.returnValue');
-
-    context('when command fails', function() {
-      this.gameModel.replayCommandBatchP
-        .rejectWith('reason');
-    }, function() {
-      expectGameError();
-    });
-  });
-
   context('commandReplayNext()', function() {
     return this.appGameService
       .commandReplayNext(this.state);
@@ -381,69 +474,6 @@ describe('appGame service', function() {
         .rejectWith('reason');
     }, function() {
       expectGameError();
-    });
-  });
-
-  xcontext('onNewChatMsg(<msg>)', function() {
-    return this.appGameService
-      .onNewChatMsg(this.state, 'event', [{ chat: 'chat' }]);
-  }, function() {
-    beforeEach(function() {
-      this.state.game = {};
-    });
-
-    it('should append <msg> to game chat', function() {
-      expect(this.context.game.chat)
-        .toEqual(['chat']);
-    });
-  });
-
-  xcontext('onSetCmds(<msg>)', function() {
-    return this.appGameService
-      .onSetCmds(this.state, 'event', [{
-        where: 'where',
-        cmds: 'cmds'
-      }]);
-  }, function() {
-    beforeEach(function() {
-      this.state.game = {};
-    });
-
-    it('should set game.<msg.where> to <msg.cmds>', function() {
-      expect(this.context.game.where)
-        .toEqual('cmds');
-    });
-  });
-
-  xcontext('onSetPlayers(<players>)', function() {
-    return this.appGameService
-      .onSetPlayers(this.state, 'event', ['players']);
-  }, function() {
-    beforeEach(function() {
-      this.state.game = {};
-    });
-
-    it('should set game.players to <players>', function() {
-      expect(this.context.game.players)
-        .toEqual('players');
-    });
-  });
-
-  xcontext('onInvitePlayer(<cmd>, <args>)', function() {
-    return this.appGameService
-      .onInvitePlayer(this.state, 'event', 'player');
-  }, function() {
-    beforeEach(function() {
-      this.state.user = { state: { name: 'user' } };
-    });
-
-    it('should send chat msg', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('User.sendChatMsg', {
-          to: [ 'player' ],
-          msg: 'User has invited you to join a game',
-          link: self.window.location.hash
-        });
     });
   });
 

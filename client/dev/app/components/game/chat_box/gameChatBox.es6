@@ -5,10 +5,10 @@
 
   gameChatBoxCtrl.$inject = [
     '$scope',
-    'game',
+    'appGame',
   ];
   function gameChatBoxCtrl($scope,
-                           gameModel) {
+                           appGameService) {
     const vm = this;
     console.log('gameChatBoxCtrl');
 
@@ -18,26 +18,17 @@
 
     function activate() {
       vm.msg = '';
-      $scope.onStateChangeEvent('Game.chat', updateChat, $scope);
-      $scope.onStateChangeEvent('Game.loaded', updateChat, $scope);
-      self.window.requestAnimationFrame(updateChat);
+      $scope.bindCell(updateChat, appGameService.chat, $scope);
     }
-    function updateChat() {
-      vm.chat = R.clone(R.path(['game','chat'], $scope.state));
-      $scope.$digest();
+    function updateChat(chat) {
+      vm.chat = R.clone(chat).slice(-10).reverse();
     }
     function doSendChatMessage() {
       const msg = s.trim(vm.msg);
       if(R.isEmpty(msg)) return;
 
-      R.threadP($scope.state.game)(
-        gameModel.sendChatP$(R.path(['user', 'state', 'name'], $scope.state),
-                             msg),
-        () => {
-          vm.msg = '';
-          $scope.$digest();
-        }
-      );
+      $scope.sendAction('Game.connection.sendChat', msg);
+      vm.msg = '';
     }
   }
 

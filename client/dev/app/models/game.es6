@@ -47,7 +47,7 @@
       replayCommandP: gameReplayCommandP,
       replayCommandsBatchP: gameReplayCommandsBatchP,
       replayNextCommandP: gameReplayNextCommandP,
-      // sendChat: gameSendChat
+      sendChat: gameSendChat
     };
 
     const GAME_PROTO = {
@@ -268,16 +268,16 @@
         );
       }
     }
-    // function gameSendChat(from, msg, game) {
-    //   return gameConnectionModel
-    //     .sendEvent({
-    //       type: 'chat',
-    //       chat: {
-    //         from: from,
-    //         msg: msg
-    //       }
-    //     }, game);
-    // }
+    function gameSendChat(from, msg, game) {
+      return gameConnectionModel
+        .sendEvent({
+          type: 'chat',
+          chat: {
+            from: from,
+            msg: msg
+          }
+        }, game);
+    }
     function gamePlayerName(p, game) {
       return R.pathOr('John Doe', ['players',p,'name'], game);
     }

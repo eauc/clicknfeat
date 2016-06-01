@@ -23,7 +23,7 @@
     vm.currentModeIs = currentModeIs;
     vm.doModeAction = doModeAction;
     vm.doActionButton = doActionButton;
-    // vm.doInvitePlayer = doInvitePlayer;
+    vm.doInvitePlayer = doInvitePlayer;
 
     activate();
 
@@ -65,11 +65,11 @@
       $scope.sendAction('Modes.current.action',
                         action, [{}]);
     }
-    // function doInvitePlayer() {
-    //   if(R.isNil(vm.invite_player)) return;
+    function doInvitePlayer() {
+      if(R.isNil(vm.invite_player)) return;
 
-    //   $scope.stateEvent('Game.invitePlayer', vm.invite_player);
-    // }
+      $scope.sendAction('Game.invitePlayer', vm.invite_player);
+    }
 
     ////////////////////////////////////////////////////
     // function updateGameLosOriginTarget(on) {

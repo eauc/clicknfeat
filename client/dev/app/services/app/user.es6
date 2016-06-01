@@ -26,6 +26,7 @@
       .changes()
       .listen((state) => userModel.saveP({state}));
     const valid = user.map(userModel.isValid);
+    const online = user.map(userModel.isOnline);
     const new_chat = appStateService.state
             .map(R.pipe(
               R.viewOr([], CONNECTION_CHAT_LENS),
@@ -36,7 +37,7 @@
             .filter(([user, chat]) => ( R.exists(chat) &&
                                         !userModel.isChatAuthor(chat, user) ));
     const userService = {
-      user, valid, new_chat,
+      user, online, valid, new_chat,
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,

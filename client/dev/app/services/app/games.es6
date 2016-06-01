@@ -3,6 +3,7 @@
     .factory('appGames', stateGamesModelFactory);
 
   stateGamesModelFactory.$inject = [
+    'appError',
     'behaviours',
     'appAction',
     'appState',
@@ -10,7 +11,8 @@
     'game',
     'games',
   ];
-  function stateGamesModelFactory(behavioursModel,
+  function stateGamesModelFactory(appErrorService,
+                                  behavioursModel,
                                   appActionService,
                                   appStateService,
                                   fileImportService,
@@ -21,7 +23,8 @@
     const local = appStateService.state
             .map(R.viewOr([], LOCAL_GAMES_LENS));
     const load = {
-      local: behavioursModel.signalModel.create()
+      local: behavioursModel.signalModel.create(),
+      online: behavioursModel.signalModel.create()
     };
 
     const gamesService = {
@@ -34,10 +37,9 @@
       localLoadNew: actionGamesLocalLoadNew,
       localLoad: actionGamesLocalLoad,
       localDelete: actionGamesLocalDelete,
-      // onOnlineCreate: stateGamesOnOnlineCreate,
-      // onOnlineLoadFile: stateGamesOnOnlineLoadFile,
-      // loadNewOnlineGameP: loadNewOnlineGameP,
-      // onOnlineLoad: stateGamesOnOnlineLoad
+      onlineCreate: actionGamesOnlineCreate,
+      onlineLoad: actionGamesOnlineLoad,
+      onlineLoadFile: actionGamesOnlineLoadFile
     };
     R.curryService(gamesService);
 
@@ -53,10 +55,10 @@
         .register('Games.local.loadFile'  , actionGamesLocalLoadFile)
         .register('Games.local.loadNew'   , actionGamesLocalLoadNew)
         .register('Games.local.load'      , actionGamesLocalLoad)
-        .register('Games.local.delete'    , actionGamesLocalDelete);
-        // .register('Games.online.create'   , stateGamesModel.onOnlineCreate)
-        // .register('Games.online.load'     , stateGamesModel.onOnlineLoad)
-        // .register('Games.online.loadFile' , stateGamesModel.onOnlineLoadFile);
+        .register('Games.local.delete'    , actionGamesLocalDelete)
+        .register('Games.online.create'   , actionGamesOnlineCreate)
+        .register('Games.online.load'     , actionGamesOnlineLoad)
+        .register('Games.online.loadFile' , actionGamesOnlineLoadFile);
 
       gamesService.ready = gamesModel.loadLocalGamesP()
         .then((games) => {
@@ -108,30 +110,38 @@
         state
       );
     }
-    // function stateGamesOnOnlineCreate(state) {
-    //   return R.thread(state)(
-    //     R.pathOr({}, ['user','state']),
-    //     gameModel.create,
-    //     stateGamesModel.loadNewOnlineGameP
-    //   );
-    // }
-    // function stateGamesOnOnlineLoadFile(_state_, _event_, [file]) {
-    //   return R.threadP(file)(
-    //     fileImportService.readP$('json'),
-    //     stateGamesModel.loadNewOnlineGameP
-    //   ).catch(R.spyAndDiscardError('Failed to open online game file'));
-    // }
-    // function loadNewOnlineGameP(game) {
-    //   return R.threadP(game)(
-    //     gamesModel.newOnlineGameP,
-    //     R.prop('private_stamp'),
-    //     (id) => appStateService
-    //       .emit('Games.online.load', 'private', id)
-    //   );
-    // }
-    // function stateGamesOnOnlineLoad(_state_, _event_, [id]) {
-    //   appStateService
-    //     .emit('Games.online.load', 'public', id);
-    // }
+    function actionGamesOnlineCreate(state) {
+      return R.threadP(state)(
+        R.pathOr({}, ['user','state']),
+        gameModel.create,
+        loadNewOnlineGameP
+      ).catch(appErrorService.emit);
+    }
+    function actionGamesOnlineLoad(state, index) {
+      return R.thread(state)(
+        R.pathOr([], ['user','connection','games']),
+        R.nth(index),
+        R.defaultTo({}),
+        R.propOr('null', 'public_stamp'),
+        (id) => {
+          load.online.send(['public', id]);
+        }
+      );
+    }
+    function actionGamesOnlineLoadFile(_state_, file) {
+      return R.threadP(file)(
+        fileImportService.readP$('json'),
+        loadNewOnlineGameP
+      ).catch(appErrorService.emit);
+    }
+    function loadNewOnlineGameP(game) {
+      return R.threadP(game)(
+        gamesModel.newOnlineGameP,
+        R.prop('private_stamp'),
+        (id) => {
+          load.online.send(['private', id]);
+        }
+      );
+    }
   }
 })();

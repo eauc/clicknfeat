@@ -17,7 +17,7 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
 
 
   $templateCache.put('app/components/game/chat_box/game_chat_box.html',
-    "<div><form ng-submit=game_chat.doSendChatMessage()><div class=input-group><span class=input-group-btn><button type=submit class=\"btn btn-default\">Send</button></span> <input class=form-control placeholder=Msg... ng-model=\"game_chat.msg\"></div></form><div class=chat-list><div class=chat ng-repeat=\"c in game_chat.chat.slice(-10).reverse() track by c.stamp\">{{ c.from }} ➝ {{c.msg}}</div></div></div>"
+    "<div><form ng-submit=game_chat.doSendChatMessage()><div class=input-group><span class=input-group-btn><button type=submit class=\"btn btn-default\">Send</button></span> <input class=form-control placeholder=Msg... ng-model=\"game_chat.msg\"></div></form><div class=chat-list><div class=chat ng-repeat=\"c in game_chat.chat track by c.stamp\">{{ c.from }} ➝ {{c.msg}}</div></div></div>"
   );
 
 
@@ -265,7 +265,7 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
 
 
   $templateCache.put('app/views/game/online/game_online.html',
-    "<div><div class=\"panel panel-info\"><div class=panel-heading><h4 class=panel-title>{{ state.user | user:'description' }} / {{ (state.user | user:'online') ? 'Online' : 'Offline' }}</h4></div><div class=panel-body ng-show=\"state.user | user:'online'\"><click-user-chat></click-user-chat></div></div><div class=\"panel panel-info\" ng-show=\"state.user | user:'online'\"><div class=panel-heading><h4 class=panel-title>Online Games</h4></div><div class=\"game-list panel-body\"><click-games-list games=state.user.connection.games selection=game_online.games_selection current=state.game.public_stamp></click-games-list></div><div class=panel-footer><form><div class=btn-group><button type=button class=\"btn btn-default\" ng-click=game_online.doLoadOnlineGame() ng-disabled=\"game_online.games_selection.list.length <= 0\">Watch Game</button></div></form></div></div></div>"
+    "<div><div class=\"panel panel-info\"><div class=panel-heading><h4 class=panel-title>{{ state.user | user:'description' }} / {{ (state.user | user:'isOnline') ? 'Online' : 'Offline' }}</h4></div><div class=panel-body ng-show=\"state.user | user:'isOnline'\"><click-user-chat></click-user-chat></div></div><div class=\"panel panel-info\" ng-show=\"state.user | userConnection:'active'\"><div class=panel-heading><h4 class=panel-title>Online Games</h4></div><div class=\"game-list panel-body\"><click-games-list games=state.user.connection.games selection=game_online.games_selection current=state.game.public_stamp></click-games-list></div><div class=panel-footer><form><div class=btn-group><button type=button class=\"btn btn-default\" ng-click=game_online.doLoadOnlineGame() ng-disabled=\"game_online.games_selection.list.length <= 0\">Watch Game</button></div></form></div></div></div>"
   );
 
 

@@ -19,20 +19,19 @@
     vm.doOpenLocalGameFile = doOpenLocalGameFile;
     vm.doDeleteLocalGame = doDeleteLocalGame;
 
-    // vm.doCreateOnlineGame = doCreateOnlineGame;
-    // vm.doLoadOnlineGame = doLoadOnlineGame;
-    // vm.doOpenOnlineGameFile = doOpenOnlineGameFile;
+    vm.doCreateOnlineGame = doCreateOnlineGame;
+    vm.doLoadOnlineGame = doLoadOnlineGame;
+    vm.doOpenOnlineGameFile = doOpenOnlineGameFile;
 
     activate();
 
     function activate() {
       vm.local_games_selection = {};
       vm.online_games_selection = {};
-    //   $scope.digestOnStateChangeEvent('Games.local.change', $scope);
-    //   $scope.digestOnStateChangeEvent('Games.online.change', $scope);
       $scope.listenSignal(onGamesLocalLoadSuccess,
                           appGamesService.load.local, $scope);
-    //   $scope.onStateChangeEvent('Games.online.load', onGamesOnlineLoad, $scope);
+      $scope.listenSignal(onGamesOnlineLoadSuccess,
+                          appGamesService.load.online, $scope);
     }
 
     function doUserToggleOnline() {
@@ -74,30 +73,22 @@
       });
     }
 
-    // function doCreateOnlineGame() {
-    //   $scope.stateEvent('Games.online.create');
-    // }
-    // function doLoadOnlineGame() {
-    //   R.thread($scope.state)(
-    //     R.pathOr([], ['user','connection','games']),
-    //     R.nth(vm.online_games_selection.list[0]),
-    //     R.defaultTo({}),
-    //     R.propOr('null', 'public_stamp'),
-    //     (id) => {
-    //       $scope.stateEvent('Games.online.load', id);
-    //     }
-    //   );
-    // }
-    // function doOpenOnlineGameFile(files) {
-    //   $scope.stateEvent('Games.online.loadFile', files[0]);
-    // }
-    // function onGamesOnlineLoad(_event_, [isPrivate, id]) {
-    //   $scope.app.goToState('game.main', {
-    //     online: 'online',
-    //     private: isPrivate,
-    //     id: id
-    //   });
-    //   $scope.$digest();
-    // }
+    function doCreateOnlineGame() {
+      $scope.sendAction('Games.online.create');
+    }
+    function doLoadOnlineGame() {
+      $scope.sendAction('Games.online.load', vm.online_games_selection.list[0]);
+    }
+    function doOpenOnlineGameFile(files) {
+      $scope.sendAction('Games.online.loadFile', files[0]);
+    }
+    function onGamesOnlineLoadSuccess([is_private, id]) {
+      console.warn('load online game success', arguments, id, is_private);
+      $scope.app.goToState('game.main', {
+        online: 'online',
+        private: is_private,
+        id: id
+      });
+    }
   }
 })();

@@ -4,10 +4,12 @@
 
   gameOnlineCtrl.$inject = [
     '$scope',
-    'user',
+    'appGames',
+    'appUser',
   ];
   function gameOnlineCtrl($scope,
-                          userModel) {
+                          appGamesService,
+                          appUserService) {
     const vm = this;
     console.log('init gameOnlineCtrl');
 
@@ -18,35 +20,29 @@
     function activate() {
       vm.games_selection = {};
 
-      $scope.onStateChangeEvent('Games.online.load', onGamesOnlineLoad, $scope);
-      $scope.state.user_ready
-        .then(checkUserOnline);
+      $scope.listenSignal(onGamesOnlineLoadSuccess,
+                          appGamesService.load.online, $scope);
+      appUserService.ready.then(() => {
+        $scope.bindCell(checkUserOnline, appUserService.online, $scope);
+      });
     }
 
-    function checkUserOnline() {
-      if(!userModel.online($scope.state.user)) {
+    function checkUserOnline(is_online) {
+      if(!is_online) {
         $scope.app.goToState('^.main');
       }
     }
 
     function doLoadOnlineGame() {
-      R.thread($scope.state)(
-        R.pathOr([], ['user','connection','games']),
-        R.nth(vm.games_selection.list[0]),
-        R.defaultTo({}),
-        R.propOr('null', 'public_stamp'),
-        (id) => {
-          $scope.stateEvent('Games.online.load', id);
-        }
-      );
+      $scope.sendAction('Games.online.load', vm.games_selection.list[0]);
     }
-    function onGamesOnlineLoad(_event_, isPrivate, id) {
+    function onGamesOnlineLoadSuccess([is_private, id]) {
+      console.warn('load online game success', arguments, id, is_private);
       $scope.app.goToState('game.main', {
         online: 'online',
-        private: isPrivate,
+        private: is_private,
         id: id
       });
-      $scope.$digest();
     }
   }
 })();

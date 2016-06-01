@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.directives').controller('gameChatBoxCtrl', gameChatBoxCtrl).directive('clickGameChatBox', gameChatBoxDirectiveFactory);
 
-  gameChatBoxCtrl.$inject = ['$scope', 'game'];
-  function gameChatBoxCtrl($scope, gameModel) {
+  gameChatBoxCtrl.$inject = ['$scope', 'appGame'];
+  function gameChatBoxCtrl($scope, appGameService) {
     var vm = this;
     console.log('gameChatBoxCtrl');
 
@@ -14,22 +14,17 @@
 
     function activate() {
       vm.msg = '';
-      $scope.onStateChangeEvent('Game.chat', updateChat, $scope);
-      $scope.onStateChangeEvent('Game.loaded', updateChat, $scope);
-      self.window.requestAnimationFrame(updateChat);
+      $scope.bindCell(updateChat, appGameService.chat, $scope);
     }
-    function updateChat() {
-      vm.chat = R.clone(R.path(['game', 'chat'], $scope.state));
-      $scope.$digest();
+    function updateChat(chat) {
+      vm.chat = R.clone(chat).slice(-10).reverse();
     }
     function doSendChatMessage() {
       var msg = s.trim(vm.msg);
       if (R.isEmpty(msg)) return;
 
-      R.threadP($scope.state.game)(gameModel.sendChatP$(R.path(['user', 'state', 'name'], $scope.state), msg), function () {
-        vm.msg = '';
-        $scope.$digest();
-      });
+      $scope.sendAction('Game.connection.sendChat', msg);
+      vm.msg = '';
     }
   }
 

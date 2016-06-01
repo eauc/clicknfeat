@@ -3,18 +3,18 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         {{ state.user | user:'description' }} /
-        {{ (state.user | user:'online') ? 'Online' : 'Offline' }}
-        <!-- ( {{ user.state.stamp }} ) -->
+        {{ (state.user | user:'isOnline') ? 'Online' : 'Offline' }}
+        <!-- ( {{ state.user.state.stamp }} ) -->
       </h4>
     </div>
     <div class="panel-body"
-         ng-show="state.user | user:'online'">
+         ng-show="state.user | user:'isOnline'">
       <click-user-chat>
       </click-user-chat>
     </div>
   </div>
   <div class="panel panel-info"
-       ng-show="state.user | user:'online'">
+       ng-show="state.user | userConnection:'active'">
     <div class="panel-heading">
       <h4 class="panel-title">Online Games</h4>
     </div>

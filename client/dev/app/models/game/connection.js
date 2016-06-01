@@ -6,6 +6,8 @@
   gameConnectionModelFactory.$inject = ['websocket', 'appState'];
   function gameConnectionModelFactory(websocketModel, appStateService) {
     var SOCKET_LENS = R.lensPath(['connection', 'state', 'socket']);
+    var COMMANDS_LOG_LENS = R.lensProp('commands_log');
+    var UNDO_LOG_LENS = R.lensProp('undo_log');
 
     var gameConnectionModel = {
       create: gameConnectionCreate,
@@ -62,16 +64,16 @@
       return R.thread(game)(R.view(SOCKET_LENS), R.exists);
     }
     function gameConnectionSendReplayCommand(command, game) {
-      return R.threadP(game)(gameConnectionModel.sendEvent$({
+      return R.thread(game)(gameConnectionModel.sendEvent$({
         type: 'replayCmd',
         cmd: command
-      }), R.over(R.lensProp('commands_log'), R.compose(R.append(command), R.defaultTo([]))));
+      }), R.over(COMMANDS_LOG_LENS, R.compose(R.append(command), R.defaultTo([]))));
     }
     function gameConnectionSendUndoCommand(command, game) {
       return R.thread(game)(gameConnectionModel.sendEvent$({
         type: 'undoCmd',
         cmd: command
-      }), R.over(R.lensProp('undo_log'), R.compose(R.append(command), R.defaultTo([]))));
+      }), R.over(UNDO_LOG_LENS, R.compose(R.append(command), R.defaultTo([]))));
     }
     function gameConnectionSendEvent(event, game) {
       return R.thread(game)(R.ifElse(gameConnectionModel.active, function () {
@@ -80,27 +82,6 @@
         return appStateService.emit('Error', 'gameConnection', 'sendEvent/not active');
       }), R.always(game));
     }
-    // function closeHandler() {
-    //   appStateService.reduce('Game.connection.close');
-    // }
-    // function replayCmdHandler(msg) {
-    //   appStateService.reduce('Game.command.replay', msg.cmd);
-    // }
-    // function undoCmdHandler(msg) {
-    //   appStateService.reduce('Game.command.undo', msg.cmd);
-    // }
-    // function cmdBatchHandler(msg) {
-    //   appStateService.reduce('Game.command.replayBatch', msg.cmds);
-    // }
-    // function chatHandler(msg) {
-    //   appStateService.reduce('Game.newChatMsg', msg);
-    // }
-    // function setCmdsHandler(msg) {
-    //   appStateService.reduce('Game.setCmds', msg);
-    // }
-    // function playersHandler(msg) {
-    //   appStateService.reduce('Game.setPlayers', msg.players);
-    // }
   }
 })();
 //# sourceMappingURL=connection.js.map

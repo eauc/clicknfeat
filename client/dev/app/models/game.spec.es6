@@ -564,7 +564,7 @@ describe('game model', function() {
     });
   });
 
-  xcontext('sendChat(<from>, <msg>)', function() {
+  context('sendChat(<from>, <msg>)', function() {
     return this.gameModel
       .sendChat(this.from, this.msg, 'game');
   }, function() {

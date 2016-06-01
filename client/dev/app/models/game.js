@@ -24,10 +24,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       undoLastCommandP: gameUndoLastCommandP,
       replayCommandP: gameReplayCommandP,
       replayCommandsBatchP: gameReplayCommandsBatchP,
-      replayNextCommandP: gameReplayNextCommandP
+      replayNextCommandP: gameReplayNextCommandP,
+      sendChat: gameSendChat
     };
 
-    // sendChat: gameSendChat
     var GAME_PROTO = {
       toJSON: function gameToJson() {
         return gamePickForJson(this);
@@ -182,16 +182,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return R.threadP(game)(R.over(UNDO_LENS, R.init), R.ifElse(gameConnectionModel.active, gameConnectionModel.sendReplayCommand$(command), R.over(COMMANDS_LENS, R.append(command))));
       }
     }
-    // function gameSendChat(from, msg, game) {
-    //   return gameConnectionModel
-    //     .sendEvent({
-    //       type: 'chat',
-    //       chat: {
-    //         from: from,
-    //         msg: msg
-    //       }
-    //     }, game);
-    // }
+    function gameSendChat(from, msg, game) {
+      return gameConnectionModel.sendEvent({
+        type: 'chat',
+        chat: {
+          from: from,
+          msg: msg
+        }
+      }, game);
+    }
     function gamePlayerName(p, game) {
       return R.pathOr('John Doe', ['players', p, 'name'], game);
     }

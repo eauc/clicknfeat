@@ -17,6 +17,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return userModel.saveP({ state: state });
     });
     var valid = user.map(userModel.isValid);
+    var online = user.map(userModel.isOnline);
     var new_chat = appStateService.state.map(R.pipe(R.viewOr([], CONNECTION_CHAT_LENS), R.last)).changes().snapshot(function (user, chat) {
       return [user, chat];
     }, user).filter(function (_ref) {
@@ -27,7 +28,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return R.exists(chat) && !userModel.isChatAuthor(chat, user);
     });
     var userService = {
-      user: user, valid: valid, new_chat: new_chat,
+      user: user, online: online, valid: valid, new_chat: new_chat,
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,

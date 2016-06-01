@@ -127,4 +127,73 @@ describe('appGames service', function() {
         .toBe('games.removeLocalGame.returnValue');
     });
   });
+
+  context('onlineCreate()', function() {
+    return this.appGamesService
+      .onlineCreate({ user: { state: 'user_state' } });
+  }, function() {
+    beforeEach(function() {
+      spyOn(this.appGamesService.load.online, 'send');
+      this.gamesModel.newOnlineGameP
+        .and.returnValue({ private_stamp: 'private_stamp' });
+    });
+
+    it('should create new game', function() {
+      expect(this.gameModel.create)
+        .toHaveBeenCalledWith('user_state');
+    });
+
+    it('should upload new game online', function() {
+      expect(this.gamesModel.newOnlineGameP)
+        .toHaveBeenCalledWith('game.create.returnValue');
+    });
+
+    it('should send load online signal', function() {
+      expect(this.appGamesService.load.online.send)
+        .toHaveBeenCalledWith(['private','private_stamp']);
+    });
+  });
+
+  context('onlineLoad(<index>)', function() {
+    return this.appGamesService
+      .onlineLoad({ user: { connection: { games: [
+        { public_stamp: 'game1' },
+        { public_stamp: 'game2' }
+      ] } } }, 1);
+  }, function() {
+    beforeEach(function() {
+      spyOn(this.appGamesService.load.online, 'send');
+    });
+
+    it('should send load online signal', function() {
+      expect(this.appGamesService.load.online.send)
+        .toHaveBeenCalledWith(['public','game2']);
+    });
+  });
+
+  context('onlineLoadFile(<file>)', function() {
+    return this.appGamesService
+      .onlineLoadFile('state', 'file');
+  }, function() {
+    beforeEach(function() {
+      spyOn(this.appGamesService.load.online, 'send');
+      this.gamesModel.newOnlineGameP
+        .and.returnValue({ private_stamp: 'private_stamp' });
+    });
+
+    it('should read file data', function() {
+      expect(this.fileImportService.readP)
+        .toHaveBeenCalledWith('json', 'file');
+    });
+
+    it('should upload new game online', function() {
+      expect(this.gamesModel.newOnlineGameP)
+        .toHaveBeenCalledWith('fileImport.readP.returnValue');
+    });
+
+    it('should send load online signal', function() {
+      expect(this.appGamesService.load.online.send)
+        .toHaveBeenCalledWith(['private','private_stamp']);
+    });
+  });
 });

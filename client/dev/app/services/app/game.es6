@@ -58,6 +58,7 @@
     const GAME_LENS = R.lensProp('game');
     const USER_NAME_LENS = R.lensPath(['user','state','name']);
     const CREATE_LENS = R.lensProp('create');
+    const CHAT_LENS = R.lensProp('chat');
     const DRAG_BOX_LENS = R.lensPath(['view','drag_box']);
     const FLIP_MAP_LENS = R.lensPath(['view','flip_map']);
     const MOVE_MAP_LENS = R.lensPath(['view','move_map']);
@@ -84,6 +85,8 @@
     const loading = behavioursModel.signalModel.create();
     const create = appStateService.state
             .map(R.view(CREATE_LENS));
+
+    const chat = game.map(R.viewOr([], CHAT_LENS));
 
     const view = behavioursModel.signalModel.create();
     const scroll_left = view.filter(R.equals('scrollLeft'));
@@ -206,7 +209,7 @@
     const model_selection_export_previous = model_selection_export.delay({});
 
     const appGameService = {
-      game, create, loading,
+      game, chat, create, loading,
       export: { board: board_export,
                 game: game_export,
                 models: model_selection_export
@@ -251,6 +254,14 @@
       loadDataReady: actionGameLoadDataReady,
       loadDataLoaded: actionGameLoadDataLoaded,
       loadGameLoaded: actionGameLoadGameLoaded,
+      connectionBatchCmd: actionGameConnectionBatchCmd,
+      connectionChat: actionGameConnectionChat,
+      connectionReplayCmd: actionGameConnectionReplayCmd,
+      connectionSendChat: actionGameConnectionSendChat,
+      connectionSetCmds: actionGameConnectionSetCmds,
+      connectionSetPlayers: actionGameConnectionSetPlayers,
+      connectionUndoCmd: actionGameConnectionUndoCmd,
+      invitePlayer: actionGameInvitePlayer,
       connectionClose: actionGameConnectionClose,
       commandExecute: actionGameCommandExecute,
       commandUndo: actionGameCommandUndo,
@@ -287,15 +298,8 @@
       terrainCreate: actionGameTerrainCreate,
       terrainsSet: actionGameTerrainsSet,
       terrainsReset: actionGameTerrainsReset,
-      // onCommandReplayBatch: stateGameOnCommandReplayBatch,
-      // onSetCmds: stateGameOnSetCmds,
-      // onSetPlayers: stateGameOnSetPlayers,
-      // onNewChatMsg: stateGameOnNewChatMsg,
-      // onUiStateFlip: stateGameOnUiStateFlip,
-      // onInvitePlayer: stateGameOnInvitePlayer,
       // onScenarioRefresh: stateGameOnScenarioRefresh,
-      // closeOsd: stateGameCloseOsd
-      checkMode: appGameCheckMode,
+      checkMode: appGameCheckMode
     };
     R.curryService(appGameService);
 
@@ -310,12 +314,20 @@
         .register('Game.load.dataReady'        , actionGameLoadDataReady)
         .register('Game.load.dataLoaded'       , actionGameLoadDataLoaded)
         .register('Game.load.gameLoaded'       , actionGameLoadGameLoaded)
+        .register('Game.connection.batchCmd'   , actionGameConnectionBatchCmd)
+        .register('Game.connection.chat'       , actionGameConnectionChat)
+        .register('Game.connection.replayCmd'  , actionGameConnectionReplayCmd)
+        .register('Game.connection.sendChat'   , actionGameConnectionSendChat)
+        .register('Game.connection.setCmds'    , actionGameConnectionSetCmds)
+        .register('Game.connection.setPlayers' , actionGameConnectionSetPlayers)
+        .register('Game.connection.undoCmd'    , actionGameConnectionUndoCmd)
+        .register('Game.invitePlayer'          , actionGameInvitePlayer)
         .register('Game.connection.close'      , actionGameConnectionClose)
         .register('Game.command.execute'       , actionGameCommandExecute)
-        .register('Game.command.undo'          , actionGameCommandUndo)
         .register('Game.command.replay'        , actionGameCommandReplay)
-        .register('Game.command.undoLast'      , actionGameCommandUndoLast)
         .register('Game.command.replayNext'    , actionGameCommandReplayNext)
+        .register('Game.command.undo'          , actionGameCommandUndo)
+        .register('Game.command.undoLast'      , actionGameCommandUndoLast)
         .register('Game.view.scrollLeft'       , actionGameViewScrollLeft)
         .register('Game.view.scrollRight'      , actionGameViewScrollRight)
         .register('Game.view.scrollUp'         , actionGameViewScrollUp)
@@ -345,15 +357,7 @@
                   actionGameTemplatesSetDeviationMax)
         .register('Game.terrain.create'        , actionGameTerrainCreate)
         .register('Game.terrains.set'          , actionGameTerrainsSet)
-        .register('Game.terrains.reset'        , actionGameTerrainsReset)
-        // .register('Game.command.replayBatch' , actionGameCommandReplayBatch)
-        // .register('Game.invitePlayer'        , actionGameInvitePlayer)
-        // .register('Game.setCmds'             , actionGameSetCmds)
-        // .register('Game.setPlayers'          , actionGameSetPlayers)
-        // .register('Game.newChatMsg'          , actionGameNewChatMsg)
-        // .register('Game.scenario.generateObjectives',
-        //             actionGameScenarioGenerateObjectives)
-      ;
+        .register('Game.terrains.reset'        , actionGameTerrainsReset);
     }
     function gameExportCurrent(previous, game) {
       console.warn('Export Game', arguments);
@@ -382,11 +386,16 @@
         gameSaveCurrent
       );
     }
-    function actionGameLoad(_state_, is_online, is_private, id) {
-      return waitForDataReady().then(() => {
+    function actionGameLoad(state, is_online, is_private, id) {
+      waitForDataReady().then(() => {
         return appActionService
           .do('Game.load.dataReady', is_online, is_private, id);
       });
+      return R.set(
+        GAME_LENS,
+        {},
+        state
+      );
 
       function waitForDataReady() {
         return R.allP([
@@ -405,7 +414,7 @@
         ),
         (data) => appActionService
           .do('Game.load.dataLoaded', data)
-      );
+      ).catch(appErrorService.emit);
     }
     function actionGameLoadDataLoaded(state, data) {
       loading.send(true);
@@ -413,7 +422,7 @@
         gameModel.loadP,
         (game) => appActionService
           .do('Game.load.gameLoaded', game)
-      );
+      ).catch(appErrorService.emit);
       return R.thread(state)(
         appModesService.reset,
         gameSaveCurrent
@@ -429,7 +438,64 @@
         ),
         (game) => appActionService
           .do('Game.set', game)
+      ).catch(appErrorService.emit);
+    }
+    function actionGameConnectionBatchCmd(state, msg) {
+      return R.threadP(state)(
+        R.view(GAME_LENS),
+        gameModel.replayCommandsBatchP$(msg.cmds),
+        (game) => {
+          appActionService
+            .do('Game.set', game);
+        }
+      ).catch(appErrorService.emit);
+    }
+    function actionGameConnectionChat(state, msg) {
+      return R.over(
+        GAME_LENS,
+        R.over(CHAT_LENS, R.compose(R.append(msg.chat), R.defaultTo([]))),
+        state
       );
+    }
+    function actionGameConnectionReplayCmd(state, msg) {
+      return appStateService
+        .onAction(state, ['Game.command.replay', msg.cmd]);
+    }
+    function actionGameConnectionSendChat(state, msg) {
+      const user_name = R.viewOr('Unknown', USER_NAME_LENS, state);
+      return R.over(
+        GAME_LENS,
+        gameModel.sendChat$(user_name, msg),
+        state
+      );
+    }
+    function actionGameConnectionSetCmds(state, set) {
+      return R.over(
+        GAME_LENS,
+        R.assoc(set.where, set.cmds),
+        state
+      );
+    }
+    function actionGameConnectionSetPlayers(state, msg) {
+      return R.over(
+        GAME_LENS,
+        R.assoc('players', msg.players),
+        state
+      );
+    }
+    function actionGameConnectionUndoCmd(state, msg) {
+      return appStateService
+        .onAction(state, ['Game.command.undo', msg.cmd]);
+    }
+    function actionGameInvitePlayer(state, to) {
+      const user_name = s.capitalize(R.viewOr('Unknown', USER_NAME_LENS, state));
+      const msg = `${user_name} has invited you to join a game`;
+      const link = self.window.location.hash;
+      console.warn('Invite player', to, msg, link);
+
+      return appStateService
+        .onAction(state, [ 'User.sendChat',
+                           { to: [to], msg: msg, link: link } ]);
     }
     function actionGameConnectionClose(state) {
       return R.thread(state)(
@@ -682,46 +748,6 @@
                            ])
       );
     }
-    // function stateGameOnCommandReplayBatch(state, _event_, [cmds]) {
-    //   return R.threadP(state.game)(
-    //     gameModel.replayCommandsBatchP$(cmds),
-    //     (game) => appStateService.reduce('Game.set', game)
-    //   ).catch((error) => appStateService.emit('Game.error', error));
-    // }
-    // function stateGameOnSetCmds(state, _event_, [set]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.assoc(set.where, set.cmds),
-    //     state
-    //   );
-    // }
-    // function stateGameOnSetPlayers(state, _event_, [players]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.assoc('players', players),
-    //     state
-    //   );
-    // }
-    // function stateGameOnNewChatMsg(state, _event_, [msg]) {
-    //   return R.over(
-    //     GAME_LENS,
-    //     R.over(R.lensProp('chat'),
-    //            R.compose(R.append(msg.chat), R.defaultTo([]))),
-    //     state
-    //   );
-    // }
-    // function stateGameOnInvitePlayer(state, _event_, to) {
-    //   const msg = [
-    //     s.capitalize(R.pathOr('Unknown', ['user','state','name'], state)),
-    //     'has invited you to join a game'
-    //   ].join(' ');
-    //   const link = self.window.location.hash;
-    //   console.log('Invite player', to, msg, link);
-
-    //   appStateService
-    //     .chainReduce('User.sendChatMsg',
-    //                  { to: [to], msg: msg, link: link });
-    // }
     // // function stateGameOnModelSelectionLocalChange(state, _event_) {
     // //   // console.warn('onModelSelectionLocalChange', arguments);
     // //   const local_model_selection = gameModelSelectionModel
