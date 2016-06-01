@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('gameLos', gameLosModelFactory);
 
-  gameLosModelFactory.$inject = ['gameSegment', 'circle', 'gameFactions', 'gameModels'];
-  function gameLosModelFactory(gameSegmentModel, circleModel, gameFactionsModel, gameModelsModel) {
+  gameLosModelFactory.$inject = ['gameSegment', 'circle', 'gameModels'];
+  function gameLosModelFactory(gameSegmentModel, circleModel, gameModelsModel) {
     var base = gameSegmentModel('los');
     var gameLosModel = Object.create(base);
     R.deepExtend(gameLosModel, {
@@ -40,7 +40,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function gameLosToggleDisplay(los) {
       return R.thread(los)(base.toggleDisplay, setOriginTarget$({}));
     }
-    function gameLosSetRemote(start, end, _state_, los) {
+    function gameLosSetRemote(start, end, _models_, los) {
       return R.thread(los)(base.setRemote$(start, end), setOriginTarget$({}));
     }
     function gameLosResetRemote(remote, los) {
@@ -66,7 +66,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         display: display
       }, los);
     }
-    function gameLosSetOriginResetTarget(origin_model, _state_, los) {
+    function gameLosSetOriginResetTarget(origin_model, _models_, los) {
       var origin = origin_model.state.stamp;
       return setOriginTarget({ origin: origin,
         target: null,
@@ -98,8 +98,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var ignore = R.pathOr([], ['remote', 'ignore'], los);
       var is_ignored = R.find(R.equals(model.state.stamp), ignore);
       ignore = is_ignored ? R.reject(R.equals(model.state.stamp), ignore) : R.append(model.state.stamp, ignore);
-      console.log('toggleIgnoreModel', ignore);
-
       return setOriginTarget({ ignore: ignore }, los);
     }
     function gameLosUpdateOriginTarget(los) {
@@ -122,7 +120,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
     function gameLosRender(_ref, los) {
       var in_los_mode = _ref.in_los_mode;
-      var factions = _ref.factions;
       var models = _ref.models;
 
       var local = {
@@ -143,35 +140,31 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       if (R.exists(los.remote.origin) && (los.remote.display || in_los_mode)) {
         var origin_model = gameModelsModel.findStamp(los.remote.origin, models);
         if (R.exists(origin_model)) {
-          var origin_info = gameFactionsModel.getModelInfo(origin_model.state.info, factions);
-          if (R.exists(origin_info)) {
-            origin = {
-              cx: origin_model.state.x,
-              cy: origin_model.state.y,
-              radius: origin_info.base_radius
-            };
-          }
+          var origin_info = origin_model.info;
+          origin = {
+            cx: origin_model.state.x,
+            cy: origin_model.state.y,
+            radius: origin_info.base_radius
+          };
         }
       }
       var target = undefined;
       if (R.exists(los.remote.target) && (los.remote.display || in_los_mode)) {
         var target_model = gameModelsModel.findStamp(los.remote.target, models);
         if (R.exists(target_model)) {
-          var target_info = gameFactionsModel.getModelInfo(target_model.state.info, factions);
-          if (R.exists(target_info)) {
-            target = {
-              cx: target_model.state.x,
-              cy: target_model.state.y,
-              radius: target_info.base_radius
-            };
-          }
+          var target_info = target_model.info;
+          target = {
+            cx: target_model.state.x,
+            cy: target_model.state.y,
+            radius: target_info.base_radius
+          };
         }
       }
       return {
         local: local, remote: remote, origin: origin, target: target
       };
     }
-    function gameLosRenderEnveloppe(state, los) {
+    function gameLosRenderEnveloppe(models, los) {
       los.computed = {
         envelope: null,
         darkness: [],
@@ -179,7 +172,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       };
       var display = los.remote.display && los.remote.origin && los.remote.target;
       if (display) {
-        updateEnveloppes(state, los);
+        updateEnveloppes(models, los);
       }
 
       var _R$pathOr = R.pathOr({}, ['computed', 'envelope'], los);
@@ -283,32 +276,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         display: display, enveloppe: enveloppe, shadow: shadow, darkness: darkness
       };
     }
-    function updateEnveloppes(state, los) {
+    function updateEnveloppes(models, los) {
       R.thread()(function () {
-        return getOriginTargetInfo(state, los.remote.origin, los.remote.target);
+        return getOriginTargetInfo(models, los.remote.origin, los.remote.target);
       }, function (_ref2) {
-        var _ref3 = _slicedToArray(_ref2, 4);
+        var _ref3 = _slicedToArray(_ref2, 2);
 
-        var origin_state = _ref3[0];
-        var origin_info = _ref3[1];
-        var target_state = _ref3[2];
-        var target_info = _ref3[3];
+        var origin = _ref3[0];
+        var target = _ref3[1];
 
         var origin_circle = {
-          x: origin_state.x,
-          y: origin_state.y,
-          radius: origin_info.base_radius
+          x: origin.state.x,
+          y: origin.state.y,
+          radius: origin.info.base_radius
         };
         var target_circle = {
-          x: target_state.x,
-          y: target_state.y,
-          radius: target_info.base_radius
+          x: target.state.x,
+          y: target.state.y,
+          radius: target.info.base_radius
         };
         var envelope = circleModel.envelopeTo(target_circle, origin_circle);
         los.computed.envelope = envelope;
 
         return R.thread()(function () {
-          return computeIntervenings(state, los.remote.ignore, los.remote.target, target_circle, los.remote.origin, envelope);
+          return computeIntervenings(models, los.remote.ignore, los.remote.target, target_circle, los.remote.origin, envelope);
         }, function (intervenings) {
           return [origin_circle, intervenings];
         });
@@ -325,35 +316,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         los.computed.shadow = shadow;
       });
     }
-    function getOriginTargetInfo(state, origin, target) {
+    function getOriginTargetInfo(models, origin, target) {
       return R.thread()(function () {
-        return [gameModelsModel.findStamp(origin, state.game.models), gameModelsModel.findStamp(target, state.game.models)];
-      }, function (_ref6) {
-        var _ref7 = _slicedToArray(_ref6, 2);
-
-        var origin_state = _ref7[0].state;
-        var target_state = _ref7[1].state;
-
-        return R.thread()(function () {
-          return [gameFactionsModel.getModelInfo(origin_state.info, state.factions), gameFactionsModel.getModelInfo(target_state.info, state.factions)];
-        }, function (_ref8) {
-          var _ref9 = _slicedToArray(_ref8, 2);
-
-          var origin_info = _ref9[0];
-          var target_info = _ref9[1];
-          return [origin_state, origin_info, target_state, target_info];
-        });
+        return [gameModelsModel.findStamp(origin, models), gameModelsModel.findStamp(target, models)];
       });
     }
-    function computeIntervenings(state, ignore, target, target_circle, origin, envelope) {
-      return R.thread(state.game.models)(gameModelsModel.all, R.map(getModelCircle), R.reject(circleIsNotIntervening), R.filter(circleModel.isInEnvelope$(envelope)));
+    function computeIntervenings(models, ignore, target, target_circle, origin, envelope) {
+      return R.thread(models)(gameModelsModel.all, R.map(getModelCircle), R.reject(circleIsNotIntervening), R.filter(circleModel.isInEnvelope$(envelope)));
 
       function getModelCircle(model) {
-        return R.thread()(function () {
-          return gameFactionsModel.getModelInfo(model.state.info, state.factions);
-        }, function (info) {
-          return R.assoc('radius', info.base_radius, model.state);
-        });
+        return R.assoc('radius', model.info.base_radius, model.state);
       }
       function circleIsNotIntervening(circle) {
         return target === circle.stamp || origin === circle.stamp || target_circle.radius > circle.radius || R.find(R.equals(circle.stamp), ignore);

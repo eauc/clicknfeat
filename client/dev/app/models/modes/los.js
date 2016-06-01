@@ -18,14 +18,14 @@
 
     return los_mode;
 
-    function losSetOriginModel(_state_, event) {
-      return appStateService.chainReduce('Game.command.execute', 'setLos', ['setOrigin', [event['click#'].target]]);
+    function losSetOriginModel(state, event) {
+      return appStateService.onAction(state, ['Game.command.execute', 'setLos', ['setOrigin', [event['click#'].target]]]);
     }
-    function losSetTargetModel(_state_, event) {
-      return appStateService.chainReduce('Game.command.execute', 'setLos', ['setTarget', [event['click#'].target]]);
+    function losSetTargetModel(state, event) {
+      return appStateService.onAction(state, ['Game.command.execute', 'setLos', ['setTarget', [event['click#'].target]]]);
     }
-    function losToggleIgnoreModel(_state_, event) {
-      return appStateService.chainReduce('Game.command.execute', 'setLos', ['toggleIgnoreModel', [event['click#'].target]]);
+    function losToggleIgnoreModel(state, event) {
+      return appStateService.onAction(state, ['Game.command.execute', 'setLos', ['toggleIgnoreModel', [event['click#'].target]]]);
     }
   }
 })();

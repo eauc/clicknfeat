@@ -1,17 +1,10 @@
-xdescribe('losMode model', function() {
+describe('losMode model', function() {
   beforeEach(inject([ 'losMode', function(losMode) {
     this.losModeService = losMode;
 
     this.appStateService = spyOnService('appState');
-    this.gameLosService = spyOnService('gameLos');
-    this.gameModelsService = spyOnService('gameModels');
-    this.gameModelSelectionService = spyOnService('gameModelSelection');
 
-    this.game = { los: 'los',
-                  models: 'models',
-                  model_selection: 'selection'
-                };
-    this.state = { game: this.game };
+    this.state = 'state';
   }]));
 
   context('when user sets los origin', function() {
@@ -24,11 +17,13 @@ xdescribe('losMode model', function() {
     });
 
     it('should set los origin model', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setLos', [
-                                'setOrigin',
-                                [this.target]
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state,
+                              [ 'Game.command.execute',
+                                'setLos', [
+                                  'setOrigin',
+                                  [this.target]
+                                ]
                               ]);
     });
   });
@@ -43,11 +38,13 @@ xdescribe('losMode model', function() {
     });
 
     it('should set los target model', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setLos', [
-                                'setTarget',
-                                [this.target]
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state,
+                              [ 'Game.command.execute',
+                                'setLos', [
+                                  'setTarget',
+                                  [this.target]
+                                ]
                               ]);
     });
   });
@@ -62,11 +59,13 @@ xdescribe('losMode model', function() {
     });
 
     it('should toggle ignore model', function() {
-      expect(this.appStateService.chainReduce)
-        .toHaveBeenCalledWith('Game.command.execute',
-                              'setLos', [
-                                'toggleIgnoreModel',
-                                [this.target]
+      expect(this.appStateService.onAction)
+        .toHaveBeenCalledWith(this.state,
+                              [ 'Game.command.execute',
+                                'setLos', [
+                                  'toggleIgnoreModel',
+                                  [this.target]
+                                ]
                               ]);
     });
   });

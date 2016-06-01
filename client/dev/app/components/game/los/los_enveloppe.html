@@ -1,0 +1,15 @@
+<g ng-show="render.display">
+  <polygon class="los-enveloppe"
+           ng-attr-points="{{render.enveloppe}}">
+  </polygon>
+  <polygon ng-repeat="shadow in render.shadow"
+           class="los-shadow"
+           style="clip-path: url(#los-clip);"
+           ng-attr-points="{{shadow}}">
+  </polygon>
+  <polygon ng-repeat="darkness in render.darkness"
+           class="los-darkness"
+           style="clip-path: url(#los-clip);"
+           ng-attr-points="{{darkness}}">
+  </polygon>
+</g>

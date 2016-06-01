@@ -5,12 +5,10 @@
   gameLosModelFactory.$inject = [
     'gameSegment',
     'circle',
-    'gameFactions',
     'gameModels',
   ];
   function gameLosModelFactory(gameSegmentModel,
                                circleModel,
-                               gameFactionsModel,
                                gameModelsModel) {
     const base = gameSegmentModel('los');
     const gameLosModel = Object.create(base);
@@ -48,7 +46,7 @@
         setOriginTarget$({})
       );
     }
-    function gameLosSetRemote(start, end, _state_, los) {
+    function gameLosSetRemote(start, end, _models_, los) {
       return R.thread(los)(
         base.setRemote$(start, end),
         setOriginTarget$({})
@@ -80,7 +78,7 @@
                                display: display
                              }, los);
     }
-    function gameLosSetOriginResetTarget(origin_model, _state_, los) {
+    function gameLosSetOriginResetTarget(origin_model, _models_, los) {
       const origin = origin_model.state.stamp;
       return setOriginTarget({ origin: origin,
                                target: null,
@@ -116,8 +114,6 @@
                  ? R.reject(R.equals(model.state.stamp), ignore)
                  : R.append(model.state.stamp, ignore)
                );
-      console.log('toggleIgnoreModel', ignore);
-
       return setOriginTarget({ ignore: ignore }, los);
     }
     function gameLosUpdateOriginTarget(los) {
@@ -142,7 +138,7 @@
       return los;
     }
     function gameLosRender({ in_los_mode,
-                             factions, models }, los) {
+                             models }, los) {
       const local = {
         show: los.local.display,
         x1: los.local.start.x,
@@ -163,15 +159,12 @@
         const origin_model = gameModelsModel
                 .findStamp(los.remote.origin, models);
         if(R.exists(origin_model)) {
-          const origin_info = gameFactionsModel
-                  .getModelInfo(origin_model.state.info, factions);
-          if(R.exists(origin_info)) {
-            origin = {
-              cx: origin_model.state.x,
-              cy: origin_model.state.y,
-              radius: origin_info.base_radius
-            };
-          }
+          const origin_info = origin_model.info;
+          origin = {
+            cx: origin_model.state.x,
+            cy: origin_model.state.y,
+            radius: origin_info.base_radius
+          };
         }
       }
       let target;
@@ -180,22 +173,19 @@
         const target_model = gameModelsModel
                 .findStamp(los.remote.target, models);
         if(R.exists(target_model)) {
-          const target_info = gameFactionsModel
-                  .getModelInfo(target_model.state.info, factions);
-          if(R.exists(target_info)) {
-            target = {
-              cx: target_model.state.x,
-              cy: target_model.state.y,
-              radius: target_info.base_radius
-            };
-          }
+          const target_info = target_model.info;
+          target = {
+            cx: target_model.state.x,
+            cy: target_model.state.y,
+            radius: target_info.base_radius
+          };
         }
       }
       return {
         local, remote, origin, target
       };
     }
-    function gameLosRenderEnveloppe(state, los) {
+    function gameLosRenderEnveloppe(models, los) {
       los.computed = {
         envelope: null,
         darkness: [],
@@ -206,7 +196,7 @@
                         los.remote.target
                       );
       if(display) {
-        updateEnveloppes(state, los);
+        updateEnveloppes(models, los);
       }
       const {
         left:  { start: { x: x1 = 0, y: y1 = 0 } = {},
@@ -259,27 +249,27 @@
         display, enveloppe, shadow, darkness
       };
     }
-    function updateEnveloppes(state, los) {
+    function updateEnveloppes(models, los) {
       R.thread()(
-        () => getOriginTargetInfo(state,
+        () => getOriginTargetInfo(models,
                                   los.remote.origin,
                                   los.remote.target),
-        ([origin_state, origin_info, target_state, target_info]) => {
+        ([origin, target]) => {
           const origin_circle = {
-            x: origin_state.x,
-            y: origin_state.y,
-            radius: origin_info.base_radius
+            x: origin.state.x,
+            y: origin.state.y,
+            radius: origin.info.base_radius
           };
           const target_circle = {
-            x: target_state.x,
-            y: target_state.y,
-            radius: target_info.base_radius
+            x: target.state.x,
+            y: target.state.y,
+            radius: target.info.base_radius
           };
           const envelope = circleModel.envelopeTo(target_circle, origin_circle);
           los.computed.envelope = envelope;
 
           return R.thread()(
-            () => computeIntervenings(state, los.remote.ignore,
+            () => computeIntervenings(models, los.remote.ignore,
                                       los.remote.target, target_circle,
                                       los.remote.origin, envelope),
             (intervenings) => [ origin_circle, intervenings ]
@@ -294,30 +284,18 @@
         }
       );
     }
-    function getOriginTargetInfo(state, origin, target) {
+    function getOriginTargetInfo(models, origin, target) {
       return R.thread()(
         () => [
-          gameModelsModel.findStamp(origin, state.game.models),
-          gameModelsModel.findStamp(target, state.game.models),
-        ],
-        ([{ state: origin_state }, { state: target_state }]) => {
-          return R.thread()(
-            () => [
-              gameFactionsModel.getModelInfo(origin_state.info, state.factions),
-              gameFactionsModel.getModelInfo(target_state.info, state.factions),
-            ],
-            ([origin_info, target_info]) => [
-              origin_state, origin_info,
-              target_state, target_info,
-            ]
-          );
-        }
+          gameModelsModel.findStamp(origin, models),
+          gameModelsModel.findStamp(target, models),
+        ]
       );
     }
-    function computeIntervenings(state, ignore,
+    function computeIntervenings(models, ignore,
                                  target, target_circle,
                                  origin, envelope) {
-      return R.thread(state.game.models)(
+      return R.thread(models)(
         gameModelsModel.all,
         R.map(getModelCircle),
         R.reject(circleIsNotIntervening),
@@ -325,11 +303,7 @@
       );
 
       function getModelCircle(model) {
-        return R.thread()(
-          () => gameFactionsModel
-            .getModelInfo(model.state.info, state.factions),
-          (info) => R.assoc('radius', info.base_radius, model.state)
-        );
+        return R.assoc('radius', model.info.base_radius, model.state);
       }
       function circleIsNotIntervening(circle) {
         return (target === circle.stamp ||

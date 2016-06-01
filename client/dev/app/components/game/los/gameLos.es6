@@ -4,56 +4,64 @@
     .directive('clickGameLosEnveloppe', gameLosEnveloppeDirectiveFactory);
 
   gameLosDirectiveFactory.$inject = [
+    'appGame',
+    'appModes',
     'modes',
     'gameLos',
-    'gameModels',
-    'gameFactions',
   ];
-  function gameLosDirectiveFactory(modesModel,
+  function gameLosDirectiveFactory(appGameService,
+                                   appModesService,
+                                   modesModel,
                                    gameLosModel) {
     return {
       restrict: 'A',
       scope: true,
+      templateUrl: 'app/components/game/los/los.html',
       link: link
     };
 
     function link(scope) {
-      // const map = document.getElementById('map');
-      scope.onStateChangeEvent('Game.los.local.change', updateLos, scope);
-      scope.onStateChangeEvent('Game.los.remote.change', updateLos, scope);
+      scope.listenSignal(updateLos, appGameService.los.changes, scope);
 
-      function updateLos() {
-        const state = scope.state;
-        const los = state.game.los;
+      mount();
+
+      function mount() {
+        const modes = appModesService.modes.sample();
+        const models = appGameService.models.models.sample();
+        const los = appGameService.los.los.sample();
+
+        updateLos([modes, models, los]);
+      }
+      function updateLos([modes, models, los]) {
         const in_los_mode = modesModel
-                .currentModeName(state.modes) === 'Los';
+                .currentModeName(modes) === 'Los';
         scope.render = gameLosModel
           .render({ in_los_mode,
-                    factions: state.factions,
-                    models: state.game.models }, los);
-        scope.$digest();
+                    models: models }, los);
+        console.warn('RENDER LOS', arguments, scope.render);
       }
     }
   }
 
   gameLosEnveloppeDirectiveFactory.$inject = [
+    'appGame',
     'gameLos'
   ];
-  function gameLosEnveloppeDirectiveFactory(gameLosModel) {
+  function gameLosEnveloppeDirectiveFactory(appGameService,
+                                            gameLosModel) {
     return {
       restrict: 'A',
       scope: true,
+      templateUrl: 'app/components/game/los/los_enveloppe.html',
       link: link
     };
     function link(scope) {
-      scope.onStateChangeEvent('Game.los.remote.change', updateEnvelope, scope);
-      function updateEnvelope() {
-        const state = scope.state;
-        const los = state.game.los;
-        scope.render = gameLosModel.renderEnveloppe(state, los);
+      scope.listenSignal(updateEnvelope, appGameService.los.changes, scope);
+      function updateEnvelope([_modes_, models, los]) {
+        scope.render = gameLosModel.renderEnveloppe(models, los);
         const clip_path = document.querySelector('#los-clip polygon');
         clip_path.setAttribute('points', scope.render.enveloppe);
-        scope.$digest();
+        console.warn('RENDER LOS ENVELOPPE', arguments, scope.render);
       }
     }
   }

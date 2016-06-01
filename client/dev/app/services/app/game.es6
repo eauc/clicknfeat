@@ -18,6 +18,7 @@
     'gameConnection',
     'gameFactions',
     'gameScenario',
+    'gameLos',
     'gameModels',
     'gameModelSelection',
     'gameRuler',
@@ -44,6 +45,7 @@
                                  gameConnectionModel,
                                  gameFactionsModel,
                                  gameScenarioModel,
+                                 gameLosModel,
                                  gameModelsModel,
                                  gameModelSelectionModel,
                                  gameRulerModel,
@@ -69,6 +71,7 @@
     const TERRAINS_LENS = R.lensProp('terrains');
     const TERRAIN_SELECTION_LENS = R.lensProp('terrain_selection');
     const BOARD_LENS = R.lensProp('board');
+    const LOS_LENS = R.lensProp('los');
     const RULER_LENS = R.lensProp('ruler');
 
     const game = appStateService.state
@@ -166,6 +169,12 @@
     const terrain_selection_changes = terrain_selection
             .changes();
 
+    const los = game
+            .map(R.viewOr(gameLosModel.create(), LOS_LENS));
+    const los_changes = los
+            .changes()
+            .snapshot((models, los) => [models, los], models)
+            .snapshot(R.prepend, appModesService.modes);
     const ruler = game
             .map(R.viewOr(gameRulerModel.create(), RULER_LENS));
     const ruler_changes = ruler
@@ -216,6 +225,9 @@
                 selection: model_selection,
                 selection_changes: model_selection_changes
               },
+      los: { los,
+             changes: los_changes
+           },
       ruler: { ruler,
                changes: ruler_changes
              },

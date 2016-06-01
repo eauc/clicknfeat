@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.directives').directive('clickGameRuler', gameRulerDirectiveFactory);
 
-  gameRulerDirectiveFactory.$inject = ['appGame', 'gameRuler', 'gameModels', 'modes'];
-  function gameRulerDirectiveFactory(appGameService, gameRulerModel, gameModelsModel, modesModel) {
+  gameRulerDirectiveFactory.$inject = ['appGame', 'appModes', 'gameRuler', 'gameModels', 'modes'];
+  function gameRulerDirectiveFactory(appGameService, appModesService, gameRulerModel, gameModelsModel, modesModel) {
     return {
       restrict: 'A',
       scope: true,
@@ -16,6 +16,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     function link(scope) {
       scope.listenSignal(updateRuler, appGameService.ruler.changes, scope);
 
+      mount();
+
+      function mount() {
+        var modes = appModesService.modes.sample();
+        var models = appGameService.models.models.sample();
+        var ruler = appGameService.ruler.ruler.sample();
+
+        updateRuler([modes, models, false, ruler]);
+      }
       function updateRuler(_ref) {
         var _ref2 = _slicedToArray(_ref, 4);
 
@@ -50,7 +59,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var in_ruler_mode = modesModel.currentModeName(modes) === 'Ruler';
         scope.render.origin = updateOrigin(models, in_ruler_mode, ruler.remote);
         scope.render.target = updateTarget(models, in_ruler_mode, ruler.remote);
-        scope.$digest();
         console.warn('RENDER RULER', arguments, scope.render);
       }
     }

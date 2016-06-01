@@ -4,7 +4,7 @@
     .factory('allModes', [
       'defaultMode',
       'rulerMode',
-      // 'losMode',
+      'losMode',
       'createModelMode',
       'modelsMode',
       'modelMode',

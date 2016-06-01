@@ -18,7 +18,7 @@
     default_actions.templateSelectionDetail = templateSelectionDetail;
     default_actions.selectTerrain = selectTerrain;
     default_actions.enterRulerMode = enterRulerMode;
-    // default_actions.enterLosMode = enterLosMode;
+    default_actions.enterLosMode = enterLosMode;
     default_actions.dragStartMap = dragMap;
     default_actions.dragMap = dragMap;
     default_actions.dragEndMap = dragEndMap;
@@ -87,9 +87,9 @@
     function enterRulerMode(state) {
       return appStateService.onAction(state, ['Modes.switchTo', 'Ruler']);
     }
-    // function enterLosMode(_state_) {
-    //   return appStateService.chainReduce('Modes.switchTo', 'Los');
-    // }
+    function enterLosMode(state) {
+      return appStateService.onAction(state, ['Modes.switchTo', 'Los']);
+    }
     function dragMap(state, event) {
       return R.set(DRAG_BOX_LENS, convertDragEventToBox(event), state);
     }

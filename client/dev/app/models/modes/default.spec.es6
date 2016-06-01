@@ -259,13 +259,13 @@ describe('defaultMode model', function() {
     });
   });
 
-  xcontext('when user uses los', function() {
+  context('when user uses los', function() {
     return this.defaultModeModel
       .actions.enterLosMode(this.state);
   }, function() {
     it('should switch to los mode', function() {
       expect(this.appStateService.onAction)
-        .toHaveBeenCalledWith(this.state ['Modes.switchTo', 'Los']);
+        .toHaveBeenCalledWith(this.state, ['Modes.switchTo', 'Los']);
     });
   });
 

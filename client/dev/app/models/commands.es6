@@ -20,7 +20,7 @@
       'setBoardCommand',
       'setBoardDataCommand',
       'setLayersCommand',
-      // 'setLosCommand',
+      'setLosCommand',
       'setRulerCommand',
       'setScenarioCommand',
       'createObjectivesCommand',

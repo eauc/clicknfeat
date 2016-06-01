@@ -4,11 +4,13 @@
 
   gameRulerDirectiveFactory.$inject = [
     'appGame',
+    'appModes',
     'gameRuler',
     'gameModels',
     'modes',
   ];
   function gameRulerDirectiveFactory(appGameService,
+                                     appModesService,
                                      gameRulerModel,
                                      gameModelsModel,
                                      modesModel) {
@@ -21,6 +23,15 @@
     function link(scope) {
       scope.listenSignal(updateRuler, appGameService.ruler.changes, scope);
 
+      mount();
+
+      function mount() {
+        const modes = appModesService.modes.sample();
+        const models = appGameService.models.models.sample();
+        const ruler = appGameService.ruler.ruler.sample();
+
+        updateRuler([modes, models, false, ruler]);
+      }
       function updateRuler([modes, models, flipped, ruler]) {
         const label_center = {
           x: (ruler.remote.end.x - ruler.remote.start.x) / 2 + ruler.remote.start.x,
@@ -50,7 +61,6 @@
           updateOrigin(models, in_ruler_mode, ruler.remote);
         scope.render.target =
           updateTarget(models, in_ruler_mode, ruler.remote);
-        scope.$digest();
         console.warn('RENDER RULER', arguments, scope.render);
       }
     }

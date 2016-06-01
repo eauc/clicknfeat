@@ -23,29 +23,35 @@
 
     return los_mode;
 
-    function losSetOriginModel(_state_, event) {
+    function losSetOriginModel(state, event) {
       return appStateService
-        .chainReduce('Game.command.execute',
-                     'setLos', [
-                       'setOrigin',
-                       [event['click#'].target]
-                     ]);
+        .onAction(state, [
+          'Game.command.execute',
+          'setLos', [
+            'setOrigin',
+            [event['click#'].target]
+          ]
+        ]);
     }
-    function losSetTargetModel(_state_, event) {
+    function losSetTargetModel(state, event) {
       return appStateService
-        .chainReduce('Game.command.execute',
-                     'setLos', [
-                       'setTarget',
-                       [event['click#'].target]
-                     ]);
+        .onAction(state, [
+          'Game.command.execute',
+          'setLos', [
+            'setTarget',
+            [event['click#'].target]
+          ]
+        ]);
     }
-    function losToggleIgnoreModel(_state_, event) {
+    function losToggleIgnoreModel(state, event) {
       return appStateService
-        .chainReduce('Game.command.execute',
-                     'setLos', [
-                       'toggleIgnoreModel',
-                       [event['click#'].target]
-                     ]);
+        .onAction(state, [
+          'Game.command.execute',
+          'setLos', [
+            'toggleIgnoreModel',
+            [event['click#'].target]
+          ]
+        ]);
     }
   }
 })();

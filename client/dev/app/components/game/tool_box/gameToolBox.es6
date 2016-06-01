@@ -12,8 +12,8 @@
 
     vm.doUseRuler = doUseRuler;
     vm.doToggleShowRuler = doToggleShowRuler;
-    // vm.doUseLos = doUseLos;
-    // vm.doToggleShowLos = doToggleShowLos;
+    vm.doUseLos = doUseLos;
+    vm.doToggleShowLos = doToggleShowLos;
     vm.doCreateTemplate = doCreateTemplate;
 
     function doUseRuler() {
@@ -32,21 +32,21 @@
                         ]);
     }
 
-    // function doUseLos() {
-    //   if($scope.game.currentModeIs('Los')) {
-    //     $scope.game.doModeAction('modeBackToDefault');
-    //   }
-    //   else {
-    //     $scope.game.doModeAction('enterLosMode');
-    //   }
-    // }
-    // function doToggleShowLos() {
-    //   $scope.sendAction('Game.command.execute',
-    //                     'setLos', [
-    //                       'toggleDisplay',
-    //                       []
-    //                     ]);
-    // }
+    function doUseLos() {
+      if($scope.game.currentModeIs('Los')) {
+        $scope.game.doModeAction('modeBackToDefault');
+      }
+      else {
+        $scope.game.doModeAction('enterLosMode');
+      }
+    }
+    function doToggleShowLos() {
+      $scope.sendAction('Game.command.execute',
+                        'setLos', [
+                          'toggleDisplay',
+                          []
+                        ]);
+    }
 
     function doCreateTemplate(type) {
       $scope.sendAction('Game.template.create', type);

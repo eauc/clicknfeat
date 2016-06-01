@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
-  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
+  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
@@ -23,6 +23,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var TERRAINS_LENS = R.lensProp('terrains');
     var TERRAIN_SELECTION_LENS = R.lensProp('terrain_selection');
     var BOARD_LENS = R.lensProp('board');
+    var LOS_LENS = R.lensProp('los');
     var RULER_LENS = R.lensProp('ruler');
 
     var game = appStateService.state.map(R.viewOr({}, GAME_LENS));
@@ -111,6 +112,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     });
     var terrain_selection_changes = terrain_selection.changes();
 
+    var los = game.map(R.viewOr(gameLosModel.create(), LOS_LENS));
+    var los_changes = los.changes().snapshot(function (models, los) {
+      return [models, los];
+    }, models).snapshot(R.prepend, appModesService.modes);
     var ruler = game.map(R.viewOr(gameRulerModel.create(), RULER_LENS));
     var ruler_changes = ruler.changes().snapshot(function (flip, ruler) {
       return [flip, ruler];
@@ -150,6 +155,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         flip_map: models_flip_map,
         selection: model_selection,
         selection_changes: model_selection_changes
+      },
+      los: { los: los,
+        changes: los_changes
       },
       ruler: { ruler: ruler,
         changes: ruler_changes

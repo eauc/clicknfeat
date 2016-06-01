@@ -5,12 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('game', gameModelFactory);
 
-  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers',
-  // 'gameLos',
-  'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
-  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel,
-  // gameLosModel,
-  gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
+  gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
+  function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
     var DICE_LENS = R.lensProp('dice');
     var COMMANDS_LENS = R.lensProp('commands');
     var COMMANDS_LOG_LENS = R.lensProp('commands_log');
@@ -215,7 +211,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         dice: [],
         layers: gameLayersModel.create(),
         ruler: gameRulerModel.create(),
-        // los: gameLosModel.create(),
+        los: gameLosModel.create(),
         models: gameModelsModel.create(),
         model_selection: gameModelSelectionModel.create(),
         templates: gameTemplatesModel.create(),
