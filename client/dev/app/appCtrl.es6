@@ -8,11 +8,11 @@
     'appAction',
     'appState',
     'appTick',
+    'appUser',
     'appData',
     'appGame',
     'appGames',
     'appModes',
-    'appUser',
     'allCommands',
     'allModes',
   ];
@@ -20,7 +20,8 @@
                    $state,
                    appActionService,
                    appStateService,
-                   appTickService) {
+                   appTickService,
+                   appUserService) {
     console.log('init appCtrl');
 
     const vm = this;
@@ -38,13 +39,13 @@
     function activate() {
       bindCell((state) => { $rootScope.state = state; },
                appStateService.state, $rootScope);
+      bindCell(onUserValid, appUserService.valid, $rootScope);
       $rootScope.sendAction('Modes.reset');
     }
 
-    // function onUserInvalid() {
-    //   $state.go('user');
-    //   $rootScope.$digest();
-    // }
+    function onUserValid(is_valid) {
+      if(!is_valid) $state.go('user');
+    }
 
     function sendAction(...args) {
       appActionService.action.send(args);

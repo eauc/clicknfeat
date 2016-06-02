@@ -23,6 +23,7 @@
     return userModel;
 
     function userIsValid(user) {
+      if (R.equals({}, user)) return true;
       return R.thread(user)(R.pathOr('', ['state', 'name']), s.trim, R.length, R.lt(0));
     }
     function userSaveP(user) {
