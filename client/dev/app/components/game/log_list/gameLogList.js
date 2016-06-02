@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.directives').directive('clickLogReplayList', logReplayListDirectiveFactory);
 
-  logReplayListDirectiveFactory.$inject = [];
-  function logReplayListDirectiveFactory() {
+  logReplayListDirectiveFactory.$inject = ['appGame'];
+  function logReplayListDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
       link: link
@@ -15,11 +15,11 @@
       var list = scroll_container.getAttribute('click-log-replay-list');
       console.log('logReplayList', list);
 
-      scope.$watch(list, function () {
+      scope.bindCell(function () {
         self.requestAnimationFrame(function () {
           scroll_container.scrollTop = 1000000;
         });
-      });
+      }, appGameService.commands[list], scope);
     }
   }
 })();

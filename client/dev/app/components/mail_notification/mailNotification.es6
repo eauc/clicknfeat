@@ -3,9 +3,17 @@
     .directive('clickMailNotification', mailNotificationDirectiveFactory);
 
   mailNotificationDirectiveFactory.$inject = [
+    '$rootScope',
+    'appGame',
     'appUser',
   ];
-  function mailNotificationDirectiveFactory(appUserService) {
+  function mailNotificationDirectiveFactory($rootScope,
+                                            appGameService,
+                                            appUserService) {
+    const services = {
+      game: appGameService,
+      user: appUserService
+    };
     return {
       restrict: 'E',
       scope: { type: '@' },
@@ -15,7 +23,7 @@
 
     function link(scope, element) {
       const audio = element[0].querySelector('audio');
-      appUserService.new_chat.listen(onChat);
+      $rootScope.listenSignal(onChat, services[scope.type].chat.new_chat, scope);
 
       function onChat() {
         console.info(`${scope.type}MailNotification`);

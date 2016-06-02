@@ -158,7 +158,7 @@ describe('aoeTemplateMode model', function() {
     });
   });
 
-  xcontext('when user set aoe to ruler target', function() {
+  context('when user set aoe to ruler target', function() {
     return this.aoeTemplateModeModel.actions
       .setToRulerTarget(this.state);
   }, function() {

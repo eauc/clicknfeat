@@ -14,7 +14,7 @@
 
     function activate() {
       vm.msg = '';
-      $scope.bindCell(updateChat, appGameService.chat, $scope);
+      $scope.bindCell(updateChat, appGameService.chat.chat, $scope);
     }
     function updateChat(chat) {
       vm.chat = R.clone(chat).slice(-10).reverse();

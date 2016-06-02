@@ -3,8 +3,12 @@
 (function () {
   angular.module('clickApp.directives').directive('clickChatHint', chatHintDirectiveFactory);
 
-  chatHintDirectiveFactory.$inject = ['$rootScope'];
-  function chatHintDirectiveFactory($rootScope) {
+  chatHintDirectiveFactory.$inject = ['$rootScope', '$state', 'appGame', 'appUser'];
+  function chatHintDirectiveFactory($rootScope, $state, appGameService, appUserService) {
+    var services = {
+      game: appGameService,
+      user: appUserService
+    };
     return {
       restrict: 'A',
       scope: { type: '@clickChatHint',
@@ -14,13 +18,11 @@
 
     function link(scope, element) {
       var tab = element[0];
-      $rootScope.onStateChangeEvent(s.capitalize(scope.type) + '.chat', onChat, scope);
+      $rootScope.listenSignal(onChat, services[scope.type].chat.new_chat, scope);
       $rootScope.$on('$stateChangeSuccess', onStateChange);
 
-      function onChat(_event_, chat) {
-        if (R.isNil(chat) || R.isNil(chat.from) || chat.from === $rootScope.state.user.state.stamp || chat.from === $rootScope.state.user.state.name) return;
-
-        var hint = !$rootScope.stateIs(scope.state);
+      function onChat() {
+        var hint = !$state.is(scope.state);
         if (hint) {
           tab.classList.add('go-to-hint');
         } else {

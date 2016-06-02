@@ -6,7 +6,7 @@ describe('rollDeviationCommand model', function() {
 
       this.onTemplatesCommandModel = spyOnService('onTemplatesCommand');
 
-      this.game = { dice: [] };
+      this.game = { };
     }
   ]));
 
@@ -36,7 +36,6 @@ describe('rollDeviationCommand model', function() {
 
     it('should return updated game', function() {
       expect(this.context[1]).toEqual({
-        dice: [  ],
         onTemplatesCommand: true
       });
     });
@@ -73,9 +72,7 @@ describe('rollDeviationCommand model', function() {
 
     it('should return update game', function() {
       expect(this.context).toEqual({
-        onTemplatesCommand: true,
-        dice: [ { desc: 'AoE deviation : direction 5, distance 4"',
-                  r: 5, d: 4 } ]
+        onTemplatesCommand: true
       });
     });
   });
@@ -88,11 +85,7 @@ describe('rollDeviationCommand model', function() {
       this.ctxt = {
         stamp: 'ctxt'
       };
-      this.game = { dice: [
-        { stamp: 'other1' },
-        { stamp: 'ctxt' },
-        { stamp: 'other2' },
-      ] };
+      this.game = { };
 
       this.onTemplatesCommandModel.undoP
         .resolveWith((_c_, g) => {
@@ -107,11 +100,7 @@ describe('rollDeviationCommand model', function() {
 
     it('should return updated game', function() {
       expect(this.context).toEqual({
-        onTemplatesCommand: true,
-        dice: [
-          { stamp: 'other1' },
-          { stamp: 'other2' },
-        ]
+        onTemplatesCommand: true
       });
     });
   });

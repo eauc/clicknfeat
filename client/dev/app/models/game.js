@@ -7,7 +7,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
   gameModelFactory.$inject = ['jsonStringifier', 'commands', 'gameConnection', 'gameLayers', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection'];
   function gameModelFactory(jsonStringifierService, commandsModel, gameConnectionModel, gameLayersModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel) {
-    var DICE_LENS = R.lensProp('dice');
     var COMMANDS_LENS = R.lensProp('commands');
     var COMMANDS_LOG_LENS = R.lensProp('commands_log');
     var UNDO_LENS = R.lensProp('undo');
@@ -18,6 +17,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       pickForJson: gamePickForJson,
       toJson: gameToJson,
       create: gameCreate,
+      close: gameClose,
       loadP: gameLoadP,
       executeCommandP: gameExecuteCommandP,
       undoCommandP: gameUndoCommandP,
@@ -25,7 +25,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       replayCommandP: gameReplayCommandP,
       replayCommandsBatchP: gameReplayCommandsBatchP,
       replayNextCommandP: gameReplayNextCommandP,
-      sendChat: gameSendChat
+      sendChat: gameSendChat,
+      chatIsFrom: gameChatIsFrom
     };
 
     var GAME_PROTO = {
@@ -58,6 +59,11 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       };
       return new_game;
     }
+    function gameClose(game) {
+      return R.thread(game)(gameConnectionModel.close, function () {
+        return {};
+      });
+    }
     function gameLoadP(data) {
       return R.threadP(Object.create(GAME_PROTO))(extendGameDefaultWithData, gameConnectionModel.create, gameReplayAllP);
 
@@ -75,11 +81,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }, sendReplayCommand, logLocalCommand), function (_ref3) {
         var _ref4 = _slicedToArray(_ref3, 2);
 
-        var command = _ref4[0];
+        var _command_ = _ref4[0];
         var game = _ref4[1];
-        return R.when(function () {
-          return command.type === 'rollDice' || command.type === 'rollDeviation';
-        }, R.over(DICE_LENS, R.append(command)), game);
+        return game;
       });
 
       function stampCommand(_ref5) {
@@ -246,6 +250,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
           });
         });
       }
+    }
+    function gameChatIsFrom(user, chat) {
+      return chat.from === user.state.name;
     }
   }
 })();

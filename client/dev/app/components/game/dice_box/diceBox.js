@@ -3,13 +3,20 @@
 (function () {
   angular.module('clickApp.directives').controller('gameDiceBoxCtrl', diceBoxCtrl).directive('clickGameDiceBox', gameDiceBoxDirectiveFactory);
 
-  diceBoxCtrl.$inject = ['$scope'];
-  function diceBoxCtrl($scope) {
+  diceBoxCtrl.$inject = ['$scope', 'appGame'];
+  function diceBoxCtrl($scope, appGameService) {
     var vm = this;
     console.log('gameDiceBoxCtrl');
 
     vm.doRollDice = doRollDice;
 
+    activate();
+
+    function activate() {
+      $scope.bindCell(function (dice) {
+        vm.dice = R.clone(dice).slice(-10).reverse();
+      }, appGameService.dice, $scope);
+    }
     function doRollDice(sides, nb_dice) {
       $scope.sendAction('Game.command.execute', 'rollDice', [sides, nb_dice]);
     }

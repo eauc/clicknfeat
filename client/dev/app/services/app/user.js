@@ -28,7 +28,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return R.exists(chat) && !userModel.isChatAuthor(chat, user);
     });
     var userService = {
-      user: user, online: online, valid: valid, new_chat: new_chat,
+      user: user, online: online, valid: valid,
+      chat: { new_chat: new_chat },
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,

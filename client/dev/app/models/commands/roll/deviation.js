@@ -7,7 +7,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
   rollDeviationCommandModelFactory.$inject = ['commands', 'onTemplatesCommand'];
   function rollDeviationCommandModelFactory(commandsModel, onTemplatesCommandModel) {
-    var DICE_LENS = R.lensProp('dice');
     var rollDeviationCommandModel = {
       executeP: rollDeviationExecuteP,
       replayP: rollDiceReplayP,
@@ -34,14 +33,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       });
     }
     function rollDiceReplayP(ctxt, game) {
-      return R.threadP()(function () {
-        return onTemplatesCommandModel.replayP(ctxt, game);
-      }, R.over(DICE_LENS, R.pipe(R.defaultTo([]), R.append(ctxt))));
+      return onTemplatesCommandModel.replayP(ctxt, game);
     }
     function rollDiceUndoP(ctxt, game) {
-      return R.threadP()(function () {
-        return onTemplatesCommandModel.undoP(ctxt, game);
-      }, R.over(DICE_LENS, R.pipe(R.defaultTo([]), R.reject(R.propEq('stamp', ctxt.stamp)))));
+      return onTemplatesCommandModel.undoP(ctxt, game);
     }
   }
 })();

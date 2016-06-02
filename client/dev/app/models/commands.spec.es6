@@ -14,6 +14,26 @@ describe('commands model', function() {
     this.commandsModel.registerCommand('cmd2',this.cmd2);
   }]));
 
+   context('isDice(<command>)', function() {
+    return this.commandsModel
+      .isDice(this.command);
+   }, function() {
+     example(function(e, d) {
+       context(d, function() {
+         this.command = { type: e.type };
+       }, function() {
+         it('should check whether <command> is a dice command', function() {
+           expect(this.context).toBe(e.is_dice);
+         });
+       });
+     }, [
+       [ 'type'          , 'is_dice' ],
+       [ 'rollDice'      , true      ],
+       [ 'rollDeviation' , true      ],
+       [ 'other'         , false     ],
+     ]);
+  });
+
   context('executeP(<name>, <args>, <state>, <game>)', function() {
     return this.commandsModel
       .executeP(this.name, this.args, this.game);

@@ -3,12 +3,9 @@
 (function () {
   angular.module('clickApp.services').factory('aoeTemplateMode', aoeTemplateModeModelFactory);
 
-  aoeTemplateModeModelFactory.$inject = ['appAction', 'appError', 'appState', 'modes', 'settings', 'templateMode', 'gameTemplates', 'gameTemplateSelection',
-  // 'gameRuler',
-  'prompt'];
-  function aoeTemplateModeModelFactory(appActionService, appErrorService, appStateService, modesModel, settingsModel, templateModeModel, gameTemplatesModel, gameTemplateSelectionModel,
-  // gameRulerModel,
-  promptService) {
+  aoeTemplateModeModelFactory.$inject = ['appAction', 'appState', 'modes', 'settings', 'templateMode', 'gameTemplates', 'gameTemplateSelection', 'gameRuler', 'prompt'];
+  function aoeTemplateModeModelFactory(appActionService, appStateService, modesModel, settingsModel, templateModeModel, gameTemplatesModel, gameTemplateSelectionModel, gameRulerModel, promptService) {
+    var RULER_LENS = R.lensPath(['game', 'ruler']);
     var template_actions = Object.create(templateModeModel.actions);
     template_actions.aoeSize3 = aoeSize3;
     template_actions.aoeSize4 = aoeSize4;
@@ -79,23 +76,13 @@
       var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
       return appStateService.onAction(state, ['Game.command.execute', 'rollDeviation', [stamps]]);
     }
-    function setToRulerTarget(_state_) {
-      // if(!gameRulerModel.isDisplayed(state.game.ruler)) return;
-
-      // const stamps = gameTemplateSelectionModel
-      //       .get('local', state.game.template_selection);
-      // R.thread(state.game)(
-      //   R.prop('ruler'),
-      //   gameRulerModel.targetAoEPosition$(state.game.models),
-      //   (position) => {
-      // return appStateService.onAction(state, [ 'Game.command.execute',
-      //                    'onTemplates',
-      //                    [ 'setToRulerP',
-      //                      [position],
-      //                      stamps
-      //                    ]);
-      //   }
-      // );
+    function setToRulerTarget(state) {
+      var stamps = gameTemplateSelectionModel.get('local', state.game.template_selection);
+      return R.thread(state)(R.view(RULER_LENS), R.ifElse(gameRulerModel.isDisplayed, R.pipe(gameRulerModel.targetAoEPosition$(state.game.models), function (position) {
+        return appStateService.onAction(state, ['Game.command.execute', 'onTemplates', ['setToRulerP', [position], stamps]]);
+      }), function () {
+        return state;
+      }));
     }
   }
 })();

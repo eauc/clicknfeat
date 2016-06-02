@@ -14,6 +14,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var CMDS_REG = {};
     var commandsModel = {
       registerCommand: commandsRegister,
+      isDice: commandsIsDice,
       executeP: commandsExecuteP,
       undoP: commandsUndoP,
       replayP: commandsReplayP,
@@ -25,6 +26,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     function commandsRegister(name, command) {
       console.log('register command', name, command);
       CMDS_REG[name] = command;
+    }
+    function commandsIsDice(command) {
+      return command.type === 'rollDice' || command.type === 'rollDeviation';
     }
     function commandsExecuteP(name, args, game) {
       return R.threadP(name)(findTypeP, function (cmd) {

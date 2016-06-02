@@ -51,7 +51,7 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
 
   $templateCache.put('app/components/game/dice_box/dice_box.html',
     "<div><div class=btn-group><button class=\"btn btn-default\" title=\"{{game.action.bindings['roll1D6'] || ''}}\" ng-click=\"dice_box.doRollDice(6, 1)\">1D6</button> <button class=\"btn btn-default\" title=\"{{game.action.bindings['roll2D6'] || ''}}\" ng-click=\"dice_box.doRollDice(6, 2)\">2D6</button> <button class=\"btn btn-default\" title=\"{{game.action.bindings['roll3D6'] || ''}}\" ng-click=\"dice_box.doRollDice(6, 3)\">3D6</button> <button class=\"btn btn-default\" title=\"{{game.action.bindings['roll4D6'] || ''}}\" ng-click=\"dice_box.doRollDice(6, 4)\">4D6</button> <button class=\"btn btn-default\" title=\"{{game.action.bindings['roll5D6'] || ''}}\" ng-click=\"dice_box.doRollDice(6, 5)\">5D6</button> <button class=\"btn btn-default\" title=\"{{game.action.bindings['roll1D3'] || ''}}\" ng-click=\"dice_box.doRollDice(3, 1)\">1D3</button></div><div class=dice-list><div ng-repeat=\"(i, die)\n" +
-    "                    in state.game.dice.slice(-10).reverse()\n" +
+    "                    in dice_box.dice\n" +
     "                    track by die.stamp\"><span class=text-primary>[{{::die.user}}]</span> {{::die.desc}}</div></div></div>"
   );
 
@@ -227,9 +227,9 @@ angular.module('clickApp.services').run(['$templateCache', function($templateCac
 
 
   $templateCache.put('app/views/game/log/game_log.html',
-    "<div><div class=\"panel panel-info\"><div class=panel-heading><strong>Command Log</strong></div><div class=panel-content><button class=\"btn btn-default\" title=\"{{game.action_bindings['commandUndoLast'] || ''}}\" ng-disabled=\"state.game.commands.length === 0\" ng-click=\"game.doModeAction('commandUndoLast')\">Undo Last</button> <button class=\"btn btn-default\" title=\"{{game.action_bindings['commandReplayNext'] || ''}}\" ng-disabled=\"state.game.undo.length === 0\" ng-click=\"game.doModeAction('commandReplayNext')\">Replay Next</button><div class=log-replay-list click-log-replay-list=state.game.undo><div ng-repeat=\"(i,cmd)\n" +
+    "<div><div class=\"panel panel-info\"><div class=panel-heading><strong>Command Log</strong></div><div class=panel-content><button class=\"btn btn-default\" title=\"{{game.action_bindings['commandUndoLast'] || ''}}\" ng-disabled=\"state.game.commands.length === 0\" ng-click=\"game.doModeAction('commandUndoLast')\">Undo Last</button> <button class=\"btn btn-default\" title=\"{{game.action_bindings['commandReplayNext'] || ''}}\" ng-disabled=\"state.game.undo.length === 0\" ng-click=\"game.doModeAction('commandReplayNext')\">Replay Next</button><div class=log-replay-list click-log-replay-list=undo><div ng-repeat=\"(i,cmd)\n" +
     "                        in state.game.undo.slice(-20)\n" +
-    "                        track by cmd.stamp\"><span class=text-primary>[{{::cmd.user}}]</span> {{::cmd.type}} {{::cmd.desc}}</div></div><div class=\"log-replay-list log\" click-log-replay-list=state.game.undo_log><div ng-repeat=\"(i,cmd)\n" +
+    "                        track by cmd.stamp\"><span class=text-primary>[{{::cmd.user}}]</span> {{::cmd.type}} {{::cmd.desc}}</div></div><div class=\"log-replay-list log\" click-log-replay-list=undo_log><div ng-repeat=\"(i,cmd)\n" +
     "                        in state.game.undo_log.slice(-20)\n" +
     "                        track by cmd.stamp\"><span class=text-primary>[{{::cmd.user}}]</span> <span class=text-info>{{::cmd.type}} {{::cmd.desc}}</span></div></div><div class=\"log-command-list log\"><div ng-repeat=\"(i,cmd)\n" +
     "                        in state.game.commands_log.slice(-20).reverse()\n" +

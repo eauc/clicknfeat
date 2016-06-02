@@ -27,9 +27,7 @@
                             gameTemplatesModel,
                             gameTemplateSelectionModel,
                             gameTerrainsModel,
-                            gameTerrainSelectionModel
-                           ) {
-    const DICE_LENS = R.lensProp('dice');
+                            gameTerrainSelectionModel) {
     const COMMANDS_LENS = R.lensProp('commands');
     const COMMANDS_LOG_LENS = R.lensProp('commands_log');
     const UNDO_LENS = R.lensProp('undo');
@@ -40,6 +38,7 @@
       pickForJson: gamePickForJson,
       toJson: gameToJson,
       create: gameCreate,
+      close: gameClose,
       loadP: gameLoadP,
       executeCommandP: gameExecuteCommandP,
       undoCommandP: gameUndoCommandP,
@@ -47,7 +46,8 @@
       replayCommandP: gameReplayCommandP,
       replayCommandsBatchP: gameReplayCommandsBatchP,
       replayNextCommandP: gameReplayNextCommandP,
-      sendChat: gameSendChat
+      sendChat: gameSendChat,
+      chatIsFrom: gameChatIsFrom
     };
 
     const GAME_PROTO = {
@@ -89,6 +89,12 @@
       };
       return new_game;
     }
+    function gameClose(game) {
+      return R.thread(game)(
+        gameConnectionModel.close,
+        () => ({})
+      );
+    }
     function gameLoadP(data) {
       return R.threadP(Object.create(GAME_PROTO))(
         extendGameDefaultWithData,
@@ -108,12 +114,7 @@
           sendReplayCommand,
           logLocalCommand
         ),
-        ([ command, game ]) => R.when(
-          () => (command.type === 'rollDice' ||
-                 command.type === 'rollDeviation'),
-          R.over(DICE_LENS, R.append(command)),
-          game
-        )
+        ([ _command_, game ]) => game
       );
 
       function stampCommand([command, game]) {
@@ -336,6 +337,9 @@
           });
         });
       }
+    }
+    function gameChatIsFrom(user, chat) {
+      return chat.from === user.state.name;
     }
   }
 })();

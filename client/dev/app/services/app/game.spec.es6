@@ -153,8 +153,10 @@ describe('appGame service', function() {
     });
 
     it('should reset game', function() {
+      expect(this.gameModel.close)
+        .toHaveBeenCalledWith(this.state.game);
       expect(this.context.game)
-        .toEqual({});
+        .toEqual('game.close.returnValue');
     });
   });
 

@@ -37,7 +37,8 @@
             .filter(([user, chat]) => ( R.exists(chat) &&
                                         !userModel.isChatAuthor(chat, user) ));
     const userService = {
-      user, online, valid, new_chat,
+      user, online, valid,
+      chat: { new_chat },
       set: actionUserSet,
       updateState: actionUserUpdateState,
       toggleOnline: actionUserToggleOnline,

@@ -44,7 +44,7 @@
           appActionService.do(actions.close);
         }
         function websocketOnMessage(event) {
-          // console.log('WebSocket message', name, event);
+          console.warn('WebSocket message', name, event);
           R.threadP(event.data)(jsonParserService.parseP, R.ifElse(function (msg) {
             return R.exists(actions[msg.type]);
           }, function (msg) {

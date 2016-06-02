@@ -4,7 +4,7 @@ describe('rollDiceCommand model', function() {
     function(rollDiceCommand) {
       this.rollDiceCommandModel = rollDiceCommand;
 
-      this.game = { dice: [] };
+      this.game = 'game';
     }
   ]));
 
@@ -40,9 +40,9 @@ describe('rollDiceCommand model', function() {
       };
     });
 
-    it('should add ctxt to game dice rolls', function() {
-      expect(this.context.dice)
-        .toEqual([this.ctxt]);
+    it('should return same game', function() {
+      expect(this.context)
+        .toBe('game');
     });
   });
 
@@ -54,19 +54,10 @@ describe('rollDiceCommand model', function() {
       this.ctxt = {
         stamp: 'ctxt'
       };
-
-      this.game = { dice: [
-        { stamp: 'other1' },
-        { stamp: 'ctxt' },
-        { stamp: 'other2' },
-      ] };
     });
 
-    it('should remove ctxt from game dice rolls', function() {
-      expect(this.context.dice).toEqual([
-        { stamp: 'other1' },
-        { stamp: 'other2' },
-      ]);
+    it('should same game', function() {
+      expect(this.context).toBe('game');
     });
   });
 });

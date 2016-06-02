@@ -32,6 +32,7 @@
     const CMDS_REG = {};
     const commandsModel = {
       registerCommand: commandsRegister,
+      isDice: commandsIsDice,
       executeP: commandsExecuteP,
       undoP: commandsUndoP,
       replayP: commandsReplayP,
@@ -43,6 +44,10 @@
     function commandsRegister(name, command) {
       console.log('register command', name, command);
       CMDS_REG[name] = command;
+    }
+    function commandsIsDice(command) {
+      return (command.type === 'rollDice' ||
+              command.type === 'rollDeviation');
     }
     function commandsExecuteP(name, args, game) {
       return R.threadP(name)(

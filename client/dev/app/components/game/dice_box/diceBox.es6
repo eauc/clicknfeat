@@ -5,13 +5,22 @@
 
   diceBoxCtrl.$inject = [
     '$scope',
+    'appGame',
   ];
-  function diceBoxCtrl($scope) {
+  function diceBoxCtrl($scope,
+                       appGameService) {
     const vm = this;
     console.log('gameDiceBoxCtrl');
 
     vm.doRollDice = doRollDice;
 
+    activate();
+
+    function activate() {
+      $scope.bindCell((dice) => {
+        vm.dice = R.clone(dice).slice(-10).reverse();
+      }, appGameService.dice, $scope);
+    }
     function doRollDice(sides, nb_dice) {
       $scope.sendAction('Game.command.execute',
                         'rollDice', [sides, nb_dice]);

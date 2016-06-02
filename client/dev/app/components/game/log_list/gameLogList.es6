@@ -2,8 +2,10 @@
   angular.module('clickApp.directives')
     .directive('clickLogReplayList', logReplayListDirectiveFactory);
 
-  logReplayListDirectiveFactory.$inject = [];
-  function logReplayListDirectiveFactory() {
+  logReplayListDirectiveFactory.$inject = [
+    'appGame'
+  ];
+  function logReplayListDirectiveFactory(appGameService) {
     return {
       restrict: 'A',
       link: link
@@ -14,11 +16,11 @@
       const list = scroll_container.getAttribute('click-log-replay-list');
       console.log('logReplayList', list);
 
-      scope.$watch(list, () => {
+      scope.bindCell(() => {
         self.requestAnimationFrame(() => {
           scroll_container.scrollTop = 1000000;
         });
-      });
+      }, appGameService.commands[list], scope);
     }
   }
 })();

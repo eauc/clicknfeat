@@ -5,12 +5,15 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
-  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'commands', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
+  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, commandsModel, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
     var CHAT_LENS = R.lensProp('chat');
+    var COMMANDS_LENS = R.lensProp('commands');
+    var UNDO_LENS = R.lensProp('undo');
+    var UNDO_LOG_LENS = R.lensProp('undo_log');
     var DRAG_BOX_LENS = R.lensPath(['view', 'drag_box']);
     var FLIP_MAP_LENS = R.lensPath(['view', 'flip_map']);
     var MOVE_MAP_LENS = R.lensPath(['view', 'move_map']);
@@ -36,6 +39,14 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var create = appStateService.state.map(R.view(CREATE_LENS));
 
     var chat = game.map(R.viewOr([], CHAT_LENS));
+    var previous_chat = chat.delay([]);
+    var new_chat = chat.map(R.last).changes().map(R.of).snapshot(R.prepend, appUserService.user).snapshot(R.prepend, chat).snapshot(R.prepend, previous_chat).filter(gameCheckNewChat);
+
+    var dice = game.map(R.viewOr([], COMMANDS_LENS)).map(R.filter(commandsModel.isDice));
+    var previous_dice = dice.delay([]);
+    var bad_dice = dice.map(R.last).changes().map(R.of).snapshot(R.prepend, dice).snapshot(R.prepend, previous_dice).filter(gameCheckBadDice);
+    var undo = game.map(R.viewOr([], UNDO_LENS));
+    var undo_log = game.map(R.viewOr([], UNDO_LOG_LENS));
 
     var view = behavioursModel.signalModel.create();
     var scroll_left = view.filter(R.equals('scrollLeft'));
@@ -140,7 +151,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var model_selection_export_previous = model_selection_export.delay({});
 
     var appGameService = {
-      game: game, chat: chat, create: create, loading: loading,
+      game: game, create: create, dice: dice, bad_dice: bad_dice, loading: loading,
+      chat: { chat: chat, new_chat: new_chat },
+      commands: { undo: undo, undo_log: undo_log },
       export: { board: board_export,
         game: game_export,
         models: model_selection_export
@@ -259,7 +272,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       waitForDataReady().then(function () {
         return appActionService.do('Game.load.dataReady', is_online, is_private, id);
       });
-      return R.set(GAME_LENS, {}, state);
+      return R.over(GAME_LENS, R.pipe(R.defaultTo({}), gameModel.close), state);
 
       function waitForDataReady() {
         return R.allP([appDataService.ready, appUserService.ready, appGamesService.ready]);
@@ -633,6 +646,30 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     }
     function observeTerrainsChanges(olds, news) {
       return R.thread(gameTerrainsModel.all(news))(R.symmetricDifference(gameTerrainsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
+    }
+    function gameCheckNewChat(_ref9) {
+      var _ref10 = _slicedToArray(_ref9, 4);
+
+      var previous_chat = _ref10[0];
+      var chat = _ref10[1];
+      var user = _ref10[2];
+      var last = _ref10[3];
+
+      return R.exists(last) && !gameModel.chatIsFrom(user, last) && R.length(previous_chat) + 1 === R.length(chat);
+    }
+    function gameCheckBadDice(_ref11) {
+      var _ref12 = _slicedToArray(_ref11, 3);
+
+      var previous_dice = _ref12[0];
+      var dice = _ref12[1];
+      var last = _ref12[2];
+
+      if (last.type === 'rollDeviation') return false;
+      if (R.length(previous_dice) + 1 !== R.length(dice)) return false;
+      var d = R.propOr([], 'd', last);
+      if (R.length(dice) < 2) return false;
+      var mean = R.reduce(R.add, 0, d) / R.length(d);
+      return mean < 2;
     }
   }
 })();

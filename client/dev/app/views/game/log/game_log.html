@@ -17,7 +17,7 @@
         Replay Next
       </button>
       <div class="log-replay-list"
-           click-log-replay-list="state.game.undo">
+           click-log-replay-list="undo">
         <div ng-repeat="(i,cmd)
                         in state.game.undo.slice(-20)
                         track by cmd.stamp">
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="log-replay-list log"
-           click-log-replay-list="state.game.undo_log">
+           click-log-replay-list="undo_log">
         <div ng-repeat="(i,cmd)
                         in state.game.undo_log.slice(-20)
                         track by cmd.stamp">

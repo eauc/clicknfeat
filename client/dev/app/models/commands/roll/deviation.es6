@@ -8,7 +8,6 @@
   ];
   function rollDeviationCommandModelFactory(commandsModel,
                                             onTemplatesCommandModel) {
-    const DICE_LENS = R.lensProp('dice');
     const rollDeviationCommandModel = {
       executeP: rollDeviationExecuteP,
       replayP: rollDiceReplayP,
@@ -37,19 +36,12 @@
       );
     }
     function rollDiceReplayP(ctxt, game) {
-      return R.threadP()(
-        () => onTemplatesCommandModel
-          .replayP(ctxt, game),
-        R.over(DICE_LENS, R.pipe(R.defaultTo([]), R.append(ctxt)))
-      );
+      return onTemplatesCommandModel
+        .replayP(ctxt, game);
     }
     function rollDiceUndoP(ctxt, game) {
-      return R.threadP()(
-        () => onTemplatesCommandModel
-          .undoP(ctxt, game),
-        R.over(DICE_LENS, R.pipe(R.defaultTo([]),
-                                 R.reject(R.propEq('stamp', ctxt.stamp))))
-      );
+      return onTemplatesCommandModel
+        .undoP(ctxt, game);
     }
   }
 })();

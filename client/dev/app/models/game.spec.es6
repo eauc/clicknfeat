@@ -23,6 +23,20 @@ describe('game model', function() {
     });
   });
 
+  context('close()', function() {
+    return this.gameModel.close('game');
+  }, function() {
+    it('should close connection', function() {
+      expect(this.gameConnectionModel.close)
+        .toHaveBeenCalledWith('game');
+    });
+
+    it('should return empty object', function() {
+      expect(this.context)
+        .toEqual({});
+    });
+  });
+
   describe('description()', function() {
     example(function(e, d) {
       it('should build description string for the game, '+d, function() {
@@ -221,27 +235,6 @@ describe('game model', function() {
           ]);
       });
     });
-
-    example(function(e) {
-      context('when command type is '+e.type, function() {
-        this.commandsModel.executeP
-          .resolveWith([
-            { type: e.type },
-            this.game
-          ]);
-      }, function() {
-        it('should append command to game dice', function() {
-          expect(this.context.dice)
-            .toEqual([
-              { type: e.type, user: 'user', stamp: 'stamp' }
-            ]);
-        });
-      });
-    }, [
-      [ 'type' ],
-      [ 'rollDice' ],
-      [ 'rollDeviation' ],
-    ]);
 
     context('when command is not loggable', function() {
       this.commandsModel.executeP
@@ -582,5 +575,25 @@ describe('game model', function() {
                 }
         }, 'game');
     });
+  });
+
+  context('chatIsFrom(<user>, <chat>)', function() {
+    return this.gameModel
+      .chatIsFrom(this.user, this.chat);
+  }, function() {
+    example(function(e, d) {
+      context(d, function() {
+        this.user = { state: { name: e.user } };
+        this.chat = { from: e.chat };
+      }, function() {
+        it('should check whether <chat> msg is from <user>', function() {
+          expect(this.context).toBe(e.is_from);
+        });
+      });
+    }, [
+      [ 'user' , 'chat'  , 'is_from' ],
+      [ 'toto' , 'toto'  , true      ],
+      [ 'toto' , 'other' , false     ],
+    ]);
   });
 });

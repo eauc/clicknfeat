@@ -33,7 +33,7 @@
   </div>
   <div class="dice-list">
     <div ng-repeat="(i, die)
-                    in state.game.dice.slice(-10).reverse()
+                    in dice_box.dice
                     track by die.stamp">
       <span class="text-primary">[{{::die.user}}]</span>
       {{::die.desc}}

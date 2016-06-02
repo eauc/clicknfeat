@@ -11,6 +11,7 @@
     'appModes',
     'appState',
     'appUser',
+    'commands',
     'fileImport',
     'fileExport',
     'game',
@@ -38,6 +39,7 @@
                                  appModesService,
                                  appStateService,
                                  appUserService,
+                                 commandsModel,
                                  fileImportService,
                                  fileExportService,
                                  gameModel,
@@ -59,6 +61,9 @@
     const USER_NAME_LENS = R.lensPath(['user','state','name']);
     const CREATE_LENS = R.lensProp('create');
     const CHAT_LENS = R.lensProp('chat');
+    const COMMANDS_LENS = R.lensProp('commands');
+    const UNDO_LENS = R.lensProp('undo');
+    const UNDO_LOG_LENS = R.lensProp('undo_log');
     const DRAG_BOX_LENS = R.lensPath(['view','drag_box']);
     const FLIP_MAP_LENS = R.lensPath(['view','flip_map']);
     const MOVE_MAP_LENS = R.lensPath(['view','move_map']);
@@ -87,6 +92,31 @@
             .map(R.view(CREATE_LENS));
 
     const chat = game.map(R.viewOr([], CHAT_LENS));
+    const previous_chat = chat.delay([]);
+    const new_chat = chat
+            .map(R.last)
+            .changes()
+            .map(R.of)
+            .snapshot(R.prepend, appUserService.user)
+            .snapshot(R.prepend, chat)
+            .snapshot(R.prepend, previous_chat)
+            .filter(gameCheckNewChat);
+
+    const dice = game
+            .map(R.viewOr([], COMMANDS_LENS))
+            .map(R.filter(commandsModel.isDice));
+    const previous_dice = dice.delay([]);
+    const bad_dice = dice
+            .map(R.last)
+            .changes()
+            .map(R.of)
+            .snapshot(R.prepend, dice)
+            .snapshot(R.prepend, previous_dice)
+            .filter(gameCheckBadDice);
+    const undo = game
+            .map(R.viewOr([], UNDO_LENS));
+    const undo_log = game
+            .map(R.viewOr([], UNDO_LOG_LENS));
 
     const view = behavioursModel.signalModel.create();
     const scroll_left = view.filter(R.equals('scrollLeft'));
@@ -209,7 +239,9 @@
     const model_selection_export_previous = model_selection_export.delay({});
 
     const appGameService = {
-      game, chat, create, loading,
+      game, create, dice, bad_dice, loading,
+      chat: { chat, new_chat },
+      commands: { undo, undo_log },
       export: { board: board_export,
                 game: game_export,
                 models: model_selection_export
@@ -391,9 +423,9 @@
         return appActionService
           .do('Game.load.dataReady', is_online, is_private, id);
       });
-      return R.set(
+      return R.over(
         GAME_LENS,
-        {},
+        R.pipe(R.defaultTo({}), gameModel.close),
         state
       );
 
@@ -906,6 +938,20 @@
         R.map(R.path(['state','stamp'])),
         R.uniq
       );
+    }
+    function gameCheckNewChat([previous_chat, chat, user, last]) {
+      return ( R.exists(last) &&
+               !gameModel.chatIsFrom(user, last) &&
+               R.length(previous_chat)+1 === R.length(chat)
+             );
+    }
+    function gameCheckBadDice([previous_dice, dice, last]) {
+      if(last.type === 'rollDeviation') return false;
+      if(R.length(previous_dice)+1 !== R.length(dice)) return false;
+      const d = R.propOr([], 'd', last);
+      if(R.length(dice) < 2) return false;
+      const mean = R.reduce(R.add, 0, d) / R.length(d);
+      return (mean < 2);
     }
   }
 })();
