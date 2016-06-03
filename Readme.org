@@ -1,0 +1,11 @@
+* Webmachine Click'n Feat
+
+  WebApp for playing Warmachine/Hordes online.
+
+** Legal Info
+   Privateer Press, WARMACHINE®, Cryx, Cygnar, Khador, Protectorate of Menoth, Retribution of Scyrah, HORDES, Circle Orboros, Legion of Everblight, Skorne, Trollbloods, and their logos and slogans; warjack, warbeast, and warcaster are trademark property of Privateer Press.
+   ©2001-2014 Privateer Press, Inc. All Rights Reserved. Used without Permission.
+
+   This application is not official and not endorsed by Privateer Press.
+
+   Art assets are from the [[http://z7.invisionfree.com/vassalwmh/][Vassal Warmachine module]], by Jeffery Brady and Ben Boyd.
