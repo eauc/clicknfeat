@@ -15,15 +15,8 @@
     activate();
 
     function activate() {
-      $scope.state.data_ready.then(updateModes);
+      updateModes();
       $scope.$on('$destroy', $scope.settings.doUpdateSettings);
-    }
-    function getBindingsKeysForMode() {
-      return R.thread($scope.state)(
-        R.path(['settings','default','Bindings', vm.mode]),
-        R.keys,
-        R.sortBy(R.identity)
-      );
     }
     function updateModes() {
       vm.modes = R.thread($scope.state)(
@@ -32,7 +25,13 @@
         R.sortBy(R.identity)
       );
       vm.mode = R.defaultTo(R.head(vm.modes), vm.mode);
-      $scope.$digest();
+    }
+    function getBindingsKeysForMode() {
+      return R.thread($scope.state)(
+        R.path(['settings','default','Bindings', vm.mode]),
+        R.keys,
+        R.sortBy(R.identity)
+      );
     }
     function doRecordBinding(action) {
       if(vm.recording) return null;
@@ -53,6 +52,7 @@
         if(R.isNil(seq) || R.isEmpty(seq)) {
           return;
         }
+        console.log(seq);
         $scope.settings.edit.Bindings[vm.mode][action] = seq.join(' ');
       }
       function resetViewModel() {

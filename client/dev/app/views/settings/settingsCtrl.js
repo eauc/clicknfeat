@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('settingsCtrl', settingsCtrl);
 
-  settingsCtrl.$inject = ['$scope'];
-  function settingsCtrl($scope) {
+  settingsCtrl.$inject = ['$scope', 'appData', 'allModes'];
+  function settingsCtrl($scope, appDataService) {
     var vm = this;
     console.log('init settingsCtrl');
 
@@ -13,17 +13,16 @@
     activate();
 
     function activate() {
-      $scope.state.data_ready.then(updateEditSettings);
-      $scope.onStateChangeEvent('Settings.current.change', updateEditSettings, $scope);
+      vm.edit = {};
+      $scope.bindCell(updateEditSettings, appDataService.settings, $scope);
     }
-    function updateEditSettings() {
-      vm.edit = R.thread($scope.state)(R.path(['settings', 'current']), JSON.stringify, JSON.parse);
-      vm.menu = R.thread($scope.state)(R.path(['settings', 'default']), R.keys, R.concat(['Main', 'Models']));
-      $scope.$digest();
+    function updateEditSettings(settings) {
+      vm.edit = R.thread(settings)(R.propOr({}, 'current'), JSON.stringify, JSON.parse);
+      vm.menu = R.thread(settings)(R.propOr({}, 'default'), R.keys, R.concat(['Main', 'Models']));
     }
 
     function doUpdateSettings() {
-      $scope.stateEvent('Settings.reset', vm.edit);
+      $scope.sendAction('Settings.reset', vm.edit);
     }
   }
 })();

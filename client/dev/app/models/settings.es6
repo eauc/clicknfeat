@@ -90,7 +90,8 @@
       }
     }
     function settingsStore(settings) {
-      return R.thread(settings.current)(
+      return R.thread(settings)(
+        R.prop('current'),
         R.spyWarn('Settings store'),
         localStorageService.save$(SETTINGS_STORAGE_KEY)
       );

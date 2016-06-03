@@ -4,8 +4,10 @@
 
   settingsModelsCtrl.$inject = [
     '$scope',
+    'appData',
   ];
-  function settingsModelsCtrl($scope) {
+  function settingsModelsCtrl($scope,
+                              appDataService) {
     const vm = this;
     console.log('init settingsModelsCtrl');
 
@@ -17,16 +19,10 @@
     activate();
 
     function activate() {
-      $scope.state.data_ready.then(updateFactions);
-      $scope.onStateChangeEvent('Factions.loadDescFile', updateLoadResult, $scope);
+      appDataService.ready.then(updateFactions);
     }
     function updateFactions() {
       vm.factions = R.path(['factions', 'base'], $scope.state);
-      $scope.$digest();
-    }
-    function updateLoadResult(_event_, [result]) {
-      $scope.result = result;
-      $scope.$digest();
     }
     function hasDesc(faction) {
       return R.thread($scope.state)(
@@ -36,13 +32,13 @@
       );
     }
     function doOpenFactionFile(faction, files) {
-      $scope.stateEvent('Factions.loadDescFile', faction, files[0]);
+      $scope.sendAction('Factions.loadDescFile', faction, files[0]);
     }
     function doClearFactionDesc(faction) {
-      $scope.stateEvent('Factions.clearDesc', faction);
+      $scope.sendAction('Factions.clearDesc', faction);
     }
     function doClearAllDesc() {
-      $scope.stateEvent('Factions.clearAllDesc');
+      $scope.sendAction('Factions.clearAllDesc');
     }
   }
 })();

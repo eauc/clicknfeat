@@ -4,8 +4,10 @@
 
   settingsMainCtrl.$inject = [
     '$scope',
+    'appData',
   ];
-  function settingsMainCtrl($scope) {
+  function settingsMainCtrl($scope,
+                            appDataService) {
     const vm = this;
     console.log('init settingsMainCtrl');
 
@@ -15,20 +17,15 @@
     activate();
 
     function activate() {
-      $scope.onStateChangeEvent('Settings.loadFile', updateLoadResult, $scope);
-      $scope.bindCell($scope.state.exports.settings, (exp) => {
+      $scope.bindCell((exp) => {
         vm.export = exp;
-      }, $scope);
-    }
-    function updateLoadResult(_event_, [result]) {
-      vm.load_settings_result = result;
-      $scope.$digest();
+      }, appDataService.export.settings, $scope);
     }
     function doLoadSettingsFile(files) {
-      $scope.stateEvent('Settings.loadFile', files[0]);
+      $scope.sendAction('Settings.loadFile', files[0]);
     }
     function doResetSettings() {
-      $scope.stateEvent('Settings.reset', {});
+      $scope.sendAction('Settings.reset', {});
     }
   }
 })();

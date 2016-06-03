@@ -12,7 +12,7 @@
     activate();
 
     function activate() {
-      $scope.state.data_ready.then(updateModes);
+      updateModes();
       $scope.$on('$destroy', $scope.settings.doUpdateSettings);
     }
     function updateModes() {
@@ -22,7 +22,6 @@
         R.sortBy(R.identity)
       );
       vm.mode = R.defaultTo(R.head(vm.modes), vm.mode);
-      $scope.$digest();
     }
   }
 })();
