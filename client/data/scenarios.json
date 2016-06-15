@@ -1,4 +1,200 @@
 [
+  [ "SR16", [ {
+    "name": "SR16 Entrenched",
+    "objectives": [
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 140,
+        "y": 210
+      },
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 340,
+        "y": 270
+      }
+    ],
+    "rect": [
+      {
+        "x": 140,
+        "y": 210,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 340,
+        "y": 270,
+        "width": 120,
+        "height": 60
+      }
+    ]
+  }, {
+    "name": "SR16 Line Breaker",
+    "objectives": [
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "flags": [
+      {
+        "info": ["flags","sr16flag"],
+        "x": 120,
+        "y": 180
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 360,
+        "y": 180
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 120,
+        "y": 300
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 360,
+        "y": 300
+      }
+    ]
+  }, {
+    "name": "SR16 Take and Hold",
+    "killbox": 140,
+    "flags": [
+      {
+        "info": ["flags","sr16flag"],
+        "x": 180,
+        "y": 210
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 300,
+        "y": 270
+      }
+    ]
+  }, {
+    "name": "SR16 The Pit",
+    "killbox": 140,
+    "objectives": [
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 320,
+        "y": 180
+      },
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 160,
+        "y": 300
+      }
+    ],
+    "circle": [
+      {
+        "x": 240,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR16 Extraction",
+    "killbox": 140,
+    "flags": [
+      {
+        "info": ["flags","sr16flag"],
+        "x": 160,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 320,
+        "y": 240
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 160
+      },
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 320
+      }
+    ]
+  }, {
+    "name": "SR16 Incursion",
+    "flags": [
+      {
+        "info": ["flags","sr16flag"],
+        "x": 120,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 240,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 360,
+        "y": 240
+      }
+    ]
+  }, {
+    "name": "SR16 Outlast",
+    "circle": [
+      {
+        "x": 140,
+        "y": 240,
+        "r": 60
+      },
+      {
+        "x": 340,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR16 Recon",
+    "rect": [
+      {
+        "x": 240,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      }
+    ],
+    "flags": [
+      {
+        "info": ["flags","sr16flag"],
+        "x": 120,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr16flag"],
+        "x": 360,
+        "y": 240
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr16_objectives","sr16gen"],
+        "x": 240,
+        "y": 300
+      }
+    ]
+  } ] ],
   [ "SR15", [ {
     "name": "SR15 Destruction",
     "killbox": 140,

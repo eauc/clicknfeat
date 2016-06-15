@@ -440,7 +440,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return appStateService.onAction(state, ['Game.command.execute', 'setScenario', [scenario]]);
     }
     function actionGameScenarioSetRandom(state) {
-      var group = gameScenarioModel.group('SR15', state.scenarios);
+      var group = gameScenarioModel.group('SR16', state.scenarios);
       var scenario = undefined,
           name = gameScenarioModel.name(state.game.scenario);
       while (name === gameScenarioModel.name(state.game.scenario)) {

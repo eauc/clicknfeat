@@ -2,6 +2,111 @@
   "name": "Scenario",
   "color": "#999",
   "models": {
+    "sr16_objectives": {
+      "sr16gen": {
+        "name": "SR16 Generic",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no Normal Movement or Combat Action, cannot become knocked down or be moved, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. This model cannot engage or be engaged. Models never gain a back strike bonus against this model."
+        }
+      },
+      "sr16arc": {
+        "name": "SR16 Arcane Wonder",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no Normal Movement or Combat Action, cannot become knocked down or be moved, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. This model cannot engage or be engaged. Models never gain a back strike bonus against this model.",
+          "Arcane Pulse": "If this model is hit by a melee attack, immediately after the attack is resolved the attacking model suffers a POW 8 magical damage roll unless this model was destroyed or removed from play by the attack.",
+          "Null Zone": " Enemy magic attacks targeting a friendly model within 4˝ of this model suffer –2 RNG."
+        }
+      },
+      "sr16arm": {
+        "name": "SR16 Armory",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no Normal Movement or Combat Action, cannot become knocked down or be moved, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. This model cannot engage or be engaged. Models never gain a back strike bonus against this model.",
+          "Reinforced": "This model does not suffer damage from non-magical ranged attacks that are POW 10 or less and does not suffer damage from non-magical melee attacks that are P+S 10 or less.",
+          "Superior Ammunition": "During your Control Phase, choose one friendly Faction model within 4˝ of this model. That model’s weapons gain Damage Type: Magical for one turn."
+        }
+      },
+      "sr16bun": {
+        "name": "SR16 Bunker",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no Normal Movement or Combat Action, cannot become knocked down or be moved, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. This model cannot engage or be engaged. Models never gain a back strike bonus against this model.",
+          "Girded": "This model does not suffer blast damage. Friendly models B2B with it do not suffer blast damage.",
+          "Dugout": "When this model is hit by a ranged or magic attack, the attacker rolls one less damage die."
+        }
+      },
+      "sr16eff": {
+        "name": "SR16 Effigy of Valor",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Roadblock": "This model provides cover to friendly models as if it were an obstacle. This model loses Roadblock while it is incorporeal or knocked down.",
+          "Uplifting Presence": "After resolving continuous effects during your Maintenance Phase, friendly knocked down models within 4˝ of this model stand up."
+        }
+      },
+      "sr16fue": {
+        "name": "SR16 Fuel Cache",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Up in Smoke": "During your Control Phase, place a 4˝ AOE cloud effect in play. Its center point must be within 1˝ of this model. The AOE remains in play for one round.",
+          "It burns !": "If this model is hit by a melee attack, immediately after the attack is resolved the attacking model suffers the Fire continuous effect unless this model was destroyed or removed from play by the attack."
+        }
+      },
+      "sr16sto": {
+        "name": "SR16 Stockpile",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        },
+        "desc": {
+          "Immobile": "This model has no movement or action and cannot be knocked down or moved. Its front arc extends to 360 ̊. It has no melee  range, cannot engage, and is automatically hit by melee attacks.",
+          "Objective": "This model cannot be placed, cannot channel spells, and cannot be chosen as a Prey target. This model cannot be targeted or damaged until the second player’s second turn. An objective cannot be engaged.",
+          "Surplus": "During your Control Phase, remove d3 damage points from friendly warjacks, warbeasts, and monstrosities B2B with this model.",
+          "High Priority": "When this model is directly hit by an enemy ranged attack, you can choose to have one friendly, non-incorporeal Faction warjack, warbeast, or monstrosity model within 4˝ of this model be directly hit instead. That model is directly hit and suffers all damage and effects."
+        }
+      }
+    },
     "sr15_objectives": {
       "sr15gen": {
         "name": "SR15 Generic",
@@ -182,6 +287,15 @@
     "flags": {
       "sr15flag": {
         "name": "SR15 Flag",
+        "type": "flag",
+        "base": "medium",
+        "immovable": true,
+        "damage": {
+          "type": "none"
+        }
+      },
+      "sr16flag": {
+        "name": "SR16 Flag",
         "type": "flag",
         "base": "medium",
         "immovable": true,
