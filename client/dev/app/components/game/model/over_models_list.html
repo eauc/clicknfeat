@@ -32,7 +32,8 @@
            ng-attr-x="{{model.render.effects[e].x}}"
            ng-attr-y="{{model.render.effects[e].y}}"
            width="10" height="10"
-           xlink:href="{{model.render.effects[e].link}}">
+           xlink:href=""
+           ng-attr-xlink:href="{{model.render.effects[e].link}}">
     </image>
     <g ng-if="model.render.dmg.show">
       <line class="model-damage-bar"

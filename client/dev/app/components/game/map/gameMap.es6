@@ -5,21 +5,16 @@
   clickGameMapDirectiveFactory.$inject = [
     'appAction',
     'appGame',
-    // 'appState',
     'gameMap',
     'terrain',
     'commonMode',
   ];
   function clickGameMapDirectiveFactory(appActionService,
                                         appGameService,
-                                        // appStateService,
                                         gameMapService,
                                         terrainModel,
                                         commonModeModel
   ) {
-    const log = true // eslint-disable-line
-            ? R.bind(console.log, console)
-            : function() {};
     return {
       restrict: 'A',
       link: link
@@ -71,7 +66,7 @@
         };
 
         function mouseDownMap(event) {
-          log('mouseDownMap', event, map.getBoundingClientRect());
+          console.log('mouseDownMap', event, map.getBoundingClientRect());
           blurInputs();
           event.preventDefault();
           if(event.which !== 1) return;
@@ -84,7 +79,7 @@
         }
 
         function mouseLeaveMap(event) {
-          log('mouseLeaveMap', event);
+          console.log('mouseLeaveMap', event);
           event.preventDefault();
 
           map.removeEventListener('mousemove', dragMap);
@@ -92,7 +87,7 @@
         }
 
         function clickMap(event) {
-          log('clickMap', event);
+          console.log('clickMap', event);
           event.preventDefault();
           if(event.which !== 1) return;
 
@@ -112,7 +107,7 @@
         }
 
         function rightClickMap(event) {
-          log('rightClickMap', event);
+          console.log('rightClickMap', event);
           event.preventDefault();
 
           const game = appGameService.game.sample();
@@ -122,7 +117,7 @@
         }
 
         function moveMap(event) {
-          log('moveMap', event);
+          console.log('moveMap', event);
           event.preventDefault();
 
           const now = gameMapService.eventToMapCoordinates(map, event);
@@ -162,7 +157,7 @@
           };
         }
         function dragMap(event) {
-          log('dragMap', event);
+          console.log('dragMap', event);
           event.preventDefault();
           if(event.which !== 1) return;
 

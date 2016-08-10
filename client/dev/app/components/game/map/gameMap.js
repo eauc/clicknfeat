@@ -7,14 +7,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   angular.module('clickApp.directives').directive('clickGameMap', clickGameMapDirectiveFactory);
 
-  clickGameMapDirectiveFactory.$inject = ['appAction', 'appGame',
-  // 'appState',
-  'gameMap', 'terrain', 'commonMode'];
-  function clickGameMapDirectiveFactory(appActionService, appGameService,
-  // appStateService,
-  gameMapService, terrainModel, commonModeModel) {
-    var log = true // eslint-disable-line
-    ? R.bind(console.log, console) : function () {};
+  clickGameMapDirectiveFactory.$inject = ['appAction', 'appGame', 'gameMap', 'terrain', 'commonMode'];
+  function clickGameMapDirectiveFactory(appActionService, appGameService, gameMapService, terrainModel, commonModeModel) {
     return {
       restrict: 'A',
       link: link
@@ -66,7 +60,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         };
 
         function mouseDownMap(event) {
-          log('mouseDownMap', event, map.getBoundingClientRect());
+          console.log('mouseDownMap', event, map.getBoundingClientRect());
           blurInputs();
           event.preventDefault();
           if (event.which !== 1) return;
@@ -79,7 +73,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
 
         function mouseLeaveMap(event) {
-          log('mouseLeaveMap', event);
+          console.log('mouseLeaveMap', event);
           event.preventDefault();
 
           map.removeEventListener('mousemove', dragMap);
@@ -87,7 +81,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
 
         function clickMap(event) {
-          log('clickMap', event);
+          console.log('clickMap', event);
           event.preventDefault();
           if (event.which !== 1) return;
 
@@ -105,7 +99,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
 
         function rightClickMap(event) {
-          log('rightClickMap', event);
+          console.log('rightClickMap', event);
           event.preventDefault();
 
           var game = appGameService.game.sample();
@@ -115,7 +109,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
 
         function moveMap(event) {
-          log('moveMap', event);
+          console.log('moveMap', event);
           event.preventDefault();
 
           var now = gameMapService.eventToMapCoordinates(map, event);
@@ -148,7 +142,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           };
         }
         function dragMap(event) {
-          log('dragMap', event);
+          console.log('dragMap', event);
           event.preventDefault();
           if (event.which !== 1) return;
 
