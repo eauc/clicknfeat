@@ -23,10 +23,14 @@
 
     activate();
 
+    var _factions = undefined;
     function activate() {
       vm.import_list = null;
       $scope.bindCell(function (factions) {
         if (R.isNil(factions)) return;
+        if (factions === _factions) return;
+        _factions = factions;
+
         vm.faction = R.head(R.keys(factions.current));
         if (R.isNil(vm.faction)) return;
         vm.onFactionChange();
