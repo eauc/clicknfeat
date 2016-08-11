@@ -47,9 +47,7 @@
         ([create_ctxt, game]) => {
           ctxt.create_ctxt = create_ctxt;
           return setBoardCommandModel
-            .executeP(data.board, game)
-            .catch(R.pipe(appErrorService.emit,
-                          R.defaultTo([{}, game])));
+            .executeP(data.board, game);
         },
         ([set_ctxt, game]) => {
           ctxt.set_ctxt = set_ctxt;

@@ -36,7 +36,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         var game = _ref4[1];
 
         ctxt.create_ctxt = create_ctxt;
-        return setBoardCommandModel.executeP(data.board, game).catch(R.pipe(appErrorService.emit, R.defaultTo([{}, game])));
+        return setBoardCommandModel.executeP(data.board, game);
       }, function (_ref5) {
         var _ref6 = _slicedToArray(_ref5, 2);
 

@@ -1,0 +1,23 @@
+* model
+  - build roaster
+  - replace (within base)
+  - highlight models in melee
+  - wreck: hide effects/icons/souls/counters
+  - import skarlock commander x2
+  - b2b/scenario aura
+  - update max length buttons
+* online
+  - save online game in cache
+  - load local game online & reverse
+* ruler
+  - origin/target live update
+  - update max length buttons
+* los
+  - origin/target live update
+* BUGS
+  - page trop grande en bas
+  - select all -> mode inconnu
+  - rire a la con sur 1d6
+  - kd s'affiche pas
+  - create AoE on model s'affiche pas
+  - label distance charge pas retourne sur flip map
