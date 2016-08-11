@@ -664,12 +664,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       var dice = _ref12[1];
       var last = _ref12[2];
 
-      if (last.type === 'rollDeviation') return false;
-      if (R.length(previous_dice) + 1 !== R.length(dice)) return false;
+      if (last.type === 'rollDeviation') return null;
+      if (R.length(previous_dice) + 1 !== R.length(dice)) return null;
       var d = R.propOr([], 'd', last);
-      if (R.length(dice) < 2) return false;
+      if (R.length(d) < 2) return null;
       var mean = R.reduce(R.add, 0, d) / R.length(d);
-      return mean < 2;
+      return mean < 2 ? true : null;
     }
   }
 })();

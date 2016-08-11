@@ -17,7 +17,7 @@
 * BUGS
   - page trop grande en bas
   - select all -> mode inconnu
-  - rire a la con sur 1d6
   - kd s'affiche pas
   - create AoE on model s'affiche pas
   - label distance charge pas retourne sur flip map
+  - template detail ne se ferme pas lorsqu'on deselectionne le template (rajouter un bouton close)

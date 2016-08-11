@@ -946,12 +946,12 @@
              );
     }
     function gameCheckBadDice([previous_dice, dice, last]) {
-      if(last.type === 'rollDeviation') return false;
-      if(R.length(previous_dice)+1 !== R.length(dice)) return false;
+      if(last.type === 'rollDeviation') return null;
+      if(R.length(previous_dice)+1 !== R.length(dice)) return null;
       const d = R.propOr([], 'd', last);
-      if(R.length(dice) < 2) return false;
+      if(R.length(d) < 2) return null;
       const mean = R.reduce(R.add, 0, d) / R.length(d);
-      return (mean < 2);
+      return (mean < 2) ? true : null;
     }
   }
 })();
