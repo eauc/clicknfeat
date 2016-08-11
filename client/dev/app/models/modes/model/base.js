@@ -78,9 +78,9 @@
     }
     function modelSelectAllUnit(state) {
       var selection = gameModelSelectionModel.get('local', state.game.model_selection);
-      return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(selection[0]), R.unless(R.isNil, R.pipe(function (model) {
+      R.thread(state)(R.view(MODELS_LENS), gameModelsModel.findStamp$(selection[0]), R.unless(R.isNil, R.pipe(function (model) {
         return R.thread(model)(modelModel.unit, R.unless(R.equals(0), R.pipe(function (unit) {
-          return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.all, R.spyError('toto'), R.filter(modelModel.userIs$(modelModel.user(model))), R.spyError('toto'), R.filter(modelModel.unitIs$(unit)), R.spyError('toto'), R.map(R.path(['state', 'stamp'])), R.spyError('toto'));
+          return R.thread(state)(R.view(MODELS_LENS), gameModelsModel.all, R.filter(modelModel.userIs$(modelModel.user(model))), R.filter(modelModel.unitIs$(unit)), R.map(R.path(['state', 'stamp'])));
         }, function (stamps) {
           return appStateService.onAction(state, ['Game.command.execute', 'setModelSelection', ['set', stamps]]);
         })));

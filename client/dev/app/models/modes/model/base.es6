@@ -138,7 +138,7 @@
     function modelSelectAllUnit(state) {
       const selection = gameModelSelectionModel
               .get('local', state.game.model_selection);
-      return R.thread(state)(
+      R.thread(state)(
         R.view(MODELS_LENS),
         gameModelsModel.findStamp$(selection[0]),
         R.unless(
@@ -152,13 +152,9 @@
                   (unit) => R.thread(state)(
                     R.view(MODELS_LENS),
                     gameModelsModel.all,
-                    R.spyError('toto'),
                     R.filter(modelModel.userIs$(modelModel.user(model))),
-                    R.spyError('toto'),
                     R.filter(modelModel.unitIs$(unit)),
-                    R.spyError('toto'),
-                    R.map(R.path(['state','stamp'])),
-                    R.spyError('toto')
+                    R.map(R.path(['state','stamp']))
                   ),
                   (stamps) => appStateService
                     .onAction(state, [ 'Game.command.execute',
