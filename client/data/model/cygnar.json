@@ -11,6 +11,17 @@
   },
   "models": {
     "casters": {
+      "allison2": {
+        "name": "Allison2 (Captain Allison Jakes)",
+        "fk_name": "Captain Allison Jakes",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 14
+        }
+      },
       "brisbane1": {
         "name": "Brisbane1 (Major Markus 'Siege' Brisbane)",
         "fk_name": "Major Markus 'Siege' Brisbane",
@@ -55,7 +66,7 @@
         "damage": {
           "n": 15
         }
-      },          
+      },
       "constance1": {
         "name": "Constance1 (Constance Blaize, Knight of the Prophet)",
         "fk_name": "Constance Blaize, Knights of the Prophet",
@@ -104,7 +115,7 @@
             }
           }
         }
-      },                 
+      },
       "haley1": {
         "name": "Haley1 (Captain Victoria Haley)",
         "fk_name": "Captain Victoria Haley",
@@ -185,6 +196,17 @@
           "n": 18
         }
       },
+      "maddox1": {
+        "name": "Maddox1 (Major Beth Maddox)",
+        "fk_name": "Major Beth Maddox",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
       "nemo1": {
         "name": "Nemo1 (Commander Adept Nemo)",
         "fk_name": "Commander Adept Nemo",
@@ -236,7 +258,7 @@
             }
           },
           "attachement": {
-            "finch": {     
+            "finch": {
               "name": "Storm Chaser Adept Caitlin Finch",
               "type": "solo",
               "base": "small",
@@ -251,7 +273,7 @@
             }
           }
         }
-      },                 
+      },
       "sloan1": {
         "name": "Sloan1 (Captain Kara Sloan)",
         "fk_name": "Captain Kara Sloan",
@@ -326,7 +348,7 @@
         "damage": {
           "n": 18
         }
-      }   
+      }
     },
     "jacks": {
       "ace": {
@@ -870,7 +892,7 @@
               }
             }
           }
-        }                 
+        }
       },
       "fields_mechaniks": {
         "name": "Field Mechaniks",
@@ -1042,7 +1064,7 @@
             }
           }
         }
-      },          
+      },
       "storm_tower": {
         "name": "Stormsmith Storm Tower",
         "fk_name": "Storm Tower",
@@ -1374,7 +1396,7 @@
             }
           }
         }
-      }      
+      }
     },
     "solos": {
       "allison": {
@@ -1391,7 +1413,15 @@
         "damage": {
           "n": 5
         }
-      },          
+      },
+      "arcane_tempest_rifleman": {
+        "name": "Arcane Tempest Rifleman",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "arlan": {
         "name": "Captain Arlan Strangewayes",
         "type": "solo",
@@ -1430,7 +1460,7 @@
         "damage": {
           "n": 5
         }
-      },          
+      },
       "journeymanwarcaster": {
         "name": "Journeyman Warcaster",
         "type": "wardude",
@@ -1447,7 +1477,7 @@
         "damage": {
           "n": 5
         }
-      },          
+      },
       "laddermore_mount": {
         "name": "Major Katherine Laddermore",
         "type": "solo",
@@ -1460,7 +1490,7 @@
         "damage": {
           "n": 10
         }
-      },          
+      },
       "laddermore_dismount": {
         "name": "Major Katherine Laddermore (dismount)",
         "fk_name": "Major Katherine Laddermore",
@@ -1474,8 +1504,8 @@
         "damage": {
           "n": 5
         }
-      },          
-      "murdoch": {           
+      },
+      "murdoch": {
         "name": "Captain Jonas Murdoch",
         "type": "solo",
         "base": "small",
@@ -1487,7 +1517,7 @@
         "damage": {
           "n": 5
         }
-      },                 
+      },
       "runewood": {
         "name": "Archduke Alain Runewood (Archduke Alain Runewood, Lord of Fharin)",
         "fk_name": "Archduke Alain Runewood",
@@ -1514,7 +1544,7 @@
         "damage": {
           "n": 5
         }
-      },         
+      },
       "stormbladecaptain": {
         "name": "Stormblade Captain",
         "type": "solo",
@@ -1527,7 +1557,7 @@
         "damage": {
           "n": 5
         }
-      },          
+      },
       "stormsmithstormcaller": {
         "name": "Stormsmith Stormcaller",
         "type": "solo",
@@ -1548,7 +1578,7 @@
             "link": "/data/model/cygnar/solos/Stormwall_Pod.png"
           }
         ]
-      },          
+      },
       "trencherbuster": {
         "name": "Trencher Buster",
         "type": "solo",

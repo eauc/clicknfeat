@@ -49,40 +49,6 @@
           "n": 17
         }
       },
-      "Cassius": {
-        "name": "Cassius1 (Cassius the Oathkeeper)",
-        "fk_name": "Cassius the Oathkeeper",
-        "entries": {
-          "caster": {
-            "Cassius": {
-              "name": "Cassius1 (Cassius the Oathkeeper)",
-              "type": "wardude",
-              "fury": 6,
-              "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/orboros/locks/Cassius1.png"
-                }
-              ],
-              "damage": {
-                "n": 16
-              }
-            }
-          },
-          "solo": {
-            "WurmWood": {
-              "name": "Wurmwood, Tree of Fate",
-              "type": "solo",
-              "base": "large",
-              "img": [
-                {
-                  "link": "/data/model/orboros/locks/Cassius1_Wurmwood.png"
-                }
-              ]
-            }
-          }
-        }
-      },
       "Grayle1": {
         "name": "Grayle1 (Grayle the Farstrider)",
         "fk_name": "Grayle the Farstrider",
@@ -264,6 +230,65 @@
         "damage": {
           "n": 16
         }
+      },
+      "Tanith1": {
+        "name": "Tanith1 (Tanith the Feralsong)",
+        "fk_name": "Tanith the Feralson",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 15
+        }
+      },
+      "Una2": {
+        "name": "Una2 (Una la Petite Campeuse)",
+        "fk_name": "Una la Petite Campeuse",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 15
+        }
+      },
+      "Wurmwood1": {
+        "name": "Wurmwood1 (Wurmwood, Tree of Fate)",
+        "fk_name": "Wurmwood, Tree of Fate",
+        "entries": {
+          "solo": {
+            "Cassius": {
+              "name": "Cassius the Oathkeeper",
+              "type": "solo",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/locks/Cassius1.png"
+                }
+              ],
+              "damage": {
+                "n": 10
+              }
+            }
+          },
+          "caster": {
+            "WurmWood": {
+              "name": "Wurmwood1 (Wurmwood, Tree of Fate)",
+              "type": "wardude",
+              "fury": 7,
+              "base": "large",
+              "img": [
+                {
+                  "link": "/data/model/orboros/locks/Cassius1_Wurmwood.png"
+                }
+              ],
+              "damage": {
+                "n": 20
+              }
+            }
+          }
+        }
       }
     },
     "beasts": {
@@ -279,12 +304,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null],
-          "2": [ "b", "b", "b", "b", null],
-          "3": [ "b", "b", "b", "b", "b"],
-          "4": [ "b", "b", null, null, null],
-          "5": [ "b", "b", "b", "b", "b"],
-          "6": [ "b", "b", null, null, null]
+          "1": [ "b" , "b" , "b" , null ],
+          "2": [ "b" , "b" , "b" , "b"  ],
+          "3": [ "b" , "b" , "b" , null ],
+          "4": [ "b" , "b" , "b" , "b"  ],
+          "5": [ "b" , "b" , "b" , null ],
+          "6": [ "b" , "b" , "b" , "b"  ]
         }
       },
       "Argus": {
@@ -300,12 +325,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b" , null ],
+          "2": [ "b" , "b" , "b" , "b"  ],
+          "3": [ "b" , "b" , "b" , null ],
+          "4": [ "b" , "b" , "b" , "b"  ],
+          "5": [ "b" , "b" , "b" , null ],
+          "6": [ "b" , "b" , "b" , "b"  ]
         }
       },
       "Brennos": {
@@ -320,8 +345,8 @@
           "2": [ "b", "b", "b",  "b",  "b", null ],
           "3": [ "b", "b", "b",  "b", null, null ],
           "4": [ "b", "b", "b",  "b",  "b",  "b" ],
-          "5": [ "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b",  "b",  "b", null ]
+          "5": [ "b", "b", "b",  "b", null, null ],
+          "6": [ "b", "b", "b",  "b",  "b",  "b" ]
         }
       },
       "Feral Warpwolf": {
@@ -336,12 +361,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b" , "b" , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b" , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , "b"  ]
         }
       },
       "Ghetorix": {
@@ -356,12 +381,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", "b", "b", null, null ],
-          "2": [ "b", "b", null, null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", null, null, null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , null , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , null ],
+          "4": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b"  , null , null , null ],
+          "6": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , null ]
         }
       },
       "Gnarlhorn Satyr": {
@@ -396,12 +421,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", null, null, null, null ]
+          "1": [ "b" , "b" , "b"  , null , null , null ],
+          "2": [ "b" , "b" , "b"  , "b"  , null , null ],
+          "3": [ "b" , "b" , "b"  , "b"  , "b"  , null ],
+          "4": [ "b" , "b" , "b"  , null , null , null ],
+          "5": [ "b" , "b" , "b"  , "b"  , "b"  , null ],
+          "6": [ "b" , "b" , null , null , null , null ]
         }
       },
       "Megalith": {
@@ -416,12 +441,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", "b", null, null, null, null ]
+          "1": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , null , null , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , null , null , null ]
         }
       },
       "Pureblood Warpwolf": {
@@ -436,12 +461,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", "b", "b", null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "4": [ "b" , "b" , "b" , null , null , null , null ],
+          "5": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , "b" , "b"  , "b"  , null , null ]
         }
       },
       "Razorwing Griffon": {
@@ -456,12 +481,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b"  , null , null ],
+          "2": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "3": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , null , null , null ],
+          "5": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , null , null , null ]
         }
       },
       "Riphorn Satyr": {
@@ -476,12 +501,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+          "6": [ "b" , "b" , "b" , null , null , null ]
         }
       },
       "Rotterhorn Griffon": {
@@ -491,12 +516,12 @@
         "base": "medium",
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b"  , null , null ],
+          "2": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "3": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , null , null , null ],
+          "5": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , null , null , null ]
         }
       },
       "Scarsfell Griffon": {
@@ -506,12 +531,12 @@
         "base": "medium",
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b"  , null , null ],
+          "2": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "3": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , null , null , null ],
+          "5": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , null , null , null ]
         }
       },
       "Shadowhorn Satyr": {
@@ -526,12 +551,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", null, null, null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+          "6": [ "b" , "b" , "b" , null , null , null ]
         }
       },
       "Storm Raptor": {
@@ -541,12 +566,12 @@
         "base": "huge",
         "damage": {
           "type": "gargantuan",
-          "1": [ "b", "b", "b", "b", "b", "b", null, null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", null, null, null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b" ]
+          "1": [ "b" , "b" , "b" , "b" , "b" , "b" , "b"  , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b" , "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b" , "b" , null , null , null , null , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b" , "b" ,  "b" ,  "b" , null , null , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b" , "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b" , "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  ]
         }
       },
       "Warpwolf Stalker": {
@@ -561,12 +586,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b" , "b" , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  ],
+          "3": [ "b" , "b" , "b" , "b" , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  ],
+          "5": [ "b" , "b" , "b" , "b" , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b" ]
         }
       },
       "Winter Argus": {
@@ -581,12 +606,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b"  , null ],
+          "2": [ "b" , "b" , "b"  , "b"  ],
+          "3": [ "b" , "b" , "b"  , null ],
+          "4": [ "b" , "b" , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b"  , null ],
+          "6": [ "b" , "b" , "b"  , "b"  ]
         }
       },
       "Woldguardian": {
@@ -601,12 +626,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", null, null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", null, null, null, null, null ]
+          "1": [ "b" , "b" , "b" , "b" , "b"  , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b" , null , null , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , null , null , null ]
         }
       },
       "Woldwarden": {
@@ -621,12 +646,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", "b", "b" ],
-          "4": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", "b", null, null, null, null ]
+          "1": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , null , null , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  , null ],
+          "6": [ "b" , "b" , "b" , "b" , null , null , null , null ]
         }
       },
       "Woldwatcher": {
@@ -644,12 +669,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", null, null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", null, null, null ],
-          "5": [ "b", "b", "b", "b", "b", "b" ],
-          "6": [ "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+          "4": [ "b" , "b" , "b" , null , null , null ],
+          "5": [ "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , "b" , null , null , null ]
         }
       },
       "Woldwrath": {
@@ -666,12 +691,12 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [ "b", "b", "b", "b", "b", null, null, null, null, null, null, null, null],
-          "2": [ "b", "b", "b", "b", "b","b", "b", null, null, null, null, null, null],
-          "3": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b"],
-          "4": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", null, null],
-          "5": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", null, null],
-          "6": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", null, null, null, null]
+          "1": [ "b" , "b" , "b" , "b" , "b"     , "b" , null , null , null , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b","b" , "b" , "b"  , null , null , null , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"     , "b" , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b" , "b"     , "b" , "b"  , "b"  , "b"  , "b"  , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b"     , "b" , "b"  , "b"  , "b"  , "b"  , "b"  , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"     , "b" , "b"  , "b"  , "b"  , null , null , null , null]
         }
       },
       "Woldwyrd": {
@@ -687,12 +712,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", null, null, null, null ],
-          "5": [ "b", "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , "b"  , null , null ],
+          "2": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "3": [ "b" , "b" , "b"  , "b"  , null ],
+          "4": [ "b" , "b" , null , null , null ],
+          "5": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "6": [ "b" , "b" , "b"  , null , null ]
         }
       }
     },
@@ -941,7 +966,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1014,7 +1039,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           },
@@ -1027,22 +1052,6 @@
               "img": [
                 {
                   "link": "/data/model/orboros/units/Ravager_Chieftain.png"
-                }
-              ],
-              "damage": {
-                "n": 8
-              }
-            }
-          },
-          "wa": {
-            "Tharn Ravager Shaman": {
-              "name": "Shaman",
-              "fk_name": "Tharn Ravager Shaman",
-              "type": "warrior",
-              "base": "medium",
-              "img": [
-                {
-                  "link": "/data/model/orboros/units/Ravager_Shaman.png"
                 }
               ],
               "damage": {
@@ -1157,6 +1166,15 @@
       }
     },
     "solos": {
+      "Blackclad Stoneshaper": {
+        "name": "Blackclad Stoneshaper",
+        "type": "solo",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "Blackclad Wayfarer": {
         "name": "Blackclad Wayfarer",
         "type": "solo",
@@ -1230,7 +1248,7 @@
         "damage": {
           "n": 10
         }
-      },          
+      },
       "Morraig_dismount": {
         "name": "Wolflord Morraig (dismount)",
         "fk_name": "Wolflord Morraig",
@@ -1258,6 +1276,20 @@
           "n": 5
         }
       },
+      "Tharn Ravager Shaman": {
+        "name": "Shaman",
+        "fk_name": "Tharn Ravager Shaman",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/orboros/units/Ravager_Shaman.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "Tharn Ravager White Mane": {
         "name": "Tharn Ravager White Mane",
         "type": "solo",
@@ -1267,6 +1299,15 @@
             "link": "/data/model/orboros/solos/WhiteMane.png"
           }
         ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "Tharn Wolf Rider Champion": {
+        "name": "Tharn Wolf Rider Champion",
+        "type": "solo",
+        "base": "large",
+        "img": [],
         "damage": {
           "n": 8
         }

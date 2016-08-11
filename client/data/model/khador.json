@@ -62,7 +62,7 @@
             }
           },
           "attachement": {
-            "argus1": {     
+            "argus1": {
               "name": "War Argus 1",
               "type": "solo",
               "base": "medium",
@@ -75,7 +75,7 @@
                 "n": 8
               }
             },
-            "argus2": {     
+            "argus2": {
               "name": "War Argus 2",
               "type": "solo",
               "base": "medium",
@@ -90,7 +90,7 @@
             }
           }
         }
-      },                 
+      },
       "harkevich1": {
         "name": "Harkevich1 (Kommander Harkevich, The Iron Wolf)",
         "fk_name": "Kommander Harkevich, the Iron Wolf",
@@ -105,7 +105,7 @@
         "damage": {
           "n": 18
         }
-      },          
+      },
       "irusk1": {
         "name": "Irusk1 (Kommandant Irusk)",
         "fk_name": "Kommandant Irusk",
@@ -140,7 +140,7 @@
         "name": "Karchev1 (Karchev the Terrible)",
         "fk_name": "Karchev the Terrible",
         "type": "wardude",
-        "focus": 5,
+        "focus": 6,
         "base": "large",
         "img": [
           {
@@ -155,6 +155,28 @@
           "4": [ "b",  "b",  "b",  "b",  "B",  "B" ],
           "5": [ "b",  "b",  "b",  "r",  "r",  "B" ],
           "6": [ "b",  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "koslov1": {
+        "name": "Koslov1 (Lord Koslov, Viscount of Scarsgrad)",
+        "fk_name": "Lord Koslov, Viscount of Scarsgrad",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 17
+        }
+      },
+      "malakov2": {
+        "name": "Malakov2 (Kommander Andrei Malakov)",
+        "fk_name": "Kommander Andrei Malakov",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 15
         }
       },
       "oldwitch1": {
@@ -927,7 +949,7 @@
               }
             }
           }
-        }                 
+        }
       },
       "go": {
         "name": "Greylord Outriders",
@@ -1033,7 +1055,7 @@
             }
           }
         }
-      },          
+      },
       "ka": {
         "name": "Kayazy Assassins",
         "entries": {
@@ -1330,7 +1352,7 @@
             }
           }
         }
-      }      
+      }
     },
     "solos": {
       "fenris": {
@@ -1518,6 +1540,15 @@
           "n": 5
         }
       },
+      "wg_artillery_kapitan": {
+        "name": "Winter Guard Artillery Kapitan",
+        "type": "solo",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "yuri": {
         "name": "Yuri the Axe",
         "type": "solo",
@@ -1545,7 +1576,7 @@
           }
         ],
         "damage": {
-          "n": 22
+          "n": 24
         }
       }
     }

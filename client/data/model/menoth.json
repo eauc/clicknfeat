@@ -41,6 +41,17 @@
           "n": 19
         }
       },
+      "durant2": {
+        "name": "Durant2 (Sovereign Tristan Durant)",
+        "fk_name": "Sovereign Tristan Durant",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 15
+        }
+      },
       "feora1": {
         "name": "Feora1 (Feora, Priestess of the Flame)",
         "fk_name": "Feora, Priestess of the Flame",
@@ -84,6 +95,17 @@
         ],
         "damage": {
           "n": 17
+        }
+      },
+      "malekus1": {
+        "name": "Malekus1 (Malekus, the Burning Truth)",
+        "fk_name": "Malekus, the Burning Truth",
+        "type": "wardude",
+        "focus": 7,
+        "base": "medium",
+        "img":[],
+        "damage": {
+          "n": 18
         }
       },
       "reclaimer1": {
@@ -703,7 +725,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -746,7 +768,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1189,6 +1211,15 @@
             "link": "/data/model/menoth/solos/Covenant.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "deliverer_arms_master": {
+        "name": "Deliverer Arms Master",
+        "type": "solo",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }

@@ -11,6 +11,17 @@
   },
   "models": {
     "casters": {
+      "elara2": {
+        "name": "Elara2 (Elara, Death's Shadow)",
+        "fk_name": "Elara, Death's Shadow",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
       "garryth1": {
         "name": "Garryth1 (Blade of Retribution)",
         "fk_name": "Garryth, Blade of Retribution",
@@ -22,6 +33,17 @@
             "link": "/data/model/scyrah/casters/Garryth1.png"
           }
         ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "Helynna1": {
+        "name": "Helynna1 (Magister Helynna)",
+        "fk_name": "Magister Helynna",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 16
         }
@@ -808,20 +830,23 @@
             }
           }
         }
+      },
+      "swordsmen": {
+        "name": "House Ellowuyr Swordsmen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": []
+            }
+          }
+        }
       }
     },
     "solos": {
-      "soulless": {
-        "name": "Soulless Escort",
-        "fk_name": "(?<nb_repeat>\\d+)\\s+Soulless Escort",
-        "type": "solo",
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/scyrah/units/SoullessEscort.png"
-          }
-        ]
-      },
       "arcanist": {
         "name": "Arcanist",
         "type": "solo",
@@ -937,6 +962,15 @@
           "n": 5
         }
       },
+      "healer": {
+        "name": "Lys Healer",
+        "type": "solo",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "mage_hunter_assassin": {
         "name": "Mage Hunter Assassin",
         "type": "solo",
@@ -1016,6 +1050,17 @@
           "n": 5
         }
       },
+      "soulless": {
+        "name": "Soulless Escort",
+        "fk_name": "(?<nb_repeat>\\d+)\\s+Soulless Escort",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/scyrah/units/SoullessEscort.png"
+          }
+        ]
+      },
       "sylys": {
         "name": "Sylys Wyshnalyrr, the Seeker",
         "type": "solo",
@@ -1061,7 +1106,7 @@
           }
         ],
         "damage": {
-          "n": 20
+          "n": 24
         }
       }
     }

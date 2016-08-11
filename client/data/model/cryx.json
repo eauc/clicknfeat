@@ -11,6 +11,28 @@
   },
   "models": {
     "casters": {
+      "Agathia1": {
+        "name": "Agathia1 (Bane Witch Agathia)",
+        "fk_name": "Bane Witch Agathia",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
+      "Aiakos2": {
+        "name": "Aiakos2 (Captain Aiakos)",
+        "fk_name": "Captain Aiakos",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
       "Asphyxious1": {
         "name": "Asphyxious1 (Iron Lich Asphyxious)",
         "fk_name": "Iron Lich Asphyxious",
@@ -133,7 +155,7 @@
         "damage": {
           "n": 18
         }
-      },        
+      },
       "Goreshade1": {
         "name": "Goreshade1 (Goreshade the Bastard & Deathwalker)",
         "fk_name": "Goreshade the Bastard",
@@ -163,14 +185,11 @@
                 {
                   "link": "/data/model/cryx/casters/Deathwalker.png"
                 }
-              ],
-              "damage": {
-                "n": 5
-              }
+              ]
             }
           }
         }
-      },          
+      },
       "Goreshade2": {
         "name": "Goreshade2 (Goreshade the Cursed)",
         "fk_name": "Goreshade the Cursed",
@@ -185,13 +204,13 @@
         "damage": {
           "n": 17
         }
-      },                
+      },
       "Goreshade3": {
         "name": "Goreshade3 (Goreshade, Lord of Ruin)",
         "fk_name": "Goreshade, Lord of Ruin",
         "type": "wardude",
         "focus": 7,
-        "base": "large", 
+        "base": "large",
         "img": [
           {
             "link": "/data/model/cryx/casters/Goreshade3.png"
@@ -200,7 +219,7 @@
         "damage": {
           "n": 17
         }
-      },                
+      },
       "Mortenebra1": {
         "name": "Mortenebra1 (Master Necrotech Mortenebra & Deryliss)",
         "fk_name": "Master Necrotech Mortenebra",
@@ -237,13 +256,13 @@
             }
           }
         }
-      }, 
+      },
       "Scaverous1": {
         "name": "Scaverous1 (Lord Exhumator Scaverous)",
         "fk_name": "Lord Exhumator Scaverous",
         "type": "wardude",
         "focus": 7,
-        "base": "medium", 
+        "base": "medium",
         "img": [
           {
             "link": "/data/model/cryx/casters/Scaverous1.png"
@@ -258,7 +277,7 @@
         "fk_name": "Pirate Queen Skarre",
         "type": "wardude",
         "focus": 6,
-        "base": "small", 
+        "base": "small",
         "img": [
           {
             "link": "/data/model/cryx/casters/Skarre1.png"
@@ -273,7 +292,7 @@
         "fk_name": "Skarre, Queen of the Broken Coast",
         "type": "wardude",
         "focus": 7,
-        "base": "small", 
+        "base": "small",
         "img": [
           {
             "link": "/data/model/cryx/casters/Skarre2.png"
@@ -303,7 +322,7 @@
         "fk_name": "Lich Lord Terminus",
         "type": "wardude",
         "focus": 6,
-        "base": "large", 
+        "base": "large",
         "img": [
           {
             "link": "/data/model/cryx/casters/Terminus1.png"
@@ -318,7 +337,7 @@
         "fk_name": "Lich Lord Venethrax",
         "type": "wardude",
         "focus": 7,
-        "base": "medium", 
+        "base": "medium",
         "img": [
           {
             "link": "/data/model/cryx/casters/Venethrax1.png"
@@ -359,7 +378,7 @@
                 }
               ],
               "damage": {
-                "n": 5
+                "n": 8
               }
             },
             "Morgaen": {
@@ -372,7 +391,7 @@
                 }
               ],
               "damage": {
-                "n": 5
+                "n": 8
               }
             },
             "Selene": {
@@ -385,7 +404,7 @@
                 }
               ],
               "damage": {
-                "n": 5
+                "n": 8
               }
             }
           }
@@ -450,23 +469,23 @@
           "6": [ null, null,  "b",  "b",  "r", null ]
         }
       },
-      "Deathripper": {
-        "name": "Deathripper",
+      "Deathjack": {
+        "name": "Deathjack",
         "type": "jack",
-        "base": "medium",
+        "base": "large",
         "img": [
           {
-            "link": "/data/model/cryx/jacks/Deathripper.png"
+            "link": "/data/model/cryx/jacks/Deathjack.png"
           }
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null,  null,  "b",  "h", "h" ],
-          "2": [ null,  null,  null,  "b",  "h", "c"  ],
-          "3": [ null,  null,  "b",  "b",  "c", "c"  ],
-          "4": [ null,  null,  "b",  "b",  "a", "m"  ],
-          "5": [ null,  null,  null,  "b",  "a", "m"  ],
-          "6": [ null, null,  null,  "b",  "m", "m" ]
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [ "b",  "b",  "b",  "l",  "l", "m"  ],
+          "3": [ "b",  "b",  "b",  "b",  "m", "m"  ],
+          "4": [ "b",  "b",  "b",  "b",  "c", "c"  ],
+          "5": [ "b",  "b",  "b",  "r",  "r", "c"  ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
         }
       },
       "Defiler": {
@@ -488,23 +507,23 @@
           "6": [ null, null,  null,  "b",  "m", "m" ]
         }
       },
-      "Deathjack": {
-        "name": "Deathjack",
+      "Deathripper": {
+        "name": "Deathripper",
         "type": "jack",
-        "base": "large",
+        "base": "medium",
         "img": [
           {
-            "link": "/data/model/cryx/jacks/Deathjack.png"
+            "link": "/data/model/cryx/jacks/Deathripper.png"
           }
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, "b",  "b",  "b",  "l", null ],
-          "2": [ "b",  "b",  "b",  "l",  "l", "m"  ],
-          "3": [ "b",  "b",  "b",  "b",  "m", "m"  ],
-          "4": [ "b",  "b",  "b",  "b",  "c", "c"  ],
-          "5": [ "b",  "b",  "b",  "r",  "r", "c"  ],
-          "6": [ null, "b",  "b",  "b",  "r", null ]
+          "1": [ null, null,  null,  "b",  "h", "h" ],
+          "2": [ null,  null,  null,  "b",  "h", "c"  ],
+          "3": [ null,  null,  "b",  "b",  "c", "c"  ],
+          "4": [ null,  null,  "b",  "b",  "a", "m"  ],
+          "5": [ null,  null,  null,  "b",  "a", "m"  ],
+          "6": [ null, null,  null,  "b",  "m", "m" ]
         }
       },
       "Desecrator": {
@@ -972,7 +991,7 @@
             }
           }
         }
-      },  
+      },
       "Blackbane's Ghost Raiders": {
         "name": "Blackbane's Ghost Raiders",
         "entries": {
@@ -1027,7 +1046,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1047,6 +1066,20 @@
                   "link": "/data/model/cryx/units/Bloodgorgers.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Carrion Thralls": {
+        "name": "Carrion Thralls",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": []
             }
           }
         }
@@ -1246,6 +1279,20 @@
           }
         }
       },
+      "Satyxis Gunslingers": {
+        "name": "Satyxis Gunslingers",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": []
+            }
+          }
+        }
+      },
       "Satyxis Raiders": {
         "name": "Satyxis Raiders",
         "entries": {
@@ -1390,6 +1437,15 @@
           "n": 8
         }
       },
+      "bloatthrall overseer mobius": {
+        "name": "Bloat Thrall Overseer Mobius",
+        "type": "solos",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 8
+        }
+      },
       "captainrengrave": {
         "name": "Captain Rengrave",
         "type": "solos",
@@ -1495,18 +1551,6 @@
           }
         ]
       },
-      "scrapthrall": {
-        "name": "Scrap Thrall",
-        "fk_name": "(?<nb_repeat>\\d+)\\s+Scrap Thrall",
-        "type": "solos",
-        "range": [1, 3],
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/cryx/solos/ScrapThrall.png"
-          }
-        ]
-      },
       "pistolwraith": {
         "name": "Pistol Wraith",
         "type": "solos",
@@ -1537,6 +1581,18 @@
           "n": 5
         }
       },
+      "scrapthrall": {
+        "name": "Scrap Thrall",
+        "fk_name": "(?<nb_repeat>\\d+)\\s+Scrap Thrall",
+        "type": "solos",
+        "range": [1, 3],
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/cryx/solos/ScrapThrall.png"
+          }
+        ]
+      },
       "skarlockthrall": {
         "name": "Skarlock Thrall",
         "type": "solos",
@@ -1553,7 +1609,6 @@
       "soultrapper": {
         "name": "Soul Trapper",
         "fk_name": "(?<nb_repeat>\\d+)\\s+Soul Trapper",
-        "ranges": [ 1, 2 ],
         "type": "solo",
         "base": "small"
       },

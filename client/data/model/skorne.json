@@ -158,7 +158,7 @@
         "damage": {
           "n": 15
         }
-      },                
+      },
       "Naaresh1": {
         "name": "Naaresh1 (Master Ascetic Naaresh)",
         "fk_name": "Master Ascetic Naaresh",
@@ -173,7 +173,7 @@
         "damage": {
           "n": 17
         }
-      },        
+      },
       "Rasheth1": {
         "name": "Rasheth1 (Dominar Rasheth)",
         "fk_name": "Dominar Rasheth",
@@ -188,7 +188,18 @@
         "damage": {
           "n": 20
         }
-      },        
+      },
+      "Xekaar1": {
+        "name": "Xekaar1 (Beast Master Xekaar)",
+        "fk_name": "Beast Master Xekaar",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
       "Xerxis1": {
         "name": "Xerxis1 (Tyrant Xerxis)",
         "fk_name": "Tyrant Xerxis",
@@ -203,7 +214,7 @@
         "damage": {
           "n": 19
         }
-      },        
+      },
       "Xerxis2": {
         "name": "Xerxis2 (Xerxis Fist of Halaak)",
         "fk_name": "Xerxis Fist of Halaak",
@@ -220,7 +231,7 @@
         "damage": {
           "n": 19
         }
-      },        
+      },
       "Zaal1": {
         "name": "Zaal1 (Supreme Aptimus Zaal & Kovaas)",
         "fk_name": "Supreme Aptimus Zaal & Kovaas",
@@ -274,24 +285,24 @@
       }
     },
     "beasts": {
-      "Archidon": {
-        "name": "Archidon",
+      "Agonizer": {
+        "name": "Agonizer",
         "type": "beast",
-        "fury": 4,
-        "base": "large",
+        "fury": 2,
+        "base": "small",
         "img": [
           {
-            "link": "/data/model/skorne/beasts/Archidon.png"
+            "link": "/data/model/skorne/solos/Agonizer.png"
           }
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b", "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b", "b" ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null, null ]
+          "1": [  "b" , null  , null ],
+          "2": [  "b" ,  "b"  , "b"  ],
+          "3": [  "b" ,  null , null ],
+          "4": [  "b" ,  "b"  ,  "b" ],
+          "5": [  "b" , "b"   , null ],
+          "6": [  "b" ,  "b"  ,  "b" ]
         }
       },
       "Aradus Sentinel": {
@@ -306,12 +317,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b", null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b", "b", "b" ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" , null , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , null , null , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null ]
         }
       },
       "Aradus Soldier": {
@@ -321,12 +332,32 @@
         "base": "large",
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b", null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b", "b", "b" ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" , null , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , null , null , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null ]
+        }
+      },
+      "Archidon": {
+        "name": "Archidon",
+        "type": "beast",
+        "fury": 3,
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/skorne/beasts/Archidon.png"
+          }
+        ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b" ,  "b" ,  "b" , null , null , null ],
+          "2": [  "b" ,  "b" , "b"  ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "Basilisk Drake": {
@@ -341,12 +372,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  null,  null, null, null ],
-          "4": [  "b",  "b",  "b",  null,  null, null ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null ]
+          "1": [  "b" ,  "b" ,  "b" , null  , null  ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b"  ,  null ],
+          "3": [  "b" ,  "b" ,  "b" ,  null , null  ],
+          "4": [  "b" ,  "b" , "b"  ,  "b"  ,  "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , null  , null  ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b"  ,  null ]
         }
       },
       "Basilisk Krea": {
@@ -361,18 +392,18 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  null,  null, null, null ],
-          "4": [  "b",  "b", "b",  null,  null, null ],
-          "5": [  "b",  "b",  "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b"  , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b"  ,  "b"  ,  null , null ],
+          "3": [  "b" ,  "b" ,  null ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b"  ,  null ,  null , null ],
+          "5": [  "b" ,  "b" ,  "b"  , "b"   , null  , null ],
+          "6": [  "b" ,  "b" ,  "b"  ,  "b"  ,  "b"  , "b"  ]
         }
       },
       "Bronzeback Titan": {
         "name": "Bronzeback Titan",
         "type": "beast",
-        "fury": 5,
+        "fury": 4,
         "base": "large",
         "img": [
           {
@@ -381,12 +412,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null, null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b", "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", "b", null, null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ]
         }
       },
       "Cyclops Brute": {
@@ -401,12 +432,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b", null ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null, null ]
+          "1": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b"  ,  "b"  , null ],
+          "5": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ]
         }
       },
       "Cyclops Raider": {
@@ -421,12 +452,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b", null ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null, null ]
+          "1": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b"  ,  "b"  , null ],
+          "5": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ]
         }
       },
       "Cyclops Savage": {
@@ -441,12 +472,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b", null ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null, null ]
+          "1": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b"  ,  "b"  , null ],
+          "5": [  "b" ,  "b" ,  "b" , null  , null  , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b"  ,  null , null ]
         }
       },
       "Cyclops Shaman": {
@@ -461,12 +492,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  null,  null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  null, null ],
-          "5": [  "b",  "b",  "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b"  , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b"  ,  "b"  ,  null , null ],
+          "3": [  "b" ,  "b" ,  null ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b"  ,  "b"  ,  null , null ],
+          "5": [  "b" ,  "b" ,  "b"  , "b"   , null  , null ],
+          "6": [  "b" ,  "b" ,  "b"  ,  "b"  ,  "b"  , null ]
         }
       },
       "Despoiler": {
@@ -481,12 +512,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b", null ],
-          "5": [  "b",  "b",  "b", "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", "b", "b" ]
+          "1": [  "b" ,  "b" ,  "b" , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ]
         }
       },
       "Hydra": {
@@ -496,12 +527,12 @@
         "base": "huge",
         "damage": {
           "type": "gargantuan",
-          "1": [  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null ],
-          "5": [  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null, null ]
+          "1": [ "b"  , "b"  , "b"  , "b"  , "b"  , "b"  , null , null , null , null , null , null , null ],
+          "2": [ "b"  , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  , null , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null , null , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null , null , null ]
         }
       },
       "Mammoth": {
@@ -518,12 +549,12 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [  "b",  "b",  "b",  "b",  "b", null, null, null, null, null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null, null, null, null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null ],
-          "5": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null, null, null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  null,  null, null, null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null , null , null , null  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null  , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b"  , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b"  ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  null , null , null ]
         }
       },
       "Molik Karn": {
@@ -538,14 +569,14 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
-      }, 
+      },
       "Razorworm": {
         "name": "Razorworm",
         "type": "beast",
@@ -558,12 +589,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  null, null, null, null ],
-          "2": [  "b",  "b",  "b",  null,  null, null ],
-          "3": [  "b",  "b",  "b",  null, null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", null ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  null , null  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b"  ,  null ,  null , null ],
+          "3": [  "b" ,  "b" ,  "b"  ,  null , null  , null ],
+          "4": [  "b" ,  "b" ,  "b"  , "b"   ,  "b"  , null ],
+          "5": [  "b" ,  "b" ,  "b"  , null  , null  , null ],
+          "6": [  "b" ,  "b" ,  "b"  ,  "b"  ,  "b"  , null ]
         }
       },
       "Reptile Hound": {
@@ -578,12 +609,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  null,  null, null, null, null ],
-          "2": [  "b",  "b",  "b",  null,  null, null ],
-          "3": [  "b",  "b",  null,  null, null, null ],
-          "4": [  "b",  "b",  "b",  null,  null, null ],
-          "5": [  "b",  null,  null, null, null, null ],
-          "6": [  "b",  "b",  "b", null,  null ]
+          "1": [  "b" ,  null ,  null , null  , null  , null ],
+          "2": [  "b" ,  "b"  ,  "b"  ,  null ,  null , null ],
+          "3": [  "b" ,  "b"  ,  null ,  null , null  , null ],
+          "4": [  "b" ,  "b"  ,  "b"  ,  null ,  null , null ],
+          "5": [  "b" ,  null ,  null , null  , null  , null ],
+          "6": [  "b" ,  "b"  ,  "b"  , null  ,  null , null ]
         }
       },
       "Rhinodon": {
@@ -598,12 +629,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ]
         }
       },
       "Scarab Pack": {
@@ -636,12 +667,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", "b" ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", "b" ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
         }
       },
       "Titan Cannoneer": {
@@ -656,12 +687,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b" ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  null, null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null  , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , null  , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null  , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b"  , null ]
         }
       },
       "Titan Gladiator": {
@@ -676,12 +707,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null, null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ]
         }
       },
       "Titan Sentry": {
@@ -696,12 +727,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null, null ],
-          "3": [  "b",  "b",  "b",  "b", "b", null, null ],
-          "4": [  "b",  "b",  "b", "b",  "b", "b", "b" ],
-          "5": [  "b",  "b",  "b", "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null, null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "4": [  "b" ,  "b" ,  "b" , "b"  ,  "b" , "b"  , "b"  ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ]
         }
       }
     },
@@ -721,7 +752,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -742,7 +773,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           },
@@ -778,7 +809,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1152,19 +1183,6 @@
       }
     },
     "solos": {
-      "Agonizer": {
-        "name": "Agonizer",
-        "type": "solo",
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/skorne/solos/Agonizer.png"
-          }
-        ],
-        "damage": {
-          "n": 8
-        }
-      },
       "Ancestral Guardian": {
         "name": "Ancestral Guardian",
         "type": "solo",
@@ -1289,6 +1307,15 @@
         "type": "wardude",
         "fury": 4,
         "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
+      "Venator Dakar": {
+        "name": "Venator Dakar",
+        "type": "solo",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }

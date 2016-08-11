@@ -24,7 +24,7 @@
         "fk_name": "Absylonia, Daughter of Everblight",
         "type": "wardude",
         "fury": 6,
-        "base": "medium", 
+        "base": "medium",
         "img": [
           {
             "link": "/data/model/legion/warlocks/Absylonia2.png"
@@ -49,6 +49,17 @@
           "n": 14
         }
       },
+      "fyanna2": {
+        "name": "Fyanna2 (Fyanna, la Courge of Everblight)",
+        "fk_name": "Fyanna, la Courge of Everblight",
+        "type": "wardude",
+        "fury": 6,
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 15
+        }
+      },
       "kallus1": {
         "name": "Kallus1 (Kallus, Wrath of Everblight)",
         "fk_name": "Kallus, Wrath of Everblight",
@@ -62,6 +73,17 @@
         ],
         "damage": {
           "n": 18
+        }
+      },
+      "kryssa1": {
+        "name": "Kryssa1 (Kryssa, Confiction of Everblight)",
+        "fk_name": "Kryssa, Confiction of Everblight",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 17
         }
       },
       "lylyth1": {
@@ -305,12 +327,12 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [ "b", "b", "b", "b", "b", "b", null, null, null, null ],
-          "2": [ "b", "b", "b", "b", "b","b", "b", null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", "b", "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", "b", "b", "b", null, null ]
+          "1": [ "b", "b", "b", "b", "b", "b", "b", null, null, null ],
+          "2": [ "b", "b", "b", "b", "b", "b", "b",  "b", null, null ],
+          "3": [ "b", "b", "b", "b", "b", "b", "b",  "b", null, null ],
+          "4": [ "b", "b", "b", "b", "b", "b", "b",  "b",  "b",  "b" ],
+          "5": [ "b", "b", "b", "b", "b", "b", "b",  "b", null, null ],
+          "6": [ "b", "b", "b", "b", "b", "b", "b",  "b",  "b", null ]
         }
       },
       "belphagor": {
@@ -351,12 +373,12 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [ "b", "b", "b", "b", "b", "b",  "b", null, null, null, null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", "b",  "b",  "b", null, null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b",  "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [ "b", "b", "b", "b", "b", "b", null, null, null, null, null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", "b",  "b", null, null, null, null, null, null ]
+          "1": [ "b", "b", "b", "b", "b", "b", "b",null,null,null,null,null,null ],
+          "2": [ "b", "b", "b", "b", "b", "b", "b", "b", "b",null,null,null,null ],
+          "3": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b",null,null ],
+          "4": [ "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b", "b" ],
+          "5": [ "b", "b", "b", "b", "b", "b",null,null,null,null,null,null,null ],
+          "6": [ "b", "b", "b", "b", "b", "b", "b",null,null,null,null,null,null ]
         }
       },
       "carnivean": {
@@ -519,11 +541,11 @@
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b" ]
+          "2": [ "b", "b", "b",  "b",  "b" ],
+          "3": [ "b", "b", "b",  "b", null, null ],
+          "4": [ "b", "b", "b",  "b",  "b",  "b" ],
+          "5": [ "b", "b", "b",  "b", null ],
+          "6": [ "b", "b", "b",  "b",  "b" ]
         }
       },
       "proteus": {
@@ -619,11 +641,11 @@
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b" ]
+          "2": [ "b", "b", "b",  "b",  "b" ],
+          "3": [ "b", "b", "b",  "b", null, null ],
+          "4": [ "b", "b", "b",  "b",  "b",  "b" ],
+          "5": [ "b", "b", "b",  "b", null ],
+          "6": [ "b", "b", "b",  "b",  "b" ]
         }
       },
       "shredder": {
@@ -689,7 +711,7 @@
       "typhon": {
         "name": "Typhon",
         "type": "beast",
-        "fury": 4,
+        "fury": 5,
         "base": "large",
         "img": [
           {
@@ -699,11 +721,11 @@
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b" ],
+          "2": [ "b", "b", "b", "b",  "b",  "b" ],
+          "3": [ "b", "b", "b", "b",  "b", null, null ],
+          "4": [ "b", "b", "b", "b",  "b",  "b",  "b" ],
           "5": [ "b", "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b", "b" ]
+          "6": [ "b", "b", "b", "b",  "b",  "b" ]
         }
       },
       "zuriel": {
@@ -869,6 +891,29 @@
                   "link": "/data/model/legion/units/Grotesque_Grunt.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "hellmouth": {
+        "name": "The Hellmouth",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Tentacle",
+              "ranges": [ 1, 3 ],
+              "type": "warrior",
+              "base": "medium",
+              "img": []
+            },
+            "maw": {
+              "name": "Maw",
+              "type": "warrior",
+              "base": "large",
+              "img": [],
+              "damage": {
+                "n": 8
+              }
             }
           }
         }
@@ -1064,7 +1109,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1085,7 +1130,7 @@
                 }]
               ,
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           },
@@ -1273,7 +1318,7 @@
           }
         ],
         "damage": {
-          "n": 10
+          "n": 8
         }
       },
       "incubus": {
@@ -1333,6 +1378,13 @@
         ],
         "damage": {
           "n": 8
+        }
+      },
+      "warlord": {
+        "name": "Blighted Nyss Warlord",
+        "base": "small",
+        "damage": {
+          "n": 5
         }
       }
     },

@@ -59,21 +59,6 @@
           "n": 16
         }
       },
-      "LordCarver1": {
-        "name": "LordCarver1 (Lord Carver, BMMD, Esq. III)",
-        "fk_name": "Lord Carver",
-        "type": "wardude",
-        "fury": 6,
-        "base": "small",
-        "img": [
-          {
-            "link": "/data/model/minions/warlocks/Carver1.png"
-          }
-        ],
-        "damage": {
-          "n": 16
-        }
-      },
       "Jaga1": {
         "name": "Jaga1 (Jaga-Jaga, the Death Charmer)",
         "fk_name": "Jaga-Jaga, the Death Charmer",
@@ -83,6 +68,21 @@
         "img": [
           {
             "link": "/data/model/minions/warlocks/Jaga_Jaga.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
+      "LordCarver1": {
+        "name": "LordCarver1 (Lord Carver, BMMD, Esq. III)",
+        "fk_name": "Lord Carver",
+        "type": "wardude",
+        "fury": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/minions/warlocks/Carver1.png"
           }
         ],
         "damage": {
@@ -178,12 +178,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", null, null, null, null, null, null ],
-          "2": [ "b", "b", "b", null, null, null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null, null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", null, null, null ]
+          "1": [ "b" , "b" , null , null , null , null , null , null ],
+          "2": [ "b" , "b" , "b"  , null , null , null , null , null ],
+          "3": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , null , null ],
+          "4": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b"  , "b"  , null , null , null , null ],
+          "6": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , null , null ]
         }
       },
       "Blind Walker": {
@@ -193,12 +193,12 @@
         "base": "large",
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", null, null, null, null, null, null ],
-          "2": [ "b", "b",  "b", null, null, null, null, null ],
-          "3": [ "b", "b",  "b",  "b",  "b",  "b", null, null ],
-          "4": [ "b", "b",  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [ "b", "b",  "b", null, null, null, null, null ],
-          "6": [ "b", "b",  "b",  "b",  "b", null, null, null ]
+          "1": [ "b" , "b" , null , null , null , null , null , null ],
+          "2": [ "b" , "b" ,  "b" , null , null , null , null , null ],
+          "3": [ "b" , "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [ "b" , "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [ "b" , "b" ,  "b" , "b"  , null , null , null , null ],
+          "6": [ "b" , "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ]
         }
       },
       "BoneSwarm": {
@@ -213,12 +213,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", null, null ],
-          "3": [ "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", "b", null ]
+          "1": [ "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b"  , null , null ],
+          "3": [ "b" , "b" , "b"  , "b"  , null ],
+          "4": [ "b" , "b" , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , null , null , null ],
+          "6": [ "b" , "b" , "b"  , "b"  , null ]
         }
       },
       "Bull Snaper": {
@@ -233,12 +233,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", null, null, null ],
-          "2": [ "b", "b", "b", null ],
-          "3": [ "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b" ],
-          "5": [ "b", "b", null, null ],
-          "6": [ "b", "b", "b", null ]
+          "1": [ "b" , null , null , null ],
+          "2": [ "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b"  , "b"  , null ],
+          "4": [ "b" , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b"  , null , null ],
+          "6": [ "b" , "b"  , "b"  , null ]
         }
       },
       "Gun Boar": {
@@ -273,12 +273,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", null, null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b", null ]
+          "1": [ "b" , "b" , "b" , "b" , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b" , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , null ]
         }
       },
       "Razor Boar": {
@@ -293,12 +293,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", null, null, null ],
-          "2": [ "b", "b", "b", null ],
-          "3": [ "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b" ],
-          "5": [ "b", null, null, null ],
-          "6": [ "b", "b", "b", null ]
+          "1": [ "b" , null , null , null ],
+          "2": [ "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b"  , null , null ],
+          "4": [ "b" , "b"  , "b"  , "b"  ],
+          "5": [ "b" , null , null , null ],
+          "6": [ "b" , "b"  , "b"  , null ]
         }
       },
       "Road Hog": {
@@ -348,12 +348,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", "b", "b", null ],
-          "4": [ "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", null ]
+          "1": [ "b" , "b" , "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b" , null , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , null , null ]
         }
       },
       "War hog": {
@@ -368,12 +368,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null, null ],
-          "2": [ "b", "b", "b", "b", null, null, null ],
-          "3": [ "b", "b", "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", null, null ]
+          "1": [ "b" , "b" , "b" , null , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , null , null , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , null , null ],
+          "4": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , "b"  , null , null , null , null ],
+          "6": [ "b" , "b" , "b" , "b"  , "b"  , null , null , null ]
         }
       }
     },
@@ -425,7 +425,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -513,6 +513,20 @@
           }
         }
       },
+      "Farrow Commandos": {
+        "name": "Farrow Commandos",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small",
+              "img": []
+            }
+          }
+        }
+      },
       "Farrow Slaughterhousers": {
         "name": "Farrow Slaughterhousers",
         "entries": {
@@ -550,7 +564,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -657,6 +671,24 @@
           "n": 5
         }
       },
+      "Bog Trog Mist Speaker": {
+        "name": "Bog Trog Mist Speaker",
+        "type": "solo",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Bog Trog Mist Trawler": {
+        "name": "Bog Trog Trawler",
+        "type": "solo",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "Brun&Lug": {
         "name": "Brun Cragback & Lug",
         "fk_name": "Brun Cragback & Lug",
@@ -690,12 +722,12 @@
               ],
               "damage": {
                 "type": "beast",
-                "1": [ "b", "b", "b", null, null, null ],
-                "2": [ "b", "b", "b", "b", "b", null ],
-                "3": [ "b", "b", "b", "b", "b", null ],
-                "4": [ "b", "b", "b", "b", "b", "b" ],
-                "5": [ "b", "b", "b", null, null, null ],
-                "6": [ "b", "b", "b", "b", "b", null ]
+                "1": [ "b" , "b" , "b" , null , null , null ],
+                "2": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+                "3": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+                "4": [ "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+                "5": [ "b" , "b" , "b" , null , null , null ],
+                "6": [ "b" , "b" , "b" , "b"  , "b"  , null ]
               }
             }
           }
@@ -729,7 +761,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           },
@@ -746,12 +778,12 @@
               ],
               "damage": {
                 "type": "beast",
-                "1": [ "b", "b", "b", null, null ],
-                "2": [ "b", "b", "b", "b", null ],
-                "3": [ "b", "b", "b", "b", null ],
-                "4": [ "b", "b", "b", "b", "b" ],
-                "5": [ "b", "b", "b", "b", null ],
-                "6": [ "b", "b", "b", "b", "b" ]
+                "1": [ "b" , "b" , "b" , null , null , null ],
+                "2": [ "b" , "b" , "b" , "b"  , null , null ],
+                "3": [ "b" , "b" , "b" , "b"  , "b"  , null ],
+                "4": [ "b" , "b" , "b" , "b"  , "b"  , "b"  ],
+                "5": [ "b" , "b" , "b" , "b"  , null , null ],
+                "6": [ "b" , "b" , "b" , "b"  , "b"  , null ]
               }
             }
           }
@@ -904,12 +936,12 @@
               ],
               "damage": {
                 "type": "beast",
-                "1": [ "b", "b", null, null, null, null, null ],
-                "2": [ "b", "b", "b", null, null, null, null ],
-                "3": [ "b", "b", "b", "b", "b", null, null ],
-                "4": [ "b", "b", "b", "b", "b", "b", "b" ],
-                "5": [ "b", "b", "b", "b", null, null, null ],
-                "6": [ "b", "b", "b", "b", "b", null, null ]
+                "1": [ "b" , "b" , null , null , null , null , null ],
+                "2": [ "b" , "b" , "b"  , null , null , null , null ],
+                "3": [ "b" , "b" , "b"  , "b"  , "b"  , null , null ],
+                "4": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , "b"  ],
+                "5": [ "b" , "b" , "b"  , "b"  , null , null , null ],
+                "6": [ "b" , "b" , "b"  , "b"  , "b"  , null , null ]
               }
             }
           }
@@ -927,6 +959,12 @@
         "damage": {
           "n": 5
         }
+      },
+      "Swamp Gobber Chef": {
+        "name": "Swamp Gobber Chef",
+        "type": "solo",
+        "base": "small",
+        "img": []
       },
       "Targ": {
         "name": "Targ",
@@ -967,6 +1005,19 @@
           "n": 8
         }
       },
+      "Witch Doctor": {
+        "name": "Gatorman Witch Doctor",
+        "type": "solo",
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/minions/solos/WitchDoctor.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "WrongEye&Snapjaw": {
         "name": "Wrong Eye & Snapjaw",
         "fk_name": "Wrong Eye & Snapjaw",
@@ -1000,28 +1051,15 @@
               ],
               "damage": {
                 "type": "beast",
-                "1": [ "b", "b", null, null, null, null, null, null ],
-                "2": [ "b", "b", "b", null, null, null, null, null ],
-                "3": [ "b", "b", "b", "b", "b", "b", null, null ],
-                "4": [ "b", "b", "b", "b", "b", "b", "b", "b" ],
-                "5": [ "b", "b", "b", null, null, null, null, null ],
-                "6": [ "b", "b", "b", "b", "b", null, null, null ]
+                "1": [ "b" , "b" , null , null , null , null , null , null ],
+                "2": [ "b" , "b" , "b"  , null , null , null , null , null ],
+                "3": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , null , null ],
+                "4": [ "b" , "b" , "b"  , "b"  , "b"  , "b"  , "b"  , "b"  ],
+                "5": [ "b" , "b" , "b"  , null , null , null , null , null ],
+                "6": [ "b" , "b" , "b"  , "b"  , "b"  , null , null , null ]
               }
             }
           }
-        }
-      },
-      "Witch Doctor": {
-        "name": "Gatorman Witch Doctor",
-        "type": "solo",
-        "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/minions/solos/WitchDoctor.png"
-          }
-        ],
-        "damage": {
-          "n": 8
         }
       }
     },
@@ -1039,7 +1077,7 @@
           }
         ],
         "damage": {
-          "n": 22
+          "n": 24
         }
       },
       "sacral vault": {
@@ -1054,7 +1092,7 @@
           }
         ],
         "damage": {
-          "n": 20
+          "n": 22
         }
       }
     }

@@ -40,7 +40,7 @@
             }
           }
         }
-      },        
+      },
       "borka2": {
         "name": "Borka2 (Borka, Vengeance of the Rimeshaws)",
         "fk_name": "Borka, Vengeance of the Rime?shaws",
@@ -70,7 +70,7 @@
         "damage": {
           "n": 16
         }
-      },  
+      },
       "grim1": {
         "name": "Grim1 (Grim Angus)",
         "fk_name": "Grim Angus",
@@ -85,7 +85,7 @@
         "damage": {
           "n": 17
         }
-      }, 
+      },
       "grim2": {
         "name": "Grim2 (Hunters Grim)",
         "fk_name": "Hunters Grim",
@@ -119,7 +119,7 @@
               "damage": {
                 "n": 5
               }
-            },        
+            },
             "krump": {
               "name": "Krump",
               "type": "warrior",
@@ -180,7 +180,7 @@
         "damage": {
           "n": 17
         }
-      },  
+      },
       "hoarluk1": {
         "name": "Hoarluk1 (Hoarluk Doomshaper, shaman of the Gnarls)",
         "fk_name": "Hoarluk Doomshaper ",
@@ -297,18 +297,18 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b",  "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "dire_troll_bomber": {
         "name": "Dire Troll Bomber",
         "type": "beast",
-        "fury": 4,      
+        "fury": 4,
         "base": "large",
         "img": [
           {
@@ -317,18 +317,18 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b",  "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "dire_troll_mauler": {
         "name": "Dire Troll Mauler",
         "type": "beast",
-        "fury": 5,      
+        "fury": 5,
         "base": "large",
         "img": [
           {
@@ -337,33 +337,33 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b",  "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "dozer&smigg": {
         "name": "Dozer & Smigg",
         "type": "beast",
-        "fury": 4,      
+        "fury": 4,
         "base": "large",
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b",  "b", null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b", null ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b", null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "earthborn_diretroll": {
         "name": "Earthborn Dire Troll",
         "type": "beast",
-        "fury": 5,
+        "fury": 4,
         "base": "large",
         "img": [
           {
@@ -372,12 +372,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b",  "b", null, null , null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b" , null ],
-          "3": [  "b",  "b",  "b",  "b", null, null , null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ,  "b" ],
-          "5": [  "b",  "b",  "b",  "b", null, null , null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b" ,  "b" ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ]
         }
       },
       "glacier_king": {
@@ -394,14 +394,14 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  , null , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
         }
-      }, 
+      },
       "mountain_king": {
         "name": "Mountain King",
         "type": "beast",
@@ -416,18 +416,18 @@
         ],
         "damage": {
           "type": "gargantuan",
-          "1": [  "b",  "b",  "b",  "b", null, null, null, null, null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b",  "b",  "b",  "b", null, null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b",  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  , null , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
         }
-      }, 
+      },
       "mulg_the_ancient": {
         "name": "Mulg the Ancient",
         "type": "beast",
-        "fury": 5,              
+        "fury": 4,
         "base": "large",
         "img": [
           {
@@ -436,12 +436,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null , null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b" , null, null ],
-          "3": [  "b",  "b",  "b",  "b",  "b", null, null , null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ,  "b",  "b" ],
-          "5": [  "b",  "b",  "b",  "b",  "b", null, null , null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b" ,  "b", null ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null  , null , null  ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  null , null , null  ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"   , null , null  ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b"  ,  "b" ,  null ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null  , null , null  ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b"  ,  "b" , null ]
         }
       },
       "night_troll": {
@@ -456,12 +456,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "pyre_troll": {
@@ -476,12 +476,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "rok": {
@@ -497,12 +497,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "slag_troll": {
@@ -517,12 +517,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "storm_troll": {
@@ -537,12 +537,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "swamp_troll": {
@@ -557,12 +557,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "troll_axer": {
@@ -577,12 +577,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "troll_bouncer": {
@@ -597,12 +597,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "troll_impaler": {
@@ -617,12 +617,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "winter_troll": {
@@ -637,12 +637,12 @@
         ],
         "damage": {
           "type": "beast",
-          "1": [  "b",  "b", null, null, null ],
-          "2": [  "b",  "b",  "b",  "b",  "b" ],
-          "3": [  "b",  "b",  "b", null, null ],
-          "4": [  "b",  "b",  "b",  "b",  "b" ],
-          "5": [  "b",  "b", null, null, null ],
-          "6": [  "b",  "b",  "b",  "b",  "b" ]
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       }
     },
@@ -777,7 +777,7 @@
               ]
             }
           }
-        } 
+        }
       },
       "highwaymen": {
         "name": "Trollkin Highwaymen",
@@ -790,7 +790,7 @@
               "base": "medium"
             }
           }
-        } 
+        }
       },
       "northkinfireeaters": {
         "name": "Northkin Fire Eaters",
@@ -826,7 +826,7 @@
               }
             }
           }
-        } 
+        }
       },
       "long_riders": {
         "name": "Trollkin Long Riders",
@@ -847,7 +847,26 @@
               }
             }
           }
-        } 
+        }
+      },
+      "Pummelercrew ": {
+        "name": "Pummelercrew",
+        "entries": {
+          "unit": {
+            "leader": {
+              "name": "Pummeler",
+              "type": "warrior",
+              "base": "large",
+              "img": []
+            },
+            "grunt": {
+              "name": "Crew",
+              "type": "warrior",
+              "base": "medium",
+              "img": []
+            }
+          }
+        }
       },
       "pyg_bushwackers ": {
         "name": "Pyg Bushwackers",
@@ -882,7 +901,7 @@
               "base": "small"
             }
           }
-        } 
+        }
       },
       "scattergunners ": {
         "name": "Trollkin Scattergunners",
@@ -928,7 +947,7 @@
             }
           }
         }
-      },                
+      },
       "sons_of_bragg": {
         "name": "Sons of Bragg",
         "fk_name": "Sons of Bragg",
@@ -974,7 +993,7 @@
               }
             }
           }
-        } 
+        }
       },
       "Thumpercrew ": {
         "name": "Thumpercrew",
@@ -1002,7 +1021,7 @@
               ]
             }
           }
-        } 
+        }
       },
       "trollkin_champions ": {
         "name": "Trollkin Champions",
@@ -1019,7 +1038,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           },
@@ -1040,7 +1059,7 @@
             }
           }
         }
-      },        
+      },
       "trollkin_fennblades ": {
         "name": "Trollkin Fennblades",
         "entries": {
@@ -1085,7 +1104,7 @@
             }
           }
         }
-      },        
+      },
       "trollkin_runeshapers": {
         "name": "Trollkin Runeshapers",
         "entries": {
@@ -1105,7 +1124,7 @@
               }
             }
           }
-        } 
+        }
       },
       "trollkin_scouts": {
         "name": "Trollkin Scouts",
@@ -1123,7 +1142,7 @@
               ]
             }
           }
-        } 
+        }
       },
       "trollkin_sluggers": {
         "name": "Trollkin Sluggers",
@@ -1144,7 +1163,7 @@
               }
             }
           }
-        } 
+        }
       },
       "trollkin_warders": {
         "name": "Trollkin Warders",
@@ -1161,11 +1180,11 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
-        } 
+        }
       }
     },
     "solos": {
@@ -1174,7 +1193,7 @@
         "type": "solo",
         "base": "medium",
         "damage": {
-          "n": 8
+          "n": 5
         }
       },
       "fell_caller_hero": {
@@ -1200,7 +1219,7 @@
           }
         ],
         "damage": {
-          "n": 8
+          "n": 5
         }
       },
       "horgle_ironstrike": {
@@ -1249,7 +1268,7 @@
           }
         ],
         "damage": {
-          "n": 8
+          "n": 5
         }
       },
       "stone_scribe_chronicler": {
@@ -1287,7 +1306,7 @@
           }
         ],
         "damage": {
-          "n": 8
+          "n": 5
         }
       },
       "trollkin_champion_hero": {
@@ -1340,7 +1359,7 @@
           }
         ],
         "damage": {
-          "n": 22
+          "n": 24
         }
       }
     }

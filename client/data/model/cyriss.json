@@ -323,6 +323,40 @@
           "R5": [ null, null, null,  "b", "r", "m" ],
           "R6": [ null, null, null, null, "r", "m" ]
         }
+      },
+      "PrimeConflux": {
+        "name": "Prime Conflux",
+        "entries": {
+          "conflux": {
+            "name": "Prime Conflux",
+            "type": "jack",
+            "base": "huge",
+            "img": [],
+            "damage": {
+              "type": "colossal",
+              "L1": [ null, null, null, null, "l", "m" ],
+              "L2": [ null, null, null,  "b", "l", "m" ],
+              "L3": [  "b",  "b",  "b",  "l", "i", "m" ],
+              "L4": [  "b",  "b",  "b",  "l", "i", "m" ],
+              "L5": [  "b",  "b",  "s",  "s", "i", "m" ],
+              "L6": [  "b",  "b",  "s",  "i", "i", "i" ],
+              "R1": [  "b",  "b",  "s",  "i", "i", "i" ],
+              "R2": [  "b",  "b",  "s",  "s", "i", "m" ],
+              "R3": [  "b",  "b",  "b",  "r", "i", "m" ],
+              "R4": [  "b",  "b",  "b",  "r", "i", "m" ],
+              "R5": [ null, null, null,  "b", "r", "m" ],
+              "R6": [ null, null, null, null, "r", "m" ]
+            }
+          },
+          "IonizationServitors": {
+            "name": "Ionization Servitor",
+            "fk_repeat": 3,
+            "ranges": [1, 3],
+            "type": "solo",
+            "base": "small",
+            "img": []
+          }
+        }
       }
     },
     "units": {
@@ -587,7 +621,7 @@
                 }
               ],
               "damage": {
-                "n": 20
+                "n": 22
               }
             }
           },

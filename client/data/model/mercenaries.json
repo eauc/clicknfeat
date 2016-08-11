@@ -73,7 +73,7 @@
         "damage": {
           "n": 16
         }
-      },    
+      },
       "drake1": {
         "name": "MacBain1 (Drake MacBain)",
         "fk_name": "Drake MacBain",
@@ -163,7 +163,7 @@
         "damage": {
           "n": 17
         }
-      },   
+      },
       "ossrum1": {
         "name": "Ossrum1 (General Ossrum)",
         "fk_name": "General Ossrum",
@@ -992,7 +992,7 @@
                 }
               ],
               "damage": {
-                "n": 8
+                "n": 5
               }
             }
           }
@@ -1164,7 +1164,7 @@
             }
           }
         }
-      },    
+      },
       "steelheadriflemen": {
         "name": "Steelhead Riflemen",
         "entries": {
@@ -1236,7 +1236,7 @@
               }
             }
           }
-        }                 
+        }
       }
     },
     "solos": {
@@ -1292,7 +1292,7 @@
           }
         ],
         "damage": {
-          "n": 5
+          "n": 8
         }
       },
       "bosun_grogspar": {
@@ -1346,7 +1346,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "gastonecrosse": {
         "name": "Gastone Crosse",
         "type": "wardude",
@@ -1360,7 +1360,15 @@
         "damage": {
           "n": 5
         }
-      },   
+      },
+      "gibbs": {
+        "name": "Major Harrison Gibbs",
+        "type": "warrior",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
       "goblintinker": {
         "name": "Goblin Tinker",
         "type": "warrior",
@@ -1368,7 +1376,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "gorman": {
         "name": "Gorman di Wulfe, Rogue Alchemist",
         "type": "warrior",
@@ -1384,7 +1392,7 @@
         "damage": {
           "n": 5
         }
-      },   
+      },
       "harlanversh": {
         "name": "Harlan Versh",
         "type": "warrior",
@@ -1397,7 +1405,7 @@
         "damage": {
           "n": 5
         }
-      },    
+      },
       "hawk": {
         "name": "First Mate Hawk",
         "type": "warrior",
@@ -1410,7 +1418,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "kellbailoch": {
         "name": "Kell Bailoch",
         "type": "warrior",
@@ -1423,7 +1431,7 @@
         "damage": {
           "n": 5
         }
-      },   
+      },
       "madelyncorbeau": {
         "name": "Madelyn Corbeau, Ordic Courtesan",
         "type": "warrior",
@@ -1436,7 +1444,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "ogrunbokur": {
         "name": "Ogrun Bokur",
         "type": "warrior",
@@ -1449,7 +1457,7 @@
         "damage": {
           "n": 8
         }
-      },  
+      },
       "orinmidwinter": {
         "name": "Orin Midwinter, Rogue Inquisitor",
         "type": "warrior",
@@ -1462,7 +1470,7 @@
         "damage": {
           "n": 5
         }
-      },    
+      },
       "ragman": {
         "name": "Ragman",
         "type": "warrior",
@@ -1475,7 +1483,16 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
+      "raluk": {
+        "name": "Raluk Moorclaw, the Ironmonger",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "reinholdt": {
         "name": "Reinholdt, Gobber Speculator",
         "type": "warrior",
@@ -1484,8 +1501,11 @@
           {
             "link": "/data/model/mercenaries/solos/Reinholdt.png"
           }
-        ]
-      },  
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "rhupertcarvolo": {
         "name": "Rhupert Carvolo, Piper of Ord",
         "type": "warrior",
@@ -1498,7 +1518,7 @@
         "damage": {
           "n": 5
         }
-      },   
+      },
       "rockbottom": {
         "name": "Lord Rockbottom",
         "type": "warrior",
@@ -1511,7 +1531,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "rutgershaw": {
         "name": "Rutger Shaw",
         "type": "warrior",
@@ -1524,7 +1544,16 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
+      "saviomontero": {
+        "name": "Savio Montero Acosta",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "stannisbrocker": {
         "name": "Stannis Brocker",
         "type": "warrior",
@@ -1537,7 +1566,13 @@
         "damage": {
           "n": 10
         }
-      },  
+      },
+      "swamp_gobber_river_raider": {
+        "name": "Swamp Gobber River Raider",
+        "type": "warrior",
+        "base": "small",
+        "img": []
+      },
       "taryndiarovissi": {
         "name": "Taryn di la Rovissi, Llaeles Gun Mage",
         "fk_name": "Taryn di la Rovissi",
@@ -1551,7 +1586,7 @@
         "damage": {
           "n": 5
         }
-      },  
+      },
       "thorsteinhammer": {
         "name": "Thor Steinhammer",
         "type": "warrior",
@@ -1561,6 +1596,15 @@
             "link": "/data/model/mercenaries/solos/Thor.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "verendrye": {
+        "name": "Sergeant Nicolas Verendrye",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }
