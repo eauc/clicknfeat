@@ -156,6 +156,7 @@
       function modelRenderCharge(_ref, path, model) {
         var base = _ref.base;
         var charge_target = _ref.charge_target;
+        var is_flipped = _ref.is_flipped;
 
         var state = model.state;
         var radius = model.info.base_radius;
@@ -177,6 +178,7 @@
           }
           var charge_options = {
             rotate: 0,
+            flipped: is_flipped,
             flip_center: state.cha.s,
             text_center: state.cha.s
           };

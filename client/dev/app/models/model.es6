@@ -248,7 +248,7 @@
         },
         modelModel.renderArea(model),
         modelModel.renderAura(model),
-        modelModel.renderCharge({ base, charge_target }, path, model),
+        modelModel.renderCharge({ base, charge_target, is_flipped }, path, model),
         modelModel.renderCounter({ base, cx, cy, is_flipped }, model),
         modelModel.renderDamage({ cx, cy }, model),
         modelModel.renderEffect({ img }, model),

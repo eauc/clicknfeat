@@ -239,7 +239,8 @@
         return state;
       }
       function modelRenderCharge({ base,
-                                   charge_target },
+                                   charge_target,
+                                   is_flipped },
                                  path, model) {
         const state = model.state;
         const radius = model.info.base_radius;
@@ -262,6 +263,7 @@
           }
           const charge_options = {
             rotate: 0,
+            flipped: is_flipped,
             flip_center: state.cha.s,
             text_center: state.cha.s
           };

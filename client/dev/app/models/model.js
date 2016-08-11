@@ -158,7 +158,7 @@
         title: modelModel.descriptionFromInfo(model),
         label_transform: 'translate(' + (state.x - cx) + ',' + (state.y - cy) + ')',
         label: label, lock: lock, path: path
-      }, modelModel.renderArea(model), modelModel.renderAura(model), modelModel.renderCharge({ base: base, charge_target: charge_target }, path, model), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped }, model), modelModel.renderDamage({ cx: cx, cy: cy }, model), modelModel.renderEffect({ img: img }, model), modelModel.renderImage({ img: img }, model), modelModel.renderLeader({ cx: cx, cy: cy }, model), modelModel.renderMelee({ img: img }, model), modelModel.renderPlace({ base: base, path: path }, model), modelModel.renderUnit({ base: base, cx: cx, cy: cy }, model));
+      }, modelModel.renderArea(model), modelModel.renderAura(model), modelModel.renderCharge({ base: base, charge_target: charge_target, is_flipped: is_flipped }, path, model), modelModel.renderCounter({ base: base, cx: cx, cy: cy, is_flipped: is_flipped }, model), modelModel.renderDamage({ cx: cx, cy: cy }, model), modelModel.renderEffect({ img: img }, model), modelModel.renderImage({ img: img }, model), modelModel.renderLeader({ cx: cx, cy: cy }, model), modelModel.renderMelee({ img: img }, model), modelModel.renderPlace({ base: base, path: path }, model), modelModel.renderUnit({ base: base, cx: cx, cy: cy }, model));
     }
   }
 })();
