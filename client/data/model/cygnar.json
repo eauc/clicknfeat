@@ -850,6 +850,7 @@
       },
       "Black 13th Gun Mage Strike Team": {
         "name": "Black 13th Gun Mage Strike Team",
+        "fk_name": "Black 13th Gun Mage Strike Team",
         "entries": {
           "unit": {
             "Ryan": {
@@ -1014,11 +1015,12 @@
       },
       "rangers": {
         "name": "Rangers",
+        "fk_name": "Rangers",
         "entries": {
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "fk_size": 6,
+              "fk_grunts": 6,
               "ranges": [1, 6],
               "type": "warrior",
               "base": "small",
