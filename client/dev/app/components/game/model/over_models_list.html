@@ -27,13 +27,13 @@
           ng-attr-x2="{{model.render.los.rx}}" ng-attr-y2="{{model.render.cy}}">
     </line>
     <image class="model-image"
-           ng-repeat="e in ['b','c','d','e','f','k','l','t']"
-           ng-show="model.render.effects[e].show"
-           ng-attr-x="{{model.render.effects[e].x}}"
-           ng-attr-y="{{model.render.effects[e].y}}"
+           ng-repeat="e in model.render.effects"
+           ng-show="e.show"
+           ng-attr-x="{{e.x}}"
+           ng-attr-y="{{e.y}}"
            width="10" height="10"
            xlink:href=""
-           ng-attr-xlink:href="{{model.render.effects[e].link}}">
+           ng-attr-xlink:href="{{e.link}}">
     </image>
     <g ng-if="model.render.dmg.show">
       <line class="model-damage-bar"

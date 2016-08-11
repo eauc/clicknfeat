@@ -17,6 +17,5 @@
 * BUGS
   - page trop grande en bas
   - select all -> mode inconnu
-  - kd s'affiche pas
   - create AoE on model s'affiche pas
   - template detail ne se ferme pas lorsqu'on deselectionne le template (rajouter un bouton close)
