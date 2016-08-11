@@ -16,6 +16,4 @@
   - origin/target live update
 * BUGS
   - page trop grande en bas
-  - select all -> mode inconnu
   - create AoE on model s'affiche pas
-  - template detail ne se ferme pas lorsqu'on deselectionne le template (rajouter un bouton close)

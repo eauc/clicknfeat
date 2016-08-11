@@ -49,7 +49,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return element_mode;
 
       function clearElementSelection(state) {
-        return R.thread(state)(R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local')), R.assocPath(['view', 'detail'], null));
+        return R.thread(state)(R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local')), R.assocPath(['view', 'detail'], {}));
       }
       function copySelection(state) {
         var stamps = R.thread(state)(R.view(SELECTION_LENS), gameElementSelectionModel.get$('local'));

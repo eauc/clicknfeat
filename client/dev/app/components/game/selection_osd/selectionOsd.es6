@@ -146,7 +146,7 @@
       vm.type = 'model';
       closeSelectionDetail();
       scope.listenSignal((detail) => {
-        if(R.isNil(detail)) {
+        if(R.isNil(R.prop('type', detail))) {
           closeSelectionDetail();
         }
         else {

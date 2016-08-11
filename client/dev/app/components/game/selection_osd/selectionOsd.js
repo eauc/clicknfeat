@@ -110,7 +110,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       vm.type = 'model';
       closeSelectionDetail();
       scope.listenSignal(function (detail) {
-        if (R.isNil(detail)) {
+        if (R.isNil(R.prop('type', detail))) {
           closeSelectionDetail();
         } else {
           openSelectionDetail(detail);

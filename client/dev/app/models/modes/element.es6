@@ -71,7 +71,7 @@
       function clearElementSelection(state) {
         return R.thread(state)(
           R.over(SELECTION_LENS, gameElementSelectionModel.clear$('local')),
-          R.assocPath(['view','detail'], null)
+          R.assocPath(['view','detail'], {})
         );
       }
       function copySelection(state) {
