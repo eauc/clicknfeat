@@ -266,7 +266,7 @@
       }
     }
     function gameFactionsBuildReferenceRegexp(name) {
-      const regexp = '^\\**\\s*'+name;
+      const regexp = '^(\\**\\s*)*'+name;
       return XRegExp(regexp, 'i');
     }
     function updateFaction(faction) {

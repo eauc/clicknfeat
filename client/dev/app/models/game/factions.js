@@ -255,7 +255,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
     }
     function gameFactionsBuildReferenceRegexp(name) {
-      var regexp = '^\\**\\s*' + name;
+      var regexp = '^(\\**\\s*)*' + name;
       return XRegExp(regexp, 'i');
     }
     function updateFaction(faction) {
