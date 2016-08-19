@@ -228,14 +228,12 @@
             .changes()
             .orElse(terrains.changes())
             .snapshot(R.nthArg(0), game)
-            .snapshot(gameBoardExport, () => board_export_previous)
+            .map(gameBoardExport)
             .hold({});
-    const board_export_previous = board_export.delay({});
     const model_selection_export = model_selection_changes
             .snapshot(R.nthArg(0), game)
-            .snapshot(gameModelSelectionExport, () => model_selection_export_previous)
+            .map(gameModelSelectionExport)
             .hold({});
-    const model_selection_export_previous = model_selection_export.delay({});
 
     const appGameService = {
       game, create, dice, bad_dice, loading,
@@ -337,6 +335,8 @@
     mount();
 
     let game_export_url;
+    let board_export_url;
+    let models_export_url;
 
     return appGameService;
 
@@ -635,8 +635,8 @@
           .do('Game.command.execute', 'setBoardData', [data])
       ).catch(appErrorService.emit);
     }
-    function gameBoardExport(previous, game) {
-      fileExportService.cleanup(previous.url);
+    function gameBoardExport(game) {
+      fileExportService.cleanup(board_export_url);
       const data = {
         board: R.view(BOARD_LENS, game),
         terrain: {
@@ -648,9 +648,10 @@
         }
       };
       console.warn('Export board', arguments, data);
+      board_export_url = fileExportService.generate('json', data);
       return {
         name: 'clicknfeat_board.json',
-        url: fileExportService.generate('json', data)
+        url: board_export_url
       };
     }
     function actionGameScenarioSet(state, name, group) {
@@ -712,8 +713,8 @@
           .do('Game.model.copy', create)
       ).catch(appErrorService.emit);
     }
-    function gameModelSelectionExport(previous, game) {
-      fileExportService.cleanup(previous.url);
+    function gameModelSelectionExport(game) {
+      fileExportService.cleanup(models_export_url);
       const data = R.thread(game)(
         R.view(MODEL_SELECTION_LENS),
         gameModelSelectionModel.get$('local'),
@@ -724,9 +725,10 @@
         )
       );
       console.warn('Export models', arguments, data);
+      models_export_url = data ? fileExportService.generate('json', data) : null;
       return {
         name: 'clicknfeat_models.json',
-        url: data ? fileExportService.generate('json', data) : null
+        url: models_export_url
       };
     }
     function actionGameTemplateCreate(state, type) {

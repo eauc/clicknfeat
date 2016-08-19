@@ -138,14 +138,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       return 'Default' === modesModel.currentModeName(modes);
     }).orElse(model_selection_changes).orElse(template_selection_changes).orElse(terrain_selection_changes).listen(appGameCheckMode);
 
-    var board_export = game.map(R.viewOr({}, BOARD_LENS)).changes().orElse(terrains.changes()).snapshot(R.nthArg(0), game).snapshot(gameBoardExport, function () {
-      return board_export_previous;
-    }).hold({});
-    var board_export_previous = board_export.delay({});
-    var model_selection_export = model_selection_changes.snapshot(R.nthArg(0), game).snapshot(gameModelSelectionExport, function () {
-      return model_selection_export_previous;
-    }).hold({});
-    var model_selection_export_previous = model_selection_export.delay({});
+    var board_export = game.map(R.viewOr({}, BOARD_LENS)).changes().orElse(terrains.changes()).snapshot(R.nthArg(0), game).map(gameBoardExport).hold({});
+    var model_selection_export = model_selection_changes.snapshot(R.nthArg(0), game).map(gameModelSelectionExport).hold({});
 
     var appGameService = {
       game: game, create: create, dice: dice, bad_dice: bad_dice, loading: loading,
@@ -247,6 +241,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     mount();
 
     var game_export_url = undefined;
+    var board_export_url = undefined;
+    var models_export_url = undefined;
 
     return appGameService;
 
@@ -420,8 +416,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appActionService.do('Game.command.execute', 'setBoardData', [data]);
       }).catch(appErrorService.emit);
     }
-    function gameBoardExport(previous, game) {
-      fileExportService.cleanup(previous.url);
+    function gameBoardExport(game) {
+      fileExportService.cleanup(board_export_url);
       var data = {
         board: R.view(BOARD_LENS, game),
         terrain: {
@@ -430,9 +426,10 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         }
       };
       console.warn('Export board', arguments, data);
+      board_export_url = fileExportService.generate('json', data);
       return {
         name: 'clicknfeat_board.json',
-        url: fileExportService.generate('json', data)
+        url: board_export_url
       };
     }
     function actionGameScenarioSet(state, name, group) {
@@ -475,15 +472,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
         return appActionService.do('Game.model.copy', create);
       }).catch(appErrorService.emit);
     }
-    function gameModelSelectionExport(previous, game) {
-      fileExportService.cleanup(previous.url);
+    function gameModelSelectionExport(game) {
+      fileExportService.cleanup(models_export_url);
       var data = R.thread(game)(R.view(MODEL_SELECTION_LENS), gameModelSelectionModel.get$('local'), R.ifElse(R.isEmpty, function () {
         return null;
       }, gameModelsModel.copyStamps$(R.__, R.view(MODELS_LENS, game))));
       console.warn('Export models', arguments, data);
+      models_export_url = data ? fileExportService.generate('json', data) : null;
       return {
         name: 'clicknfeat_models.json',
-        url: data ? fileExportService.generate('json', data) : null
+        url: models_export_url
       };
     }
     function actionGameTemplateCreate(state, type) {
