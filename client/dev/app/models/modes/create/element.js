@@ -11,10 +11,16 @@
       var createElement_actions = Object.create(commonModeModel.actions);
       createElement_actions.modeBackToDefault = modeBackToDefault;
       createElement_actions.moveMap = moveMap;
-      createElement_actions.create = create;
+      createElement_actions.clickMap = create;
+      createElement_actions.clickModel = create;
+      createElement_actions.clickTemplate = create;
+      createElement_actions.clickTerrain = create;
 
       var createElement_default_bindings = {
-        'create': 'clickMap'
+        'clickMap': 'clickMap',
+        'clickModel': 'clickModel',
+        'clickTemplate': 'clickTemplate',
+        'clickTerrain': 'clickTerrain'
       };
       var createElement_bindings = R.extend(Object.create(commonModeModel.bindings), createElement_default_bindings);
       var createElement_buttons = [];
