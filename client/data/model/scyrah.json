@@ -538,6 +538,7 @@
       },
       "electromancer": {
         "name": "House Vyre Electromancers",
+        "fk_name": "House Vyre Electromancers?.*(?<nb_grunts>\\d+)\\s+grunt",
         "entries": {
           "unit": {
             "grunt": {
