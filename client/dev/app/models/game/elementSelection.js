@@ -53,7 +53,7 @@
       }
       function elementSelectionRemoveFrom(where, stamps, selection) {
         var previous = R.prop(where, selection);
-        var new_selection = R.difference(previous, stamps);
+        var new_selection = R.differenceWith(R.eq, previous, stamps);
         return R.assoc(where, new_selection, selection);
       }
       function elementSelectionClear(where, selection) {

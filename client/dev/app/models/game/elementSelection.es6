@@ -58,7 +58,7 @@
       }
       function elementSelectionRemoveFrom(where, stamps, selection) {
         const previous = R.prop(where, selection);
-        const new_selection = R.difference(previous, stamps);
+        const new_selection = R.differenceWith(R.eq, previous, stamps);
         return R.assoc(where, new_selection, selection);
       }
       function elementSelectionClear(where, selection) {

@@ -84,9 +84,8 @@
             .map(R.viewOr({}, GAME_LENS));
     const game_export = game
             .changes()
-            .snapshot(gameExportCurrent, () => game_export_previous)
+            .map(gameExportCurrent)
             .hold({});
-    const game_export_previous = game_export.delay({});
     const loading = behavioursModel.signalModel.create();
     const create = appStateService.state
             .map(R.view(CREATE_LENS));
@@ -337,6 +336,8 @@
 
     mount();
 
+    let game_export_url;
+
     return appGameService;
 
     function mount() {
@@ -391,13 +392,14 @@
         .register('Game.terrains.set'          , actionGameTerrainsSet)
         .register('Game.terrains.reset'        , actionGameTerrainsReset);
     }
-    function gameExportCurrent(previous, game) {
+    function gameExportCurrent(game) {
       console.warn('Export Game', arguments);
-      fileExportService.cleanup(previous.url);
+      fileExportService.cleanup(game_export_url);
+      game_export_url = fileExportService
+        .generate('json', game);
       return {
         name: 'clicknfeat_game.json',
-        url: fileExportService
-          .generate('json', game)
+        url: game_export_url
       };
     }
     function gameSaveCurrent(state) {
@@ -913,28 +915,28 @@
     }
     function observeModelsChanges(olds, news) {
       return R.thread(gameModelsModel.all(news))(
-        R.symmetricDifference(gameModelsModel.all(olds)),
+        R.symmetricDifferenceWith(R.eq, gameModelsModel.all(olds)),
         R.map(R.path(['state','stamp'])),
         R.uniq
       );
     }
     function observeModelSelectionChanges(old, sel) {
       return R.concat(
-        R.symmetricDifference(R.propOr([], 'local', old), R.propOr([], 'local', sel)),
-        R.symmetricDifference(R.propOr([], 'remote', old), R.propOr([], 'remote', sel)),
+        R.symmetricDifferenceWith(R.eq, R.propOr([], 'local', old), R.propOr([], 'local', sel)),
+        R.symmetricDifferenceWith(R.eq, R.propOr([], 'remote', old), R.propOr([], 'remote', sel)),
         R.uniq
       );
     }
     function observeTemplatesChanges(olds, news) {
       return R.thread(gameTemplatesModel.all(news))(
-        R.symmetricDifference(gameTemplatesModel.all(olds)),
+        R.symmetricDifferenceWith(R.eq, gameTemplatesModel.all(olds)),
         R.map(R.path(['state','stamp'])),
         R.uniq
       );
     }
     function observeTerrainsChanges(olds, news) {
       return R.thread(gameTerrainsModel.all(news))(
-        R.symmetricDifference(gameTerrainsModel.all(olds)),
+        R.symmetricDifferenceWith(R.eq, gameTerrainsModel.all(olds)),
         R.map(R.path(['state','stamp'])),
         R.uniq
       );

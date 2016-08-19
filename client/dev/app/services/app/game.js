@@ -31,10 +31,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var RULER_LENS = R.lensProp('ruler');
 
     var game = appStateService.state.map(R.viewOr({}, GAME_LENS));
-    var game_export = game.changes().snapshot(gameExportCurrent, function () {
-      return game_export_previous;
-    }).hold({});
-    var game_export_previous = game_export.delay({});
+    var game_export = game.changes().map(gameExportCurrent).hold({});
     var loading = behavioursModel.signalModel.create();
     var create = appStateService.state.map(R.view(CREATE_LENS));
 
@@ -249,17 +246,20 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     mount();
 
+    var game_export_url = undefined;
+
     return appGameService;
 
     function mount() {
       appActionService.register('Game.set', actionGameSet).register('Game.load', actionGameLoad).register('Game.load.dataReady', actionGameLoadDataReady).register('Game.load.dataLoaded', actionGameLoadDataLoaded).register('Game.load.gameLoaded', actionGameLoadGameLoaded).register('Game.connection.batchCmd', actionGameConnectionBatchCmd).register('Game.connection.chat', actionGameConnectionChat).register('Game.connection.replayCmd', actionGameConnectionReplayCmd).register('Game.connection.sendChat', actionGameConnectionSendChat).register('Game.connection.setCmds', actionGameConnectionSetCmds).register('Game.connection.setPlayers', actionGameConnectionSetPlayers).register('Game.connection.undoCmd', actionGameConnectionUndoCmd).register('Game.invitePlayer', actionGameInvitePlayer).register('Game.connection.close', actionGameConnectionClose).register('Game.command.execute', actionGameCommandExecute).register('Game.command.replay', actionGameCommandReplay).register('Game.command.replayNext', actionGameCommandReplayNext).register('Game.command.undo', actionGameCommandUndo).register('Game.command.undoLast', actionGameCommandUndoLast).register('Game.view.scrollLeft', actionGameViewScrollLeft).register('Game.view.scrollRight', actionGameViewScrollRight).register('Game.view.scrollUp', actionGameViewScrollUp).register('Game.view.scrollDown', actionGameViewScrollDown).register('Game.view.zoomIn', actionGameViewZoomIn).register('Game.view.zoomOut', actionGameViewZoomOut).register('Game.view.zoomReset', actionGameViewZoomReset).register('Game.view.flipMap', actionGameViewFlipMap).register('Game.view.moveMap', actionGameViewMoveMap).register('Game.view.toggleMenu', actionGameViewToggleMenu).register('Game.view.editDamage.reset', actionGameViewEditDamageReset).register('Game.view.editLabel', actionGameViewEditLabel).register('Game.board.set', actionGameBoardSet).register('Game.board.setRandom', actionGameBoardSetRandom).register('Game.board.importFile', actionGameBoardImportFile).register('Game.scenario.set', actionGameScenarioSet).register('Game.scenario.setRandom', actionGameScenarioSetRandom).register('Game.scenario.generateObjectives', actionGameScenarioGenerateObjectives).register('Game.model.create', actionGameModelCreate).register('Game.model.copy', actionGameModelCopy).register('Game.model.importList', actionGameModelImportList).register('Game.model.importFile', actionGameModelImportFile).register('Game.template.create', actionGameTemplateCreate).register('Game.templates.set', actionGameTemplatesSet).register('Game.templates.setDeviationMax', actionGameTemplatesSetDeviationMax).register('Game.terrain.create', actionGameTerrainCreate).register('Game.terrains.set', actionGameTerrainsSet).register('Game.terrains.reset', actionGameTerrainsReset);
     }
-    function gameExportCurrent(previous, game) {
+    function gameExportCurrent(game) {
       console.warn('Export Game', arguments);
-      fileExportService.cleanup(previous.url);
+      fileExportService.cleanup(game_export_url);
+      game_export_url = fileExportService.generate('json', game);
       return {
         name: 'clicknfeat_game.json',
-        url: fileExportService.generate('json', game)
+        url: game_export_url
       };
     }
     function gameSaveCurrent(state) {
@@ -636,16 +636,16 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       }
     }
     function observeModelsChanges(olds, news) {
-      return R.thread(gameModelsModel.all(news))(R.symmetricDifference(gameModelsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
+      return R.thread(gameModelsModel.all(news))(R.symmetricDifferenceWith(R.eq, gameModelsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
     }
     function observeModelSelectionChanges(old, sel) {
-      return R.concat(R.symmetricDifference(R.propOr([], 'local', old), R.propOr([], 'local', sel)), R.symmetricDifference(R.propOr([], 'remote', old), R.propOr([], 'remote', sel)), R.uniq);
+      return R.concat(R.symmetricDifferenceWith(R.eq, R.propOr([], 'local', old), R.propOr([], 'local', sel)), R.symmetricDifferenceWith(R.eq, R.propOr([], 'remote', old), R.propOr([], 'remote', sel)), R.uniq);
     }
     function observeTemplatesChanges(olds, news) {
-      return R.thread(gameTemplatesModel.all(news))(R.symmetricDifference(gameTemplatesModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
+      return R.thread(gameTemplatesModel.all(news))(R.symmetricDifferenceWith(R.eq, gameTemplatesModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
     }
     function observeTerrainsChanges(olds, news) {
-      return R.thread(gameTerrainsModel.all(news))(R.symmetricDifference(gameTerrainsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
+      return R.thread(gameTerrainsModel.all(news))(R.symmetricDifferenceWith(R.eq, gameTerrainsModel.all(olds)), R.map(R.path(['state', 'stamp'])), R.uniq);
     }
     function gameCheckNewChat(_ref9) {
       var _ref10 = _slicedToArray(_ref9, 4);

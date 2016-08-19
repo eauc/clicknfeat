@@ -145,8 +145,8 @@
     function setupBindings(mode) {
       const own_bindings = R.keys(mode.bindings);
       const all_bindings = R.keysIn(mode.bindings);
-      const inherited_bindings = R.difference(all_bindings,
-                                              own_bindings);
+      const inherited_bindings =
+              R.differenceWith(R.eq, all_bindings, own_bindings);
       R.forEach(bindAction, inherited_bindings);
       R.forEach(bindAction, own_bindings);
 

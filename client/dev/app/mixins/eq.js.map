@@ -1,0 +1,1 @@
+{"version":3,"sources":["eq.es6"],"names":[],"mappings":";;AAAA,EAAE,EAAF,GAAO,UAAC,CAAD,EAAI,CAAJ;SAAW,MAAM,CAAN;CAAX","file":"eq.js","sourcesContent":["R.eq = (a, b) => (a === b);\n"]}
