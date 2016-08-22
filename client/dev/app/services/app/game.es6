@@ -28,6 +28,7 @@
     'gameTerrains',
     'gameTerrainSelection',
     'games',
+    'http',
     'modes',
     'allTemplates',
   ];
@@ -56,6 +57,7 @@
                                  gameTerrainsModel,
                                  gameTerrainSelectionModel,
                                  gamesModel,
+                                 httpService,
                                  modesModel) {
     const GAME_LENS = R.lensProp('game');
     const USER_NAME_LENS = R.lensPath(['user','state','name']);
@@ -82,6 +84,11 @@
 
     const game = appStateService.state
             .map(R.viewOr({}, GAME_LENS));
+    let ping_interval;
+    const game_connection_active = game
+            .map(gameConnectionModel.active)
+            .changes()
+            .map(gameSetupOnlinePing);
     const game_export = game
             .changes()
             .map(gameExportCurrent)
@@ -237,6 +244,7 @@
 
     const appGameService = {
       game, create, dice, bad_dice, loading,
+      connection_active: game_connection_active,
       chat: { chat, new_chat },
       commands: { undo, undo_log },
       export: { board: board_export,
@@ -956,6 +964,20 @@
       if(R.length(d) < 2) return null;
       const mean = R.reduce(R.add, 0, d) / R.length(d);
       return (mean < 2) ? true : null;
+    }
+    function gameSetupOnlinePing(active) {
+      if(!active && ping_interval) {
+        self.clearInterval(ping_interval);
+        ping_interval = null;
+      }
+      if(active && !ping_interval) {
+        ping_interval = self.setInterval(gamePing, 60000);
+      }
+    }
+    function gamePing() {
+      const game = appGameService.game.sample();
+      const url = `/api/games/public/${game.public_stamp}`;
+      httpService.getP(url);
     }
   }
 })();

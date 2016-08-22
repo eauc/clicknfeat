@@ -38,6 +38,7 @@
 
       $scope.$on('$destroy', () => {
         $scope.sendAction('Modes.exit');
+        $scope.sendAction('Game.set', {});
       });
     }
 

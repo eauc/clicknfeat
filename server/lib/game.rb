@@ -39,7 +39,7 @@ class Game
       p [ "Game: unknown private message type #{msg['type']}", msg]
     end
   end
-  
+
   def onPublicMessage msg
     case msg['type']
     when "chat"
@@ -57,7 +57,7 @@ class Game
     @state['chat'] << msg['chat']
     self.signalAllListeners msg
   end
-  
+
   def onReplayCmdMessage msg
     name = msg['cmd']['user'].strip
     return if name.empty?
@@ -68,7 +68,7 @@ class Game
                               'cmd' => msg['cmd']
                             })
   end
-  
+
   def onUndoCmdMessage msg
     @state['commands'] = @state['commands'].reject { |c| c['stamp'] == msg['cmd']['stamp'] }
     @state['undo'] << msg['cmd']
@@ -76,11 +76,11 @@ class Game
                               'cmd' => msg['cmd']
                             })
   end
-  
+
   def addPlayer player, name
     name = name.strip
     return if name.empty?
-    
+
     @players << [ player, name ]
     if @state['players']['p1']['name'].nil?
       @state['players']['p1']['name'] = name
@@ -103,7 +103,7 @@ class Game
   def players
     @players.map { |p| p[1] }
   end
-  
+
   def addWatcher watcher, name
     name = name.strip
     return if name.empty?
@@ -128,7 +128,7 @@ class Game
       Game.signalListener event, l[0]
     end
   end
-  
+
   def self.signalListener event, listener
     listener.send event.to_json
   end
@@ -152,11 +152,10 @@ class Game
                           'cmds' => @state['chat'],
                         }, listener)
   end
-  
+
   def debug
     { 'private_stamp' => @state['private_stamp'],
       'public_stamp' => @state['public_stamp'],
-      'players' => @state['players'],
       'n_commands' => @state['commands'].length,
       'n_undo' => @state['undo'].length,
       'n_chat' => @state['chat'].length,

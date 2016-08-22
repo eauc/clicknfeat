@@ -3,8 +3,8 @@
 (function () {
   angular.module('clickApp.controllers').controller('appCtrl', appCtrl);
 
-  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appState', 'appTick', 'appUser', 'appData', 'appGame', 'appGames', 'appModes', 'allCommands', 'allModes'];
-  function appCtrl($rootScope, $state, appActionService, appStateService, appTickService, appUserService) {
+  appCtrl.$inject = ['$rootScope', '$state', 'appAction', 'appGame', 'appState', 'appTick', 'appUser', 'appData', 'appGames', 'appModes', 'allCommands', 'allModes'];
+  function appCtrl($rootScope, $state, appActionService, appGameService, appStateService, appTickService, appUserService) {
     console.log('init appCtrl');
 
     var vm = this;
@@ -24,6 +24,7 @@
         $rootScope.state = state;
       }, appStateService.state, $rootScope);
       bindCell(onUserValid, appUserService.valid, $rootScope);
+      listenSignal(function () {}, appGameService.connection_active, $rootScope);
       $rootScope.sendAction('Modes.reset');
     }
 

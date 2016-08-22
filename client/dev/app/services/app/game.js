@@ -5,8 +5,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 (function () {
   angular.module('clickApp.services').factory('appGame', stateGameModelFactory);
 
-  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'commands', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'modes', 'allTemplates'];
-  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, commandsModel, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, modesModel) {
+  stateGameModelFactory.$inject = ['behaviours', 'appAction', 'appData', 'appError', 'appGames', 'appModes', 'appState', 'appUser', 'commands', 'fileImport', 'fileExport', 'game', 'gameBoard', 'gameConnection', 'gameFactions', 'gameScenario', 'gameLos', 'gameModels', 'gameModelSelection', 'gameRuler', 'gameTemplates', 'gameTemplateSelection', 'gameTerrains', 'gameTerrainSelection', 'games', 'http', 'modes', 'allTemplates'];
+  function stateGameModelFactory(behavioursModel, appActionService, appDataService, appErrorService, appGamesService, appModesService, appStateService, appUserService, commandsModel, fileImportService, fileExportService, gameModel, gameBoardModel, gameConnectionModel, gameFactionsModel, gameScenarioModel, gameLosModel, gameModelsModel, gameModelSelectionModel, gameRulerModel, gameTemplatesModel, gameTemplateSelectionModel, gameTerrainsModel, gameTerrainSelectionModel, gamesModel, httpService, modesModel) {
     var GAME_LENS = R.lensProp('game');
     var USER_NAME_LENS = R.lensPath(['user', 'state', 'name']);
     var CREATE_LENS = R.lensProp('create');
@@ -31,6 +31,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
     var RULER_LENS = R.lensProp('ruler');
 
     var game = appStateService.state.map(R.viewOr({}, GAME_LENS));
+    var ping_interval = undefined;
+    var game_connection_active = game.map(gameConnectionModel.active).changes().map(gameSetupOnlinePing);
     var game_export = game.changes().map(gameExportCurrent).hold({});
     var loading = behavioursModel.signalModel.create();
     var create = appStateService.state.map(R.view(CREATE_LENS));
@@ -143,6 +145,7 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
     var appGameService = {
       game: game, create: create, dice: dice, bad_dice: bad_dice, loading: loading,
+      connection_active: game_connection_active,
       chat: { chat: chat, new_chat: new_chat },
       commands: { undo: undo, undo_log: undo_log },
       export: { board: board_export,
@@ -668,6 +671,20 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
       if (R.length(d) < 2) return null;
       var mean = R.reduce(R.add, 0, d) / R.length(d);
       return mean < 2 ? true : null;
+    }
+    function gameSetupOnlinePing(active) {
+      if (!active && ping_interval) {
+        self.clearInterval(ping_interval);
+        ping_interval = null;
+      }
+      if (active && !ping_interval) {
+        ping_interval = self.setInterval(gamePing, 60000);
+      }
+    }
+    function gamePing() {
+      var game = appGameService.game.sample();
+      var url = '/api/games/public/' + game.public_stamp;
+      httpService.getP(url);
     }
   }
 })();

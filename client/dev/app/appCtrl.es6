@@ -6,11 +6,11 @@
     '$rootScope',
     '$state',
     'appAction',
+    'appGame',
     'appState',
     'appTick',
     'appUser',
     'appData',
-    'appGame',
     'appGames',
     'appModes',
     'allCommands',
@@ -19,6 +19,7 @@
   function appCtrl($rootScope,
                    $state,
                    appActionService,
+                   appGameService,
                    appStateService,
                    appTickService,
                    appUserService) {
@@ -40,6 +41,7 @@
       bindCell((state) => { $rootScope.state = state; },
                appStateService.state, $rootScope);
       bindCell(onUserValid, appUserService.valid, $rootScope);
+      listenSignal(() => {}, appGameService.connection_active, $rootScope);
       $rootScope.sendAction('Modes.reset');
     }
 
