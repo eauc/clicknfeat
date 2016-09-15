@@ -81,14 +81,14 @@
   }, {
     "name": "SR16 The Pit",
     "killbox": 140,
-    "objectives": [
+    "flags": [
       {
-        "info": ["sr16_objectives","sr16gen"],
+        "info": ["flags","sr16flag"],
         "x": 320,
         "y": 180
       },
       {
-        "info": ["sr16_objectives","sr16gen"],
+        "info": ["flags","sr16flag"],
         "x": 160,
         "y": 300
       }
