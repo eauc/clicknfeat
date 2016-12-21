@@ -54,7 +54,7 @@
         "fk_name": "Fyanna, la Courge of Everblight",
         "type": "wardude",
         "fury": 6,
-        "base": "medium",
+        "base": "small",
         "img": [],
         "damage": {
           "n": 15
