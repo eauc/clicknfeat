@@ -123,6 +123,15 @@
           }
         }
       },
+      "Kaya3": {
+        "name": "Kaya3 (Kaya the Wildheart)",
+        "type": "wardude",
+        "fury": 6,
+        "base": "large",
+        "damage": {
+          "n": 17
+        }
+      },
       "Kromac1": {
         "name": "Kromac1 (Kromac the Ravenous)",
         "fk_name": "Kromac the Ravenous",
@@ -427,6 +436,21 @@
           "4": [ "b" , "b" , "b"  , null , null , null ],
           "5": [ "b" , "b" , "b"  , "b"  , "b"  , null ],
           "6": [ "b" , "b" , null , null , null , null ]
+        }
+      },
+      "Loki": {
+        "name": "Loki",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "damage": {
+          "type": "beast",
+          "1": [ "b" , "b" , "b" , null , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
+          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "5": [ "b" , "b" , "b" , null , null , null , null ],
+          "6": [ "b" , "b" , "b" , "b"  , "b"  , null , null  ]
         }
       },
       "Megalith": {

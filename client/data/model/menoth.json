@@ -82,6 +82,15 @@
           "n": 16
         }
       },
+      "feora3": {
+        "name": "Feora3 (Feora, the Conquering Flame)",
+        "type": "wardude",
+        "focus": 6,
+        "base": "large",
+        "damage": {
+          "n": 18
+        }
+      },
       "harbinger1": {
         "name": "Harbinger1 (Harbinger of Menoth)",
         "fk_name": "Harbinger of Menoth",
@@ -408,6 +417,20 @@
           "4": [ null,  "b",  "b",  "b",  "c", "c"  ],
           "5": [ null,  "b",  "b",  "r",  "r", "c"  ],
           "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "eyeOfTruth": {
+        "name": "Eye of Truth",
+        "type": "jack",
+        "base": "large",
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [  "b", "b",  "b",  "l",  "l", "m"  ],
+          "3": [  "b", "b",  "b",  "h",  "m", "m"  ],
+          "4": [  "b", "b",  "b",  "h",  "c", "c"  ],
+          "5": [  "b", "b",  "b",  "r",  "r", "c"  ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
         }
       },
       "fireOfSalvation": {

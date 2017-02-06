@@ -75,6 +75,15 @@
           "n": 18
         }
       },
+      "kallus2": {
+        "name": "Kallus2 (Kallus, Devastation of Everblight)",
+        "type": "wardude",
+        "fury": 6,
+        "base": "large",
+        "damage": {
+          "n": 20
+        }
+      },
       "kryssa1": {
         "name": "Kryssa1 (Kryssa, Confiction of Everblight)",
         "fk_name": "Kryssa, Confiction of Everblight",
@@ -306,6 +315,21 @@
           "4": [ "b", "b", "b", "b", "b" ],
           "5": [ "b", "b", "b", null, null ],
           "6": [ "b", "b", "b", "b", "b" ]
+        }
+      },
+      "azrael": {
+        "name": "Azrael",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "damage": {
+          "type": "beast",
+          "1": [ "b" , "b" , "b" , "b" , null , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b" , "b" , "b" , null , null , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , "b"  , "b"  ]
         }
       },
       "archangel": {

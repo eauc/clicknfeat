@@ -67,6 +67,40 @@
           "n": 15
         }
       },
+      "caine3": {
+        "name": "Caine3 (Caine's Hellslingers)",
+        "entries": {
+          "lock": {
+            "caine3": {
+              "name": "Caine",
+              "type": "wardude",
+              "focus": 6,
+              "base": "small",
+              "damage": {
+                "n": 15
+              }
+            }
+          },
+          "unit": {
+            "ryan2": {
+              "name": "Ryan",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            },
+            "watts2": {
+              "name": "Watts",
+              "type": "warrior",
+              "base": "small",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
       "constance1": {
         "name": "Constance1 (Constance Blaize, Knight of the Prophet)",
         "fk_name": "Constance Blaize, Knights of the Prophet",
@@ -374,6 +408,20 @@
             "link": "/data/model/cygnar/jacks/Avenger.png"
           }
         ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [ null, "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null, "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "brickhouse": {
+        "name": "Brickhouse",
+        "type": "jack",
+        "base": "large",
         "damage": {
           "type": "jack",
           "1": [ null, "b",  "b",  "b",  "l", null ],
