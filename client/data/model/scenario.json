@@ -2,6 +2,17 @@
   "name": "Scenario",
   "color": "#999",
   "models": {
+    "sr17_objectives": {
+      "sr17gen": {
+        "name": "SR17 Generic",
+        "type": "objective",
+        "base": "large",
+        "immovable": true,
+        "damage": {
+          "n": 15
+        }
+      }
+    },
     "sr16_objectives": {
       "sr16gen": {
         "name": "SR16 Generic",
@@ -285,8 +296,8 @@
       }
     },
     "flags": {
-      "sr15flag": {
-        "name": "SR15 Flag",
+      "sr17flag": {
+        "name": "SR17 Flag",
         "type": "flag",
         "base": "medium",
         "immovable": true,
@@ -296,6 +307,15 @@
       },
       "sr16flag": {
         "name": "SR16 Flag",
+        "type": "flag",
+        "base": "medium",
+        "immovable": true,
+        "damage": {
+          "type": "none"
+        }
+      },
+      "sr15flag": {
+        "name": "SR15 Flag",
         "type": "flag",
         "base": "medium",
         "immovable": true,
