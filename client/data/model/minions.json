@@ -803,6 +803,14 @@
           "n": 5
         }
       },
+      "Eilish Garrity": {
+        "name": "Eilish Garrity, the Occultist",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
       "Feralgeist": {
         "name": "Feralgeist",
         "type": "solo",

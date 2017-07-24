@@ -253,6 +253,16 @@
           "n": 16
         }
       },
+      "kolgrima1": {
+        "name": "Kolgrima1 (Kolgrima Stonetruth, Winter Witch)",
+        "fk_name": "Kolgrima Stonetruth, Winter Witch",
+        "type": "wardude",
+        "fury": 7,
+        "base": "medium",
+        "damage": {
+          "n": 15
+        }
+      },
       "madrak1": {
         "name": "Madrak1 (Madrak Ironhide, Thornwood Chieftain)",
         "fk_name": "Chief Madrak Ironhide",
@@ -315,6 +325,21 @@
             "link": "/data/model/trollblood/beasts/Bomber.png"
           }
         ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
+        }
+      },
+      "dire_troll_brawler": {
+        "name": "Dire Troll Brawler",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
         "damage": {
           "type": "beast",
           "1": [  "b" ,  "b" ,  "b" ,  "b" , null , null ],
@@ -400,6 +425,21 @@
           "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
           "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
           "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
+        }
+      },
+      "ice_troll": {
+        "name": "Ice Troll",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
+        "damage": {
+          "type": "beast",
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
       "mountain_king": {
@@ -505,6 +545,21 @@
           "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null ]
         }
       },
+      "sea_king": {
+        "name": "Sea King",
+        "type": "beast",
+        "fury": 5,
+        "base": "huge",
+        "damage": {
+          "type": "gargantuan",
+          "1": [  "b" ,  "b" ,  "b" ,  "b" , "b"  , "b"  , null , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
+        }
+      },
       "slag_troll": {
         "name": "Slag Troll",
         "type": "beast",
@@ -575,6 +630,21 @@
             "link": "/data/model/trollblood/beasts/Axer.png"
           }
         ],
+        "damage": {
+          "type": "beast",
+          "1": [  "b" ,  "b" , "b"  , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" , null ],
+          "3": [  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" , "b"  , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" , null ]
+        }
+      },
+      "troll_basher": {
+        "name": "Troll Basher",
+        "type": "beast",
+        "fury": 3,
+        "base": "medium",
         "damage": {
           "type": "beast",
           "1": [  "b" ,  "b" , "b"  , null , null ],
@@ -761,6 +831,43 @@
           }
         }
       },
+      "northkin_bear_handler_and_battle_boars": {
+        "name": "Northkins Bear Hander & Battle Boars",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Battle Boar",
+              "ranges": [1, 2],
+              "type": "warrior",
+              "base": "large",
+              "damage": {
+                "n": 8
+              }
+            },
+            "leader": {
+              "name": "Bear Handler",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "northkin_raiders": {
+        "name": "Northkin Raiders",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader & Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "medium"
+            }
+          }
+        }
+      },
       "pyg_burrowers": {
         "name": "Pyg Burrowers",
         "entries": {
@@ -775,6 +882,19 @@
                   "link": "/data/model/trollblood/units/Pyg_Burrowers.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "pyg_lookouts": {
+        "name": "Pyg Lookouts",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 4, 6],
+              "type": "warrior",
+              "base": "small"
             }
           }
         }
@@ -1344,9 +1464,25 @@
         "damage": {
           "n": 5
         }
+      },
+      "valka1": {
+        "name": "Valka Curseborn, Chieftain of the North",
+        "type": "solo",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
       }
     },
     "battle_engines": {
+      "hooch_hauler": {
+        "name": "Hearthgut Hooch Hauler",
+        "type": "be",
+        "base": "huge",
+        "damage": {
+          "n": 36
+        }
+      },
       "war_wagon": {
         "name": "War Wagon",
         "type": "be",
