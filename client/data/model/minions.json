@@ -570,6 +570,31 @@
           }
         }
       },
+      "Gatormen Posse TF": {
+        "name": "Gatormen Posse (Theme Force)",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 3, 5 ],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/minions/units/Gatormen_grunt.png"
+                },
+                {
+                  "type": "leader",
+                  "link": "/data/model/minions/units/Gatormen_Leader.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
       "Lynus&Edrea": {
         "name": "Lynus Wesselbaum & Edrea Lloryrr",
         "entries": {
