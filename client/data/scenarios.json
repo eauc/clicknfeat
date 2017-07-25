@@ -1,7 +1,7 @@
 [
   [ "SR17", [ {
     "name": "SR17 The Pit II",
-    "killbox": 100,
+    "killbox": 120,
     "objectives": [
       {
         "info": ["sr17_objectives","sr17gen"],
@@ -37,7 +37,7 @@
     ]
   }, {
     "name": "SR17 Standoff",
-    "killbox": 100,
+    "killbox": 120,
     "objectives": [
       {
         "info": ["sr17_objectives","sr17gen"],
@@ -78,7 +78,7 @@
     ]
   }, {
     "name": "SR17 Spread the Net",
-    "killbox": 100,
+    "killbox": 120,
     "flags": [
       {
         "info": ["flags","sr17flag"],
@@ -114,7 +114,7 @@
     ]
   }, {
     "name": "SR17 Breakdown",
-    "killbox": 100,
+    "killbox": 120,
     "rect": [
       {
         "x": 240,
@@ -137,7 +137,7 @@
     ]
   }, {
     "name": "SR17 Outlast",
-    "killbox": 100,
+    "killbox": 120,
     "flags": [
       {
         "info": ["flags","sr17flag"],
@@ -164,6 +164,7 @@
     ]
   }, {
     "name": "SR17 Recon II",
+    "killbox": 120,
     "flags": [
       {
         "info": ["flags","sr17flag"],
