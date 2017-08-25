@@ -669,7 +669,7 @@
                            'setScenario', [scenario] ]);
     }
     function actionGameScenarioSetRandom(state) {
-      const group = gameScenarioModel.group('SR16', state.scenarios);
+      const group = gameScenarioModel.group('SR17', state.scenarios);
       let scenario, name = gameScenarioModel.name(state.game.scenario);
       while(name === gameScenarioModel.name(state.game.scenario)) {
         scenario = group[1][R.randomRange(0, group[1].length-1)];
