@@ -826,7 +826,10 @@
                 {
                   "link": "/data/model/trollblood/units/Krielstone_Stone_Scribe_Elder.png"
                 }
-              ]
+              ],
+              "damage": {
+                "n": 5
+              }
             }
           }
         }
