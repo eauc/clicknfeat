@@ -34,6 +34,16 @@
           "n": 18
         }
       },
+      "anamag1": {
+        "name": "Anamag1 (Anamag the Doom Fister)",
+        "fk_name": "Anamag the Doom Fister",
+        "type": "wardude",
+        "fury": 7,
+        "base": "medium",
+        "damage": {
+          "n": 17
+        }
+      },
       "bethayne1": {
         "name": "Bethayne1 (Bethayne, Voice of Everblight)",
         "fk_name": "Bethayne & Belphagor",
@@ -423,6 +433,21 @@
           "4": [ "b", "b", "b", "b", "b", "b", "b" ],
           "5": [ "b", "b", "b", "b", null, null, null ],
           "6": [ "b", "b", "b", "b", "b", "b", null ]
+        }
+      },
+      "golab": {
+        "name": "Golab",
+        "type": "beast",
+        "fury": 4,
+        "base": "large",
+        "damage": {
+          "type": "beast",
+          "1": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "2": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null ],
+          "3": [ "b" , "b" , "b" , null, null , null , null ],
+          "4": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "5": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
+          "6": [ "b" , "b" , "b" , "b" , "b"  , "b"  , null ]
         }
       },
       "harrier": {
@@ -887,6 +912,22 @@
           }
         }
       },
+      "chosen": {
+        "name": "Chosen of Everblight",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 3, 5 ],
+              "type": "warrior",
+              "base": "large",
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
       "grotesques banshees": {
         "name": "Blighted Nyss Grotesques Banshees",
         "entries": {
@@ -1042,6 +1083,19 @@
           }
         }
       },
+      "rotwings": {
+        "name": "Blighted Rotwings",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 6, 10 ],
+              "type": "warrior",
+              "base": "small"
+            }
+          }
+        }
+      },
       "scather_crew": {
         "name": "Blighted Nyss Scather Crew",
         "entries": {
@@ -1134,6 +1188,16 @@
               ],
               "damage": {
                 "n": 5
+              }
+            }
+          },
+          "ua": {
+            "gorag": {
+              "name": "Gorag Rotteneye",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 8
               }
             }
           }
@@ -1267,6 +1331,13 @@
       }
     },
     "solos": {
+      "ammok": {
+        "name": "Ammok the Stick of Truthbearer",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
+      },
       "annyssa": {
         "name": "Annyssa Ryvaal, Talon of Everblight",
         "type": "solo",
