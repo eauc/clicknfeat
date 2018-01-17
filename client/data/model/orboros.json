@@ -448,7 +448,7 @@
           "1": [ "b" , "b" , "b" , null , null , null , null ],
           "2": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
           "3": [ "b" , "b" , "b" , "b"  , "b"  , null , null ],
-          "3": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
+          "4": [ "b" , "b" , "b" , "b"  , "b"  , "b"  , "b"  ],
           "5": [ "b" , "b" , "b" , null , null , null , null ],
           "6": [ "b" , "b" , "b" , "b"  , "b"  , null , null  ]
         }
@@ -701,6 +701,21 @@
           "6": [ "b" , "b" , "b" , null , null , null ]
         }
       },
+      "WoldWight": {
+        "name": "Wold Wight",
+        "type": "beast",
+        "fury": 2,
+        "base": "medium",
+        "damage": {
+          "type": "beast",
+          "1": [ "b" , null , null ],
+          "2": [ "b" ,  "b" ,  "b" ],
+          "3": [ "b" ,  "b" , null ],
+          "4": [ "b" ,  "b" ,  "b" ],
+          "5": [ "b" ,  "b" , null ],
+          "6": [ "b" ,  "b" ,  "b" ]
+        }
+      },
       "Woldwrath": {
         "name": "Woldwrath",
         "type": "beast",
@@ -727,7 +742,7 @@
         "name": "Woldwyrd",
         "fk_name": "Woldwyrd",
         "type": "beast",
-        "fury": 3,
+        "fury": 2,
         "base": "medium",
         "img": [
           {

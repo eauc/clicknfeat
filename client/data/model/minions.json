@@ -34,6 +34,30 @@
           "n": 16
         }
       },
+      "Barnabas2": {
+        "name": "Barnabas2 (Barnabas, Lord of Blood)",
+        "entries": {
+          "lock": {
+            "Barnabas2": {
+              "name": "Barnabas, Lord of Blood",
+              "type": "wardude",
+              "fury": 7,
+              "base": "large",
+              "damage": {
+                "n": 18
+              }
+            }
+          },
+          "unit": {
+            "BoneShaker": {
+              "name": "Bone Shaker",
+              "type": "warrior",
+              "ranges": [1, 3],
+              "base": "small"
+            }
+          }
+        }
+      },
       "Calaban1": {
         "name": "Calaban1 (Calaban, The grave walker)",
         "fk_name": "Calaban, the Gravewalker",
@@ -93,7 +117,7 @@
         "name": "Maelok1 (Maelok the Dreadbound)",
         "fk_name": "Maelok, the Dreadbound",
         "type": "wardude",
-        "fury": 6,
+        "fury": 7,
         "base": "medium",
         "img": [
           {
@@ -239,6 +263,21 @@
           "4": [ "b" , "b"  , "b"  , "b"  ],
           "5": [ "b" , "b"  , null , null ],
           "6": [ "b" , "b"  , "b"  , null ]
+        }
+      },
+      "Dracodile": {
+        "name": "Dracodile",
+        "type": "beast",
+        "fury": 4,
+        "base": "huge",
+        "damage": {
+          "type": "gargantuan",
+          "1": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
+          "2": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "3": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null ],
+          "4": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ],
+          "5": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null ],
+          "6": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , "b"  , null ]
         }
       },
       "Gun Boar": {
@@ -400,6 +439,29 @@
           }
         }
       },
+      "Boil Master and Spirit Cauldron": {
+        "name": "Boil Master and Spirit Cauldron",
+        "entries": {
+          "unit": {
+            "leader": {
+              "name": "Boil Master",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 5
+              }
+            },
+            "cauldron": {
+              "name": "Cauldron",
+              "type": "warrior",
+              "base": "large",
+              "damage": {
+                "n": 10
+              }
+            }
+          }
+        }
+      },
       "Bokor and Shamblers": {
         "name": "Gatorman Bokor and Bog Trog Shamblers",
         "entries": {
@@ -449,6 +511,19 @@
                   "link": "/data/model/minions/units/Croak_Raider_Leader.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Croak Trappers": {
+        "name": "Croak Trappers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 2 ],
+              "type": "warrior",
+              "base": "small"
             }
           }
         }
@@ -541,6 +616,19 @@
                   "link": "/data/model/minions/units/Slaughter_grunt.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Farrow Varlkyries": {
+        "name": "Farrow Valkyries",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [ 1, 3 ],
+              "type": "warrior",
+              "base": "small"
             }
           }
         }
@@ -714,6 +802,14 @@
           "n": 5
         }
       },
+      "Bone Shrine": {
+        "name": "Bone Shrine",
+        "type": "solo",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
+      },
       "Brun&Lug": {
         "name": "Brun Cragback & Lug",
         "fk_name": "Brun Cragback & Lug",
@@ -846,6 +942,22 @@
           }
         ]
       },
+      "Gatorman Husk": {
+        "name": "Gatorman Husk",
+        "type": "solo",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
+      },
+      "Gatorman Soul Slave": {
+        "name": "Gatorman Soul Slave",
+        "type": "solo",
+        "base": "medium",
+        "damage": {
+          "n": 8
+        }
+      },
       "Gobber Tinker": {
         "name": "Gobber Tinker",
         "type": "solo",
@@ -888,6 +1000,14 @@
           "n": 8
         }
       },
+      "Kwaak": {
+        "name": "Kwaak Slickspine and Bug",
+        "type": "solo",
+        "base": "small",
+        "damage": {
+          "n": 5
+        }
+      },
       "Lanyssa": {
         "name": "Lanyssa Ryssyll, Nyss Sorceress",
         "type": "solo",
@@ -897,6 +1017,14 @@
             "link": "/data/model/minions/solos/Lanyssa.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Longchops": {
+        "name": "Longchops",
+        "type": "solo",
+        "base": "medium",
         "damage": {
           "n": 5
         }
@@ -1037,6 +1165,11 @@
         "damage": {
           "n": 8
         }
+      },
+      "Void Leech": {
+        "name": "Void Leech",
+        "type": "solo",
+        "base": "small"
       },
       "Witch Doctor": {
         "name": "Gatorman Witch Doctor",
