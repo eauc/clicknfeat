@@ -128,6 +128,11 @@
         "type": "wardude",
         "fury": 6,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Kaya3.png"
+          }
+        ],
         "damage": {
           "n": 17
         }
@@ -553,6 +558,11 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/Scarsfell.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b"  , null , null ],
@@ -588,6 +598,11 @@
         "type": "beast",
         "fury": 4,
         "base": "huge",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/Storm_Raptor.png"
+          }
+        ],
         "damage": {
           "type": "gargantuan",
           "1": [ "b" , "b" , "b" , "b" , "b" , "b" , "b"  , null , null , null , null ],
@@ -785,6 +800,10 @@
               "name": "Scall",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Death_Wolves.png"
+                }
               "damage": {
                 "n": 5
               }
@@ -793,6 +812,10 @@
               "name": "Tala",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Death_Wolves.png"
+                }
               "damage": {
                 "n": 5
               }
@@ -801,6 +824,10 @@
               "name": "Caleb",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Death_Wolves.png"
+                }
               "damage": {
                 "n": 5
               }
