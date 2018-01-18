@@ -130,6 +130,8 @@
         "base": "large",
         "img": [
           {
+            "width": 20,
+            "height": 20,
             "link": "/data/model/orboros/locks/Kaya3.png"
           }
         ],
@@ -560,6 +562,8 @@
         "base": "medium",
         "img": [
           {
+            "width": 15,
+            "height": 15,
             "link": "/data/model/orboros/beasts/Scarsfell.png"
           }
         ],
@@ -600,6 +604,8 @@
         "base": "huge",
         "img": [
           {
+            "width": 50,
+            "height": 50,
             "link": "/data/model/orboros/beasts/Storm_Raptor.png"
           }
         ],
@@ -802,8 +808,11 @@
               "base": "small",
               "img": [
                 {
+                  "width": 12,
+                  "height": 12,
                   "link": "/data/model/orboros/units/Death_Wolves.png"
                 }
+              ],
               "damage": {
                 "n": 5
               }
@@ -814,8 +823,11 @@
               "base": "small",
               "img": [
                 {
+                  "width": 12,
+                  "height": 12,
                   "link": "/data/model/orboros/units/Death_Wolves.png"
                 }
+              ],
               "damage": {
                 "n": 5
               }
@@ -826,8 +838,11 @@
               "base": "small",
               "img": [
                 {
+                  "width": 12,
+                  "height": 12,
                   "link": "/data/model/orboros/units/Death_Wolves.png"
                 }
+              ],
               "damage": {
                 "n": 5
               }
