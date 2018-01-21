@@ -253,7 +253,10 @@
         "type": "wardude",
         "fury": 6,
         "base": "small",
-        "img": [],
+		"img": [
+          {
+            "link": "/data/model/orboros/locks/Tanith1.png"
+          }
         "damage": {
           "n": 15
         }
@@ -264,7 +267,10 @@
         "type": "wardude",
         "fury": 6,
         "base": "small",
-        "img": [],
+		"img": [
+          {
+            "link": "/data/model/orboros/locks/Una2.png"
+          }
         "damage": {
           "n": 15
         }
@@ -355,6 +361,11 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/Brennos.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null, null ],
@@ -450,6 +461,11 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/Loki.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b" , null , null , null , null ],
@@ -545,6 +561,11 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/Rotterhorn.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b"  , null , null ],
@@ -727,6 +748,11 @@
         "type": "beast",
         "fury": 2,
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/orboros/beasts/WoldWight.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , null , null ],
