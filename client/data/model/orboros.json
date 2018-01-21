@@ -255,6 +255,8 @@
         "base": "small",
 		"img": [
           {
+            "width": 12,
+            "height": 12,
             "link": "/data/model/orboros/locks/Tanith1.png"
           }
         "damage": {
@@ -269,6 +271,12 @@
         "base": "small",
 		"img": [
           {
+		"img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/locks/Tanith1.png"
+          }
             "link": "/data/model/orboros/locks/Una2.png"
           }
         "damage": {
@@ -363,6 +371,8 @@
         "base": "large",
         "img": [
           {
+            "width": 20,
+            "height": 20,
             "link": "/data/model/orboros/beasts/Brennos.png"
           }
         ],
@@ -463,6 +473,8 @@
         "base": "large",
         "img": [
           {
+            "width": 20,
+            "height": 20,
             "link": "/data/model/orboros/beasts/Loki.png"
           }
         ],
@@ -752,6 +764,8 @@
         "base": "medium",
         "img": [
           {
+            "width": 15,
+            "height": 15,
             "link": "/data/model/orboros/beasts/WoldWight.png"
           }
         ],
