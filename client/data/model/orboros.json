@@ -259,6 +259,7 @@
             "height": 12,
             "link": "/data/model/orboros/locks/Tanith1.png"
           }
+		],
         "damage": {
           "n": 15
         }
@@ -275,6 +276,7 @@
             "height": 12,
             "link": "/data/model/orboros/locks/Una2.png"
           }
+		],
         "damage": {
           "n": 15
         }
@@ -835,7 +837,7 @@
                   "height": 20,
                   "link": "/data/model/orboros/units/Druid_Mist_Riders.png"
                 }
-              ]
+              ],
               "damage": {
                 "n": 5
               }
@@ -1302,6 +1304,7 @@
             "height": 12,
             "link": "/data/model/orboros/solos/Blackclad_Stoneshaper.png"
           }
+		],
         "damage": {
           "n": 5
         }
@@ -1329,6 +1332,7 @@
             "height": 12,
             "link": "/data/model/orboros/solos/BloodWeaver_Night_Witch.png"
           }
+		],
         "damage": {
           "n": 5
         }
@@ -1450,6 +1454,7 @@
             "height": 20,
             "link": "/data/model/orboros/solos/Tharn_Wolf_Rider_Champion.png"
           }
+		],
         "damage": {
           "n": 8
         }
@@ -1465,6 +1470,7 @@
             "height": 12,
             "link": "/data/model/orboros/solos/Una1.png"
           }
+		],
         "damage": {
           "n": 5
         }
