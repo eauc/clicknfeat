@@ -625,7 +625,13 @@
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
               "base": "small",
-              "img": []
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/minions/units/Farrow_Commandos.png"
+                }
+              ],
             }
           }
         }
@@ -656,7 +662,14 @@
               "name": "Leader and Grunts",
               "ranges": [ 1, 3 ],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/minions/units/Farrow_Valkyries.png"
+                }
+              ],
             }
           }
         }
@@ -719,6 +732,13 @@
               "name": "Lynus",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/minions/units/Lynus.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -727,6 +747,13 @@
               "name": "Edrea",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/minions/units/Edrea.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
