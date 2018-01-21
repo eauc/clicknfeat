@@ -180,6 +180,13 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/minions/beasts/BattleBoar.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", null, null, null, null ],
@@ -215,6 +222,13 @@
         "type": "beast",
         "fury": 3,
         "base": "large",
+        "img": [
+          {
+            "width": 20,
+            "height": 20,
+            "link": "/data/model/minions/beasts/BlindWalker.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , null , null , null , null , null , null ],
@@ -270,6 +284,13 @@
         "type": "beast",
         "fury": 4,
         "base": "huge",
+        "img": [
+          {
+            "width": 50,
+            "height": 50,
+            "link": "/data/model/minions/beasts/Dracodile.png"
+          }
+        ],
         "damage": {
           "type": "gargantuan",
           "1": [  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" ,  "b" , null , null , null , null ],
@@ -365,6 +386,13 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/minions/beasts/SplatterBoar.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", null, null, null, null ],
