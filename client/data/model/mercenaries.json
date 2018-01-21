@@ -1676,6 +1676,13 @@
         "name": "Hammerfall Siege Crawler",
         "type": "be",
         "base": "huge",
+        "img": [
+          {
+            "width": 50,
+            "height": 50,
+            "link": "/data/model/mercenaries/bes/Hammerfall.png"
+          }
+        ],
         "damage": {
           "n": 40
         }
