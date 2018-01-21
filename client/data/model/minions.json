@@ -843,7 +843,13 @@
         "name": "Bog Trog Mist Speaker",
         "type": "solo",
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/minions/solos/Bog_Trog_Mist_Speaker.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -852,7 +858,13 @@
         "name": "Bog Trog Trawler",
         "type": "solo",
         "base": "medium",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/minions/solos/Bog_Trog_Trawler.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1009,6 +1021,13 @@
         "name": "Gatorman Soul Slave",
         "type": "solo",
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/minions/solos/Gatorman_Soul_Slave.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
@@ -1030,6 +1049,13 @@
         "name": "Gremlin Swarm",
         "type": "solo",
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/minions/solos/Gremlin_Swarm.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1051,6 +1077,13 @@
         "name": "Hutchuck, Ogrun Bounty Hunter",
         "type": "solo",
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/minions/solos/Hutchuck.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
@@ -1059,6 +1092,13 @@
         "name": "Kwaak Slickspine and Bug",
         "type": "solo",
         "base": "small",
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/minions/solos/Kwaak.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1180,7 +1220,13 @@
         "name": "Swamp Gobber Chef",
         "type": "solo",
         "base": "small",
-        "img": []
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/minions/solos/Swamp_Gobber_Chef.png"
+          }
+        ],
       },
       "Targ": {
         "name": "Targ",
