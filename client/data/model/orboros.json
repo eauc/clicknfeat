@@ -253,7 +253,13 @@
         "type": "wardude",
         "fury": 6,
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/locks/Tanith1.png"
+          }
+        ],
         "damage": {
           "n": 15
         }
@@ -264,7 +270,13 @@
         "type": "wardude",
         "fury": 6,
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/locks/Una2.png"
+          }
+        ],
         "damage": {
           "n": 15
         }
@@ -355,6 +367,13 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "width": 20,
+            "height": 20,
+            "link": "/data/model/orboros/beasts/Brennos.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b", "b", "b", null, null, null ],
@@ -450,6 +469,13 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "width": 20,
+            "height": 20,
+            "link": "/data/model/orboros/beasts/Loki.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b" , null , null , null , null ],
@@ -545,6 +571,13 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/orboros/beasts/Rotterhorn.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b"  , null , null ],
@@ -727,6 +760,13 @@
         "type": "beast",
         "fury": 2,
         "base": "medium",
+        "img": [
+          {
+            "width": 15,
+            "height": 15,
+            "link": "/data/model/orboros/beasts/WoldWight.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , null , null ],
@@ -791,6 +831,13 @@
               "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "large",
+              "img": [
+                {
+                  "width": 20,
+                  "height": 20,
+                  "link": "/data/model/orboros/units/Druid_Mist_Riders.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1251,7 +1298,13 @@
         "name": "Blackclad Stoneshaper",
         "type": "solo",
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/solos/Blackclad_Stoneshaper.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1273,6 +1326,13 @@
         "name": "Bloodweaver Night Witch",
         "type": "solo",
         "base": "small",
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/solos/BloodWeaver_Night_Witch.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1388,7 +1448,13 @@
         "name": "Tharn Wolf Rider Champion",
         "type": "solo",
         "base": "large",
-        "img": [],
+        "img": [
+          {
+            "width": 20,
+            "height": 20,
+            "link": "/data/model/orboros/solos/Tharn_Wolf_Rider_Champion.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
@@ -1398,6 +1464,13 @@
         "type": "wardude",
         "fury": 4,
         "base": "small",
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/orboros/solos/Una1.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
