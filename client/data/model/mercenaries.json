@@ -1215,6 +1215,13 @@
               "name": "Mar",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/mercenaries/units/Mar.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1223,6 +1230,13 @@
               "name": "Morland",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/mercenaries/units/Morland.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1231,6 +1245,13 @@
               "name": "Zira",
               "type": "warrior",
               "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/mercenaries/units/Zira.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1351,6 +1372,13 @@
         "name": "Eilish Garrity, the Occultist",
         "type": "solo",
         "base": "small",
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/mercenaries/solos/Eilish_Garrity.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1373,6 +1401,13 @@
         "name": "Major Harrison Gibbs",
         "type": "warrior",
         "base": "small",
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/mercenaries/solos/Harrison_Gibbs.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1557,7 +1592,13 @@
         "name": "Savio Montero Acosta",
         "type": "warrior",
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/mercenaries/solos/Savio_Montero_Acosta.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1579,7 +1620,13 @@
         "name": "Swamp Gobber River Raider",
         "type": "warrior",
         "base": "small",
-        "img": []
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/mercenaries/solos/Swamp_Gobber_River_Raider.png"
+          }
+        ]
       },
       "taryndiarovissi": {
         "name": "Taryn di la Rovissi, Llaeles Gun Mage",
@@ -1612,7 +1659,13 @@
         "name": "Sergeant Nicolas Verendrye",
         "type": "warrior",
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "width": 12,
+            "height": 12,
+            "link": "/data/model/mercenaries/solos/Nicolas_Verendrye.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1623,6 +1676,13 @@
         "name": "Hammerfall Siege Crawler",
         "type": "be",
         "base": "huge",
+        "img": [
+          {
+            "width": 50,
+            "height": 50,
+            "link": "/data/model/mercenaries/bes/Hammerfall.png"
+          }
+        ],
         "damage": {
           "n": 40
         }
