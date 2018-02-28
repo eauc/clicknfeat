@@ -1,4 +1,238 @@
 [
+  [ "SR18CID", [ {
+    "name": "SR18 The Pit II",
+    "killbox": 120,
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 120,
+        "y": 210
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 360,
+        "y": 270
+      }
+    ],
+    "rect": [
+      {
+        "x": 120,
+        "y": 240,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 360,
+        "y": 240,
+        "width": 120,
+        "height": 60
+      }
+    ],
+    "circle": [
+      {
+        "x": 240,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR18 Standoff",
+    "killbox": 120,
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "rect": [
+      {
+        "x": 240,
+        "y": 180,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 240,
+        "y": 300,
+        "width": 120,
+        "height": 60
+      }
+    ],
+    "circle": [
+      {
+        "x": 120,
+        "y": 240,
+        "r": 60
+      },
+      {
+        "x": 360,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR18 Spread the Net",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 120,
+        "y": 290
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 360,
+        "y": 190
+      }
+    ],
+    "rect": [
+      {
+        "x": 120,
+        "y": 190,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 360,
+        "y": 290,
+        "width": 120,
+        "height": 60
+      }
+    ],
+    "circle": [
+      {
+        "x": 240,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR18 Invasion",
+    "killbox": 120,
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "rect": [
+      {
+        "x": 240,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      }
+    ],
+    "circle": [
+      {
+        "x": 120,
+        "y": 240,
+        "r": 60
+      },
+      {
+        "x": 360,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR18 Mirage",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 240,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 150,
+        "y": 200
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 330,
+        "y": 280
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 190,
+        "y": 310
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 290,
+        "y": 170
+      }
+    ],
+    "circle": [
+      {
+        "x": 190,
+        "y": 310,
+        "r": 60
+      },
+      {
+        "x": 290,
+        "y": 170,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR18 Recon II",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 180,
+        "y": 180
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 300,
+        "y": 300
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "rect": [
+      {
+        "x": 150,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      },
+      {
+        "x": 330,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      }
+    ]
+  } ] ],
   [ "SR17", [ {
     "name": "SR17 The Pit II",
     "killbox": 120,
