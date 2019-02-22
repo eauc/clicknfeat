@@ -1,0 +1,15 @@
+Dockerfile
+docker-compose.yml
+.git
+.gitignore
+.gitlab-ci.yml
+
+.grunt
+node_modules
+.sass-cache
+npm-debug.log
+
+client/dev/lib
+client/dev/*.js
+client/dev/*.map
+client/dist

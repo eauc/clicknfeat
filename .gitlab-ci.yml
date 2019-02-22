@@ -1,0 +1,35 @@
+image: docker:stable
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_DRIVER: overlay2
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_DEPLOY_IMAGE: registry.heroku.com/clicknfeat-reboot/web
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - docker pull ${CONTAINER_TEST_IMAGE} || true
+    - docker build --cache-from ${CONTAINER_TEST_IMAGE} -t ${CONTAINER_TEST_IMAGE} .
+    - docker push $CONTAINER_TEST_IMAGE
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  script:
+    - docker pull ${CONTAINER_TEST_IMAGE}
+    - docker tag ${CONTAINER_TEST_IMAGE} ${CONTAINER_DEPLOY_IMAGE}
+    - docker login --username=_ --password=${HEROKU_API_KEY} registry.heroku.com
+    - docker push ${CONTAINER_DEPLOY_IMAGE}
+    - docker run --rm -e HEROKU_API_KEY=${HEROKU_API_KEY} wingrunr21/alpine-heroku-cli container:release web --app clicknfeat-reboot
