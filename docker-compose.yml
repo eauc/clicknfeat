@@ -1,0 +1,28 @@
+version: "3.4"
+services:
+  server:
+    container_name: cnf-server
+    build:
+      context: .
+      target: server
+    tty: true
+    environment:
+      - RACK_ENV=production
+      - PORT=3000
+    ports:
+      - "8080:3000"
+    command: ./build/dev_server_run
+    volumes:
+      - ./build:/app/build
+      - ./server:/app/server
+      - ./client:/app/client
+  client:
+    container_name: cnf-client
+    build:
+      context: .
+      target: client
+    command: npm run dev:client
+    volumes:
+      - ./build:/app/build
+      - ./client:/app/client
+      - /app/client/dev/lib

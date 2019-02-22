@@ -3,4 +3,7 @@ node_modules
 *.spec.js*
 .sass-cache
 npm-debug.log
-
+client/dev/lib
+client/dev/*.js
+client/dev/*.map
+client/dist
