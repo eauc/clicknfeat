@@ -3,11 +3,26 @@
   "color": "#6b3667",
   "models": {
     "locks": {
+      "old witch3": {
+        "name": "Old Witch3 (Zevanna Agha, The Fate Keeper)",
+        "type": "wardude",
+        "fury": 7,
+        "base": "huge",
+        "img": [{
+          "link": "/data/model/grymkin/locks/OldWitch3.png"
+        }],
+        "damage": {
+          "n": 18
+        }
+      },
       "the child": {
         "name": "Child1 (The Child)",
         "type": "wardude",
         "fury": 7,
         "base": "large",
+        "img": [{
+          "link": "/data/model/grymkin/locks/Child1.png"
+        }],
         "damage": {
           "n": 18
         }
@@ -21,6 +36,9 @@
               "type": "wardude",
               "fury": 7,
               "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/locks/Dreamer1.png"
+              }],
               "damage": {
                 "n": 15
               }
@@ -31,6 +49,9 @@
               "name": "Phantasm Small",
               "type": "warrior",
               "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/locks/PhantasmS.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -39,6 +60,9 @@
               "name": "Phantasm Medium",
               "type": "warrior",
               "base": "medium",
+              "img": [{
+                "link": "/data/model/grymkin/locks/PhantasmM.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -47,6 +71,9 @@
               "name": "Phantasm Large",
               "type": "warrior",
               "base": "large",
+              "img": [{
+                "link": "/data/model/grymkin/locks/PhantasmL.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -59,6 +86,9 @@
         "type": "wardude",
         "fury": 7,
         "base": "medium",
+        "img": [{
+          "link": "/data/model/grymkin/locks/Heretic1.png"
+        }],
         "damage": {
           "n": 17
         }
@@ -68,6 +98,9 @@
         "type": "wardude",
         "fury": 8,
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/locks/KingOfNothing1.png"
+        }],
         "damage": {
           "n": 14
         }
@@ -77,40 +110,67 @@
         "type": "wardude",
         "fury": 6,
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/locks/Wanderer1.png"
+        }],
         "damage": {
           "n": 16
         }
       }
     },
     "beasts": {
-      "cage rage": {
+      "clockatrice": {
+        "name": "Clockatrice",
+        "type": "beast",
+        "fury": 3,
+        "base": "large",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/Clockatrice.png"
+        }],
+        "damage": {
+          "type": "beast",
+          "1": ["b", "b", "b", "b", null, null],
+          "2": ["b", "b", "b", "b", "b", null],
+          "3": ["b", "b", "b", "b", null, null, null],
+          "4": ["b", "b", "b", "b", "b", null, null],
+          "5": ["b", "b", "b", "b", null],
+          "6": ["b", "b", "b", "b", "b", null]
+        }
+      },
+      "cage rager": {
         "name": "Cage Rager",
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/CageRager.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", "b", null ],
-          "6": [ "b", "b", "b", "b", "b", "b" ]
+          "1": ["b", "b", "b", "b", null, null],
+          "2": ["b", "b", "b", "b", "b", "b"],
+          "3": ["b", "b", "b", "b", "b", null, null],
+          "4": ["b", "b", "b", "b", "b", "b", "b"],
+          "5": ["b", "b", "b", "b", null],
+          "6": ["b", "b", "b", "b", "b", "b"]
         }
       },
-      "crabit": {
-        "name": "Crabit",
+      "crabbit": {
+        "name": "Crabbit",
         "type": "beast",
         "fury": 2,
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/Crabbit.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", null, null ],
-          "2": [ "b", "b", "b" ],
-          "3": [ "b", "b", null ],
-          "4": [ "b", "b", "b" ],
-          "5": [ "b", "b", null ],
-          "6": [ "b", "b", "b" ]
+          "1": ["b", null, null],
+          "2": ["b", "b", "b"],
+          "3": ["b", "b", null],
+          "4": ["b", "b", "b"],
+          "5": ["b", "b", null],
+          "6": ["b", "b", "b"]
         }
       },
       "frightmare": {
@@ -118,14 +178,17 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/Frightmare.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null ],
-          "2": [ "b", "b", "b", "b" ],
-          "3": [ "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null ],
-          "6": [ "b", "b", "b", "b" ]
+          "1": ["b", "b", "b", null],
+          "2": ["b", "b", "b", "b"],
+          "3": ["b", "b", "b", null, null],
+          "4": ["b", "b", "b", "b", "b"],
+          "5": ["b", "b", "b", null],
+          "6": ["b", "b", "b", "b"]
         }
       },
       "gorehound": {
@@ -133,14 +196,17 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/Gorehound.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", null ],
-          "5": [ "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b" ]
+          "1": ["b", "b", null, null],
+          "2": ["b", "b", "b", "b", null],
+          "3": ["b", "b", "b", null, null],
+          "4": ["b", "b", "b", "b", null],
+          "5": ["b", "b", "b", null, null],
+          "6": ["b", "b", "b", "b"]
         }
       },
       "rattler": {
@@ -148,14 +214,17 @@
         "type": "beast",
         "fury": 3,
         "base": "medium",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/Rattler.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", null, null ],
-          "2": [ "b", "b", "b", "b", null ],
-          "3": [ "b", "b", "b", null, null ],
-          "4": [ "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", null, null ],
-          "6": [ "b", "b", "b", "b", "b" ]
+          "1": ["b", "b", null, null],
+          "2": ["b", "b", "b", "b", null],
+          "3": ["b", "b", "b", null, null],
+          "4": ["b", "b", "b", "b", "b"],
+          "5": ["b", "b", "b", null, null],
+          "6": ["b", "b", "b", "b", "b"]
         }
       },
       "skins and moans": {
@@ -163,14 +232,17 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [{
+          "link": "/data/model/grymkin/beasts/SkinAndMoans.png"
+        }],
         "damage": {
           "type": "beast",
-          "1": [ "b", "b", "b", null, null, null, null ],
-          "2": [ "b", "b", "b", "b", "b", null, null ],
-          "3": [ "b", "b", "b", "b", null, null, null ],
-          "4": [ "b", "b", "b", "b", "b", "b", "b" ],
-          "5": [ "b", "b", "b", "b", null, null, null ],
-          "6": [ "b", "b", "b", "b", "b", "b", null ]
+          "1": ["b", "b", "b", null, null, null, null],
+          "2": ["b", "b", "b", "b", "b", null, null],
+          "3": ["b", "b", "b", "b", null, null, null],
+          "4": ["b", "b", "b", "b", "b", "b", "b"],
+          "5": ["b", "b", "b", "b", null, null, null],
+          "6": ["b", "b", "b", "b", "b", "b", null]
         }
       }
     },
@@ -181,9 +253,12 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [ 1, 6, 10 ],
+              "ranges": [1, 6, 10],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/DreadRots.png"
+              }]
             }
           }
         }
@@ -194,9 +269,30 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [ 1, 6, 10 ],
+              "ranges": [1, 6, 10],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/Hollowmen.png"
+              }]
+            },
+            "lanterman": {
+              "name": "Lanter Man",
+              "type": "warrior",
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/LanternMan.png"
+              }],
+              "damage": 5
+            },
+            "holden": {
+              "name": "Holdev",
+              "type": "warrior",
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/MadCapsLeader.png"
+              }],
+              "damage": 5
             }
           }
         }
@@ -207,14 +303,20 @@
           "unit": {
             "grunt": {
               "name": "Grunts",
-              "ranges": [ 1, 2 ],
+              "ranges": [1, 2],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/MadCapsGrunt.png"
+              }]
             },
             "leader": {
-              "name": "Leader",
+              "name": "Boss",
               "type": "warrior",
               "base": "large",
+              "img": [{
+                "link": "/data/model/grymkin/units/MadCapsBoss.png"
+              }],
               "damage": 5
             }
           }
@@ -226,9 +328,12 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [ 1, 6 ],
+              "ranges": [1, 6],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/MurderCrows.png"
+              }]
             }
           }
         }
@@ -239,9 +344,12 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [ 1, 3, 5 ],
+              "ranges": [1, 3, 5],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/NeighSlayers.png"
+              }]
             }
           }
         }
@@ -252,9 +360,12 @@
           "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [ 1, 3, 5 ],
+              "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "medium",
+              "img": [{
+                "link": "/data/model/grymkin/units/Piggybacks.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -270,6 +381,9 @@
               "name": "Heidrun",
               "type": "warrior",
               "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/Heidrun.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -278,6 +392,9 @@
               "name": "Agrona",
               "type": "warrior",
               "base": "small",
+              "img": [{
+                "link": "/data/model/grymkin/units/Agrona.png"
+              }],
               "damage": {
                 "n": 5
               }
@@ -290,19 +407,30 @@
       "cask imp": {
         "name": "Cask Imp",
         "type": "solo",
-        "base": "small"
+        "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/solos/CaskImp.png"
+        }]
       },
       "glimmer imp": {
         "name": "Glimmer Imp",
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/solos/GlimmerImp.png"
+        }],
         "damage": {
           "n": 5
         }
       },
-      "gremlin swarm": {
+      "Gremlin Swarm": {
         "name": "Gremlin Swarm",
         "type": "solo",
         "base": "medium",
+        "img": [{
+          "width": 15,
+          "height": 15,
+          "link": "/data/model/minions/solos/Gremlin_Swarm.png"
+        }],
         "damage": {
           "n": 5
         }
@@ -311,6 +439,9 @@
         "name": "Lady Karianna Rose",
         "type": "solo",
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/solos/LadyKariannaRose.png"
+        }],
         "damage": {
           "n": 5
         }
@@ -319,6 +450,9 @@
         "name": "Lord Longfellow",
         "type": "solo",
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/solos/LordLongfellow.png"
+        }],
         "damage": {
           "n": 5
         }
@@ -327,6 +461,9 @@
         "name": "Trapperkin",
         "type": "solo",
         "base": "small",
+        "img": [{
+          "link": "/data/model/grymkin/solos/Trapperkin.png"
+        }],
         "damage": {
           "n": 5
         }
@@ -335,8 +472,24 @@
         "name": "Witchwood",
         "type": "solo",
         "base": "large",
+        "img": [{
+          "link": "/data/model/grymkin/solos/Witchwood.png"
+        }],
         "damage": {
           "n": 10
+        }
+      },
+      "Eilish Garrity": {
+        "name": "Eilish Garrity, the Occultist",
+        "type": "solo",
+        "base": "small",
+        "img": [{
+          "width": 12,
+          "height": 12,
+          "link": "/data/model/mercenaries/solos/Eilish_Garrity.png"
+        }],
+        "damage": {
+          "n": 5
         }
       }
     },
@@ -345,6 +498,9 @@
         "name": "Death Knell",
         "type": "be",
         "base": "huge",
+        "img": [{
+          "link": "/data/model/grymkin/bes/DeathKnell.png"
+        }],
         "damage": {
           "n": 22
         }
