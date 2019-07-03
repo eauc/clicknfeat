@@ -28,8 +28,9 @@
           R.over(R.lensProp('close'), R.defaultTo('Websocket.close'))
         );
 
-        const scheme = 'ws://';
+        const scheme = 'wss://';
         const uri = scheme + self.document.location.host + url;
+        console.info('WebSocket create', uri);
         const socket = new self.WebSocket(uri);
         let resolved = false;
         socket.onopen = websocketOnOpen;
