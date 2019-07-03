@@ -1,4 +1,245 @@
 [
+  [ "SR19", [ {
+    "name": "SR19 King of the Hill",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 240,
+        "y": 240
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 120,
+        "y": 210
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 360,
+        "y": 270
+      }
+    ],
+    "rect": [
+      {
+        "x": 60,
+        "y": 240,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 420,
+        "y": 240,
+        "width": 120,
+        "height": 60
+      }
+    ],
+    "circle": [
+      {
+        "x": 240,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR19 Bunkers",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 240,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 120,
+        "y": 240
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 360,
+        "y": 240
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 150
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 330
+      }
+    ],
+    "rect": [
+      {
+        "x": 240,
+        "y": 150,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 240,
+        "y": 330,
+        "width": 120,
+        "height": 60
+      }
+    ]
+  }, {
+    "name": "SR19 Spread the Net",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 360,
+        "y": 190
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 120,
+        "y": 290
+      }
+    ],
+    "rect": [
+      {
+        "x": 120,
+        "y": 190,
+        "width": 120,
+        "height": 60
+      },
+      {
+        "x": 360,
+        "y": 290,
+        "width": 120,
+        "height": 60
+      }
+    ],
+    "circle": [
+      {
+        "x": 240,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR19 Invasion",
+    "killbox": 120,
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "rect": [
+      {
+        "x": 240,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      }
+    ],
+    "circle": [
+      {
+        "x": 120,
+        "y": 240,
+        "r": 60
+      },
+      {
+        "x": 360,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR19 Anarchy",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 190,
+        "y": 280
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 290,
+        "y": 200
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 210,
+        "y": 160
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 270,
+        "y": 320
+      }
+    ],
+    "circle": [
+      {
+        "x": 90,
+        "y": 240,
+        "r": 60
+      },
+      {
+        "x": 390,
+        "y": 240,
+        "r": 60
+      }
+    ]
+  }, {
+    "name": "SR19 Recon 2",
+    "killbox": 120,
+    "flags": [
+      {
+        "info": ["flags","sr17flag"],
+        "x": 180,
+        "y": 180
+      },
+      {
+        "info": ["flags","sr17flag"],
+        "x": 300,
+        "y": 300
+      }
+    ],
+    "objectives": [
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 180
+      },
+      {
+        "info": ["sr17_objectives","sr17gen"],
+        "x": 240,
+        "y": 300
+      }
+    ],
+    "rect": [
+      {
+        "x": 150,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      },
+      {
+        "x": 330,
+        "y": 240,
+        "width": 60,
+        "height": 120
+      }
+    ]
+  } ] ],
   [ "SR18CID", [ {
     "name": "SR18 The Pit II",
     "killbox": 120,
