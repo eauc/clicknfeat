@@ -29,6 +29,48 @@
           "n": 14
         }
       },
+      "Ashlynn2": {
+        "name": "Ashlynn2 (Ashlynn d'Elyse, The Queen's Blade)",
+        "fk_name": "Ashlynn2",
+        "entries": {
+          "caster": {
+            "Ashlynn2": {
+              "name": "Ashlynn2 (Ashlynn d'Elyse, The Queen's Blade)",
+              "type": "wardude",
+              "focus": 6,
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 16
+              }
+            }
+          },
+          "attachement": {
+            "Vayne Di Brascio1": {
+              "name": "Vayne Di Brascio1",
+              "type": "solo",
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          },
+          "attachement": {
+            "Marie Aguillon1": {
+              "name": "Marie Aguillon1",
+              "type": "solo",
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 5}
+            }
+          }
+        }
+      },
       "bartolo1": {
         "name": "Bartolo1 (Captain Bartolo Montador)",
         "fk_name": "Captain Bartolo Montador",
@@ -57,6 +99,18 @@
         ],
         "damage": {
           "n": 16
+        }
+      },
+      "Crosse2": {
+        "name": "Crosse2 (Lieutenant Crosse, Resistance Fighter)",
+        "fk_name": "Crosse2",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 15
         }
       },
       "damiano1": {
@@ -179,6 +233,18 @@
           "n": 18
         }
       },
+      "Rahera1": {
+        "name": "Rahera1 (Rahera, Terror of the Wailing Sea)",
+        "fk_name": "Rahera1",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
       "shae1": {
         "name": "Shae1 (Captain Phinneus Shae)",
         "fk_name": "Captain Phinneus Shae",
@@ -196,6 +262,28 @@
       }
     },
     "jacks": {
+      "Blockader": {
+        "name": "Blockader",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "b",  "l" ],
+          "L2": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L3": [ null, null,  "b",  "b",  "l",  "m" ],
+          "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "L6": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "b",  "c",  "c",  "m" ],
+          "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null, null,  "b",  "b",  "r",  "m" ],
+          "R5": [ null, null,  "b",  "b",  "r",  "r" ],
+          "R6": [ null, null,  "b",  "b",  "b",  "r" ]
+        }
+      },
       "buccaneer": {
         "name": "Buccaneer",
         "type": "jack",
@@ -516,6 +604,38 @@
           "6": [ null,  "b",  "b",  "b",  "r", null ]
         }
       },
+      "Scallywag": {
+        "name": "Scallywag",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "Swabber": {
+        "name": "Swabber",
+        "type": "jack",
+        "base": "large",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
       "talon": {
         "name": "Talon",
         "type": "jack",
@@ -533,6 +653,22 @@
           "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
           "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
           "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "Toro": {
+        "name": "Toro",
+        "type": "jack",
+        "base": "large",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
         }
       },
       "vanguard": {
@@ -614,6 +750,42 @@
                   "link": "/data/model/mercenaries/units/ThrallWarrior.png"
                 }
               ]
+            }
+          }
+        }
+      },
+      "Asphyxious4": {
+        "name": "Asphyxious4 (Asphyxious the Sanctified)",
+        "entries": {
+          "caster": {
+            "Asphyxious4": {
+              "name": "Asphyxious4 (Asphyxious the Hellbringer)",
+              "fk_name": "Asphyxious4",
+              "type": "wardude",
+              "focus": 5,
+              "base": "large",
+              "img": [
+              ],
+              "damage": {
+                "n": 17
+              }
+            }
+          },
+          "servitors": {
+            "Annihilation Sevitor": {
+              "name": "Annihilation Servitor",
+              "fk_name": "Asphyxious4",
+              "fk_repeat": 3,
+              "ranges": [
+                1, 3
+              ],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 1
+              }
             }
           }
         }
@@ -977,6 +1149,68 @@
           }
         }
       },
+      "LegionOLS": {
+        "name": "Legion of Lost Souls",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ]
+            }
+          }
+        }
+      },
+      "Morrowan Battle Priest": {
+        "name": "Morrowan Battle Priest",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Morrowan Battle Priest",
+              "ranges": [1, 2, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": []
+            }
+          }
+        }
+      },
+      "Resolutes": {
+        "name": "Order of Illumination Resolutes",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Vigilants": {
+        "name": "Order of Illumination Vigilants",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ]
+            }
+          }
+        }
+      },
       "ogrunassaultcorps": {
         "name": "Ogrun Assault Corps",
         "entries": {
@@ -1126,6 +1360,28 @@
           }
         }
       },
+      "SteelheadCannon": {
+        "name": "Steelhead Cannon Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Grunts",
+              "fk_grunts": 1,
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+              ]
+            }
+          }
+        }
+      },
       "steelheadhalberdiers": {
         "name": "Steelhead Halberdiers",
         "entries": {
@@ -1165,6 +1421,28 @@
           }
         }
       },
+      "SteelheadMortar": {
+        "name": "Steelhead Mortar Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Grunts",
+              "fk_grunts": 1,
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+              ]
+            }
+          }
+        }
+      },
       "steelheadriflemen": {
         "name": "Steelhead Riflemen",
         "entries": {
@@ -1178,6 +1456,28 @@
                 {
                   "link": "/data/model/mercenaries/units/SteelheadRifleman.png"
                 }
+              ]
+            }
+          }
+        }
+      },
+      "SteelheadVolleyGun": {
+        "name": "Steelhead Volley Gun Crew",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Grunts",
+              "fk_grunts": 1,
+              "type": "warrior",
+              "base": "small",
+              "img": [
+              ]
+            },
+            "leader": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
               ]
             }
           }
@@ -1258,6 +1558,20 @@
             }
           }
         }
+      },
+      "Thorn Gun Mages": {
+        "name": "Thorn Gun Mages",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": []
+            }
+          }
+        }
       }
     },
     "solos": {
@@ -1274,6 +1588,16 @@
           "n": 10
         }
       },
+      "alexia_undying": {
+        "name": "Alexia, the Undying",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "alten_ashley_monster_hunter": {
         "name": "Alten Ashley, Monster Hunter",
         "type": "warrior",
@@ -1287,6 +1611,44 @@
           "n": 5
         }
       },
+      "Archon_Menite": {
+        "name": "Menite Archon",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+        ],
+        "damage": {
+          "n": 15
+        }
+      },
+      "Archon_Morrow": {
+        "name": "Morrowan Archon",
+        "type": "warrior",
+        "base": "large",
+        "img": [],
+        "damage": {
+          "n": 12
+        }
+      },
+      "Archon_Thamar": {
+        "name": "Thamarite Archon",
+        "type": "warrior",
+        "base": "large",
+        "img": [],
+        "damage": {
+          "n": 10
+        }
+      },
+      "Archon_Void": {
+        "name": "Void Archon",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+        ],
+        "damage": {
+          "n": 12
+        }
+      },
       "anastasia_di_bray": {
         "name": "Anastasia di Bray",
         "type": "warrior",
@@ -1296,9 +1658,27 @@
             "link": "/data/model/mercenaries/solos/Anastasia.png"
           },
           {
-	    "link":"/data/model/mercenaries/solos/Anastasia_Invisible.png"
+            "link":"/data/model/mercenaries/solos/Anastasia_Invisible.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Balthazar Bamfist": {
+        "name": "Balthazar Bamfist",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Black Bella": {
+        "name": "Black Bella, Duchess of Dread",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -1316,6 +1696,16 @@
           "n": 8
         }
       },
+      "boomhowler2": {
+        "name": "Boomhowler, Solo Artist",
+        "type": "warrior",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
       "bosun_grogspar": {
         "name": "Bosun Grogspar",
         "type": "warrior",
@@ -1327,6 +1717,24 @@
         ],
         "damage": {
           "n": 8
+        }
+      },
+      "Crawtooth": {
+        "name": "Captain Crawtooth",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 8
+        }
+      },
+      "Dez": {
+        "name": "Dez",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 5
         }
       },
       "dirtymeg": {
@@ -1383,6 +1791,15 @@
           "n": 5
         }
       },
+      "Flugwug": {
+        "name": "Flugwug the Filcher",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "gastonecrosse": {
         "name": "Gastone Crosse",
         "type": "wardude",
@@ -1412,6 +1829,15 @@
           "n": 5
         }
       },
+      "Glyn_Cormier": {
+        "name": "Glyn Cormier, Illuminated One",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "goblintinker": {
         "name": "Goblin Tinker",
         "type": "warrior",
@@ -1429,9 +1855,38 @@
             "link": "/data/model/mercenaries/solos/Gorman.png"
           },
           {
-	    "link": "/data/model/mercenaries/solos/Gorman_invisible.png"
+            "link": "/data/model/mercenaries/solos/Gorman_invisible.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "gorman2": {
+        "name": "Gorman the Mad",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Gabriel_Throne": {
+        "name": "Grand Master Gabriel Throne",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "Gubbin": {
+        "name": "Gubbin",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -1449,6 +1904,15 @@
           "n": 5
         }
       },
+      "Harlowe_Holdemhigh": {
+        "name": "Harlowe Holdemhigh",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "hawk": {
         "name": "First Mate Hawk",
         "type": "warrior",
@@ -1462,6 +1926,24 @@
           "n": 5
         }
       },
+      "HERMIT": {
+        "name": "Hermit of Henge Hold",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "JAIMs": {
+        "name": "J.A.I.M.s",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 8
+        }
+      },
       "kellbailoch": {
         "name": "Kell Bailoch",
         "type": "warrior",
@@ -1473,6 +1955,15 @@
         ],
         "damage": {
           "n": 5
+        }
+      },
+      "MacHorne2": {
+        "name": "Boss MacHorne",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 10
         }
       },
       "madelyncorbeau": {
@@ -1603,6 +2094,15 @@
           "n": 5
         }
       },
+      "Scythe": {
+        "name": "Scythe",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "stannisbrocker": {
         "name": "Stannis Brocker",
         "type": "warrior",
@@ -1612,6 +2112,33 @@
             "link": "/data/model/mercenaries/solos/Stannis.png"
           }
         ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "SteelheadArcanist": {
+        "name": "Steelhead Arcanist",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "SteelheadGunner": {
+        "name": "Steelhead Gunner",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "SteelheadIronhead": {
+        "name": "Steelhead Ironhead",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
         "damage": {
           "n": 10
         }
@@ -1638,6 +2165,15 @@
             "link": "/data/model/mercenaries/solos/Taryn.png"
           }
         ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "ThamariteAdvocate": {
+        "name": "Thamarite Advocate",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -1669,6 +2205,24 @@
         "damage": {
           "n": 5
         }
+      },
+      "Weird Wendell": {
+        "name": "Weird Wendell, Gremlin Wrangler",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
+      "Widget": {
+        "name": "Widget, Tinker Extraordinaire",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
       }
     },
     "battle_engines": {
@@ -1685,6 +2239,42 @@
         ],
         "damage": {
           "n": 40
+        }
+      },
+      "Nemo4": {
+        "name": "Nemo4 (Artificer Prime Nemo & Arcane Mechaniks)",
+        "entries": {
+          "caster": {
+            "Nemo4": {
+              "name": "Nemo4 (Artificer Prime Nemo)",
+              "fk_name": "Nemo4",
+              "type": "wardude",
+              "focus": 5,
+              "base": "huge",
+              "img": [
+              ],
+              "damage": {
+                "n": 26
+              }
+            }
+          },
+          "ArcaneMechaniks": {
+            "Arcane Mechaniks": {
+              "name": "Arcane Mechaniks",
+              "fk_name": "Nemo4",
+              "fk_repeat": 3,
+              "ranges": [
+                1, 3
+              ],
+              "type": "solo",
+              "base": "small",
+              "img": [
+              ],
+              "damage": {
+                "n": 1
+              }
+            }
+          }
         }
       }
     }
