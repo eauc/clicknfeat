@@ -847,6 +847,30 @@
           }
         }
       },
+      "atanas": {
+        "name": "Kommandant Atanas Arconovich & Standard",
+        "fk_name": "Kommandant Atanas Arconovich & Standard",
+        "entries": {
+          "unit": {
+            "atanas": {
+              "name": "Atanas",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 8
+              }
+            },
+            "standard": {
+              "name": "Standard",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
       "bm": {
         "name": "Battle Mechaniks",
         "entries": {
@@ -1211,17 +1235,16 @@
               "damage": {
                 "n": 8
               }
-            },
-            "ua": {
-              "officer": {
-                "name": "Officer",
-                "fk_name": "Man-o-War Bombardier Officer",
-                "type": "warrior",
-                "base": "medium",
-                "damage": {
-                  "type": "warrior",
-                  "n": 8
-                }
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Man-o-War Bombardier Officer",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 8
               }
             }
           }
@@ -1244,17 +1267,16 @@
               "damage": {
                 "n": 8
               }
-            },
-            "ua": {
-              "dragos": {
-                "name": "Dragos",
-                "fk_name": "Sergeant Dragos Dragadovich",
-                "type": "warrior",
-                "base": "medium",
-                "damage": {
-                  "type": "warrior",
-                  "n": 8
-                }
+            }
+          },
+          "ua": {
+            "dragos": {
+              "name": "Dragos",
+              "fk_name": "Sergeant Dragos Dragadovich",
+              "type": "warrior",
+              "base": "medium",
+              "damage": {
+                "n": 8
               }
             }
           }
@@ -1277,17 +1299,21 @@
               "damage": {
                 "n": 8
               }
-            },
-            "ua": {
-              "officer": {
-                "name": "Officer",
-                "fk_name": "Man-o-War Shocktrooper Officer",
-                "type": "warrior",
-                "base": "medium",
-                "damage": {
-                  "type": "warrior",
-                  "n": 8
+            }
+          },
+          "ua": {
+            "officer": {
+              "name": "Officer",
+              "fk_name": "Man-o-War Shocktrooper Officer",
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/khador/units/ShockTrooperOfficer.png"
                 }
+              ],
+              "damage": {
+                "n": 8
               }
             }
           }
