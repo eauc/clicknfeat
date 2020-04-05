@@ -647,9 +647,12 @@
       },
       "Kharybdis": {
         "name": "Kharybdis",
-        "type": "jac k",
+        "type": "jack",
         "base": "large",
         "img": [
+          {
+            "link": "/data/model/cryx/jacks/Kharybdis.png"
+          }
         ],
         "damage": {
           "type": "jack",
