@@ -64,6 +64,20 @@
           "n": 17
         }
       },
+      "Iona1": {
+        "name": "Iona1 (Iona the Unseen)",
+        "type": "wardude",
+        "fury": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Iona1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },
       "Kaya1": {
         "name": "Kaya1 (Kaya the Wildborne)",
         "fk_name": "Kaya the Wildborne",
@@ -845,12 +859,45 @@
           }
         }
       },
+      "Brighid & Caul": {
+        "name": "Brighid & Caul",
+        "entries": {
+          "unit": {
+            "Brighid": {
+              "name": "Brighid",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Brighid.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "Caul": {
+              "name": "Caul",
+              "type": "warrior",
+              "base": "medieum",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Caul.png"
+                }
+              ],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
       "Death wolves": {
         "name": "The Death Wolves",
         "entries": {
           "unit": {
-            "Scall": {
-              "name": "Scall",
+            "Sköll": {
+              "name": "Sköll",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1149,6 +1196,21 @@
                 }
               ]
             }
+          },
+          "ua": {
+            "Tharn Bloodweaver Haruspex": {
+              "name": "Tharn Bloodweaver Haruspex",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/orboros/units/Haruspex.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
           }
         }
       },
@@ -1417,6 +1479,19 @@
           "n": 5
         }
       },
+      "Tharn Blood Shaman": {
+        "name": "Tharn Blood Shaman",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/orboros/units/Blood_Shaman.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "Tharn Ravager Shaman": {
         "name": "Shaman",
         "fk_name": "Tharn Ravager Shaman",
@@ -1503,6 +1578,21 @@
         ],
         "damage": {
           "n": 28
+        }
+      },
+       "Well of Orboros": {
+        "name": "Well of Orboros",
+        "type": "be",
+        "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/orboros/bes/WellOfOrboros.png"
+          }
+        ],
+        "damage": {
+          "n": 32
         }
       }
     }
