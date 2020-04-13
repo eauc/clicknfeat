@@ -69,11 +69,7 @@
         "type": "wardude",
         "fury": 7,
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/orboros/locks/Iona1.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 16
         }
@@ -867,11 +863,7 @@
               "name": "Brighid",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/orboros/units/Brighid.png"
-                }
-              ],
+              "img": [],
               "damage": {
                 "n": 5
               }
@@ -879,12 +871,8 @@
             "Caul": {
               "name": "Caul",
               "type": "warrior",
-              "base": "medieum",
-              "img": [
-                {
-                  "link": "/data/model/orboros/units/Caul.png"
-                }
-              ],
+              "base": "medium",
+              "img": [],
               "damage": {
                 "n": 8
               }
@@ -1202,11 +1190,7 @@
               "name": "Tharn Bloodweaver Haruspex",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/orboros/units/Haruspex.png"
-                }
-              ],
+              "img": [],
               "damage": {
                 "n": 5
               }
@@ -1483,11 +1467,7 @@
         "name": "Tharn Blood Shaman",
         "type": "warrior",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/orboros/units/Blood_Shaman.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -1584,13 +1564,7 @@
         "name": "Well of Orboros",
         "type": "be",
         "base": "huge",
-        "img": [
-          {
-            "width": 90,
-            "height": 90,
-            "link": "/data/model/orboros/bes/WellOfOrboros.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 32
         }
