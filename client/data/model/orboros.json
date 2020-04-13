@@ -64,6 +64,16 @@
           "n": 17
         }
       },
+      "Iona1": {
+        "name": "Iona1 (Iona the Unseen)",
+        "type": "wardude",
+        "fury": 7,
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 16
+        }
+      },
       "Kaya1": {
         "name": "Kaya1 (Kaya the Wildborne)",
         "fk_name": "Kaya the Wildborne",
@@ -845,12 +855,37 @@
           }
         }
       },
+      "Brighid & Caul": {
+        "name": "Brighid & Caul",
+        "entries": {
+          "unit": {
+            "Brighid": {
+              "name": "Brighid",
+              "type": "warrior",
+              "base": "small",
+              "img": [],
+              "damage": {
+                "n": 5
+              }
+            },
+            "Caul": {
+              "name": "Caul",
+              "type": "warrior",
+              "base": "medium",
+              "img": [],
+              "damage": {
+                "n": 8
+              }
+            }
+          }
+        }
+      },
       "Death wolves": {
         "name": "The Death Wolves",
         "entries": {
           "unit": {
-            "Scall": {
-              "name": "Scall",
+            "Sköll": {
+              "name": "Sköll",
               "type": "warrior",
               "base": "small",
               "img": [
@@ -1149,6 +1184,17 @@
                 }
               ]
             }
+          },
+          "ua": {
+            "Tharn Bloodweaver Haruspex": {
+              "name": "Tharn Bloodweaver Haruspex",
+              "type": "warrior",
+              "base": "small",
+              "img": [],
+              "damage": {
+                "n": 5
+              }
+            }
           }
         }
       },
@@ -1417,6 +1463,15 @@
           "n": 5
         }
       },
+      "Tharn Blood Shaman": {
+        "name": "Tharn Blood Shaman",
+        "type": "warrior",
+        "base": "small",
+        "img": [],
+        "damage": {
+          "n": 5
+        }
+      },
       "Tharn Ravager Shaman": {
         "name": "Shaman",
         "fk_name": "Tharn Ravager Shaman",
@@ -1503,6 +1558,15 @@
         ],
         "damage": {
           "n": 28
+        }
+      },
+       "Well of Orboros": {
+        "name": "Well of Orboros",
+        "type": "be",
+        "base": "huge",
+        "img": [],
+        "damage": {
+          "n": 32
         }
       }
     }
