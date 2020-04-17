@@ -1,5 +1,6 @@
 {
   "cephalyx" : "/data/model/cephalyx.json",
+  "crucible" : "/data/model/crucible.json",
   "cryx" : "/data/model/cryx.json",
   "cygnar" : "/data/model/cygnar.json",
   "cyriss" : "/data/model/cyriss.json",

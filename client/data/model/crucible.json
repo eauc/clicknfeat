@@ -1,38 +1,32 @@
 {
   "name": "Crucible Guard",
   "color": "#85d1bd",
-  },
   "models": {
     "casters": {
       "gearhart1": {
+        "name": "Gearhart1 (Marshal General Baldwin Gearhart)",
         "entries": {
           "caster": {
-            "name": "Gearhart1 (Marshal General Baldwin Gearhart)",
-            "type": "wardude",
-            "focus": 6,
-            "base": "small",
-            "img": [
-            {
-              "link": "/data/model/crucible/casters/Gearhart.png"
-          }
-        ],
-            "damage": {
-            "n": 17
+            "gearhart1": {
+              "name": "Gearhart",
+              "type": "wardude",
+              "focus": 6,
+              "base": "small",
+              "img": [],
+              "damage": {
+                "n": 17
               }
             }
           },
           "solo": {
-            "Mr Cloggs": {
+            "cloggs": {
               "name": "Mr Cloggs",
               "type": "solo",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/solos/Cloggs.png"
-                }
-              ],
+              "img": [],
               "damage": {
-              "n": 5
+                "n": 5
+              }
             }
           }
         }
@@ -42,11 +36,7 @@
         "type": "wardude",
         "focus": 7,
         "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/crucible/casters/Locke.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 18
         }
@@ -56,11 +46,7 @@
         "type": "wardude",
         "focus": 5,
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/casters/Lukas.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 18
         }
@@ -70,13 +56,7 @@
         "type": "wardude",
         "focus": 6,
         "base": "huge",
-        "img": [
-          {
-            "width": 90,
-            "height": 90,
-            "link": "/data/model/crucible/casters/Mackay.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 36
         }
@@ -86,11 +66,7 @@
         "type": "wardude",
         "focus": 7,
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/casters/Syvestro.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 15
         }
@@ -101,11 +77,7 @@
         "name": "Liberator",
         "type": "jack",
         "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/crucible/jacks/Liberator.png"
-          }
-        ],        
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null, null,  "b",  "b",  "l", null ],
@@ -116,15 +88,11 @@
           "6": [ null, null,  "b",  "b",  "r", null ]
         }
       },
-     "retaliator": {
+      "retaliator": {
         "name": "Retaliator",
         "type": "jack",
         "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/crucible/jacks/Retaliator.png"
-          }
-        ],        
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null, null,  "b",  "b",  "l", null ],
@@ -139,11 +107,7 @@
         "name": "Vanguard",
         "type": "jack",
         "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/mercenaries/jacks/Vanguard.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null, null,  "b",  "b",  "l", null ],
@@ -158,11 +122,7 @@
         "name": "Suppressor",
         "type": "jack",
         "base": "large",
-        "img": [
-          {
-            "link": "/data/model/crucible/jacks/Suppressor.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null, "b",  "b",  "b",  "l", null ],
@@ -177,11 +137,7 @@
         "name": "Toro",
         "type": "jack",
         "base": "large",
-        "img": [
-          {
-            "link": "/data/model/crucible/jacks/Toro.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null,  "b",  "b",  "b",  "l", null ],
@@ -196,11 +152,7 @@
         "name": "Vindicator",
         "type": "jack",
         "base": "large",
-        "img": [
-          {
-            "link": "/data/model/crucible/jacks/Vindicator.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "type": "jack",
           "1": [ null, "b",  "b",  "b",  "l", null ],
@@ -215,13 +167,7 @@
         "name": "Vulcan",
         "type": "jack",
         "base": "huge",
-        "img": [
-          {
-            "width": 50,
-            "height": 50,
-            "link": "/data/model/crucible/jacks/Vulcan.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "type": "colossal",
           "L1": [ null, null,  "b",  "b",  "l",  "l" ],
@@ -242,34 +188,28 @@
     "units": {
       "combat alchemists": {
         "name": "Combat Alchemists",
-         "entries": {
-           "unit": {
+        "entries": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [3],
+              "ranges": [1, 3],
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/CombatAlchemists.png"
-                }
-              ]
+              "img": []
             }
-          },
+          }
+        }
+      },
       "assault troopers": {
         "name": "Crucible Guard Assault Troopers",
-         "entries": {
-           "unit": {
+        "entries": {
+          "unit": {
             "grunt": {
               "name": "Leader and Grunts",
-              "ranges": [3, 5],
-               "type": "warrior",
-                "base": "medium",
-                 "img": [
-                {
-                  "link": "/data/model/crucible/units/AssaultTroopers.png"
-                }
-              ],
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [],
               "damage": {
                 "n": 5
               }
@@ -286,33 +226,24 @@
               "ranges": [1, 6, 10],
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/Infantry.png"
-                }
-              ]
-            },
-            "ua": {
+              "img": []
+            }
+          },
+          "ua": {
+            "officer": {
               "name": "Officer",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cygnar/units/InfantryUA.png"
-                }
-              ],
+              "img": [],
               "damage": {
                 "n": 5
               }
+            },
             "standard": {
               "name": "Standard Bearer",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/cygnar/units/InfantryStandard.png"
-                }
-              ]
+              "img": []
             }
           }
         }
@@ -326,11 +257,7 @@
               "ranges": [1, 6, 10],
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/Rocketmen.png"
-                }
-              ]
+              "img": []
             }
           },
           "ua": {
@@ -338,11 +265,7 @@
               "name": "Rocketman Captain",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/RocketmanCaptain.png"
-                }
-              ],
+              "img": [],
               "damage": {
                 "n": 5
               }
@@ -351,11 +274,7 @@
               "name": "Rocketman Gunner",
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/RocketmanGunner.png"
-                }
-              ]
+              "img": []
             }
           }
         }
@@ -369,13 +288,10 @@
               "ranges": [1, 3, 5],
               "type": "warrior",
               "base": "medium",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/Stormtroopers.png"
-                }
-              ],
+              "img": [],
               "damage": {
                 "n": 5
+              }
             }
           }
         }
@@ -386,40 +302,26 @@
           "unit": {
             "grunt": {
               "name": "Crew",
-              "ranges": [1, 2],
               "type": "warrior",
               "base": "small",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/DragonsbreathCrew.png"
-                }
-              ]
-             }
+              "img": []
             },
-            "Gunner": {
-            "Gunner": {
+            "gunner": {
               "name": "Gunner",
               "type": "warrior",
               "base": "large",
-              "img": [
-                {
-                  "link": "/data/model/crucible/units/DragonsbreathGunner.png"
-                }
-              ]
+              "img": []
             }
           }
         }
-      },
+      }
+    },
     "solos": {
       "alyce (little)": {
         "name": "Aurum Ominus Alyce Marc",
         "type": "warrior",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/Alyce.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -428,11 +330,7 @@
         "name": "Aurum Ominus Alyce Marc",
         "type": "warrior",
         "base": "large",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/BigAlyce.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 8
         }
@@ -441,22 +339,13 @@
         "name": "Crucible Guard Mechanik",
         "type": "warrior",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/Mechanik.png"
-          }
-        ]
-       }
+        "img": []
       },
       "mosby": {
         "name": "Doctor Alejandro Mosby",
         "type": "solo",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/Adophus.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -466,11 +355,7 @@
         "type": "wardude",
         "focus": 4,
         "base": "medium",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/Prospero.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 8
         }
@@ -479,11 +364,7 @@
         "name": "Rocketman Ace",
         "type": "solo",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/RocketmanAce.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -492,11 +373,7 @@
         "name": "Trancer",
         "type": "solo",
         "base": "small",
-        "img": [
-          {
-            "link": "/data/model/crucible/solos/Trancer.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 5
         }
@@ -507,13 +384,7 @@
         "name": "Railless Interceptor",
         "type": "be",
         "base": "huge",
-        "img": [
-          {
-            "width": 90,
-            "height": 90,
-            "link": "/data/model/crucible/bes/Railless.png"
-          }
-        ],
+        "img": [],
         "damage": {
           "n": 36
         }
