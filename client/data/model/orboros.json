@@ -69,7 +69,11 @@
         "type": "wardude",
         "fury": 7,
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "link": "/data/model/orboros/locks/Iona1.png"
+          }
+        ],
         "damage": {
           "n": 16
         }
@@ -863,7 +867,11 @@
               "name": "Brighid",
               "type": "warrior",
               "base": "small",
-              "img": [],
+              "img": [
+                {
+                  "link": "client/data/model/orboros/units/Brighid.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -872,7 +880,11 @@
               "name": "Caul",
               "type": "warrior",
               "base": "medium",
-              "img": [],
+              "img": [
+                {
+                  "link": "client/data/model/orboros/units/Caul.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -1190,7 +1202,11 @@
               "name": "Tharn Bloodweaver Haruspex",
               "type": "warrior",
               "base": "small",
-              "img": [],
+              "img": [
+                {
+                  "link": "client/data/model/orboros/solos/Haruspex.png"
+                }
+              ],
               "damage": {
                 "n": 5
               }
@@ -1467,7 +1483,11 @@
         "name": "Tharn Blood Shaman",
         "type": "warrior",
         "base": "small",
-        "img": [],
+        "img": [
+          {
+            "link": "client/data/model/orboros/solos/Blood_Shaman.png"
+          }
+        ],
         "damage": {
           "n": 5
         }
@@ -1560,14 +1580,14 @@
           "n": 28
         }
       },
-       "Well of Orboros": {
+      "Well of Orboros": {
         "name": "Well of Orboros",
         "type": "be",
         "base": "huge",
         "img": [
           {
-            "width": 50,
-            "height": 50,
+            "width": 90,
+            "height": 90,
             "link": "/data/model/orboros/bes/Well.png"
           }
         ],
