@@ -1564,7 +1564,13 @@
         "name": "Well of Orboros",
         "type": "be",
         "base": "huge",
-        "img": [],
+        "img": [
+          {
+            "width": 50,
+            "height": 50,
+            "link": "/data/model/orboros/bes/Well.png"
+          }
+        ],
         "damage": {
           "n": 32
         }
