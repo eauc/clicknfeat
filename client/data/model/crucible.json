@@ -1,0 +1,523 @@
+{
+  "name": "Crucible Guard",
+  "color": "#85d1bd",
+  },
+  "models": {
+    "casters": {
+      "gearhart1": {
+        "entries": {
+          "caster": {
+            "name": "Gearhart1 (Marshal General Baldwin Gearhart)",
+            "type": "wardude",
+            "focus": 6,
+            "base": "small",
+            "img": [
+            {
+              "link": "/data/model/crucible/casters/Gearhart.png"
+          }
+        ],
+            "damage": {
+            "n": 17
+              }
+            }
+          },
+          "solo": {
+            "Mr Cloggs": {
+              "name": "Mr Cloggs",
+              "type": "solo",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/solos/Cloggs.png"
+                }
+              ],
+              "damage": {
+              "n": 5
+            }
+          }
+        }
+      },
+      "locke1": {
+        "name": "Locke1 (Aurum Lucanum Athanor Locke)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/crucible/casters/Locke.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "lukas1": {
+        "name": "Lukas1 (Aurum Legate Lukas di Morray)",
+        "type": "wardude",
+        "focus": 5,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/casters/Lukas.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
+      "mackay1": {
+        "name": "Mackay1 (Captain Eira Mackay)",
+        "type": "wardude",
+        "focus": 6,
+        "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/crucible/casters/Mackay.png"
+          }
+        ],
+        "damage": {
+          "n": 36
+        }
+      },
+      "syvestro1": {
+        "name": "Syvestro1 (Aurum Adeptus Syvestro)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/casters/Syvestro.png"
+          }
+        ],
+        "damage": {
+          "n": 15
+        }
+      }
+    },
+    "jacks": {
+      "liberator": {
+        "name": "Liberator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/crucible/jacks/Liberator.png"
+          }
+        ],        
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "a",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "a",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+     "retaliator": {
+        "name": "Retaliator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/crucible/jacks/Retaliator.png"
+          }
+        ],        
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "vanguard": {
+        "name": "Vanguard",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/mercenaries/jacks/Vanguard.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null,  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [ null,  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ null,  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, null,  "b",  "b",  "r", null ]
+        }
+      },
+      "suppressor": {
+        "name": "Suppressor",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/crucible/jacks/Suppressor.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [ null, "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null, "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "toro": {
+        "name": "Toro",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/crucible/jacks/Toro.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null,  "b",  "b",  "b",  "l", null ],
+          "2": [ null,  "b",  "b",  "l",  "l",  "m" ],
+          "3": [  "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [  "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null,  "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null,  "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "vindicator": {
+        "name": "Vindicator",
+        "type": "jack",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/crucible/jacks/Vindicator.png"
+          }
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, "b",  "b",  "b",  "l", null ],
+          "2": [ null, "b",  "b",  "l",  "l",  "m" ],
+          "3": [ "b",  "b",  "b",  "b",  "m",  "m" ],
+          "4": [ "b",  "b",  "b",  "b",  "c",  "c" ],
+          "5": [ null, "b",  "b",  "r",  "r",  "c" ],
+          "6": [ null, "b",  "b",  "b",  "r", null ]
+        }
+      },
+      "vulcan": {
+        "name": "Vulcan",
+        "type": "jack",
+        "base": "huge",
+        "img": [
+          {
+            "width": 50,
+            "height": 50,
+            "link": "/data/model/crucible/jacks/Vulcan.png"
+          }
+        ],
+        "damage": {
+          "type": "colossal",
+          "L1": [ null, null,  "b",  "b",  "l",  "l" ],
+          "L2": [ null, null,  "b",  "b",  "l",  "c" ],
+          "L3": [ null, null,  "b",  "l",  "c",  "m" ],
+          "L4": [ null,  "b",  "b",  "l",  "c",  "m" ],
+          "L5": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "L6": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R1": [  "b",  "b",  "s",  "c",  "c",  "m" ],
+          "R2": [  "b",  "b",  "s",  "s",  "c",  "m" ],
+          "R3": [ null,  "b",  "b",  "r",  "c",  "m" ],
+          "R4": [ null, null,  "b",  "r",  "c",  "m" ],
+          "R5": [ null, null,  "b",  "b",  "r",  "c" ],
+          "R6": [ null, null,  "b",  "b",  "r",  "r" ]
+        }
+      }
+    },
+    "units": {
+      "combat alchemists": {
+        "name": "Combat Alchemists",
+         "entries": {
+           "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/CombatAlchemists.png"
+                }
+              ]
+            }
+          },
+      "assault troopers": {
+        "name": "Crucible Guard Assault Troopers",
+         "entries": {
+           "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [3, 5],
+               "type": "warrior",
+                "base": "medium",
+                 "img": [
+                {
+                  "link": "/data/model/crucible/units/AssaultTroopers.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
+      "Infantry": {
+        "name": "Crucible Guard Infantry",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Infantry",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/Infantry.png"
+                }
+              ]
+            },
+            "ua": {
+              "name": "Officer",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cygnar/units/InfantryUA.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            "standard": {
+              "name": "Standard Bearer",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cygnar/units/InfantryStandard.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "rocketmen": {
+        "name": "Crucible Guard Rocketmen",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 6, 10],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/Rocketmen.png"
+                }
+              ]
+            }
+          },
+          "ua": {
+            "captain": {
+              "name": "Rocketman Captain",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/RocketmanCaptain.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            },
+            "gunner": {
+              "name": "Rocketman Gunner",
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/RocketmanGunner.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "storm troopers": {
+        "name": "Crucible Guard Storm Troopers",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3, 5],
+              "type": "warrior",
+              "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/Stormtroopers.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+            }
+          }
+        }
+      },
+      "dragon's breath": {
+        "name": "Dragon's Breath Rocket",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Crew",
+              "ranges": [1, 2],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/DragonsbreathCrew.png"
+                }
+              ]
+             }
+            },
+            "Gunner": {
+            "Gunner": {
+              "name": "Gunner",
+              "type": "warrior",
+              "base": "large",
+              "img": [
+                {
+                  "link": "/data/model/crucible/units/DragonsbreathGunner.png"
+                }
+              ]
+            }
+          }
+        }
+      },
+    "solos": {
+      "alyce (little)": {
+        "name": "Aurum Ominus Alyce Marc",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/Alyce.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "alyce (big)": {
+        "name": "Aurum Ominus Alyce Marc",
+        "type": "warrior",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/BigAlyce.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "mechanik": {
+        "name": "Crucible Guard Mechanik",
+        "type": "warrior",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/Mechanik.png"
+          }
+        ]
+       }
+      },
+      "mosby": {
+        "name": "Doctor Alejandro Mosby",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/Adophus.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "prospero": {
+        "name": "Prospero",
+        "type": "wardude",
+        "focus": 4,
+        "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/Prospero.png"
+          }
+        ],
+        "damage": {
+          "n": 8
+        }
+      },
+      "rocketman ace": {
+        "name": "Rocketman Ace",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/RocketmanAce.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "trancer": {
+        "name": "Trancer",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/crucible/solos/Trancer.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      }
+    },
+    "battle_engines": {
+      "railess interceptor": {
+        "name": "Railless Interceptor",
+        "type": "be",
+        "base": "huge",
+        "img": [
+          {
+            "width": 90,
+            "height": 90,
+            "link": "/data/model/crucible/bes/Railless.png"
+          }
+        ],
+        "damage": {
+          "n": 36
+        }
+      }
+    }
+  }
+}
