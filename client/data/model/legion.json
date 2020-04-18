@@ -40,6 +40,11 @@
         "type": "wardude",
         "fury": 7,
         "base": "medium",
+         "img": [
+          {
+            "link": "/data/model/legion/warlocks/Anamag1.png"
+          }
+        ],
         "damage": {
           "n": 17
         }
@@ -440,6 +445,11 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "link": "/data/model/legion/beasts/Golab.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
@@ -921,6 +931,11 @@
               "ranges": [ 1, 3, 5 ],
               "type": "warrior",
               "base": "large",
+              "img": [
+                {
+                  "link": "/data/model/legion/units/Chosen.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -1105,10 +1120,12 @@
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
               "base": "small"
-            }
-          }
-        }
-      },
+              "img": [
+                {
+                  "link": "/data/model/legion/units/Rotwings.png"
+                }
+              ]
+            },
       "scather_crew": {
         "name": "Blighted Nyss Scather Crew",
         "entries": {
@@ -1209,6 +1226,11 @@
               "name": "Gorag Rotteneye",
               "type": "warrior",
               "base": "medium",
+              "img": [
+                {
+                  "link": "/data/model/legion/units/Gorag.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -1347,6 +1369,11 @@
       "ammok": {
         "name": "Ammok the Stick of Truthbearer",
         "base": "medium",
+        "img": [
+          {
+            "link": "/data/model/legion/solos/Ammok.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
