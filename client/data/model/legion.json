@@ -40,8 +40,10 @@
         "type": "wardude",
         "fury": 7,
         "base": "medium",
-         "img": [
+        "img": [
           {
+            "width": 16,
+            "height": 16,
             "link": "/data/model/legion/warlocks/Anamag1.png"
           }
         ],
@@ -447,6 +449,8 @@
         "base": "large",
         "img": [
           {
+            "width": 20,
+            "height": 20,
             "link": "/data/model/legion/beasts/Golab.png"
           }
         ],
@@ -933,6 +937,8 @@
               "base": "large",
               "img": [
                 {
+                  "width": 20,
+                  "height": 20,
                   "link": "/data/model/legion/units/Chosen.png"
                 }
               ],
@@ -1119,13 +1125,18 @@
               "name": "Leader and Grunts",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
               "img": [
                 {
+                  "width": 12,
+                  "height": 12,
                   "link": "/data/model/legion/units/Rotwings.png"
                 }
               ]
-            },
+            }
+          }
+        }
+      },
       "scather_crew": {
         "name": "Blighted Nyss Scather Crew",
         "entries": {
@@ -1228,6 +1239,8 @@
               "base": "medium",
               "img": [
                 {
+                  "width": 16,
+                  "height": 16,
                   "link": "/data/model/legion/units/Gorag.png"
                 }
               ],
@@ -1371,6 +1384,8 @@
         "base": "medium",
         "img": [
           {
+            "width": 16,
+            "height": 16,
             "link": "/data/model/legion/solos/Ammok.png"
           }
         ],
