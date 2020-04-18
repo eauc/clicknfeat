@@ -40,6 +40,13 @@
         "type": "wardude",
         "fury": 7,
         "base": "medium",
+        "img": [
+          {
+            "width": 16,
+            "height": 16,
+            "link": "/data/model/legion/warlocks/Anamag1.png"
+          }
+        ],
         "damage": {
           "n": 17
         }
@@ -440,6 +447,13 @@
         "type": "beast",
         "fury": 4,
         "base": "large",
+        "img": [
+          {
+            "width": 20,
+            "height": 20,
+            "link": "/data/model/legion/beasts/Golab.png"
+          }
+        ],
         "damage": {
           "type": "beast",
           "1": [ "b" , "b" , "b" , "b" , "b"  , null , null ],
@@ -921,6 +935,13 @@
               "ranges": [ 1, 3, 5 ],
               "type": "warrior",
               "base": "large",
+              "img": [
+                {
+                  "width": 20,
+                  "height": 20,
+                  "link": "/data/model/legion/units/Chosen.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -1104,7 +1125,14 @@
               "name": "Leader and Grunts",
               "ranges": [ 1, 6, 10 ],
               "type": "warrior",
-              "base": "small"
+              "base": "small",
+              "img": [
+                {
+                  "width": 12,
+                  "height": 12,
+                  "link": "/data/model/legion/units/Rotwings.png"
+                }
+              ]
             }
           }
         }
@@ -1209,6 +1237,13 @@
               "name": "Gorag Rotteneye",
               "type": "warrior",
               "base": "medium",
+              "img": [
+                {
+                  "width": 16,
+                  "height": 16,
+                  "link": "/data/model/legion/units/Gorag.png"
+                }
+              ],
               "damage": {
                 "n": 8
               }
@@ -1347,6 +1382,13 @@
       "ammok": {
         "name": "Ammok the Stick of Truthbearer",
         "base": "medium",
+        "img": [
+          {
+            "width": 16,
+            "height": 16,
+            "link": "/data/model/legion/solos/Ammok.png"
+          }
+        ],
         "damage": {
           "n": 8
         }
