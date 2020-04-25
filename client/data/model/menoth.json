@@ -41,6 +41,21 @@
           "n": 19
         }
       },
+      "cyrenia1": {
+        "name": "Cyrenia1 (High Exemplar Cyrenia)",
+        "type": "wardude",
+        "focus": 6,
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/menoth/casters/Cyrenia1.png"
+          }
+        ],
+        "damage": {
+          "n": 16
+        }
+      },      
+      
       "durant2": {
         "name": "Durant2 (Sovereign Tristan Durant)",
         "fk_name": "Sovereign Tristan Durant",
@@ -1019,6 +1034,27 @@
           }
         }
       },
+      "initiates": {
+        "name": "Initiates of the Wall",
+        "entries": {
+          "unit": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/menoth/units/Initiates.png"
+                }
+              ],
+              "damage": {
+                "n": 5
+              }
+            }
+          }
+        }
+      },
       "knights": {
         "name": "Knights Exemplar",
         "entries": {
@@ -1225,6 +1261,32 @@
           "n": 8
         }
       },
+        "champion": {
+        "name": "Champion of the Order of the Wall",
+        "type": "solo",
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/menoth/solos/Champion.png"
+          }
+        ],
+        "damage": {
+          "n": 10
+        }
+      },
+      "championDismount": {
+        "name": "Champion of the Order of the Wall (Dismounted)",
+        "type": "solo",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/menoth/solos/ChampionDismount.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
       "convenant": {
         "name": "The Covenant of Menoth",
         "type": "solo",
@@ -1360,6 +1422,19 @@
         "img": [
           {
             "link": "/data/model/menoth/solos/Reclaimer.png"
+          }
+        ],
+        "damage": {
+          "n": 5
+        }
+      },
+      "sevy0": {
+        "name": "Scrutator Potentate Severius",
+        "type": "wardude",
+        "base": "small",
+        "img": [
+          {
+            "link": "/data/model/menoth/solos/Sevy0.png"
           }
         ],
         "damage": {
