@@ -71,6 +71,20 @@
           }
         }
       },
+      "aurora2": {
+        "name": "Aurora2 (Archnumen Aurora)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "large",
+        "img": [
+          {
+            "link": "/data/model/mercenaries/casters/Aurora2.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
       "bartolo1": {
         "name": "Bartolo1 (Captain Bartolo Montador)",
         "fk_name": "Captain Bartolo Montador",
@@ -1728,6 +1742,15 @@
           "n": 8
         }
       },
+      "Destructotron3000": {
+        "name": "Destructotron 3000",
+        "type": "warrior",
+        "base": "medium",
+        "img": [],
+        "damage": {
+          "n": 8
+        }
+      },      
       "Dez": {
         "name": "Dez",
         "type": "warrior",
