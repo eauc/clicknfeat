@@ -90,6 +90,18 @@
           }
         }
       },
+      "Orion1": {
+        "name": "Orion1 (Eminent Configurator Orion)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "n": 17
+        }
+      }
+    },
       "Syntherion1": {
         "name": "Syntherion1 (Forge Master)",
         "fk_name": "Forge Master Syntherion",
@@ -194,12 +206,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Galvanizer": {
@@ -213,12 +225,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Inverter": {
@@ -251,12 +263,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Modulator": {
@@ -295,6 +307,22 @@
           "4": [  "b",  "b", "b", "r", "r", "i" ],
           "5": [  "b",  "b", "b", "b", "r", "m" ],
           "6": [ null, null, "b", "b", "b", "m" ]
+        }
+      },
+      "Negator": {
+        "name": "Negator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null, null, "b",  "m" ],
+          "2": [ null, null, null, "b",  "h",  "m" ],
+          "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "5": [ null, null, null, "b",  "h",  "m" ],
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "PrimeAxiom": {
@@ -356,6 +384,21 @@
             "base": "small",
             "img": []
           }
+        },
+      "Tesselator": {
+        "name": "Tesselator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null, null, "b",  "m" ],
+          "2": [ null, null, null, "b",  "h",  "m" ],
+          "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "5": [ null, null, null, "b",  "h",  "m" ],
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       }
     },
@@ -395,6 +438,24 @@
               "damage": {
                 "n": 8
               }
+            }
+          }
+        }
+      },
+      "Negation": {
+        "name": "Negation Angels",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cyriss/units/Clockwork_Angel.png"
+                }
+              ]
             }
           }
         }
@@ -561,6 +622,16 @@
         ],
         "damage": {
           "n": 10
+        }
+      },
+      "PrefectHypatia": {
+        "name": "Prefect Hypatia",
+        "type": "solo",
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 5
         }
       },
       "ReflexServitor": {
