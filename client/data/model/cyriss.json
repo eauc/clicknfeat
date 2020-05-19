@@ -28,6 +28,22 @@
           "n": 16
         }
       },
+      "Aurora2": {
+        "name": "Aurora2 (Archnumen Aurora)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "large",
+        "img": [
+          {
+            "width": 19,
+            "height": 19,
+            "link": "/data/model/mercenaries/casters/Aurora2.png"
+          }
+        ],
+        "damage": {
+          "n": 18
+        }
+      },
       "Axis1": {
         "name": "Axis1 (Harmonic Enforcer)",
         "fk_name": "Axis, the Harmonic Enforcer",
@@ -88,6 +104,17 @@
               ]
             }
           }
+        }
+      },
+      "Orion1": {
+        "name": "Orion1 (Eminent Configurator Orion)",
+        "type": "wardude",
+        "focus": 7,
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "n": 17
         }
       },
       "Syntherion1": {
@@ -194,12 +221,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Galvanizer": {
@@ -213,12 +240,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Inverter": {
@@ -251,12 +278,12 @@
         ],
         "damage": {
           "type": "jack",
-          "1": [ null, null, null, null, null, "m" ],
+          "1": [ null, null, null, null, "b",  "m" ],
           "2": [ null, null, null, "b",  "h",  "m" ],
           "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
           "5": [ null, null, null, "b",  "h",  "m" ],
-          "6": [ null, null, null, null, null, "m" ]
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       },
       "Modulator": {
@@ -297,6 +324,22 @@
           "6": [ null, null, "b", "b", "b", "m" ]
         }
       },
+      "Negator": {
+        "name": "Negator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null, null, "b",  "m" ],
+          "2": [ null, null, null, "b",  "h",  "m" ],
+          "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "5": [ null, null, null, "b",  "h",  "m" ],
+          "6": [ null, null, null, null, "b",  "m" ]
+        }
+      },
       "PrimeAxiom": {
         "name": "Prime Axiom",
         "type": "jack",
@@ -327,35 +370,55 @@
       "PrimeConflux": {
         "name": "Prime Conflux",
         "entries": {
-          "conflux": {
-            "name": "Prime Conflux",
-            "type": "jack",
-            "base": "huge",
-            "img": [],
-            "damage": {
-              "type": "colossal",
-              "L1": [ null, null, null, null, "l", "m" ],
-              "L2": [ null, null, null,  "b", "l", "m" ],
-              "L3": [  "b",  "b",  "b",  "l", "i", "m" ],
-              "L4": [  "b",  "b",  "b",  "l", "i", "m" ],
-              "L5": [  "b",  "b",  "s",  "s", "i", "m" ],
-              "L6": [  "b",  "b",  "s",  "i", "i", "i" ],
-              "R1": [  "b",  "b",  "s",  "i", "i", "i" ],
-              "R2": [  "b",  "b",  "s",  "s", "i", "m" ],
-              "R3": [  "b",  "b",  "b",  "r", "i", "m" ],
-              "R4": [  "b",  "b",  "b",  "r", "i", "m" ],
-              "R5": [ null, null, null,  "b", "r", "m" ],
-              "R6": [ null, null, null, null, "r", "m" ]
+          "jack": {
+            "PrimeConflux": {
+              "name": "Prime Conflux",
+              "type": "jack",
+              "base": "huge",
+              "img": [],
+              "damage": {
+                "type": "colossal",
+                "L1": [ null, null, null, null, "l", "m" ],
+                "L2": [ null, null, null,  "b", "l", "m" ],
+                "L3": [  "b",  "b",  "b",  "l", "i", "m" ],
+                "L4": [  "b",  "b",  "b",  "l", "i", "m" ],
+                "L5": [  "b",  "b",  "s",  "s", "i", "m" ],
+                "L6": [  "b",  "b",  "s",  "i", "i", "i" ],
+                "R1": [  "b",  "b",  "s",  "i", "i", "i" ],
+                "R2": [  "b",  "b",  "s",  "s", "i", "m" ],
+                "R3": [  "b",  "b",  "b",  "r", "i", "m" ],
+                "R4": [  "b",  "b",  "b",  "r", "i", "m" ],
+                "R5": [ null, null, null,  "b", "r", "m" ],
+                "R6": [ null, null, null, null, "r", "m" ]
+              }
             }
           },
-          "IonizationServitors": {
-            "name": "Ionization Servitor",
-            "fk_repeat": 3,
-            "ranges": [1, 3],
-            "type": "solo",
-            "base": "small",
-            "img": []
+          "servitors": {
+            "IonizationServitors": {
+              "name": "Ionization Servitor",
+              "fk_repeat": 3,
+              "ranges": [1, 3],
+              "type": "solo",
+              "base": "small",
+              "img": []
+            }
           }
+        }
+      },
+      "Tesselator": {
+        "name": "Tesselator",
+        "type": "jack",
+        "base": "medium",
+        "img": [
+        ],
+        "damage": {
+          "type": "jack",
+          "1": [ null, null, null, null, "b",  "m" ],
+          "2": [ null, null, null, "b",  "h",  "m" ],
+          "3": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "4": [  "b",  "b",  "b", "b",  "h",  "i" ],
+          "5": [ null, null, null, "b",  "h",  "m" ],
+          "6": [ null, null, null, null, "b",  "m" ]
         }
       }
     },
@@ -395,6 +458,24 @@
               "damage": {
                 "n": 8
               }
+            }
+          }
+        }
+      },
+      "Negation": {
+        "name": "Negation Angels",
+        "entries": {
+          "grunt": {
+            "grunt": {
+              "name": "Leader and Grunts",
+              "ranges": [1, 3],
+              "type": "warrior",
+              "base": "small",
+              "img": [
+                {
+                  "link": "/data/model/cyriss/units/Clockwork_Angel.png"
+                }
+              ]
             }
           }
         }
@@ -561,6 +642,16 @@
         ],
         "damage": {
           "n": 10
+        }
+      },
+      "PrefectHypatia": {
+        "name": "Prefect Hypatia",
+        "type": "solo",
+        "base": "small",
+        "img": [
+        ],
+        "damage": {
+          "n": 5
         }
       },
       "ReflexServitor": {
